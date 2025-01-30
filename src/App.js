@@ -85,7 +85,7 @@ const App = () => {
         </Routes>
       </Suspense>
       <Toaster
-        position="bottom-right"
+        position="top-center"
         // ... other configurations
       />
       {/* </HashRouter> */}

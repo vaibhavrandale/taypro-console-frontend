@@ -163,7 +163,7 @@ const Login = () => {
                         >
                           {loading ? (
                             <>
-                              <LoadingSpinner /> Logging in...
+                              <LoadingSpinner /> Login..
                             </>
                           ) : (
                             'Login'
