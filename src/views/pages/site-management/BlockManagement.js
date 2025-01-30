@@ -79,13 +79,13 @@ const BlockManagement = () => {
 
   return (
     <div className="min-vh-100 d-flex flex-column align-items-center">
-      <h3 className=" p-2">
+      <h4 className=" p-2 text-center text-primary">
         {siteName},{siteLocation}
-      </h3>
+      </h4>
       {/* ✅ Status Summary */}
       <CContainer>
-        <CRow className="my-4 d-flex justify-content-center fw-bold">
-          <CCol md={3}>
+        <CRow className="my-2 d-flex justify-content-center fw-bold">
+          <CCol md={3} className="my-2">
             <CCard className="border-0 p-3">
               <div className=" d-flex justify-content-center flex-column align-items-center">
                 {' '}
@@ -96,7 +96,7 @@ const BlockManagement = () => {
               </div>
             </CCard>
           </CCol>
-          <CCol md={3}>
+          <CCol md={3} className="my-2">
             <CCard className=" border-0 p-3">
               <div className=" d-flex justify-content-center flex-column align-items-center">
                 <span className="text-center fw-bold">Total Online</span>
@@ -104,7 +104,7 @@ const BlockManagement = () => {
               </div>
             </CCard>
           </CCol>
-          <CCol md={3}>
+          <CCol md={3} className="my-2">
             <CCard className="text-center border-0 p-3">
               <div className=" d-flex justify-content-center flex-column align-items-center">
                 {' '}
@@ -122,7 +122,7 @@ const BlockManagement = () => {
             const block = blocks[blockId];
 
             return (
-              <CCol md={4} className="my-3" key={block.id}>
+              <CCol md={4} className="my-2" key={block.id}>
                 <CCard className="h-100 d-flex flex-column border-0 shadow">
                   {/* Card Header */}
                   <CCardHeader className="text-center fw-bold border-0">

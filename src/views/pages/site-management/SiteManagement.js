@@ -25,7 +25,7 @@ const SiteManagement = () => {
   );
 
   return (
-    <div className="p-4">
+    <div className="">
       <h2>Site Management</h2>
 
       {/* Search Input */}
@@ -34,7 +34,7 @@ const SiteManagement = () => {
           <CInputGroup className="mb-3">
             <CFormInput
               type="text"
-              placeholder="Search Sites..."
+              placeholder="Search Site..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -63,7 +63,7 @@ const SiteManagement = () => {
                   <Link
                     color="primary"
                     size="sm"
-                    className="btn btn-primary btn-sm mx-1"
+                    className="btn btn-primary btn-sm m-1"
                     to={`/block-management/${site.site_id}`}
                   >
                     Manage
@@ -71,7 +71,7 @@ const SiteManagement = () => {
                   <Link
                     color="primary"
                     size="sm"
-                    className="btn btn-warning btn-sm mx-1"
+                    className="btn btn-warning btn-sm mx-1 px-3"
                   >
                     Edit
                   </Link>

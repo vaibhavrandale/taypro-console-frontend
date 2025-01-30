@@ -11,7 +11,7 @@ const AppFooter = () => {
           style={{ width: '30px', height: '30px', marginRight: '8px' }}
         />
         <a
-          className="text-decoration-none text-dark fw-bold"
+          className="text-decoration-none  fw-bold"
           href="https://taypro.in"
           target="_blank"
           rel="noopener noreferrer"
