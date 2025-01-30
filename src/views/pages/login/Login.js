@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import TayproLogo from '../../../assets/brand/logo-white.png';
 import toast from 'react-hot-toast';
-import { data } from '../../../data';
+import { users, roles } from '../../../data';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Login = () => {
@@ -29,57 +29,94 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Extract roles and users from the data
-  const roles = data[0].roles;
+  // // Extract roles and users from the data
+  // const roles = data[0].roles;
 
   // Handle form submission
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   setTimeout(() => {
+  //     let matchedUser = null;
+  //     let matchedRole = null;
+
+  //     // Check if the username and password match any user in the roles
+  //     for (const role of roles) {
+  //       const user = role.users.find(
+  //         (user) => user.email === username && user.password === password
+  //       );
+  //       if (user) {
+  //         matchedUser = user;
+  //         matchedRole = role;
+  //         break;
+  //       }
+  //     }
+
+  //     if (matchedUser && matchedRole) {
+  //       toast.success(`Welcome, ${matchedUser.username}!`);
+
+  //       // Navigate to a specific route based on role
+  //       switch (matchedRole.role) {
+  //         case 'Master Admin':
+  //           navigate('/dashboard/admin');
+  //           break;
+  //         case 'Project Engineer':
+  //           navigate('/dashboard/project-engineer');
+  //           break;
+  //         case 'Service Admin':
+  //           navigate('/dashboard/service-admin');
+  //           break;
+  //         case 'Site Technician':
+  //           navigate('/dashboard/site-technician');
+  //           break;
+  //         case 'Client Admin':
+  //           navigate('/dashboard/client-admin');
+  //           break;
+  //         case 'Client Technician':
+  //           navigate('/dashboard/client-technician');
+  //           break;
+  //         default:
+  //           navigate('/dashboard');
+  //           break;
+  //       }
+  //     } else {
+  //       toast.error('Invalid username or password');
+  //     }
+
+  //     setLoading(false);
+  //   }, 1000);
+  // };
+
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
 
     setTimeout(() => {
-      let matchedUser = null;
-      let matchedRole = null;
+      // Find user directly from the `users` array
+      const matchedUser = users.find(
+        (user) => user.email === username && user.password === password
+      );
 
-      // Check if the username and password match any user in the roles
-      for (const role of roles) {
-        const user = role.users.find(
-          (user) => user.email === username && user.password === password
+      if (matchedUser) {
+        // Find the corresponding role
+        const matchedRole = roles.find(
+          (role) => role.role === matchedUser.role
         );
-        if (user) {
-          matchedUser = user;
-          matchedRole = role;
-          break;
-        }
-      }
 
-      if (matchedUser && matchedRole) {
         toast.success(`Welcome, ${matchedUser.username}!`);
 
         // Navigate to a specific route based on role
-        switch (matchedRole.role) {
-          case 'Master Admin':
-            navigate('/dashboard/admin');
-            break;
-          case 'Project Engineer':
-            navigate('/dashboard/project-engineer');
-            break;
-          case 'Service Admin':
-            navigate('/dashboard/service-admin');
-            break;
-          case 'Site Technician':
-            navigate('/dashboard/site-technician');
-            break;
-          case 'Client Admin':
-            navigate('/dashboard/client-admin');
-            break;
-          case 'Client Technician':
-            navigate('/dashboard/client-technician');
-            break;
-          default:
-            navigate('/dashboard');
-            break;
-        }
+        const roleRoutes = {
+          'Master Admin': '/dashboard/admin',
+          'Project Engineer': '/dashboard/project-engineer',
+          'Service Admin': '/dashboard/service-admin',
+          'Site Technician': '/dashboard/site-technician',
+          'Client Admin': '/dashboard/client-admin',
+          'Client Technician': '/dashboard/client-technician',
+        };
+
+        navigate(roleRoutes[matchedRole.role] || '/dashboard');
       } else {
         toast.error('Invalid username or password');
       }
@@ -132,7 +169,7 @@ const Login = () => {
                         onChange={(e) => setUsername(e.target.value)}
                       />
                     </CInputGroup>
-
+                    {/* 
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
@@ -144,9 +181,47 @@ const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
+
                       <CInputGroupText
                         onClick={() => setShowPassword(!showPassword)}
-                        style={{ cursor: 'pointer' }}
+                        className="  border-0"
+                        style={{ cursor: 'pointer', background: 'transparent' }}
+                      >
+                        <FontAwesomeIcon
+                          icon={showPassword ? faEyeSlash : faEye}
+                        />
+                      </CInputGroupText>
+                    </CInputGroup>
+                    
+                    */}
+
+                    <CInputGroup className="mb-4 position-relative">
+                      {/* Lock Icon */}
+                      <CInputGroupText>
+                        <CIcon icon={cilLockLocked} />
+                      </CInputGroupText>
+
+                      {/* Password Input */}
+                      <CFormInput
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="" // Ensure space for the icon
+                      />
+
+                      {/* Show/Hide Password Button (Inside Input) */}
+                      <CInputGroupText
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="border-0 bg-transparent position-absolute"
+                        style={{
+                          right: '10px', // Adjust position inside input
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          cursor: 'pointer',
+                          zIndex: 10, // Ensure it stays on top
+                        }}
                       >
                         <FontAwesomeIcon
                           icon={showPassword ? faEyeSlash : faEye}
@@ -157,13 +232,16 @@ const Login = () => {
                     <CRow className="d-flex justify-content-between align-items-center">
                       <CCol xs="6">
                         <CButton
-                          color="primary"
+                          color="success"
+                          style={{ color: 'white' }}
                           className="px-4 py-1"
                           type="submit"
+                          disabled={!username || !password || loading}
                         >
                           {loading ? (
                             <>
-                              <LoadingSpinner /> Login..
+                              Login..
+                              <LoadingSpinner />
                             </>
                           ) : (
                             'Login'
