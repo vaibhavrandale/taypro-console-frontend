@@ -17,9 +17,7 @@ import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-// import TayproLogo from 'src/assets/brand/logo-white.png';
 import TayproLogo from '../../../assets/brand/logo-white.png';
-// import Toast from '../../../components/Toast';
 import toast from 'react-hot-toast';
 import { data } from '../../../data';
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -91,99 +89,6 @@ const Login = () => {
   };
 
   return (
-    // <div
-    //   className="min-vh-100 d-flex flex-row align-items-center"
-    //   style={{
-    //     backgroundImage:
-    //       "url('https://res.cloudinary.com/di0iwc8ql/image/upload/v1724749800/ium0a01kucfsimtbyesq.jpg')",
-    //     backgroundSize: 'cover',
-    //     backgroundPosition: 'center',
-    //     backgroundAttachment: 'fixed',
-    //     height: '100vh',
-    //   }}
-    // >
-    //   <CContainer>
-    //     <CRow className="justify-content-center">
-    //       <CCol md={5}>
-    //         <CCardGroup>
-    //           <CCard className="p-2">
-    //             <CCardBody>
-    //               <div className="text-center mb-2 border">
-    //                 <img
-    //                   src={TayproLogo}
-    //                   alt="Taypro Logo"
-    //                   className=" logo "
-    //                   style={{
-    //                     height: '100px',
-    //                     width: 'auto',
-    //                     objectFit: 'contain',
-    //                   }}
-    //                 />
-    //               </div>
-    //               <CForm onSubmit={handleLogin} autoComplete="off">
-    //                 <h1 className="text-center mb-4">Login</h1>
-
-    //                 <CInputGroup className="mb-3">
-    //                   <CInputGroupText>
-    //                     <CIcon icon={cilUser} />
-    //                   </CInputGroupText>
-    //                   <CFormInput
-    //                     placeholder="Username"
-    //                     autoComplete="username"
-    //                     value={username}
-    //                     onChange={(e) => setUsername(e.target.value)}
-    //                   />
-    //                 </CInputGroup>
-    //                 <CInputGroup className="mb-4">
-    //                   <CInputGroupText>
-    //                     <CIcon icon={cilLockLocked} />
-    //                   </CInputGroupText>
-    //                   <CFormInput
-    //                     type={showPassword ? 'text' : 'password'}
-    //                     placeholder="Password"
-    //                     autoComplete="current-password"
-    //                     value={password}
-    //                     onChange={(e) => setPassword(e.target.value)}
-    //                   />
-    //                   <CInputGroupText
-    //                     onClick={() => setShowPassword(!showPassword)}
-    //                     style={{ cursor: 'pointer' }}
-    //                   >
-    //                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-    //                   </CInputGroupText>
-    //                 </CInputGroup>
-    //                 <CRow>
-    //                   <CCol xs={6}>
-    //                     <CButton
-    //                       color="primary"
-    //                       className="px-4 py-1"
-    //                       type="submit"
-    //                       // disabled={loading}
-    //                     >
-    //                       {loading ? (
-    //                         <span>
-    //                           Login...
-    //                           <LoadingSpinner />
-    //                         </span>
-    //                       ) : (
-    //                         'Login'
-    //                       )}
-    //                     </CButton>
-    //                   </CCol>
-    //                   <CCol xs={6} className="text-right">
-    //                     <CButton color="link" className="px-0" href="forgot-password">
-    //                       Forgot password?
-    //                     </CButton>
-    //                   </CCol>
-    //                 </CRow>
-    //               </CForm>
-    //             </CCardBody>
-    //           </CCard>
-    //         </CCardGroup>
-    //       </CCol>
-    //     </CRow>
-    //   </CContainer>
-    // </div>
     <div
       className="d-flex flex-column justify-content-center align-items-center min-vh-100"
       style={{
@@ -206,7 +111,11 @@ const Login = () => {
                       src={TayproLogo}
                       alt="Taypro Logo"
                       className=""
-                      style={{ height: '80px', objectFit: 'cover' }}
+                      style={{
+                        height: '80px',
+                        objectFit: 'cover',
+                        width: 'auto',
+                      }}
                     />
                   </div>
                   <CForm onSubmit={handleLogin} autoComplete="off">
