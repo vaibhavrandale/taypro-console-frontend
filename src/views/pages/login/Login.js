@@ -158,7 +158,7 @@ const Login = () => {
                       <CCol xs="6">
                         <CButton
                           color="primary"
-                          className="w-100 py-2"
+                          className="px-4 py-1"
                           type="submit"
                         >
                           {loading ? (
