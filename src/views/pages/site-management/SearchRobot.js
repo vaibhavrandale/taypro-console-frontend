@@ -59,7 +59,6 @@ const SearchRobot = () => {
                       style={{ listStyle: 'none' }}
                     >
                       <Link
-                        target="blank"
                         to={`/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                         className="text-decoration-none"
                       >
