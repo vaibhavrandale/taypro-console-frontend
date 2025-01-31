@@ -26,6 +26,9 @@ const AppSidebar = () => {
   return (
     <CSidebar
       className="border-end"
+      // style={{
+      //   backgroundImage: 'linear-gradient(180deg,#042537 10%,#224abe 100%)',
+      // }}
       colorScheme="dark"
       position="fixed"
       unfoldable={unfoldable}
@@ -42,8 +45,8 @@ const AppSidebar = () => {
             alt="Taypro Logo"
             // height={30}
             style={{
-              height: '70px',
-              width: '180px',
+              height: '50px',
+              width: '200px',
               objectFit: 'contain',
             }}
             className="sidebar-brand-full"

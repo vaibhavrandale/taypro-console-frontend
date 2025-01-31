@@ -57,6 +57,7 @@ const AppBreadcrumb = () => {
       {breadcrumbs.map((breadcrumb, index) => {
         return (
           <CBreadcrumbItem
+            className="text-decoration-none"
             {...(breadcrumb.active
               ? { active: true }
               : { href: breadcrumb.pathname })}

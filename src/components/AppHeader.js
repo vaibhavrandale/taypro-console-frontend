@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   CContainer,
@@ -18,8 +18,8 @@ import CIcon from '@coreui/icons-react';
 import {
   cilBell,
   cilContrast,
-  cilEnvelopeOpen,
-  cilList,
+  // cilEnvelopeOpen,
+  // cilList,
   cilMenu,
   cilMoon,
   cilSun,
@@ -57,24 +57,25 @@ const AppHeader = () => {
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
-            <CNavLink to="/dashboard" as={NavLink}>
-              Dashboard
+            <CNavLink>
+              Welcome ,{' '}
+              <span className="text-primary fw-bold">Vaibhav Randale</span>
             </CNavLink>
           </CNavItem>
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink href="#">Users</CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>
+          </CNavItem> */}
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
           <CNavItem>
-            <CNavLink href="#">
+            <CNavLink href="/admin-notifications">
               <CIcon icon={cilBell} size="lg" />
             </CNavLink>
           </CNavItem>
-          <CNavItem>
+          {/* <CNavItem>
             <CNavLink href="#">
               <CIcon icon={cilList} size="lg" />
             </CNavLink>
@@ -83,7 +84,7 @@ const AppHeader = () => {
             <CNavLink href="#">
               <CIcon icon={cilEnvelopeOpen} size="lg" />
             </CNavLink>
-          </CNavItem>
+          </CNavItem> */}
         </CHeaderNav>
         <CHeaderNav>
           <li className="nav-item py-1">

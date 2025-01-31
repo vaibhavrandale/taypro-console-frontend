@@ -64,7 +64,7 @@ const SiteManagement = () => {
                     color="primary"
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
-                    to={`/block-management/${site.site_id}`}
+                    to={`block-management/${site.site_id}`}
                   >
                     Manage
                   </Link>

@@ -1,6 +1,7 @@
 import React from 'react';
 import CIcon from '@coreui/icons-react';
 import {
+  cibProbot,
   cilBell,
   cilCalculator,
   cilChartPie,
@@ -11,6 +12,7 @@ import {
   cilNotes,
   cilPencil,
   cilPuzzle,
+  cilSettings,
   cilSpeedometer,
   cilStar,
 } from '@coreui/icons';
@@ -31,9 +33,20 @@ const _nav = [
     component: CNavItem,
     name: 'Site Management',
     to: '/site-management',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
     badge: {
       color: 'info',
+      text: 'NEW',
+    },
+  },
+
+  {
+    component: CNavItem,
+    name: 'Search Robot',
+    to: '/search-robot',
+    icon: <CIcon icon={cibProbot} customClassName="nav-icon" />,
+    badge: {
+      color: 'success',
       text: 'NEW',
     },
   },

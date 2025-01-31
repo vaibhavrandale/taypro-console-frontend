@@ -1,13 +1,35 @@
 import React from 'react';
 
 const App = React.lazy(() => import('./views/pages/app/App'));
+
 const SiteManagement = React.lazy(() =>
   import('./views/pages/site-management/SiteManagement')
 );
+
 const BlockManagement = React.lazy(() =>
   import('./views/pages/site-management/BlockManagement')
 );
+
+const RobotOperating = React.lazy(() =>
+  import('./views/pages/site-management/RobotOperating')
+);
+
+const DebugLog = React.lazy(() =>
+  import('./views/pages/site-management/DebugLog')
+);
+
+const CleaningLog = React.lazy(() =>
+  import('./views/pages/site-management/CleaningLog')
+);
+
+const SearchRobot = React.lazy(() =>
+  import('./views/pages/site-management/SearchRobot')
+);
+
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+const TayproDashboard = React.lazy(() =>
+  import('./views/dashboard/TayproDashboard')
+);
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
 const Typography = React.lazy(() =>
   import('./views/theme/typography/Typography')
@@ -86,19 +108,47 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
   // new features
   { path: '/apps', name: 'App', element: App },
   {
+    path: '/dashboard',
+    name: 'Taypro Dashboard',
+    element: TayproDashboard,
+  },
+  {
     path: '/site-management',
-    name: 'Site-management',
+    name: 'Site Management',
     element: SiteManagement,
   },
   {
-    path: '/block-management/:site_id',
-    name: 'Block-management',
+    path: '/site-management/block-management/:site_id',
+    name: 'Block Management',
     element: BlockManagement,
+  },
+  {
+    path: '/site-management/block-management/:site_id/:block/:robot_no',
+    name: 'Robot Configuration',
+    element: RobotOperating,
+  },
+
+  {
+    path: '/search-robot',
+    name: 'Search Robot',
+    element: SearchRobot,
+  },
+
+  {
+    path: '/site-management/block-management/:site_id/:block/:robot_no/debug_logs',
+    name: 'Debug Log',
+    element: DebugLog,
+  },
+
+  {
+    path: '/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs',
+    name: 'Cleaning Log',
+    element: CleaningLog,
   },
 
   // existing features
