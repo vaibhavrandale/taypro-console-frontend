@@ -155,7 +155,7 @@ const RobotOperating = () => {
 
       <CRow className="">
         {/* First Card */}
-        <CCol md={5}>
+        <CCol md={5} className="mt-2">
           <CCard className="shadow border-0" style={{ height: '100%' }}>
             <CCardBody>
               <CTable borderless>
@@ -207,7 +207,7 @@ const RobotOperating = () => {
         </CCol>
 
         {/* Second Card */}
-        <CCol md={4}>
+        <CCol md={4} className="mt-2">
           <CCard className="shadow border-0 " style={{ height: '100%' }}>
             <CCardBody>
               <CTable borderless>
@@ -247,7 +247,7 @@ const RobotOperating = () => {
         </CCol>
 
         {/* Third Card (Custom Downlink) */}
-        <CCol md={3}>
+        <CCol md={3} className="mt-2">
           <CCard className="shadow border-0 " style={{ height: '100%' }}>
             <CCardBody>
               <div className="d-flex justify-content-between align-items-center">
