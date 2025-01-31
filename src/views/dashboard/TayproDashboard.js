@@ -159,6 +159,7 @@ const TayproDashboard = () => {
 
               {/* ✅ Online Robots Modal */}
               <CModal
+                scrollable
                 size="xl"
                 visible={activeOnlineSite === site.site_id}
                 onClose={() => setActiveOnlineSite(null)}
@@ -185,13 +186,27 @@ const TayproDashboard = () => {
                     <CTable responsive hover bordered>
                       <CTableHead>
                         <CTableRow>
-                          <CTableHeaderCell>#</CTableHeaderCell>
-                          <CTableHeaderCell>Robot No</CTableHeaderCell>
-                          <CTableHeaderCell>Deveui</CTableHeaderCell>
-                          <CTableHeaderCell>Block</CTableHeaderCell>
-                          <CTableHeaderCell>Last Status</CTableHeaderCell>
-                          <CTableHeaderCell>Last updateAt</CTableHeaderCell>
-                          <CTableHeaderCell>Status</CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '20px' }}>
+                            #
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Robot No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Deveui
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Block
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Last Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '170px' }}>
+                            Last updateAt
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Status
+                          </CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
@@ -228,7 +243,9 @@ const TayproDashboard = () => {
                             )
                             .map((robot, index) => (
                               <CTableRow key={robot.robot_no}>
-                                <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                                <CTableHeaderCell style={{ minWidth: '20px' }}>
+                                  {index + 1}
+                                </CTableHeaderCell>
                                 <CTableDataCell>
                                   {robot.robot_no}
                                 </CTableDataCell>
@@ -281,6 +298,7 @@ const TayproDashboard = () => {
 
               {/* ✅ Offline Robots Modal */}
               <CModal
+                scrollable
                 size="xl"
                 visible={activeOfflineSite === site.site_id}
                 onClose={() => setActiveOfflineSite(null)}
@@ -307,13 +325,27 @@ const TayproDashboard = () => {
                     <CTable responsive hover bordered>
                       <CTableHead>
                         <CTableRow>
-                          <CTableHeaderCell>#</CTableHeaderCell>
-                          <CTableHeaderCell>Robot No</CTableHeaderCell>
-                          <CTableHeaderCell>Deveui</CTableHeaderCell>
-                          <CTableHeaderCell>Block</CTableHeaderCell>
-                          <CTableHeaderCell>Last Status</CTableHeaderCell>
-                          <CTableHeaderCell>Last updateAt</CTableHeaderCell>
-                          <CTableHeaderCell>Status</CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '20px' }}>
+                            #
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Robot No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Deveui
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Block
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Last Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '170px' }}>
+                            Last updateAt
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                            Status
+                          </CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
@@ -350,7 +382,9 @@ const TayproDashboard = () => {
                             )
                             .map((robot, index) => (
                               <CTableRow key={robot.robot_no}>
-                                <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                                <CTableHeaderCell style={{ minWidth: '20px' }}>
+                                  {index + 1}
+                                </CTableHeaderCell>
                                 <CTableDataCell>
                                   {robot.robot_no}
                                 </CTableDataCell>
