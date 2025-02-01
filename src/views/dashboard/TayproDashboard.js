@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CContainer,
   CRow,
@@ -12,7 +12,7 @@ import {
   CTableBody,
   CTableDataCell,
   CBadge,
-  CImage,
+  // CImage,
   CButton,
   CModalFooter,
   CModalBody,
@@ -23,9 +23,14 @@ import {
   CFormInput,
 } from '@coreui/react';
 import { sites, robots } from '../../data'; // Import sites and robots data
-import TayproLogo from '../../assets/brand/logo-white.png';
+// import TayproLogo from '../../assets/brand/logo-white.png';
+// import { useNavigate } from 'react-router-dom';
+// import { useSelector } from 'react-redux'; // Import Redux Hook
 
 const TayproDashboard = () => {
+  // const navigate = useNavigate();
+  // const roleRoutes = useSelector((state) => state.roleRoutes); // Get role routes from Redux
+
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
   const [activeOfflineSite, setActiveOfflineSite] = useState(null);
@@ -35,15 +40,16 @@ const TayproDashboard = () => {
   const onlineRobots = robots.filter((robot) => robot.lora_state === 1).length;
   const offlineRobots = totalRobots - onlineRobots;
 
+  // useEffect(() => {
+  //   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  //   if (storedUser) {
+  //     navigate(roleRoutes[storedUser.role]);
+  //   }
+  // }, [navigate, roleRoutes]);
+
   return (
     <CContainer fluid>
-      {/* 🔹 Logo */}
-      <div className="text-center">
-        <CImage fluid src={TayproLogo} width={200} height={200} />
-      </div>
-
-      {/* 🔹 Summary Section */}
-      <CRow className="my-3 text-center">
+      <CRow className="my-1 text-center">
         <CCol md={4} className="my-2">
           <CCard className="shadow-sm border-0">
             <CCardBody>

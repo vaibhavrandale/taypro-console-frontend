@@ -34,6 +34,8 @@ const AppHeader = () => {
     'coreui-free-react-admin-template-theme'
   );
 
+  const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
 
@@ -59,7 +61,9 @@ const AppHeader = () => {
           <CNavItem>
             <CNavLink>
               Welcome ,{' '}
-              <span className="text-primary fw-bold">Vaibhav Randale</span>
+              <span className="text-primary fw-bold">
+                {storedUser.username}
+              </span>
             </CNavLink>
           </CNavItem>
           {/* <CNavItem>

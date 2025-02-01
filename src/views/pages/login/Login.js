@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import TayproLogo from '../../../assets/brand/logo-white.png';
 import toast from 'react-hot-toast';
-import { users, roles } from '../../../data';
+import { users } from '../../../data';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Login = () => {
@@ -29,94 +29,36 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // // Extract roles and users from the data
-  // const roles = data[0].roles;
-
-  // Handle form submission
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   setTimeout(() => {
-  //     let matchedUser = null;
-  //     let matchedRole = null;
-
-  //     // Check if the username and password match any user in the roles
-  //     for (const role of roles) {
-  //       const user = role.users.find(
-  //         (user) => user.email === username && user.password === password
-  //       );
-  //       if (user) {
-  //         matchedUser = user;
-  //         matchedRole = role;
-  //         break;
-  //       }
-  //     }
-
-  //     if (matchedUser && matchedRole) {
-  //       toast.success(`Welcome, ${matchedUser.username}!`);
-
-  //       // Navigate to a specific route based on role
-  //       switch (matchedRole.role) {
-  //         case 'Master Admin':
-  //           navigate('/dashboard/admin');
-  //           break;
-  //         case 'Project Engineer':
-  //           navigate('/dashboard/project-engineer');
-  //           break;
-  //         case 'Service Admin':
-  //           navigate('/dashboard/service-admin');
-  //           break;
-  //         case 'Site Technician':
-  //           navigate('/dashboard/site-technician');
-  //           break;
-  //         case 'Client Admin':
-  //           navigate('/dashboard/client-admin');
-  //           break;
-  //         case 'Client Technician':
-  //           navigate('/dashboard/client-technician');
-  //           break;
-  //         default:
-  //           navigate('/dashboard');
-  //           break;
-  //       }
-  //     } else {
-  //       toast.error('Invalid username or password');
-  //     }
-
-  //     setLoading(false);
-  //   }, 1000);
-  // };
-
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
 
     setTimeout(() => {
-      // Find user directly from the `users` array
+      // Find user directly from the users array
       const matchedUser = users.find(
         (user) => user.email === username && user.password === password
       );
 
       if (matchedUser) {
-        // Find the corresponding role
-        const matchedRole = roles.find(
-          (role) => role.role === matchedUser.role
-        );
+        // Save user details in localStorage for session persistence
+        localStorage.setItem('loggedInUser', JSON.stringify(matchedUser));
 
         toast.success(`Welcome, ${matchedUser.username}!`);
 
-        // Navigate to a specific route based on role
+        // Role-based redirection
         const roleRoutes = {
-          'Master Admin': '/dashboard/admin',
-          'Project Engineer': '/dashboard/project-engineer',
-          'Service Admin': '/dashboard/service-admin',
-          'Site Technician': '/dashboard/site-technician',
-          'Client Admin': '/dashboard/client-admin',
-          'Client Technician': '/dashboard/client-technician',
+          'Master Admin': '/master-admin/dashboard',
+          'Master User': '/master-admin/dashboard',
+          'Project Admin': '/project-admin/dashboard',
+          'Project Engineer': '/project-admin/dashboard',
+          'Service Admin': '/service-admin/dashboard',
+          'Service User': '/service-admin/dashboard',
+          'Site Technician': '/service-admin/dashboard',
+          'Client Admin': '/client-admin/dashboard',
+          'Client Technician': '/client-admin/dashboard',
         };
 
-        navigate(roleRoutes[matchedRole.role] || '/dashboard');
+        navigate(roleRoutes[matchedUser.role]);
       } else {
         toast.error('Invalid username or password');
       }

@@ -2,6 +2,13 @@ import React from 'react';
 
 const App = React.lazy(() => import('./views/pages/app/App'));
 
+//master admin
+const MasterAdminDashboard = React.lazy(() =>
+  import('./views/master-admin/MasterAdminDashboard')
+);
+
+//master admin
+
 const SiteManagement = React.lazy(() =>
   import('./views/pages/site-management/SiteManagement')
 );
@@ -107,14 +114,25 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'));
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
+  // { path: '/', exact: true, name: 'Home' },
+
+  {
+    path: '/master-admin/dashboard',
+    name: 'Master Admin Dashboard',
+    element: MasterAdminDashboard,
+  },
+  // master admin
+
+  // { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
   // new features
   { path: '/apps', name: 'App', element: App },
+
+  // master admin
+
   {
-    path: '/dashboard',
-    name: 'Taypro Dashboard',
+    path: '/all-site-data',
+    name: 'Taypro All Site Data',
     element: TayproDashboard,
   },
   {
