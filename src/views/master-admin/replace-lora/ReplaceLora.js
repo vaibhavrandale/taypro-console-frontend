@@ -13,11 +13,9 @@ import { FaRobot, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Impor
 
 const ReplaceLora = () => {
   const navigate = useNavigate();
-
   return (
     <div className="p-4">
       <h2>Replace Lora</h2>
-
       <CRow className="mt-4">
         {/* Active Robots Card */}
         <CCol md={6}>
@@ -40,7 +38,6 @@ const ReplaceLora = () => {
             </CCardBody>
           </CCard>
         </CCol>
-
         {/* Inactive Robots Card */}
         <CCol md={6}>
           <CCard className="border-0 shadow-sm text-center">
