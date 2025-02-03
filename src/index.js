@@ -16,10 +16,10 @@ import { Provider } from 'react-redux';
 import 'core-js';
 
 import App from './App';
-import Store from './Store';
+import store from './store';
 
 createRoot(document.getElementById('root')).render(
-  <Provider store={Store}>
+  <Provider store={store}>
     <App />
   </Provider>
 );

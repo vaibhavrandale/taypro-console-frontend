@@ -14,8 +14,8 @@ const changeState = (state = initialState, { type, ...rest }) => {
   }
 };
 
-const Store = createStore(changeState);
-export default Store;
+const store = createStore(changeState);
+export default store;
 
 // 2nd
 // import { legacy_createStore as createStore } from 'redux';
@@ -55,7 +55,7 @@ export default Store;
 // const initialState = {
 //   sidebarShow: true,
 //   theme: 'light',
-//   userInfo: JSON.parse(localStorage.getItem('loggedInUser')) || null, // Store user info
+//   userInfo: JSON.parse(localStorage.getItem('loggedInUser')) || null, // store user info
 // };
 
 // const reducer = (state = initialState, action) => {
@@ -71,5 +71,5 @@ export default Store;
 //   }
 // };
 
-// const Store = createStore(reducer);
-// export default Store; // Ensure we are exporting the store as default
+// const store = createStore(reducer);
+// export default store; // Ensure we are exporting the store as default
