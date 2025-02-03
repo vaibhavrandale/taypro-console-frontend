@@ -112,13 +112,13 @@ const RobotOperating = () => {
             RETURN TO DOCK ALL
           </CButton>
           <Link
-            to={`/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
+            to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
             className="btn btn-sm m-1 shadow-sm"
           >
             Debug Log
           </Link>
           <Link
-            to={`/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
+            to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
             className="btn btn-sm m-1 shadow-sm"
           >
             Cleaning Log

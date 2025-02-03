@@ -1,0 +1,12 @@
+.table-container {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  white-space: nowrap;
+}
+
+.sticky-column {
+  position: sticky;
+  left: 0;
+  background: white; /* Ensure it does not overlap with table background */
+  z-index: 100;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for separation */
+}

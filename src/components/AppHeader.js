@@ -169,7 +169,6 @@ const AppHeader = () => {
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
   const navigate = useNavigate();
-  const roleRoutes = useSelector((state) => state.roleRoutes); // Get role routes from Redux
 
   // ✅ Store user in state to prevent repeated calls to localStorage
   const [storedUser, setStoredUser] = useState(null);
@@ -189,11 +188,8 @@ const AppHeader = () => {
       navigate('/login'); // 🔹 Redirect to login if user is not found
     } else {
       setStoredUser(user);
-      if (roleRoutes[user.role]) {
-        navigate(roleRoutes[user.role]); // 🔹 Redirect to the role-based route
-      }
     }
-  }, [navigate, roleRoutes]);
+  }, [navigate]);
 
   // ✅ Prevent errors by checking if `storedUser` exists before rendering
   if (!storedUser) {

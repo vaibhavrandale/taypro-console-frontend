@@ -59,7 +59,7 @@ const SearchRobot = () => {
                       style={{ listStyle: 'none' }}
                     >
                       <Link
-                        to={`/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                        to={`/master-admin/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                         className="text-decoration-none"
                       >
                         {robot.robot_no}

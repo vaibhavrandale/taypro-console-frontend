@@ -6,7 +6,20 @@ const App = React.lazy(() => import('./views/pages/app/App'));
 const MasterAdminDashboard = React.lazy(() =>
   import('./views/master-admin/MasterAdminDashboard')
 );
+const LoraConfiguration = React.lazy(() =>
+  import('./views/master-admin/LoraConfiguration')
+);
 
+const ReplaceLora = React.lazy(() =>
+  import('./views/master-admin/replace-lora/ReplaceLora')
+);
+
+const ActiveRobots = React.lazy(() =>
+  import('./views/master-admin/replace-lora/ActiveRobots')
+);
+const InActiveRobots = React.lazy(() =>
+  import('./views/master-admin/replace-lora/InActiveRobots')
+);
 //master admin
 
 const SiteManagement = React.lazy(() =>
@@ -116,58 +129,77 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
 
-  {
-    path: '/master-admin/dashboard',
-    name: 'Master Admin Dashboard',
-    element: MasterAdminDashboard,
-  },
-  // master admin
-
   // { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
   // new features
   { path: '/apps', name: 'App', element: App },
 
   // master admin
-
   {
-    path: '/all-site-data',
+    path: '/master-admin/dashboard',
+    name: 'Master Admin Dashboard',
+    element: MasterAdminDashboard,
+  },
+  {
+    path: '/master-admin/all-site-data',
     name: 'Taypro All Site Data',
     element: TayproDashboard,
   },
   {
-    path: '/site-management',
+    path: '/master-admin/site-management',
     name: 'Site Management',
     element: SiteManagement,
   },
   {
-    path: '/site-management/block-management/:site_id',
+    path: '/master-admin/site-management/block-management/:site_id',
     name: 'Block Management',
     element: BlockManagement,
   },
   {
-    path: '/site-management/block-management/:site_id/:block/:robot_no',
+    path: '/master-admin/site-management/block-management/:site_id/:block/:robot_no',
     name: 'Robot Configuration',
     element: RobotOperating,
   },
 
   {
-    path: '/search-robot',
+    path: '/master-admin/search-robot',
     name: 'Search Robot',
     element: SearchRobot,
   },
 
   {
-    path: '/site-management/block-management/:site_id/:block/:robot_no/debug_logs',
+    path: '/master-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs',
     name: 'Debug Log',
     element: DebugLog,
   },
 
   {
-    path: '/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs',
+    path: '/master-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs',
     name: 'Cleaning Log',
     element: CleaningLog,
   },
+  {
+    path: '/master-admin/lora-configuration',
+    name: 'Lora Configuration',
+    element: LoraConfiguration,
+  },
+  {
+    path: '/master-admin/replace-lora',
+    name: 'Replace Lora',
+    element: ReplaceLora,
+  },
+  {
+    path: '/master-admin/replace-lora/in-active-robots',
+    name: 'In Active Robots',
+    element: InActiveRobots,
+  },
+  {
+    path: '/master-admin/replace-lora/active-robots',
+    name: 'Active Robots',
+    element: ActiveRobots,
+  },
+
+  //master admin
 
   // existing features
   { path: '/theme', name: 'Theme', element: Colors, exact: true },

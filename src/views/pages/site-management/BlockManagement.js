@@ -716,7 +716,7 @@ const BlockManagement = () => {
                   <div className="p-2 d-flex justify-content-center">
                     {firstRobot ? (
                       <Link
-                        to={`/site-management/block-management/${site_id}/${block.id}/${firstRobot.robot_no}`}
+                        to={`/master-admin/site-management/block-management/${site_id}/${block.id}/${firstRobot.robot_no}`}
                         className="btn btn-sm btn-primary"
                         size="sm"
                       >

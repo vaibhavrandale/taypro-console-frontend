@@ -41,3 +41,21 @@ input[type='text']:focus {
   outline: none;
   border: none;
 }
+
+.form-control {
+  padding-left: 0px;
+  /* Adjust this value according to the button size */
+  border: 0px;
+  border-bottom: 1px solid rgb(0, 0, 0);
+  border-radius: 0% !important;
+  /* Remove rounded corners */
+}
+
+.form-control:focus {
+  outline: none !important;
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid red;
+  border-radius: 0;
+  /* Remove rounded corners */
+}
