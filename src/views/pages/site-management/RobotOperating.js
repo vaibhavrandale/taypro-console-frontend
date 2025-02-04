@@ -113,15 +113,15 @@ const RobotOperating = () => {
           </CButton>
           <Link
             to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
-            className="btn btn-sm m-1 shadow-sm"
+            className="btn  btn-sm m-1 shadow-sm"
           >
-            Debug Log
+            DEBUG LOG
           </Link>
           <Link
             to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
             className="btn btn-sm m-1 shadow-sm"
           >
-            Cleaning Log
+            CLEANING LOG
           </Link>
 
           <CDropdown className="dropdown">

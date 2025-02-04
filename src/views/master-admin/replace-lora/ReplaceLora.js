@@ -6,13 +6,12 @@ import {
   CCardText,
   CRow,
   CCol,
-  CButton,
 } from '@coreui/react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaRobot, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import icons
+import { Link } from 'react-router-dom';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import icons
 
 const ReplaceLora = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <div className="p-4">
       <h2>Replace Lora</h2>
@@ -48,7 +47,9 @@ const ReplaceLora = () => {
                 <p>
                   View and manage all <b>in-active</b> robots.
                 </p>
-                <p>(to replace lora 1st update new lora no using this link)</p>
+                <p>
+                  (After updating new lora no to activate robot use this link)
+                </p>
               </CCardText>
               <Link
                 className="btn btn-sm btn-danger text-white"

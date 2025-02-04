@@ -445,6 +445,28 @@ export const users = [
     role: 'Client Technician',
   },
 ];
+
+export const clients = [
+  {
+    sr: 1,
+    client_name: 'Avaada Clean Projects',
+    client_id: 'avaada_001',
+    logo: 'https://images.unsplash.com/photo-1562783912-21ad31ee2a83?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDV8fGxvZ298ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    sr: 2,
+    client_name: 'Hero Future Energies',
+    client_id: 'hero_002',
+    logo: 'https://images.unsplash.com/photo-1554463529-e27854014799?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGxvZ298ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    sr: 3,
+    client_name: 'ReNew Power',
+    client_id: 'renew_003',
+    logo: 'https://images.unsplash.com/photo-1557053964-937650b63311?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGxvZ298ZW58MHx8MHx8fDA%3D',
+  },
+];
+
 export const sites = [
   {
     id: 1,
@@ -452,6 +474,17 @@ export const sites = [
     siteName: 'Avaada Clean Projects',
     location: 'Agar, MP',
     site_id: 'avaada_clean_projects_agar_mp',
+    client_id: 'avaada_001', // Assigned Client
+    password: 'avaada_clean_projects_agar_mp@taypro',
+  },
+  {
+    id: 21,
+    logo: 'https://images.unsplash.com/photo-1496200186974-4293800e2c20?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    siteName: 'Avaada Clean Projects',
+    location: 'Pune, MH',
+    site_id: 'avaada_clean_projects_pune_mh',
+    client_id: 'avaada_001', // Assigned Client
+    password: 'avaada_clean_projects_pune_mh@taypro',
   },
   {
     id: 2,
@@ -459,6 +492,8 @@ export const sites = [
     siteName: 'ReNew Power',
     location: 'Bikaner, RJ',
     site_id: 'renew_power_bikaner_rj',
+    client_id: 'renew_003',
+    password: 'renew_power_bikaner_rj@taypro',
   },
   {
     id: 3,
@@ -466,6 +501,8 @@ export const sites = [
     siteName: 'Adani Green Energy',
     location: 'Jaisalmer, RJ',
     site_id: 'adani_green_energy_jaisalmer_rj',
+    client_id: 'adani_004',
+    password: 'adani_green_energy_jaisalmer_rj@taypro',
   },
   {
     id: 4,
@@ -473,6 +510,8 @@ export const sites = [
     siteName: 'Tata Power Solar',
     location: 'Nellore, AP',
     site_id: 'tata_power_solar_nellore_ap',
+    client_id: 'tata_005',
+    password: 'tata_power_solar_nellore_ap@taypro',
   },
   {
     id: 5,
@@ -480,6 +519,8 @@ export const sites = [
     siteName: 'Azure Power',
     location: 'Kurnool, AP',
     site_id: 'azure_power_kurnool_ap',
+    client_id: 'azure_006',
+    password: 'azure_power_kurnool_ap@taypro',
   },
   {
     id: 6,
@@ -487,6 +528,8 @@ export const sites = [
     siteName: 'ACME Solar',
     location: 'Khadoda, GJ',
     site_id: 'acme_solar_khadoda_gj',
+    client_id: 'acme_007',
+    password: 'acme_solar_khadoda_gj@taypro',
   },
   {
     id: 7,
@@ -494,6 +537,8 @@ export const sites = [
     siteName: 'Mahindra Susten',
     location: 'Rajasthan, RJ',
     site_id: 'mahindra_susten_rajasthan_rj',
+    client_id: 'mahindra_008',
+    password: 'mahindra_susten_rajasthan_rj@taypro',
   },
   {
     id: 8,
@@ -501,14 +546,17 @@ export const sites = [
     siteName: 'NHPC Solar Project',
     location: 'Leh, Ladakh',
     site_id: 'nhpc_solar_project_leh_ladakh',
+    client_id: 'nhpc_009',
+    password: 'nhpc_solar_project_leh_ladakh@taypro',
   },
   {
     id: 9,
     logo: 'https://plus.unsplash.com/premium_photo-1679941208875-0fa8522fe6a5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODF8fGNvbXBhbnklMjBsb2dvfGVufDB8fDB8fHww',
-
     siteName: 'Hero Future Energies',
     location: 'Tumkur, KA',
     site_id: 'hero_future_energies_tumkur_ka',
+    client_id: 'hero_002',
+    password: 'hero_future_energies_tumkur_ka@taypro',
   },
   {
     id: 10,
@@ -516,6 +564,7 @@ export const sites = [
     siteName: 'SJVN Solar Park',
     location: 'Baghpat, UP',
     site_id: 'sjvn_solar_park_baghpat_up',
+    password: 'sjvn_solar_park_baghpat_up@taypro',
   },
   {
     id: 11,
@@ -524,6 +573,7 @@ export const sites = [
     siteName: 'JSW Energy Solar',
     location: 'Nagpur, MH',
     site_id: 'jsw_energy_solar_nagpur_mh',
+    password: 'jsw_energy_solar_nagpur_mh@taypro',
   },
   {
     id: 12,
@@ -532,6 +582,7 @@ export const sites = [
     siteName: 'Hindustan Power',
     location: 'Anantapur, AP',
     site_id: 'hindustan_power_anantapur_ap',
+    password: 'hindustan_power_anantapur_ap@taypro',
   },
   {
     id: 13,
@@ -540,6 +591,7 @@ export const sites = [
     siteName: 'NTPC Solar Plant',
     location: 'Ramagundam, TG',
     site_id: 'ntpc_solar_plant_ramagundam_tg',
+    password: 'ntpc_solar_plant_ramagundam_tg@taypro',
   },
   {
     id: 14,
@@ -547,6 +599,7 @@ export const sites = [
     siteName: 'Sterling & Wilson Solar',
     location: 'Bhuj, GJ',
     site_id: 'sterling_wilson_solar_bhuj_gj',
+    password: 'sterling_wilson_solar_bhuj_gj@taypro',
   },
   {
     id: 15,
@@ -555,6 +608,7 @@ export const sites = [
     siteName: 'Engie Solar Park',
     location: 'Kadapa, AP',
     site_id: 'engie_solar_park_kadapa_ap',
+    password: 'engie_solar_park_kadapa_ap@taypro',
   },
   {
     id: 16,
@@ -563,6 +617,7 @@ export const sites = [
     siteName: 'ACB India Solar',
     location: 'Raipur, CG',
     site_id: 'acb_india_solar_raipur_cg',
+    password: 'acb_india_solar_raipur_cg@taypro',
   },
   {
     id: 17,
@@ -570,6 +625,7 @@ export const sites = [
     siteName: 'SB Energy',
     location: 'Phalodi, RJ',
     site_id: 'sb_energy_phalodi_rj',
+    password: 'sb_energy_phalodi_rj@taypro',
   },
   {
     id: 18,
@@ -577,6 +633,7 @@ export const sites = [
     siteName: 'Jakson Solar',
     location: 'Bareilly, UP',
     site_id: 'jakson_solar_bareilly_up',
+    password: 'jakson_solar_bareilly_up@taypro',
   },
   {
     id: 19,
@@ -584,6 +641,7 @@ export const sites = [
     siteName: 'SunSource Energy',
     location: 'Noida, UP',
     site_id: 'sunsource_energy_noida_up',
+    password: 'sunsource_energy_noida_up@taypro',
   },
   {
     id: 20,
@@ -591,6 +649,15 @@ export const sites = [
     siteName: 'Essel Green Energy',
     location: 'Rewa, MP',
     site_id: 'essel_green_energy_rewa_mp',
+    password: 'essel_green_energy_rewa_mp@taypro',
+  },
+  {
+    id: 21,
+    logo: 'https://images.unsplash.com/photo-1549924231-f129b911e442?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    siteName: 'Essel Green Energy',
+    location: 'Pune, MH',
+    site_id: 'essel_green_energy_rewa_mp',
+    password: 'essel_green_energy_rewa_mp@taypro',
   },
 ];
 

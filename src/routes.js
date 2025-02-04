@@ -20,7 +20,18 @@ const ActiveRobots = React.lazy(() =>
 const InActiveRobots = React.lazy(() =>
   import('./views/master-admin/replace-lora/InActiveRobots')
 );
+
+const AddRobotUsingLoraNo = React.lazy(() =>
+  import('./views/master-admin/add-robot/AddRobotUsingLoraNo')
+);
+
+const Clients = React.lazy(() => import('./views/pages/clients/Clients'));
+const ClientsData = React.lazy(() =>
+  import('./views/pages/clients/ClientData')
+);
 //master admin
+
+//common pages
 
 const SiteManagement = React.lazy(() =>
   import('./views/pages/site-management/SiteManagement')
@@ -46,10 +57,18 @@ const SearchRobot = React.lazy(() =>
   import('./views/pages/site-management/SearchRobot')
 );
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 const TayproDashboard = React.lazy(() =>
   import('./views/dashboard/TayproDashboard')
 );
+const Robots = React.lazy(() => import('./views/pages/robots/Robots'));
+const UpdateRobots = React.lazy(() =>
+  import('./views/pages/robots/UpdateRobot')
+);
+
+//common pages
+
+const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
 const Typography = React.lazy(() =>
   import('./views/theme/typography/Typography')
@@ -199,7 +218,39 @@ const routes = [
     element: ActiveRobots,
   },
 
+  {
+    path: '/master-admin/add-robot/add-robot-using-lorano',
+    name: 'Add Robot',
+    element: AddRobotUsingLoraNo,
+  },
+
+  {
+    path: '/master-admin/clients',
+    name: 'Clients data',
+    element: Clients,
+  },
+
+  {
+    path: '/master-admin/clients/clients-data/:client_id',
+    name: 'Client data',
+    element: ClientsData,
+  },
+  {
+    path: '/master-admin/robots',
+    name: 'All Robots',
+    element: Robots,
+  },
+  {
+    path: '/master-admin/robots/:client_id',
+    name: 'Update Robot',
+    element: UpdateRobots,
+  },
+
   //master admin
+
+  //common pages
+
+  //common pages
 
   // existing features
   { path: '/theme', name: 'Theme', element: Colors, exact: true },

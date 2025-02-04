@@ -62,7 +62,7 @@ const InActiveRobots = () => {
           <CFormInput
             type="text"
             placeholder="Search by Robot No, Deveui, or Lora No"
-            className="mb-3"
+            className="mb-3 from-control"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -107,7 +107,7 @@ const InActiveRobots = () => {
       {/* Update Modal */}
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Update Robot Data</CModalTitle>
+          <CModalTitle>Activate Robot</CModalTitle>
         </CModalHeader>
         <CModalBody>
           {selectedRobot && (
@@ -117,23 +117,36 @@ const InActiveRobots = () => {
                 name="robot_no"
                 value={formData.robot_no}
                 label="Robot No"
+                disabled
                 onChange={handleChange}
+                className="mb-3"
               />
               <CFormInput
                 type="text"
                 name="deveui"
                 value={formData.deveui}
                 label="Deveui"
+                disabled
                 onChange={handleChange}
-                className="mt-3"
+                className="mb-3"
               />
               <CFormInput
                 type="text"
                 name="lora_no"
+                disabled
                 value={formData.lora_no}
-                label="Lora No"
+                label="Current Lora No"
                 onChange={handleChange}
-                className="mt-3"
+                className="mb-3"
+              />
+              <CFormInput
+                type="text"
+                name="old_lora_no"
+                disabled
+                value={formData.old_lora_no}
+                label="Old Lora No"
+                onChange={handleChange}
+                className="mb-3"
               />
             </div>
           )}
@@ -142,8 +155,8 @@ const InActiveRobots = () => {
           <CButton color="secondary" onClick={() => setModalVisible(false)}>
             Cancel
           </CButton>
-          <CButton color="primary" onClick={handleUpdate}>
-            Save Changes
+          <CButton color="success" onClick={handleUpdate}>
+            activate
           </CButton>
         </CModalFooter>
       </CModal>

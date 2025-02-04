@@ -75,7 +75,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Add Robot',
-        to: '/master-admin/add-robot',
+        to: '/master-admin/add-robot/add-robot-using-lorano',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
       },
 
@@ -88,7 +88,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Client Data',
-        to: '/master-admin/client-data',
+        to: '/master-admin/clients',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: 'danger',
@@ -98,7 +98,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Update Robot Data',
-        to: '/master-admin/update-robot-data',
+        to: '/master-admin/robots',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
       },
       {

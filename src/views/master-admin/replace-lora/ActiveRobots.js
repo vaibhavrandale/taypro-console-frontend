@@ -252,7 +252,7 @@ const ActiveRobots = () => {
           <CFormInput
             type="text"
             placeholder="Search by Robot No, Deveui, or Lora No"
-            className="mb-3"
+            className="mb-3 "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -352,10 +352,14 @@ const ActiveRobots = () => {
           )}
         </CModalBody>
         <CModalFooter>
-          <CButton color="secondary" onClick={() => setModalVisible(false)}>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => setModalVisible(false)}
+          >
             Cancel
           </CButton>
-          <CButton color="primary" onClick={handleUpdate}>
+          <CButton color="primary" size="sm" onClick={handleUpdate}>
             Save Changes
           </CButton>
         </CModalFooter>
