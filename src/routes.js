@@ -29,7 +29,30 @@ const Clients = React.lazy(() => import('./views/pages/clients/Clients'));
 const ClientsData = React.lazy(() =>
   import('./views/pages/clients/ClientData')
 );
+
+const ServiceTicketDashboard = React.lazy(() =>
+  import('./views/master-admin/service-tickets/ServiceTicketDashboard')
+);
+
+const CreateNewServiceTicket = React.lazy(() =>
+  import('./views/master-admin/service-tickets/CreateServiceTicket')
+);
+
+const InternalTicketsDashboard = React.lazy(() =>
+  import('./views/master-admin/internal-tickets/InternalTicketsDashboard')
+);
+
+const CreateNewInternalTicket = React.lazy(() =>
+  import('./views/master-admin/internal-tickets/CreateNewInternalTicket')
+);
+
 //master admin
+
+//service admin
+const ServiceAdminDahboard = React.lazy(() =>
+  import('./views/service-admin/ServiceAdminDashboard')
+);
+//service admin
 
 //common pages
 
@@ -148,7 +171,7 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
 
-  // { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
   // new features
   { path: '/apps', name: 'App', element: App },
@@ -246,7 +269,37 @@ const routes = [
     element: UpdateRobots,
   },
 
+  {
+    path: '/master-admin/service-tickets',
+    name: 'Service Tickets',
+    element: ServiceTicketDashboard,
+  },
+  {
+    path: '/master-admin/service-tickets/create-new-ticket',
+    name: 'Create new Tickets',
+    element: CreateNewServiceTicket,
+  },
+  {
+    path: '/master-admin/internal-tickets',
+    name: 'Internal Tickets',
+    element: InternalTicketsDashboard,
+  },
+  {
+    path: '/master-admin/internal-tickets/create-new-internal-ticket',
+    name: 'Create New Internal Tickets',
+    element: CreateNewInternalTicket,
+  },
+
   //master admin
+
+  //service admin
+  {
+    path: '/service-admin',
+    name: 'Service Admin Dashboard',
+    element: ServiceAdminDahboard,
+  },
+
+  //service admin
 
   //common pages
 
