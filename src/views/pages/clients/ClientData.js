@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  CCard,
-  CCardBody,
-  CCardTitle,
-  CCardText,
+  // CCard,
+  // CCardBody,
+  // CCardTitle,
+  // CCardText,
   CButton,
   CTable,
   CTableHead,

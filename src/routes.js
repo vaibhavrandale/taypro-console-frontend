@@ -7,7 +7,7 @@ const MasterAdminDashboard = React.lazy(() =>
   import('./views/master-admin/MasterAdminDashboard')
 );
 const LoraConfiguration = React.lazy(() =>
-  import('./views/master-admin/LoraConfiguration')
+  import('./views/master-admin/replace-lora/LoraConfiguration')
 );
 
 const ReplaceLora = React.lazy(() =>
@@ -44,6 +44,22 @@ const InternalTicketsDashboard = React.lazy(() =>
 
 const CreateNewInternalTicket = React.lazy(() =>
   import('./views/master-admin/internal-tickets/CreateNewInternalTicket')
+);
+
+const UsersDashboard = React.lazy(() =>
+  import('./views/master-admin/users/UsersDashboard')
+);
+
+const Notifications = React.lazy(() =>
+  import('./views/master-admin/notifications/Notifications')
+);
+
+const AllSiteCleaningLog = React.lazy(() =>
+  import('./views/master-admin/all-site-cleaninglog/AllSiteCleaningLog')
+);
+
+const SitewaiseLog = React.lazy(() =>
+  import('./views/master-admin/all-site-cleaninglog/SitewaiseLog')
 );
 
 //master admin
@@ -288,6 +304,30 @@ const routes = [
     path: '/master-admin/internal-tickets/create-new-internal-ticket',
     name: 'Create New Internal Tickets',
     element: CreateNewInternalTicket,
+  },
+
+  {
+    path: '/master-admin/users',
+    name: 'All Users',
+    element: UsersDashboard,
+  },
+
+  {
+    path: '/master-admin/notifications',
+    name: 'Master Admin Notifications',
+    element: Notifications,
+  },
+
+  {
+    path: '/master-admin/all-site-cleaning-log',
+    name: 'Master Admin All Site Cleaning Log',
+    element: AllSiteCleaningLog,
+  },
+
+  {
+    path: '/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id',
+    name: 'Master Admin  Sitewise Cleaning Log',
+    element: SitewaiseLog,
   },
 
   //master admin

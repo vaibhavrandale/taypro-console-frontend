@@ -7,7 +7,7 @@ import routes from '../routes';
 
 const AppContent = () => {
   return (
-    <CContainer className="px-4" lg>
+    <div className="mx-3 my-2">
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, idx) => {
@@ -29,7 +29,7 @@ const AppContent = () => {
           />
         </Routes>
       </Suspense>
-    </CContainer>
+    </div>
   );
 };
 

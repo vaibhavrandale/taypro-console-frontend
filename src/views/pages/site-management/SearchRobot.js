@@ -54,16 +54,17 @@ const SearchRobot = () => {
                 >
                   {filteredRobots.map((robot, index) => (
                     <li
-                      key={index} // ✅ Move the key to the <li> (not the <Link>)
+                      key={index}
                       className="my-2 border p-2 rounded"
                       style={{ listStyle: 'none' }}
                     >
                       <Link
+                        // ✅ Move the key to the <li> (not the <Link>)
                         to={`/master-admin/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
-                        className="text-decoration-none"
+                        className="text-decoration-none w-100"
                       >
                         {robot.robot_no}
-                      </Link>
+                      </Link>{' '}
                     </li>
                   ))}
                 </ul>

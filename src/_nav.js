@@ -150,9 +150,13 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Users',
-        to: '/master-admin/Users',
+        to: '/master-admin/users',
         //internal external
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: 'success',
+          text: 'DONE',
+        },
       },
       {
         component: CNavItem,

@@ -295,6 +295,7 @@ const TayproDashboard = () => {
                 <CModalFooter>
                   <CButton
                     color="secondary"
+                    size="sm"
                     onClick={() => setActiveOnlineSite(null)}
                   >
                     Close
@@ -434,6 +435,7 @@ const TayproDashboard = () => {
                 <CModalFooter>
                   <CButton
                     color="secondary"
+                    size="sm"
                     onClick={() => setActiveOfflineSite(null)}
                   >
                     Close

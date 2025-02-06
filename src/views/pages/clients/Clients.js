@@ -235,6 +235,7 @@ import {
 } from '@coreui/react';
 import { clients as initialClients } from '../../../data'; // Import clients data
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Clients = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -295,7 +296,7 @@ const Clients = () => {
   // Handle add new client
   const handleAddClient = () => {
     if (!formData.client_name || !formData.logo) {
-      alert('Please fill in all fields');
+      toast.error('Please fill  all fields');
       return;
     }
 
@@ -334,8 +335,12 @@ const Clients = () => {
         <CTableHead color="dark">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
-            <CTableHeaderCell>Client Name</CTableHeaderCell>
-            <CTableHeaderCell>Client ID</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '200px' }}>
+              Client Name
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '200px' }}>
+              Client ID
+            </CTableHeaderCell>
             <CTableHeaderCell>Logo</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
@@ -357,22 +362,26 @@ const Clients = () => {
                   />
                 </CTableDataCell>
                 <CTableDataCell>
-                  <Link
-                    className="m-1 btn btn-sm btn-primary"
-                    color="primary"
-                    size="sm"
-                    to={`clients-data/${client.client_id}`}
-                  >
-                    view assigned sites
-                  </Link>
-                  <CButton
-                    className="m-1"
-                    color="warning"
-                    size="sm"
-                    onClick={() => openModal(client)}
-                  >
-                    Update
-                  </CButton>
+                  <div className="d-flex justify-content-center align-items-center">
+                    {' '}
+                    <Link
+                      className="m-1 btn btn-sm btn-primary"
+                      style={{ minWidth: '200px' }}
+                      color="primary"
+                      size="sm"
+                      to={`clients-data/${client.client_id}`}
+                    >
+                      view assigned sites
+                    </Link>
+                    <CButton
+                      className="m-1"
+                      color="warning"
+                      size="sm"
+                      onClick={() => openModal(client)}
+                    >
+                      Update
+                    </CButton>
+                  </div>
                 </CTableDataCell>
               </CTableRow>
             ))

@@ -14,10 +14,10 @@ const ReplaceLora = () => {
   // const navigate = useNavigate();
   return (
     <div className="p-4">
-      <h2>Replace Lora</h2>
-      <CRow className="mt-4">
+      <h2 className="text-center">Replace Lora</h2>
+      <CRow className="mt-4 justify-content-center">
         {/* Active Robots Card */}
-        <CCol md={6}>
+        <CCol md={5} className="m-2">
           <CCard className="border-0 shadow-sm text-center">
             <CCardBody>
               <FaCheckCircle size={50} color="green" />
@@ -38,7 +38,7 @@ const ReplaceLora = () => {
           </CCard>
         </CCol>
         {/* Inactive Robots Card */}
-        <CCol md={6}>
+        <CCol md={5} className="m-2">
           <CCard className="border-0 shadow-sm text-center">
             <CCardBody>
               <FaTimesCircle size={50} color="red" />

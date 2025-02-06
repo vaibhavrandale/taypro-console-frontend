@@ -47,7 +47,8 @@ const Robots = () => {
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      robot.lora_no.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Open modal and load robot data
@@ -77,7 +78,7 @@ const Robots = () => {
         <CCol md={4}>
           <CFormInput
             type="text"
-            placeholder="Search by Robot No, Deveui, or Site ID..."
+            placeholder="Search by Robot No, Deveui,Lora No, or Site ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -89,11 +90,19 @@ const Robots = () => {
         <CTableHead color="dark">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Robot No</CTableHeaderCell>
-            <CTableHeaderCell>Deveui</CTableHeaderCell>
-            <CTableHeaderCell>Lora No</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '200px' }}>
+              Robot No
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '200px' }}>
+              Deveui
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Lora No
+            </CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Block</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Block
+            </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>

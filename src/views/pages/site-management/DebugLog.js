@@ -17,6 +17,7 @@ import {
 import { debug_log } from '../../../data'; // Import debug log data
 import { useParams } from 'react-router-dom';
 import * as XLSX from 'xlsx'; // Import xlsx for Excel export
+import toast from 'react-hot-toast';
 
 const DebugLog = () => {
   const { robot_no } = useParams();
@@ -45,7 +46,7 @@ const DebugLog = () => {
   // Function to export data to Excel
   const exportToExcel = () => {
     if (filteredLogs.length === 0) {
-      alert('No data available for export.');
+      toast.error('No data available for export.');
       return;
     }
 

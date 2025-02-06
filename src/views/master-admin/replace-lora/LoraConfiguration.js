@@ -18,19 +18,97 @@ import {
   CModal,
   CFormSelect,
 } from '@coreui/react';
-import { sites, lora_configuration } from '../../data'; // Ensure correct path
-import './master-admin.css';
+import { sites, lora_configuration } from '../../../data'; // Ensure correct path
+import '../master-admin.css';
+import toast from 'react-hot-toast';
 const LoraConfiguration = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [addmodalVisible, setAddModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [newDeveui, setNewDeveui] = useState('');
 
   // Open Modal and Set Selected Item Data
   const openModal = (item) => {
     setSelectedItem(item);
     setFormData(item);
     setModalVisible(true);
+  };
+  // Open Modal and Set Selected Item Data
+  const openAddModal = () => {
+    setAddModalVisible(true);
+  };
+
+  // Handle Adding New Entry
+  // const handleAdd = () => {
+  //   if (!newDeveui) {
+  //     alert('Please enter a valid Deveui!');
+  //     return;
+  //   }
+
+  //   // Add new entry to lora_configuration
+  //   const newEntry = {
+  //     serial: lora_configuration.length + 1, // Generate serial
+  //     robot_no: 'N/A', // Default for now
+  //     deveui: newDeveui,
+  //     formatted_deveui: newDeveui,
+  //     site_id: 'taypro_office', // Default site
+  //     added_by: 'Vaibhav Randale', // Replace with actual user
+  //     added_by_email: 'vaibhav.r@gmail.com', // Replace with actual user
+  //     added_by_id: 'dfbdfbdbdfbg', // Replace with actual user
+  //     lastUpdateBy: null,
+  //     lastUpdateAt: null,
+  //   };
+
+  //   console.log('New Lora Added:', newEntry);
+  //   lora_configuration.push(newEntry);
+
+  //   // Show Success Toast
+  //   toast.success('New Lora Configuration Added Successfully!');
+
+  //   // Close Modal & Reset
+  //   setNewDeveui('');
+  //   setAddModalVisible(false);
+  // };
+
+  const handleDeveuiChange = (e) => {
+    let input = e.target.value;
+    setNewDeveui(input);
+  };
+
+  const handleAdd = () => {
+    if (!newDeveui) {
+      alert('Please enter a valid Deveui!');
+      return;
+    }
+
+    // Convert Deveui: Remove colons and convert to lowercase
+    const formattedDeveui = newDeveui.replace(/:/g, '').toLowerCase();
+
+    // Add new entry to lora_configuration
+    const newEntry = {
+      serial: lora_configuration.length + 1, // Generate serial
+      robot_no: '', // Default for now
+      deveui: newDeveui, // Original input
+      formatted_deveui: formattedDeveui, // Converted format
+      site_id: 'taypro_office', // Default site
+      added_by: 'Vaibhav Randale', // Replace with actual user
+      added_by_email: 'vaibhav.r@gmail.com', // Replace with actual user
+      added_by_id: 'dfbdfbdbdfbg', // Replace with actual user
+      lastUpdated_by: null,
+      lastUpdateAt: null,
+    };
+
+    console.log(`New Lora ${lora_configuration.serial}  Added:`, newEntry);
+    lora_configuration.push(newEntry);
+
+    // Show Success Toast
+    toast.success('New Lora Configuration Added Successfully!');
+
+    // Close Modal & Reset
+    setNewDeveui('');
+    setAddModalVisible(false);
   };
 
   // Handle Input Change in Form
@@ -61,7 +139,63 @@ const LoraConfiguration = () => {
 
   return (
     <div className="">
-      <h2 className="text-center">Lora Configuration</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="text-center">Lora Configuration</h2>
+        <CButton
+          color="success"
+          size="sm"
+          className="text-white"
+          onClick={openAddModal}
+        >
+          + Add New
+        </CButton>
+      </div>
+      {/* Add Modal */}
+      <CModal
+        visible={addmodalVisible}
+        onClose={() => setAddModalVisible(false)}
+        backdrop
+      >
+        <CModalHeader>
+          <CModalTitle>Add New Lora </CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CRow>
+            <CCol md={12}>
+              <CFormLabel>Deveui</CFormLabel>
+              <CFormInput
+                type="text"
+                name="deveui"
+                value={newDeveui}
+                onChange={handleDeveuiChange}
+                placeholder="ENTER DEVEUI"
+                className="mb-3"
+              />
+            </CCol>
+            <CCol md={12}>
+              <CFormLabel>Site ID (Default: taypro_office)</CFormLabel>
+              <CFormInput
+                type="text"
+                value="taypro_office"
+                disabled
+                className="mb-3"
+              />
+            </CCol>
+          </CRow>
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => setAddModalVisible(false)}
+          >
+            Cancel
+          </CButton>
+          <CButton color="primary" size="sm" onClick={handleAdd}>
+            Add
+          </CButton>
+        </CModalFooter>
+      </CModal>
       <CRow className="justify-content-end">
         <CCol md={4} lg={3}>
           <CFormInput
@@ -79,7 +213,6 @@ const LoraConfiguration = () => {
             <CTableHeaderCell className="sticky-column">
               <div className="d-flex flex-column">
                 <span>Lora Sr</span>
-                {/* <span className=" text-white">(available on back side of pcb)</span> */}
               </div>
             </CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
@@ -91,51 +224,66 @@ const LoraConfiguration = () => {
             <CTableHeaderCell>Added By</CTableHeaderCell>
             <CTableHeaderCell>Added At</CTableHeaderCell>
             <CTableHeaderCell>Last Update</CTableHeaderCell>
+            <CTableHeaderCell>Last Update By</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredData.map((item, index) => (
-            <CTableRow key={index}>
-              <CTableDataCell className="sticky-column">
-                {item.serial}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '150px' }}>
-                {item.robot_no}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '150px' }}>
-                {item.deveui}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '150px' }}>
-                {item.formatted_deveui}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '150px' }}>
-                {item.site_id}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '170px' }}>
-                {item.added_by}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '170px' }}>
-                {item.addedAt}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: '170px' }}>
-                {item.lastUpdateBy === null ? (
-                  <span className="badge bg-danger">N/A</span>
-                ) : (
-                  <span className="badge bg-success">{item.lastUpdateBy}</span>
-                )}
-              </CTableDataCell>
-              <CTableDataCell>
-                <CButton
-                  color="primary"
-                  className="btn-sm"
-                  onClick={() => openModal(item)}
-                >
-                  Update
-                </CButton>
-              </CTableDataCell>
-            </CTableRow>
-          ))}
+          {filteredData
+            .slice()
+            .reverse()
+            .map((item, index) => (
+              <CTableRow key={index}>
+                <CTableDataCell className="sticky-column">
+                  {item.serial}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '150px' }}>
+                  {item.robot_no}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '150px' }}>
+                  {item.deveui}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '150px' }}>
+                  {item.formatted_deveui}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '150px' }}>
+                  {item.site_id}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '170px' }}>
+                  {item.added_by}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '170px' }}>
+                  {item.addedAt}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '170px' }}>
+                  {item.lastUpdated_by === null ? (
+                    <span className="badge bg-danger">N/A</span>
+                  ) : (
+                    <span className="badge bg-success">
+                      {item.lastUpdated_by}
+                    </span>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '170px' }}>
+                  {item.lastUpdateAt === null ? (
+                    <span className="badge bg-danger">N/A</span>
+                  ) : (
+                    <span className="badge bg-success">
+                      {item.lastUpdateAt}
+                    </span>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="primary"
+                    className="btn-sm"
+                    onClick={() => openModal(item)}
+                  >
+                    Update
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            ))}
         </CTableBody>
       </CTable>
 
