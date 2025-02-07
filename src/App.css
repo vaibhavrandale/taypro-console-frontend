@@ -1,61 +1,101 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap');
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
+  font-family: 'Blinker', serif;
+  font-weight: 500;
+  font-style: normal;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+p,
+span,
+a,
+td,
+th,
+select,
+input,
+button,
+.btn,
+breadcrumb,
+div {
+  font-family: 'Blinker', serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn-primary,
+.btn-success {
+  background: #96db00;
+  color: #052638 !important;
+  border: none;
+  font-weight: 600;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.btn-primary,
+.btn-success:hover {
+  background: #96db00;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-warning {
+  background: #96db00;
+  color: #052638;
+  border: none;
+  font-weight: 600;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btn-dark,
+.btn-secondary {
+  background: #052638;
+  color: #ffffff;
+  border: none;
+  font-weight: 500;
+}
+
+.btn-dark,
+.btn-secondary:hover {
+  background: #052638 !important;
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background: #96db00 !important;
+  color: #052638;
+}
+
+.bg-primary {
+  background: #052638 !important;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.bg-success {
+  background: #96db00 !important;
+  color: #052638;
+  font-weight: 600;
+}
+.bg-danger {
+  font-weight: 600;
+}
+
+.bg-warning {
+  font-weight: 600;
+  color: #052638;
+}
+
+.text-success {
+  color: #96db00 !important;
+}
+
+thead th {
+  background: #052638 !important;
+  color: #ffffff !important;
 }
 
 input[type='text']:focus {
   outline: none;
   border: none;
-}
-
-.form-control {
-  padding-left: 0px;
-  /* Adjust this value according to the button size */
-  border: 0px;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  border-radius: 0% !important;
-  /* Remove rounded corners */
-}
-
-.form-control:focus {
-  outline: none !important;
-  border: none;
-  box-shadow: none;
-  border-bottom: 1px solid red;
-  border-radius: 0;
-  /* Remove rounded corners */
 }

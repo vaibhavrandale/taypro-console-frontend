@@ -1,128 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import {
-//   CTable,
-//   CTableHead,
-//   CTableRow,
-//   CTableHeaderCell,
-//   CTableBody,
-//   CTableDataCell,
-//   CFormInput,
-//   CRow,
-//   CCol,
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-// } from '@coreui/react';
-// import { cleaning_log } from '../../../data'; // Import cleaning logs data
-// import { useParams } from 'react-router-dom';
-
-// const SitewaiseLog = () => {
-//   const { site_id } = useParams();
-//   const [selectedDate, setSelectedDate] = useState('');
-
-//   // Set default date when the component mounts
-//   useEffect(() => {
-//     setSelectedDate(new Date().toISOString().split('T')[0]); // Auto-select today's date
-//   }, []);
-
-//   const filteredLogs = cleaning_log
-//     .filter((log) => log.site_id === site_id) // Filter by Site ID
-//     .filter(
-//       (log) => (selectedDate ? log.timestamp.startsWith(selectedDate) : true) // Filter by selected date
-//     );
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="mb-4">🧼 Cleaning Logs</h2>
-
-//       {/* 📅 Date Picker */}
-//       <CRow className="justify-content-end mb-3">
-//         <CCol md={4}>
-//           <CFormInput
-//             type="date"
-//             value={selectedDate}
-//             onChange={(e) => setSelectedDate(e.target.value)}
-//             className="mb-3"
-//           />
-//         </CCol>
-//       </CRow>
-
-//       {/* 📝 Show Table Only if Date is Selected */}
-//       {selectedDate && (
-//         <CCard className="shadow-sm">
-//           <CCardHeader>
-//             <h5 className="m-0">📝 Cleaning Log Report</h5>
-//           </CCardHeader>
-//           <CCardBody>
-//             <CTable bordered hover responsive>
-//               <CTableHead color="dark">
-//                 <CTableRow>
-//                   <CTableHeaderCell>Sr</CTableHeaderCell>
-//                   <CTableHeaderCell>Device Name</CTableHeaderCell>
-//                   <CTableHeaderCell>Row Number</CTableHeaderCell>
-//                   <CTableHeaderCell>Row Length (Meters)</CTableHeaderCell>
-//                   <CTableHeaderCell>Cleaning Date</CTableHeaderCell>
-//                   <CTableHeaderCell>Cleaning Start Time</CTableHeaderCell>
-//                   <CTableHeaderCell>Battery Start (%)</CTableHeaderCell>
-//                   <CTableHeaderCell>Cleaning Finished Time</CTableHeaderCell>
-//                   <CTableHeaderCell>Battery Finished (%)</CTableHeaderCell>
-//                   <CTableHeaderCell>Distance Covered (Meters)</CTableHeaderCell>
-//                   <CTableHeaderCell>Status</CTableHeaderCell>
-//                 </CTableRow>
-//               </CTableHead>
-//               <CTableBody>
-//                 {filteredLogs.length > 0 ? (
-//                   filteredLogs.map((log, index) => (
-//                     <CTableRow key={log.id}>
-//                       <CTableDataCell>{index + 1}</CTableDataCell>
-//                       <CTableDataCell>{log.robot_no}</CTableDataCell>
-//                       <CTableDataCell>N/A</CTableDataCell>
-//                       <CTableDataCell>660</CTableDataCell>
-//                       <CTableDataCell>
-//                         {log.timestamp.split(' ')[0]}
-//                       </CTableDataCell>
-//                       <CTableDataCell>{log.timestamp}</CTableDataCell>
-//                       <CTableDataCell>
-//                         {Math.floor(Math.random() * 30) + 70}
-//                       </CTableDataCell>
-//                       <CTableDataCell>
-//                         {new Date(
-//                           new Date(log.timestamp).getTime() + 55 * 60 * 1000
-//                         )
-//                           .toISOString()
-//                           .replace('T', ' ')
-//                           .slice(0, 19)}
-//                       </CTableDataCell>
-//                       <CTableDataCell>
-//                         {Math.floor(Math.random() * 20) + 30}
-//                       </CTableDataCell>
-//                       <CTableDataCell>672</CTableDataCell>
-//                       <CTableDataCell>
-//                         <span className="badge bg-success">Success</span>
-//                       </CTableDataCell>
-//                     </CTableRow>
-//                   ))
-//                 ) : (
-//                   <CTableRow>
-//                     <CTableDataCell
-//                       colSpan="11"
-//                       className="text-center text-danger"
-//                     >
-//                       No logs found for the selected date.
-//                     </CTableDataCell>
-//                   </CTableRow>
-//                 )}
-//               </CTableBody>
-//             </CTable>
-//           </CCardBody>
-//         </CCard>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SitewaiseLog;
-
 import React, { useEffect, useState } from 'react';
 import {
   CTable,
@@ -142,7 +17,7 @@ import {
 } from '@coreui/react';
 import { cleaning_log } from '../../../data'; // Import cleaning logs data
 import { useParams } from 'react-router-dom';
-import * as XLSX from 'xlsx'; // Import xlsx for Excel export
+// import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import toast from 'react-hot-toast';
 
 const SitewaiseLog = () => {
@@ -164,7 +39,7 @@ const SitewaiseLog = () => {
     setTimeout(() => {
       const logs = cleaning_log
         .filter((log) => log.site_id === site_id) // Filter by Site ID
-        .filter((log) => (date ? log.timestamp.startsWith(date) : true)); // Filter by selected date
+        .filter((log) => (date ? log.start_timestamp.startsWith(date) : true)); // Filter by selected date
       setFilteredLogs(logs);
       setLoading(false); // Stop loading
     }, 800); // Simulate network delay for smooth UI
@@ -182,7 +57,7 @@ const SitewaiseLog = () => {
   // 🔽 Export to CSV Function
   const exportToCSV = () => {
     if (filteredLogs.length === 0) {
-      alert('No data available to export.');
+      toast.error('No data available to export.');
       return;
     }
 
@@ -191,20 +66,17 @@ const SitewaiseLog = () => {
     ];
 
     const csvRows = filteredLogs.map((log, index) => {
-      const startBattery = Math.floor(Math.random() * 30) + 70;
-      const endBattery = Math.floor(Math.random() * 20) + 30;
-      const cleaningFinishedTime = new Date(
-        new Date(log.timestamp).getTime() + 55 * 60 * 1000
-      )
-        .toISOString()
-        .replace('T', ' ')
-        .slice(0, 19);
+      const startBattery = log.start_battery_percentage;
+      const endBattery = log.finish_battery_percentage;
+      const cleaningFinishedTime = log.finish_timestamp;
 
-      return `${index + 1},${log.robot_no},N/A,660,${
-        log.timestamp.split(' ')[0]
-      },${
-        log.timestamp
-      },${startBattery},${cleaningFinishedTime},${endBattery},672,Success`;
+      return `${index + 1},${log.robot_no},${log.row_number},${
+        log.row_length
+      },${log.start_timestamp.split(' ')[0]},${
+        log.start_timestamp
+      },${startBattery},${cleaningFinishedTime},${endBattery},${
+        log.claculated_distance
+      },${log.cleaning_status}`;
     });
 
     const csvContent = [csvHeader, ...csvRows].join('\n');
@@ -225,7 +97,7 @@ const SitewaiseLog = () => {
 
       {/* 📅 Date Picker */}
       <CRow className="justify-content-between mb-3">
-        <CCol md={4}>
+        <CCol md={2}>
           <CFormInput
             type="date"
             value={selectedDate}
@@ -239,7 +111,7 @@ const SitewaiseLog = () => {
             className="text-white"
             as="button"
             onClick={exportToCSV}
-            disabled={filteredLogs.length === 0}
+            // disabled={filteredLogs.length === 0}
           >
             📥 Export CSV
           </CButton>
@@ -259,7 +131,7 @@ const SitewaiseLog = () => {
                 <CSpinner color="primary" />
               </div>
             ) : (
-              <CTable bordered hover responsive>
+              <CTable bordered hover responsive className="text-center">
                 <CTableHead color="dark">
                   <CTableRow>
                     <CTableHeaderCell>Sr</CTableHeaderCell>
@@ -285,30 +157,37 @@ const SitewaiseLog = () => {
                       <CTableRow key={log.id}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
                         <CTableDataCell>{log.robot_no}</CTableDataCell>
-                        <CTableDataCell>N/A</CTableDataCell>
-                        <CTableDataCell>660</CTableDataCell>
+                        <CTableDataCell>{log.row_number}</CTableDataCell>
+                        <CTableDataCell>{log.row_length}</CTableDataCell>
                         <CTableDataCell>
-                          {log.timestamp.split(' ')[0]}
+                          {log.start_timestamp.split(' ')[0]}
                         </CTableDataCell>
-                        <CTableDataCell>{log.timestamp}</CTableDataCell>
+                        <CTableDataCell>{log.start_timestamp}</CTableDataCell>
                         <CTableDataCell>
-                          {Math.floor(Math.random() * 30) + 70}
+                          {log.start_battery_percentage}
                         </CTableDataCell>
-                        <CTableDataCell>
-                          {new Date(
-                            new Date(log.timestamp).getTime() + 55 * 60 * 1000
-                          )
-                            .toISOString()
-                            .replace('T', ' ')
-                            .slice(0, 19)}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {Math.floor(Math.random() * 20) + 30}
-                        </CTableDataCell>
-                        <CTableDataCell>672</CTableDataCell>
-                        <CTableDataCell>
-                          <span className="badge bg-success">Success</span>
-                        </CTableDataCell>
+                        {log.finish_timestamp === null ? (
+                          <CTableDataCell colSpan={4} className="text-center">
+                            <span className="badge bg-warning">
+                              Cleaning in progress
+                            </span>
+                          </CTableDataCell>
+                        ) : (
+                          <>
+                            <CTableDataCell>
+                              {log.finish_timestamp}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.finish_battery_percentage}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.claculated_distance}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.cleaning_status}
+                            </CTableDataCell>
+                          </>
+                        )}
                       </CTableRow>
                     ))
                   ) : (

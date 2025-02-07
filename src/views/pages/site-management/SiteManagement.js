@@ -26,7 +26,7 @@ const SiteManagement = () => {
 
   return (
     <div className="">
-      <h2>Site Management</h2>
+      <h2 className="blinker-semibold">Site Management</h2>
 
       {/* Search Input */}
       <CRow className="justify-content-end">
@@ -44,7 +44,7 @@ const SiteManagement = () => {
 
       {/* Dynamic Data Table */}
       <CTable bordered hover responsive>
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Site Name</CTableHeaderCell>

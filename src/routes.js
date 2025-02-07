@@ -100,10 +100,12 @@ const TayproDashboard = React.lazy(() =>
   import('./views/dashboard/TayproDashboard')
 );
 const Robots = React.lazy(() => import('./views/pages/robots/Robots'));
+
 const UpdateRobots = React.lazy(() =>
   import('./views/pages/robots/UpdateRobot')
 );
 
+const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 //common pages
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
@@ -283,6 +285,11 @@ const routes = [
     path: '/master-admin/robots/:client_id',
     name: 'Update Robot',
     element: UpdateRobots,
+  },
+  {
+    path: '/master-admin/timers',
+    name: 'Update Timers',
+    element: Timers,
   },
 
   {

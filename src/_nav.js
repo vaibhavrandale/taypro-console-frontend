@@ -163,12 +163,16 @@ const _nav = [
         name: 'All Sites Cleaning Log',
         to: '/master-admin/all-site-cleaning-log',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: 'success',
+          text: 'DONE',
+        },
       },
 
       {
         component: CNavItem,
         name: 'All Sites Timers',
-        to: '/master-admin/all-site-timers',
+        to: '/master-admin/timers',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
       },
       {

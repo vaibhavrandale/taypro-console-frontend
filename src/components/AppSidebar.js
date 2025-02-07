@@ -26,9 +26,9 @@ const AppSidebar = () => {
   return (
     <CSidebar
       className="border-end"
-      // style={{
-      //   backgroundImage: 'linear-gradient(180deg,#042537 10%,#224abe 100%)',
-      // }}
+      style={{
+        background: '#052638',
+      }}
       colorScheme="dark"
       position="fixed"
       unfoldable={unfoldable}
