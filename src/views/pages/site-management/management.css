@@ -85,14 +85,14 @@
 }
 
 .online:hover {
-  background-color: #28a745 !important;
+  background-color: #96db00 !important;
   color: #fff;
 }
 .offline:hover {
   background-color: red !important;
 }
 .online {
-  background-color: #28a745;
+  background-color: #96db00;
 
   border-radius: 5px;
   color: #fff;
@@ -110,22 +110,4 @@
 
 .shadow-sm {
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-.form-control {
-  padding-left: 0px;
-  /* Adjust this value according to the button size */
-  border: none !important;
-  border-bottom: 1px solid rgb(0, 0, 0);
-  border-radius: 0% !important;
-  /* Remove rounded corners */
-}
-
-.form-control:focus {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none;
-  border-bottom: 1px solid red;
-  border-radius: 0;
-  /* Remove rounded corners */
 }

@@ -102,30 +102,30 @@ const RobotOperating = () => {
       {/* Action Buttons */}
       <CRow className="my-2">
         <CCol>
-          <CButton color="light" className="btn-sm m-1 shadow-sm">
+          <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
             START ALL
           </CButton>
-          <CButton color="light" className="btn-sm m-1 shadow-sm">
+          <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
             STOP ALL
           </CButton>
-          <CButton color="light" className="btn-sm m-1 shadow-sm">
+          <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
             RETURN TO DOCK ALL
           </CButton>
           <Link
             to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
-            className="btn  btn-sm m-1 shadow-sm"
+            className="btn btn-sm btn-secondary  btn-sm m-1 shadow-sm"
           >
             DEBUG LOG
           </Link>
           <Link
             to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
-            className="btn btn-sm m-1 shadow-sm"
+            className="btn btn-sm btn-secondary m-1 shadow-sm"
           >
             CLEANING LOG
           </Link>
 
           <CDropdown className="dropdown">
-            <CDropdownToggle color="light" size="sm" className="shadow-sm ">
+            <CDropdownToggle size="sm" className="shadow-sm ">
               {Robotdata[0].robot_no}
             </CDropdownToggle>
 
@@ -359,13 +359,13 @@ const RobotOperating = () => {
           <CCard className="shadow border-0 " style={{ height: '100%' }}>
             <CCardBody>
               <p>Cleaning Cycle</p>
-              <CButton color="light" className="btn-sm m-1 shadow">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow">
                 START
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 STOP
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 RETURN
               </CButton>
             </CCardBody>
@@ -377,13 +377,13 @@ const RobotOperating = () => {
           <CCard className="shadow border-0 " style={{ height: '100%' }}>
             <CCardBody>
               <p>Set Wheel Speed</p>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 LOW
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 MEDIUM
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 HIGH
               </CButton>
             </CCardBody>
@@ -395,13 +395,13 @@ const RobotOperating = () => {
           <CCard className="shadow border-0 " style={{ height: '100%' }}>
             <CCardBody>
               <p>Set Brush Speed</p>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 LOW
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 MEDIUM
               </CButton>
-              <CButton color="light" className="btn-sm m-1 shadow-sm">
+              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
                 HIGH
               </CButton>
             </CCardBody>

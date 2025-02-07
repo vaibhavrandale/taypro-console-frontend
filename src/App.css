@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap');
-
+:root {
+  --primary-green: #96db00;
+  --primary-text: #052638;
+}
 h1,
 h2,
 h3,
@@ -28,12 +31,20 @@ div {
   font-style: normal;
 }
 
+/* Override Bootstrap Button Styles */
 .btn-primary,
 .btn-success {
-  background: #96db00;
+  background: var(--primary-green) !important;
+  color: var(--primary-text) !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+.custom-btn-primary {
+  background: #96db00 !important;
   color: #052638 !important;
-  border: none;
   font-weight: 600;
+  padding: 4px 8px !important;
 }
 
 .btn-primary,
@@ -81,6 +92,10 @@ div {
   font-weight: 600;
 }
 
+.bg-secondary {
+  font-weight: 600;
+}
+
 .bg-warning {
   font-weight: 600;
   color: #052638;
@@ -88,6 +103,12 @@ div {
 
 .text-success {
   color: #96db00 !important;
+  font-weight: 600;
+}
+
+.text-primary {
+  color: #052638 !important;
+  font-weight: 600;
 }
 
 thead th {

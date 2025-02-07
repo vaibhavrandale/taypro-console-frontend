@@ -123,7 +123,7 @@ const BlockManagement = () => {
       </h4>
       <div className="p-2 d-flex justify-content-center">
         <CButton
-          className="btn btn-primary btn-sm"
+          className="btn btn-secondary btn-sm"
           size="sm"
           onClick={() => setVisible(!visible)}
         >
@@ -236,7 +236,7 @@ const BlockManagement = () => {
 
       {/* Block Display with Manage Button */}
       <CContainer>
-        <CRow className="mt-4">
+        <CRow className="mt-4 justify-content-center">
           {Object.keys(blocks).map((blockId) => {
             const block = blocks[blockId];
 
@@ -310,7 +310,7 @@ const BlockManagement = () => {
                     {firstRobot ? (
                       <Link
                         to={`/master-admin/site-management/block-management/${site_id}/${block.id}/${firstRobot.robot_no}`}
-                        className="btn btn-sm btn-primary"
+                        className="btn btn-sm btn btn-secondary"
                         size="sm"
                       >
                         MANAGE
