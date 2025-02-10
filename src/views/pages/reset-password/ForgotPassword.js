@@ -112,7 +112,7 @@ import {
   CRow,
 } from '@coreui/react';
 import toast from 'react-hot-toast';
-import TayproLogo from '../../../assets/brand/logo-white.png';
+import TayproLogo from '../../../assets/brand/logoforwhitebg.png';
 import { users } from '../../../data'; // Import users from data.js
 
 const ForgotPassword = () => {

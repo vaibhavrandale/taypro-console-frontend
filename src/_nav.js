@@ -38,7 +38,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'All Site Data',
-        to: '/master-admin/all-site-data',
+        to: '/master-admin/site-management/all-site-data',
         icon: <CIcon icon={cilFactory} customClassName="nav-icon" />,
         badge: {
           color: 'success',
@@ -174,18 +174,30 @@ const _nav = [
         name: 'All Sites Timers',
         to: '/master-admin/timers',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: 'success',
+          text: 'DONE',
+        },
       },
       {
         component: CNavItem,
-        name: 'All Sites Gateway Status',
-        to: '/master-admin/all-site-timers',
+        name: 'All Sites Gateways',
+        to: '/master-admin/all-site-gateways',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: 'success',
+          text: 'DONE',
+        },
       },
       {
         component: CNavItem,
         name: 'All Site DPR',
         to: '/master-admin/all-site-dpr',
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: 'success',
+          text: 'DONE',
+        },
       },
     ],
   },

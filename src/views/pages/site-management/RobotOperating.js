@@ -34,7 +34,6 @@ import toast from 'react-hot-toast';
 
 const RobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
-
   const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]); // Store robots assigned to the site
   const [searchTerm, setSearchTerm] = useState('');

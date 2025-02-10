@@ -4,7 +4,7 @@ import { CSpinner } from '@coreui/react';
 const LoadingSpinner = () => {
   return (
     <>
-      <CSpinner size="sm" color="light" />
+      <CSpinner size="sm" color="dark" />
     </>
   );
 };

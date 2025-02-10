@@ -177,7 +177,7 @@ import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import toast from 'react-hot-toast';
 import { users } from '../../../data'; // Use correct data import
-import TayproLogo from '../../../assets/brand/logo-white.png';
+import TayproLogo from '../../../assets/brand/logoforwhitebg.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../../../components/LoadingSpinner';

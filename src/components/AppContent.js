@@ -1,9 +1,10 @@
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { CContainer, CSpinner } from '@coreui/react';
+import { CSpinner } from '@coreui/react';
 
 // routes config
 import routes from '../routes';
+import Dashboard from '../views/dashboard/Dashboard';
 
 const AppContent = () => {
   return (
@@ -23,10 +24,7 @@ const AppContent = () => {
               )
             );
           })}
-          <Route
-            path="/"
-            element={<Navigate to="/master-admin/dashboard" replace />}
-          />
+          {/* <Route path="/" element={<Dashboard />} /> */}
         </Routes>
       </Suspense>
     </div>

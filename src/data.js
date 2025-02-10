@@ -418,6 +418,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9876543210',
     profile_image: 'https://randomuser.me/api/portraits/men/1.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U002',
@@ -429,6 +431,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9234567890',
     profile_image: 'https://randomuser.me/api/portraits/men/2.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U003',
@@ -440,6 +444,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9456781234',
     profile_image: 'https://randomuser.me/api/portraits/men/3.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U004',
@@ -451,6 +457,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9876545678',
     profile_image: 'https://randomuser.me/api/portraits/men/4.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U005',
@@ -462,6 +470,8 @@ export const users = [
     type: 'External',
     phone: '+91 9321654789',
     profile_image: 'https://randomuser.me/api/portraits/men/5.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U006',
@@ -473,6 +483,8 @@ export const users = [
     type: 'External',
     phone: '+91 9012345678',
     profile_image: 'https://randomuser.me/api/portraits/men/6.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U007',
@@ -484,6 +496,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9871234560',
     profile_image: 'https://randomuser.me/api/portraits/men/7.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U008',
@@ -495,6 +509,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9015672345',
     profile_image: 'https://randomuser.me/api/portraits/women/1.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U009',
@@ -506,6 +522,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9823456789',
     profile_image: 'https://randomuser.me/api/portraits/men/8.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U010',
@@ -517,6 +535,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 8976543210',
     profile_image: 'https://randomuser.me/api/portraits/women/2.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U011',
@@ -528,6 +548,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9654321789',
     profile_image: 'https://randomuser.me/api/portraits/men/9.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U012',
@@ -539,6 +561,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9023456781',
     profile_image: 'https://randomuser.me/api/portraits/women/3.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U013',
@@ -550,6 +574,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9954321765',
     profile_image: 'https://randomuser.me/api/portraits/men/10.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U014',
@@ -561,6 +587,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9012567345',
     profile_image: 'https://randomuser.me/api/portraits/women/4.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U015',
@@ -572,6 +600,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9876541234',
     profile_image: 'https://randomuser.me/api/portraits/men/11.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U016',
@@ -583,6 +613,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9801234567',
     profile_image: 'https://randomuser.me/api/portraits/women/5.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U017',
@@ -594,6 +626,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9786543210',
     profile_image: 'https://randomuser.me/api/portraits/men/12.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U018',
@@ -605,6 +639,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9023456789',
     profile_image: 'https://randomuser.me/api/portraits/women/6.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
   {
     id: 'U019',
@@ -616,6 +652,8 @@ export const users = [
     type: 'Internal',
     phone: '+91 9016541230',
     profile_image: 'https://randomuser.me/api/portraits/men/13.jpg',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjMsInJvbGUiOiJhZG1pbiIsImV4cCI6MTczOTE3NTQ5N30.UiU0Io0270S_U7WIzwfxWTEi7JQ9oRsQiZzTT83W5IY',
   },
 ];
 
@@ -2088,8 +2126,35 @@ export const lora_configuration = [
 
 export const robots = [
   {
-    robot_no: 'AAG-2526114',
+    robot_no: 'AYD-ROUTER-01',
     deveui: 'A1B2C3D4E5F60789',
+    block: 'Block-2',
+    robot_type: 'gateway',
+    site_id: 'avaada_clean_projects_agar_mp',
+    company: 'Avaada Clean Projects',
+    last_update: '2025-01-30 14:30:00',
+    lora_state: 0,
+    activate: 1,
+    last_status: 'Cleaning Finished',
+    battery_percentage: 85,
+    version: 'V12.5',
+    old_lora_no: '101',
+    lora_no: 213,
+    wheel_speed: 200,
+    brush_speed: 150,
+    stuck_count: 2,
+    row_length: 100,
+    row_number: '112',
+    timer1: '25:00:00',
+    timer1_date: '2025-01-30',
+    timer2: '25:00:00',
+    timer2_date: '2025-01-30',
+    timer3: '25:00:00',
+    timer3_date: '2025-01-30',
+  },
+  {
+    robot_no: 'AAG-2526114',
+    deveui: 'A1B2C3D4E5F60709',
     block: 'Block-2',
     robot_type: 'Automatic',
     site_id: 'avaada_clean_projects_agar_mp',
@@ -3261,5 +3326,176 @@ export const notifications = [
     timestamp: '2025-02-03 08:10:00',
     location: 'Unknown',
     status: 'Unread',
+  },
+];
+
+export const gateways = [
+  {
+    id: 'gw1-xyz123',
+    gateway_name: 'avaada_yadgiri_gateway_01',
+    gateway_id_in_lns_server: 'avaada_yadgiri_gateway_01',
+    gateway_name_in_lns_server: 'avaada_yadgiri',
+    gateway_lattitude: '25.66903',
+    gateway_longitude: '80.3251',
+    gateway_simnumber: '80.3251',
+    gateway_type: 'outdoor',
+    gateway_robot_no: 'AYD-ROUTER-01',
+    gateway_lora_deveui: 'A1B2C3D4E5F60789',
+    gateway_lora_no: 213,
+    last_online_update: '2025-02-10 12:45:30',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Initial setup and configuration.',
+        updated_by: 'Vaibhav Randale',
+        updated_by_email: 'vaibhav.r@taypro.in',
+        updated_at: '2025-02-10 12:46:30',
+      },
+      {
+        id: 2,
+        comments: 'Firmware update and performance tuning.',
+        updated_by: 'Vaibhav Randale',
+        updated_by_email: 'vaibhav.r@taypro.in',
+        updated_at: '2025-02-11 11:46:30',
+      },
+    ],
+  },
+  {
+    id: 'gw2-abc456',
+    gateway_name: 'avaada_pune_gateway_02',
+    gateway_id_in_lns_server: 'avaada_pune_gateway_02',
+    gateway_name_in_lns_server: 'avaada_pune',
+    gateway_lattitude: '18.5204',
+    gateway_longitude: '73.8567',
+    gateway_simnumber: '91.5204',
+    gateway_type: 'outdoor',
+    gateway_robot_no: 'APN-ROUTER-02',
+    gateway_lora_deveui: 'A1B2C3D4E5F60790',
+    gateway_lora_no: 245,
+    last_online_update: '2025-02-10 13:15:45',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Network calibration and testing.',
+        updated_by: 'Rahul Sharma',
+        updated_by_email: 'rahul.s@taypro.in',
+        updated_at: '2025-02-10 13:16:45',
+      },
+    ],
+  },
+  {
+    id: 'gw3-qwe789',
+    gateway_name: 'avaada_delhi_gateway_03',
+    gateway_id_in_lns_server: 'avaada_delhi_gateway_03',
+    gateway_name_in_lns_server: 'avaada_delhi',
+    gateway_lattitude: '28.7041',
+    gateway_longitude: '77.1025',
+    gateway_simnumber: '77.9876',
+    gateway_type: 'indoor',
+    gateway_robot_no: 'ADL-ROUTER-03',
+    gateway_lora_deveui: 'A1B2C3D4E5F60791',
+    gateway_lora_no: 267,
+    last_online_update: '2025-02-10 14:05:20',
+    update_log: [
+      {
+        id: 1,
+        comments: 'System diagnostics completed.',
+        updated_by: 'Amit Patel',
+        updated_by_email: 'amit.p@taypro.in',
+        updated_at: '2025-02-10 14:06:20',
+      },
+    ],
+  },
+  {
+    id: 'gw4-hjk321',
+    gateway_name: 'avaada_mumbai_gateway_04',
+    gateway_id_in_lns_server: 'avaada_mumbai_gateway_04',
+    gateway_name_in_lns_server: 'avaada_mumbai',
+    gateway_lattitude: '19.0760',
+    gateway_longitude: '72.8777',
+    gateway_simnumber: '72.3456',
+    gateway_type: 'outdoor',
+    gateway_robot_no: 'AMB-ROUTER-04',
+    gateway_lora_deveui: 'A1B2C3D4E5F60792',
+    gateway_lora_no: 289,
+    last_online_update: '2025-02-10 14:45:10',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Hardware maintenance check.',
+        updated_by: 'Sandeep Kumar',
+        updated_by_email: 'sandeep.k@taypro.in',
+        updated_at: '2025-02-10 14:46:10',
+      },
+    ],
+  },
+  {
+    id: 'gw5-zxc654',
+    gateway_name: 'avaada_chennai_gateway_05',
+    gateway_id_in_lns_server: 'avaada_chennai_gateway_05',
+    gateway_name_in_lns_server: 'avaada_chennai',
+    gateway_lattitude: '13.0827',
+    gateway_longitude: '80.2707',
+    gateway_simnumber: '80.5678',
+    gateway_type: 'indoor',
+    gateway_robot_no: 'ACH-ROUTER-05',
+    gateway_lora_deveui: 'A1B2C3D4E5F60786',
+    gateway_lora_no: 312,
+    last_online_update: '2025-02-10 15:10:55',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Routine performance audit.',
+        updated_by: 'Manish Verma',
+        updated_by_email: 'manish.v@taypro.in',
+        updated_at: '2025-02-10 15:11:55',
+      },
+    ],
+  },
+  {
+    id: 'gw6-mno987',
+    gateway_name: 'avaada_hyderabad_gateway_06',
+    gateway_id_in_lns_server: 'avaada_hyderabad_gateway_06',
+    gateway_name_in_lns_server: 'avaada_hyderabad',
+    gateway_lattitude: '17.3850',
+    gateway_longitude: '78.4867',
+    gateway_simnumber: '78.3452',
+    gateway_type: 'outdoor',
+    gateway_robot_no: 'AHY-ROUTER-06',
+    gateway_lora_deveui: 'A1B2C3D4E5F60781',
+    gateway_lora_no: 333,
+    last_online_update: '2025-02-10 15:45:30',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Signal strength analysis.',
+        updated_by: 'Rajesh Gupta',
+        updated_by_email: 'rajesh.g@taypro.in',
+        updated_at: '2025-02-10 15:46:30',
+      },
+    ],
+  },
+  {
+    id: 'gw7-uvw654',
+    gateway_name: 'avaada_jaipur_gateway_07',
+    gateway_id_in_lns_server: 'avaada_jaipur_gateway_07',
+    gateway_name_in_lns_server: 'avaada_jaipur',
+    gateway_lattitude: '26.9124',
+    gateway_longitude: '75.7873',
+    gateway_simnumber: '75.1234',
+    gateway_type: 'outdoor',
+    gateway_robot_no: 'AJP-ROUTER-07',
+    gateway_lora_deveui: 'A1B2C3D4E5F60782',
+    gateway_lora_no: 355,
+    last_online_update: '2025-02-10 16:20:40',
+    update_log: [
+      {
+        id: 1,
+        comments: 'Cloud integration updates.',
+        updated_by: 'Neha Joshi',
+        updated_by_email: 'neha.j@taypro.in',
+        updated_at: '2025-02-10 16:21:40',
+      },
+    ],
   },
 ];

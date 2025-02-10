@@ -25,9 +25,7 @@ import { notifications } from '../data'; // Import notifications data
 
 const AppHeader = () => {
   const headerRef = useRef();
-  const { colorMode, setColorMode } = useColorModes(
-    'coreui-free-react-admin-template-theme'
-  );
+  const { colorMode, setColorMode } = useColorModes('theme');
 
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
@@ -43,7 +41,7 @@ const AppHeader = () => {
         );
     });
 
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const user = JSON.parse(localStorage.getItem('userInfo'));
     if (!user) {
       navigate('/login'); // Redirect to login if user is not found
     } else {
@@ -74,17 +72,12 @@ const AppHeader = () => {
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
-            <CNavLink>
-              Welcome,{' '}
-              <span className="text-primary fw-bold">
-                {storedUser?.username}
-              </span>
-            </CNavLink>
+            <CNavLink>Welcome, &nbsp;{storedUser?.username}</CNavLink>
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
           {/* 🔔 Notifications Dropdown */}
-          <CDropdown variant="nav-item" placement="bottom-end">
+          <CDropdown variant="nav-item" placement="top-end">
             <CDropdownToggle caret={false}>
               <div className="d-flex justify-content-center align-items-center">
                 <CIcon icon={cilBell} size="lg" />
@@ -238,7 +231,7 @@ export default AppHeader;
 //         );
 //     });
 
-//     const user = JSON.parse(localStorage.getItem('loggedInUser'));
+//     const user = JSON.parse(localStorage.getItem('userInfo'));
 
 //     if (!user) {
 //       navigate('/login'); // 🔹 Redirect to login if user is not found

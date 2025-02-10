@@ -12,10 +12,8 @@ import {
 
 import { AppSidebarNav } from './AppSidebarNav';
 
-import TayproLogo from '../assets/brand/logo-dark.png'; // Import the image
-// import TayproLogo from 'src/assets/brand/logo-bg-white.png' // Import the image
-// src/assets/brand/Taypro.png
-// sidebar nav config
+import TayproLogo from '../assets/brand/logofordarkbg.png'; // Import the image
+
 import navigation from '../_nav';
 
 const AppSidebar = () => {

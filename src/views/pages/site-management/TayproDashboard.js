@@ -22,7 +22,7 @@ import {
   CInputGroup,
   CFormInput,
 } from '@coreui/react';
-import { sites, robots } from '../../data'; // Import sites and robots data
+import { sites, robots } from '../../../data'; // Import sites and robots data
 // import TayproLogo from '../../assets/brand/logo-white.png';
 // import { useNavigate } from 'react-router-dom';
 // import { useSelector } from 'react-redux'; // Import Redux Hook

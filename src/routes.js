@@ -1,8 +1,12 @@
 import React from 'react';
 
 const App = React.lazy(() => import('./views/pages/app/App'));
+const UserBasedLinkDashboard = React.lazy(() =>
+  import('./views/dashboard/UserBasedLinkDashboard')
+);
 
 //master admin
+
 const MasterAdminDashboard = React.lazy(() =>
   import('./views/master-admin/MasterAdminDashboard')
 );
@@ -62,6 +66,14 @@ const SitewaiseLog = React.lazy(() =>
   import('./views/master-admin/all-site-cleaninglog/SitewaiseLog')
 );
 
+const Gateways = React.lazy(() =>
+  import('./views/master-admin/gateways/Gateways')
+);
+
+const UpdateGateway = React.lazy(() =>
+  import('./views/master-admin/gateways/UpdateGateway')
+);
+
 //master admin
 
 //service admin
@@ -97,15 +109,16 @@ const SearchRobot = React.lazy(() =>
 );
 
 const TayproDashboard = React.lazy(() =>
-  import('./views/dashboard/TayproDashboard')
+  import('./views/pages/site-management/TayproDashboard')
 );
-const Robots = React.lazy(() => import('./views/pages/robots/Robots'));
+const Robots = React.lazy(() => import('./views/master-admin/robots/Robots'));
 
 const UpdateRobots = React.lazy(() =>
-  import('./views/pages/robots/UpdateRobot')
+  import('./views/master-admin/robots/UpdateRobot')
 );
 
-const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
+// const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
+const Timers = React.lazy(() => import('./views/master-admin/timers/Timers'));
 //common pages
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
@@ -191,6 +204,12 @@ const routes = [
 
   { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
+  {
+    path: '/user-dashboard',
+    name: 'User Links',
+    element: UserBasedLinkDashboard,
+  },
+
   // new features
   { path: '/apps', name: 'App', element: App },
 
@@ -201,7 +220,7 @@ const routes = [
     element: MasterAdminDashboard,
   },
   {
-    path: '/master-admin/all-site-data',
+    path: '/master-admin/site-management/all-site-data',
     name: 'Taypro All Site Data',
     element: TayproDashboard,
   },
@@ -335,6 +354,16 @@ const routes = [
     path: '/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id',
     name: 'Master Admin  Sitewise Cleaning Log',
     element: SitewaiseLog,
+  },
+  {
+    path: '/master-admin/all-site-gateways',
+    name: 'Master Admin  All Site Gateway/Router Status',
+    element: Gateways,
+  },
+  {
+    path: '/master-admin/update-gateway/:gatewayid',
+    name: 'Master Admin  Update Gateway',
+    element: UpdateGateway,
   },
 
   //master admin
