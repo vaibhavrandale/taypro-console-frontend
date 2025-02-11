@@ -19,6 +19,7 @@ import {
 } from '@coreui/react';
 import { gateways, robots } from '../../../data'; // Import the gateways data
 import { Link } from 'react-router-dom';
+import LastOnlineStatus from '../../../components/LastOnlineStatus';
 
 const Gateways = () => {
   const [selectedGateway, setSelectedGateway] = useState(null);
@@ -138,6 +139,21 @@ const Gateways = () => {
                       {selectedGateway.gateway_id_in_lns_server}
                     </CTableDataCell>
                   </CTableRow>
+                  {/* <CTableRow>
+                    <CTableHeaderCell>Gateway Status</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedGateway.last_online_update}
+                    </CTableDataCell>
+                  </CTableRow> */}
+
+                  <CTableRow>
+                    <CTableHeaderCell>Gateway Status</CTableHeaderCell>
+                    <CTableDataCell>
+                      <LastOnlineStatus
+                        lastOnlineTime={selectedGateway.last_online_update}
+                      />
+                    </CTableDataCell>
+                  </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>
                       Gateway Name in LNS Server
@@ -147,17 +163,19 @@ const Gateways = () => {
                     </CTableDataCell>
                   </CTableRow>
                   <CTableRow>
-                    <CTableHeaderCell>Latitude</CTableHeaderCell>
+                    <CTableHeaderCell>Longitude,Latitude</CTableHeaderCell>
                     <CTableDataCell>
-                      {selectedGateway.gateway_lattitude}
+                      {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
+                      {selectedGateway.gateway_lattitude}&nbsp;{' '}
+                      <Link
+                        target="blank"
+                        to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
+                      >
+                        view on map
+                      </Link>
                     </CTableDataCell>
                   </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Longitude</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_longitude}
-                    </CTableDataCell>
-                  </CTableRow>
+
                   <CTableRow>
                     <CTableHeaderCell>SIM Number</CTableHeaderCell>
                     <CTableDataCell>
@@ -186,7 +204,7 @@ const Gateways = () => {
               </CTable>
 
               {/* Finding matching robots */}
-              <h5 className="mt-4 mb-3">Connected Robot</h5>
+              <h5 className="mt-4 mb-3">Connected Robot/Lora</h5>
               {robots.filter(
                 (robot) =>
                   robot.robot_no === selectedGateway.gateway_robot_no &&
@@ -197,9 +215,11 @@ const Gateways = () => {
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
+                      <CTableHeaderCell>Status</CTableHeaderCell>
                       <CTableHeaderCell>Site ID</CTableHeaderCell>
-                      <CTableHeaderCell>LoRa DEVEUI</CTableHeaderCell>
+                      <CTableHeaderCell>LoRa Serial No</CTableHeaderCell>
                       <CTableHeaderCell>Battery %</CTableHeaderCell>
+                      <CTableHeaderCell>Last Seen</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -214,12 +234,22 @@ const Gateways = () => {
                       )
                       .map((robot, index) => (
                         <CTableRow key={index}>
-                          <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                          <CTableDataCell>{robot.robot_no} </CTableDataCell>
+                          <CTableDataCell>
+                            {robot.lora_state === 1 ? (
+                              <span className="badge bg-success">online</span>
+                            ) : (
+                              <span className="badge bg-danger">offline</span>
+                            )}
+                          </CTableDataCell>
                           <CTableDataCell>{robot.site_id}</CTableDataCell>
-                          <CTableDataCell>{robot.deveui}</CTableDataCell>
+                          <CTableDataCell>
+                            {robot.lora_no}&nbsp;&nbsp;({robot.deveui})
+                          </CTableDataCell>
                           <CTableDataCell>
                             {robot.battery_percentage}%
                           </CTableDataCell>
+                          <CTableDataCell>{robot.last_update}</CTableDataCell>
                         </CTableRow>
                       ))}
                   </CTableBody>

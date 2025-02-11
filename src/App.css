@@ -89,7 +89,8 @@ div {
   font-weight: 600;
 }
 .bg-danger {
-  font-weight: 600;
+  font-weight: 400;
+  color: #ffffff;
 }
 
 .bg-secondary {

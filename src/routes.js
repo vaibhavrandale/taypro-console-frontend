@@ -74,6 +74,10 @@ const UpdateGateway = React.lazy(() =>
   import('./views/master-admin/gateways/UpdateGateway')
 );
 
+const AllSiteDpr = React.lazy(() =>
+  import('./views/master-admin/all-site-dpr/AllSiteDpr')
+);
+
 //master admin
 
 //service admin
@@ -364,6 +368,11 @@ const routes = [
     path: '/master-admin/update-gateway/:gatewayid',
     name: 'Master Admin  Update Gateway',
     element: UpdateGateway,
+  },
+  {
+    path: '/master-admin/all-site-dpr',
+    name: 'Master Admin  All Site Dpr',
+    element: AllSiteDpr,
   },
 
   //master admin
