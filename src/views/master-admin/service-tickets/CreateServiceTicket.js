@@ -307,7 +307,7 @@ const CreateServiceTicket = () => {
 
   return (
     <CRow className="justify-content-center">
-      <CCol xs={12} md={12}>
+      <CCol xs={12} md={8}>
         <CCard className="shadow">
           <CCardHeader>
             <h5>Create New Service Ticket</h5>

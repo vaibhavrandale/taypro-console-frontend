@@ -119,7 +119,7 @@ const AllSiteDpr = () => {
       </CRow>
 
       {/* DPR Table */}
-      <CTable striped bordered hover responsive>
+      <CTable striped bordered hover responsive className="text-center">
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -146,7 +146,7 @@ const AllSiteDpr = () => {
         {loading ? (
           <CTableBody>
             <CTableRow className="text-center">
-              <CTableDataCell colSpan={6}>
+              <CTableDataCell colSpan={7}>
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -159,7 +159,7 @@ const AllSiteDpr = () => {
                   <CTableHeaderCell>{index + 1}</CTableHeaderCell>
                   <CTableDataCell>{dpr.site_id}</CTableDataCell>
                   <CTableDataCell style={{ minWidth: '150px' }}>
-                    {dpr.submittedAt}
+                    {dpr.submittedAt.split(' ')[0]}
                   </CTableDataCell>
                   <CTableDataCell style={{ minWidth: '160px' }}>
                     {dpr.total_running_robots}
@@ -192,7 +192,7 @@ const AllSiteDpr = () => {
               ))
             ) : (
               <CTableRow>
-                <CTableDataCell colSpan="6" className="text-center text-muted">
+                <CTableDataCell colSpan="7" className="text-center text-muted">
                   No records found
                 </CTableDataCell>
               </CTableRow>
@@ -225,7 +225,7 @@ const AllSiteDpr = () => {
                       <CTableDataCell>
                         {Array.isArray(value) ? (
                           key === 'technitian_present' ? (
-                            <CTable className="w-50 border-0">
+                            <CTable className=" border-0">
                               <CTableBody>
                                 {value.map((tech, index) => {
                                   return (

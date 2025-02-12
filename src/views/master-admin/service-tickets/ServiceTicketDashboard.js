@@ -1,16 +1,7 @@
-// import React from 'react';
-
-// const ServiceTicketDashboard = () => {
-//   return <div>ServiceTicketDashboard</div>;
-// };
-
-// export default ServiceTicketDashboard;
-
 import React, { useState } from 'react';
 import {
   CCard,
   CCardBody,
-  CCardTitle,
   CCardHeader,
   CTable,
   CTableHead,
@@ -28,8 +19,9 @@ import {
   CFormInput,
   CRow,
   CCol,
+  CImage,
 } from '@coreui/react';
-import { Bar } from 'react-chartjs-2';
+// import { Bar } from 'react-chartjs-2';
 import { service_tickets } from '../../../data'; // Import service ticket data
 // import TicketChart from './TicketChart';
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -44,12 +36,18 @@ const ServiceTicketDashboard = () => {
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
 
   // 📌 Open modal with selected ticket data
-  const openModal = (ticket) => {
+  const openUpdateModal = (ticket) => {
     setSelectedTicket(ticket);
     setFormData(ticket);
     setModalVisible(true);
+  };
+
+  const openViewModal = (ticket) => {
+    setSelectedTicket(ticket);
+    setViewModalVisible(true);
   };
 
   // 📌 Handle input change in modal
@@ -74,15 +72,7 @@ const ServiceTicketDashboard = () => {
   return (
     <div className="container">
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
-      {/* 📊 Ticket Statistics Chart */}
-      {/* <CCard className="mb-4">
-        <CCardHeader>
-          <h4>Service Ticket Overview</h4>
-        </CCardHeader>
-        <CCardBody>
-          <TicketChart />
-        </CCardBody>
-      </CCard> */}
+
       <PieChart />
 
       {/* 📋 Service Tickets Table */}
@@ -139,9 +129,17 @@ const ServiceTicketDashboard = () => {
                   </CTableDataCell>
                   <CTableDataCell>
                     <CButton
+                      color="secondary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => openViewModal(ticket)}
+                    >
+                      View
+                    </CButton>
+                    <CButton
                       color="primary"
                       size="sm"
-                      onClick={() => openModal(ticket)}
+                      onClick={() => openUpdateModal(ticket)}
                     >
                       Update
                     </CButton>
@@ -152,6 +150,187 @@ const ServiceTicketDashboard = () => {
           </CTable>
         </CCardBody>
       </CCard>
+
+      {/* 📌 View Modal */}
+      <CModal
+        scrollable
+        size="xl"
+        visible={viewModalVisible}
+        onClose={() => setViewModalVisible(false)}
+      >
+        {selectedTicket && (
+          <>
+            <CModalHeader closeButton>
+              <CModalTitle>
+                {' '}
+                <span className="badge bg-danger">
+                  {selectedTicket.ticket_id}
+                </span>
+                &nbsp;:&nbsp; Service Ticket Details
+              </CModalTitle>
+            </CModalHeader>
+
+            <CModalBody>
+              <CTable striped hover bordered responsive>
+                <CTableBody>
+                  {/* Ticket ID */}
+                  <CTableRow>
+                    <CTableHeaderCell>Ticket ID</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.ticket_id}</CTableDataCell>
+                  </CTableRow>
+
+                  {/* Robot Information */}
+                  <CTableRow>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.robot_no}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Deveui</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.deveui}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Robot Type</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.robot_type}</CTableDataCell>
+                  </CTableRow>
+
+                  {/* Site & Company Information */}
+                  <CTableRow>
+                    <CTableHeaderCell>Site ID</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.site_id}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Company</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.company}</CTableDataCell>
+                  </CTableRow>
+
+                  {/* Fault Information */}
+                  <CTableRow>
+                    <CTableHeaderCell>Fault Type</CTableHeaderCell>
+                    <CTableDataCell>{selectedTicket.fault_type}</CTableDataCell>
+                  </CTableRow>
+
+                  {/* Ticket Timestamps */}
+                  <CTableRow>
+                    <CTableHeaderCell>Ticket Generated At</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedTicket.ticket_generated_at}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Ticket Resolved</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedTicket.ticket_resolved ? (
+                        <CBadge color="success">Resolved</CBadge>
+                      ) : (
+                        <CBadge color="danger">Open</CBadge>
+                      )}
+                    </CTableDataCell>
+                  </CTableRow>
+                  {selectedTicket.ticket_resolved && (
+                    <CTableRow>
+                      <CTableHeaderCell>Ticket Resolved At</CTableHeaderCell>
+                      <CTableDataCell>
+                        {selectedTicket.ticket_resolved_at}
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+
+                  {/* Generated By */}
+                  <CTableRow>
+                    <CTableHeaderCell>Generated By</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedTicket.ticket_generated_by}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Generated By Email</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedTicket.ticket_generated_by_email}
+                    </CTableDataCell>
+                  </CTableRow>
+
+                  {/* Resolving Information */}
+                  {selectedTicket.ticket_resolved && (
+                    <>
+                      <CTableRow>
+                        <CTableHeaderCell>Resolved By</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedTicket.ticket_resolved_by}
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Resolved By Email</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedTicket.ticket_resolved_by_email}
+                        </CTableDataCell>
+                      </CTableRow>
+                    </>
+                  )}
+
+                  {/* Notes */}
+                  <CTableRow>
+                    <CTableHeaderCell>Generating Notes</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedTicket.ticket_generating_notes}
+                    </CTableDataCell>
+                  </CTableRow>
+                  {selectedTicket.ticket_resolved && (
+                    <CTableRow>
+                      <CTableHeaderCell>Resolving Notes</CTableHeaderCell>
+                      <CTableDataCell>
+                        {selectedTicket.ticket_resolving_notes}
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+
+                  {/* Ticket Images */}
+                  <CTableRow>
+                    <CTableHeaderCell>Ticket Images</CTableHeaderCell>
+                    <CTableDataCell>
+                      <div className="d-flex flex-wrap">
+                        {selectedTicket.ticket_images.length > 0 ? (
+                          selectedTicket.ticket_images.map((image, index) => (
+                            // <img
+                            // key={index}
+                            // src={image.image}
+                            // alt={`Ticket Image ${index + 1}`}
+                            //   className="img-thumbnail me-2"
+                            // width="100"
+                            // height="80"
+                            //   style={{ objectFit: 'cover', cursor: 'pointer' }}
+                            // />
+
+                            <CImage
+                              fluid
+                              key={index}
+                              src={image.image}
+                              className="m-2"
+                              alt={`Ticket Image ${index + 1}`}
+                              style={{ width: '100vw', height: 'auto' }}
+                            />
+                          ))
+                        ) : (
+                          <p className="text-muted">No images available</p>
+                        )}
+                      </div>
+                    </CTableDataCell>
+                  </CTableRow>
+                </CTableBody>
+              </CTable>
+            </CModalBody>
+          </>
+        )}
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => setViewModalVisible(false)}
+          >
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
       {/* 📌 Update Modal */}
       <CModal

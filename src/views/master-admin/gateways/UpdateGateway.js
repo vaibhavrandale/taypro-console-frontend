@@ -56,7 +56,10 @@ const UpdateGateway = () => {
 
   return (
     <CContainer className="mt-5">
-      <h2 className="text-center mb-4">Update Gateway Data</h2>
+      <h2 className="text-center  d-flex justify-content-center align-items-center">
+        <span> Update Gateway</span>&nbsp;-&nbsp;
+        <span className="text-primary">{gatewayid}</span>
+      </h2>
 
       {gateway ? (
         <>
@@ -162,26 +165,37 @@ const UpdateGateway = () => {
           </CForm>
 
           {/* Robot Data Table */}
-          <h4 className="mt-5">Connected Robots</h4>
+          <h4 className="mt-5">Connected Robots/Lora</h4>
           {matchingRobots.length > 0 ? (
             <CTable striped bordered hover responsive className="mt-3">
               <CTableHead>
                 <CTableRow>
-                  <CTableHeaderCell>Robot No</CTableHeaderCell>
+                  <CTableHeaderCell>Robot No</CTableHeaderCell>{' '}
+                  <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell>Site ID</CTableHeaderCell>
+                  <CTableHeaderCell>LoRa No</CTableHeaderCell>
                   <CTableHeaderCell>LoRa DEVEUI</CTableHeaderCell>
                   <CTableHeaderCell>Battery %</CTableHeaderCell>
-                  <CTableHeaderCell>Signal Strength</CTableHeaderCell>
+                  <CTableHeaderCell>Last Seen</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {matchingRobots.map((robot, index) => (
                   <CTableRow key={index}>
                     <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                    <CTableDataCell>
+                      {robot.lora_state === 1 ? (
+                        <span className="badge bg-success">online</span>
+                      ) : (
+                        <span className="badge bg-danger">offline</span>
+                      )}
+                    </CTableDataCell>
                     <CTableDataCell>{robot.site_id}</CTableDataCell>
+                    <CTableDataCell>{robot.lora_no}</CTableDataCell>
                     <CTableDataCell>{robot.deveui}</CTableDataCell>
                     <CTableDataCell>{robot.battery_percentage}%</CTableDataCell>
-                    <CTableDataCell>{robot.signal_strength}</CTableDataCell>
+
+                    <CTableDataCell>{robot.last_update}</CTableDataCell>
                   </CTableRow>
                 ))}
               </CTableBody>
@@ -191,7 +205,7 @@ const UpdateGateway = () => {
           )}
 
           {/* Update Logs */}
-          <h4 className="mt-5">Update Logs</h4>
+          <h4 className="mt-5">Last Update Logs</h4>
           {updatedGateway.update_log.length > 0 ? (
             <CTable striped bordered hover responsive className="mt-3">
               <CTableHead>

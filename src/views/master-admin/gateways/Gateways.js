@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CContainer,
   CTable,
@@ -20,11 +20,39 @@ import {
 import { gateways, robots } from '../../../data'; // Import the gateways data
 import { Link } from 'react-router-dom';
 import LastOnlineStatus from '../../../components/LastOnlineStatus';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Gateways = () => {
   const [selectedGateway, setSelectedGateway] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [filteredGateways, setFilteredGateways] = useState([]);
+
+  useEffect(() => {
+    setLoading(true); // Start loading
+    setTimeout(() => {
+      const Gateways = gateways.filter(
+        (gateway) =>
+          gateway.gateway_robot_no
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          gateway.gateway_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          gateway.gateway_name_in_lns_server
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          gateway.gateway_robot_no
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      setFilteredGateways(Gateways);
+      setLoading(false); // Stop loading
+    }, 500); // Simulating API call delay
+  }, [searchTerm]);
 
   // Function to handle modal open
   const openModal = (gateway) => {
@@ -37,21 +65,6 @@ const Gateways = () => {
     setModalVisible(false);
     setSelectedGateway(null);
   };
-
-  const filteredGateways = gateways.filter(
-    (gateway) =>
-      gateway.gateway_robot_no
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      gateway.gateway_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      gateway.gateway_name_in_lns_server
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      gateway.gateway_robot_no
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <CContainer className="mt-5">
@@ -81,39 +94,51 @@ const Gateways = () => {
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        <CTableBody>
-          {filteredGateways.map((gateway, index) => (
-            <CTableRow key={gateway.id}>
-              <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-              <CTableDataCell>{gateway.gateway_name}</CTableDataCell>
-              <CTableDataCell>
-                {gateway.gateway_type.toUpperCase()}
-              </CTableDataCell>
-              <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
-              <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
-              <CTableDataCell>{gateway.last_online_update}</CTableDataCell>
-              <CTableDataCell>
-                <CButton
-                  color="warning"
-                  size="sm"
-                  className="m-1"
-                  onClick={() => openModal(gateway)}
-                >
-                  View Details
-                </CButton>
-                <Link
-                  type="button"
-                  color="primary"
-                  size="sm"
-                  to={`/master-admin/update-gateway/${gateway.id}`}
-                  className="btn btn-secondary  btn-sm m-1"
-                >
-                  Update
-                </Link>
+        {loading ? (
+          <CTableBody>
+            <CTableRow className="text-center">
+              <CTableDataCell colSpan={7}>
+                <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ))}
-        </CTableBody>
+          </CTableBody>
+        ) : (
+          <CTableBody>
+            {filteredGateways.map((gateway, index) => (
+              <CTableRow key={gateway.id}>
+                <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                <CTableDataCell>{gateway.gateway_name}</CTableDataCell>
+                <CTableDataCell>
+                  {gateway.gateway_type.toUpperCase()}
+                </CTableDataCell>
+                <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
+                <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: '160px' }}>
+                  {gateway.last_online_update}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: '180px' }}>
+                  <CButton
+                    color="warning"
+                    size="sm"
+                    className="m-1"
+                    onClick={() => openModal(gateway)}
+                  >
+                    View Details
+                  </CButton>
+                  <Link
+                    type="button"
+                    color="primary"
+                    size="sm"
+                    to={`/master-admin/update-gateway/${gateway.id}`}
+                    className="btn btn-secondary  btn-sm m-1"
+                  >
+                    Update
+                  </Link>
+                </CTableDataCell>
+              </CTableRow>
+            ))}
+          </CTableBody>
+        )}
       </CTable>
 
       <CModal
