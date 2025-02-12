@@ -206,7 +206,7 @@ const AllSiteDpr = () => {
         {selectedDPR ? (
           <>
             <CModalHeader closeButton>
-              <CModalTitle className="d-flex">
+              <CModalTitle className="d-flex flex-wrap">
                 <span> View DPR Details : </span>&nbsp;
                 <p className="text-primary">
                   {selectedDPR.site_id}&nbsp;(
