@@ -16,6 +16,7 @@ import {
   CModalHeader,
   CModalTitle,
   CModalFooter,
+  CAvatar,
 } from '@coreui/react';
 import moment from 'moment';
 import {
@@ -35,7 +36,9 @@ const AllSiteDpr = () => {
   const [updatedDPR, setUpdatedDPR] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filteredDPRs, setFilteredDPRs] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false); // Manage visibility
+  // const [showSuggestions, setShowSuggestions] = useState(false); // Manage visibility
+  const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
     setLoading(true); // Start loading
@@ -86,12 +89,12 @@ const AllSiteDpr = () => {
   };
 
   return (
-    <CContainer className="mt-5">
+    <div className="mt-5 mx-2">
       <h2 className="text-center mb-4">Daily Progress Reports (DPRs)</h2>
 
       {/* Search and Date Filters */}
       <CRow className="mb-3">
-        <CCol md={4}>
+        <CCol md={4} className="m-1">
           <CFormInput
             type="text"
             placeholder="Search by technician, email, or site"
@@ -99,14 +102,14 @@ const AllSiteDpr = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </CCol>
-        <CCol md={3}>
+        <CCol md={3} className="m-1">
           <CFormInput
             type="date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
           />
         </CCol>
-        <CCol md={3}>
+        <CCol md={3} className="m-1">
           <CFormInput
             type="date"
             value={toDate}
@@ -120,12 +123,24 @@ const AllSiteDpr = () => {
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Site ID</CTableHeaderCell>
-            <CTableHeaderCell>Date</CTableHeaderCell>
-            <CTableHeaderCell>Total Running Robots</CTableHeaderCell>
-            <CTableHeaderCell>Failed Robots</CTableHeaderCell>
-            <CTableHeaderCell>Run By</CTableHeaderCell>
-            <CTableHeaderCell>Actions</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Site ID
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Date
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Total Running Robots
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Failed Robots
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Run By
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: '100px' }}>
+              Actions
+            </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         {loading ? (
@@ -143,23 +158,30 @@ const AllSiteDpr = () => {
                 <CTableRow key={dpr.id}>
                   <CTableHeaderCell>{index + 1}</CTableHeaderCell>
                   <CTableDataCell>{dpr.site_id}</CTableDataCell>
-                  <CTableDataCell>{dpr.submittedAt}</CTableDataCell>
-                  <CTableDataCell>{dpr.total_running_robots}</CTableDataCell>
-                  <CTableDataCell>{dpr.total_failed_robots}</CTableDataCell>
+                  <CTableDataCell style={{ minWidth: '150px' }}>
+                    {dpr.submittedAt}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: '160px' }}>
+                    {dpr.total_running_robots}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: '140px' }}>
+                    {dpr.total_failed_robots}
+                  </CTableDataCell>
                   <CTableDataCell>
                     {dpr.robots_run_by.toUpperCase()}
                   </CTableDataCell>
-                  <CTableDataCell>
+                  <CTableDataCell style={{ minWidth: '150px' }}>
                     <CButton
                       color="info"
                       size="sm"
-                      className="btn-secondary me-2"
+                      className="btn-secondary m-1"
                       onClick={() => handleView(dpr)}
                     >
                       View
                     </CButton>
                     <CButton
                       color="warning"
+                      className="btn-primary m-1"
                       size="sm"
                       onClick={() => handleUpdate(dpr)}
                     >
@@ -180,46 +202,77 @@ const AllSiteDpr = () => {
       </CTable>
 
       {/* View Modal */}
-      <CModal visible={viewModal} onClose={() => setViewModal(false)} size="lg">
-        <CModalHeader closeButton>
-          <CModalTitle>View DPR Details</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {selectedDPR ? (
-            <CTable striped bordered>
-              <CTableBody>
-                {Object.entries(selectedDPR).map(([key, value]) => (
-                  <CTableRow key={key}>
-                    <CTableHeaderCell>
-                      {key.replace(/_/g, ' ')}
-                    </CTableHeaderCell>
-                    <CTableDataCell>
-                      {Array.isArray(value)
-                        ? key === 'technitian_present'
-                          ? value.map((tech, index) => (
-                              <li key={index}>
-                                {tech.technitian_username} (
-                                {tech.technitian_email})
-                              </li>
-                            ))
-                          : JSON.stringify(value)
-                        : value?.toString() || 'N/A'}
-                    </CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
-          ) : (
-            <p className="text-center text-muted">No data available</p>
-          )}
-        </CModalBody>
+      <CModal visible={viewModal} onClose={() => setViewModal(false)} size="xl">
+        {selectedDPR ? (
+          <>
+            <CModalHeader closeButton>
+              <CModalTitle className="d-flex">
+                <span> View DPR Details : </span>&nbsp;
+                <p className="text-primary">
+                  {selectedDPR.site_id}&nbsp;(
+                  {selectedDPR.submittedAt.split(' ')[0]})
+                </p>
+              </CModalTitle>
+            </CModalHeader>
+            <CModalBody>
+              <CTable striped bordered hover responsive>
+                <CTableBody>
+                  {Object.entries(selectedDPR).map(([key, value]) => (
+                    <CTableRow key={key}>
+                      <CTableHeaderCell>
+                        {key.replace(/_/g, ' ')}
+                      </CTableHeaderCell>
+                      <CTableDataCell>
+                        {Array.isArray(value) ? (
+                          key === 'technitian_present' ? (
+                            <CTable className="w-50 border-0">
+                              <CTableBody>
+                                {value.map((tech, index) => {
+                                  return (
+                                    <CTableRow key={index} className="border">
+                                      <CTableDataCell className="border-0">
+                                        {index + 1})
+                                      </CTableDataCell>
+                                      <CTableDataCell className="border-0">
+                                        <CAvatar
+                                          src={tech.profile_image}
+                                          className="me-2"
+                                        />
+                                      </CTableDataCell>
+                                      <CTableDataCell className="border-0">
+                                        {tech.technitian_username}
+                                      </CTableDataCell>
+                                      {/* <CTableDataCell className="border-0">
+                                      {tech.technitian_email}
+                                    </CTableDataCell> */}
+                                    </CTableRow>
+                                  );
+                                })}
+                              </CTableBody>
+                            </CTable>
+                          ) : (
+                            JSON.stringify(value)
+                          )
+                        ) : (
+                          value?.toString() || 'N/A'
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </CModalBody>
+          </>
+        ) : (
+          <p className="text-center text-muted">No data available</p>
+        )}
       </CModal>
 
       {/* Update Modal */}
       <CModal
         visible={updateModal}
         onClose={() => setUpdateModal(false)}
-        size="lg"
+        size="xl"
       >
         <CModalHeader closeButton>
           <CModalTitle>
@@ -342,128 +395,128 @@ const AllSiteDpr = () => {
               </CCol>
 
               {/* Technician Table */}
-              <CTable striped bordered responsive className="mt-2">
+              <CTable striped bordered className="mt-2">
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell>Email</CTableHeaderCell>
-                    <CTableHeaderCell>ID</CTableHeaderCell>
-                    <CTableHeaderCell>Actions</CTableHeaderCell>
+                    {/* <CTableHeaderCell>Email</CTableHeaderCell>
+                    <CTableHeaderCell>ID</CTableHeaderCell> */}
+                    <CTableHeaderCell style={{ width: '80px' }}>
+                      Actions
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
-                  {updatedDPR.technitian_present.map((tech, index) => {
-                    return (
-                      <CTableRow key={index}>
-                        <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                  {updatedDPR.technitian_present.map((tech, index) => (
+                    <CTableRow key={index}>
+                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
 
-                        {/* Technician Name with Auto-Suggestions */}
-                        <CTableDataCell className="position-relative">
-                          <CFormInput
-                            type="text"
-                            name={`technitian_present[${index}].technitian_username`}
-                            value={tech.technitian_username}
-                            onChange={(e) => {
-                              const newTechnicianPresent = [
-                                ...updatedDPR.technitian_present,
-                              ];
-                              newTechnicianPresent[index].technitian_username =
-                                e.target.value;
-                              setUpdatedDPR({
-                                ...updatedDPR,
-                                technitian_present: newTechnicianPresent,
-                              });
-                              setShowSuggestions(true); // Show dropdown
-                            }}
-                            onBlur={() =>
-                              setTimeout(() => setShowSuggestions(false), 200)
-                            } // Hide dropdown on blur
-                          />
+                      {/* Technician Name with Auto-Suggestions */}
+                      <CTableDataCell className="position-relative">
+                        <CFormInput
+                          type="text"
+                          value={tech.technitian_username}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          {/* Suggestions List */}
-                          {showSuggestions &&
-                            tech.technitian_username.length > 0 && (
-                              <div className="suggestion-dropdown">
-                                {users
-                                  .filter((user) =>
-                                    user.username
-                                      .toLowerCase()
-                                      .includes(
-                                        tech.technitian_username.toLowerCase()
-                                      )
-                                  )
-                                  .slice(0, 5) // Show only top 5 suggestions
-                                  .map((user, idx) => (
-                                    <div
-                                      key={idx}
-                                      className="suggestion-item"
-                                      onClick={() => {
-                                        const newTechnicianPresent = [
-                                          ...updatedDPR.technitian_present,
-                                        ];
-                                        newTechnicianPresent[index] = {
-                                          technitian_username: user.username,
-                                          technitian_email: user.email,
-                                          technitian_id: user.id,
-                                        };
-                                        setUpdatedDPR({
-                                          ...updatedDPR,
-                                          technitian_present:
-                                            newTechnicianPresent,
-                                        });
-                                        setShowSuggestions(false); // Hide dropdown after selection
-                                      }}
-                                    >
-                                      {user.username} ({user.email})
-                                    </div>
-                                  ))}
-                              </div>
-                            )}
-                        </CTableDataCell>
+                            // Filter users based on input
+                            // const filtered = users.filter((user) =>
+                            //   user.username
+                            //     .toLowerCase()
+                            //     .includes(value.toLowerCase())
+                            // );
 
-                        {/* Technician Email */}
-                        <CTableDataCell>
-                          <CFormInput
-                            type="email"
-                            name={`technitian_present[${index}].technitian_email`}
-                            value={tech.technitian_email}
-                            disabled
-                          />
-                        </CTableDataCell>
+                            const filtered = users
+                              .filter(
+                                (user) =>
+                                  user.role === 'Site Technician' && // Only "Site Technician"
+                                  user.username
+                                    .toLowerCase()
+                                    .includes(value.toLowerCase())
+                              )
+                              .slice(0, 5); // Limit to 5 suggestions
 
-                        {/* Technician ID */}
-                        <CTableDataCell>
-                          <CFormInput
-                            type="text"
-                            name={`technitian_present[${index}].technitian_id`}
-                            value={tech.technitian_id}
-                            disabled
-                          />
-                        </CTableDataCell>
+                            setFilteredUsers(filtered.slice(0, 5)); // Show max 5 suggestions
+                            setShowSuggestionsIndex(index); // Set suggestion visibility for this row
 
-                        {/* Remove Row Button */}
-                        <CTableDataCell className="text-center">
-                          <CButton
-                            color="danger"
-                            size="sm"
-                            onClick={() => {
-                              const newTechnicianPresent =
-                                updatedDPR.technitian_present.filter(
-                                  (_, i) => i !== index
-                                );
-                              setUpdatedDPR({
-                                ...updatedDPR,
-                                technitian_present: newTechnicianPresent,
-                              });
-                            }}
-                          >
-                            ❌ Remove
-                          </CButton>
-                        </CTableDataCell>
-                      </CTableRow>
-                    );
-                  })}
+                            const newTechnicianPresent = [
+                              ...updatedDPR.technitian_present,
+                            ];
+                            newTechnicianPresent[index].technitian_username =
+                              value;
+                            setUpdatedDPR({
+                              ...updatedDPR,
+                              technitian_present: newTechnicianPresent,
+                            });
+                          }}
+                          onFocus={() => setShowSuggestionsIndex(index)} // Show suggestions when input is focused
+                          onBlur={() =>
+                            setTimeout(() => setShowSuggestionsIndex(null), 200)
+                          } // Hide dropdown on blur
+                        />
+
+                        {/* Suggestions List */}
+                        {showSuggestionsIndex === index &&
+                          filteredUsers.length > 0 && (
+                            <div className="suggestion-dropdown">
+                              {filteredUsers.map((user, idx) => (
+                                <div
+                                  key={idx}
+                                  className="suggestion-item"
+                                  onClick={() => {
+                                    const newTechnicianPresent = [
+                                      ...updatedDPR.technitian_present,
+                                    ];
+                                    newTechnicianPresent[index] = {
+                                      technitian_username: user.username,
+                                      technitian_email: user.email,
+                                      technitian_id: user.id,
+                                    };
+                                    setUpdatedDPR({
+                                      ...updatedDPR,
+                                      technitian_present: newTechnicianPresent,
+                                    });
+                                    setShowSuggestionsIndex(null);
+                                  }}
+                                >
+                                  <CAvatar
+                                    src={user.profile_image}
+                                    className="me-2"
+                                  />
+                                  {user.username}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        <CFormInput
+                          type="hidden"
+                          value={tech.technitian_email}
+                        />
+                        <CFormInput type="hidden" value={tech.technitian_id} />
+                      </CTableDataCell>
+
+                      {/* Remove Button */}
+                      <CTableDataCell className="text-center">
+                        <CButton
+                          size="sm"
+                          onClick={() => {
+                            const newTechnicianPresent =
+                              updatedDPR.technitian_present.filter(
+                                (_, i) => i !== index
+                              );
+                            setUpdatedDPR({
+                              ...updatedDPR,
+                              technitian_present: newTechnicianPresent,
+                            });
+                          }}
+                        >
+                          ❌
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
                 </CTableBody>
               </CTable>
             </CRow>
@@ -480,7 +533,7 @@ const AllSiteDpr = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-    </CContainer>
+    </div>
   );
 };
 

@@ -34,7 +34,7 @@ const Notifications = () => {
   );
 
   return (
-    <div className="p-4">
+    <div className="m-2">
       <h2>📢 System Notifications</h2>
 
       {/* 🔍 Search Input */}

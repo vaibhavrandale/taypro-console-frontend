@@ -23,12 +23,13 @@ import { AppHeaderDropdown } from './header/index';
 import { Link, useNavigate } from 'react-router-dom';
 import { notifications } from '../data'; // Import notifications data
 
-const AppHeader = () => {
+// const AppHeader = () => {
+const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes('theme');
 
   const dispatch = useDispatch();
-  const sidebarShow = useSelector((state) => state.sidebarShow);
+  // const sidebarShow = useSelector((state) => state.sidebarShow);
   const navigate = useNavigate();
   const [storedUser, setStoredUser] = useState(null);
 
@@ -65,7 +66,8 @@ const AppHeader = () => {
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          // onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          onClick={() => setSidebarShow(!sidebarShow)}
           style={{ marginInlineStart: '-14px' }}
         >
           <CIcon icon={cilMenu} size="lg" />

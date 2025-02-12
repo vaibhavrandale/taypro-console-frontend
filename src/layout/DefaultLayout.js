@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   AppContent,
   AppSidebar,
@@ -13,12 +13,15 @@ const DefaultLayout = () => {
   // useEffect(() => {
   //   navigate('/user-dashboard');
   // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [sidebarShow, setSidebarShow] = useState(true); // Use local state
 
   return (
     <div>
-      <AppSidebar />
+      {/* <AppSidebar /> */}
+      <AppSidebar sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
       <div className="wrapper d-flex flex-column min-vh-100">
-        <AppHeader />
+        {/* <AppHeader /> */}
+        <AppHeader sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
         <div className="body flex-grow-1">
           <AppContent />
         </div>

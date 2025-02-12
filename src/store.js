@@ -24,7 +24,7 @@ import { legacy_createStore as createStore } from 'redux';
 
 // Get userInfo from localStorage
 const initialState = {
-  sidebarShow: true,
+  // sidebarShow: true,
   theme: 'light',
   userInfo: localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
