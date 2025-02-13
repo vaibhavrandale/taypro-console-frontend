@@ -518,23 +518,24 @@ const ServiceTicketDashboard = () => {
               <CCol md={12}>
                 <h6 className="mt-3">Ticket Images</h6>
                 <div className="d-flex flex-wrap">
-                  {formData.ticket_images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="p-2"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setSelectedImage(image.image)}
-                    >
-                      <img
-                        src={image.image}
-                        alt={`Ticket ${index + 1}`}
-                        className="img-thumbnail"
-                        width="100"
-                        height="80"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  ))}
+                  {formData.ticket_images &&
+                    formData.ticket_images.map((image, index) => (
+                      <div
+                        key={index}
+                        className="p-2"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSelectedImage(image.image)}
+                      >
+                        <img
+                          src={image.image}
+                          alt={`Ticket ${index + 1}`}
+                          className="img-thumbnail"
+                          width="100"
+                          height="80"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                    ))}
                 </div>
               </CCol>
 
