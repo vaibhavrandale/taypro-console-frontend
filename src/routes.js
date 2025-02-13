@@ -5,7 +5,7 @@ const UserBasedLinkDashboard = React.lazy(() =>
   import('./views/dashboard/UserBasedLinkDashboard')
 );
 
-//master admin
+//-----------------------master admin----------------------------------
 
 const MasterAdminDashboard = React.lazy(() =>
   import('./views/master-admin/MasterAdminDashboard')
@@ -78,7 +78,15 @@ const AllSiteDpr = React.lazy(() =>
   import('./views/master-admin/all-site-dpr/AllSiteDpr')
 );
 
-//master admin
+//----------------------------------master admin------------------------------------
+
+//----------------------------------client admin------------------------------------
+
+const ClientAdminDashboard = React.lazy(() =>
+  import('./views/client-admin/ClientAdminDashboard')
+);
+
+//----------------------------------client admin------------------------------------
 
 //service admin
 const ServiceAdminDahboard = React.lazy(() =>
@@ -204,7 +212,12 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'));
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
+  {
+    path: '/',
+    exact: true,
+    name: 'User Lnks',
+    element: UserBasedLinkDashboard,
+  },
 
   { path: '/dashboard2', name: 'Dashboard', element: Dashboard },
 
@@ -217,7 +230,7 @@ const routes = [
   // new features
   { path: '/apps', name: 'App', element: App },
 
-  // master admin
+  // ------------------------master admin---------------------------------
   {
     path: '/master-admin/dashboard',
     name: 'Master Admin Dashboard',
@@ -375,16 +388,25 @@ const routes = [
     element: AllSiteDpr,
   },
 
-  //master admin
+  // ------------------------master admin---------------------------------
 
-  //service admin
+  // ------------------------client admin---------------------------------
+  {
+    path: '/client-admin/dashboard',
+    name: 'Client Admin Dashboard',
+    element: ClientAdminDashboard,
+  },
+
+  // ------------------------client admin---------------------------------
+
+  //------------------------service admin---------------------------------
   {
     path: '/service-admin',
     name: 'Service Admin Dashboard',
     element: ServiceAdminDahboard,
   },
 
-  //service admin
+  //------------------------service admin---------------------------------
 
   //common pages
 

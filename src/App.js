@@ -17,7 +17,7 @@ import './scss/examples.scss';
 import { Toaster } from 'react-hot-toast';
 import ResetPassword from './views/pages/reset-password/ResetPassword';
 import ForgotPassword from './views/pages/reset-password/ForgotPassword';
-import UserBasedLinkDashboard from './views/dashboard/UserBasedLinkDashboard';
+// import UserBasedLinkDashboard from './views/dashboard/UserBasedLinkDashboard';
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
@@ -29,9 +29,7 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 const App = () => {
-  const { isColorModeSet, setColorMode } = useColorModes(
-    'coreui-free-react-admin-template-theme'
-  );
+  const { isColorModeSet, setColorMode } = useColorModes('theme');
   const storedTheme = useSelector((state) => state.theme);
 
   useEffect(() => {

@@ -270,6 +270,7 @@ const AllSiteDpr = () => {
 
       {/* Update Modal */}
       <CModal
+        backdrop="static"
         visible={updateModal}
         onClose={() => setUpdateModal(false)}
         size="xl"

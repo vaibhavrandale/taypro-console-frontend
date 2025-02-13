@@ -335,6 +335,7 @@ const ServiceTicketDashboard = () => {
       {/* 📌 Update Modal */}
       <CModal
         scrollable
+        backdrop="static"
         size="xl"
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
