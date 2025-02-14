@@ -26,10 +26,10 @@ import {
   cilUser,
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import avatar8 from './../../assets/images/avatars/vaibhav.jpg';
+// import avatar8 from './../../assets/images/avatars/vaibhav.jpg';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import store from '../../store';
+// import store from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 
 const AppHeaderDropdown = () => {
@@ -63,6 +63,7 @@ const AppHeaderDropdown = () => {
         >
           <CAvatar src={userInfo && userInfo.profile_image} size="md" />
         </CDropdownToggle>
+
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownItem href="#">
             <CIcon icon={cilUser} className="me-2" />

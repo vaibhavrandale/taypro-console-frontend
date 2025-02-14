@@ -88,11 +88,17 @@ const ClientAdminDashboard = React.lazy(() =>
 
 //----------------------------------client admin------------------------------------
 
-//service admin
+//-------------------------------------project admin---------------------------
+const ProjectAdminDashboard = React.lazy(() =>
+  import('./views/project-admin/ProjectAdminDashboard')
+);
+//--------------------------------------project admin---------------------------------
+
+//-------------------------------------service admin---------------------------
 const ServiceAdminDahboard = React.lazy(() =>
   import('./views/service-admin/ServiceAdminDashboard')
 );
-//service admin
+//--------------------------------------service admin---------------------------------
 
 //common pages
 
@@ -399,9 +405,18 @@ const routes = [
 
   // ------------------------client admin---------------------------------
 
+  //------------------------project admin---------------------------------
+  {
+    path: '/project-admin/dashboard',
+    name: 'Project Admin Dashboard',
+    element: ProjectAdminDashboard,
+  },
+
+  //------------------------project admin---------------------------------
+
   //------------------------service admin---------------------------------
   {
-    path: '/service-admin',
+    path: '/service-admin/dashboard',
     name: 'Service Admin Dashboard',
     element: ServiceAdminDahboard,
   },

@@ -117,7 +117,8 @@ export const AppSidebarNav = () => {
   // 🔍 Filter Navigation Links Based on User Role
   const filteredNav = _nav.filter((navItem) => {
     if (storedUser.role === 'Master Admin') {
-      return true; // Show all menu items
+      // return true; // Show all menu items
+      return navItem.name === 'Master Admin';
     } else if (storedUser.role === 'Project Admin') {
       return navItem.name === 'Project Admin'; // Show only Service Admin items
     } else if (storedUser.role === 'Service Admin') {

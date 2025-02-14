@@ -501,6 +501,18 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
   if (!storedUser) return null; // Don't render if no user is logged in
 
+  // 🔍 Dynamic Notification Link Based on Role
+  const notificationPage =
+    storedUser.role === 'Master Admin'
+      ? '/master-admin/notifications'
+      : storedUser.role === 'Service Admin'
+      ? '/service-admin/notifications'
+      : storedUser.role === 'Project Admin'
+      ? '/project-admin/notifications'
+      : storedUser.role === 'Client Admin'
+      ? '/client-admin/notifications'
+      : '/notifications';
+
   // 🔍 Filter notifications based on user role
   const filteredNotifications = notifications.filter((notification) => {
     switch (storedUser.role) {
@@ -550,7 +562,48 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         </CHeaderNav>
 
         <CHeaderNav className="ms-auto">
-          {/* 🔔 Notifications Dropdown */}
+          {/* 🌗 Theme Toggle */}
+          <CDropdown variant="nav-item" placement="bottom-end">
+            <CDropdownToggle caret={false}>
+              {colorMode === 'dark' ? (
+                <CIcon icon={cilMoon} size="lg" />
+              ) : colorMode === 'auto' ? (
+                <CIcon icon={cilContrast} size="lg" />
+              ) : (
+                <CIcon icon={cilSun} size="lg" />
+              )}
+            </CDropdownToggle>
+            <CDropdownMenu>
+              <CDropdownItem
+                active={colorMode === 'light'}
+                onClick={() => setColorMode('light')}
+                as="button"
+              >
+                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
+              </CDropdownItem>
+              <CDropdownItem
+                as="button"
+                active={colorMode === 'dark'}
+                onClick={() => setColorMode('dark')}
+              >
+                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
+              </CDropdownItem>
+              {/* <CDropdownItem
+                as="button"
+                active={colorMode === 'auto'}
+                onClick={() => setColorMode('auto')}
+              >
+                <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
+              </CDropdownItem> */}
+            </CDropdownMenu>
+          </CDropdown>
+        </CHeaderNav>
+
+        {/* 🔔 Notifications Dropdown */}
+        <CHeaderNav>
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
           <CDropdown variant="nav-item" placement="top-end">
             <CDropdownToggle caret={false}>
               <div className="d-flex justify-content-center align-items-center">
@@ -566,10 +619,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             <CDropdownMenu className="p-2" style={{ minWidth: '250px' }}>
               <div className="d-flex justify-content-between align-items-center px-3 py-2">
                 <strong>Notifications</strong>
-                <Link
-                  to="/master-admin/notifications"
-                  className="text-primary small"
-                >
+                <Link to={notificationPage} className="text-primary small">
                   View All
                 </Link>
               </div>
@@ -620,47 +670,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               )}
             </CDropdownMenu>
           </CDropdown>
-        </CHeaderNav>
 
-        {/* 🌗 Theme Toggle */}
-        <CHeaderNav>
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
-          <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false}>
-              {colorMode === 'dark' ? (
-                <CIcon icon={cilMoon} size="lg" />
-              ) : colorMode === 'auto' ? (
-                <CIcon icon={cilContrast} size="lg" />
-              ) : (
-                <CIcon icon={cilSun} size="lg" />
-              )}
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem
-                active={colorMode === 'light'}
-                onClick={() => setColorMode('light')}
-                as="button"
-              >
-                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
-              </CDropdownItem>
-              <CDropdownItem
-                as="button"
-                active={colorMode === 'dark'}
-                onClick={() => setColorMode('dark')}
-              >
-                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
-              </CDropdownItem>
-              <CDropdownItem
-                as="button"
-                active={colorMode === 'auto'}
-                onClick={() => setColorMode('auto')}
-              >
-                <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
-              </CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>

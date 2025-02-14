@@ -89,6 +89,7 @@ import {
 import { AppSidebarNav } from './AppSidebarNav';
 import TayproLogo from '../assets/brand/logofordarkbg.png'; // Import the image
 import navigation from '../_nav';
+import { Link } from 'react-router-dom';
 
 const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
   const [unfoldable, setUnfoldable] = useState(false);
@@ -105,18 +106,22 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
     >
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
-          <img
-            src={TayproLogo}
-            alt="Taypro Logo"
-            style={{ height: '50px', width: '200px', objectFit: 'contain' }}
-            className="sidebar-brand-full"
-          />
-          <img
-            src={TayproLogo}
-            alt="Taypro Logo"
-            height={30}
-            className="sidebar-brand-narrow"
-          />
+          <Link to="/">
+            <img
+              src={TayproLogo}
+              alt="Taypro Logo"
+              style={{ height: '50px', width: '200px', objectFit: 'contain' }}
+              className="sidebar-brand-full"
+            />
+          </Link>
+          <Link to="/">
+            <img
+              src={TayproLogo}
+              alt="Taypro Logo"
+              height={30}
+              className="sidebar-brand-narrow"
+            />
+          </Link>
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"

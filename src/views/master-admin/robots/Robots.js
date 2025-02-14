@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   CTable,
+  CFormSelect,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
@@ -16,13 +17,15 @@ import {
   CModalTitle,
   CModalBody,
   CForm,
+  CFormLabel,
 } from '@coreui/react';
-import { robots } from '../../../data'; // Import robots data
+import { robots, sites } from '../../../data'; // Import robots data
 
 const Robots = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
+  // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
     robot_no: '',
     deveui: '',
@@ -170,7 +173,6 @@ const Robots = () => {
                     name="robot_no"
                     value={formData.robot_no}
                     label="Robot No"
-                    disabled
                     className="mb-3"
                   />
                 </CCol>
@@ -180,7 +182,6 @@ const Robots = () => {
                     name="deveui"
                     value={formData.deveui}
                     label="Deveui"
-                    disabled
                     className="mb-3"
                   />
                 </CCol>
@@ -197,15 +198,29 @@ const Robots = () => {
                   />{' '}
                 </CCol>
                 <CCol>
-                  <CFormInput
+                  {/* <CFormInput
                     type="text"
                     name="site_id"
-                    disabled
                     value={formData.site_id}
                     label="Site ID"
                     onChange={handleChange}
                     className="mb-3"
-                  />
+                  /> */}
+                  <CFormLabel htmlFor="siteSelect">Select Site</CFormLabel>
+                  <CFormSelect
+                    id="siteSelect"
+                    value={formData.site_id} // Set value from formData
+                    onChange={(e) =>
+                      setFormData({ ...formData, site_id: e.target.value })
+                    }
+                  >
+                    <option value="">-- Select a Site --</option>
+                    {sites.map((site) => (
+                      <option key={site.id} value={site.site_id}>
+                        {site.site_id}
+                      </option>
+                    ))}
+                  </CFormSelect>
                 </CCol>
               </CRow>
               <CRow>
@@ -213,7 +228,6 @@ const Robots = () => {
                   <CFormInput
                     type="text"
                     name="company"
-                    disabled
                     value={formData.company}
                     label="Company"
                     onChange={handleChange}
@@ -226,7 +240,6 @@ const Robots = () => {
                     name="last_update"
                     value={formData.last_update}
                     label="Last Update"
-                    disabled
                     className="mb-3"
                   />
                 </CCol>
@@ -295,7 +308,6 @@ const Robots = () => {
                     name="old_lora_no"
                     value={formData.old_lora_no}
                     label="Old Lora No"
-                    disabled
                     className="mb-3"
                   />
                 </CCol>
@@ -308,7 +320,6 @@ const Robots = () => {
                     name="lora_no"
                     value={formData.lora_no}
                     label="Current Lora No"
-                    disabled
                     className="mb-3"
                   />{' '}
                 </CCol>

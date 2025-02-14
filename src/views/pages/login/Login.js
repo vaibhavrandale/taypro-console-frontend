@@ -198,7 +198,7 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-  useColorModes,
+  // useColorModes,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
@@ -212,7 +212,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Login = () => {
-  const { colorMode } = useColorModes('theme'); // ✅ Fixed usage
+  // const { colorMode } = useColorModes('theme'); // ✅ Fixed usage
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

@@ -1,12 +1,10 @@
-// import React from 'react'
+// import React from 'react';
 
-// const ServiceAdminDashboard = () => {
-//   return (
-//     <div>ServiceAdminDashboard</div>
-//   )
-// }
+// const ProjectAdminDashboard = () => {
+//   return <div>ProjectAdminDashboard</div>;
+// };
 
-// export default ServiceAdminDashboard
+// export default ProjectAdminDashboard;
 
 import React from 'react';
 import {
@@ -39,52 +37,52 @@ const dashboardItems = [
     id: 2,
     title: 'Users',
     icon: cilUser,
-    link: '/service-admin/users',
+    link: '/project-admin/users',
   },
 
   {
     id: 3,
     title: 'Reports',
     icon: cilChartPie,
-    link: '/service-admin/reports',
+    link: '/project-admin/reports',
   },
-  { id: 4, title: 'Service', icon: cilTask, link: '/service-admin/service' },
+  { id: 4, title: 'Service', icon: cilTask, link: '/project-admin/service' },
   {
     id: 5,
     title: 'Notifications',
     icon: cilBell,
-    link: '/service-admin/notifications',
+    link: '/project-admin/notifications',
   },
   {
     id: 6,
     title: 'Live chat',
     icon: cilEnvelopeOpen,
-    link: '/service-admin/messages',
+    link: '/project-admin/messages',
   },
   {
     id: 7,
     title: 'Projects',
     icon: cilFolderOpen,
-    link: '/service-admin/projects',
+    link: '/project-admin/projects',
   },
   {
     id: 8,
     title: 'Roles & Permissions',
     icon: cilList,
-    link: '/service-admin/roles',
+    link: '/project-admin/roles',
   },
   {
     id: 9,
     title: 'Settings',
     icon: cilSettings,
-    link: '/service-admin/settings',
+    link: '/project-admin/settings',
   },
 ];
 
-const ServiceAdminDashboard = () => {
+const ProjectAdminDashboard = () => {
   return (
     <CContainer fluid className="">
-      <h3 className="text-center my-2 text-primary">Service Dashboard</h3>
+      <h3 className="text-center my-2 text-primary">Project Dashboard</h3>
       <CRow className="g-4 my-3">
         {dashboardItems.map((item) => (
           <CCol md={4} lg={3} key={item.id}>
@@ -110,4 +108,4 @@ const ServiceAdminDashboard = () => {
   );
 };
 
-export default ServiceAdminDashboard;
+export default ProjectAdminDashboard;
