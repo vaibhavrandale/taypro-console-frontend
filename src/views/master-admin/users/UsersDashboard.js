@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CTable,
   CTableHead,
@@ -18,7 +18,8 @@ import {
   CModal,
   CFormSelect,
 } from '@coreui/react';
-import { users, departments, role_permissions } from '../../../data'; // Ensure correct path
+import { departments, role_permissions } from '../../../data'; // Ensure correct path
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const UsersDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,6 +27,30 @@ const UsersDashboard = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
+  const [users, setUsers] = useState([]); // State for users
+
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(
+          'https://taypro-console-backend.onrender.com/api/v1/users'
+        ); // Replace with your API endpoint
+
+        // setUsers(filteredUsers)
+        const data = await response.json();
+        console.log(data);
+
+        setUsers(data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []); // Runs only once on mount
 
   // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
@@ -122,8 +147,57 @@ const UsersDashboard = () => {
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        <CTableBody>
+        {/* <CTableBody>
           {filteredUsers.length > 0 ? (
+            filteredUsers.map((user, index) =>
+              loading ? (
+                <LoadingSpinner />
+              ) : (
+                <CTableRow key={index}>
+                  <CTableDataCell>{index + 1}</CTableDataCell>
+                  <CTableDataCell>
+                    <img
+                      src={user.profile_image}
+                      alt="Profile"
+                      className="rounded-circle"
+                      width="50"
+                      height="50"
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>{user.username}</CTableDataCell>
+                  <CTableDataCell>{user.email}</CTableDataCell>
+                  <CTableDataCell>{user.role}</CTableDataCell>
+                  <CTableDataCell>{user.department}</CTableDataCell>
+                  <CTableDataCell>{user.phone}</CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                      color="primary"
+                      size="sm"
+                      onClick={() => openModal(user)}
+                    >
+                      Update
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+              )
+            )
+          ) : (
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center text-danger">
+                No users found.
+              </CTableDataCell>
+            </CTableRow>
+          )}
+        </CTableBody> */}
+
+        <CTableBody>
+          {loading ? (
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
