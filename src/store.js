@@ -29,6 +29,9 @@ const initialState = {
   userInfo: localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
     : null,
+  authtoken: localStorage.getItem('authtoken')
+    ? JSON.parse(localStorage.getItem('authtoken'))
+    : null,
 };
 
 // Reducer function

@@ -210,6 +210,7 @@ import toast from 'react-hot-toast';
 import { users } from '../../../data';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 const Login = () => {
   // const { colorMode } = useColorModes('theme'); // ✅ Fixed usage
@@ -219,7 +220,8 @@ const Login = () => {
   // Get userInfo from Redux state
   const userInfo = useSelector((state) => state.userInfo);
   const storedTheme = useSelector((state) => state.theme) || 'light'; // ✅ Ensure default theme
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -236,30 +238,56 @@ const Login = () => {
     }
   }, [navigate, redirect, userInfo]); // ✅ Updated dependency list
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    setTimeout(() => {
-      const matchedUser = users.find(
-        (user) => user.email === username && user.password === password
+    try {
+      const { data } = await axios.post(
+        'https://taypro-console-backend.onrender.com/api/v1/auth/sign-in',
+        {
+          email,
+          password,
+        }
       );
 
-      if (matchedUser) {
-        localStorage.setItem('userInfo', JSON.stringify(matchedUser));
+      // ✅ Dispatch to Redux
+      dispatch({ type: 'EMP_SIGNIN', payload: data.data.user });
+      localStorage.setItem('userInfo', JSON.stringify(data.data.user));
+      localStorage.setItem('authtoken', JSON.stringify(data.data.token));
 
-        // ✅ Dispatch to Redux
-        dispatch({ type: 'EMP_SIGNIN', payload: matchedUser });
-
-        toast.success(`Welcome, ${matchedUser.username}!`);
-        navigate('/user-dashboard');
-      } else {
-        toast.error('Invalid username or password');
-      }
-
-      setLoading(false);
-    }, 1000);
+      navigate('/user-dashboard');
+      // toast.success(`Login Successfull!`);
+      toast.success(`Welcome Back!  ${data.data.user.username}`);
+    } catch (err) {
+      toast.error(err.response.data.error);
+    }
+    setLoading(false);
   };
+
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   setTimeout(() => {
+  //     const matchedUser = users.find(
+  //       (user) => user.email === username && user.password === password
+  //     );
+
+  //     if (matchedUser) {
+  //       localStorage.setItem('userInfo', JSON.stringify(matchedUser));
+
+  //       // ✅ Dispatch to Redux
+  //       dispatch({ type: 'EMP_SIGNIN', payload: matchedUser });
+
+  //       toast.success(`Welcome, ${matchedUser.username}!`);
+  //       navigate('/user-dashboard');
+  //     } else {
+  //       toast.error('Invalid username or password');
+  //     }
+
+  //     setLoading(false);
+  //   }, 1000);
+  // };
 
   console.log('Stored Theme:', storedTheme); // ✅ Debugging
 
@@ -308,9 +336,9 @@ const Login = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </CInputGroup>
 
@@ -341,7 +369,7 @@ const Login = () => {
                           color="success"
                           className="px-4 py-1"
                           type="submit"
-                          disabled={!username || !password || loading}
+                          disabled={!email || !password || loading}
                         >
                           {loading ? (
                             <>

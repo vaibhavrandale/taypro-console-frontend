@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   CTable,
   CTableHead,
@@ -22,6 +23,9 @@ import { departments, role_permissions } from '../../../data'; // Ensure correct
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const UsersDashboard = () => {
+  const { userInfo } = useSelector((state) => state);
+  const { authtoken } = useSelector((state) => state);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -35,7 +39,10 @@ const UsersDashboard = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          'https://taypro-console-backend.onrender.com/api/v1/users'
+          'https://taypro-console-backend.onrender.com/api/v1/users',
+          {
+            headers: { authorization: `${authtoken}` },
+          }
         ); // Replace with your API endpoint
 
         // setUsers(filteredUsers)
@@ -50,7 +57,7 @@ const UsersDashboard = () => {
     };
 
     fetchUsers();
-  }, []); // Runs only once on mount
+  }, [userInfo.token]); // Runs only once on mount
 
   // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
