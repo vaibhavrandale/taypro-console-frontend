@@ -3593,7 +3593,6 @@ export const service_technitian_daily_progress_report = [
     ],
   },
 ];
-
 export const notifications = [
   {
     id: 'N001',

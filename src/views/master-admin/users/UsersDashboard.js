@@ -21,10 +21,13 @@ import {
 } from '@coreui/react';
 import { departments, role_permissions } from '../../../data'; // Ensure correct path
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import axios from 'axios';
+// import logo from '../../../assets/brand/logoforwhitebg.png';
 
 const UsersDashboard = () => {
-  const { userInfo } = useSelector((state) => state);
-  const { authtoken } = useSelector((state) => state);
+  // const { userInfo, authtoken } = useSelector((state) => state);
+  const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,18 +41,17 @@ const UsersDashboard = () => {
     setLoading(true);
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           'https://taypro-console-backend.onrender.com/api/v1/users',
           {
-            headers: { authorization: `${authtoken}` },
+            headers: { authorization: `Bearer ${authtoken}` },
           }
         ); // Replace with your API endpoint
 
         // setUsers(filteredUsers)
-        const data = await response.json();
-        console.log(data);
+        const data = response.data.data;
 
-        setUsers(data.data);
+        setUsers(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -57,7 +59,7 @@ const UsersDashboard = () => {
     };
 
     fetchUsers();
-  }, [userInfo.token]); // Runs only once on mount
+  }, [authtoken, userInfo]); // Runs only once on mount
 
   // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
@@ -111,6 +113,7 @@ const UsersDashboard = () => {
 
   return (
     <div className="">
+      {/* <img src={logo} alt="logo" className="border" /> */}
       {/* Search & Add User Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>

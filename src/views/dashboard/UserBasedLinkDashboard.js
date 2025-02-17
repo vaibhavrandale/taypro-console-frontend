@@ -138,6 +138,7 @@ import {
   faTools,
   faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
+// import NetworkStatus from '../NetworkStatus';
 
 const UserBasedLinkDashboard = () => {
   const navigate = useNavigate();
@@ -213,7 +214,7 @@ const UserBasedLinkDashboard = () => {
       <h2 className="text-center mb-4">
         Welcome, {userInfo.username} &nbsp;({userInfo.role})
       </h2>
-
+      {/* <NetworkStatus /> */}
       <CRow className="justify-content-center">
         {userRoleData ? (
           <CCol md={3} className="mb-4">

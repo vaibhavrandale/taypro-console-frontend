@@ -249,7 +249,6 @@ const Login = () => {
           password,
         }
       );
-
       // ✅ Dispatch to Redux
       dispatch({ type: 'EMP_SIGNIN', payload: data.data.user });
       localStorage.setItem('userInfo', JSON.stringify(data.data.user));

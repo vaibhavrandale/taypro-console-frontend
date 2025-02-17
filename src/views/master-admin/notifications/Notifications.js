@@ -163,8 +163,7 @@ const Notifications = () => {
         .includes(searchTerm.toLowerCase()) ||
       notification.performed_by.email
         .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      notification.location.toLowerCase().includes(searchTerm.toLowerCase())
+        .includes(searchTerm.toLowerCase())
   );
 
   // 📌 Open Read Users Modal

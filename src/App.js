@@ -17,6 +17,7 @@ import './scss/examples.scss';
 import { Toaster } from 'react-hot-toast';
 import ResetPassword from './views/pages/reset-password/ResetPassword';
 import ForgotPassword from './views/pages/reset-password/ForgotPassword';
+import NetworkStatus from './views/NetworkStatus';
 // import UserBasedLinkDashboard from './views/dashboard/UserBasedLinkDashboard';
 
 // Containers
@@ -61,6 +62,7 @@ const App = () => {
           </div>
         }
       >
+        <NetworkStatus />
         <Routes>
           <Route
             exact
