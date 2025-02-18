@@ -242,13 +242,10 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        'https://taypro-console-backend.onrender.com/api/v1/auth/sign-in',
-        {
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post('/api/v1/auth/sign-in', {
+        email,
+        password,
+      });
       // ✅ Dispatch to Redux
       dispatch({ type: 'EMP_SIGNIN', payload: data.data.user });
       localStorage.setItem('userInfo', JSON.stringify(data.data.user));

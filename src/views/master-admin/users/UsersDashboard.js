@@ -41,12 +41,9 @@ const UsersDashboard = () => {
     setLoading(true);
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          'https://taypro-console-backend.onrender.com/api/v1/users',
-          {
-            headers: { authorization: `Bearer ${authtoken}` },
-          }
-        ); // Replace with your API endpoint
+        const response = await axios.get('/api/v1/users', {
+          headers: { authorization: `Bearer ${authtoken}` },
+        }); // Replace with your API endpoint
 
         // setUsers(filteredUsers)
         const data = response.data.data;

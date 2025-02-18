@@ -3614,7 +3614,8 @@ export const notifications = [
       // { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       // { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3642,11 +3643,12 @@ export const notifications = [
     // location: 'Mumbai, India',
     // Read/Unread status
     read_status: [
-      { id: 1, read: true, readbyId: 'U001', readByName: 'Vaibhav Randale' },
+      // { id: 1, read: true, readbyId: 'U001', readByName: 'Vaibhav Randale' },
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
     masteradmin: true,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: false,
@@ -3678,7 +3680,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3710,7 +3713,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3742,7 +3746,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3773,7 +3778,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3805,7 +3811,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       // { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3836,7 +3843,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3868,7 +3876,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,
@@ -3899,7 +3908,8 @@ export const notifications = [
       { id: 2, read: true, readbyId: 'U002', readByName: 'Jitesh Kute' },
       { id: 3, read: true, readbyId: 'U003', readByName: 'Abhay Singh' },
     ],
-    masteradmin: true,
+    masteradmin: false,
+
     masteruser: true,
     tayprotechnitian: false,
     projectadmin: true,

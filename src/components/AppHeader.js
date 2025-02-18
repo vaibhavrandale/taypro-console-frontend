@@ -499,6 +499,23 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
   }, [navigate]);
 
+  // const fetchUsers = async () => {
+  //   try {
+  //     const response = await axios.get('/api/v1/notifications', {
+  //       headers: { authorization: `Bearer ${authtoken}` },
+  //     }); // Replace with your API endpoint
+
+  //     // setUsers(filteredUsers)
+  //     // const data = response.data.data;
+  //     // console.log(data);
+
+  //     setNotifications(response.data.data);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching users:', error.response.data.error);
+  //   }
+  // };
+  // fetchUsers();
   if (!storedUser) return null; // Don't render if no user is logged in
 
   // 🔍 Dynamic Notification Link Based on Role
@@ -538,9 +555,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const unreadNotifications = latestNotifications.filter(
     (notification) =>
       !notification.read_status.some(
-        (status) => status.readbyId === storedUser.id && status.read
+        (status) => status.readbyId === storedUser._id && status.read
       )
   );
+  console.log(unreadNotifications);
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
