@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://dashboard-backend.taypro.in/api/$1"
+    }
+  ]
+}
