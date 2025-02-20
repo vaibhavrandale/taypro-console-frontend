@@ -249,7 +249,6 @@ const Login = () => {
       dispatch({ type: 'EMP_SIGNIN', payload: data.data.user });
       localStorage.setItem('userInfo', JSON.stringify(data.data.user));
       localStorage.setItem('authtoken', JSON.stringify(data.data.token));
-
       navigate('/user-dashboard');
       // toast.success(`Login Successfull!`);
       toast.success(`Welcome Back!  ${data.data.user.username}`);
