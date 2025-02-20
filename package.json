@@ -1,6 +1,6 @@
 {
   "name": "taypro-console-frontend",
-  "proxy": "https://dashboard-backend.taypro.in",
+  "proxy": "https://taypro-console-backend.onrender.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
