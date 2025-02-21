@@ -576,7 +576,6 @@ const ServiceTicketDashboard = () => {
             Cancel
           </CButton>
           <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes{' '}
             {loading ? (
               <>
                 Saving <LoadingSpinner />

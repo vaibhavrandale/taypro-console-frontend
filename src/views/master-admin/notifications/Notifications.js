@@ -11,6 +11,12 @@
 //   CRow,
 //   CCol,
 //   CAvatar,
+//   CButton,
+//   CModal,
+//   CModalHeader,
+//   CModalTitle,
+//   CModalBody,
+//   CModalFooter,
 // } from '@coreui/react';
 // import { notifications } from '../../../data';
 // import CIcon from '@coreui/icons-react';
@@ -18,6 +24,8 @@
 
 // const Notifications = () => {
 //   const [searchTerm, setSearchTerm] = useState('');
+//   const [showModal, setShowModal] = useState(false);
+//   const [readUsers, setReadUsers] = useState([]);
 
 //   // 🔍 Filter Notifications Based on Search
 //   const filteredNotifications = notifications.filter(
@@ -29,9 +37,14 @@
 //         .includes(searchTerm.toLowerCase()) ||
 //       notification.performed_by.email
 //         .toLowerCase()
-//         .includes(searchTerm.toLowerCase()) ||
-//       notification.location.toLowerCase().includes(searchTerm.toLowerCase())
+//         .includes(searchTerm.toLowerCase())
 //   );
+
+//   // 📌 Open Read Users Modal
+//   const handleViewReadUsers = (notification) => {
+//     setReadUsers(notification.read_status || []);
+//     setShowModal(true);
+//   };
 
 //   return (
 //     <div className="m-2">
@@ -64,8 +77,9 @@
 //             <CTableHeaderCell>Details</CTableHeaderCell>
 //             <CTableHeaderCell>Role</CTableHeaderCell>
 //             <CTableHeaderCell>Timestamp</CTableHeaderCell>
-//             <CTableHeaderCell>Location</CTableHeaderCell>
-//             <CTableHeaderCell>Status</CTableHeaderCell>
+//             {/* <CTableHeaderCell>Location</CTableHeaderCell> */}
+//             {/* <CTableHeaderCell>Status</CTableHeaderCell> */}
+//             <CTableHeaderCell>Read By</CTableHeaderCell>
 //           </CTableRow>
 //         </CTableHead>
 //         <CTableBody>
@@ -78,9 +92,6 @@
 //                     className="me-3"
 //                     size="md"
 //                     src={notification.performed_by.profile_image}
-//                     status={
-//                       notification.status === 'Read' ? 'success' : 'danger'
-//                     }
 //                   />
 //                 </CTableDataCell>
 //                 <CTableDataCell>
@@ -92,39 +103,94 @@
 //                 </CTableDataCell>
 //                 <CTableDataCell>{notification.action}</CTableDataCell>
 //                 <CTableDataCell>{notification.module}</CTableDataCell>
-//                 <CTableDataCell>{notification.details}</CTableDataCell>
+//                 <CTableDataCell>
+//                   {notification.details.length > 30
+//                     ? `${notification.details}`
+//                     : notification.details}
+//                 </CTableDataCell>
 //                 <CTableDataCell>
 //                   {notification.performed_by.role}
 //                 </CTableDataCell>
 //                 <CTableDataCell>{notification.timestamp}</CTableDataCell>
-//                 <CTableDataCell>{notification.location}</CTableDataCell>
+
 //                 <CTableDataCell>
-//                   <CBadge
-//                     color={
-//                       notification.status === 'Unread' ? 'danger' : 'success'
-//                     }
+//                   <CButton
+//                     color="secondary"
+//                     size="sm"
+//                     onClick={() => handleViewReadUsers(notification)}
 //                   >
-//                     {notification.status}
-//                   </CBadge>
+//                     View
+//                   </CButton>
 //                 </CTableDataCell>
 //               </CTableRow>
 //             ))
 //           ) : (
 //             <CTableRow>
-//               <CTableDataCell colSpan="10" className="text-center text-danger">
+//               <CTableDataCell colSpan="11" className="text-center text-danger">
 //                 No notifications found.
 //               </CTableDataCell>
 //             </CTableRow>
 //           )}
 //         </CTableBody>
 //       </CTable>
+
+//       {/* 📌 Read Users Modal */}
+//       <CModal
+//         scrollable
+//         size="lg"
+//         visible={showModal}
+//         onClose={() => setShowModal(false)}
+//       >
+//         <CModalHeader closeButton>
+//           <CModalTitle>📖 Read Users</CModalTitle>
+//         </CModalHeader>
+//         <CModalBody>
+//           {readUsers.length > 0 ? (
+//             <CTable bordered hover responsive>
+//               <CTableHead>
+//                 <CTableRow>
+//                   <CTableHeaderCell>#</CTableHeaderCell>
+//                   <CTableHeaderCell>User ID</CTableHeaderCell>
+//                   <CTableHeaderCell>User Name</CTableHeaderCell>
+//                   <CTableHeaderCell>Status</CTableHeaderCell>
+//                 </CTableRow>
+//               </CTableHead>
+//               <CTableBody>
+//                 {readUsers.map((user, index) => (
+//                   <CTableRow key={user.id}>
+//                     <CTableDataCell>{index + 1}</CTableDataCell>
+//                     <CTableDataCell>{user.readbyId}</CTableDataCell>
+//                     <CTableDataCell>{user.readByName}</CTableDataCell>
+//                     <CTableDataCell>
+//                       <CBadge color={user.read ? 'success' : 'danger'}>
+//                         {user.read ? 'Read' : 'Unread'}
+//                       </CBadge>
+//                     </CTableDataCell>
+//                   </CTableRow>
+//                 ))}
+//               </CTableBody>
+//             </CTable>
+//           ) : (
+//             <p className="text-center text-muted">No users have read this.</p>
+//           )}
+//         </CModalBody>
+//         <CModalFooter>
+//           <CButton
+//             color="secondary"
+//             size="sm"
+//             onClick={() => setShowModal(false)}
+//           >
+//             Close
+//           </CButton>
+//         </CModalFooter>
+//       </CModal>
 //     </div>
 //   );
 // };
 
 // export default Notifications;
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CTable,
   CTableHead,
@@ -144,14 +210,63 @@ import {
   CModalBody,
   CModalFooter,
 } from '@coreui/react';
-import { notifications } from '../../../data';
 import CIcon from '@coreui/icons-react';
 import { cilPeople } from '@coreui/icons';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const Notifications = () => {
+  // const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
+
+  const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [readUsers, setReadUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch notifications from API
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const response = await fetch('/api/v1/notifications');
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch notifications');
+  //       }
+  //       const data = await response.json();
+  //       setNotifications(data);
+  //     } catch (error) {
+  //       setError(error.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchNotifications();
+  // }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/api/v1/notifications', {
+          headers: {
+            Authorization: `Bearer ${authtoken}`, // Attach Authorization token
+          },
+        });
+        setNotifications(response.data.data);
+        console.log(response.data);
+      } catch (error) {
+        setError(error.response ? error.response.data.message : error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [authtoken]);
 
   // 🔍 Filter Notifications Based on Search
   const filteredNotifications = notifications.filter(
@@ -171,6 +286,9 @@ const Notifications = () => {
     setReadUsers(notification.read_status || []);
     setShowModal(true);
   };
+
+  // if (loading) return <p className="text-center">Loading...</p>;
+  if (error) return <p className="text-center text-danger">{error}</p>;
 
   return (
     <div className="m-2">
@@ -203,13 +321,17 @@ const Notifications = () => {
             <CTableHeaderCell>Details</CTableHeaderCell>
             <CTableHeaderCell>Role</CTableHeaderCell>
             <CTableHeaderCell>Timestamp</CTableHeaderCell>
-            {/* <CTableHeaderCell>Location</CTableHeaderCell> */}
-            {/* <CTableHeaderCell>Status</CTableHeaderCell> */}
             <CTableHeaderCell>Read By</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredNotifications.length > 0 ? (
+          {loading ? (
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredNotifications.length > 0 ? (
             filteredNotifications.map((notification, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
@@ -238,20 +360,6 @@ const Notifications = () => {
                   {notification.performed_by.role}
                 </CTableDataCell>
                 <CTableDataCell>{notification.timestamp}</CTableDataCell>
-                {/* <CTableDataCell>{notification.location}</CTableDataCell> */}
-                {/* <CTableDataCell>
-                  <CBadge
-                    color={
-                      notification.read_status.some((r) => r.read)
-                        ? 'success'
-                        : 'danger'
-                    }
-                  >
-                    {notification.read_status.some((r) => r.read)
-                      ? 'Read'
-                      : 'Unread'}
-                  </CBadge>
-                </CTableDataCell> */}
                 <CTableDataCell>
                   <CButton
                     color="secondary"
@@ -265,7 +373,7 @@ const Notifications = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="11" className="text-center text-danger">
+              <CTableDataCell colSpan="9" className="text-center text-danger">
                 No notifications found.
               </CTableDataCell>
             </CTableRow>
