@@ -6,7 +6,7 @@
 
 // export default AddRobotUsingLoraNo;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CForm,
   CFormSelect,
@@ -17,18 +17,19 @@ import {
   //   CCardHeader,
   CRow,
   CCol,
-} from '@coreui/react';
-import { lora_configuration, robots } from '../../../data'; // Import lora config
-import toast from 'react-hot-toast';
+} from "@coreui/react";
+import { lora_configuration, robots } from "../../../data"; // Import lora config
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AddRobotUsingLoraNo = () => {
   const [formData, setFormData] = useState({
-    lora_no: '',
-    robot_no: '',
-    formatted_deveui: '',
-    site_id: '',
+    lora_no: "",
+    robot_no: "",
+    formatted_deveui: "",
+    site_id: "",
   });
-
+  const navigate = useNavigate();
   // Get only available lora_no (not already in robots array)
   const assignedLoraNos = robots.map((robot) => robot.lora_no);
   const availableLoraConfig = lora_configuration.filter(
@@ -57,7 +58,7 @@ const AddRobotUsingLoraNo = () => {
     e.preventDefault();
 
     if (!formData.lora_no) {
-      alert('Please select a valid Lora No.');
+      alert("Please select a valid Lora No.");
       return;
     }
 
@@ -71,11 +72,12 @@ const AddRobotUsingLoraNo = () => {
 
     toast.success(`Robot ${formData.robot_no}  added successfully!`);
     setFormData({
-      lora_no: '',
-      robot_no: '',
-      formatted_deveui: '',
-      site_id: '',
+      lora_no: "",
+      robot_no: "",
+      formatted_deveui: "",
+      site_id: "",
     });
+    navigate("/master-admin/robots");
   };
   console.log(robots);
 
