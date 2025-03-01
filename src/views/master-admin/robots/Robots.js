@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CFormSelect,
@@ -18,31 +18,32 @@ import {
   CModalBody,
   CForm,
   CFormLabel,
-} from '@coreui/react';
-import { robots, sites } from '../../../data'; // Import robots data
+} from "@coreui/react";
+import { robots, sites } from "../../../data"; // Import robots data
+import { Link } from "react-router-dom";
 
 const Robots = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
   // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
-    robot_no: '',
-    deveui: '',
-    block: '',
-    site_id: '',
-    company: '',
-    last_update: '',
-    lora_state: '',
-    activate: '',
-    last_status: '',
-    battery_percentage: '',
-    version: '',
-    old_lora_no: '',
-    lora_no: '',
-    wheel_speed: '',
-    brush_speed: '',
-    stuck_count: '',
+    robot_no: "",
+    deveui: "",
+    block: "",
+    site_id: "",
+    company: "",
+    last_update: "",
+    lora_state: "",
+    activate: "",
+    last_status: "",
+    battery_percentage: "",
+    version: "",
+    old_lora_no: "",
+    lora_no: "",
+    wheel_speed: "",
+    brush_speed: "",
+    stuck_count: "",
   });
 
   // Filter robots based on search term
@@ -68,14 +69,21 @@ const Robots = () => {
 
   // Handle update action
   const handleUpdate = () => {
-    console.log('Updated Robot Data:', formData);
+    console.log("Updated Robot Data:", formData);
     setModalVisible(false);
   };
 
   return (
     <div className="p-4">
       <h2 className="text-center">All Robots</h2>
-
+      <div className="d-flex justify-content-end mb-3">
+        <Link
+          className="btn btn-sm btn-primary"
+          to="/master-admin/add-robot/add-robot-using-lorano"
+        >
+          Add Robot
+        </Link>
+      </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
         <CCol md={4}>
@@ -93,17 +101,17 @@ const Robots = () => {
         <CTableHead color="dark">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '200px' }}>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
               Robot No
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '200px' }}>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
               Deveui
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Lora No
             </CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Block
             </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
@@ -116,9 +124,7 @@ const Robots = () => {
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{robot.robot_no}</CTableDataCell>
-                <CTableDataCell>
-                  {robot.deveui.toLocaleLowerCase()}
-                </CTableDataCell>
+                <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
                 <CTableDataCell>
                   {robot.lora_state === 1 ? (
@@ -160,7 +166,7 @@ const Robots = () => {
         <CModalHeader>
           <CModalTitle>
             Update Robot Data :&nbsp;
-            <span className="badge bg-success">{formData.robot_no}</span>{' '}
+            <span className="badge bg-success">{formData.robot_no}</span>{" "}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
@@ -195,7 +201,7 @@ const Robots = () => {
                     label="Block"
                     onChange={handleChange}
                     className="mb-3"
-                  />{' '}
+                  />{" "}
                 </CCol>
                 <CCol>
                   {/* <CFormInput
@@ -264,7 +270,7 @@ const Robots = () => {
                     label="Activate"
                     onChange={handleChange}
                     className="mb-3"
-                  />{' '}
+                  />{" "}
                 </CCol>
               </CRow>
 
@@ -277,7 +283,7 @@ const Robots = () => {
                     label="Last Status"
                     onChange={handleChange}
                     className="mb-3"
-                  />{' '}
+                  />{" "}
                 </CCol>
                 <CCol>
                   <CFormInput
@@ -321,7 +327,7 @@ const Robots = () => {
                     value={formData.lora_no}
                     label="Current Lora No"
                     className="mb-3"
-                  />{' '}
+                  />{" "}
                 </CCol>
                 <CCol>
                   <CFormInput

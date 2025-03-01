@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   //   CContainer,
   CRow,
@@ -23,20 +23,20 @@ import {
   CDropdownToggle,
   CInputGroup,
   CFormInput,
-} from '@coreui/react';
-import { FaCopy, FaArrowUp } from 'react-icons/fa';
+} from "@coreui/react";
+import { FaCopy, FaArrowUp } from "react-icons/fa";
 
-import { FaCircleInfo } from 'react-icons/fa6'; // Correct import from FA6
-import { Link, useParams } from 'react-router-dom';
-import './management.css';
-import { robots, downlinks } from '../../../data'; // Import robots from data.js
-import toast from 'react-hot-toast';
+import { FaCircleInfo } from "react-icons/fa6"; // Correct import from FA6
+import { Link, useParams } from "react-router-dom";
+import "./management.css";
+import { robots, downlinks } from "../../../data"; // Import robots from data.js
+import toast from "react-hot-toast";
 
 const RobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]); // Store robots assigned to the site
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (site_id) {
@@ -44,14 +44,13 @@ const RobotOperating = () => {
       // const siteRobots = robots.filter((robot) => robot.site_id === site_id);
 
       const extractNumber = (robotNo) =>
-        parseInt(robotNo.match(/\d+/g)?.join('') || '0', 10);
+        parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
 
       const filteredRobots = robots
         .filter((robot) => robot.site_id === site_id && robot.block === block)
         .sort((a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no));
 
       setSiteRobots(filteredRobots); // Store robots in state
-      //   console.log(filteredRobots);
     }
   }, [block, site_id]);
 
@@ -66,14 +65,14 @@ const RobotOperating = () => {
 
   const copydownlink = (downlink) => {
     if (!document.hasFocus()) {
-      toast.error('Please focus on the document before copying.');
+      toast.error("Please focus on the document before copying.");
       return;
     }
 
     navigator.clipboard
       .writeText(downlink)
       .then(() => toast.success(`Copied: ${downlink}`))
-      .catch((err) => toast.error('Clipboard copy failed', err));
+      .catch((err) => toast.error("Clipboard copy failed", err));
   };
 
   const Robotdata = robots.filter(
@@ -130,7 +129,7 @@ const RobotOperating = () => {
 
             <CDropdownMenu className="px-2 py-1 dropdown-menu">
               {siteRobots.length === 1
-                ? ''
+                ? ""
                 : siteRobots.map((item, index) => (
                     <CDropdownItem
                       key={index}
@@ -155,13 +154,13 @@ const RobotOperating = () => {
       <CRow className="">
         {/* First Card */}
         <CCol md={5} className="mt-2">
-          <CCard className="shadow border-0" style={{ height: '100%' }}>
+          <CCard className="shadow border-0" style={{ height: "100%" }}>
             <CCardBody>
               <CTable borderless>
                 <CTableBody>
                   <CTableRow>
                     <CTableDataCell>
-                      <b style={{ fontSize: '15px' }}>
+                      <b style={{ fontSize: "15px" }}>
                         {Robotdata[0].robot_no}
                       </b>
                     </CTableDataCell>
@@ -187,7 +186,7 @@ const RobotOperating = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableDataCell>
-                      Lora:{' '}
+                      Lora:{" "}
                       <span className="text-success">
                         {Robotdata[0].lora_no}
                       </span>
@@ -207,7 +206,7 @@ const RobotOperating = () => {
 
         {/* Second Card */}
         <CCol md={4} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <CTable borderless>
                 <CTableBody>
@@ -247,13 +246,13 @@ const RobotOperating = () => {
 
         {/* Third Card (Custom Downlink) */}
         <CCol md={3} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <div className="d-flex justify-content-between align-items-center">
                 <h6 className="fw-bold">Custom Downlink</h6>
                 <FaCircleInfo
                   className="text-primary"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   onClick={() => setModalVisible(true)}
                 />
               </div>
@@ -301,22 +300,22 @@ const RobotOperating = () => {
           <CTable responsive hover bordered>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell style={{ minWidth: '70px' }}>
+                <CTableHeaderCell style={{ minWidth: "70px" }}>
                   Sr No
                 </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: '180px' }}>
+                <CTableHeaderCell style={{ minWidth: "180px" }}>
                   downlink Command
                 </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: '180px' }}>
+                <CTableHeaderCell style={{ minWidth: "180px" }}>
                   Decoded String
                 </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: '180px' }}>
+                <CTableHeaderCell style={{ minWidth: "180px" }}>
                   Hexa decimal
                 </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: '180px' }}>
+                <CTableHeaderCell style={{ minWidth: "180px" }}>
                   Uplink
                 </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: '250px' }}>
+                <CTableHeaderCell style={{ minWidth: "250px" }}>
                   Description
                 </CTableHeaderCell>
               </CTableRow>
@@ -329,9 +328,9 @@ const RobotOperating = () => {
                     {item.downlink}
                     <FaCopy
                       style={{
-                        cursor: 'pointer',
-                        marginLeft: '5px',
-                        color: 'lime',
+                        cursor: "pointer",
+                        marginLeft: "5px",
+                        color: "lime",
                       }}
                       onClick={() => copydownlink(item.downlink)}
                     />
@@ -355,7 +354,7 @@ const RobotOperating = () => {
       <CRow className="my-2">
         {/* First Card - Cleaning Cycle */}
         <CCol md={3} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <p>Cleaning Cycle</p>
               <CButton className="btn btn-sm btn-secondary m-1 shadow">
@@ -373,7 +372,7 @@ const RobotOperating = () => {
 
         {/* Second Card - Set Wheel Speed */}
         <CCol md={3} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <p>Set Wheel Speed</p>
               <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
@@ -391,7 +390,7 @@ const RobotOperating = () => {
 
         {/* Third Card - Set Brush Speed */}
         <CCol md={3} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <p>Set Brush Speed</p>
               <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
@@ -409,7 +408,7 @@ const RobotOperating = () => {
 
         {/* Fourth Card - Text To Base64 */}
         <CCol md={3} className="mt-2">
-          <CCard className="shadow border-0 " style={{ height: '100%' }}>
+          <CCard className="shadow border-0 " style={{ height: "100%" }}>
             <CCardBody>
               <div className="d-flex justify-content-between align-items-center">
                 <h6 className="fw-bold">Text to Base64</h6>
