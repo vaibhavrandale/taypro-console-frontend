@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -20,28 +20,59 @@ import {
   CRow,
   CCol,
   CImage,
-} from '@coreui/react';
-// import { Bar } from 'react-chartjs-2';
-// import { service_tickets } from '../../../data'; // Import service ticket data
-// import TicketChart from './TicketChart';
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import PieChart from './PieChart';
-import './servicetickts.css';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
-import LastActivity from '../../../components/LastActivity';
+} from "@coreui/react";
+
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import PieChart from "./PieChart";
+import "./servicetickts.css";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'FETCH_REQUEST':
+    case "FETCH_REQUEST":
       return { ...state, loading: true };
 
-    case 'FETCH_SUCCESS':
+    case "FETCH_SUCCESS":
       return { ...state, servicetickets: action.payload, loading: false };
 
-    case 'FETCH_FAIL':
+    case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "FETCH_TICKET_REQUEST":
+      return { ...state, fetchserviceticketloading: true };
+
+    case "FETCH_TICKET_SUCCESS":
+      return {
+        ...state,
+        serviceticket: action.payload,
+        fetchserviceticketloading: false,
+      };
+
+    case "FETCH_TICKET_FAIL":
+      return {
+        ...state,
+        fetchserviceticketloading: false,
+        error: action.payload,
+      };
+    case "UPDATE_TICKET_REQUEST":
+      return { ...state, updateserviceticketloading: true };
+
+    case "UPDATE_TICKET_SUCCESS":
+      return {
+        ...state,
+        serviceticket: action.payload,
+        updateserviceticketloading: false,
+      };
+
+    case "UPDATE_TICKET_FAIL":
+      return {
+        ...state,
+        updateserviceticketloading: false,
+        error: action.payload,
+      };
 
     default:
       return state;
@@ -49,31 +80,78 @@ const reducer = (state, action) => {
 };
 
 const ServiceTicketDashboard = () => {
-  const [{ loading, error, servicetickets }, dispatch] = useReducer(reducer, {
+  const [
+    {
+      loading,
+      error,
+      servicetickets,
+      serviceticket,
+      fetchserviceticketloading,
+      updateserviceticketloading,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
     servicetickets: [],
+    serviceticket: [],
     loading: true,
-    error: '',
+    fetchserviceticketloading: true,
+    updateserviceticketloading: true,
+    error: "",
   });
-  const userInfo = useSelector((state) => state.userInfo);
+  // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState(null);
+  // const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   // const [loading, setLoading] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
 
   // 📌 Open modal with selected ticket data
-  const openUpdateModal = (ticket) => {
-    setSelectedTicket(ticket);
-    setFormData(ticket);
+  const openUpdateModal = async (id) => {
+    // setSelectedTicket(ticket);
+    // setFormData(ticket);
+
     setModalVisible(true);
+
+    try {
+      dispatch({ type: "FETCH_TICKET_REQUEST" });
+      const response = await axios.get(`/api/v1/servicetickets/${id}`, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+
+      console.log(response);
+
+      let result = response.data.data;
+
+      dispatch({ type: "FETCH_TICKET_SUCCESS", payload: result });
+      // setSelectedTicket(result);
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+      dispatch({ type: "FETCH_TICKET_FAIL", payload: error });
+    }
   };
 
-  const openViewModal = (ticket) => {
-    setSelectedTicket(ticket);
+  const openViewModal = async (id) => {
     setViewModalVisible(true);
+
+    try {
+      dispatch({ type: "FETCH_TICKET_REQUEST" });
+      const response = await axios.get(`/api/v1/servicetickets/${id}`, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+
+      // console.log(response);
+
+      let result = response.data.data;
+
+      dispatch({ type: "FETCH_TICKET_SUCCESS", payload: result });
+      // setSelectedTicket(result);
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+      dispatch({ type: "FETCH_TICKET_FAIL", payload: error });
+    }
   };
 
   // 📌 Handle input change in modal
@@ -82,26 +160,52 @@ const ServiceTicketDashboard = () => {
   };
 
   // 📌 Handle ticket update (currently logs data)
-  const handleUpdate = () => {
-    console.log('Updated Ticket:', formData);
-    setModalVisible(false);
+  // const handleUpdate = (id) => {
+  //   console.log("Updated Ticket:", serviceticket);
+  //   setModalVisible(false);
+  // };
+
+  const handleUpdate = async (id) => {
+    try {
+      dispatch({ type: "UPDATE_TICKET_REQUEST" });
+      const response = await axios.put(
+        `/api/v1/servicetickets/${id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log("Updated Ticket:", response.data);
+      setModalVisible(false);
+
+      // Update local state with the modified ticket
+      dispatch({
+        type: "UPDATE_TICKET_SUCCESS",
+        payload: servicetickets.map((ticket) =>
+          ticket.id === id ? { ...ticket, ...formData } : ticket
+        ),
+      });
+    } catch (error) {
+      dispatch({ type: "UPDATE_TICKET_FAIL", payload: error });
+      console.error("Error updating ticket:", error);
+    }
   };
 
   useEffect(() => {
     const fetchServicetickets = async () => {
       try {
-        dispatch({ type: 'FETCH_REQUEST' });
-        const response = await axios.get('/api/v1/servicetickets', {
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.get("/api/v1/servicetickets", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         let result = response.data.data;
-        console.log(result);
+        // console.log(result);
 
-        dispatch({ type: 'FETCH_SUCCESS', payload: result });
+        dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error("Error fetching notifications:", error);
         dispatch({
-          type: 'FETCH_FAIL',
+          type: "FETCH_FAIL",
           payload: error,
         });
       }
@@ -162,42 +266,52 @@ const ServiceTicketDashboard = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {filteredData.map((ticket, index) => (
-                <CTableRow key={index}>
-                  <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell className="sticky-col">
-                    {ticket.ticket_id}
-                  </CTableDataCell>
-                  <CTableDataCell>{ticket.robot_no}</CTableDataCell>
-                  <CTableDataCell>{ticket.site_id}</CTableDataCell>
-                  <CTableDataCell>{ticket.fault_type}</CTableDataCell>
-                  <CTableDataCell>
-                    {ticket.ticket_resolved ? (
-                      <CBadge color="success">Resolved</CBadge>
-                    ) : (
-                      <CBadge color="danger">Open</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CButton
-                      color="secondary"
-                      size="sm"
-                      className="m-1"
-                      onClick={() => openViewModal(ticket)}
-                    >
-                      View
-                    </CButton>
-                    <CButton
-                      color="primary"
-                      size="sm"
-                      className="m-1"
-                      onClick={() => openUpdateModal(ticket)}
-                    >
-                      Update
-                    </CButton>
+              {loading ? (
+                <CTableRow>
+                  <CTableDataCell colSpan="8" className="text-center">
+                    <LoadingSpinner />
                   </CTableDataCell>
                 </CTableRow>
-              ))}
+              ) : error ? (
+                <CTableRow>{error}</CTableRow>
+              ) : (
+                filteredData.map((ticket, index) => (
+                  <CTableRow key={index}>
+                    <CTableDataCell>{index + 1}</CTableDataCell>
+                    <CTableDataCell className="sticky-col">
+                      {ticket.ticket_id}
+                    </CTableDataCell>
+                    <CTableDataCell>{ticket.robot_no}</CTableDataCell>
+                    <CTableDataCell>{ticket.site_id}</CTableDataCell>
+                    <CTableDataCell>{ticket.fault_type}</CTableDataCell>
+                    <CTableDataCell>
+                      {ticket.ticket_resolved ? (
+                        <CBadge color="success">Resolved</CBadge>
+                      ) : (
+                        <CBadge color="danger">Open</CBadge>
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <CButton
+                        color="secondary"
+                        size="sm"
+                        className="m-1"
+                        onClick={() => openViewModal(ticket._id)}
+                      >
+                        View
+                      </CButton>
+                      <CButton
+                        color="primary"
+                        size="sm"
+                        className="m-1"
+                        onClick={() => openUpdateModal(ticket._id)}
+                      >
+                        Update
+                      </CButton>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))
+              )}
             </CTableBody>
           </CTable>
         </CCardBody>
@@ -211,265 +325,284 @@ const ServiceTicketDashboard = () => {
         visible={viewModalVisible}
         onClose={() => setViewModalVisible(false)}
       >
-        {selectedTicket && (
+        {fetchserviceticketloading ? (
+          <CModalBody className="d-flex justify-content-center align-items-center">
+            {" "}
+            <LoadingSpinner />
+          </CModalBody>
+        ) : (
           <>
             <CModalHeader closeButton>
               <CModalTitle>
-                {' '}
+                {" "}
+                Details &nbsp;:&nbsp;{" "}
                 <span className="badge bg-danger">
-                  {selectedTicket.ticket_id}
+                  {serviceticket.ticket_id}
                 </span>
-                &nbsp;:&nbsp; Service Ticket Details
               </CModalTitle>
             </CModalHeader>
-
             <CModalBody>
               <CTable striped hover bordered responsive>
                 <CTableBody>
                   {/* Ticket ID */}
                   <CTableRow>
                     <CTableHeaderCell>Ticket ID</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.ticket_id}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.ticket_id}</CTableDataCell>
                   </CTableRow>
 
                   {/* Robot Information */}
                   <CTableRow>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.robot_no}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.robot_no}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Deveui</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.deveui}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.deveui}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.robot_type}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.robot_type}</CTableDataCell>
                   </CTableRow>
 
                   {/* Site & Company Information */}
                   <CTableRow>
                     <CTableHeaderCell>Site ID</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.site_id}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.site_id}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Company</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.company}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.company}</CTableDataCell>
                   </CTableRow>
 
                   {/* Fault Information */}
                   <CTableRow>
                     <CTableHeaderCell>Fault Type</CTableHeaderCell>
-                    <CTableDataCell>{selectedTicket.fault_type}</CTableDataCell>
+                    <CTableDataCell>{serviceticket.fault_type}</CTableDataCell>
                   </CTableRow>
 
                   {/* Ticket Timestamps */}
                   <CTableRow>
                     <CTableHeaderCell>Ticket Generated At</CTableHeaderCell>
                     <CTableDataCell>
-                      {selectedTicket.ticket_generated_at}
+                      {serviceticket.ticket_generated_at}
                     </CTableDataCell>
                   </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Ticket Resolved</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedTicket.ticket_resolved ? (
-                        <CBadge color="success">Resolved</CBadge>
-                      ) : (
-                        <CBadge color="danger">Open</CBadge>
-                      )}
-                    </CTableDataCell>
-                  </CTableRow>
-                  {selectedTicket.ticket_resolved && (
-                    <CTableRow>
-                      <CTableHeaderCell>Ticket Resolved At</CTableHeaderCell>
-                      <CTableDataCell>
-                        {selectedTicket.ticket_resolved_at}
-                      </CTableDataCell>
-                    </CTableRow>
-                  )}
 
                   {/* Generated By */}
                   <CTableRow>
                     <CTableHeaderCell>Generated By</CTableHeaderCell>
                     <CTableDataCell>
-                      {selectedTicket.ticket_generated_by}
+                      {serviceticket.ticket_generated_by}
                     </CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Generated By Email</CTableHeaderCell>
                     <CTableDataCell>
-                      {selectedTicket.ticket_generated_by_email}
+                      {serviceticket.ticket_generated_by_email}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Generating Notes</CTableHeaderCell>
+                    <CTableDataCell>
+                      {serviceticket.ticket_generating_notes}
                     </CTableDataCell>
                   </CTableRow>
 
+                  {/* Ticket Generating Images */}
+                  {serviceticket.ticket_generated_images1 ? (
+                    <>
+                      <CTableRow>
+                        <CTableHeaderCell>Ticket Images</CTableHeaderCell>
+                        <CTableDataCell>
+                          <div className="d-flex flex-wrap">
+                            {serviceticket.ticket_generated_images1 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_generated_images1}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_generated_images1}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_generated_images2 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_generated_images2}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_generated_images2}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_generated_images3 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_generated_images3}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_generated_images3}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_generated_images4 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_generated_images4}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_generated_images4}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_generated_images5 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_generated_images5}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_generated_images5}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow></CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Ticket Resolved</CTableHeaderCell>
+                        <CTableDataCell>
+                          {serviceticket.ticket_resolved ? (
+                            <CBadge color="success">Resolved</CBadge>
+                          ) : (
+                            <CBadge color="danger">Open</CBadge>
+                          )}
+                        </CTableDataCell>
+                      </CTableRow>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                  {serviceticket.ticket_resolved && (
+                    <CTableRow>
+                      <CTableHeaderCell>Ticket Resolved At</CTableHeaderCell>
+                      <CTableDataCell>
+                        {serviceticket.ticket_resolved_at}
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
                   {/* Resolving Information */}
-                  {selectedTicket.ticket_resolved && (
+                  {serviceticket.ticket_resolved && (
                     <>
                       <CTableRow>
                         <CTableHeaderCell>Resolved By</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedTicket.ticket_resolved_by}
+                          {serviceticket.ticket_resolved_by}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableHeaderCell>Resolved By Email</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedTicket.ticket_resolved_by_email}
+                          {serviceticket.ticket_resolved_by_email}
                         </CTableDataCell>
                       </CTableRow>
                     </>
                   )}
 
                   {/* Notes */}
-                  <CTableRow>
-                    <CTableHeaderCell>Generating Notes</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedTicket.ticket_generating_notes}
-                    </CTableDataCell>
-                  </CTableRow>
-                  {selectedTicket.ticket_resolved && (
+
+                  {serviceticket.ticket_resolved && (
                     <CTableRow>
                       <CTableHeaderCell>Resolving Notes</CTableHeaderCell>
                       <CTableDataCell>
-                        {selectedTicket.ticket_resolving_notes}
+                        {serviceticket.ticket_resolving_notes}
                       </CTableDataCell>
                     </CTableRow>
                   )}
-
-                  {/* Ticket Images */}
-                  <CTableRow>
-                    <CTableHeaderCell>Ticket Images</CTableHeaderCell>
-                    <CTableDataCell>
-                      <div className="d-flex flex-wrap">
-                        {selectedTicket.ticket_generated_images1 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_generated_images1}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_generated_images1}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_generated_images2 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_generated_images2}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_generated_images2}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_generated_images3 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_generated_images3}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_generated_images3}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_generated_images4 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_generated_images4}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_generated_images4}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_generated_images5 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_generated_images5}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_generated_images5}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                      </div>
-                    </CTableDataCell>
-                  </CTableRow>
-
-                  <CTableRow>
-                    <CTableHeaderCell>Resolved Ticket Images</CTableHeaderCell>
-                    <CTableDataCell>
-                      <div className="d-flex flex-wrap">
-                        {selectedTicket.ticket_resolved_images1 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_resolved_images1}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images1}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_resolved_images2 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_resolved_images2}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images2}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_resolved_images3 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_resolved_images3}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images3}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_resolved_images4 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_resolved_images4}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images4}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                        {selectedTicket.ticket_resolved_images5 ? (
-                          <CImage
-                            fluid
-                            src={selectedTicket.ticket_resolved_images5}
-                            className="m-2"
-                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images5}`}
-                            style={{ width: '100vw', height: 'auto' }}
-                          />
-                        ) : (
-                          ''
-                        )}
-                      </div>
-                    </CTableDataCell>
-                  </CTableRow>
-
+                  {serviceticket.ticket_resolved_images1 ? (
+                    <>
+                      <CTableRow>
+                        <CTableHeaderCell>
+                          Resolved Ticket Images
+                        </CTableHeaderCell>
+                        <CTableDataCell>
+                          <div className="d-flex flex-wrap">
+                            {serviceticket.ticket_resolved_images1 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_resolved_images1}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_resolved_images1}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_resolved_images2 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_resolved_images2}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_resolved_images2}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_resolved_images3 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_resolved_images3}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_resolved_images3}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_resolved_images4 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_resolved_images4}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_resolved_images4}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                            {serviceticket.ticket_resolved_images5 ? (
+                              <CImage
+                                fluid
+                                src={serviceticket.ticket_resolved_images5}
+                                className="m-2"
+                                alt={`Ticket Image ${serviceticket.ticket_resolved_images5}`}
+                                style={{ width: "100vw", height: "auto" }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </CTableDataCell>
+                      </CTableRow>
+                    </>
+                  ) : (
+                    ""
+                  )}
                   {/* array lastactivity */}
                 </CTableBody>
               </CTable>
-              <LastActivity LastActivity={selectedTicket.last_activity} />
+
+              <LastActivity lastactivity={serviceticket.last_activity} />
             </CModalBody>
           </>
         )}
+        {/* )} */}
 
         <CModalFooter>
           <CButton
@@ -492,20 +625,25 @@ const ServiceTicketDashboard = () => {
       >
         <CModalHeader>
           <CModalTitle>
-            Update Service Ticket :{' '}
-            <span className="badge bg-danger">{formData.ticket_id}</span>
+            Update Service Ticket :{" "}
+            <span className="badge bg-danger">{serviceticket.ticket_id}</span>
           </CModalTitle>
         </CModalHeader>
 
-        <CModalBody>
-          {selectedTicket && (
+        {fetchserviceticketloading ? (
+          <CModalBody className="d-flex justify-content-center align-items-center">
+            {" "}
+            <LoadingSpinner />
+          </CModalBody>
+        ) : (
+          <CModalBody>
             <CRow>
               {/* Ticket ID & Robot No () */}
               <CCol md={6}>
                 <CFormInput
                   type="text"
                   name="ticket_id"
-                  value={formData.ticket_id}
+                  value={serviceticket.ticket_id}
                   disabled
                   label="Ticket ID"
                   className="mb-3"
@@ -515,7 +653,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="robot_no"
-                  value={formData.robot_no}
+                  value={serviceticket.robot_no}
                   disabled
                   label="Robot No"
                   className="mb-3"
@@ -527,7 +665,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="deveui"
-                  value={formData.deveui}
+                  value={serviceticket.deveui}
                   disabled
                   label="Deveui"
                   className="mb-3"
@@ -537,7 +675,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="site_id"
-                  value={formData.site_id}
+                  value={serviceticket.site_id}
                   disabled
                   label="Site ID"
                   className="mb-3"
@@ -549,7 +687,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="fault_type"
-                  value={formData.fault_type}
+                  value={serviceticket.fault_type}
                   label="Fault Type"
                   onChange={handleChange}
                   className="mb-3"
@@ -559,7 +697,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="lora_no"
-                  value={formData.lora_no}
+                  value={serviceticket.lora_no}
                   disabled
                   label="Lora No"
                   className="mb-3"
@@ -571,7 +709,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="ticket_generated_by"
-                  value={formData.ticket_generated_by}
+                  value={serviceticket.ticket_generated_by}
                   disabled
                   label="Generated By"
                   className="mb-3"
@@ -581,7 +719,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="email"
                   name="ticket_generated_by_email"
-                  value={formData.ticket_generated_by_email}
+                  value={serviceticket.ticket_generated_by_email}
                   disabled
                   label="Generated By Email"
                   className="mb-3"
@@ -593,7 +731,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="datetime-local"
                   name="ticket_generated_at"
-                  value={formData.ticket_generated_at}
+                  value={serviceticket.ticket_generated_at}
                   label="Generated At"
                   className="mb-3"
                 />
@@ -602,7 +740,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="textarea"
                   name="ticket_generating_notes"
-                  value={formData.ticket_generating_notes}
+                  value={serviceticket.ticket_generating_notes}
                   label="Generating Notes"
                   className="mb-3"
                 />
@@ -612,7 +750,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="ticket_resolved"
-                  value={formData.ticket_resolved ? 'Resolved' : 'Open'}
+                  value={serviceticket.ticket_resolved ? "Resolved" : "Open"}
                   label="Status"
                   className="mb-3"
                 />
@@ -621,7 +759,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="datetime-local"
                   name="ticket_resolved_at"
-                  value={formData.ticket_resolved_at || ''}
+                  value={serviceticket.ticket_resolved_at || ""}
                   label="Resolved At"
                   onChange={handleChange}
                   className="mb-3"
@@ -632,7 +770,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="text"
                   name="ticket_resolved_by"
-                  value={formData.ticket_resolved_by || 'N/A'}
+                  value={serviceticket.ticket_resolved_by || "N/A"}
                   label="Resolved By"
                   className="mb-3"
                 />
@@ -641,7 +779,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="email"
                   name="ticket_resolved_by_email"
-                  value={formData.ticket_resolved_by_email || 'N/A'}
+                  value={serviceticket.ticket_resolved_by_email || "N/A"}
                   label="Resolved By Email"
                   className="mb-3"
                 />
@@ -652,7 +790,7 @@ const ServiceTicketDashboard = () => {
                 <CFormInput
                   type="textarea"
                   name="ticket_resolving_notes"
-                  value={formData.ticket_resolving_notes}
+                  value={serviceticket.ticket_resolving_notes}
                   label="Resolving Notes"
                   onChange={handleChange}
                   className="mb-3"
@@ -667,10 +805,240 @@ const ServiceTicketDashboard = () => {
 
               {/* Image Gallery */}
               <CCol md={12}>
-                <h6 className="mt-3">Ticket Images</h6>
+                <h6 className="mt-3">Service Ticket Generating Time Images</h6>
                 <div className="d-flex flex-wrap">
-                  {/* {formData.ticket_images &&
-                    formData.ticket_images.map((image, index) => (
+                  {serviceticket.ticket_generated_images1 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_generated_images1)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_generated_images1}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_generated_images1}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {serviceticket.ticket_generated_images2 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_generated_images2)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_generated_images2}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_generated_images2}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {serviceticket.ticket_generated_images3 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_generated_images3)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_generated_images3}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_generated_images3}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {serviceticket.ticket_generated_images4 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_generated_images4)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_generated_images4}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_generated_images4}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {serviceticket.ticket_generated_images5 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_generated_images5)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_generated_images5}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_generated_images5}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {/* {serviceticket.ticket_images &&
+                    serviceticket.ticket_images.map((image, index) => (
+                      <div
+                        key={index}
+                        className="p-2"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSelectedImage(image.image)}
+                      >
+                        <img
+                          src={image.image}
+                          alt={`Ticket ${index + 1}`}
+                          className="img-thumbnail"
+                          width="100"
+                          height="80"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                    ))} */}
+                </div>
+              </CCol>
+
+              <CCol md={12}>
+                <h6 className="mt-3">Service Ticket Resolving Time Images</h6>
+                <div className="d-flex flex-wrap">
+                  {serviceticket.ticket_resolved_images1 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_resolved_images1)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_resolved_images1}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_resolved_images1}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {serviceticket.ticket_resolved_images2 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_resolved_images2)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_resolved_images2}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_resolved_images2}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {serviceticket.ticket_resolved_images3 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_resolved_images3)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_resolved_images3}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_resolved_images3}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {serviceticket.ticket_resolved_images4 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_resolved_images4)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_resolved_images4}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_resolved_images4}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {serviceticket.ticket_resolved_images5 ? (
+                    <div
+                      className="p-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setSelectedImage(serviceticket.ticket_resolved_images5)
+                      }
+                    >
+                      {" "}
+                      <CImage
+                        fluid
+                        src={serviceticket.ticket_resolved_images5}
+                        className="m-2"
+                        alt={`Ticket Image ${serviceticket.ticket_resolved_images5}`}
+                        style={{ width: "10vw", height: "10vh" }}
+                      />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {/* {serviceticket.ticket_images &&
+                    serviceticket.ticket_images.map((image, index) => (
                       <div
                         key={index}
                         className="p-2"
@@ -693,6 +1061,7 @@ const ServiceTicketDashboard = () => {
               {/* Enlarged Image Modal */}
               {selectedImage && (
                 <CModal
+                  className=""
                   visible={true}
                   onClose={() => setSelectedImage(null)}
                   size="xl"
@@ -703,20 +1072,22 @@ const ServiceTicketDashboard = () => {
                   >
                     <CButton onClick={() => setSelectedImage(null)}>✖</CButton>
                   </div>
-                  <CModalBody className="d-flex justify-content-center">
+                  <CModalBody
+                    style={{ background: "transparent" }}
+                    className="d-flex justify-content-center"
+                  >
                     <img
                       src={selectedImage}
                       alt="Selected"
                       className="p-2"
-                      style={{ height: '80vh' }}
+                      style={{ height: "80vh", width: "90%" }}
                     />
                   </CModalBody>
                 </CModal>
               )}
             </CRow>
-          )}
-        </CModalBody>
-
+          </CModalBody>
+        )}
         <CModalFooter>
           <CButton
             color="secondary"
@@ -725,13 +1096,17 @@ const ServiceTicketDashboard = () => {
           >
             Cancel
           </CButton>
-          <CButton color="primary" size="sm" onClick={handleUpdate}>
+          <CButton
+            color="primary"
+            size="sm"
+            onClick={() => handleUpdate(serviceticket._id)}
+          >
             {loading ? (
               <>
                 Saving <LoadingSpinner />
               </>
             ) : (
-              'save changes'
+              "save changes"
             )}
           </CButton>
         </CModalFooter>

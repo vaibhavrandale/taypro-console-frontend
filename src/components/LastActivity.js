@@ -1,20 +1,91 @@
-import React from 'react';
-import { CCard, CCardHeader, CCardBody } from '@coreui/react';
-import { CAvatar } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilSpeech } from '@coreui/icons';
-import { formatDistanceToNow } from 'date-fns';
+import React from "react";
+import { CCard, CCardHeader, CCardBody, CButton, CAvatar } from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilSpeech } from "@coreui/icons";
+import { formatDistanceToNow } from "date-fns";
 
-const LastActivity = ({ LastActivity }) => {
+// const LastActivity = ({ lastactivity }) => {
+//   return (
+//     <CCard className="w-full mx-auto shadow rounded">
+//       <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
+//         <div>
+//           <CIcon icon={cilSpeech} className="me-2 text-primary" />
+//           <strong>Last Activity</strong>
+//         </div>
+//       </CCardHeader>
+//       <CCardBody className="overflow-auto" style={{ maxHeight: "400px" }}>
+//         {lastactivity.length > 0 ? (
+//           lastactivity
+//             .slice()
+//             .reverse()
+//             .map((activity, index) => (
+//               <div
+//                 key={index}
+//                 className="d-flex align-items-center border-bottom pb-3 mb-3"
+//               >
+//                 <CAvatar
+//                   src={activity.profile}
+//                   size="lg"
+//                   className="me-3 flex-shrink-0"
+//                   style={{ width: "50px", height: "50px" }} // Fixed size
+//                 />
+//                 <div className="flex-grow-1">
+//                   <p className="mb-1 fw-semibold d-flex justify-content-between">
+//                     <span className="fw-semibold">{activity.name}</span>
+//                     <span className="text-muted small">
+//                       {formatDistanceToNow(new Date(activity.timestamp), {
+//                         addSuffix: true,
+//                       })}
+//                     </span>
+//                   </p>
+
+//                   <p
+//                     className="text-muted"
+//                     style={{ fontSize: "14px", lineHeight: "1.5" }}
+//                     dangerouslySetInnerHTML={{
+//                       __html: activity.details.replace(/, /g, ",<br>"),
+//                     }}
+//                   ></p>
+//                 </div>
+//               </div>
+//             ))
+//         ) : (
+//           <p className="text-center text-muted">No recent activity</p>
+//         )}
+//       </CCardBody>
+//     </CCard>
+//   );
+// };
+
+const LastActivity = ({ lastactivity }) => {
+  if (!lastactivity || !Array.isArray(lastactivity)) {
+    return (
+      <CCard className="w-full mx-auto shadow rounded">
+        <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
+          <div>
+            <CIcon icon={cilSpeech} className="me-2 text-primary" />
+            <strong>Last Activity</strong>
+          </div>
+        </CCardHeader>
+        <CCardBody className="overflow-auto" style={{ maxHeight: "400px" }}>
+          <p className="text-center text-muted">No recent activity</p>
+        </CCardBody>
+      </CCard>
+    );
+  }
+
   return (
-    <CCard className="w-full  mx-auto shadow rounded">
-      <CCardHeader className="bg-light d-flex align-items-center">
-        <CIcon icon={cilSpeech} className="me-2 text-primary" />
-        <strong>Last Activity</strong>
+    <CCard className="w-full mx-auto shadow rounded">
+      <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
+        <div>
+          <CIcon icon={cilSpeech} className="me-2 text-primary" />
+          <strong>Last Activity</strong>
+        </div>
       </CCardHeader>
-      <CCardBody className="overflow-auto" style={{ maxHeight: '400px' }}>
-        {LastActivity.length > 0 ? (
-          LastActivity.slice()
+      <CCardBody className="overflow-auto" style={{ maxHeight: "400px" }}>
+        {lastactivity.length > 0 ? (
+          lastactivity
+            .slice()
             .reverse()
             .map((activity, index) => (
               <div
@@ -25,7 +96,7 @@ const LastActivity = ({ LastActivity }) => {
                   src={activity.profile}
                   size="lg"
                   className="me-3 flex-shrink-0"
-                  style={{ width: '50px', height: '50px' }} // Fixed size
+                  style={{ width: "50px", height: "50px" }} // Fixed size
                 />
                 <div className="flex-grow-1">
                   <p className="mb-1 fw-semibold d-flex justify-content-between">
@@ -36,17 +107,12 @@ const LastActivity = ({ LastActivity }) => {
                       })}
                     </span>
                   </p>
-
-                  {/* <p
-                    className="text-dark small"
-                    style={{ wordBreak: 'break-word' }}
-                  >
-                    {activity.details}
-                  </p> */}
                   <p
-                    className="text-muted"
-                    style={{ fontSize: '14px', lineHeight: '1.5' }}
-                    dangerouslySetInnerHTML={{ __html: activity.details }}
+                    className=""
+                    style={{ fontSize: "14px", lineHeight: "1.5" }}
+                    dangerouslySetInnerHTML={{
+                      __html: activity.details.replace(/, /g, ",<br>"),
+                    }}
                   ></p>
                 </div>
               </div>
