@@ -269,17 +269,19 @@ const Notifications = () => {
   }, [authtoken]);
 
   // 🔍 Filter Notifications Based on Search
-  const filteredNotifications = notifications.filter(
-    (notification) =>
-      notification.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      notification.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      notification.performed_by.username
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      notification.performed_by.email
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
+  const filteredNotifications = notifications
+    .filter(
+      (notification) =>
+        notification.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.performed_by.username
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        notification.performed_by.email
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+    )
+    .reverse();
 
   // 📌 Open Read Users Modal
   const handleViewReadUsers = (notification) => {

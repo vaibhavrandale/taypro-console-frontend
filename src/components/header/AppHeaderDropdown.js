@@ -53,6 +53,12 @@ const AppHeaderDropdown = () => {
     toast.success('Sign out Successfully');
   };
 
+  const image = userInfo
+    ? userInfo.profile_image
+      ? userInfo.profile_image
+      : 'https://www.pngitem.com/pimgs/m/146-1462217_profile-icon-png-image-free-download-searchpng-employee.png'
+    : '';
+
   return (
     <>
       <CDropdown variant="nav-item">
@@ -61,7 +67,7 @@ const AppHeaderDropdown = () => {
           className="py-0 pe-0"
           caret={false}
         >
-          <CAvatar src={userInfo.profile_image} size="md" />
+          <CAvatar src={image} size="md" />
         </CDropdownToggle>
 
         <CDropdownMenu className="pt-0" placement="bottom-end">

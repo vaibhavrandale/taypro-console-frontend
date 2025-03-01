@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   CCard,
   CCardBody,
@@ -22,20 +22,46 @@ import {
   CImage,
 } from '@coreui/react';
 // import { Bar } from 'react-chartjs-2';
-import { service_tickets } from '../../../data'; // Import service ticket data
+// import { service_tickets } from '../../../data'; // Import service ticket data
 // import TicketChart from './TicketChart';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import PieChart from './PieChart';
 import './servicetickts.css';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import LastActivity from '../../../components/LastActivity';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+
+    case 'FETCH_SUCCESS':
+      return { ...state, servicetickets: action.payload, loading: false };
+
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const ServiceTicketDashboard = () => {
+  const [{ loading, error, servicetickets }, dispatch] = useReducer(reducer, {
+    servicetickets: [],
+    loading: true,
+    error: '',
+  });
+  const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
 
   // 📌 Open modal with selected ticket data
@@ -61,16 +87,41 @@ const ServiceTicketDashboard = () => {
     setModalVisible(false);
   };
 
-  const filteredData = service_tickets.filter(
-    (item) =>
-      item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchServicetickets = async () => {
+      try {
+        dispatch({ type: 'FETCH_REQUEST' });
+        const response = await axios.get('/api/v1/servicetickets', {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        let result = response.data.data;
+        console.log(result);
+
+        dispatch({ type: 'FETCH_SUCCESS', payload: result });
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: error,
+        });
+      }
+    };
+
+    fetchServicetickets();
+  }, [authtoken]);
+
+  const filteredData = servicetickets
+    ? servicetickets.filter(
+        (item) =>
+          item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
-    <div className="container">
+    <div className="">
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
 
       <PieChart />
@@ -131,7 +182,7 @@ const ServiceTicketDashboard = () => {
                     <CButton
                       color="secondary"
                       size="sm"
-                      className="me-2"
+                      className="m-1"
                       onClick={() => openViewModal(ticket)}
                     >
                       View
@@ -139,6 +190,7 @@ const ServiceTicketDashboard = () => {
                     <CButton
                       color="primary"
                       size="sm"
+                      className="m-1"
                       onClick={() => openUpdateModal(ticket)}
                     >
                       Update
@@ -155,6 +207,7 @@ const ServiceTicketDashboard = () => {
       <CModal
         scrollable
         size="xl"
+        backdrop="static"
         visible={viewModalVisible}
         onClose={() => setViewModalVisible(false)}
       >
@@ -288,35 +341,132 @@ const ServiceTicketDashboard = () => {
                     <CTableHeaderCell>Ticket Images</CTableHeaderCell>
                     <CTableDataCell>
                       <div className="d-flex flex-wrap">
-                        {selectedTicket.ticket_images.length > 0 ? (
-                          selectedTicket.ticket_images.map((image, index) => (
-                            // <img
-                            // key={index}
-                            // src={image.image}
-                            // alt={`Ticket Image ${index + 1}`}
-                            //   className="img-thumbnail me-2"
-                            // width="100"
-                            // height="80"
-                            //   style={{ objectFit: 'cover', cursor: 'pointer' }}
-                            // />
-
-                            <CImage
-                              fluid
-                              key={index}
-                              src={image.image}
-                              className="m-2"
-                              alt={`Ticket Image ${index + 1}`}
-                              style={{ width: '100vw', height: 'auto' }}
-                            />
-                          ))
+                        {selectedTicket.ticket_generated_images1 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_generated_images1}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_generated_images1}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
                         ) : (
-                          <p className="text-muted">No images available</p>
+                          ''
+                        )}
+                        {selectedTicket.ticket_generated_images2 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_generated_images2}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_generated_images2}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_generated_images3 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_generated_images3}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_generated_images3}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_generated_images4 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_generated_images4}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_generated_images4}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_generated_images5 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_generated_images5}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_generated_images5}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
                         )}
                       </div>
                     </CTableDataCell>
                   </CTableRow>
+
+                  <CTableRow>
+                    <CTableHeaderCell>Resolved Ticket Images</CTableHeaderCell>
+                    <CTableDataCell>
+                      <div className="d-flex flex-wrap">
+                        {selectedTicket.ticket_resolved_images1 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_resolved_images1}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images1}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_resolved_images2 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_resolved_images2}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images2}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_resolved_images3 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_resolved_images3}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images3}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_resolved_images4 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_resolved_images4}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images4}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                        {selectedTicket.ticket_resolved_images5 ? (
+                          <CImage
+                            fluid
+                            src={selectedTicket.ticket_resolved_images5}
+                            className="m-2"
+                            alt={`Ticket Image ${selectedTicket.ticket_resolved_images5}`}
+                            style={{ width: '100vw', height: 'auto' }}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </CTableDataCell>
+                  </CTableRow>
+
+                  {/* array lastactivity */}
                 </CTableBody>
               </CTable>
+              <LastActivity LastActivity={selectedTicket.last_activity} />
             </CModalBody>
           </>
         )}
@@ -519,7 +669,7 @@ const ServiceTicketDashboard = () => {
               <CCol md={12}>
                 <h6 className="mt-3">Ticket Images</h6>
                 <div className="d-flex flex-wrap">
-                  {formData.ticket_images &&
+                  {/* {formData.ticket_images &&
                     formData.ticket_images.map((image, index) => (
                       <div
                         key={index}
@@ -536,7 +686,7 @@ const ServiceTicketDashboard = () => {
                           style={{ objectFit: 'cover' }}
                         />
                       </div>
-                    ))}
+                    ))} */}
                 </div>
               </CCol>
 
