@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import {
   CContainer,
   CDropdown,
@@ -14,35 +14,35 @@ import {
   CDropdownDivider,
   CAvatar,
   CBadge,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilBell, cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import moment from 'moment';
-import { AppHeaderDropdown } from './header/index';
-import { AppBreadcrumb } from './index';
-import { useSelector } from 'react-redux';
-import LoadingSpinner from './LoadingSpinner';
-import toast from 'react-hot-toast';
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilBell, cilContrast, cilMenu, cilMoon, cilSun } from "@coreui/icons";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import moment from "moment";
+import { AppHeaderDropdown } from "./header/index";
+import { AppBreadcrumb } from "./index";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "./LoadingSpinner";
+import toast from "react-hot-toast";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'FETCH_REQUEST':
+    case "FETCH_REQUEST":
       return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
+    case "FETCH_SUCCESS":
       return { ...state, notifications: action.payload, loading: false };
-    case 'FETCH_FAIL':
+    case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
-    case 'UPDATE_REQUEST':
+    case "UPDATE_REQUEST":
       return { ...state, loadingUpdate: true, updateSuccess: false };
-    case 'UPDATE_SUCCESS':
+    case "UPDATE_SUCCESS":
       return { ...state, loadingUpdate: false, updateSuccess: true };
-    case 'UPDATE_FAIL':
+    case "UPDATE_FAIL":
       return { ...state, loadingUpdate: false };
 
-    case 'UPDATE_RESET':
+    case "UPDATE_RESET":
       return { ...state, loadingDelete: false, updateSuccess: false };
 
     default:
@@ -56,34 +56,39 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
-    error: '',
+    error: "",
   });
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
 
   const headerRef = useRef();
-  const { colorMode, setColorMode } = useColorModes('theme');
+  const { colorMode, setColorMode } = useColorModes("theme");
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        dispatch({ type: 'FETCH_REQUEST' });
-        const response = await axios.get('/api/v1/notifications', {
+        if (!authtoken) {
+          console.warn("Waiting for token...");
+          setTimeout(fetchNotifications, 500); // Wait & retry in 500ms
+          return;
+        }
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.get("/api/v1/notifications", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         let result = response.data.data;
-        dispatch({ type: 'FETCH_SUCCESS', payload: result });
+        dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error("Error fetching notifications:", error);
         dispatch({
-          type: 'FETCH_FAIL',
+          type: "FETCH_FAIL",
           payload: error,
         });
       }
     };
 
     if (userInfo && updateSuccess) {
-      dispatch({ type: 'UPDATE_RESET' });
+      dispatch({ type: "UPDATE_RESET" });
     } else {
       fetchNotifications();
     }
@@ -92,26 +97,26 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   if (!userInfo) return null;
 
   const notificationPage =
-    userInfo.role === 'Master Admin'
-      ? '/master-admin/notifications'
-      : userInfo.role === 'Service Admin'
-      ? '/service-admin/notifications'
-      : userInfo.role === 'Project Admin'
-      ? '/project-admin/notifications'
-      : userInfo.role === 'Client Admin'
-      ? '/client-admin/notifications'
-      : '/notifications';
+    userInfo.role === "Master Admin"
+      ? "/master-admin/notifications"
+      : userInfo.role === "Service Admin"
+      ? "/service-admin/notifications"
+      : userInfo.role === "Project Admin"
+      ? "/project-admin/notifications"
+      : userInfo.role === "Client Admin"
+      ? "/client-admin/notifications"
+      : "/notifications";
 
   const filteredNotifications = notifications
     ? notifications.filter((notification) => {
         switch (userInfo.role) {
-          case 'Master Admin':
+          case "Master Admin":
             return true;
-          case 'Client Admin':
+          case "Client Admin":
             return notification.clientadmin;
-          case 'Project Admin':
+          case "Project Admin":
             return notification.projectadmin;
-          case 'Service Admin':
+          case "Service Admin":
             return notification.serviceadmin;
           default:
             return false;
@@ -139,7 +144,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     : [];
   const readNotification = async (notify) => {
     try {
-      dispatch({ type: 'UPDATE_REQUEST' });
+      dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
         `/api/v1/notifications/notification-readby-user/${notify._id}`, // API call with notification ID
         { read: true }, // Sending "read" status in the request body
@@ -149,16 +154,16 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           },
         }
       );
-      dispatch({ type: 'UPDATE_SUCCESS' });
-      toast.success('Notification read');
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success("Notification read");
     } catch (error) {
       console.error(
-        'Error marking notification as read:',
+        "Error marking notification as read:",
         error.response.data.error
       );
       toast.error(error.response.data.error);
       dispatch({
-        type: 'UPDATE_FAIL',
+        type: "UPDATE_FAIL",
       });
     }
   };
@@ -168,7 +173,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
           onClick={() => setSidebarShow(!sidebarShow)}
-          style={{ marginInlineStart: '-14px' }}
+          style={{ marginInlineStart: "-14px" }}
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
@@ -186,9 +191,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           {/* 🌗 Theme Toggle */}
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>
-              {colorMode === 'dark' ? (
+              {colorMode === "dark" ? (
                 <CIcon icon={cilMoon} size="lg" />
-              ) : colorMode === 'auto' ? (
+              ) : colorMode === "auto" ? (
                 <CIcon icon={cilContrast} size="lg" />
               ) : (
                 <CIcon icon={cilSun} size="lg" />
@@ -196,16 +201,16 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             </CDropdownToggle>
             <CDropdownMenu>
               <CDropdownItem
-                active={colorMode === 'light'}
-                onClick={() => setColorMode('light')}
+                active={colorMode === "light"}
+                onClick={() => setColorMode("light")}
                 as="button"
               >
                 <CIcon className="me-2" icon={cilSun} size="lg" /> Light
               </CDropdownItem>
               <CDropdownItem
                 as="button"
-                active={colorMode === 'dark'}
-                onClick={() => setColorMode('dark')}
+                active={colorMode === "dark"}
+                onClick={() => setColorMode("dark")}
               >
                 <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
               </CDropdownItem>
@@ -240,9 +245,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     <CBadge
                       className="badge bg-danger d-flex justify-content-center align-items-center "
                       style={{
-                        height: '16px',
-                        width: '16px',
-                        borderRadius: '50%',
+                        height: "18px",
+                        width: "18px",
+                        borderRadius: "50%",
                       }}
                       position="top-end"
                       shape="rounded-pill"
@@ -258,7 +263,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               </div>
             </CDropdownToggle>
 
-            <CDropdownMenu className="p-2" style={{ minWidth: '250px' }}>
+            <CDropdownMenu className="p-2" style={{ minWidth: "250px" }}>
               <div className="d-flex justify-content-between align-items-center px-3 py-2">
                 <strong>Notifications</strong>
                 <Link to={notificationPage} className=" small">
@@ -283,7 +288,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       key={index}
                       disabled={isRead}
                       className={`d-flex align-items-center py-2 my-1 ${
-                        isRead ? 'text-muted' : 'fw-bold'
+                        isRead ? "text-muted" : "fw-bold"
                       }`}
                       onClick={() => readNotification(notification)}
                     >
@@ -301,10 +306,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             ? `${notification.details.substring(0, 30)}...`
                             : notification.details}
                         </small>
-                        <small className="d-block" style={{ fontSize: '12px' }}>
-                          {notification.performed_by.username} |{' '}
+                        <small className="d-block" style={{ fontSize: "12px" }}>
+                          {notification.performed_by.username} |{" "}
                           {moment(notification.timestamp).format(
-                            'MMM DD, YYYY HH:mm'
+                            "MMM DD, YYYY HH:mm"
                           )}
                         </small>
                       </div>

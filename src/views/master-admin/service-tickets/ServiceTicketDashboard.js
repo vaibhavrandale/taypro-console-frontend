@@ -215,13 +215,15 @@ const ServiceTicketDashboard = () => {
   }, [authtoken]);
 
   const filteredData = servicetickets
-    ? servicetickets.filter(
-        (item) =>
-          item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? servicetickets
+        .filter(
+          (item) =>
+            item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .reverse()
     : [];
 
   return (
@@ -300,14 +302,15 @@ const ServiceTicketDashboard = () => {
                       >
                         View
                       </CButton>
-                      <CButton
+                      <Link
                         color="primary"
                         size="sm"
-                        className="m-1"
-                        onClick={() => openUpdateModal(ticket._id)}
+                        className="m-1 btn btn-sm btn-primary text-decoration-none"
+                        to={`update-service-ticket/${ticket._id}`}
+                        // onClick={() => openUpdateModal(ticket._id)}
                       >
                         Update
-                      </CButton>
+                      </Link>
                     </CTableDataCell>
                   </CTableRow>
                 ))
@@ -412,61 +415,112 @@ const ServiceTicketDashboard = () => {
                   {serviceticket.ticket_generated_images1 ? (
                     <>
                       <CTableRow>
-                        <CTableHeaderCell>Ticket Images</CTableHeaderCell>
+                        <CTableHeaderCell>
+                          Ticket Generating Time Images
+                        </CTableHeaderCell>
                         <CTableDataCell>
                           <div className="d-flex flex-wrap">
                             {serviceticket.ticket_generated_images1 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_generated_images1}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_generated_images1}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_generated_images1}`}
+                                target="blank"
+                              >
+                                {" "}
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_generated_images1}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_generated_images1}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_generated_images2 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_generated_images2}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_generated_images2}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_generated_images2}`}
+                                target="blank"
+                              >
+                                {" "}
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_generated_images2}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_generated_images2}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_generated_images3 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_generated_images3}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_generated_images3}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_generated_images3}`}
+                                target="blank"
+                              >
+                                {" "}
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_generated_images3}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_generated_images3}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_generated_images4 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_generated_images4}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_generated_images4}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_generated_images4}`}
+                                target="blank"
+                              >
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_generated_images4}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_generated_images4}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_generated_images5 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_generated_images5}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_generated_images5}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_generated_images5}`}
+                                target="blank"
+                              >
+                                {" "}
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_generated_images5}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_generated_images5}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
@@ -533,57 +587,103 @@ const ServiceTicketDashboard = () => {
                         <CTableDataCell>
                           <div className="d-flex flex-wrap">
                             {serviceticket.ticket_resolved_images1 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_resolved_images1}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_resolved_images1}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_resolved_images1}`}
+                                target="blank"
+                              >
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_resolved_images1}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_resolved_images1}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_resolved_images2 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_resolved_images2}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_resolved_images2}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_resolved_images2}`}
+                                target="blank"
+                              >
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_resolved_images2}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_resolved_images2}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_resolved_images3 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_resolved_images3}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_resolved_images3}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_resolved_images3}`}
+                                target="blank"
+                              >
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_resolved_images3}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_resolved_images3}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_resolved_images4 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_resolved_images4}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_resolved_images4}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_resolved_images4}`}
+                                target="blank"
+                              >
+                                {" "}
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_resolved_images4}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_resolved_images4}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />{" "}
+                              </Link>
                             ) : (
                               ""
                             )}
                             {serviceticket.ticket_resolved_images5 ? (
-                              <CImage
-                                fluid
-                                src={serviceticket.ticket_resolved_images5}
-                                className="m-2"
-                                alt={`Ticket Image ${serviceticket.ticket_resolved_images5}`}
-                                style={{ width: "100vw", height: "auto" }}
-                              />
+                              <Link
+                                to={`${serviceticket.ticket_resolved_images5}`}
+                                target="blank"
+                              >
+                                <CImage
+                                  fluid
+                                  src={serviceticket.ticket_resolved_images5}
+                                  className="m-2"
+                                  alt={`Ticket Image ${serviceticket.ticket_resolved_images5}`}
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </Link>
                             ) : (
                               ""
                             )}
@@ -1101,7 +1201,7 @@ const ServiceTicketDashboard = () => {
             size="sm"
             onClick={() => handleUpdate(serviceticket._id)}
           >
-            {loading ? (
+            {updateserviceticketloading ? (
               <>
                 Saving <LoadingSpinner />
               </>

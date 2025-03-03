@@ -190,7 +190,7 @@
 
 // export default Notifications;
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   CTable,
   CTableHead,
@@ -209,19 +209,19 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilPeople } from '@coreui/icons';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilPeople } from "@coreui/icons";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const Notifications = () => {
   // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
 
   const [notifications, setNotifications] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [readUsers, setReadUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -251,7 +251,7 @@ const Notifications = () => {
     setLoading(true);
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/api/v1/notifications', {
+        const response = await axios.get("/api/v1/notifications", {
           headers: {
             Authorization: `Bearer ${authtoken}`, // Attach Authorization token
           },
@@ -406,13 +406,13 @@ const Notifications = () => {
               </CTableHead>
               <CTableBody>
                 {readUsers.map((user, index) => (
-                  <CTableRow key={user.id}>
+                  <CTableRow key={index}>
                     <CTableDataCell>{index + 1}</CTableDataCell>
                     <CTableDataCell>{user.readbyId}</CTableDataCell>
                     <CTableDataCell>{user.readByName}</CTableDataCell>
                     <CTableDataCell>
-                      <CBadge color={user.read ? 'success' : 'danger'}>
-                        {user.read ? 'Read' : 'Unread'}
+                      <CBadge color={user.read ? "success" : "danger"}>
+                        {user.read ? "Read" : "Unread"}
                       </CBadge>
                     </CTableDataCell>
                   </CTableRow>

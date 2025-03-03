@@ -203,7 +203,7 @@
 
 // export default CreateServiceTicket;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -217,22 +217,22 @@ import {
   CCol,
   CListGroup,
   CListGroupItem,
-} from '@coreui/react';
-import { robots, service_tickets_faults } from '../../../data'; // Import robots & fault types
+} from "@coreui/react";
+import { robots, service_tickets_faults } from "../../../data"; // Import robots & fault types
 
 const CreateServiceTicket = () => {
   const [formData, setFormData] = useState({
-    robot_no: '',
-    deveui: '',
-    site_id: '',
-    company: '',
-    lora_no: '',
-    fault_type: '',
-    notes: '',
+    robot_no: "",
+    deveui: "",
+    site_id: "",
+    company: "",
+    lora_no: "",
+    fault_type: "",
+    notes: "",
     images: [],
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
 
   // 📌 Handle robot selection to auto-fill details
@@ -247,7 +247,7 @@ const CreateServiceTicket = () => {
         company: selectedRobot.company,
         lora_no: selectedRobot.lora_no,
       });
-      setSearchTerm(''); // Clear search input
+      setSearchTerm(""); // Clear search input
       setFilteredRobots([]); // Hide suggestions
     }
   };
@@ -278,7 +278,7 @@ const CreateServiceTicket = () => {
       company: robot.company,
       lora_no: robot.lora_no,
     });
-    setSearchTerm(''); // Clear search input
+    setSearchTerm(""); // Clear search input
     setFilteredRobots([]); // Hide suggestions
   };
 
@@ -291,16 +291,16 @@ const CreateServiceTicket = () => {
   // 📌 Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('New Service Ticket:', formData);
-    alert('Service Ticket Created Successfully!');
+    console.log("New Service Ticket:", formData);
+    alert("Service Ticket Created Successfully!");
     setFormData({
-      robot_no: '',
-      deveui: '',
-      site_id: '',
-      company: '',
-      lora_no: '',
-      fault_type: '',
-      notes: '',
+      robot_no: "",
+      deveui: "",
+      site_id: "",
+      company: "",
+      lora_no: "",
+      fault_type: "",
+      notes: "",
       images: [],
     });
   };
@@ -329,7 +329,7 @@ const CreateServiceTicket = () => {
                   {filteredRobots.map((robot) => (
                     <CListGroupItem
                       id="robot_no"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                       key={robot.robot_no}
                       action
                       onClick={() => selectRobotFromSearch(robot)}
@@ -348,11 +348,13 @@ const CreateServiceTicket = () => {
                 className="mb-3"
               >
                 <option value="">Select Robot</option>
-                {robots.map((robot) => (
-                  <option key={robot.robot_no} value={robot.robot_no}>
-                    {robot.robot_no} - {robot.site_id}
-                  </option>
-                ))}
+                {robots
+                  .filter((robot) => robot.robot_type !== "gateway") // Exclude "gateway" robots
+                  .map((robot) => (
+                    <option key={robot.robot_no} value={robot.robot_no}>
+                      {robot.robot_no} - {robot.site_id}
+                    </option>
+                  ))}
               </CFormSelect>
 
               <CRow>
@@ -413,7 +415,7 @@ const CreateServiceTicket = () => {
                 <option value="">Select Fault Type</option>
                 {service_tickets_faults.map((fault, index) => (
                   <option key={index} value={fault}>
-                    {fault.replace(/-/g, ' ')}
+                    {fault.replace(/-/g, " ")}
                   </option>
                 ))}
               </CFormSelect>
