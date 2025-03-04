@@ -1,209 +1,4 @@
-// import React, { useState } from 'react';
-// import {
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-//   CForm,
-//   CFormSelect,
-//   CFormInput,
-//   CFormTextarea,
-//   CButton,
-//   CRow,
-//   CCol,
-// } from '@coreui/react';
-// import { robots, service_tickets_faults } from '../../../data'; // Import robots & fault types
-
-// const CreateServiceTicket = () => {
-//   const [formData, setFormData] = useState({
-//     robot_no: '',
-//     deveui: '',
-//     site_id: '',
-//     company: '',
-//     lora_no: '',
-//     fault_type: '',
-//     notes: '',
-//     images: [],
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   // 📌 Handle robot selection to auto-fill details
-//   const handleRobotSelect = (e) => {
-//     const selectedRobot = robots.find((r) => r.robot_no === e.target.value);
-//     if (selectedRobot) {
-//       setFormData({
-//         ...formData,
-//         robot_no: selectedRobot.robot_no,
-//         deveui: selectedRobot.deveui,
-//         site_id: selectedRobot.site_id,
-//         company: selectedRobot.company,
-//         lora_no: selectedRobot.lora_no,
-//       });
-//     }
-//   };
-
-//   // 📌 Handle image upload
-//   const handleImageUpload = (e) => {
-//     const files = Array.from(e.target.files);
-//     setFormData({ ...formData, images: [...formData.images, ...files] });
-//   };
-
-//   // 📌 Handle form submission
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log('New Service Ticket:', formData);
-//     alert('Service Ticket Created Successfully!');
-//     setFormData({
-//       robot_no: '',
-//       deveui: '',
-//       site_id: '',
-//       company: '',
-//       lora_no: '',
-//       fault_type: '',
-//       notes: '',
-//       images: [],
-//     });
-//   };
-
-//   return (
-//     <CRow className="justify-content-center">
-//       <CCol xs={12} md={8}>
-//         <CCard className="shadow">
-//           <CCardHeader>
-//             <h5>Create New Service Ticket</h5>
-//           </CCardHeader>
-//           <CCardBody>
-//             <CForm onSubmit={handleSubmit}>
-//               {/* 📌 Select Robot */}
-//               <CFormSelect
-//                 name="robot_no"
-//                 onChange={handleRobotSelect}
-//                 className="mb-3"
-//               >
-//                 <option value="">Select Robot</option>
-//                 {robots.map((robot) => (
-//                   <option key={robot.robot_no} value={robot.robot_no}>
-//                     {robot.robot_no} - {robot.site_id}
-//                   </option>
-//                 ))}
-//               </CFormSelect>
-
-//               <CRow>
-//                 <CCol md={6}>
-//                   <CFormInput
-//                     type="text"
-//                     name="deveui"
-//                     value={formData.deveui}
-//                     label="Deveui"
-//                     disabled
-//                     className="mb-3"
-//                   />
-//                 </CCol>
-//                 <CCol md={6}>
-//                   <CFormInput
-//                     type="text"
-//                     name="site_id"
-//                     value={formData.site_id}
-//                     label="Site ID"
-//                     disabled
-//                     className="mb-3"
-//                   />
-//                 </CCol>
-//               </CRow>
-
-//               <CRow>
-//                 <CCol md={6}>
-//                   <CFormInput
-//                     type="text"
-//                     name="company"
-//                     value={formData.company}
-//                     label="Company"
-//                     disabled
-//                     className="mb-3"
-//                   />
-//                 </CCol>
-//                 <CCol md={6}>
-//                   <CFormInput
-//                     type="text"
-//                     name="lora_no"
-//                     value={formData.lora_no}
-//                     label="Lora No"
-//                     disabled
-//                     className="mb-3"
-//                   />
-//                 </CCol>
-//               </CRow>
-
-//               {/* 📌 Select Fault Type */}
-//               <CFormSelect
-//                 name="fault_type"
-//                 value={formData.fault_type}
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               >
-//                 <option value="">Select Fault Type</option>
-//                 {service_tickets_faults.map((fault, index) => (
-//                   <option key={index} value={fault}>
-//                     {fault.replace(/-/g, ' ')}
-//                   </option>
-//                 ))}
-//               </CFormSelect>
-
-//               {/* 📌 Notes */}
-//               <CFormTextarea
-//                 name="notes"
-//                 value={formData.notes}
-//                 onChange={handleChange}
-//                 rows={3}
-//                 placeholder="Add any additional notes..."
-//                 className="mb-3"
-//               />
-
-//               {/* 📌 Upload Images */}
-//               <CFormInput
-//                 type="file"
-//                 multiple
-//                 onChange={handleImageUpload}
-//                 className="mb-3"
-//               />
-
-//               {/* 📌 Display Uploaded Images */}
-//               {formData.images.length > 0 && (
-//                 <div className="mb-3">
-//                   <strong>Uploaded Images:</strong>
-//                   <div className="d-flex flex-wrap mt-2">
-//                     {formData.images.map((img, index) => (
-//                       <img
-//                         key={index}
-//                         src={URL.createObjectURL(img)}
-//                         alt={`Upload ${index}`}
-//                         className="img-thumbnail me-2"
-//                         width="80"
-//                         height="80"
-//                       />
-//                     ))}
-//                   </div>
-//                 </div>
-//               )}
-
-//               {/* 📌 Submit Button */}
-//               <CButton type="submit" color="primary" className="w-100">
-//                 Create Ticket
-//               </CButton>
-//             </CForm>
-//           </CCardBody>
-//         </CCard>
-//       </CCol>
-//     </CRow>
-//   );
-// };
-
-// export default CreateServiceTicket;
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -217,8 +12,15 @@ import {
   CCol,
   CListGroup,
   CListGroupItem,
+  CBadge,
 } from "@coreui/react";
-import { robots, service_tickets_faults } from "../../../data"; // Import robots & fault types
+import axios from "axios";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { cilX } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CreateServiceTicket = () => {
   const [formData, setFormData] = useState({
@@ -228,32 +30,58 @@ const CreateServiceTicket = () => {
     company: "",
     lora_no: "",
     fault_type: "",
-    notes: "",
-    images: [],
+    ticket_generating_notes: "",
+    block: "",
+    robot_type: "",
+    ticket_resolved: false,
+    ticket_generated_images1: "",
+    ticket_generated_images2: "",
+    ticket_generated_images3: "",
+    ticket_generated_images4: "",
+    ticket_generated_images5: "",
   });
 
+  const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
-
-  // 📌 Handle robot selection to auto-fill details
-  const handleRobotSelect = (e) => {
-    const selectedRobot = robots.find((r) => r.robot_no === e.target.value);
-    if (selectedRobot) {
-      setFormData({
-        ...formData,
-        robot_no: selectedRobot.robot_no,
-        deveui: selectedRobot.deveui,
-        site_id: selectedRobot.site_id,
-        company: selectedRobot.company,
-        lora_no: selectedRobot.lora_no,
-      });
-      setSearchTerm(""); // Clear search input
-      setFilteredRobots([]); // Hide suggestions
-    }
-  };
+  const [uploadingFields, setUploadingFields] = useState({});
+  const [robots, setRobots] = useState([]);
+  const [faults, setFaults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // 📌 Handle search input change
-  const handleSearchChange = (e) => {
+
+  useEffect(() => {
+    const fetchAllRobots = async () => {
+      try {
+        const response = await axios.get("/api/v1/robots", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        let result = response.data.data;
+        setRobots(result);
+        console.log(result);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    const fetchAllFaults = async () => {
+      try {
+        const response = await axios.get("/api/v1/serviceticketsfaults", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        let result = response.data.data;
+        setFaults(result);
+        console.log(result);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    fetchAllRobots();
+    fetchAllFaults();
+  }, [authtoken]);
+
+  const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     if (value.length > 0) {
@@ -268,7 +96,31 @@ const CreateServiceTicket = () => {
     }
   };
 
-  // 📌 Handle selecting a robot from search results
+  const deleteFileHandler = async (fileName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [`ticket_generated_images${fileName}`]: "",
+    }));
+  };
+
+  // 📌 Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/v1/servicetickets", formData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      toast.success(
+        `${response.data.data.ticket_id}, Ticket Created Successfully!`
+      );
+      setLoading(false);
+      navigate("/master-admin/service-tickets");
+      console.log("Created Ticket:", response.data);
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+    }
+  };
   const selectRobotFromSearch = (robot) => {
     setFormData({
       ...formData,
@@ -277,37 +129,49 @@ const CreateServiceTicket = () => {
       site_id: robot.site_id,
       company: robot.company,
       lora_no: robot.lora_no,
+      block: robot.block,
+      robot_type: robot.robot_type,
     });
     setSearchTerm(""); // Clear search input
     setFilteredRobots([]); // Hide suggestions
   };
+  const handleFileChange = async (event) => {
+    const { name, files } = event.target;
+    if (files.length === 0) return;
 
-  // 📌 Handle image upload
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData({ ...formData, images: [...formData.images, ...files] });
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploadingFields((prev) => ({ ...prev, [name]: true })); // ✅ Set only this field to loading
+
+      const response = await axios.post(
+        "/api/v1/image-upload/service-tickets",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      // ✅ Update uploaded image dynamically for the specific field
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
+      }));
+
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading for this input
+    } catch (error) {
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading on error
+      console.error("File upload error:", error);
+    }
   };
-
-  // 📌 Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("New Service Ticket:", formData);
-    alert("Service Ticket Created Successfully!");
-    setFormData({
-      robot_no: "",
-      deveui: "",
-      site_id: "",
-      company: "",
-      lora_no: "",
-      fault_type: "",
-      notes: "",
-      images: [],
-    });
-  };
-
   return (
     <CRow className="justify-content-center">
-      <CCol xs={12} md={8}>
+      <CCol>
         <CCard className="shadow">
           <CCardHeader>
             <h5>Create New Service Ticket</h5>
@@ -340,24 +204,17 @@ const CreateServiceTicket = () => {
                 </CListGroup>
               )}
 
-              {/* 📌 Select Robot (Dropdown) */}
-              <CFormSelect
-                name="robot_no"
-                onChange={handleRobotSelect}
-                value={formData.robot_no}
-                className="mb-3"
-              >
-                <option value="">Select Robot</option>
-                {robots
-                  .filter((robot) => robot.robot_type !== "gateway") // Exclude "gateway" robots
-                  .map((robot) => (
-                    <option key={robot.robot_no} value={robot.robot_no}>
-                      {robot.robot_no} - {robot.site_id}
-                    </option>
-                  ))}
-              </CFormSelect>
-
               <CRow>
+                <CCol md={6}>
+                  <CFormInput
+                    type="text"
+                    name="deveui"
+                    value={formData.robot_no}
+                    label="Robot No"
+                    disabled
+                    className="mb-3"
+                  />
+                </CCol>
                 <CCol md={6}>
                   <CFormInput
                     type="text"
@@ -368,6 +225,9 @@ const CreateServiceTicket = () => {
                     className="mb-3"
                   />
                 </CCol>
+              </CRow>
+
+              <CRow>
                 <CCol md={6}>
                   <CFormInput
                     type="text"
@@ -378,9 +238,6 @@ const CreateServiceTicket = () => {
                     className="mb-3"
                   />
                 </CCol>
-              </CRow>
-
-              <CRow>
                 <CCol md={6}>
                   <CFormInput
                     type="text"
@@ -391,6 +248,9 @@ const CreateServiceTicket = () => {
                     className="mb-3"
                   />
                 </CCol>
+              </CRow>
+
+              <CRow>
                 <CCol md={6}>
                   <CFormInput
                     type="text"
@@ -413,9 +273,9 @@ const CreateServiceTicket = () => {
                 className="mb-3"
               >
                 <option value="">Select Fault Type</option>
-                {service_tickets_faults.map((fault, index) => (
-                  <option key={index} value={fault}>
-                    {fault.replace(/-/g, " ")}
+                {faults.map((fault, index) => (
+                  <option key={index} value={fault.name}>
+                    {fault.fault_name.replace(/-/g, " ")}
                   </option>
                 ))}
               </CFormSelect>
@@ -423,45 +283,77 @@ const CreateServiceTicket = () => {
               {/* 📌 Notes */}
               <CFormTextarea
                 name="notes"
-                value={formData.notes}
+                value={formData.ticket_generating_notes}
                 onChange={(e) =>
-                  setFormData({ ...formData, notes: e.target.value })
+                  setFormData({
+                    ...formData,
+                    ticket_generating_notes: e.target.value,
+                  })
                 }
                 rows={3}
                 placeholder="Add any additional notes..."
                 className="mb-3"
               />
 
-              {/* 📌 Upload Images */}
-              <CFormInput
-                type="file"
-                multiple
-                onChange={handleImageUpload}
-                className="mb-3"
-              />
+              {[1, 2, 3, 4, 5].map((num) => (
+                <CRow>
+                  <CCol md={3} key={`resolved-${num}`}>
+                    <CFormInput
+                      label={`Ticket Generated Image ${num}`}
+                      type="file"
+                      name={`ticket_generated_images${num}`}
+                      onChange={handleFileChange}
+                      disabled={
+                        uploadingFields[`ticket_generated_images${num}`]
+                      } // ✅ Disable only the input being uploaded
+                    />
+                  </CCol>
 
-              {/* 📌 Display Uploaded Images */}
-              {formData.images.length > 0 && (
-                <div className="mb-3">
-                  <strong>Uploaded Images:</strong>
-                  <div className="d-flex flex-wrap mt-2">
-                    {formData.images.map((img, index) => (
-                      <img
-                        key={index}
-                        src={URL.createObjectURL(img)}
-                        alt={`Upload ${index}`}
-                        className="img-thumbnail me-2"
-                        width="80"
-                        height="80"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+                  <CCol md={3}>
+                    {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                      <div className="mt-2 d-flex justify-content-center">
+                        <LoadingSpinner />
+                      </div>
+                    ) : formData[`ticket_generated_images${num}`] ? (
+                      <div className="my-2">
+                        <img
+                          className="position-relative "
+                          src={formData[`ticket_generated_images${num}`]}
+                          alt={`Generated Image ${num}`}
+                          width="100"
+                          height="100"
+                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                        />
+                        <CBadge
+                          color="primary"
+                          position="absolute"
+                          top="0"
+                          left="0"
+                          shape="rounded-pill"
+                          className=" p-1"
+                        >
+                          <CIcon
+                            icon={cilX}
+                            cursor="pointer"
+                            onClick={() => deleteFileHandler(num)}
+                            title="Download file"
+                          />
+                        </CBadge>
+                      </div>
+                    ) : null}
+                  </CCol>
+                </CRow>
+              ))}
 
               {/* 📌 Submit Button */}
-              <CButton type="submit" color="primary" className="w-100">
-                Create Ticket
+              <CButton type="submit" color="primary" className="w-100 m-2">
+                {loading ? (
+                  <>
+                    Creating... <LoadingSpinner />{" "}
+                  </>
+                ) : (
+                  "Create Ticket"
+                )}
               </CButton>
             </CForm>
           </CCardBody>

@@ -4,63 +4,10 @@ import CIcon from "@coreui/icons-react";
 import { cilSpeech } from "@coreui/icons";
 import { formatDistanceToNow } from "date-fns";
 
-// const LastActivity = ({ lastactivity }) => {
-//   return (
-//     <CCard className="w-full mx-auto shadow rounded">
-//       <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
-//         <div>
-//           <CIcon icon={cilSpeech} className="me-2 text-primary" />
-//           <strong>Last Activity</strong>
-//         </div>
-//       </CCardHeader>
-//       <CCardBody className="overflow-auto" style={{ maxHeight: "400px" }}>
-//         {lastactivity.length > 0 ? (
-//           lastactivity
-//             .slice()
-//             .reverse()
-//             .map((activity, index) => (
-//               <div
-//                 key={index}
-//                 className="d-flex align-items-center border-bottom pb-3 mb-3"
-//               >
-//                 <CAvatar
-//                   src={activity.profile}
-//                   size="lg"
-//                   className="me-3 flex-shrink-0"
-//                   style={{ width: "50px", height: "50px" }} // Fixed size
-//                 />
-//                 <div className="flex-grow-1">
-//                   <p className="mb-1 fw-semibold d-flex justify-content-between">
-//                     <span className="fw-semibold">{activity.name}</span>
-//                     <span className="text-muted small">
-//                       {formatDistanceToNow(new Date(activity.timestamp), {
-//                         addSuffix: true,
-//                       })}
-//                     </span>
-//                   </p>
-
-//                   <p
-//                     className="text-muted"
-//                     style={{ fontSize: "14px", lineHeight: "1.5" }}
-//                     dangerouslySetInnerHTML={{
-//                       __html: activity.details.replace(/, /g, ",<br>"),
-//                     }}
-//                   ></p>
-//                 </div>
-//               </div>
-//             ))
-//         ) : (
-//           <p className="text-center text-muted">No recent activity</p>
-//         )}
-//       </CCardBody>
-//     </CCard>
-//   );
-// };
-
 const LastActivity = ({ lastactivity }) => {
   if (!lastactivity || !Array.isArray(lastactivity)) {
     return (
-      <CCard className="w-full mx-auto shadow rounded">
+      <CCard className="mx-auto shadow rounded">
         <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
           <div>
             <CIcon icon={cilSpeech} className="me-2 text-primary" />
@@ -82,7 +29,10 @@ const LastActivity = ({ lastactivity }) => {
           <strong>Last Activity</strong>
         </div>
       </CCardHeader>
-      <CCardBody className="overflow-auto" style={{ maxHeight: "400px" }}>
+      <CCardBody
+        className="overflow-auto"
+        style={{ maxHeight: "400px", maxWidth: "100%" }}
+      >
         {lastactivity.length > 0 ? (
           lastactivity
             .slice()
@@ -107,17 +57,7 @@ const LastActivity = ({ lastactivity }) => {
                       })}
                     </span>
                   </p>
-                  {/* <p
-                    className="border maxw-75 mw-75"
-                    style={{
-                      fontSize: "14px",
-                      lineHeight: "1.5",
-                      textAlign: "start",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: activity.details.replace(/, /g, ",<br>"),
-                    }}
-                  ></p> */}
+
                   <p
                     className=" maxw-75 mw-75"
                     style={{
