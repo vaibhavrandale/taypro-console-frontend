@@ -48,6 +48,7 @@ const CreateServiceTicket = () => {
   const [robots, setRobots] = useState([]);
   const [faults, setFaults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [faultLoading, setFaultLoading] = useState(false);
   const navigate = useNavigate();
 
   // 📌 Handle search input change
@@ -66,12 +67,14 @@ const CreateServiceTicket = () => {
       }
     };
     const fetchAllFaults = async () => {
+      setFaultLoading(true);
       try {
         const response = await axios.get("/api/v1/serviceticketsfaults", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         let result = response.data.data;
         setFaults(result);
+        setFaultLoading(false);
         console.log(result);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -186,7 +189,6 @@ const CreateServiceTicket = () => {
                 onChange={handleSearchChange}
                 className="mb-3"
               />
-
               {/* 📌 Display Search Suggestions */}
               {filteredRobots.length > 0 && (
                 <CListGroup className="mb-3">
@@ -203,7 +205,6 @@ const CreateServiceTicket = () => {
                   ))}
                 </CListGroup>
               )}
-
               <CRow>
                 <CCol md={6}>
                   <CFormInput
@@ -226,7 +227,6 @@ const CreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-
               <CRow>
                 <CCol md={6}>
                   <CFormInput
@@ -249,7 +249,6 @@ const CreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-
               <CRow>
                 <CCol md={6}>
                   <CFormInput
@@ -262,7 +261,7 @@ const CreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-
+              {faultLoading ? <LoadingSpinner /> : ""}{" "}
               {/* 📌 Select Fault Type */}
               <CFormSelect
                 name="fault_type"
@@ -279,7 +278,6 @@ const CreateServiceTicket = () => {
                   </option>
                 ))}
               </CFormSelect>
-
               {/* 📌 Notes */}
               <CFormTextarea
                 name="notes"
@@ -294,7 +292,6 @@ const CreateServiceTicket = () => {
                 placeholder="Add any additional notes..."
                 className="mb-3"
               />
-
               {[1, 2, 3, 4, 5].map((num) => (
                 <CRow>
                   <CCol md={3} key={`resolved-${num}`}>
@@ -344,7 +341,6 @@ const CreateServiceTicket = () => {
                   </CCol>
                 </CRow>
               ))}
-
               {/* 📌 Submit Button */}
               <CButton type="submit" color="primary" className="w-100 m-2">
                 {loading ? (
