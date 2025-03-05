@@ -20,9 +20,11 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { cilX } from "@coreui/icons";
+import { cilCloudUpload } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import "./servicetickts.css";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -369,7 +371,7 @@ const CreateServiceTicket = () => {
               />
               {[1, 2, 3, 4, 5].map((num) => (
                 <CRow>
-                  <CCol md={3} key={`resolved-${num}`}>
+                  {/* <CCol md={3} key={`resolved-${num}`}>
                     <CFormInput
                       label={`Ticket Generated Image ${num}`}
                       type="file"
@@ -379,6 +381,21 @@ const CreateServiceTicket = () => {
                         uploadingFields[`ticket_generated_images${num}`]
                       } // ✅ Disable only the input being uploaded
                     />
+                  </CCol> */}
+                  <CCol md={2} key={`resolved-${num}`}>
+                    <div className="container-btn-file p-2 m-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      {`Image ${num}`}
+                      <input
+                        className="file"
+                        name={`ticket_generated_images${num}`}
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={
+                          uploadingFields[`ticket_generated_images${num}`]
+                        }
+                      />
+                    </div>
                   </CCol>
 
                   <CCol md={3}>
@@ -392,8 +409,8 @@ const CreateServiceTicket = () => {
                           className="position-relative "
                           src={formData[`ticket_generated_images${num}`]}
                           alt={`Generated Image ${num}`}
-                          width="100"
-                          height="100"
+                          width="80"
+                          height="80"
                           style={{ objectFit: "cover", borderRadius: "5px" }}
                         />
                         <CBadge
