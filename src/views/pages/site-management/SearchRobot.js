@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  // CContainer,
   CRow,
   CCol,
   CCard,
   CCardBody,
   CFormInput,
   CInputGroup,
-  //   CDropdown,
-  //   CDropdownToggle,
-  //   CDropdownMenu,
-  //   CDropdownItem,
-} from '@coreui/react';
-import { robots } from '../../../data'; // Import robots data
-import { Link } from 'react-router-dom';
+} from "@coreui/react";
+import { robots } from "../../../data"; // Import robots data
+import { Link } from "react-router-dom";
 
 const SearchRobot = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRobot, setFilteredRobot] = useState([]);
 
-  // Filter robots based on search term (only by Robot No)
-  const filteredRobots = robots.filter((robot) =>
-    robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const handleSearchChange = async (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (value.length > 0) {
+      const filtered = robots.filter(
+        (robot) =>
+          robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
+          robot.site_id.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredRobot(filtered);
+    } else {
+      setFilteredRobot([]);
+    }
+  };
   return (
     <div className="my-3">
-      <CCard className="shadow border-0" style={{ minHeight: '73vh' }}>
+      <CCard className="shadow border-0" style={{ minHeight: "73vh" }}>
         <CCardBody>
           <h5 className="text-primary text-center">Search Robots</h5>
 
@@ -38,25 +43,29 @@ const SearchRobot = () => {
                   placeholder="Search by Robot No..."
                   value={searchTerm}
                   className="form-control"
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                 />
               </CInputGroup>
             </CCol>
           </CRow>
 
           {/* Dropdown with Robot List */}
-          {searchTerm && filteredRobots.length > 0 ? (
-            <CRow className="justify-content-center">
-              <CCol md={4}>
-                <ul
-                  className="text-center shadow-sm p-3"
-                  style={{ maxHeight: '300px', overflowY: 'auto' }}
-                >
-                  {filteredRobots.map((robot, index) => (
+          <CRow className="justify-content-center">
+            <CCol md={4}>
+              <ul
+                className={`text-center ${
+                  searchTerm === "" ? `` : `shadow-sm`
+                } p-3`}
+                style={{ maxHeight: "300px", overflowY: "auto" }}
+              >
+                {searchTerm && filteredRobot.length === 0 ? (
+                  <li style={{ listStyle: "none" }}>No robots found</li>
+                ) : (
+                  filteredRobot.map((robot, index) => (
                     <li
                       key={index}
                       className="my-2 border p-2 rounded"
-                      style={{ listStyle: 'none' }}
+                      style={{ listStyle: "none" }}
                     >
                       <Link
                         // ✅ Move the key to the <li> (not the <Link>)
@@ -64,15 +73,13 @@ const SearchRobot = () => {
                         className="text-decoration-none w-100"
                       >
                         {robot.robot_no}
-                      </Link>{' '}
+                      </Link>{" "}
                     </li>
-                  ))}
-                </ul>
-              </CCol>
-            </CRow>
-          ) : (
-            <p className="text-center">No robot found.</p>
-          )}
+                  ))
+                )}
+              </ul>
+            </CCol>
+          </CRow>
         </CCardBody>
       </CCard>
     </div>

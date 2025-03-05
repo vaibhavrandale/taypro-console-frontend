@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable jsx-a11y/img-redundant-alt */
+/* eslint-disable default-case */
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -22,7 +24,52 @@ import CIcon from "@coreui/icons-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_ROBOTS_REQUEST":
+      return { ...state, robotsloading: true };
+
+    case "FETCH_ROBOTS_SUCCESS":
+      return { ...state, robots: action.payload, robotsloading: false };
+
+    case "FETCH_ROBOTS_FAIL":
+      return { ...state, robotsloading: false, roboterror: action.payload };
+
+    case "FETCH_FAULTS_REQUEST":
+      return { ...state, faultsloading: true };
+
+    case "FETCH_FAULTS_SUCCESS":
+      return {
+        ...state,
+        serviceticketsfault: action.payload,
+        faultsloading: false,
+      };
+
+    case "FETCH_FAULTS_FAIL":
+      return { ...state, faultsloading: false, faulterror: action.payload };
+  }
+};
+
 const CreateServiceTicket = () => {
+  const [
+    {
+      faultsloading,
+      roboterror,
+      robotsloading,
+      faulterror,
+      robots,
+      serviceticketsfault,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    faultsloading: true,
+    robotsloading: true,
+    roboterror: "",
+    faulterror: "",
+    robots: [],
+    serviceticketsfault: [],
+  });
+
   const [formData, setFormData] = useState({
     robot_no: "",
     deveui: "",
@@ -45,10 +92,7 @@ const CreateServiceTicket = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
   const [uploadingFields, setUploadingFields] = useState({});
-  const [robots, setRobots] = useState([]);
-  const [faults, setFaults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [faultLoading, setFaultLoading] = useState(false);
   const navigate = useNavigate();
 
   // 📌 Handle search input change
@@ -56,28 +100,42 @@ const CreateServiceTicket = () => {
   useEffect(() => {
     const fetchAllRobots = async () => {
       try {
+        dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+
         const response = await axios.get("/api/v1/robots", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        let result = response.data.data;
-        setRobots(result);
-        console.log(result);
+
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          payload: response.data.data,
+        });
+        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
+
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: error.response ? error.response.data.error : error.message,
+        });
       }
     };
     const fetchAllFaults = async () => {
-      setFaultLoading(true);
       try {
+        dispatch({ type: "FETCH_FAULTS_REQUEST" });
         const response = await axios.get("/api/v1/serviceticketsfaults", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        let result = response.data.data;
-        setFaults(result);
-        setFaultLoading(false);
-        console.log(result);
+
+        dispatch({
+          type: "FETCH_FAULTS_SUCCESS",
+          payload: response.data.data,
+        });
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: error.response ? error.response.data.message : error.message,
+        });
       }
     };
     fetchAllRobots();
@@ -93,6 +151,7 @@ const CreateServiceTicket = () => {
           robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
           robot.site_id.toLowerCase().includes(value.toLowerCase())
       );
+
       setFilteredRobots(filtered);
     } else {
       setFilteredRobots([]);
@@ -181,18 +240,26 @@ const CreateServiceTicket = () => {
           </CCardHeader>
           <CCardBody>
             <CForm onSubmit={handleSubmit}>
+              {robotsloading ? (
+                <LoadingSpinner />
+              ) : roboterror ? (
+                <span className="badge bg-danger p-2">{roboterror}</span>
+              ) : (
+                <CFormInput
+                  type="text"
+                  placeholder="Search Robot No or Site ID..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="mb-3"
+                />
+              )}
               {/* 📌 Search for Robot */}
-              <CFormInput
-                type="text"
-                placeholder="Search Robot No or Site ID..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="mb-3"
-              />
               {/* 📌 Display Search Suggestions */}
-              {filteredRobots.length > 0 && (
-                <CListGroup className="mb-3">
-                  {filteredRobots.map((robot) => (
+              <CListGroup className="mb-3">
+                {searchTerm && filteredRobots.length === 0 ? (
+                  <CListGroupItem>No robots found</CListGroupItem>
+                ) : (
+                  filteredRobots.map((robot) => (
                     <CListGroupItem
                       id="robot_no"
                       style={{ cursor: "pointer" }}
@@ -202,9 +269,9 @@ const CreateServiceTicket = () => {
                     >
                       {robot.robot_no} - {robot.site_id}
                     </CListGroupItem>
-                  ))}
-                </CListGroup>
-              )}
+                  ))
+                )}
+              </CListGroup>
               <CRow>
                 <CCol md={6}>
                   <CFormInput
@@ -261,23 +328,31 @@ const CreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-              {faultLoading ? <LoadingSpinner /> : ""}{" "}
+              {/* {faultsloading ? <LoadingSpinner /> : ""}{" "} */}
               {/* 📌 Select Fault Type */}
-              <CFormSelect
-                name="fault_type"
-                value={formData.fault_type}
-                onChange={(e) =>
-                  setFormData({ ...formData, fault_type: e.target.value })
-                }
-                className="mb-3"
-              >
-                <option value="">Select Fault Type</option>
-                {faults.map((fault, index) => (
-                  <option key={index} value={fault.name}>
-                    {fault.fault_name.replace(/-/g, " ")}
-                  </option>
-                ))}
-              </CFormSelect>
+              {faultsloading ? (
+                <LoadingSpinner />
+              ) : faulterror ? (
+                <span className="badge bg-danger p-2">{roboterror}</span>
+              ) : (
+                <CFormSelect
+                  name="fault_type"
+                  value={formData.fault_type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fault_type: e.target.value })
+                  }
+                  className="mb-3"
+                >
+                  <option value="">Select Fault Type</option>
+                  {serviceticketsfault
+                    ? serviceticketsfault.map((fault, index) => (
+                        <option key={index} value={fault.name}>
+                          {fault.fault_name.replace(/-/g, " ")}
+                        </option>
+                      ))
+                    : []}
+                </CFormSelect>
+              )}
               {/* 📌 Notes */}
               <CFormTextarea
                 name="notes"
