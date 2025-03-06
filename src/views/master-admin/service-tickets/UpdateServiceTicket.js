@@ -15,12 +15,17 @@ import {
   CCardHeader,
   CFormTextarea,
   CFormSelect,
+  CBadge,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
     case "FETCH_SUCCESS":
       return { ...state, ticket: action.payload, loading: false };
     case "FETCH_FAIL":
@@ -41,6 +46,16 @@ const reducer = (state, action) => {
       };
     case "UPLOAD_FAIL":
       return { ...state, loadingUpload: false, errorUpload: action.payload };
+    case "FETCH_FAULTS_REQUEST":
+      return { ...state, faultsloading: true };
+    case "FETCH_FAULTS_SUCCESS":
+      return {
+        ...state,
+        serviceticketsfault: action.payload,
+        faultsloading: false,
+      };
+    case "FETCH_FAULTS_FAIL":
+      return { ...state, faultsloading: false, faulterror: action.payload };
     default:
       return state;
   }
@@ -57,24 +72,47 @@ const UpdateServiceTicket = () => {
     error: "",
     updating: false,
     success: false,
+    faultsloading: true,
+    faulterror: "",
+    serviceticketsfault: [],
   });
   const [formData, setFormData] = useState({});
-
   const [uploadingFields, setUploadingFields] = useState({});
 
   useEffect(() => {
     const fetchTicket = async () => {
       try {
+        dispatch({ type: "FETCH_REQUEST" });
         const response = await axios.get(`/api/v1/servicetickets/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
       } catch (error) {
-        dispatch({ type: "FETCH_FAIL", payload: error.message });
+        console.log(error);
+        dispatch({ type: "FETCH_FAIL", payload: error.response.data.error });
+      }
+    };
+    const fetchAllFaults = async () => {
+      try {
+        dispatch({ type: "FETCH_FAULTS_REQUEST" });
+        const response = await axios.get("/api/v1/serviceticketsfaults", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        dispatch({
+          type: "FETCH_FAULTS_SUCCESS",
+          payload: response.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: error.response ? error.response.data.message : error.message,
+        });
       }
     };
     fetchTicket();
+    fetchAllFaults();
   }, [id, authtoken]);
 
   const handleChange = (e) => {
@@ -101,41 +139,13 @@ const UpdateServiceTicket = () => {
       dispatch({ type: "UPDATE_FAIL", payload: error.message });
     }
   };
-  //   const handleFileChange = async (event) => {
-  //     const { name, files } = event.target;
-  //     if (files.length === 0) return;
 
-  //     const file = files[0]; // Single file per input
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-
-  //     try {
-  //       dispatch({ type: "UPLOAD_REQUEST" });
-
-  //       const response = await axios.post(
-  //         "/api/v1/image-upload/service-tickets", // Adjust backend URL
-  //         formData,
-  //         {
-  //           headers: {
-  //             "Content-Type": "multipart/form-data",
-  //             Authorization: `Bearer ${authtoken}`,
-  //           },
-  //         }
-  //       );
-
-  //       dispatch({ type: "UPLOAD_SUCCESS" });
-
-  //       // Store uploaded image URL dynamically
-  //       setFormData((prevData) => ({
-  //         ...prevData,
-  //         [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
-  //       }));
-  //     } catch (error) {
-  //       dispatch({ type: "UPLOAD_FAIL", payload: error.message });
-  //       console.error("File upload error:", error);
-  //     }
-  //   };
-
+  const deleteFileHandler = async (fileName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [`ticket_generated_images${fileName}`]: "",
+    }));
+  };
   const handleFileChange = async (event) => {
     const { name, files } = event.target;
     if (files.length === 0) return;
@@ -172,7 +182,7 @@ const UpdateServiceTicket = () => {
   };
 
   return (
-    <CContainer>
+    <div>
       <CCard>
         <CCardHeader>
           Update Service Ticket -{" "}
@@ -184,7 +194,9 @@ const UpdateServiceTicket = () => {
               <LoadingSpinner />
             </div>
           ) : state.error ? (
-            <p>{state.error}</p>
+            <div className="d-flex justify-content-center align-items-center w-100 ">
+              <p className="badge bg-danger p-2">{state.error}</p>
+            </div>
           ) : (
             <CForm onSubmit={handleSubmit}>
               <CRow>
@@ -253,14 +265,32 @@ const UpdateServiceTicket = () => {
                   />
                 </CCol>
                 <CCol md={6}>
-                  <CFormInput
-                    label="Fault Type"
-                    name="fault_type"
-                    value={formData.fault_type || ""}
-                    onChange={handleChange}
-                  />
+                  {state.faultsloading ? (
+                    <LoadingSpinner />
+                  ) : state.faulterror ? (
+                    <span className="badge bg-danger p-2">
+                      {state.faulterror}
+                    </span>
+                  ) : (
+                    <CFormSelect
+                      name="fault_type"
+                      value={formData.fault_type}
+                      onChange={(e) =>
+                        setFormData({ ...formData, fault_type: e.target.value })
+                      }
+                      className="mb-3 mt-3"
+                    >
+                      <option value="">Select Fault Type</option>
+                      {state.serviceticketsfault
+                        ? state.serviceticketsfault.map((fault, index) => (
+                            <option key={index} value={fault.name}>
+                              {fault.fault_name.replace(/-/g, " ")}
+                            </option>
+                          ))
+                        : []}
+                    </CFormSelect>
+                  )}
                 </CCol>
-
                 <CCol md={6}>
                   <CFormInput
                     label="Ticket Generated By"
@@ -342,63 +372,61 @@ const UpdateServiceTicket = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-                {/* Ticket Images - Generated */}
-                {/* {[1, 2, 3, 4, 5].map((num) => (
-                  <CCol md={6} key={`generated-${num}`}>
-                    <CFormInput
-                      label={`Ticket Generated Image ${num}`}
-                      type="file"
-                      name={`ticket_generated_images${num}`}
-                      onChange={handleFileChange}
-                    />
-
-                    {state.loadingUpload ? (
-                      <div className="mt-2 d-flex justify-content-center">
-                        <LoadingSpinner />
-                      </div>
-                    ) : formData[`ticket_generated_images${num}`] ? (
-                      <div className="mt-2">
-                        <img
-                          src={formData[`ticket_generated_images${num}`]}
-                          alt={`Generated Image ${num}`}
-                          width="100"
-                          height="100"
-                          style={{ objectFit: "cover", borderRadius: "5px" }}
-                        />
-                      </div>
-                    ) : null}
-                  </CCol>
-                ))} */}
                 {[1, 2, 3, 4, 5].map((num) => (
-                  <CCol md={3} key={`resolved-${num}`}>
-                    <CFormInput
-                      label={`Ticket Generated Image ${num}`}
-                      type="file"
-                      name={`ticket_generated_images${num}`}
-                      onChange={handleFileChange}
-                      disabled={
-                        uploadingFields[`ticket_generated_images${num}`]
-                      } // ✅ Disable only the input being uploaded
-                    />
-
-                    {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
-                      <div className="mt-2 d-flex justify-content-center">
-                        <LoadingSpinner />
-                      </div>
-                    ) : formData[`ticket_generated_images${num}`] ? (
-                      <div className="mt-2">
-                        <img
-                          src={formData[`ticket_generated_images${num}`]}
-                          alt={`Generated Image ${num}`}
-                          width="100"
-                          height="100"
-                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                  <CRow>
+                    <CCol md={2} xs={5} key={`resolved-${num}`}>
+                      <div className="container-btn-file p-2 m-2 w-80">
+                        <CIcon icon={cilCloudUpload} className="upload-icon" />
+                        {`Image ${num}`}
+                        <input
+                          className="file"
+                          name={`ticket_generated_images${num}`}
+                          type="file"
+                          onChange={handleFileChange}
+                          disabled={
+                            uploadingFields[`ticket_generated_images${num}`]
+                          }
                         />
                       </div>
-                    ) : null}
-                  </CCol>
+                    </CCol>
+                    <CCol md={3} sm={2}>
+                      {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                        <div className="mt-2 d-flex justify-content-center">
+                          <LoadingSpinner />
+                        </div>
+                      ) : formData[`ticket_generated_images${num}`] ? (
+                        <div className="my-2">
+                          <img
+                            className="position-relative "
+                            src={formData[`ticket_generated_images${num}`]}
+                            alt={`Generated Image ${num}`}
+                            width="80"
+                            height="80"
+                            style={{ objectFit: "cover", borderRadius: "5px" }}
+                          />
+                          <CBadge
+                            color="primary"
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            shape="rounded-pill"
+                            className=" p-1"
+                          >
+                            <CIcon
+                              icon={cilX}
+                              cursor="pointer"
+                              onClick={() => deleteFileHandler(num)}
+                              title="Download file"
+                            />
+                          </CBadge>
+                        </div>
+                      ) : null}
+                    </CCol>
+                  </CRow>
                 ))}
-                <CCol md={6}>
+
+                {/* Move the Ticket Resolved field to a new row */}
+                <CCol md={12}>
                   <CFormSelect
                     label="Ticket Resolved"
                     name="ticket_resolved"
@@ -415,7 +443,9 @@ const UpdateServiceTicket = () => {
                     <option value="false">No</option>
                   </CFormSelect>
                 </CCol>
-                <CCol md={6}>
+
+                {/* Move the Ticket Resolving Notes field to a new row */}
+                <CCol md={12}>
                   <CFormTextarea
                     label="Ticket Resolving Notes"
                     name="ticket_resolving_notes"
@@ -423,41 +453,22 @@ const UpdateServiceTicket = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-                {/* {[1, 2, 3, 4, 5].map((num) => (
-                  <CCol md={6} key={`resolved-${num}`}>
-                    <CFormInput
-                      label={`Ticket Resolved Image ${num}`}
-                      type="file"
-                      name={`ticket_resolved_images${num}`}
-                      onChange={handleFileChange}
-                    />
 
-                    {state.loadingUpload ? (
-                      <div className="mt-2 d-flex justify-content-center">
-                        <LoadingSpinner />
-                      </div>
-                    ) : formData[`ticket_resolved_images${num}`] ? (
-                      <div className="mt-2">
-                        <img
-                          src={formData[`ticket_resolved_images${num}`]}
-                          alt={`Resolved Image ${num}`}
-                          width="100"
-                          height="100"
-                          style={{ objectFit: "cover", borderRadius: "5px" }}
-                        />
-                      </div>
-                    ) : null}
-                  </CCol>
-                ))} */}
                 {[1, 2, 3, 4, 5].map((num) => (
                   <CCol md={3} key={`resolved-${num}`}>
-                    <CFormInput
-                      label={`Ticket Resolved Image ${num}`}
-                      type="file"
-                      name={`ticket_resolved_images${num}`}
-                      onChange={handleFileChange}
-                      disabled={uploadingFields[`ticket_resolved_images${num}`]} // ✅ Disable only the input being uploaded
-                    />
+                    <div className="container-btn-file p-2 my-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      {`Image ${num}`}
+                      <input
+                        className="file"
+                        name={`ticket_resolved_images${num}`}
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={
+                          uploadingFields[`ticket_resolved_images${num}`]
+                        }
+                      />
+                    </div>
 
                     {uploadingFields[`ticket_resolved_images${num}`] ? ( // ✅ Show loader only for the uploading input
                       <div className="mt-2 d-flex justify-content-center">
@@ -478,23 +489,6 @@ const UpdateServiceTicket = () => {
                 ))}
               </CRow>
 
-              {/* <div className="d-flex justify-content-end">
-                <CButton
-                  className="my-2"
-                  type="submit"
-                  size="sm"
-                  color="primary"
-                  readOnly={state.updating}
-                >
-                  {state.updating ? (
-                    <>
-                      Updating <LoadingSpinner />
-                    </>
-                  ) : (
-                    "Update Ticket"
-                  )}
-                </CButton>
-              </div> */}
               <div className="d-flex justify-content-end">
                 <CButton
                   className="my-2"
@@ -516,7 +510,7 @@ const UpdateServiceTicket = () => {
           )}
         </CCardBody>
       </CCard>
-    </CContainer>
+    </div>
   );
 };
 
