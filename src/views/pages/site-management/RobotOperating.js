@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   //   CContainer,
   CRow,
@@ -23,22 +23,90 @@ import {
   CDropdownToggle,
   CInputGroup,
   CFormInput,
+  CSpinner,
 } from "@coreui/react";
-import { FaCopy, FaArrowUp } from "react-icons/fa";
+import { FaArrowUp } from "react-icons/fa";
 
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import from FA6
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./management.css";
-import { robots, downlinks } from "../../../data"; // Import robots from data.js
+import { robots } from "../../../data"; // Import robots from data.js
 import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+
+    case "FETCH_SUCCESS":
+      return { ...state, downlink: action.payload, loading: false };
+
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    case "DELETE_REQUEST":
+      return { ...state, loadingDelete: true, successDelete: false };
+
+    case "DELETE_SUCCESS":
+      return { ...state, loadingDelete: false, successDelete: true };
+
+    case "DELETE_FAIL":
+      return { ...state, loadingDelete: false, successDelete: false };
+
+    case "DELETE_RESET":
+      return { ...state, successDelete: false };
+
+    case "NOTIFICATION_REQUEST":
+      return { ...state, loading: true };
+
+    case "NOTIFICATION_SUCCESS":
+      return { ...state, notifications: action.payload, loading: false };
+
+    case "NOTIFICATION_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const RobotOperating = () => {
-  const { site_id, block, robot_no } = useParams();
+  const { site_id, block, robot_no, id } = useParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]); // Store robots assigned to the site
   const [searchTerm, setSearchTerm] = useState("");
+  const authtoken = useSelector((state) => state.authtoken);
 
+  const [{ loading, error, downlink, successDelete }, dispatch] = useReducer(
+    reducer,
+    { loading: true, error: "" }
+  );
+
+  const navigate = useNavigate();
   useEffect(() => {
+    const getDownlinks = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.get("/api/v1/downlinks", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response ? error.response.data.message : error.message,
+        });
+      }
+    };
+
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      getDownlinks();
+    }
+
     if (site_id) {
       // ✅ Filter robots assigned to this site
       // const siteRobots = robots.filter((robot) => robot.site_id === site_id);
@@ -52,28 +120,46 @@ const RobotOperating = () => {
 
       setSiteRobots(filteredRobots); // Store robots in state
     }
-  }, [block, site_id]);
+  }, [block, site_id, successDelete, authtoken]);
 
-  const filtereddownlinks = downlinks.filter(
-    (downlink) =>
-      downlink.downlink.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      downlink.decodedString.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      downlink.usedFor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      downlink.hexadecimal.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      downlink.uplink.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const deleteDownlink = async (downlink) => {
+    if (window.confirm("Are you sure you want to delete?")) {
+      try {
+        await axios.delete(`/api/v1/downlink/${downlink._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
 
-  const copydownlink = (downlink) => {
-    if (!document.hasFocus()) {
-      toast.error("Please focus on the document before copying.");
-      return;
+        toast.success("Downlink deleted successfully");
+
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (err) {
+        toast.error(err.response ? err.response.data.message : err.message);
+
+        dispatch({ type: "DELETE_FAIL" });
+      }
     }
-
-    navigator.clipboard
-      .writeText(downlink)
-      .then(() => toast.success(`Copied: ${downlink}`))
-      .catch((err) => toast.error("Clipboard copy failed", err));
   };
+
+  // const filtereddownlinks = downlinks.filter(
+  //   (downlink) =>
+  //     downlink.downlink.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     downlink.decodedString.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     downlink.usedFor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     downlink.hexadecimal.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     downlink.uplink.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+  // const copydownlink = (downlink) => {
+  //   if (!document.hasFocus()) {
+  //     toast.error("Please focus on the document before copying.");
+  //     return;
+  //   }
+
+  //   navigator.clipboard
+  //     .writeText(downlink)
+  //     .then(() => toast.success(`Copied: ${downlink}`))
+  //     .catch((err) => toast.error("Clipboard copy failed", err));
+  // };
 
   const Robotdata = robots.filter(
     (robot) =>
@@ -285,7 +371,7 @@ const RobotOperating = () => {
           <CModalTitle>Custom Downlink</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <CRow className="justify-content-end">
+          <CRow className="d-flex justify-content-between">
             <CCol xs={12} sm={10} md={6} lg={4}>
               <CInputGroup className="mb-3">
                 <CFormInput
@@ -295,6 +381,22 @@ const RobotOperating = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </CInputGroup>
+            </CCol>
+            <CCol
+              className="d-flex justify-content-end align-items-center"
+              xs={12}
+              sm={10}
+              md={6}
+              lg={4}
+            >
+              <Link
+                className="btn btn-sm btn-warning justify-content-end"
+                size="md"
+                // to="/master-admin/site-management/add-downlink"
+                to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/add-downlink`}
+              >
+                Add Downlink
+              </Link>
             </CCol>
           </CRow>
           <CTable responsive hover bordered>
@@ -318,32 +420,89 @@ const RobotOperating = () => {
                 <CTableHeaderCell style={{ minWidth: "250px" }}>
                   Description
                 </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "250px" }}>
+                  Action
+                </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
+
             <CTableBody>
-              {filtereddownlinks.map((item, index) => (
-                <CTableRow key={index}>
-                  <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>
-                    {item.downlink}
-                    <FaCopy
-                      style={{
-                        cursor: "pointer",
-                        marginLeft: "5px",
-                        color: "lime",
-                      }}
-                      onClick={() => copydownlink(item.downlink)}
-                    />
+              {loading ? (
+                <CTableRow className="text-center">
+                  <CTableDataCell colSpan={7}>
+                    <CSpinner color="primary" />
                   </CTableDataCell>
-                  <CTableDataCell>{item.decodedString}</CTableDataCell>
-                  <CTableDataCell>{item.hexadecimal}</CTableDataCell>
-                  <CTableDataCell>{item.uplink}</CTableDataCell>
-                  <CTableDataCell>{item.usedFor}</CTableDataCell>
                 </CTableRow>
-              ))}
+              ) : error ? (
+                <CTableRow>
+                  <CTableDataCell
+                    colSpan={7}
+                    className="text-center text-danger"
+                  >
+                    {error}
+                  </CTableDataCell>
+                </CTableRow>
+              ) : downlink.length > 0 ? (
+                downlink.map((item, index) => (
+                  <CTableRow key={index}>
+                    <CTableDataCell>{index + 1}</CTableDataCell>
+
+                    <CTableDataCell>
+                      <Link
+                        onClick={() =>
+                          toast.success("Command sent Successfully!")
+                        }
+                      >
+                        {item.downlink}
+                      </Link>
+                    </CTableDataCell>
+                    <CTableDataCell>{item.decodedString}</CTableDataCell>
+                    <CTableDataCell>{item.hexadecimal}</CTableDataCell>
+                    <CTableDataCell>{item.uplink}</CTableDataCell>
+                    <CTableDataCell>{item.additionalInfo}</CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex">
+                        <Link
+                          to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/view-downlink/${item._id}`}
+                          color=""
+                          size="sm"
+                          className="btn btn-sm btn-secondary m-1"
+                        >
+                          View
+                        </Link>
+
+                        <Link
+                          to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/update-downlink/${item._id}`}
+                          color="warning"
+                          size="sm"
+                          className="btn btn-sm btn-warning m-1"
+                        >
+                          Edit
+                        </Link>
+
+                        <CButton
+                          color="danger"
+                          size="sm"
+                          className="m-1 text-white"
+                          onClick={() => deleteDownlink(item)}
+                        >
+                          Delete
+                        </CButton>
+                      </div>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))
+              ) : (
+                <CTableRow>
+                  <CTableDataCell className="text-center" colSpan={7}>
+                    No Data Found.
+                  </CTableDataCell>
+                </CTableRow>
+              )}
             </CTableBody>
           </CTable>
         </CModalBody>
+
         <CModalFooter>
           <CButton color="secondary" onClick={() => setModalVisible(false)}>
             Close
