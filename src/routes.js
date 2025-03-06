@@ -110,6 +110,18 @@ const SiteManagement = React.lazy(() =>
   import("./views/pages/site-management/SiteManagement")
 );
 
+const NewDownlink = React.lazy(() =>
+  import("./views/pages/site-management/NewDownlink")
+);
+
+const UpdateDownlink = React.lazy(() =>
+  import("./views/pages/site-management/UpdateDownlink")
+);
+
+const ViewDownlink = React.lazy(() =>
+  import("./views/pages/site-management/ViewDownlink")
+);
+
 const BlockManagement = React.lazy(() =>
   import("./views/pages/site-management/BlockManagement")
 );
@@ -283,6 +295,21 @@ const routes = [
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
     name: "Cleaning Log",
     element: CleaningLog,
+  },
+  {
+    path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/add-downlink",
+    name: "Add Downlink",
+    element: NewDownlink,
+  },
+  {
+    path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/update-downlink/:id",
+    name: "Update Downlink",
+    element: UpdateDownlink,
+  },
+  {
+    path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/view-downlink/:id",
+    name: "View Downlink",
+    element: ViewDownlink,
   },
   {
     path: "/master-admin/lora-configuration",
