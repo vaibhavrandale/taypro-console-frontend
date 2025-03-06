@@ -7,7 +7,6 @@ import {
   CForm,
   CFormInput,
   CButton,
-  CContainer,
   CRow,
   CCol,
   CCard,
@@ -21,6 +20,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilCloudUpload, cilX } from "@coreui/icons";
+import "./servicetickts.css";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -454,47 +454,65 @@ const UpdateServiceTicket = () => {
                   />
                 </CCol>
 
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <CCol md={3} key={`resolved-${num}`}>
-                    <div className="container-btn-file p-2 my-2 w-80">
-                      <CIcon icon={cilCloudUpload} className="upload-icon" />
-                      {`Image ${num}`}
-                      <input
-                        className="file"
-                        name={`ticket_resolved_images${num}`}
-                        type="file"
-                        onChange={handleFileChange}
-                        disabled={
-                          uploadingFields[`ticket_resolved_images${num}`]
-                        }
-                      />
-                    </div>
-
-                    {uploadingFields[`ticket_resolved_images${num}`] ? ( // ✅ Show loader only for the uploading input
-                      <div className="mt-2 d-flex justify-content-center">
-                        <LoadingSpinner />
-                      </div>
-                    ) : formData[`ticket_resolved_images${num}`] ? (
-                      <div className="mt-2">
-                        <img
-                          src={formData[`ticket_resolved_images${num}`]}
-                          alt={`Resolved Image ${num}`}
-                          width="100"
-                          height="100"
-                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                {[1, 2, 3, 4, 5].map((num, index) => (
+                  <CRow>
+                    <CCol md={2} xs={5} key={`resolved-${index}`}>
+                      <div className="container-btn-file p-2 my-2 w-80">
+                        <CIcon icon={cilCloudUpload} className="upload-icon" />
+                        {`Image ${num}`}
+                        <input
+                          className="file"
+                          name={`ticket_resolved_images${num}`}
+                          type="file"
+                          onChange={handleFileChange}
+                          disabled={
+                            uploadingFields[`ticket_resolved_images${num}`]
+                          }
                         />
                       </div>
-                    ) : null}
-                  </CCol>
+                    </CCol>
+                    <CCol md={3} sm={2}>
+                      {uploadingFields[`ticket_resolved_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                        <div className="mt-2 d-flex justify-content-center">
+                          <LoadingSpinner />
+                        </div>
+                      ) : formData[`ticket_resolved_images${num}`] ? (
+                        <div className="my-2">
+                          <img
+                            src={formData[`ticket_resolved_images${num}`]}
+                            alt={`Resolved Image ${num}`}
+                            width="80"
+                            height="80"
+                            style={{ objectFit: "cover", borderRadius: "5px" }}
+                          />
+                          <CBadge
+                            color="primary"
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            shape="rounded-pill"
+                            className=" p-1"
+                          >
+                            <CIcon
+                              icon={cilX}
+                              cursor="pointer"
+                              onClick={() => deleteFileHandler(num)}
+                              title="Download file"
+                            />
+                          </CBadge>
+                        </div>
+                      ) : null}
+                    </CCol>
+                  </CRow>
                 ))}
               </CRow>
 
               <div className="d-flex justify-content-end">
                 <CButton
-                  className="my-2"
+                  className="my-2 w-25 "
                   type="submit"
-                  size="sm"
-                  color="primary"
+                  size="md"
+                  color="secondary"
                   disabled={state.updating || state.loadingUpload} // ✅ Merge both loading states
                 >
                   {state.updating || state.loadingUpload ? (

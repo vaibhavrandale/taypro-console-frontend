@@ -371,17 +371,6 @@ const CreateServiceTicket = () => {
               />
               {[1, 2, 3, 4, 5].map((num) => (
                 <CRow>
-                  {/* <CCol md={3} key={`resolved-${num}`}>
-                    <CFormInput
-                      label={`Ticket Generated Image ${num}`}
-                      type="file"
-                      name={`ticket_generated_images${num}`}
-                      onChange={handleFileChange}
-                      disabled={
-                        uploadingFields[`ticket_generated_images${num}`]
-                      } // ✅ Disable only the input being uploaded
-                    />
-                  </CCol> */}
                   <CCol md={2} key={`resolved-${num}`}>
                     <div className="container-btn-file p-2 m-2 w-80">
                       <CIcon icon={cilCloudUpload} className="upload-icon" />
@@ -434,15 +423,17 @@ const CreateServiceTicket = () => {
                 </CRow>
               ))}
               {/* 📌 Submit Button */}
-              <CButton type="submit" color="primary" className="w-100 m-2">
-                {loading ? (
-                  <>
-                    Creating... <LoadingSpinner />{" "}
-                  </>
-                ) : (
-                  "Create Ticket"
-                )}
-              </CButton>
+              <div className="d-flex justify-content-end">
+                <CButton type="submit" color="secondary" className=" m-2 w-25">
+                  {loading ? (
+                    <>
+                      Creating... <LoadingSpinner />{" "}
+                    </>
+                  ) : (
+                    "Create Ticket"
+                  )}
+                </CButton>
+              </div>
             </CForm>
           </CCardBody>
         </CCard>
