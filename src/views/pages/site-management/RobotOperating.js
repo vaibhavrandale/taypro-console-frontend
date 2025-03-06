@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
-  //   CContainer,
   CRow,
   CCol,
   CCard,
@@ -30,7 +29,7 @@ import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import from FA6
 import { Link, useParams } from "react-router-dom";
 import "./management.css";
-import { robots } from "../../../data"; // Import robots from data.js
+import { robots } from "../../../data";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -108,7 +107,6 @@ const RobotOperating = () => {
 
     if (site_id) {
       // ✅ Filter robots assigned to this site
-      // const siteRobots = robots.filter((robot) => robot.site_id === site_id);
 
       const extractNumber = (robotNo) =>
         parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
@@ -138,27 +136,6 @@ const RobotOperating = () => {
       }
     }
   };
-
-  // const filtereddownlinks = downlinks.filter(
-  //   (downlink) =>
-  //     downlink.downlink.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     downlink.decodedString.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     downlink.usedFor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     downlink.hexadecimal.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     downlink.uplink.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  // const copydownlink = (downlink) => {
-  //   if (!document.hasFocus()) {
-  //     toast.error("Please focus on the document before copying.");
-  //     return;
-  //   }
-
-  //   navigator.clipboard
-  //     .writeText(downlink)
-  //     .then(() => toast.success(`Copied: ${downlink}`))
-  //     .catch((err) => toast.error("Clipboard copy failed", err));
-  // };
 
   const Robotdata = robots.filter(
     (robot) =>
