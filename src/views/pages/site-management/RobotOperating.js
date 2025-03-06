@@ -28,7 +28,7 @@ import {
 import { FaArrowUp } from "react-icons/fa";
 
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import from FA6
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./management.css";
 import { robots } from "../../../data"; // Import robots from data.js
 import toast from "react-hot-toast";
@@ -73,7 +73,7 @@ const reducer = (state, action) => {
 };
 
 const RobotOperating = () => {
-  const { site_id, block, robot_no, id } = useParams();
+  const { site_id, block, robot_no } = useParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]); // Store robots assigned to the site
   const [searchTerm, setSearchTerm] = useState("");
@@ -84,7 +84,6 @@ const RobotOperating = () => {
     { loading: true, error: "" }
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     const getDownlinks = async () => {
       try {
