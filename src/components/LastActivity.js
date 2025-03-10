@@ -23,7 +23,7 @@ const LastActivity = ({ lastactivity }) => {
 
   return (
     <CCard className="w-full mx-auto shadow rounded">
-      <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
+      <CCardHeader className=" d-flex align-items-center justify-content-between">
         <div>
           <CIcon icon={cilSpeech} className="me-2 text-primary" />
           <strong>Last Activity</strong>
@@ -43,7 +43,7 @@ const LastActivity = ({ lastactivity }) => {
                 className="d-flex align-items-center border-bottom pb-3 mb-3"
               >
                 <CAvatar
-                  src={activity.profile}
+                  src={activity.profile_image}
                   size="lg"
                   className="me-3 flex-shrink-0"
                   style={{ width: "50px", height: "50px" }} // Fixed size

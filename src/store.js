@@ -38,12 +38,12 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "EMP_SIGNIN":
-      return { ...state, userInfo: action.payload };
+      return { ...state, userInfo: action.payload, authtoken: action.token };
 
     case "EMP_SIGNOUT":
       localStorage.removeItem("userInfo"); // Remove from localStorage
       localStorage.removeItem("authtoken"); // Remove from localStorage
-      return { ...state, userInfo: null };
+      return { ...state, userInfo: null, authtoken: null };
 
     case "set":
       return { ...state, ...action.payload };

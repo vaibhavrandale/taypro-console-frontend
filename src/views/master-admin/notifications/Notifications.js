@@ -215,6 +215,7 @@ import { cilPeople } from "@coreui/icons";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { formatDistanceToNow } from "date-fns";
 
 const Notifications = () => {
   // const userInfo = useSelector((state) => state.userInfo);
@@ -329,7 +330,7 @@ const Notifications = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center">
+              <CTableDataCell colSpan="9" className="text-center">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -345,7 +346,7 @@ const Notifications = () => {
                   />
                 </CTableDataCell>
                 <CTableDataCell>
-                  {notification.performed_by.username}
+                  {notification.performed_by.name}
                   <br />
                   <small className="text-muted">
                     {notification.performed_by.email}
@@ -361,7 +362,12 @@ const Notifications = () => {
                 <CTableDataCell>
                   {notification.performed_by.role}
                 </CTableDataCell>
-                <CTableDataCell>{notification.timestamp}</CTableDataCell>
+                <CTableDataCell>
+                  {formatDistanceToNow(new Date(notification.timestamp), {
+                    addSuffix: true,
+                  })}
+                  {}
+                </CTableDataCell>
                 <CTableDataCell>
                   <CButton
                     color="secondary"

@@ -6,7 +6,7 @@
 
 // export default CleaningLog;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -21,14 +21,15 @@ import {
   CFormInput,
   CInputGroup,
   CButton,
-} from '@coreui/react';
-import { cleaning_log } from '../../../data'; // Import debug log data
-import { useParams } from 'react-router-dom';
-import * as XLSX from 'xlsx'; // Import xlsx for Excel export
+} from "@coreui/react";
+import { cleaning_log } from "../../../data"; // Import debug log data
+import { useParams } from "react-router-dom";
+import * as XLSX from "xlsx"; // Import xlsx for Excel export
+import toast from "react-hot-toast";
 
 const CleaningLog = () => {
   const { robot_no } = useParams();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter logs based on robot_no
   const filteredRobotLogs = cleaning_log.filter(
@@ -51,15 +52,15 @@ const CleaningLog = () => {
 
   const exportToExcel = () => {
     if (filteredLogs.length === 0) {
-      alert('No data available for export.');
+      toast.error("No data available for export.");
       return;
     }
 
     // Convert JSON to sheet
     const worksheet = XLSX.utils.json_to_sheet(
       filteredLogs.map((log, index) => ({
-        '#': index + 1,
-        'Robot No': log.robot_no,
+        "#": index + 1,
+        "Robot No": log.robot_no,
         Deveui: log.deveui,
         Data: log.data,
         Timestamp: log.timestamp,
@@ -68,7 +69,7 @@ const CleaningLog = () => {
     );
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Cleaning Logs');
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Cleaning Logs");
 
     // Trigger download
     XLSX.writeFile(workbook, `CleaningLogs_${robot_no}.xlsx`);
@@ -80,9 +81,9 @@ const CleaningLog = () => {
         <CCardBody>
           <CRow className="justify-content-between my-3">
             <CCol md={4} className="text-end">
-              {' '}
+              {" "}
               <h5 className="text-primary text-center">
-                Cleaning Logs of - <b>{robot_no}</b>
+                Cleaning Logs of <span>{robot_no}</span>
               </h5>
             </CCol>
             <CCol md={2} className="text-end">
@@ -123,31 +124,31 @@ const CleaningLog = () => {
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell
                       className="text-center"
-                      style={{ minWidth: '140px' }}
+                      style={{ minWidth: "140px" }}
                     >
                       Robot No
                     </CTableHeaderCell>
                     <CTableHeaderCell
                       className="text-center"
-                      style={{ minWidth: '140px' }}
+                      style={{ minWidth: "140px" }}
                     >
                       Deveui
                     </CTableHeaderCell>
                     <CTableHeaderCell
                       className="text-center"
-                      style={{ minWidth: '150px' }}
+                      style={{ minWidth: "150px" }}
                     >
                       Data
                     </CTableHeaderCell>
                     <CTableHeaderCell
                       className="text-center"
-                      style={{ minWidth: '170px' }}
+                      style={{ minWidth: "170px" }}
                     >
                       Timestamp
                     </CTableHeaderCell>
                     <CTableHeaderCell
                       className="text-center"
-                      style={{ minWidth: '140px' }}
+                      style={{ minWidth: "140px" }}
                     >
                       Topic
                     </CTableHeaderCell>

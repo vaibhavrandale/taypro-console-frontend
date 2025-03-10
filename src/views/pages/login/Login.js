@@ -184,8 +184,8 @@
 
 // export default Login;
 
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   CButton,
   CCard,
@@ -199,18 +199,18 @@ import {
   CInputGroupText,
   CRow,
   // useColorModes,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilLockLocked, cilUser } from '@coreui/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import Tayprofordarkbg from '../../../assets/brand/logofordarkbg.png';
-import Tayproforwhitebg from '../../../assets/brand/logoforwhitebg.png';
-import toast from 'react-hot-toast';
-import { users } from '../../../data';
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilLockLocked, cilUser } from "@coreui/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
+import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
+import toast from "react-hot-toast";
+import { users } from "../../../data";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 const Login = () => {
   // const { colorMode } = useColorModes('theme'); // ✅ Fixed usage
@@ -219,18 +219,18 @@ const Login = () => {
 
   // Get userInfo from Redux state
   const userInfo = useSelector((state) => state.userInfo);
-  const storedTheme = useSelector((state) => state.theme) || 'light'; // ✅ Ensure default theme
+  const storedTheme = useSelector((state) => state.theme) || "light"; // ✅ Ensure default theme
   // const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const { search } = useLocation();
-  const redirectInUrl = new URLSearchParams(search).get('redirect');
-  const redirect = redirectInUrl ? redirectInUrl : '/user-dashboard';
+  const redirectInUrl = new URLSearchParams(search).get("redirect");
+  const redirect = redirectInUrl ? redirectInUrl : "/user-dashboard";
 
-  const theme = localStorage.getItem('theme');
+  const theme = localStorage.getItem("theme");
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
@@ -241,15 +241,19 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post('/api/v1/auth/sign-in', {
+      const { data } = await axios.post("/api/v1/auth/sign-in", {
         email,
         password,
       });
       // ✅ Dispatch to Redux
-      dispatch({ type: 'EMP_SIGNIN', payload: data.data.user });
-      localStorage.setItem('userInfo', JSON.stringify(data.data.user));
-      localStorage.setItem('authtoken', JSON.stringify(data.data.token));
-      navigate('/user-dashboard');
+      dispatch({
+        type: "EMP_SIGNIN",
+        payload: data.data.user,
+        token: data.data.token,
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data.data.user));
+      localStorage.setItem("authtoken", JSON.stringify(data.data.token));
+      navigate("/user-dashboard");
       // toast.success(`Login Successfull!`);
       toast.success(`Welcome Back!  ${data.data.user.username}`);
     } catch (err) {
@@ -283,17 +287,15 @@ const Login = () => {
   //   }, 1000);
   // };
 
-  console.log('Stored Theme:', storedTheme); // ✅ Debugging
-
   return (
     <div
       style={{
         backgroundImage:
           "url('https://res.cloudinary.com/di0iwc8ql/image/upload/v1724749800/ium0a01kucfsimtbyesq.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        height: '100vh',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        height: "100vh",
       }}
       className="d-flex flex-column justify-content-center align-items-center min-vh-100"
     >
@@ -305,19 +307,19 @@ const Login = () => {
                 <CCardBody>
                   {/* ✅ Theme-based Logo */}
                   <div className="text-center mb-3">
-                    {theme === 'light' ? (
+                    {theme === "light" ? (
                       <img
                         src={Tayproforwhitebg}
                         alt="Taypro Logo"
                         className=""
-                        style={{ height: '80px', width: 'auto' }}
+                        style={{ height: "80px", width: "auto" }}
                       />
                     ) : (
                       <img
                         src={Tayprofordarkbg}
                         alt="Taypro Logo"
                         className=""
-                        style={{ height: '80px', width: 'auto' }}
+                        style={{ height: "80px", width: "auto" }}
                       />
                     )}
                   </div>
@@ -341,14 +343,14 @@ const Login = () => {
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
                       <CInputGroupText
                         onClick={() => setShowPassword(!showPassword)}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                       >
                         <FontAwesomeIcon
                           icon={showPassword ? faEyeSlash : faEye}
@@ -370,7 +372,7 @@ const Login = () => {
                               Login.... <LoadingSpinner />
                             </>
                           ) : (
-                            'Login'
+                            "Login"
                           )}
                         </CButton>
                       </CCol>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap");
 :root {
   --primary-green: #96db00;
   --primary-text: #052638;
@@ -10,7 +10,7 @@ h4,
 h5,
 h6,
 h7 {
-  font-family: 'Blinker', serif;
+  font-family: "Blinker", serif;
   font-weight: 500;
   font-style: normal;
 }
@@ -26,7 +26,7 @@ button,
 .btn,
 breadcrumb,
 div {
-  font-family: 'Blinker', serif;
+  font-family: "Blinker", serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -117,7 +117,15 @@ thead th {
   color: #ffffff !important;
 }
 
-input[type='text']:focus {
+input[type="text"]:focus {
   outline: none;
   border: none;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  height: 100%; /* Full viewport height */
+  width: 100%; /* Full viewport width (optional) */
 }

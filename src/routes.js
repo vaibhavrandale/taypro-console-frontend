@@ -82,6 +82,11 @@ const AllSiteDpr = React.lazy(() =>
   import("./views/master-admin/all-site-dpr/AllSiteDpr")
 );
 
+// activate mutiple robots
+const ActivateRobots = React.lazy(() =>
+  import("./views/master-admin/robots/ActivateRobots")
+);
+
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
@@ -355,7 +360,12 @@ const routes = [
     element: Robots,
   },
   {
-    path: "/master-admin/robots/:client_id",
+    path: "/master-admin/activate-robots",
+    name: "All Inactivate Robots",
+    element: ActivateRobots,
+  },
+  {
+    path: "/master-admin/robots/:id",
     name: "Update Robot",
     element: UpdateRobots,
   },

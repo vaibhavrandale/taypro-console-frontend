@@ -80,13 +80,13 @@
 //   items: PropTypes.arrayOf(PropTypes.any).isRequired,
 // };
 
-import React, { useEffect, useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
-import { CBadge, CNavLink, CSidebarNav } from '@coreui/react';
-import _nav from '../_nav'; // Import Navigation Data
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import SimpleBar from "simplebar-react";
+import "simplebar-react/dist/simplebar.min.css";
+import { CBadge, CNavLink, CSidebarNav } from "@coreui/react";
+import _nav from "../_nav"; // Import Navigation Data
 
 export const AppSidebarNav = () => {
   const [storedUser, setStoredUser] = useState(null);
@@ -94,17 +94,17 @@ export const AppSidebarNav = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.addEventListener('scroll', () => {
+    document.addEventListener("scroll", () => {
       headerRef.current &&
         headerRef.current.classList.toggle(
-          'shadow-sm',
+          "shadow-sm",
           document.documentElement.scrollTop > 0
         );
     });
 
-    const user = JSON.parse(localStorage.getItem('userInfo'));
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     if (!user) {
-      navigate('/login'); // Redirect to login if user is not found
+      navigate("/login"); // Redirect to login if user is not found
     } else {
       setStoredUser(user);
     }
@@ -116,15 +116,17 @@ export const AppSidebarNav = () => {
 
   // 🔍 Filter Navigation Links Based on User Role
   const filteredNav = _nav.filter((navItem) => {
-    if (storedUser.role === 'Master Admin') {
+    if (storedUser.role === "Master Admin") {
       // return true; // Show all menu items
-      return navItem.name === 'Master Admin';
-    } else if (storedUser.role === 'Project Admin') {
-      return navItem.name === 'Project Admin'; // Show only Service Admin items
-    } else if (storedUser.role === 'Service Admin') {
-      return navItem.name === 'Service Admin'; // Show only Service Admin items
-    } else if (storedUser.role === 'Client Admin') {
-      return navItem.name === 'Client Admin'; // Show only Client Admin items
+      return navItem.name === "Master Admin";
+    } else if (storedUser.role === "Project Admin") {
+      return navItem.name === "Project Admin"; // Show only Service Admin items
+    } else if (storedUser.role === "Service Admin") {
+      return navItem.name === "Service Admin"; // Show only Service Admin items
+    } else if (storedUser.role === "Service User") {
+      return navItem.name === "Service User"; // Show only Service Admin items
+    } else if (storedUser.role === "Client Admin") {
+      return navItem.name === "Client Admin"; // Show only Client Admin items
     }
     return false;
   });
@@ -155,7 +157,7 @@ export const AppSidebarNav = () => {
         {rest.to || rest.href ? (
           <CNavLink
             {...(rest.to && { as: NavLink })}
-            {...(rest.href && { target: '_blank', rel: 'noopener noreferrer' })}
+            {...(rest.href && { target: "_blank", rel: "noopener noreferrer" })}
             {...rest}
           >
             {navLink(name, icon, badge, indent)}

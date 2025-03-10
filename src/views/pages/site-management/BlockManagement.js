@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useReducer } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   CContainer,
   CRow,
@@ -21,38 +21,121 @@ import {
   CTableDataCell,
   CInputGroup,
   CFormInput,
-} from '@coreui/react';
-import { robots, sites } from '../../../data';
-import './management.css';
+} from "@coreui/react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import "./management.css";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, error: "" };
+    case "FETCH_SITES_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, error: action.payload };
+
+    case "FETCH_ROBOTS_REQUEST":
+      return { ...state, loadingRobots: true, error: "" };
+    case "FETCH_ROBOTS_SUCCESS":
+      return { ...state, loadingRobots: false, robots: action.payload };
+    case "FETCH_ROBOTS_FAIL":
+      return { ...state, loadingRobots: false, error: action.payload };
+
+    case "SET_SITE_DATA":
+      return {
+        ...state,
+        siteRobots: action.payload.siteRobots,
+        siteName: action.payload.siteName,
+        siteLocation: action.payload.siteLocation,
+        blocks: action.payload.blocks,
+        totalAssigned: action.payload.totalAssigned,
+        totalOnline: action.payload.totalOnline,
+        totalOffline: action.payload.totalOffline,
+        totalRunning: action.payload.totalRunning,
+      };
+
+    case "SET_SEARCH_TERM":
+      return { ...state, searchTerm: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const BlockManagement = () => {
+  const [{ loadingRobots, loadingSites, error, robots, sites }, dispatch] =
+    useReducer(reducer, {
+      sites: [],
+      robots: [],
+      loadingRobots: false,
+      loadingSites: false,
+      error: "",
+    });
+  const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [blocks, setBlocks] = useState({});
-  const [siteName, setSiteName] = useState('');
-  const [siteLocation, setSiteLocation] = useState('');
+  const [siteName, setSiteName] = useState("");
+  const [siteLocation, setSiteLocation] = useState("");
   const [totalAssigned, setTotalAssigned] = useState(0);
   const [totalOnline, setTotalOnline] = useState(0);
   const [totalOffline, setTotalOffline] = useState(0);
   const [totalRunning, setTotalRunning] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const [visible, setVisible] = useState(false);
-  const [siteRobots, setSiteRobots] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (site_id) {
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const { data } = await axios.get("/api/v1/sites", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({ type: "FETCH_SITES_SUCCESS", payload: data.data });
+        console.log(data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: "Failed to fetch sites",
+        });
+        toast.error("Failed to fetch sites");
+      }
+    };
+
+    const fetchRobots = async () => {
+      dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/robots/site/${site_id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: "Failed to fetch robots",
+        });
+        toast.error("Failed to fetch robots");
+      }
+    };
+
+    fetchSites();
+    fetchRobots();
+  }, [authtoken, site_id]);
+
+  useEffect(() => {
+    if (site_id && sites.length && robots.length) {
       const filteredRobots = robots.filter(
         (robot) => robot.site_id === site_id
       );
-      setSiteRobots(filteredRobots);
-
       const siteData = sites.find((site) => site.site_id === site_id);
-      if (siteData) {
-        setSiteName(siteData.siteName);
-        setSiteLocation(siteData.location);
-      } else {
-        console.log('Site not found');
+      if (!siteData) {
+        toast.error("Site not found");
+        return;
       }
-
+      setSiteName(siteData.siteName);
+      setSiteLocation(siteData.location);
       const blockData = {};
       let assignedCount = 0,
         onlineCount = 0,
@@ -70,56 +153,48 @@ const BlockManagement = () => {
             robots: [],
           };
         }
-
-        blockData[robot.block].assigned += 1;
+        blockData[robot.block].assigned++;
         assignedCount++;
-
         if (robot.lora_state === 1) {
-          blockData[robot.block].online += 1;
+          blockData[robot.block].online++;
           onlineCount++;
         } else {
-          blockData[robot.block].offline += 1;
+          blockData[robot.block].offline++;
           offlineCount++;
         }
-
-        if (robot.last_status === 'Cleaning Started') {
-          blockData[robot.block].running += 1;
+        if (robot.last_status === "Cleaning Started") {
+          blockData[robot.block].running++;
           runningCount++;
         }
-
         blockData[robot.block].robots.push(robot);
       });
-
-      // Sort robots within each block by robot_no in ascending order
-      Object.keys(blockData).forEach((blockId) => {
-        blockData[blockId].robots.sort((a, b) =>
-          a.robot_no.localeCompare(b.robot_no, undefined, { numeric: true })
-        );
-      });
-
       setBlocks(blockData);
       setTotalAssigned(assignedCount);
       setTotalOnline(onlineCount);
       setTotalOffline(offlineCount);
       setTotalRunning(runningCount);
     }
-  }, [site_id]);
+  }, [site_id, sites, robots]);
 
-  const filteredRobotsData = siteRobots.filter(
+  const filteredRobotsData = robots.filter(
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.block.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.last_status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.last_update.toLowerCase().includes(searchTerm.toLowerCase())
+      robot.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
-    <div className="min-vh-100 d-flex flex-column align-items-center">
+    <div className="min-vh-90 d-flex flex-column align-items-center">
       <h4 className="p-2 text-center text-primary">
-        {siteName}, {siteLocation}
+        {loadingRobots && loadingSites ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <h4>{error}</h4>
+        ) : (
+          <span>
+            {siteName}, {siteLocation}
+          </span>
+        )}
       </h4>
       <div className="p-2 d-flex justify-content-center">
         <CButton
@@ -142,7 +217,7 @@ const BlockManagement = () => {
             <CModalTitle id="StaticBackdropExampleLabel">
               <span className="text-primary">
                 {siteName}, {siteLocation} -
-              </span>{' '}
+              </span>{" "}
               Robots Details
             </CModalTitle>
           </CModalHeader>
@@ -165,64 +240,87 @@ const BlockManagement = () => {
                   <CTableHeaderCell
                     className="text-center"
                     scope="col"
-                    style={{ minWidth: '20px' }}
+                    style={{ minWidth: "20px" }}
                   >
                     Sr
                   </CTableHeaderCell>
                   <CTableHeaderCell
                     className="text-center"
                     scope="col"
-                    style={{ minWidth: '120px' }}
+                    style={{ minWidth: "120px" }}
                   >
                     Robot No
                   </CTableHeaderCell>
                   <CTableHeaderCell
                     className="text-center"
                     scope="col"
-                    style={{ minWidth: '120px' }}
+                    style={{ minWidth: "120px" }}
                   >
                     deveui
                   </CTableHeaderCell>
                   <CTableHeaderCell
                     className="text-center"
                     scope="col"
-                    style={{ minWidth: '120px' }}
+                    style={{ minWidth: "120px" }}
                   >
                     Lora State
                   </CTableHeaderCell>
                   <CTableHeaderCell
                     className="text-center"
                     scope="col"
-                    style={{ minWidth: '120px' }}
+                    style={{ minWidth: "120px" }}
                   >
                     Block
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {filteredRobotsData.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableHeaderCell scope="row" style={{ minWidth: '20px' }}>
-                      {index + 1}
-                    </CTableHeaderCell>
-                    <CTableDataCell style={{ minWidth: '120px' }}>
-                      {item.robot_no}
-                    </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: '120px' }}>
-                      {item.deveui}
-                    </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: '120px' }}>
-                      {item.lora_state === 1 ? (
-                        <span className="badge bg-success">Online</span>
-                      ) : (
-                        <span className="badge bg-danger">Offline</span>
-                      )}
-                    </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: '120px' }}>
-                      {item.block}
+                {loadingRobots && loadingSites ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan="5" className="text-center fw-bold">
+                      <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
-                ))}
+                ) : error ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan="5" className="text-center fw-bold">
+                      {error}
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : filteredRobotsData.length > 0 ? (
+                  filteredRobotsData.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "20px" }}
+                      >
+                        {index + 1}
+                      </CTableHeaderCell>
+                      <CTableDataCell style={{ minWidth: "120px" }}>
+                        {item.robot_no}
+                      </CTableDataCell>
+                      <CTableDataCell style={{ minWidth: "120px" }}>
+                        {item.deveui}
+                      </CTableDataCell>
+                      <CTableDataCell style={{ minWidth: "120px" }}>
+                        {item.lora_state === 1 ? (
+                          <span className="badge bg-success">Online</span>
+                        ) : (
+                          <span className="badge bg-danger">Offline</span>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell style={{ minWidth: "120px" }}>
+                        {item.block}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan="5" className="text-center fw-bold">
+                      No Robots Found
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
               </CTableBody>
             </CTable>
           </CModalBody>
@@ -245,8 +343,8 @@ const BlockManagement = () => {
 
             return (
               <CCol md={4} className="my-2" key={block.id}>
-                <CCard className="h-100 d-flex flex-column border-0 shadow">
-                  <CCardHeader className="text-center fw-bold border-0">
+                <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                  <CCardHeader className="text-center fw-bold border">
                     {block.id}
                   </CCardHeader>
                   <CCardBody className="d-flex flex-column flex-grow-1">
@@ -282,8 +380,8 @@ const BlockManagement = () => {
                       {block.robots.map((robot, index) => {
                         const robotNumberMatch = robot.robot_no.match(/\d+/g);
                         const robotNumber = robotNumberMatch
-                          ? robotNumberMatch.join('')
-                          : '000';
+                          ? robotNumberMatch.join("")
+                          : "000";
                         const lastThreeDigits = robotNumber.slice(-3);
 
                         return (
@@ -291,8 +389,8 @@ const BlockManagement = () => {
                             key={index}
                             className={`tooltip-container m-1 badge ${
                               robot.lora_state === 1
-                                ? 'bg-success'
-                                : 'bg-danger'
+                                ? "bg-success"
+                                : "bg-danger"
                             }`}
                           >
                             {lastThreeDigits}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
   CTableBody,
@@ -10,12 +10,56 @@ import {
   CFormInput,
   CRow,
   CCol,
-} from '@coreui/react';
-import { sites } from '../../../data'; // Import sites from data.js
-import { Link } from 'react-router-dom';
-
+} from "@coreui/react";
+// import { sites } from "../../../data"; // Import sites from data.js
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SUCCESS":
+      return { ...state, sites: action.payload, loading: false };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 const SiteManagement = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [{ loading, error, sites }, dispatch] = useReducer(reducer, {
+    sites: [],
+    loading: true,
+    error: "",
+  });
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const authtoken = useSelector((state) => state.authtoken);
+
+  useEffect(() => {
+    const fetchDownlink = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+
+        const { data } = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response?.data || "Failed to fetch data",
+        });
+        toast.error(error.response?.data || "Failed to fetch data");
+      }
+    };
+
+    fetchDownlink();
+  }, [authtoken]);
 
   // Filter table rows based on search term
   const filteredData = sites.filter(
@@ -53,7 +97,19 @@ const SiteManagement = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredData.length > 0 ? (
+          {loading ? (
+            <CTableRow>
+              <CTableHeaderCell colSpan="4" className="text-center">
+                <LoadingSpinner />
+              </CTableHeaderCell>
+            </CTableRow>
+          ) : error ? (
+            <CTableRow>
+              <CTableHeaderCell colSpan="4" className="text-center">
+                {error}
+              </CTableHeaderCell>
+            </CTableRow>
+          ) : filteredData.length > 0 ? (
             filteredData.map((site, index) => (
               <CTableRow key={site.id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>

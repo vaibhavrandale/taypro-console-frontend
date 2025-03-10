@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -17,17 +17,149 @@ import {
   CModalHeader,
   CModal,
   CFormSelect,
-} from '@coreui/react';
-import { sites, lora_configuration } from '../../../data'; // Ensure correct path
-import '../master-admin.css';
-import toast from 'react-hot-toast';
+  CBadge,
+  CTooltip,
+} from "@coreui/react";
+// import { sites, lora_configuration } from "../../../data"; // Ensure correct path
+import "../master-admin.css";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import LastActivity from "../../../components/LastActivity";
+import { formatDistanceToNow } from "date-fns";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, error: "" };
+    case "FETCH_SITES_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, error: action.payload };
+
+    case "FETCH_LORACONFIG_REQUEST":
+      return { ...state, loadingloraconfig: true, error: "" };
+    case "FETCH_LORACONFIG_SUCCESS":
+      return {
+        ...state,
+        loadingloraconfig: false,
+        lora_configuration: action.payload,
+      };
+    case "FETCH_LORACONFIG_FAIL":
+      return { ...state, loadingloraconfig: false, error: action.payload };
+
+    case "ADD_LORA_REQUEST":
+      return { ...state, addloadingloraconfig: true, addloraerror: "" };
+    case "ADD_LORA_SUCCESS":
+      return {
+        ...state,
+        addloadingloraconfig: false,
+        lora_configuration: action.payload,
+      };
+    case "ADD_LORA_FAIL":
+      return {
+        ...state,
+        addloadingloraconfig: false,
+        addloraerror: action.payload,
+      };
+
+    case "UPDATE_LORA_REQUEST":
+      return { ...state, updatingLora: true, updateError: "" };
+
+    case "UPDATE_LORA_SUCCESS":
+      return {
+        ...state,
+        updatingLora: false,
+        lora_configuration: state.lora_configuration.map((config) =>
+          config.deveui === action.payload.deveui ? action.payload : config
+        ),
+      };
+
+    case "UPDATE_LORA_FAIL":
+      return { ...state, updatingLora: false, updateError: action.payload };
+    default:
+      return state;
+  }
+};
 const LoraConfiguration = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [
+    {
+      error,
+      addloraerror,
+      updatingLora,
+      updateError,
+      sites,
+      lora_configuration,
+      loadingloraconfig,
+      addloadingloraconfig,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    sites: [],
+    lora_configuration: [],
+    loadingSites: false,
+    loadingloraconfig: false,
+    addloadingloraconfig: false,
+    updatingLora: false,
+    error: "",
+    updateError: "",
+  });
+  const authtoken = useSelector((state) => state.authtoken);
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+
   const [addmodalVisible, setAddModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
-  const [newDeveui, setNewDeveui] = useState('');
+  const [deveuiObj, setDeveuiObj] = useState({});
+  // console.log(formData);
+  useEffect(() => {
+    const fetchloraconfigurations = async () => {
+      dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/loraconfigurations`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_LORACONFIG_SUCCESS",
+          payload: result.data.data,
+        });
+        // console.log(result.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_LORACONFIG_FAIL",
+          payload: "Failed to fetch loraconfigurations",
+        });
+        toast.error("Failed to fetch loraconfigurations");
+      }
+    };
+
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+        // console.log(result.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: "Failed to fetch sites",
+        });
+        toast.error("Failed to fetch sites");
+      }
+    };
+
+    fetchloraconfigurations();
+    fetchSites();
+  }, [authtoken]);
 
   // Open Modal and Set Selected Item Data
   const openModal = (item) => {
@@ -39,76 +171,51 @@ const LoraConfiguration = () => {
   const openAddModal = () => {
     setAddModalVisible(true);
   };
+  const openViewModal = (item) => {
+    setSelectedItem(item);
+    console.log(item);
 
-  // Handle Adding New Entry
-  // const handleAdd = () => {
-  //   if (!newDeveui) {
-  //     alert('Please enter a valid Deveui!');
-  //     return;
-  //   }
-
-  //   // Add new entry to lora_configuration
-  //   const newEntry = {
-  //     serial: lora_configuration.length + 1, // Generate serial
-  //     robot_no: 'N/A', // Default for now
-  //     deveui: newDeveui,
-  //     formatted_deveui: newDeveui,
-  //     site_id: 'taypro_office', // Default site
-  //     added_by: 'Vaibhav Randale', // Replace with actual user
-  //     added_by_email: 'vaibhav.r@gmail.com', // Replace with actual user
-  //     added_by_id: 'dfbdfbdbdfbg', // Replace with actual user
-  //     lastUpdateBy: null,
-  //     lastUpdateAt: null,
-  //   };
-
-  //   console.log('New Lora Added:', newEntry);
-  //   lora_configuration.push(newEntry);
-
-  //   // Show Success Toast
-  //   toast.success('New Lora Configuration Added Successfully!');
-
-  //   // Close Modal & Reset
-  //   setNewDeveui('');
-  //   setAddModalVisible(false);
-  // };
-
-  const handleDeveuiChange = (e) => {
-    let input = e.target.value;
-    setNewDeveui(input);
+    setViewModalVisible(true);
   };
 
-  const handleAdd = () => {
-    if (!newDeveui) {
-      alert('Please enter a valid Deveui!');
+  const handleDeveuiChange = (e) => {
+    setDeveuiObj({ ...deveuiObj, deveui: e.target.value });
+  };
+
+  const handleAdd = async () => {
+    if (deveuiObj.deveui.length > 23) {
+      toast.error("Please enter a valid Deveui!");
       return;
     }
+    try {
+      dispatch({ type: "ADD_LORA_REQUEST" });
+      const response = await axios.post(
+        "/api/v1/loraconfigurations",
+        deveuiObj,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      // console.log(response.data.message);
 
-    // Convert Deveui: Remove colons and convert to lowercase
-    const formattedDeveui = newDeveui.replace(/:/g, '').toLowerCase();
+      toast.success(response.data.message);
+      // Update robots state with new data
+      dispatch({
+        type: "ADD_LORA_SUCCESS",
+        payload: [...lora_configuration, response.data.data], // Append instead of replace
+      });
 
-    // Add new entry to lora_configuration
-    const newEntry = {
-      serial: lora_configuration.length + 1, // Generate serial
-      robot_no: '', // Default for now
-      deveui: newDeveui, // Original input
-      formatted_deveui: formattedDeveui, // Converted format
-      site_id: 'taypro_office', // Default site
-      added_by: 'Vaibhav Randale', // Replace with actual user
-      added_by_email: 'vaibhav.r@gmail.com', // Replace with actual user
-      added_by_id: 'dfbdfbdbdfbg', // Replace with actual user
-      lastUpdated_by: null,
-      lastUpdateAt: null,
-    };
+      setDeveuiObj({});
 
-    console.log(`New Lora ${lora_configuration.serial}  Added:`, newEntry);
-    lora_configuration.push(newEntry);
-
-    // Show Success Toast
-    toast.success('New Lora Configuration Added Successfully!');
-
-    // Close Modal & Reset
-    setNewDeveui('');
-    setAddModalVisible(false);
+      setAddModalVisible(false);
+    } catch (error) {
+      toast.error(error.response.data.error);
+      dispatch({
+        type: "ADD_LORA_FAIL",
+        payload: error.response.data.error,
+      });
+      setAddModalVisible(false);
+    }
   };
 
   // Handle Input Change in Form
@@ -116,10 +223,41 @@ const LoraConfiguration = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Form Submission (For Now, Just Logs the Updated Data)
-  const handleUpdate = () => {
-    console.log('Updated Data:', formData);
-    setModalVisible(false);
+  // // Handle Form Submission (For Now, Just Logs the Updated Data)
+  // const handleUpdate = () => {
+  //   console.log("Updated Data:", formData);
+  //   setModalVisible(false);
+  // };
+
+  const handleUpdate = async () => {
+    try {
+      dispatch({ type: "UPDATE_LORA_REQUEST" });
+      const { createdAt, _id, last_activity, addedAt, ...filteredFormData } =
+        formData;
+      const response = await axios.put(
+        `/api/v1/loraconfigurations/${formData._id}`,
+        filteredFormData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({
+        type: "UPDATE_LORA_SUCCESS",
+        payload: response.data.data,
+      });
+
+      toast.success(
+        `${filteredFormData.serial} Lora Configuration updated successfully!`
+      );
+      setModalVisible(false);
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_LORA_FAIL",
+        payload: error.response?.data?.message || "Failed to update data",
+      });
+      toast.error(error.response?.data?.message);
+    }
   };
 
   // Filter data based on search term
@@ -135,7 +273,7 @@ const LoraConfiguration = () => {
       index === self.findIndex((t) => t.site_id === value.site_id)
   );
 
-  console.log(uniqueSitenames);
+  // console.log(uniqueSitenames);
 
   return (
     <div className="">
@@ -154,7 +292,7 @@ const LoraConfiguration = () => {
       <CModal
         visible={addmodalVisible}
         onClose={() => setAddModalVisible(false)}
-        backdrop
+        backdrop="static"
       >
         <CModalHeader>
           <CModalTitle>Add New Lora </CModalTitle>
@@ -166,13 +304,13 @@ const LoraConfiguration = () => {
               <CFormInput
                 type="text"
                 name="deveui"
-                value={newDeveui}
+                value={deveuiObj.deveui}
                 onChange={handleDeveuiChange}
                 placeholder="ENTER DEVEUI"
                 className="mb-3"
               />
             </CCol>
-            <CCol md={12}>
+            {/* <CCol md={12}>
               <CFormLabel>Site ID (Default: taypro_office)</CFormLabel>
               <CFormInput
                 type="text"
@@ -180,7 +318,7 @@ const LoraConfiguration = () => {
                 disabled
                 className="mb-3"
               />
-            </CCol>
+            </CCol> */}
           </CRow>
         </CModalBody>
         <CModalFooter>
@@ -192,7 +330,14 @@ const LoraConfiguration = () => {
             Cancel
           </CButton>
           <CButton color="primary" size="sm" onClick={handleAdd}>
-            Add
+            {addloadingloraconfig ? (
+              <>
+                Adding..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Add"
+            )}
           </CButton>
         </CModalFooter>
       </CModal>
@@ -217,7 +362,7 @@ const LoraConfiguration = () => {
             </CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
             <CTableHeaderCell>Deveui</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '190px' }}>
+            <CTableHeaderCell style={{ minWidth: "190px" }}>
               Formatted Deveui
             </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
@@ -229,74 +374,168 @@ const LoraConfiguration = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredData
-            .slice()
-            .reverse()
-            .map((item, index) => (
-              <CTableRow key={index}>
-                <CTableDataCell className="sticky-column">
-                  {item.serial}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '150px' }}>
-                  {item.robot_no}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '150px' }}>
-                  {item.deveui}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '150px' }}>
-                  {item.formatted_deveui}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '150px' }}>
-                  {item.site_id}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '170px' }}>
-                  {item.added_by}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '170px' }}>
-                  {item.addedAt}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '170px' }}>
-                  {item.lastUpdated_by === null ? (
-                    <span className="badge bg-danger">N/A</span>
-                  ) : (
-                    <span className="badge bg-success">
-                      {item.lastUpdated_by}
-                    </span>
-                  )}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '170px' }}>
-                  {item.lastUpdateAt === null ? (
-                    <span className="badge bg-danger">N/A</span>
-                  ) : (
-                    <span className="badge bg-success">
-                      {item.lastUpdateAt}
-                    </span>
-                  )}
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="primary"
-                    className="btn-sm"
-                    onClick={() => openModal(item)}
-                  >
-                    Update
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
-            ))}
+          {loadingloraconfig ? (
+            <CTableRow>
+              <CTableDataCell colSpan="10" className="text-center fw-bold">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : error ? (
+            <CTableRow>
+              <CTableDataCell
+                colSpan="10"
+                className="text-center text-danger fw-bold"
+              >
+                {error}
+              </CTableDataCell>
+            </CTableRow>
+          ) : (
+            filteredData
+              .slice()
+              .reverse()
+              .map((item, index) => (
+                <CTableRow key={index}>
+                  <CTableDataCell className="sticky-column">
+                    {item.serial}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "150px" }}>
+                    {item.robot_no}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "150px" }}>
+                    {item.deveui}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "150px" }}>
+                    {item.formatted_deveui}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "150px" }}>
+                    {item.site_id}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "170px" }}>
+                    {item.added_by}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "170px" }}>
+                    <CTooltip
+                      content={new Date(item.addedAt).toLocaleString()}
+                      placement="top"
+                    >
+                      <span>
+                        {formatDistanceToNow(new Date(item.addedAt), {
+                          addSuffix: true,
+                        })}
+                      </span>
+                    </CTooltip>
+                  </CTableDataCell>
+
+                  <CTableDataCell style={{ minWidth: "170px" }}>
+                    {item.lastUpdated_by === null ? (
+                      <span className="badge bg-danger">N/A</span>
+                    ) : (
+                      <span className="badge bg-success">
+                        {item.lastUpdated_by}
+                      </span>
+                    )}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "170px" }}>
+                    {item.lastUpdateAt === null ? (
+                      <span className="badge bg-danger">N/A</span>
+                    ) : (
+                      <span className="badge bg-success">
+                        {item.lastUpdateAt}
+                      </span>
+                    )}
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                      color="secondary"
+                      className="btn-sm m-1"
+                      onClick={() => openViewModal(item)}
+                    >
+                      View
+                    </CButton>
+                    <CButton
+                      color="primary"
+                      className="btn-sm m-1"
+                      onClick={() => openModal(item)}
+                    >
+                      Update
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+              ))
+          )}
         </CTableBody>
       </CTable>
+
+      {/* view Modal */}
+      <CModal
+        visible={viewModalVisible}
+        size="xl"
+        onClose={() => setViewModalVisible(false)}
+      >
+        {selectedItem && (
+          <>
+            <CModalHeader>
+              <CModalTitle>
+                View Lora Configuration :{" "}
+                <CBadge className="badge bg-danger">
+                  {selectedItem.serial}
+                </CBadge>
+              </CModalTitle>
+            </CModalHeader>
+            <CModalBody>
+              <CTable bordered hover responsive>
+                <CTableBody>
+                  <CTableRow>
+                    <CTableHeaderCell>Serial</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.serial}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Deveui</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.deveui}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Formatted Deveui</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedItem.formatted_deveui}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.robot_no}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Site ID</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedItem.site_id || "N/A"}
+                    </CTableDataCell>
+                  </CTableRow>
+                </CTableBody>
+              </CTable>
+
+              <LastActivity lastactivity={selectedItem.last_activity} />
+            </CModalBody>
+            <CModalFooter>
+              <CButton
+                color="secondary"
+                onClick={() => setViewModalVisible(false)}
+              >
+                Close
+              </CButton>
+            </CModalFooter>
+          </>
+        )}
+      </CModal>
 
       {/* Update Modal */}
       <CModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        backdrop
+        backdrop="static"
         size="lg"
       >
         <CModalHeader>
           <CModalTitle>
-            Update Lora{' '}
+            Update Lora{" "}
             <b className="px-3 badge bg-danger">{formData.serial}</b>
           </CModalTitle>
         </CModalHeader>
@@ -314,6 +553,36 @@ const LoraConfiguration = () => {
                   />
                 </CCol>
                 <CCol md={6}>
+                  <CFormLabel>Site ID</CFormLabel>
+                  {uniqueSitenames.length === 0 ? (
+                    <p className="text-danger">No sites Found</p>
+                  ) : (
+                    <CFormSelect
+                      size="md"
+                      className="mb-3"
+                      aria-label="Large select example"
+                      name="site_id"
+                      value={formData.site_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select site</option>
+                      {uniqueSitenames.map((item, index) => (
+                        <option
+                          key={index}
+                          value={item.site_id}
+                          selected={formData.site_id === item.site_id}
+                        >
+                          {item.site_id}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  )}
+                </CCol>
+              </CRow>
+
+              <CRow className="mt-3">
+                {" "}
+                <CCol md={6}>
                   <CFormLabel>Deveui</CFormLabel>
                   <CFormInput
                     disabled
@@ -323,9 +592,6 @@ const LoraConfiguration = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-              </CRow>
-
-              <CRow className="mt-3">
                 <CCol md={6}>
                   <CFormLabel>Formatted Deveui</CFormLabel>
                   <CFormInput
@@ -336,29 +602,9 @@ const LoraConfiguration = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-                <CCol md={6}>
-                  <CFormLabel>Site ID</CFormLabel>
-
-                  <CFormSelect
-                    size="md"
-                    className="mb-3"
-                    aria-label="Large select example"
-                  >
-                    <option value="">Select site</option>
-                    {uniqueSitenames.map((item, index) => (
-                      <option
-                        key={index}
-                        value={item.site_id}
-                        selected={formData.site_id === item.site_id}
-                      >
-                        {item.site_id}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                </CCol>
               </CRow>
 
-              <CRow className="mb-3">
+              {/* <CRow className="mb-3">
                 <CCol md={6}>
                   <CFormLabel>Added By</CFormLabel>
                   <CFormInput
@@ -368,7 +614,7 @@ const LoraConfiguration = () => {
                     value={formData.added_by}
                     onChange={handleChange}
                   />
-                </CCol>{' '}
+                </CCol>{" "}
                 <CCol md={6}>
                   <CFormLabel>Added At</CFormLabel>
                   <CFormInput
@@ -379,9 +625,9 @@ const LoraConfiguration = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-              </CRow>
+              </CRow> */}
 
-              <CRow className="mb-3">
+              {/* <CRow className="mb-3">
                 <CCol md={6}>
                   <CFormLabel>Last Updated by</CFormLabel>
                   <CFormInput
@@ -390,7 +636,7 @@ const LoraConfiguration = () => {
                     name="lastUpdateBy"
                     value={
                       formData.lastUpdateBy === null
-                        ? 'N/A'
+                        ? "N/A"
                         : formData.lastUpdateBy
                     }
                     onChange={handleChange}
@@ -404,13 +650,13 @@ const LoraConfiguration = () => {
                     name="lastUpdateAt"
                     value={
                       formData.lastUpdateAt === null
-                        ? 'N/A'
+                        ? "N/A"
                         : formData.lastUpdateAt
                     }
                     onChange={handleChange}
                   />
                 </CCol>
-              </CRow>
+              </CRow> */}
             </div>
           )}
         </CModalBody>
@@ -424,7 +670,14 @@ const LoraConfiguration = () => {
             Cancel
           </CButton>
           <CButton color="primary" className="btn-sm" onClick={handleUpdate}>
-            Save Changes
+            {updatingLora ? (
+              <>
+                Updating..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Update"
+            )}
           </CButton>
         </CModalFooter>
       </CModal>

@@ -63,15 +63,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        if (!authtoken) {
-          console.warn("Waiting for token...");
-          setTimeout(fetchNotifications, 500); // Wait & retry in 500ms
-          return;
-        }
         dispatch({ type: "FETCH_REQUEST" });
         const response = await axios.get("/api/v1/notifications", {
           headers: { Authorization: `Bearer ${authtoken}` },
@@ -79,7 +74,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         let result = response.data.data;
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        // console.log(error.response.status);
+
+        if (error.response.status === 401) {
+          dispatch({
+            type: "EMP_SIGNOUT",
+          });
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("authtoken");
+        }
         dispatch({
           type: "FETCH_FAIL",
           payload: error,
@@ -92,7 +95,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     } else {
       fetchNotifications();
     }
-  }, [authtoken, userInfo, updateSuccess]);
+  }, [authtoken, userInfo, updateSuccess, navigate]);
 
   if (!userInfo) return null;
 
@@ -157,10 +160,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Notification read");
     } catch (error) {
-      console.error(
-        "Error marking notification as read:",
-        error.response.data.error
-      );
+      // console.error(
+      //   "Error marking notification as read:",
+      //   error.response.data.error
+      // );
+      console.log(error.response);
+
       toast.error(error.response.data.error);
       dispatch({
         type: "UPDATE_FAIL",
@@ -243,11 +248,17 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   <span className="position-relative">
                     <CIcon icon={cilBell} size="xl" />
                     <CBadge
-                      className="badge bg-danger d-flex justify-content-center align-items-center "
+                      className="badge bg-danger d-flex justify-content-center align-items-center"
                       style={{
-                        height: "18px",
-                        width: "18px",
+                        height:
+                          unreadNotifications.length > 99 ? "22px" : "18px",
+                        width:
+                          unreadNotifications.length > 99 ? "22px" : "18px",
                         borderRadius: "50%",
+                        fontSize: "12px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                       position="top-end"
                       shape="rounded-pill"
@@ -307,7 +318,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             : notification.details}
                         </small>
                         <small className="d-block" style={{ fontSize: "12px" }}>
-                          {notification.performed_by.username} |{" "}
+                          {notification.performed_by.name} |{" "}
                           {moment(notification.timestamp).format(
                             "MMM DD, YYYY HH:mm"
                           )}
