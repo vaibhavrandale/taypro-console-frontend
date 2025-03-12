@@ -112,7 +112,15 @@ const CleaningLog = () => {
         "Robot No": log.robot_no,
         Deveui: log.deveui,
         Data: log.data,
-        Timestamp: log.timestamp,
+        Timestamp: new Date(log.createdAt).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }),
         Topic: log.topic,
       }))
     );
@@ -132,8 +140,7 @@ const CleaningLog = () => {
             <CCol md={4} className="text-end">
               {" "}
               <h5 className="text-primary text-center">
-                Cleaning Logs of -{" "}
-                <span className="text-danger">{robot_no}</span>
+                <span className="text-danger">{robot_no}</span> - Cleaning Logs
               </h5>
             </CCol>
             <CCol md={2} className="text-end">

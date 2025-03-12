@@ -23,6 +23,7 @@ import {
   CInputGroup,
   CFormInput,
   CSpinner,
+  CTooltip,
 } from "@coreui/react";
 import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import
@@ -233,9 +234,11 @@ const RobotOperating = () => {
                   </CDropdownToggle>
                 ) : (
                   <CButton
-                    className="shadow-sm "
+                    className={`${
+                      Robotdata[0].lora_state === 1 ? `` : `text-white`
+                    } shadow-sm`}
                     color={`${
-                      Robotdata[0].lora_state === 1 ? `warning` : `danger`
+                      Robotdata[0].lora_state === 1 ? `danger` : `success`
                     }`}
                     size="sm"
                   >
@@ -278,12 +281,15 @@ const RobotOperating = () => {
                     <CTableBody>
                       <CTableRow>
                         <CTableDataCell>
-                          <b style={{ fontSize: "15px" }}>
+                          <span
+                            className="text-secondary"
+                            style={{ fontSize: "15px" }}
+                          >
                             {Robotdata[0].robot_no}
-                          </b>
+                          </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          🔋: {Robotdata[0].battery_percentage}%
+                          🔋: {Robotdata[0].battery_voltage}%
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="badge bg-success">
@@ -293,7 +299,13 @@ const RobotOperating = () => {
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell className="text-danger">
-                          {Robotdata[0].deveui}
+                          <span
+                            className="text-secondary"
+                            style={{ fontSize: "13px" }}
+                          >
+                            {" "}
+                            {Robotdata[0].deveui}{" "}
+                          </span>
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
                         <CTableDataCell>
@@ -330,7 +342,7 @@ const RobotOperating = () => {
                     <CTableBody>
                       <CTableRow>
                         <CTableDataCell>
-                          <p
+                          <span
                             className={`text-${
                               Robotdata[0].lora_state === "1"
                                 ? `success`
@@ -340,10 +352,10 @@ const RobotOperating = () => {
                             {Robotdata[0].lora_state === "1"
                               ? `online`
                               : `offline`}
-                          </p>
+                          </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="text-primary">
+                          <span className="text-secondary">
                             {Robotdata[0].last_status}
                           </span>
                         </CTableDataCell>
@@ -355,14 +367,22 @@ const RobotOperating = () => {
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="text-danger">
-                            {formatDistanceToNow(
-                              new Date(Robotdata[0].last_uplink),
-                              {
-                                addSuffix: true,
-                              }
-                            )}
-                            {/* {Robotdata[0].last_uplink} */}
+                          <span className="">
+                            <CTooltip
+                              content={new Date(
+                                Robotdata[0].last_uplink
+                              ).toLocaleString()}
+                              placement="top"
+                            >
+                              <span>
+                                {formatDistanceToNow(
+                                  new Date(Robotdata[0].last_uplink),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                            </CTooltip>
                           </span>
                         </CTableDataCell>
                       </CTableRow>

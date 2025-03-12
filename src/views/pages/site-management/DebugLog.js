@@ -103,7 +103,15 @@ const DebugLog = () => {
         "Robot No": log.robot_no,
         Deveui: log.deveui,
         Data: log.data,
-        Timestamp: log.timestamp,
+        Timestamp: new Date(log.createdAt).toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }),
         Topic: log.topic,
       }))
     );
@@ -122,8 +130,8 @@ const DebugLog = () => {
           <CRow className="justify-content-between my-3">
             <CCol md={4} className="text-end">
               {" "}
-              <h5 className="text-primary text-center">
-                Debug Logs of - <span>{robot_no}</span>
+              <h5 className="text-secondary text-center">
+                <span className="text-danger">{robot_no}</span> - Debug Logs
               </h5>
             </CCol>
             <CCol md={2} className="text-end">
