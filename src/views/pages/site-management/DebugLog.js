@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -14,19 +14,65 @@ import {
   CInputGroup,
   CButton,
 } from "@coreui/react";
-import { debug_log } from "../../../data"; // Import debug log data
+// import { debug_log } from "../../../data"; // Import debug log data
 import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import toast from "react-hot-toast";
-
+import { useSelector } from "react-redux";
+import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SUCCESS":
+      return { ...state, debuglogs: action.payload, loading: false };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 const DebugLog = () => {
+  const [{ loading, error, debuglogs }, dispatch] = useReducer(reducer, {
+    debuglogs: [],
+    loading: true,
+    error: "",
+  });
   const { robot_no } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const authtoken = useSelector((state) => state.authtoken);
+
+  useEffect(() => {
+    const fetchDownlink = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+
+        const { data } = await axios.get(
+          `/api/v1/debuglogs/robot/${robot_no}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // console.log(data);
+        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
+        // console.log(data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response?.data || "Failed to fetch data",
+        });
+        toast.error(error.response?.data || "Failed to fetch data");
+      }
+    };
+
+    fetchDownlink();
+  }, [authtoken, robot_no]);
 
   // Filter logs based on robot_no
-  const filteredRobotLogs = debug_log.filter(
-    (log) => log.robot_no === robot_no
-  );
+  const filteredRobotLogs = debuglogs
+    .filter((log) => log.robot_no === robot_no)
+    .reverse();
 
   // Search by robot_no or topic
   const filteredLogs = filteredRobotLogs
@@ -105,80 +151,84 @@ const DebugLog = () => {
             </CCol>
           </CRow>
 
-          {/* Show Message If No Logs Found */}
-          {filteredLogs.length === 0 ? (
-            <p className="text-center text-muted">
-              No debug logs found for this robot.
-            </p>
-          ) : (
-            <div className="table-responsive">
-              <CTable striped responsive hover bordered>
-                <CTableHead>
-                  {/* <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: '140px' }}>
-                      Robot No
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: '140px' }}>
-                      Deveui
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>Data</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: '170px' }}>
-                      Timestamp
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: '140px' }}>
-                      Topic
-                    </CTableHeaderCell>
-                  </CTableRow> */}
+          <div className="table-responsive">
+            <CTable striped responsive hover bordered>
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>#</CTableHeaderCell>
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ minWidth: "140px" }}
+                  >
+                    Robot No
+                  </CTableHeaderCell>
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ minWidth: "140px" }}
+                  >
+                    Deveui
+                  </CTableHeaderCell>
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ minWidth: "150px" }}
+                  >
+                    Data
+                  </CTableHeaderCell>
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ minWidth: "170px" }}
+                  >
+                    Timestamp (D/M/Y)
+                  </CTableHeaderCell>
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ minWidth: "140px" }}
+                  >
+                    Topic
+                  </CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell
-                      className="text-center"
-                      style={{ minWidth: "140px" }}
-                    >
-                      Robot No
-                    </CTableHeaderCell>
-                    <CTableHeaderCell
-                      className="text-center"
-                      style={{ minWidth: "140px" }}
-                    >
-                      Deveui
-                    </CTableHeaderCell>
-                    <CTableHeaderCell
-                      className="text-center"
-                      style={{ minWidth: "150px" }}
-                    >
-                      Data
-                    </CTableHeaderCell>
-                    <CTableHeaderCell
-                      className="text-center"
-                      style={{ minWidth: "170px" }}
-                    >
-                      Timestamp
-                    </CTableHeaderCell>
-                    <CTableHeaderCell
-                      className="text-center"
-                      style={{ minWidth: "140px" }}
-                    >
-                      Topic
-                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center" colSpan={6}>
+                      <LoadingSpinner />
+                    </CTableHeaderCell>{" "}
                   </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {filteredLogs.map((log, index) => (
-                    <CTableRow key={log.id}>
+                ) : (
+                  filteredLogs.map((log, index) => (
+                    <CTableRow key={index}>
                       <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                      <CTableDataCell>{log.robot_no}</CTableDataCell>
-                      <CTableDataCell>{log.deveui}</CTableDataCell>
-                      <CTableDataCell>{log.data}</CTableDataCell>
-                      <CTableDataCell>{log.timestamp}</CTableDataCell>
-                      <CTableDataCell>{log.topic}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.robot_no}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.deveui}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.data}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {new Date(log.createdAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
+                      </CTableDataCell>
+
+                      <CTableDataCell className="text-center">
+                        {log.topic}
+                      </CTableDataCell>
                     </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-            </div>
-          )}
+                  ))
+                )}
+              </CTableBody>
+            </CTable>
+          </div>
         </CCardBody>
       </CCard>
     </div>

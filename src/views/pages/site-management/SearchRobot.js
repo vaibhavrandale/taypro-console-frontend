@@ -63,10 +63,8 @@ const SearchRobot = () => {
     const value = e.target.value;
     setSearchTerm(value);
     if (value.length > 0) {
-      const filtered = robots.filter(
-        (robot) =>
-          robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(value.toLowerCase())
+      const filtered = robots.filter((robot) =>
+        robot.robot_no.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredRobot(filtered);
     } else {
