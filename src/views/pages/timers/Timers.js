@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   CTable,
   CTableHead,
@@ -20,11 +20,11 @@ import {
   CModalFooter,
   CFormLabel,
   CFormInput,
-} from '@coreui/react';
-import { robots, sites } from '../../../data'; // Import Robots & Sites Data
+} from "@coreui/react";
+import { robots, sites } from "../../../data"; // Import Robots & Sites Data
 
 const Timers = () => {
-  const [selectedSite, setSelectedSite] = useState('');
+  const [selectedSite, setSelectedSite] = useState("");
   const [filteredBlocks, setFilteredBlocks] = useState([]);
   const [editData, setEditData] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -39,7 +39,7 @@ const Timers = () => {
   // Function to get Site Name from site_id
   const getSiteName = (site_id) => {
     const site = sites.find((s) => s.site_id === site_id);
-    return site ? site.site_id : 'Unknown';
+    return site ? site.site_id : "Unknown";
   };
 
   // Function to Filter Blocks Based on Site
@@ -72,7 +72,7 @@ const Timers = () => {
 
   // Set Default View (Show All Blocks)
   useEffect(() => {
-    filterBlocks('');
+    filterBlocks("");
   }, []);
 
   // Handle Site Selection Change
@@ -130,12 +130,12 @@ const Timers = () => {
         <CCardHeader>
           <h5 className="m-0">
             📋 Timers for &nbsp;
-            <b>{selectedSite ? getSiteName(selectedSite) : 'All Sites'}</b>
+            <b>{selectedSite ? getSiteName(selectedSite) : "All Sites"}</b>
           </h5>
         </CCardHeader>
         <CCardBody>
           <CTable bordered hover responsive>
-            <CTableHead color="dark">
+            <CTableHead>
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
                 <CTableHeaderCell>Site ID</CTableHeaderCell>

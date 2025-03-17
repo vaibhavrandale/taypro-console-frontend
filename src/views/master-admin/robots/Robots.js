@@ -145,7 +145,7 @@ const Robots = () => {
 
       {/* Robots Table */}
       <CTable bordered hover responsive className="text-center shadow-sm">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>

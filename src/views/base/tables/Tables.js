@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -12,8 +12,8 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Tables = () => {
   return (
@@ -26,7 +26,7 @@ const Tables = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Using the most basic table CoreUI, here&#39;s how{' '}
+              Using the most basic table CoreUI, here&#39;s how{" "}
               <code>&lt;CTable&gt;</code>-based tables look in CoreUI.
             </p>
             <DocsExample href="components/table">
@@ -468,7 +468,7 @@ const Tables = () => {
             <p className="text-body-secondary small">
               <a href="https://coreui.io/docs/utilities/borders#border-color">
                 Border color utilities
-              </a>{' '}
+              </a>{" "}
               can be added to change colors:
             </p>
             <DocsExample href="components/table#bordered-tables">
@@ -586,8 +586,8 @@ const Tables = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add <code>small</code> property to make any{' '}
-              <code>&lt;CTable&gt;</code> more compact by cutting all cell{' '}
+              Add <code>small</code> property to make any{" "}
+              <code>&lt;CTable&gt;</code> more compact by cutting all cell{" "}
               <code>padding</code> in half.
             </p>
             <DocsExample href="components/table#small-tables">
@@ -632,8 +632,8 @@ const Tables = () => {
           <CCardBody>
             <p className="text-body-secondary small">
               Table cells of <code>&lt;CTableHead&gt;</code> are always vertical
-              aligned to the bottom. Table cells in{' '}
-              <code>&lt;CTableBody&gt;</code> inherit their alignment from{' '}
+              aligned to the bottom. Table cells in{" "}
+              <code>&lt;CTableBody&gt;</code> inherit their alignment from{" "}
               <code>&lt;CTable&gt;</code> and are aligned to the the top by
               default. Use the align property to re-align where needed.
             </p>
@@ -658,15 +658,15 @@ const Tables = () => {
                 <CTableBody>
                   <CTableRow>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: middle;</code>{' '}
+                      This cell inherits <code>vertical-align: middle;</code>{" "}
                       from the table
                     </CTableDataCell>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: middle;</code>{' '}
+                      This cell inherits <code>vertical-align: middle;</code>{" "}
                       from the table
                     </CTableDataCell>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: middle;</code>{' '}
+                      This cell inherits <code>vertical-align: middle;</code>{" "}
                       from the table
                     </CTableDataCell>
                     <CTableDataCell>
@@ -677,15 +677,15 @@ const Tables = () => {
                   </CTableRow>
                   <CTableRow align="bottom">
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: bottom;</code>{' '}
+                      This cell inherits <code>vertical-align: bottom;</code>{" "}
                       from the table row
                     </CTableDataCell>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: bottom;</code>{' '}
+                      This cell inherits <code>vertical-align: bottom;</code>{" "}
                       from the table row
                     </CTableDataCell>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: bottom;</code>{' '}
+                      This cell inherits <code>vertical-align: bottom;</code>{" "}
                       from the table row
                     </CTableDataCell>
                     <CTableDataCell>
@@ -696,11 +696,11 @@ const Tables = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: middle;</code>{' '}
+                      This cell inherits <code>vertical-align: middle;</code>{" "}
                       from the table
                     </CTableDataCell>
                     <CTableDataCell>
-                      This cell inherits <code>vertical-align: middle;</code>{' '}
+                      This cell inherits <code>vertical-align: middle;</code>{" "}
                       from the table
                     </CTableDataCell>
                     <CTableDataCell align="top">
@@ -799,9 +799,9 @@ const Tables = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Similar to tables and dark tables, use the modifier prop{' '}
-              <code>color=&#34;light&#34;</code> or{' '}
-              <code>color=&#34;dark&#34;</code> to make{' '}
+              Similar to tables and dark tables, use the modifier prop{" "}
+              <code>color=&#34;light&#34;</code> or{" "}
+              <code>color=&#34;dark&#34;</code> to make{" "}
               <code>&lt;CTableHead&gt;</code>s appear light or dark gray.
             </p>
             <DocsExample href="components/table#table-head">
@@ -838,7 +838,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#table-head">
               <CTable>
-                <CTableHead color="dark">
+                <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>

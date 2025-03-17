@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableBody,
@@ -10,12 +10,12 @@ import {
   CFormInput,
   CRow,
   CCol,
-} from '@coreui/react';
-import { sites } from '../../../data'; // Import sites from data.js
-import { Link } from 'react-router-dom';
+} from "@coreui/react";
+import { sites } from "../../../data"; // Import sites from data.js
+import { Link } from "react-router-dom";
 
 const AllSiteCleaningLog = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter table rows based on search term
   const filteredData = sites.filter(
@@ -45,7 +45,7 @@ const AllSiteCleaningLog = () => {
         {/* Dynamic Data Table */}
         <CCol>
           <CTable bordered hover responsive>
-            <CTableHead color="dark">
+            <CTableHead>
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
                 <CTableHeaderCell>Site Name</CTableHeaderCell>

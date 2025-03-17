@@ -70,7 +70,7 @@
 //         </CCol>
 //       </CRow>
 //       <CTable bordered hover responsive className="text-center">
-//         <CTableHead color="dark">
+//         <CTableHead >
 //           <CTableRow>
 //             <CTableHeaderCell>Sr</CTableHeaderCell>
 //             <CTableHeaderCell>Robot No</CTableHeaderCell>
@@ -175,7 +175,7 @@
 
 // export default ActiveRobots;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -193,20 +193,20 @@ import {
   CFormInput,
   CRow,
   CCol,
-} from '@coreui/react';
-import { robots } from '../../../data'; // Import your robots data
+} from "@coreui/react";
+import { robots } from "../../../data"; // Import your robots data
 
 const ActiveRobots = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
   const [formData, setFormData] = useState({
-    robot_no: '',
-    deveui: '',
-    lora_no: '',
-    old_lora_no: '',
-    new_lora_no: '',
+    robot_no: "",
+    deveui: "",
+    lora_no: "",
+    old_lora_no: "",
+    new_lora_no: "",
   });
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter active robots
   const activeRobots = robots.filter((robot) => robot.activate === 1);
@@ -223,11 +223,11 @@ const ActiveRobots = () => {
   const openModal = (robot) => {
     setSelectedRobot(robot);
     setFormData({
-      robot_no: robot.robot_no || '',
-      deveui: robot.deveui || '',
-      lora_no: robot.lora_no || '',
-      old_lora_no: robot.old_lora_no || '',
-      new_lora_no: '',
+      robot_no: robot.robot_no || "",
+      deveui: robot.deveui || "",
+      lora_no: robot.lora_no || "",
+      old_lora_no: robot.old_lora_no || "",
+      new_lora_no: "",
     });
     setModalVisible(true);
   };
@@ -239,7 +239,7 @@ const ActiveRobots = () => {
 
   // Handle update (currently logs updated data)
   const handleUpdate = () => {
-    console.log('Updated Data:', formData);
+    console.log("Updated Data:", formData);
     setModalVisible(false);
   };
 
@@ -259,7 +259,7 @@ const ActiveRobots = () => {
         </CCol>
       </CRow>
       <CTable bordered hover responsive className="text-center">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>

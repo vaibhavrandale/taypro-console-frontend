@@ -77,7 +77,7 @@
 
 //       {/* Clients Table */}
 //       <CTable bordered hover responsive className="text-center">
-//         <CTableHead color="dark">
+//         <CTableHead >
 //           <CTableRow>
 //             <CTableHeaderCell>Sr</CTableHeaderCell>
 //             <CTableHeaderCell>Client Name</CTableHeaderCell>
@@ -214,7 +214,7 @@
 
 // export default Clients;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -232,29 +232,29 @@ import {
   CRow,
   CCol,
   CForm,
-} from '@coreui/react';
-import { clients as initialClients } from '../../../data'; // Import clients data
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
+} from "@coreui/react";
+import { clients as initialClients } from "../../../data"; // Import clients data
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Clients = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [clients, setClients] = useState(initialClients);
   const [selectedClient, setSelectedClient] = useState(null);
   const [formData, setFormData] = useState({
-    client_name: '',
-    client_id: '',
-    logo: '',
+    client_name: "",
+    client_id: "",
+    logo: "",
   });
 
   // Function to generate client_id from client_name
   const generateClientID = (name) => {
     return name
       .toLowerCase() // Convert to lowercase
-      .replace(/\s+/g, '_') // Replace spaces with underscores
-      .replace(/[^\w_]/g, ''); // Remove special characters
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/[^\w_]/g, ""); // Remove special characters
   };
 
   // Open modal for updating client
@@ -266,7 +266,7 @@ const Clients = () => {
 
   // Open "Add Client" modal
   const openAddClientModal = () => {
-    setFormData({ client_name: '', client_id: '', logo: '' });
+    setFormData({ client_name: "", client_id: "", logo: "" });
     setAddModalVisible(true);
   };
 
@@ -276,7 +276,7 @@ const Clients = () => {
     let newFormData = { ...formData, [name]: value };
 
     // Generate `client_id` dynamically based on `client_name`
-    if (name === 'client_name') {
+    if (name === "client_name") {
       newFormData.client_id = generateClientID(value);
     }
 
@@ -296,7 +296,7 @@ const Clients = () => {
   // Handle add new client
   const handleAddClient = () => {
     if (!formData.client_name || !formData.logo) {
-      toast.error('Please fill  all fields');
+      toast.error("Please fill  all fields");
       return;
     }
 
@@ -332,13 +332,13 @@ const Clients = () => {
 
       {/* Clients Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '200px' }}>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
               Client Name
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '200px' }}>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
               Client ID
             </CTableHeaderCell>
             <CTableHeaderCell>Logo</CTableHeaderCell>
@@ -363,10 +363,10 @@ const Clients = () => {
                 </CTableDataCell>
                 <CTableDataCell>
                   <div className="d-flex justify-content-center align-items-center">
-                    {' '}
+                    {" "}
                     <Link
                       className="m-1 btn btn-sm btn-primary"
-                      style={{ minWidth: '200px' }}
+                      style={{ minWidth: "200px" }}
                       color="primary"
                       size="sm"
                       to={`clients-data/${client.client_id}`}
@@ -448,7 +448,7 @@ const Clients = () => {
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
         <CModalHeader>
           <CModalTitle>
-            Update Client :{' '}
+            Update Client :{" "}
             <span className="badge bg-success">{formData.client_id}</span>
           </CModalTitle>
         </CModalHeader>

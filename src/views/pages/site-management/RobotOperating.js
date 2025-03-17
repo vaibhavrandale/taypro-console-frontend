@@ -173,6 +173,10 @@ const RobotOperating = () => {
     getRobots();
   }, [block, site_id, successDelete, authtoken]);
 
+  const filteredDownlink = downlink.filter((item) =>
+    item.downlink.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const deleteDownlink = async (downlink) => {
     if (window.confirm("Are you sure you want to delete?")) {
       try {
@@ -591,8 +595,8 @@ const RobotOperating = () => {
                         {error}
                       </CTableDataCell>
                     </CTableRow>
-                  ) : downlink.length > 0 ? (
-                    downlink.map((item, index) => (
+                  ) : filteredDownlink.length > 0 ? (
+                    filteredDownlink.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
 

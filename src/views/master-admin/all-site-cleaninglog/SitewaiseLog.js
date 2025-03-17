@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -14,21 +14,21 @@ import {
   CCardHeader,
   CSpinner,
   CButton, // Import Loading Spinner
-} from '@coreui/react';
-import { cleaning_log } from '../../../data'; // Import cleaning logs data
-import { useParams } from 'react-router-dom';
+} from "@coreui/react";
+import { cleaning_log } from "../../../data"; // Import cleaning logs data
+import { useParams } from "react-router-dom";
 // import * as XLSX from 'xlsx'; // Import xlsx for Excel export
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 const SitewaiseLog = () => {
   const { site_id } = useParams();
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [loading, setLoading] = useState(false); // 🔄 Loading state
 
   // Set default date when the component mounts
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     setSelectedDate(today);
     filterLogs(today);
   }, []);
@@ -57,12 +57,12 @@ const SitewaiseLog = () => {
   // 🔽 Export to CSV Function
   const exportToCSV = () => {
     if (filteredLogs.length === 0) {
-      toast.error('No data available to export.');
+      toast.error("No data available to export.");
       return;
     }
 
     const csvHeader = [
-      'Sr,Robot No,Row Number,Row Length (Meters),Cleaning Date,Cleaning Start Time,Battery Start (%),Cleaning Finished Time,Battery Finished (%),Distance Covered (Meters),Status',
+      "Sr,Robot No,Row Number,Row Length (Meters),Cleaning Date,Cleaning Start Time,Battery Start (%),Cleaning Finished Time,Battery Finished (%),Distance Covered (Meters),Status",
     ];
 
     const csvRows = filteredLogs.map((log, index) => {
@@ -72,17 +72,17 @@ const SitewaiseLog = () => {
 
       return `${index + 1},${log.robot_no},${log.row_number},${
         log.row_length
-      },${log.start_timestamp.split(' ')[0]},${
+      },${log.start_timestamp.split(" ")[0]},${
         log.start_timestamp
       },${startBattery},${cleaningFinishedTime},${endBattery},${
         log.claculated_distance
       },${log.cleaning_status}`;
     });
 
-    const csvContent = [csvHeader, ...csvRows].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const csvContent = [csvHeader, ...csvRows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `Cleaning_Log_${selectedDate}.csv`;
     a.click();
@@ -132,10 +132,10 @@ const SitewaiseLog = () => {
               </div>
             ) : (
               <CTable bordered hover responsive className="text-center">
-                <CTableHead color="dark">
+                <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>Sr</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: '150px' }}>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Robot No
                     </CTableHeaderCell>
                     <CTableHeaderCell>Row Number</CTableHeaderCell>
@@ -160,7 +160,7 @@ const SitewaiseLog = () => {
                         <CTableDataCell>{log.row_number}</CTableDataCell>
                         <CTableDataCell>{log.row_length}</CTableDataCell>
                         <CTableDataCell>
-                          {log.start_timestamp.split(' ')[0]}
+                          {log.start_timestamp.split(" ")[0]}
                         </CTableDataCell>
                         <CTableDataCell>{log.start_timestamp}</CTableDataCell>
                         <CTableDataCell>

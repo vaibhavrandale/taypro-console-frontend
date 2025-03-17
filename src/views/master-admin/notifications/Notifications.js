@@ -65,7 +65,7 @@
 
 //       {/* 🔔 Notifications Table */}
 //       <CTable bordered hover responsive className="text-center">
-//         <CTableHead color="dark">
+//         <CTableHead >
 //           <CTableRow>
 //             <CTableHeaderCell>#</CTableHeaderCell>
 //             <CTableHeaderCell>
@@ -312,7 +312,7 @@ const Notifications = () => {
 
       {/* 🔔 Notifications Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>

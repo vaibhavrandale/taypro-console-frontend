@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -16,14 +16,14 @@ import {
   CFormInput,
   CRow,
   CCol,
-} from '@coreui/react';
-import { robots } from '../../../data'; // Import your robots data
+} from "@coreui/react";
+import { robots } from "../../../data"; // Import your robots data
 
 const InActiveRobots = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
   const [formData, setFormData] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter inactive robots
   const inactiveRobots = robots.filter((robot) => robot.activate === 0);
@@ -49,7 +49,7 @@ const InActiveRobots = () => {
 
   // Handle update (currently logs updated data)
   const handleUpdate = () => {
-    console.log('Updated Data:', formData);
+    console.log("Updated Data:", formData);
     setModalVisible(false);
   };
 
@@ -70,7 +70,7 @@ const InActiveRobots = () => {
       </CRow>
 
       <CTable bordered hover responsive>
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>

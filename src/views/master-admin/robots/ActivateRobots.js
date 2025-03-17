@@ -146,7 +146,7 @@
 //           responsive
 //           className="text-center shadow-sm mt-3"
 //         >
-//           <CTableHead color="dark">
+//           <CTableHead >
 //             <CTableRow>
 //               <CTableHeaderCell>Select</CTableHeaderCell>
 //               <CTableHeaderCell>#</CTableHeaderCell>
@@ -393,7 +393,7 @@ const ActivateRobots = () => {
           responsive
           className="text-center shadow-sm mt-3"
         >
-          <CTableHead color="dark">
+          <CTableHead>
             <CTableRow>
               <CTableHeaderCell>Select</CTableHeaderCell>
               <CTableHeaderCell>#</CTableHeaderCell>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import {
   // CCard,
   // CCardBody,
@@ -22,21 +22,21 @@ import {
   CModalBody,
   CModalFooter,
   CForm,
-} from '@coreui/react';
-import { clients, sites } from '../../../data'; // Import clients & sites data
-import toast from 'react-hot-toast';
+} from "@coreui/react";
+import { clients, sites } from "../../../data"; // Import clients & sites data
+import toast from "react-hot-toast";
 
 const ClientData = () => {
   const { client_id } = useParams(); // Get client_id from URL params
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedSite, setSelectedSite] = useState(null);
   const [formData, setFormData] = useState({
-    siteName: '',
-    location: '',
-    site_id: '',
+    siteName: "",
+    location: "",
+    site_id: "",
     client_id: client_id,
   });
 
@@ -44,8 +44,8 @@ const ClientData = () => {
   const generateClientID = (name) => {
     return name
       .toLowerCase() // Convert to lowercase
-      .replace(/\s+/g, '_') // Replace spaces with underscores
-      .replace(/[^\w_]/g, ''); // Remove special characters
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/[^\w_]/g, ""); // Remove special characters
   };
 
   // Find the client by client_id
@@ -87,7 +87,7 @@ const ClientData = () => {
   };
 
   const handleDelete = (site_id) => {
-    if (window.confirm('Are you sure you want to delete this site?')) {
+    if (window.confirm("Are you sure you want to delete this site?")) {
       toast.success(`${site_id} deleted!`);
       // Here you can add logic to remove site from the state or database
       setDeleteModal(false);
@@ -97,9 +97,9 @@ const ClientData = () => {
   // Open modal for adding site
   const openAddModal = () => {
     setFormData({
-      siteName: '',
-      location: '',
-      site_id: '',
+      siteName: "",
+      location: "",
+      site_id: "",
       client_id: client_id,
     });
     setAddModalVisible(true);
@@ -112,7 +112,7 @@ const ClientData = () => {
     let newFormData = { ...formData, [name]: value };
 
     // Generate `client_id` dynamically based on `client_name`
-    if (name === 'siteName') {
+    if (name === "siteName") {
       newFormData.site_id = generateClientID(value);
     }
 
@@ -121,17 +121,17 @@ const ClientData = () => {
 
   // Handle updating site
   const handleUpdate = () => {
-    console.log('Updated Site Data:', formData);
+    console.log("Updated Site Data:", formData);
     setModalVisible(false);
   };
 
   // Handle adding new site
   const handleAddSite = () => {
     if (!formData.siteName || !formData.location || !formData.site_id) {
-      alert('Please fill in all fields');
+      alert("Please fill in all fields");
       return;
     }
-    console.log('New Site Added:', formData);
+    console.log("New Site Added:", formData);
     setAddModalVisible(false);
   };
 
@@ -167,22 +167,22 @@ const ClientData = () => {
             </CRow>
 
             <CTable bordered hover responsive className="text-center  mt-2">
-              <CTableHead color="dark">
+              <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell style={{ minWidth: '200px' }}>
+                  <CTableHeaderCell style={{ minWidth: "200px" }}>
                     Site Name
                   </CTableHeaderCell>
-                  <CTableHeaderCell style={{ minWidth: '100px' }}>
+                  <CTableHeaderCell style={{ minWidth: "100px" }}>
                     Location
                   </CTableHeaderCell>
-                  <CTableHeaderCell style={{ minWidth: '170px' }}>
+                  <CTableHeaderCell style={{ minWidth: "170px" }}>
                     Site ID
                   </CTableHeaderCell>
-                  <CTableHeaderCell style={{ minWidth: '170px' }}>
+                  <CTableHeaderCell style={{ minWidth: "170px" }}>
                     Password
                   </CTableHeaderCell>
-                  <CTableHeaderCell style={{ minWidth: '170px' }}>
+                  <CTableHeaderCell style={{ minWidth: "170px" }}>
                     Action
                   </CTableHeaderCell>
                 </CTableRow>
@@ -296,7 +296,7 @@ const ClientData = () => {
             >
               <CModalHeader>
                 <CModalTitle>
-                  Update Site{' '}
+                  Update Site{" "}
                   <b className="text-danger">
                     {formData.siteName},{formData.location}
                   </b>
@@ -373,7 +373,7 @@ const ClientData = () => {
                 <CModalTitle>
                   Are you want to delete <br />
                   <b className="text-danger">
-                    {formData.siteName},{formData.location}{' '}
+                    {formData.siteName},{formData.location}{" "}
                     <span className="text-success">({formData.site_id})</span>
                   </b>
                   ?

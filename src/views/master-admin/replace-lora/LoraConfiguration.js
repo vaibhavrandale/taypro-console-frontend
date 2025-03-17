@@ -353,7 +353,7 @@ const LoraConfiguration = () => {
         </CCol>
       </CRow>
       <CTable bordered hover responsive className="text-center table-container">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell className="sticky-column">
               Lora Sr

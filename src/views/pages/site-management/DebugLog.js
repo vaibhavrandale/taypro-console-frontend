@@ -75,18 +75,15 @@ const DebugLog = () => {
     .reverse();
 
   // Search by robot_no or topic
-  const filteredLogs = filteredRobotLogs
-    .filter(
-      (log) =>
-        (log.robot_no &&
-          log.robot_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        log.data.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        log.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        log.timestamp.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (log.topic &&
-          log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const filteredLogs = filteredRobotLogs.filter(
+    (log) =>
+      (log.robot_no &&
+        log.robot_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      log.data.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.timestamp.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   // Function to export data to Excel
   // Function to export data to Excel

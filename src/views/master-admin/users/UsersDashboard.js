@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   CTable,
   CTableHead,
@@ -18,10 +18,10 @@ import {
   CModalHeader,
   CModal,
   CFormSelect,
-} from '@coreui/react';
-import { departments, role_permissions } from '../../../data'; // Ensure correct path
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import axios from 'axios';
+} from "@coreui/react";
+import { departments, role_permissions } from "../../../data"; // Ensure correct path
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import axios from "axios";
 // import logo from '../../../assets/brand/logoforwhitebg.png';
 
 const UsersDashboard = () => {
@@ -29,7 +29,7 @@ const UsersDashboard = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -41,7 +41,7 @@ const UsersDashboard = () => {
     setLoading(true);
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/v1/users', {
+        const response = await axios.get("/api/v1/users", {
           headers: { authorization: `Bearer ${authtoken}` },
         }); // Replace with your API endpoint
 
@@ -51,7 +51,7 @@ const UsersDashboard = () => {
         setUsers(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -69,13 +69,13 @@ const UsersDashboard = () => {
   const openAddModal = () => {
     setFormData({
       id: `U00${users.length + 1}`, // Generate unique user ID
-      username: '',
-      email: '',
-      role: '',
-      department: '',
-      phone: '',
-      type: 'Internal',
-      profile_image: '',
+      username: "",
+      email: "",
+      role: "",
+      department: "",
+      phone: "",
+      type: "Internal",
+      profile_image: "",
     });
     setAddModalVisible(true);
   };
@@ -87,13 +87,13 @@ const UsersDashboard = () => {
 
   // Handle Update User
   const handleUpdate = () => {
-    console.log('Updated User:', formData);
+    console.log("Updated User:", formData);
     setModalVisible(false);
   };
 
   // Handle Add User
   const handleAdd = () => {
-    console.log('New User Added:', formData);
+    console.log("New User Added:", formData);
     users.push(formData);
     setAddModalVisible(false);
   };
@@ -101,7 +101,7 @@ const UsersDashboard = () => {
   // Filter Users based on Search Term and ensure they are "Internal" type
   const filteredUsers = users.filter(
     (user) =>
-      user.type === 'Internal' &&
+      user.type === "Internal" &&
       (user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,7 +129,7 @@ const UsersDashboard = () => {
         </div>
       </div>
       <CRow className="mb-3 justify-content-end">
-        {' '}
+        {" "}
         <CCol md={4} className="my-2">
           <CFormInput
             type="text"
@@ -142,7 +142,7 @@ const UsersDashboard = () => {
 
       {/* Users Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Profile</CTableHeaderCell>

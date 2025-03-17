@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -18,12 +18,12 @@ import {
   CModalFooter,
   CFormSelect,
   CFormTextarea,
-} from '@coreui/react';
-import { internal_tickets } from '../../../data';
-import { Link } from 'react-router-dom';
+} from "@coreui/react";
+import { internal_tickets } from "../../../data";
+import { Link } from "react-router-dom";
 
 const InternalTicketsDashboard = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
@@ -53,14 +53,14 @@ const InternalTicketsDashboard = () => {
 
   /** ✅ Handle Update */
   const handleUpdate = () => {
-    console.log('Updated Ticket:', formData);
+    console.log("Updated Ticket:", formData);
     setModalVisible(false);
   };
 
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
-        {' '}
+        {" "}
         <h2>Internal Tickets</h2>
         <Link
           to="create-new-internal-ticket"
@@ -85,7 +85,7 @@ const InternalTicketsDashboard = () => {
 
       {/* 📋 Ticket Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead color="dark">
+        <CTableHead>
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Ticket ID</CTableHeaderCell>
@@ -110,11 +110,11 @@ const InternalTicketsDashboard = () => {
                 <CTableDataCell>
                   <CBadge
                     color={
-                      ticket.priority === 'Critical'
-                        ? 'danger'
-                        : ticket.priority === 'High'
-                        ? 'warning'
-                        : 'primary'
+                      ticket.priority === "Critical"
+                        ? "danger"
+                        : ticket.priority === "High"
+                        ? "warning"
+                        : "primary"
                     }
                   >
                     {ticket.priority}
@@ -123,11 +123,11 @@ const InternalTicketsDashboard = () => {
                 <CTableDataCell>
                   <CBadge
                     color={
-                      ticket.status === 'Resolved'
-                        ? 'success'
-                        : ticket.status === 'In Progress'
-                        ? 'warning'
-                        : 'danger'
+                      ticket.status === "Resolved"
+                        ? "success"
+                        : ticket.status === "In Progress"
+                        ? "warning"
+                        : "danger"
                     }
                   >
                     {ticket.status}
@@ -166,7 +166,7 @@ const InternalTicketsDashboard = () => {
       >
         <CModalHeader>
           <CModalTitle>
-            Update Ticket:{' '}
+            Update Ticket:{" "}
             <span className="badge bg-success">{formData.ticket_id}</span>
           </CModalTitle>
         </CModalHeader>
@@ -326,13 +326,13 @@ const InternalTicketsDashboard = () => {
               </CCol>
 
               {/* If Resolved, Show Resolved By & Resolved At */}
-              {formData.status === 'Resolved' && (
+              {formData.status === "Resolved" && (
                 <>
                   <CCol md={6}>
                     <CFormInput
                       type="text"
                       name="resolved_by"
-                      value={formData.resolved_by || ''}
+                      value={formData.resolved_by || ""}
                       label="Resolved By"
                       onChange={handleChange}
                       className="mb-3"
@@ -342,7 +342,7 @@ const InternalTicketsDashboard = () => {
                     <CFormInput
                       type="email"
                       name="resolved_by_email"
-                      value={formData.resolved_by_email || ''}
+                      value={formData.resolved_by_email || ""}
                       label="Resolved By Email"
                       onChange={handleChange}
                       className="mb-3"
@@ -354,7 +354,7 @@ const InternalTicketsDashboard = () => {
                     <CFormInput
                       type="text"
                       name="resolved_by_id"
-                      value={formData.resolved_by_id || ''}
+                      value={formData.resolved_by_id || ""}
                       label="Resolved By ID"
                       disabled
                       className="mb-3"
@@ -366,7 +366,7 @@ const InternalTicketsDashboard = () => {
                     <CFormInput
                       type="datetime-local"
                       name="resolved_at"
-                      value={formData.resolved_at || ''}
+                      value={formData.resolved_at || ""}
                       label="Resolved At"
                       onChange={handleChange}
                       className="mb-3"
