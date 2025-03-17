@@ -332,7 +332,7 @@ const Clients = () => {
 
       {/* Clients Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>

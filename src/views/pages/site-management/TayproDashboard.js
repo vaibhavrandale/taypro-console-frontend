@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CContainer,
   CRow,
@@ -21,8 +21,8 @@ import {
   CModal,
   CInputGroup,
   CFormInput,
-} from '@coreui/react';
-import { sites, robots } from '../../../data'; // Import sites and robots data
+} from "@coreui/react";
+import { sites, robots } from "../../../data"; // Import sites and robots data
 // import TayproLogo from '../../assets/brand/logo-white.png';
 // import { useNavigate } from 'react-router-dom';
 // import { useSelector } from 'react-redux'; // Import Redux Hook
@@ -34,7 +34,7 @@ const TayproDashboard = () => {
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
   const [activeOfflineSite, setActiveOfflineSite] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   // Calculate Total Robots, Online, and Offline
   const totalRobots = robots.length;
   const onlineRobots = robots.filter((robot) => robot.lora_state === 1).length;
@@ -105,9 +105,9 @@ const TayproDashboard = () => {
                       src={site.logo}
                       alt={site.siteName}
                       style={{
-                        width: '120px',
-                        height: '70px',
-                        objectFit: 'contain',
+                        width: "120px",
+                        height: "70px",
+                        objectFit: "contain",
                       }}
                     />
                   </div>
@@ -119,7 +119,7 @@ const TayproDashboard = () => {
 
                   {/* Robot Status Table */}
                   <CTable striped responsive className="mt-2">
-                    <CTableHead>
+                    <CTableHead color="secondary">
                       <CTableRow>
                         <CTableHeaderCell className="text-center">
                           Total
@@ -142,7 +142,7 @@ const TayproDashboard = () => {
                           <CBadge
                             color="success"
                             onClick={() => setActiveOnlineSite(site.site_id)}
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                           >
                             {online}
                           </CBadge>
@@ -152,7 +152,7 @@ const TayproDashboard = () => {
                           <CBadge
                             color="danger"
                             onClick={() => setActiveOfflineSite(site.site_id)}
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                           >
                             {offline}
                           </CBadge>
@@ -190,27 +190,27 @@ const TayproDashboard = () => {
                       </CCol>
                     </CRow>
                     <CTable responsive hover bordered>
-                      <CTableHead>
+                      <CTableHead color="secondary">
                         <CTableRow>
-                          <CTableHeaderCell style={{ minWidth: '20px' }}>
+                          <CTableHeaderCell style={{ minWidth: "20px" }}>
                             #
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Robot No
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Deveui
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Block
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Last Status
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '170px' }}>
+                          <CTableHeaderCell style={{ minWidth: "170px" }}>
                             Last updateAt
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Status
                           </CTableHeaderCell>
                         </CTableRow>
@@ -249,7 +249,7 @@ const TayproDashboard = () => {
                             )
                             .map((robot, index) => (
                               <CTableRow key={robot.robot_no}>
-                                <CTableHeaderCell style={{ minWidth: '20px' }}>
+                                <CTableHeaderCell style={{ minWidth: "20px" }}>
                                   {index + 1}
                                 </CTableHeaderCell>
                                 <CTableDataCell>
@@ -267,13 +267,13 @@ const TayproDashboard = () => {
                                   <CBadge
                                     color={
                                       robot.lora_state === 1
-                                        ? 'success'
-                                        : 'danger'
+                                        ? "success"
+                                        : "danger"
                                     }
                                   >
                                     {robot.lora_state === 1
-                                      ? 'Online'
-                                      : 'Offline'}
+                                      ? "Online"
+                                      : "Offline"}
                                   </CBadge>
                                 </CTableDataCell>
                               </CTableRow>
@@ -330,27 +330,27 @@ const TayproDashboard = () => {
                       </CCol>
                     </CRow>
                     <CTable responsive hover bordered>
-                      <CTableHead>
+                      <CTableHead color="secondary">
                         <CTableRow>
-                          <CTableHeaderCell style={{ minWidth: '20px' }}>
+                          <CTableHeaderCell style={{ minWidth: "20px" }}>
                             #
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Robot No
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Deveui
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Block
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Last Status
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '170px' }}>
+                          <CTableHeaderCell style={{ minWidth: "170px" }}>
                             Last updateAt
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: '150px' }}>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Status
                           </CTableHeaderCell>
                         </CTableRow>
@@ -389,7 +389,7 @@ const TayproDashboard = () => {
                             )
                             .map((robot, index) => (
                               <CTableRow key={robot.robot_no}>
-                                <CTableHeaderCell style={{ minWidth: '20px' }}>
+                                <CTableHeaderCell style={{ minWidth: "20px" }}>
                                   {index + 1}
                                 </CTableHeaderCell>
                                 <CTableDataCell>
@@ -407,13 +407,13 @@ const TayproDashboard = () => {
                                   <CBadge
                                     color={
                                       robot.lora_state === 1
-                                        ? 'success'
-                                        : 'danger'
+                                        ? "success"
+                                        : "danger"
                                     }
                                   >
                                     {robot.lora_state === 1
-                                      ? 'Online'
-                                      : 'Offline'}
+                                      ? "Online"
+                                      : "Offline"}
                                   </CBadge>
                                 </CTableDataCell>
                               </CTableRow>

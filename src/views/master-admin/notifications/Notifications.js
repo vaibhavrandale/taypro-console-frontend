@@ -147,7 +147,7 @@
 //         <CModalBody>
 //           {readUsers.length > 0 ? (
 //             <CTable bordered hover responsive>
-//               <CTableHead>
+//              <CTableHead color="secondary">
 //                 <CTableRow>
 //                   <CTableHeaderCell>#</CTableHeaderCell>
 //                   <CTableHeaderCell>User ID</CTableHeaderCell>
@@ -312,7 +312,7 @@ const Notifications = () => {
 
       {/* 🔔 Notifications Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>
@@ -402,7 +402,7 @@ const Notifications = () => {
         <CModalBody>
           {readUsers.length > 0 ? (
             <CTable bordered hover responsive>
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
                   <CTableHeaderCell>User ID</CTableHeaderCell>

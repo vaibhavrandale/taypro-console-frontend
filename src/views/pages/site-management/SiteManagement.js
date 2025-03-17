@@ -88,7 +88,7 @@ const SiteManagement = () => {
 
       {/* Dynamic Data Table */}
       <CTable bordered hover responsive>
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Site Name</CTableHeaderCell>

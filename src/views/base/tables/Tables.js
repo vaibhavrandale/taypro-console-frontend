@@ -31,7 +31,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table">
               <CTable>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -75,7 +75,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#variants">
               <CTable>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
@@ -146,7 +146,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#striped-rows">
               <CTable striped>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -180,7 +180,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#striped-rows">
               <CTable color="dark" striped>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -211,7 +211,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#striped-rows">
               <CTable color="success" striped>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -255,7 +255,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#hoverable-rows">
               <CTable hover>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -286,7 +286,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#hoverable-rows">
               <CTable color="dark" hover>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -317,7 +317,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#hoverable-rows">
               <CTable striped hover>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -357,7 +357,7 @@ const Tables = () => {
           <CCardBody>
             <DocsExample href="components/table#active-tables">
               <CTable>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -390,7 +390,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#active-tables">
               <CTable color="dark">
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -436,7 +436,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#bordered-tables">
               <CTable bordered>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -473,7 +473,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#bordered-tables">
               <CTable bordered borderColor="primary">
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -516,7 +516,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#tables-without-borders">
               <CTable borderless>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -547,7 +547,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#tables-without-borders">
               <CTable color="dark" borderless>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -592,7 +592,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#small-tables">
               <CTable small>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -639,7 +639,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#vertical-alignment">
               <CTable align="middle" responsive>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col" className="w-25">
                       Heading 1
@@ -730,7 +730,7 @@ const Tables = () => {
             </p>
             <DocsExample href="components/table#nesting">
               <CTable striped>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -748,7 +748,7 @@ const Tables = () => {
                   <CTableRow>
                     <CTableHeaderCell colSpan={4}>
                       <CTable>
-                        <CTableHead>
+                        <CTableHead color="secondary">
                           <CTableRow>
                             <CTableHeaderCell scope="col">
                               Header
@@ -838,7 +838,7 @@ const Tables = () => {
             </DocsExample>
             <DocsExample href="components/table#table-head">
               <CTable>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -905,7 +905,7 @@ const Tables = () => {
                     <CTableDataCell>@twitter</CTableDataCell>
                   </CTableRow>
                 </CTableBody>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableDataCell>Footer</CTableDataCell>
                     <CTableDataCell>Footer</CTableDataCell>
@@ -932,7 +932,7 @@ const Tables = () => {
             <DocsExample href="components/table#captions">
               <CTable>
                 <CTableCaption>List of users</CTableCaption>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>
@@ -969,7 +969,7 @@ const Tables = () => {
             <DocsExample href="components/table#captions">
               <CTable caption="top">
                 <CTableCaption>List of users</CTableCaption>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Class</CTableHeaderCell>

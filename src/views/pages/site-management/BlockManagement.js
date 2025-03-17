@@ -235,7 +235,7 @@ const BlockManagement = () => {
               </CCol>
             </CRow>
             <CTable responsive hover bordered>
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell
                     className="text-center"

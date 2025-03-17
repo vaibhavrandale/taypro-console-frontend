@@ -28,13 +28,19 @@ import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITES_REQUEST":
       return { ...state, loadingSites: true, error: "" };
     case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
+      return {
+        ...state,
+        loadingSites: false,
+
+        sites: action.payload,
+      };
     case "FETCH_SITES_FAIL":
       return { ...state, loadingSites: false, error: action.payload };
 
@@ -44,7 +50,10 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingloraconfig: false,
-        lora_configuration: action.payload,
+        lora_configuration: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_LORACONFIG_FAIL":
       return { ...state, loadingloraconfig: false, error: action.payload };
@@ -93,6 +102,9 @@ const LoraConfiguration = () => {
       lora_configuration,
       loadingloraconfig,
       addloadingloraconfig,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -104,6 +116,9 @@ const LoraConfiguration = () => {
     updatingLora: false,
     error: "",
     updateError: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
 
@@ -115,17 +130,38 @@ const LoraConfiguration = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
   const [deveuiObj, setDeveuiObj] = useState({});
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const page = parseInt(queryParams.get("pg")) || 1;
+  const limit = parseInt(queryParams.get("limit")) || 10;
+
   // console.log(formData);
   useEffect(() => {
     const fetchloraconfigurations = async () => {
       dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/loraconfigurations`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const result = await axios.get(
+          `/api/v1/loraconfigurations?pg=${page}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
-          payload: result.data.data,
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
         });
         // console.log(result.data.data);
       } catch (error) {
@@ -159,7 +195,7 @@ const LoraConfiguration = () => {
 
     fetchloraconfigurations();
     fetchSites();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   // Open Modal and Set Selected Item Data
   const openModal = (item) => {
@@ -268,7 +304,9 @@ const LoraConfiguration = () => {
   );
 
   // console.log(uniqueSitenames);
-
+  const handlePageChange = (newPage) => {
+    navigate(`?pg=${newPage}&limit=${limit}`);
+  };
   return (
     <div className="">
       <div className="d-flex justify-content-between align-items-center">
@@ -347,7 +385,7 @@ const LoraConfiguration = () => {
         </CCol>
       </CRow>
       <CTable bordered hover responsive className="text-center table-container">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell className="sticky-column">
               Lora Sr
@@ -463,7 +501,40 @@ const LoraConfiguration = () => {
           )}
         </CTableBody>
       </CTable>
+      <CRow className="mt-3">
+        <CCol className="d-flex justify-content-end">
+          <CButton
+            color="secondary"
+            disabled={!hasPrevPage}
+            onClick={() => handlePageChange(page - 1)}
+            className="mx-1"
+            size="sm"
+          >
+            Prev
+          </CButton>
 
+          {Array.from({ length: totalPages }, (_, i) => (
+            <CButton
+              key={i + 1}
+              color={page === i + 1 ? "primary" : ""}
+              onClick={() => handlePageChange(i + 1)}
+              className="mx-1"
+            >
+              {i + 1}
+            </CButton>
+          ))}
+
+          <CButton
+            color="secondary"
+            disabled={!hasNextPage}
+            onClick={() => handlePageChange(page + 1)}
+            className="mx-1"
+            size="sm"
+          >
+            Next
+          </CButton>
+        </CCol>
+      </CRow>
       {/* view Modal */}
       <CModal
         visible={viewModalVisible}

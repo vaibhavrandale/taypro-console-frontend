@@ -255,7 +255,7 @@ const ServiceTicketDashboard = () => {
             </CCol>
           </CRow>
           <CTable bordered hover responsive className="text-center">
-            <CTableHead>
+            <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Serial</CTableHeaderCell>
                 <CTableHeaderCell className="sticky-col">

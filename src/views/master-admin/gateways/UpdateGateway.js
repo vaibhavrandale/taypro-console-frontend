@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CContainer,
   CRow,
@@ -12,10 +12,10 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-} from '@coreui/react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { gateways, robots } from '../../../data'; // Import gateways and robots data
-import toast from 'react-hot-toast';
+} from "@coreui/react";
+import { useParams, useNavigate } from "react-router-dom";
+import { gateways, robots } from "../../../data"; // Import gateways and robots data
+import toast from "react-hot-toast";
 
 const UpdateGateway = () => {
   const { gatewayid } = useParams(); // Get gateway ID from URL
@@ -47,11 +47,11 @@ const UpdateGateway = () => {
 
   // Handle form submission (Mock Save)
   const handleSaveChanges = () => {
-    console.log('Updated Gateway Data:', updatedGateway);
+    console.log("Updated Gateway Data:", updatedGateway);
     toast.success(
       `${updatedGateway.gateway_name}-(${updatedGateway.id}) details updated successfully!`
     );
-    navigate('/master-admin/all-site-gateways'); // Redirect back to gateways list
+    navigate("/master-admin/all-site-gateways"); // Redirect back to gateways list
   };
 
   return (
@@ -157,7 +157,7 @@ const UpdateGateway = () => {
                 color="secondary"
                 className="ms-2"
                 size="sm"
-                onClick={() => navigate('/master-admin/all-site-gateways')}
+                onClick={() => navigate("/master-admin/all-site-gateways")}
               >
                 Cancel
               </CButton>
@@ -168,9 +168,9 @@ const UpdateGateway = () => {
           <h4 className="mt-5">Connected Robots/Lora</h4>
           {matchingRobots.length > 0 ? (
             <CTable striped bordered hover responsive className="mt-3">
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
-                  <CTableHeaderCell>Robot No</CTableHeaderCell>{' '}
+                  <CTableHeaderCell>Robot No</CTableHeaderCell>{" "}
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell>Site ID</CTableHeaderCell>
                   <CTableHeaderCell>LoRa No</CTableHeaderCell>
@@ -208,7 +208,7 @@ const UpdateGateway = () => {
           <h4 className="mt-5">Last Update Logs</h4>
           {updatedGateway.update_log.length > 0 ? (
             <CTable striped bordered hover responsive className="mt-3">
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
                   <CTableHeaderCell>Updated By</CTableHeaderCell>

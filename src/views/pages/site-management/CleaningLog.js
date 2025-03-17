@@ -23,7 +23,7 @@ import {
   CButton,
 } from "@coreui/react";
 // import { cleaning_log } from "../../../data"; // Import debug log data
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -34,7 +34,15 @@ const reducer = (state, action) => {
     case "FETCH_REQUEST":
       return { ...state, loading: true, error: "" };
     case "FETCH_SUCCESS":
-      return { ...state, cleaninglogs: action.payload, loading: false };
+      // return { ...state, cleaninglogs: action.payload, loading: false };
+      return {
+        ...state,
+        cleaninglogs: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loading: false,
+      };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     default:
@@ -42,12 +50,23 @@ const reducer = (state, action) => {
   }
 };
 const CleaningLog = () => {
-  const [{ loading, error, cleaninglogs }, dispatch] = useReducer(reducer, {
+  const [
+    { loading, error, cleaninglogs, totalPages, hasNextPage, hasPrevPage },
+    dispatch,
+  ] = useReducer(reducer, {
     cleaninglogs: [],
     loading: true,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
   const { robot_no } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const page = parseInt(queryParams.get("pg")) || 1;
+  const limit = parseInt(queryParams.get("limit")) || 10;
   const [searchTerm, setSearchTerm] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -58,13 +77,26 @@ const CleaningLog = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const { data } = await axios.get(
-          `/api/v1/rawcleaninglogs/robot/${robot_no}`,
+          `/api/v1/rawcleaninglogs/robot/${robot_no}?pg=${page}&limit=${limit}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(data);
-        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
+
+        let total = Math.ceil(Number(data.total) / Number(data.limit));
+        let next = data.hasNextPage;
+        let prev = data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+
         // console.log(data.data);
       } catch (error) {
         console.log(error.response.data.error);
@@ -78,7 +110,7 @@ const CleaningLog = () => {
     };
 
     fetchDownlink();
-  }, [authtoken, robot_no]);
+  }, [authtoken, limit, page, robot_no]);
 
   // Filter logs based on robot_no
   const filteredRobotLogs = cleaninglogs.filter(
@@ -92,7 +124,6 @@ const CleaningLog = () => {
         log.robot_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
       log.data.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.timestamp.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
@@ -127,6 +158,10 @@ const CleaningLog = () => {
 
     // Trigger download
     XLSX.writeFile(workbook, `CleaningLogs_${robot_no}.xlsx`);
+  };
+
+  const handlePageChange = (newPage) => {
+    navigate(`?pg=${newPage}&limit=${limit}`);
   };
 
   return (
@@ -167,7 +202,7 @@ const CleaningLog = () => {
 
           <div className="table-responsive">
             <CTable striped responsive hover bordered>
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
                   <CTableHeaderCell
@@ -254,6 +289,40 @@ const CleaningLog = () => {
                 )}
               </CTableBody>
             </CTable>
+            <CRow className="mt-3">
+              <CCol className="d-flex justify-content-end">
+                <CButton
+                  color="secondary"
+                  disabled={!hasPrevPage}
+                  onClick={() => handlePageChange(page - 1)}
+                  className="mx-1"
+                  size="sm"
+                >
+                  Prev
+                </CButton>
+
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <CButton
+                    key={i + 1}
+                    color={page === i + 1 ? "primary" : ""}
+                    onClick={() => handlePageChange(i + 1)}
+                    className="mx-1"
+                  >
+                    {i + 1}
+                  </CButton>
+                ))}
+
+                <CButton
+                  color="secondary"
+                  disabled={!hasNextPage}
+                  onClick={() => handlePageChange(page + 1)}
+                  className="mx-1"
+                  size="sm"
+                >
+                  Next
+                </CButton>
+              </CCol>
+            </CRow>
           </div>
         </CCardBody>
       </CCard>

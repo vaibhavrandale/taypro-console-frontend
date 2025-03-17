@@ -28,7 +28,7 @@ import {
 } from "@coreui/react";
 import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -42,7 +42,14 @@ const reducer = (state, action) => {
       return { ...state, loading: true };
 
     case "FETCH_SUCCESS":
-      return { ...state, downlink: action.payload, loading: false };
+      return {
+        ...state,
+        downlinks: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loading: false,
+      };
 
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
@@ -97,30 +104,58 @@ const RobotOperating = () => {
     {
       loading,
       error,
-      downlink,
+      downlinks,
       successDelete,
       loadingRobots,
       robots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
       sendingCommandloading,
     },
     dispatch,
   ] = useReducer(reducer, {
-    downlink: [],
+    downlinks: [],
     robots: [],
     loading: true,
     error: "",
     loadingRobots: true,
     sendingCommandloading: false,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
-
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const page = parseInt(queryParams.get("pg")) || 1;
+  const limit = parseInt(queryParams.get("limit")) || 10;
   useEffect(() => {
     const getDownlinks = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get("/api/v1/downlinks", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+        const response = await axios.get(
+          `/api/v1/downlinks?pg=${page}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // console.log(response.data);
+
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit)
+        );
+        let next = response.data.hasNextPage;
+        let prev = response.data.hasPrevPage;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: response.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
         });
-        dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -171,9 +206,9 @@ const RobotOperating = () => {
     }
 
     getRobots();
-  }, [block, site_id, successDelete, authtoken]);
+  }, [block, site_id, successDelete, authtoken, page, limit]);
 
-  const filteredDownlink = downlink.filter((item) =>
+  const filteredDownlink = downlinks.filter((item) =>
     item.downlink.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -243,6 +278,10 @@ const RobotOperating = () => {
 
   const sendMulticastDownlink = async (command, deveuiArr) => {
     // console.log(command);
+  };
+
+  const handlePageChange = (newPage) => {
+    navigate(`?pg=${newPage}&limit=${limit}`);
   };
   return (
     <>
@@ -550,7 +589,7 @@ const RobotOperating = () => {
                 </CCol>
               </CRow>
               <CTable responsive hover bordered>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell style={{ minWidth: "70px" }}>
                       Sr No
@@ -657,6 +696,41 @@ const RobotOperating = () => {
                   )}
                 </CTableBody>
               </CTable>
+
+              <CRow className="mt-3">
+                <CCol className="d-flex justify-content-end">
+                  <CButton
+                    color="secondary"
+                    disabled={!hasPrevPage}
+                    onClick={() => handlePageChange(page - 1)}
+                    className="mx-1"
+                    size="sm"
+                  >
+                    Prev
+                  </CButton>
+
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <CButton
+                      key={i + 1}
+                      color={page === i + 1 ? "primary" : ""}
+                      onClick={() => handlePageChange(i + 1)}
+                      className="mx-1"
+                    >
+                      {i + 1}
+                    </CButton>
+                  ))}
+
+                  <CButton
+                    color="secondary"
+                    disabled={!hasNextPage}
+                    onClick={() => handlePageChange(page + 1)}
+                    className="mx-1"
+                    size="sm"
+                  >
+                    Next
+                  </CButton>
+                </CCol>
+              </CRow>
             </CModalBody>
 
             <CModalFooter>

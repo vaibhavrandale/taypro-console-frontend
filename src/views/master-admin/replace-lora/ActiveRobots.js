@@ -259,7 +259,7 @@ const ActiveRobots = () => {
         </CCol>
       </CRow>
       <CTable bordered hover responsive className="text-center">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>

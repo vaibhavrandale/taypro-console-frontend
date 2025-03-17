@@ -142,7 +142,7 @@ const UsersDashboard = () => {
 
       {/* Users Table */}
       <CTable bordered hover responsive className="text-center">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Profile</CTableHeaderCell>

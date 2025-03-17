@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   CContainer,
   CTable,
@@ -17,19 +17,19 @@ import {
   CModalTitle,
   CModalFooter,
   CAvatar,
-} from '@coreui/react';
-import moment from 'moment';
+} from "@coreui/react";
+import moment from "moment";
 import {
   service_technitian_daily_progress_report as dprData,
   users,
-} from '../../../data'; // Import DPR data
-import LoadingSpinner from '../../../components/LoadingSpinner';
-import { Link } from 'react-router-dom';
-import './dpr.css';
+} from "../../../data"; // Import DPR data
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Link } from "react-router-dom";
+import "./dpr.css";
 const AllSiteDpr = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [selectedDPR, setSelectedDPR] = useState(null);
   const [viewModal, setViewModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
@@ -44,9 +44,9 @@ const AllSiteDpr = () => {
     setLoading(true); // Start loading
     setTimeout(() => {
       const filtered = dprData.filter((dpr) => {
-        const submittedDate = moment(dpr.submittedAt, 'YYYY-MM-DD HH:mm:ss');
-        const from = fromDate ? moment(fromDate, 'YYYY-MM-DD') : null;
-        const to = toDate ? moment(toDate, 'YYYY-MM-DD') : null;
+        const submittedDate = moment(dpr.submittedAt, "YYYY-MM-DD HH:mm:ss");
+        const from = fromDate ? moment(fromDate, "YYYY-MM-DD") : null;
+        const to = toDate ? moment(toDate, "YYYY-MM-DD") : null;
 
         const matchesSearch =
           dpr.technitian_username
@@ -58,8 +58,8 @@ const AllSiteDpr = () => {
           dpr.site_id.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesDate =
-          (!from || submittedDate.isSameOrAfter(from, 'day')) &&
-          (!to || submittedDate.isSameOrBefore(to, 'day'));
+          (!from || submittedDate.isSameOrAfter(from, "day")) &&
+          (!to || submittedDate.isSameOrBefore(to, "day"));
 
         return matchesSearch && matchesDate;
       });
@@ -120,25 +120,25 @@ const AllSiteDpr = () => {
 
       {/* DPR Table */}
       <CTable striped bordered hover responsive className="text-center">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Site ID
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Date
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Total Running Robots
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Failed Robots
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Run By
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: '100px' }}>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Actions
             </CTableHeaderCell>
           </CTableRow>
@@ -158,19 +158,19 @@ const AllSiteDpr = () => {
                 <CTableRow key={dpr.id}>
                   <CTableHeaderCell>{index + 1}</CTableHeaderCell>
                   <CTableDataCell>{dpr.site_id}</CTableDataCell>
-                  <CTableDataCell style={{ minWidth: '150px' }}>
-                    {dpr.submittedAt.split(' ')[0]}
+                  <CTableDataCell style={{ minWidth: "150px" }}>
+                    {dpr.submittedAt.split(" ")[0]}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: '160px' }}>
+                  <CTableDataCell style={{ minWidth: "160px" }}>
                     {dpr.total_running_robots}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: '140px' }}>
+                  <CTableDataCell style={{ minWidth: "140px" }}>
                     {dpr.total_failed_robots}
                   </CTableDataCell>
                   <CTableDataCell>
                     {dpr.robots_run_by.toUpperCase()}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: '150px' }}>
+                  <CTableDataCell style={{ minWidth: "150px" }}>
                     <CButton
                       color="info"
                       size="sm"
@@ -210,7 +210,7 @@ const AllSiteDpr = () => {
                 <span> View DPR Details : </span>&nbsp;
                 <p className="text-primary">
                   {selectedDPR.site_id}&nbsp;(
-                  {selectedDPR.submittedAt.split(' ')[0]})
+                  {selectedDPR.submittedAt.split(" ")[0]})
                 </p>
               </CModalTitle>
             </CModalHeader>
@@ -220,11 +220,11 @@ const AllSiteDpr = () => {
                   {Object.entries(selectedDPR).map(([key, value]) => (
                     <CTableRow key={key}>
                       <CTableHeaderCell>
-                        {key.replace(/_/g, ' ')}
+                        {key.replace(/_/g, " ")}
                       </CTableHeaderCell>
                       <CTableDataCell>
                         {Array.isArray(value) ? (
-                          key === 'technitian_present' ? (
+                          key === "technitian_present" ? (
                             <CTable className=" border-0">
                               <CTableBody>
                                 {value.map((tech, index) => {
@@ -254,7 +254,7 @@ const AllSiteDpr = () => {
                             JSON.stringify(value)
                           )
                         ) : (
-                          value?.toString() || 'N/A'
+                          value?.toString() || "N/A"
                         )}
                       </CTableDataCell>
                     </CTableRow>
@@ -279,7 +279,7 @@ const AllSiteDpr = () => {
           <CModalTitle>
             Update DPR Details -
             <span className="text-danger">
-              {updatedDPR?.site_id || 'N/A'} ({updatedDPR?.submittedAt || 'N/A'}
+              {updatedDPR?.site_id || "N/A"} ({updatedDPR?.submittedAt || "N/A"}
               )
             </span>
           </CModalTitle>
@@ -292,7 +292,7 @@ const AllSiteDpr = () => {
                 <CFormInput
                   type="text"
                   name="technitian_username"
-                  value={updatedDPR.technitian_username || ''}
+                  value={updatedDPR.technitian_username || ""}
                   onChange={handleUpdateChange}
                 />
               </CCol>
@@ -302,7 +302,7 @@ const AllSiteDpr = () => {
                 <CFormInput
                   type="email"
                   name="technitian_email"
-                  value={updatedDPR.technitian_email || ''}
+                  value={updatedDPR.technitian_email || ""}
                   onChange={handleUpdateChange}
                 />
               </CCol>
@@ -312,7 +312,7 @@ const AllSiteDpr = () => {
                 <CFormInput
                   type="text"
                   name="site_id"
-                  value={updatedDPR.site_id || ''}
+                  value={updatedDPR.site_id || ""}
                   onChange={handleUpdateChange}
                 />
               </CCol>
@@ -342,7 +342,7 @@ const AllSiteDpr = () => {
                 <CFormInput
                   type="text"
                   name="robots_run_by"
-                  value={updatedDPR.robots_run_by || ''}
+                  value={updatedDPR.robots_run_by || ""}
                   onChange={handleUpdateChange}
                 />
               </CCol>
@@ -352,7 +352,7 @@ const AllSiteDpr = () => {
                 <CFormInput
                   type="text"
                   name="comments"
-                  value={updatedDPR.comments || ''}
+                  value={updatedDPR.comments || ""}
                   onChange={handleUpdateChange}
                 />
               </CCol>
@@ -363,7 +363,7 @@ const AllSiteDpr = () => {
                   type="datetime-local"
                   name="submittedAt"
                   value={moment(updatedDPR.submittedAt || new Date()).format(
-                    'YYYY-MM-DDTHH:mm'
+                    "YYYY-MM-DDTHH:mm"
                   )}
                   onChange={handleUpdateChange}
                 />
@@ -383,9 +383,9 @@ const AllSiteDpr = () => {
                       technitian_present: [
                         ...updatedDPR.technitian_present,
                         {
-                          technitian_username: '',
-                          technitian_email: '',
-                          technitian_id: '',
+                          technitian_username: "",
+                          technitian_email: "",
+                          technitian_id: "",
                         },
                       ],
                     });
@@ -397,13 +397,13 @@ const AllSiteDpr = () => {
 
               {/* Technician Table */}
               <CTable striped bordered className="mt-2">
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>Name</CTableHeaderCell>
                     {/* <CTableHeaderCell>Email</CTableHeaderCell>
                     <CTableHeaderCell>ID</CTableHeaderCell> */}
-                    <CTableHeaderCell style={{ width: '80px' }}>
+                    <CTableHeaderCell style={{ width: "80px" }}>
                       Actions
                     </CTableHeaderCell>
                   </CTableRow>
@@ -432,7 +432,7 @@ const AllSiteDpr = () => {
                             const filtered = users
                               .filter(
                                 (user) =>
-                                  user.role === 'Site Technician' && // Only "Site Technician"
+                                  user.role === "Site Technician" && // Only "Site Technician"
                                   user.username
                                     .toLowerCase()
                                     .includes(value.toLowerCase())

@@ -167,7 +167,7 @@ const ClientData = () => {
             </CRow>
 
             <CTable bordered hover responsive className="text-center  mt-2">
-              <CTableHead>
+              <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
                   <CTableHeaderCell style={{ minWidth: "200px" }}>

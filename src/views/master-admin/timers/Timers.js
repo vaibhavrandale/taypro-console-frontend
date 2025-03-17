@@ -135,7 +135,7 @@ const Timers = () => {
         </CCardHeader>
         <CCardBody>
           <CTable bordered hover responsive>
-            <CTableHead>
+            <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
                 <CTableHeaderCell>Site ID</CTableHeaderCell>

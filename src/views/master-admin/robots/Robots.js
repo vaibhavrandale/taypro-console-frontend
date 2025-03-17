@@ -14,9 +14,10 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
+  CButton,
 } from "@coreui/react";
 // import { robots, sites } from "../../../data"; // Import robots data
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -34,7 +35,14 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_REQUEST":
       return { ...state, loadingRobots: true, error: "" };
     case "FETCH_ROBOTS_SUCCESS":
-      return { ...state, loadingRobots: false, robots: action.payload };
+      return {
+        ...state,
+        loadingRobots: false,
+        robots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
     case "FETCH_ROBOTS_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
     default:
@@ -42,21 +50,39 @@ const reducer = (state, action) => {
   }
 };
 const Robots = () => {
-  const [{ error, robots, sites, loadingRobots }, dispatch] = useReducer(
-    reducer,
+  const [
     {
-      sites: [],
-      robots: [],
-      loading: true,
-      loadingRobots: true,
-      error: "",
-    }
-  );
+      error,
+      robots,
+      sites,
+      loadingRobots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    sites: [],
+    robots: [],
+    loading: true,
+    loadingRobots: true,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
   const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const page = parseInt(queryParams.get("pg")) || 1;
+  const limit = parseInt(queryParams.get("limit")) || 10;
+
   // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
     robot_no: "",
@@ -81,11 +107,29 @@ const Robots = () => {
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/robots`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+        const result = await axios.get(
+          `/api/v1/robots?pg=${page}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // console.log(result.data);
+
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
         });
-        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
-        console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -96,7 +140,7 @@ const Robots = () => {
     };
 
     fetchRobots();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   // Filter robots based on search term
   const filteredRobots = robots.filter(
@@ -113,7 +157,9 @@ const Robots = () => {
     setFormData(robot);
     setModalVisible(true);
   };
-
+  const handlePageChange = (newPage) => {
+    navigate(`?pg=${newPage}&limit=${limit}`);
+  };
   return (
     <div className="p-2">
       <h2 className="text-center">All Robots</h2>
@@ -145,7 +191,7 @@ const Robots = () => {
 
       {/* Robots Table */}
       <CTable bordered hover responsive className="text-center shadow-sm">
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
@@ -175,14 +221,14 @@ const Robots = () => {
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : error ? (
             <CTableRow>
               {" "}
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
                 {error}
               </CTableDataCell>
             </CTableRow>
@@ -246,7 +292,40 @@ const Robots = () => {
           )}
         </CTableBody>
       </CTable>
+      <CRow className="mt-3">
+        <CCol className="d-flex justify-content-end">
+          <CButton
+            color="secondary"
+            disabled={!hasPrevPage}
+            onClick={() => handlePageChange(page - 1)}
+            className="mx-1"
+            size="sm"
+          >
+            Prev
+          </CButton>
 
+          {Array.from({ length: totalPages }, (_, i) => (
+            <CButton
+              key={i + 1}
+              color={page === i + 1 ? "primary" : ""}
+              onClick={() => handlePageChange(i + 1)}
+              className="mx-1"
+            >
+              {i + 1}
+            </CButton>
+          ))}
+
+          <CButton
+            color="secondary"
+            disabled={!hasNextPage}
+            onClick={() => handlePageChange(page + 1)}
+            className="mx-1"
+            size="sm"
+          >
+            Next
+          </CButton>
+        </CCol>
+      </CRow>
       {/* view Modal */}
       <CModal
         size="xl"
@@ -264,7 +343,7 @@ const Robots = () => {
           {selectedRobot && (
             <>
               <CTable bordered responsive>
-                <CTableHead>
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>Field</CTableHeaderCell>
                     <CTableHeaderCell>Value</CTableHeaderCell>

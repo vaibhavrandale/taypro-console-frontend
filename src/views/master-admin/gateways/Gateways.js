@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   CContainer,
   CTable,
@@ -16,16 +16,16 @@ import {
   CCol,
   CInputGroup,
   CFormInput,
-} from '@coreui/react';
-import { gateways, robots } from '../../../data'; // Import the gateways data
-import { Link } from 'react-router-dom';
-import LastOnlineStatus from '../../../components/LastOnlineStatus';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+} from "@coreui/react";
+import { gateways, robots } from "../../../data"; // Import the gateways data
+import { Link } from "react-router-dom";
+import LastOnlineStatus from "../../../components/LastOnlineStatus";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const Gateways = () => {
   const [selectedGateway, setSelectedGateway] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [filteredGateways, setFilteredGateways] = useState([]);
 
@@ -83,7 +83,7 @@ const Gateways = () => {
       </CRow>
       {/* Table displaying all gateways */}
       <CTable bordered hover responsive>
-        <CTableHead>
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Gateway Name</CTableHeaderCell>
@@ -113,10 +113,10 @@ const Gateways = () => {
                 </CTableDataCell>
                 <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
                 <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
-                <CTableDataCell style={{ minWidth: '160px' }}>
+                <CTableDataCell style={{ minWidth: "160px" }}>
                   {gateway.last_online_update}
                 </CTableDataCell>
-                <CTableDataCell style={{ minWidth: '180px' }}>
+                <CTableDataCell style={{ minWidth: "180px" }}>
                   <CButton
                     color="warning"
                     size="sm"
@@ -191,7 +191,7 @@ const Gateways = () => {
                     <CTableHeaderCell>Longitude,Latitude</CTableHeaderCell>
                     <CTableDataCell>
                       {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
-                      {selectedGateway.gateway_lattitude}&nbsp;{' '}
+                      {selectedGateway.gateway_lattitude}&nbsp;{" "}
                       <Link
                         target="blank"
                         to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
@@ -237,7 +237,7 @@ const Gateways = () => {
                   robot.lora_no === selectedGateway.gateway_lora_no
               ).length > 0 ? (
                 <CTable striped bordered hover responsive>
-                  <CTableHead>
+                  <CTableHead color="secondary">
                     <CTableRow>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
                       <CTableHeaderCell>Status</CTableHeaderCell>
@@ -255,7 +255,7 @@ const Gateways = () => {
                           robot.deveui ===
                             selectedGateway.gateway_lora_deveui &&
                           robot.lora_no === selectedGateway.gateway_lora_no &&
-                          robot.robot_type === 'gateway'
+                          robot.robot_type === "gateway"
                       )
                       .map((robot, index) => (
                         <CTableRow key={index}>
@@ -287,7 +287,7 @@ const Gateways = () => {
               <h5 className="mt-4 mb-3">last Update Logs</h5>
               {selectedGateway.update_log.length > 0 ? (
                 <CTable striped bordered hover responsive>
-                  <CTableHead>
+                  <CTableHead color="secondary">
                     <CTableRow>
                       <CTableHeaderCell>#</CTableHeaderCell>
                       <CTableHeaderCell>Updated By</CTableHeaderCell>
