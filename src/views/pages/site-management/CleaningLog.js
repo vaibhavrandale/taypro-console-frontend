@@ -81,9 +81,9 @@ const CleaningLog = () => {
   }, [authtoken, robot_no]);
 
   // Filter logs based on robot_no
-  const filteredRobotLogs = cleaninglogs
-    .filter((log) => log.robot_no === robot_no)
-    .reverse();
+  const filteredRobotLogs = cleaninglogs.filter(
+    (log) => log.robot_no === robot_no
+  );
 
   // Search by robot_no or topic
   const filteredLogs = filteredRobotLogs.filter(
