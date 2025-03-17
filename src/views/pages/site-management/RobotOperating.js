@@ -24,6 +24,7 @@ import {
   CFormInput,
   CSpinner,
   CTooltip,
+  CBadge,
 } from "@coreui/react";
 import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import
@@ -67,6 +68,15 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
 
+    case "SEND_DOWNLINK_REQUEST":
+      return { ...state, sendingCommandloading: true, error: "" };
+
+    case "SEND_DOWNLINK_SUCCESS":
+      return { ...state, sendingCommandloading: false };
+
+    case "SEND_DOWNLINK_FAIL":
+      return { ...state, sendingCommandloading: false, error: action.payload };
+
     default:
       return state;
   }
@@ -78,9 +88,21 @@ const RobotOperating = () => {
   const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
+  let startall = "C1";
+  let stopall = "CC";
+  let returnall = "D1";
+  const [loadingRow, setLoadingRow] = useState(null); // Track the row index
 
   const [
-    { loading, error, downlink, successDelete, loadingRobots, robots },
+    {
+      loading,
+      error,
+      downlink,
+      successDelete,
+      loadingRobots,
+      robots,
+      sendingCommandloading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     downlink: [],
@@ -88,6 +110,7 @@ const RobotOperating = () => {
     loading: true,
     error: "",
     loadingRobots: true,
+    sendingCommandloading: false,
   });
 
   useEffect(() => {
@@ -114,6 +137,7 @@ const RobotOperating = () => {
         });
 
         const robotsData = response.data.data; // Ensure correct data access
+        // console.log(robotsData);
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
@@ -175,12 +199,47 @@ const RobotOperating = () => {
             robot.robot_no === robot_no
         )
       : [];
+  // console.log(Robotdata);
 
-  const sendCommand = (command) => {
-    // Send command to robot
-    toast.success(`${command} Command sent Successfully!`);
+  // const sendCommand = (command) => {
+  //   // Send command to robot
+  //   toast.success(`${command} Command sent Successfully!`);
+  // };
+
+  const sendsingleDownlink = async (command, index) => {
+    setLoadingRow(index);
+    // console.log(command);
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: Robotdata[0].deveui,
+      robot_no: Robotdata[0].robot_no,
+      site_id: site_id,
+      command: command,
+      lora_no: Robotdata[0].lora_no,
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
+      const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      console.log(data.data.message);
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message,
+      });
+
+      toast.error(error.response.data.message || "Error adding downlink");
+    }
+    setLoadingRow(null);
   };
 
+  const sendMulticastDownlink = async (command, deveuiArr) => {
+    // console.log(command);
+  };
   return (
     <>
       {loadingRobots ? (
@@ -205,13 +264,22 @@ const RobotOperating = () => {
           {/* Action Buttons */}
           <CRow className="my-2">
             <CCol>
-              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+              <CButton
+                className="btn btn-sm btn-secondary m-1 shadow-sm"
+                onClick={() => sendMulticastDownlink(startall)}
+              >
                 START ALL
               </CButton>
-              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+              <CButton
+                className="btn btn-sm btn-secondary m-1 shadow-sm"
+                onClick={() => sendMulticastDownlink(stopall)}
+              >
                 STOP ALL
               </CButton>
-              <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+              <CButton
+                className="btn btn-sm btn-secondary m-1 shadow-sm"
+                onClick={() => sendMulticastDownlink(returnall)}
+              >
                 RETURN TO DOCK ALL
               </CButton>
               <Link
@@ -309,9 +377,12 @@ const RobotOperating = () => {
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
                         <CTableDataCell>
-                          <span className="badge bg-danger">
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
+                          >
                             {Robotdata[0].wheel_motor_speed}
-                          </span>
+                          </CBadge>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
@@ -323,9 +394,12 @@ const RobotOperating = () => {
                         </CTableDataCell>
                         <CTableDataCell>Brush Speed</CTableDataCell>
                         <CTableDataCell>
-                          <span className="badge bg-danger">
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
+                          >
                             {Robotdata[0].brush_motor_speed}
-                          </span>
+                          </CBadge>
                         </CTableDataCell>
                       </CTableRow>
                     </CTableBody>
@@ -367,23 +441,32 @@ const RobotOperating = () => {
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="">
-                            <CTooltip
-                              content={new Date(
-                                Robotdata[0].last_uplink
-                              ).toLocaleString()}
-                              placement="top"
+                          {Robotdata[0].last_uplink === null ? (
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
                             >
-                              <span>
-                                {formatDistanceToNow(
-                                  new Date(Robotdata[0].last_uplink),
-                                  {
-                                    addSuffix: true,
-                                  }
-                                )}
-                              </span>
-                            </CTooltip>
-                          </span>
+                              Robot is not activated
+                            </CBadge>
+                          ) : (
+                            <span className="">
+                              <CTooltip
+                                content={new Date(
+                                  Robotdata[0].last_uplink
+                                ).toLocaleString()}
+                                placement="top"
+                              >
+                                <span>
+                                  {formatDistanceToNow(
+                                    new Date(Robotdata[0].last_uplink),
+                                    {
+                                      addSuffix: true,
+                                    }
+                                  )}
+                                </span>
+                              </CTooltip>
+                            </span>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                     </CTableBody>
@@ -425,6 +508,7 @@ const RobotOperating = () => {
           {/* Modal for Commands */}
           <CModal
             scrollable
+            backdrop="static"
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
             size="xl"
@@ -513,8 +597,15 @@ const RobotOperating = () => {
                         <CTableDataCell>{index + 1}</CTableDataCell>
 
                         <CTableDataCell>
-                          <Link onClick={() => sendCommand(item.downlink)}>
-                            {item.downlink}
+                          <Link
+                            className="text-secondary"
+                            style={{ textDecoration: "none" }}
+                            onClick={() =>
+                              sendsingleDownlink(item.downlink, index)
+                            }
+                          >
+                            {item.downlink}&nbsp;
+                            {loadingRow === index ? <LoadingSpinner /> : ""}
                           </Link>
                         </CTableDataCell>
                         <CTableDataCell>{item.decodedString}</CTableDataCell>

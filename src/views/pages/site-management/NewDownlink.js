@@ -145,10 +145,11 @@ const NewDownlink = () => {
           />
         </div>
 
-        <Link onClick={handleSubmit} className="btn btn-warning">
+        <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
           {state.loading ? (
             <>
-              Adding <LoadingSpinner />
+              Adding..
+              <LoadingSpinner />
             </>
           ) : (
             "Add"

@@ -100,7 +100,7 @@ const AddRobotUsingLoraNo = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
-        console.log(result.data.data);
+        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -115,11 +115,11 @@ const AddRobotUsingLoraNo = () => {
         const result = await axios.get(`/api/v1/loraconfigurations`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
+        console.log(result.data.data);
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
           payload: result.data.data,
         });
-        console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_LORACONFIG_FAIL",
@@ -140,6 +140,7 @@ const AddRobotUsingLoraNo = () => {
   const availableLoraConfig = lora_configuration.filter(
     (lora) => !assignedLoraNos.includes(lora.serial) // `serial` as unique lora_no
   );
+  // console.log(availableLoraConfig);
 
   // // Handle Lora selection
   // const handleLoraChange = (e) => {
@@ -233,7 +234,7 @@ const AddRobotUsingLoraNo = () => {
     }
   };
 
-  console.log(robots);
+  // console.log(robots);
 
   return (
     <CCard className="p-4">

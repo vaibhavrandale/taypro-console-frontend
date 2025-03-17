@@ -203,6 +203,12 @@ const DebugLog = () => {
                       <LoadingSpinner />
                     </CTableHeaderCell>{" "}
                   </CTableRow>
+                ) : filteredLogs.length === 0 ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan="6" className="text-center">
+                      No data found
+                    </CTableDataCell>
+                  </CTableRow>
                 ) : (
                   filteredLogs.map((log, index) => (
                     <CTableRow key={index}>

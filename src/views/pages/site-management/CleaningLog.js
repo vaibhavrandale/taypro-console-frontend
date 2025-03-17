@@ -215,8 +215,14 @@ const CleaningLog = () => {
                 ) : error ? (
                   <CTableRow>
                     <CTableHeaderCell className="text-center" colSpan={6}>
-                      No CLeaning Logs Found
+                      {error}
                     </CTableHeaderCell>{" "}
+                  </CTableRow>
+                ) : filteredLogs.length === 0 ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan="6" className="text-center">
+                      No data found
+                    </CTableDataCell>
                   </CTableRow>
                 ) : (
                   filteredLogs.map((log, index) => (

@@ -74,14 +74,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         let result = response.data.data;
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        // console.log(error.response.status);
+        console.log(error);
 
         if (error.response.status === 401) {
           dispatch({
             type: "EMP_SIGNOUT",
           });
-          localStorage.removeItem("userInfo");
-          localStorage.removeItem("authtoken");
         }
         dispatch({
           type: "FETCH_FAIL",

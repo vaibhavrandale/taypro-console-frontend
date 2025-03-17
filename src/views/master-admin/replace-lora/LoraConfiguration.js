@@ -356,9 +356,7 @@ const LoraConfiguration = () => {
         <CTableHead color="dark">
           <CTableRow>
             <CTableHeaderCell className="sticky-column">
-              <div className="d-flex flex-column">
-                <span>Lora Sr</span>
-              </div>
+              Lora Sr
             </CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
             <CTableHeaderCell>Deveui</CTableHeaderCell>
@@ -387,6 +385,12 @@ const LoraConfiguration = () => {
                 className="text-center text-danger fw-bold"
               >
                 {error}
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredData.length === 0 ? (
+            <CTableRow>
+              <CTableDataCell colSpan="10" className="text-center text-danger">
+                No Lora Found
               </CTableDataCell>
             </CTableRow>
           ) : (
