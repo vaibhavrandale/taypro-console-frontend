@@ -223,12 +223,6 @@ const LoraConfiguration = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // // Handle Form Submission (For Now, Just Logs the Updated Data)
-  // const handleUpdate = () => {
-  //   console.log("Updated Data:", formData);
-  //   setModalVisible(false);
-  // };
-
   const handleUpdate = async () => {
     try {
       dispatch({ type: "UPDATE_LORA_REQUEST" });
