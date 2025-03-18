@@ -424,7 +424,13 @@ const CreateServiceTicket = () => {
               ))}
               {/* 📌 Submit Button */}
               <div className="d-flex justify-content-end">
-                <CButton type="submit" color="secondary" className=" m-2 w-25">
+                <CButton
+                  type="submit"
+                  color="primary"
+                  size="sm"
+                  className=" m-2"
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
                       Creating... <LoadingSpinner />{" "}

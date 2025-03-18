@@ -122,9 +122,14 @@ thead th {
   font-weight: 600;
 }
 
-input[type="text"]:focus {
-  outline: none;
-  border: none;
+input[type="text"]:focus,
+input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0px !important;
+}
+input {
+  border-radius: 0px !important;
 }
 
 .loading-container {
@@ -133,4 +138,34 @@ input[type="text"]:focus {
   align-items: center; /* Centers vertically */
   height: 100%; /* Full viewport height */
   width: 100%; /* Full viewport width (optional) */
+}
+
+input[type="number"] {
+  appearance: textfield; /* Standard */
+  -moz-appearance: textfield; /* Firefox */
+  -webkit-appearance: none; /* Webkit browsers */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* More specific selector */
+input[type="number"]:focus,
+input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid #dbdfe6;
+}
+input[type="number"] {
+  border: 1px solid #dbdfe6;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0px !important;
+  font-size: 12px;
+  -webkit-border-radius: 0px !important;
+  -moz-border-radius: 0px !important;
+  -ms-border-radius: 0px !important;
+  -o-border-radius: 0px !important;
 }

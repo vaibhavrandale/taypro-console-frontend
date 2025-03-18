@@ -28,7 +28,7 @@ import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
-import { useLocation, useNavigate } from "react-router-dom";
+import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -130,19 +130,23 @@ const LoraConfiguration = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({});
   const [deveuiObj, setDeveuiObj] = useState({});
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("pg")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 10;
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // console.log(formData);
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchloraconfigurations = async () => {
       dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
       try {
-        const result = await axios.get(
-          `/api/v1/loraconfigurations?pg=${page}&limit=${limit}`,
+        const result = await axios.post(
+          `/api/v1/loraconfigurations/get-loraconfigurations`,
+          pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -176,7 +180,7 @@ const LoraConfiguration = () => {
     const fetchSites = async () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/sites`, {
+        const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({
@@ -303,10 +307,24 @@ const LoraConfiguration = () => {
       index === self.findIndex((t) => t.site_id === value.site_id)
   );
 
-  // console.log(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    navigate(`?pg=${newPage}&limit=${limit}`);
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
   };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
+
   return (
     <div className="">
       <div className="d-flex justify-content-between align-items-center">
@@ -501,40 +519,17 @@ const LoraConfiguration = () => {
           )}
         </CTableBody>
       </CTable>
-      <CRow className="mt-3">
-        <CCol className="d-flex justify-content-end">
-          <CButton
-            color="secondary"
-            disabled={!hasPrevPage}
-            onClick={() => handlePageChange(page - 1)}
-            className="mx-1"
-            size="sm"
-          >
-            Prev
-          </CButton>
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
 
-          {Array.from({ length: totalPages }, (_, i) => (
-            <CButton
-              key={i + 1}
-              color={page === i + 1 ? "primary" : ""}
-              onClick={() => handlePageChange(i + 1)}
-              className="mx-1"
-            >
-              {i + 1}
-            </CButton>
-          ))}
-
-          <CButton
-            color="secondary"
-            disabled={!hasNextPage}
-            onClick={() => handlePageChange(page + 1)}
-            className="mx-1"
-            size="sm"
-          >
-            Next
-          </CButton>
-        </CCol>
-      </CRow>
       {/* view Modal */}
       <CModal
         visible={viewModalVisible}

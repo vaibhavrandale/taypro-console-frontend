@@ -20,16 +20,18 @@ import {
   CRow,
   CCol,
   CImage,
+  CTooltip,
 } from "@coreui/react";
 
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PieChart from "./PieChart";
 import "./servicetickts.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
+import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -37,7 +39,15 @@ const reducer = (state, action) => {
       return { ...state, loading: true };
 
     case "FETCH_SUCCESS":
-      return { ...state, servicetickets: action.payload, loading: false };
+      return {
+        ...state,
+        // servicetickets: action.payload,
+        servicetickets: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loading: false,
+      };
 
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
@@ -89,6 +99,9 @@ const ServiceTicketDashboard = () => {
       serviceticket,
       fetchserviceticketloading,
       updateserviceticketloading,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -98,6 +111,9 @@ const ServiceTicketDashboard = () => {
     fetchserviceticketloading: true,
     updateserviceticketloading: true,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
   // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
@@ -108,6 +124,12 @@ const ServiceTicketDashboard = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   // const [loading, setLoading] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
+
+  // const location = useLocation();
+  // const navigate = useNavigate();
+  // const queryParams = new URLSearchParams(location.search);
+  // const page = parseInt(queryParams.get("pg")) || 1;
+  // const limit = parseInt(queryParams.get("limit")) || 10;
 
   // 📌 Open modal with selected ticket data
   const openUpdateModal = async (id) => {
@@ -192,17 +214,45 @@ const ServiceTicketDashboard = () => {
     }
   };
 
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // console.log(formData);
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchServicetickets = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get("/api/v1/servicetickets", {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.post(
+          `/api/v1/servicetickets/get-servicetickets`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit)
+        );
+        let next = response.data.hasNextPage;
+        let prev = response.data.hasPrevPage;
         let result = response.data.data;
         // console.log(result);
 
-        dispatch({ type: "FETCH_SUCCESS", payload: result });
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: result,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
       } catch (error) {
         console.error("Error fetching notifications:", error);
         dispatch({
@@ -213,25 +263,40 @@ const ServiceTicketDashboard = () => {
     };
 
     fetchServicetickets();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   const filteredData = servicetickets
-    ? servicetickets
-        .filter(
-          (item) =>
-            item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .reverse()
+    ? servicetickets.filter(
+        (item) =>
+          item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : [];
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
 
   return (
     <div className="">
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
 
-      <PieChart />
+      {/* <PieChart /> */}
 
       {/* 📋 Service Tickets Table */}
       <CCard className="mt-4">
@@ -264,7 +329,9 @@ const ServiceTicketDashboard = () => {
                 <CTableHeaderCell>Robot No</CTableHeaderCell>
                 <CTableHeaderCell>Site ID</CTableHeaderCell>
                 <CTableHeaderCell>Fault Type</CTableHeaderCell>
+
                 <CTableHeaderCell>Status</CTableHeaderCell>
+                <CTableHeaderCell>created At</CTableHeaderCell>
                 <CTableHeaderCell>Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -282,7 +349,7 @@ const ServiceTicketDashboard = () => {
                   <CTableRow key={index}>
                     <CTableDataCell>{index + 1}</CTableDataCell>
                     <CTableDataCell
-                      style={{ minWidth: "230px" }}
+                      style={{ minWidth: "240px" }}
                       className="sticky-col"
                     >
                       {ticket.ticket_id}
@@ -302,6 +369,21 @@ const ServiceTicketDashboard = () => {
                       ) : (
                         <CBadge color="danger">Open</CBadge>
                       )}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      {/* {ticket.createdAt} */}
+                      <span className="">
+                        <CTooltip
+                          content={new Date(ticket.createdAt).toLocaleString()}
+                          placement="top"
+                        >
+                          <span>
+                            {formatDistanceToNow(new Date(ticket.createdAt), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        </CTooltip>
+                      </span>
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
                       <CButton
@@ -327,6 +409,16 @@ const ServiceTicketDashboard = () => {
               )}
             </CTableBody>
           </CTable>
+          <PaginateInput
+            page={page}
+            totalPages={totalPages}
+            hasPrevPage={hasPrevPage}
+            hasNextPage={hasNextPage}
+            pageInput={pageInput}
+            handlePageChange={handlePageChange}
+            handlePageInputChange={handlePageInputChange}
+            handlePageInputSubmit={handlePageInputSubmit}
+          />
         </CCardBody>
       </CCard>
 

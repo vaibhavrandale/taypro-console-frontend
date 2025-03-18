@@ -76,15 +76,17 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       } catch (error) {
         console.log(error);
 
-        if (error.response.status === 401) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response.message,
+        });
+        if (error.status === 401) {
           dispatch({
             type: "EMP_SIGNOUT",
           });
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("authtoken");
         }
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: error,
-        });
       }
     };
 

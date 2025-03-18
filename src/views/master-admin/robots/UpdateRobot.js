@@ -54,7 +54,7 @@ const UpdateRobot = () => {
     const fetchRobot = async () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
-        const response = await axios.get(`/api/v1/robots/id/${id}`, {
+        const response = await axios.get(`/api/v1/robots/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -90,7 +90,7 @@ const UpdateRobot = () => {
         manufactured_date,
         ...filteredFormData
       } = formData;
-      await axios.put(`/api/v1/robots/id/${id}`, filteredFormData, {
+      await axios.put(`/api/v1/robots/${id}`, filteredFormData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
 
@@ -128,7 +128,7 @@ const UpdateRobot = () => {
                 "block",
                 "deveui",
                 "robot_type",
-                "lora_state",
+
                 "version",
                 "last_status",
                 "battery_status",
@@ -214,6 +214,7 @@ const UpdateRobot = () => {
 
               {/* Checkbox Inputs */}
               {[
+                "lora_state",
                 "auto_clean",
                 "rescheduled_cycle",
                 "activate",

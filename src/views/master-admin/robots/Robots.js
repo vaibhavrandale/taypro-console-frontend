@@ -23,6 +23,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
+import PaginateInput from "../../../components/PaginateInput";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITES_REQUEST":
@@ -77,11 +78,10 @@ const Robots = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("pg")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 10;
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
@@ -104,11 +104,16 @@ const Robots = () => {
   });
 
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const result = await axios.get(
-          `/api/v1/robots?pg=${page}&limit=${limit}`,
+        const result = await axios.post(
+          `/api/v1/robots/get-robots`,
+          pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -157,8 +162,22 @@ const Robots = () => {
     setFormData(robot);
     setModalVisible(true);
   };
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
-    navigate(`?pg=${newPage}&limit=${limit}`);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
   };
   return (
     <div className="p-2">
@@ -292,40 +311,16 @@ const Robots = () => {
           )}
         </CTableBody>
       </CTable>
-      <CRow className="mt-3">
-        <CCol className="d-flex justify-content-end">
-          <CButton
-            color="secondary"
-            disabled={!hasPrevPage}
-            onClick={() => handlePageChange(page - 1)}
-            className="mx-1"
-            size="sm"
-          >
-            Prev
-          </CButton>
-
-          {Array.from({ length: totalPages }, (_, i) => (
-            <CButton
-              key={i + 1}
-              color={page === i + 1 ? "primary" : ""}
-              onClick={() => handlePageChange(i + 1)}
-              className="mx-1"
-            >
-              {i + 1}
-            </CButton>
-          ))}
-
-          <CButton
-            color="secondary"
-            disabled={!hasNextPage}
-            onClick={() => handlePageChange(page + 1)}
-            className="mx-1"
-            size="sm"
-          >
-            Next
-          </CButton>
-        </CCol>
-      </CRow>
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
       {/* view Modal */}
       <CModal
         size="xl"

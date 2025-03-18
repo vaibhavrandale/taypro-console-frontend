@@ -95,10 +95,11 @@ const RobotOperating = () => {
   const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
-  let startall = "C1";
-  let stopall = "CC";
-  let returnall = "D1";
+  let start = "C1";
+  let stop = "CC";
+  let returntodock = "D1";
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
+  const [commandButton, setCommandButton] = useState(null); // Track the row index
 
   const [
     {
@@ -140,7 +141,7 @@ const RobotOperating = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(response.data);
+        // console.log(response.data.data);
 
         let total = Math.ceil(
           Number(response.data.total) / Number(response.data.limit)
@@ -213,7 +214,11 @@ const RobotOperating = () => {
   );
 
   const deleteDownlink = async (downlink) => {
-    if (window.confirm("Are you sure you want to delete?")) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete downlink ${downlink.downlink}🚫`
+      )
+    ) {
       try {
         await axios.delete(`/api/v1/downlinks/${downlink._id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
@@ -238,15 +243,12 @@ const RobotOperating = () => {
             robot.robot_no === robot_no
         )
       : [];
-  // console.log(Robotdata);
-
-  // const sendCommand = (command) => {
-  //   // Send command to robot
-  //   toast.success(`${command} Command sent Successfully!`);
-  // };
+  const blockwiserobots =
+    robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
 
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
+    setCommandButton(index);
     // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
@@ -274,10 +276,46 @@ const RobotOperating = () => {
       toast.error(error.response.data.message || "Error adding downlink");
     }
     setLoadingRow(null);
+    setCommandButton(null);
   };
 
-  const sendMulticastDownlink = async (command, deveuiArr) => {
+  const sendMulticastDownlink = async (command, index) => {
     // console.log(command);
+    let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    console.log(alldeveuis, command);
+
+    setCommandButton(index);
+    // console.log(command);
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: alldeveuis,
+      block: block,
+      site_id: site_id,
+      command: command,
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/multicast-downlink",
+        robotdownlink,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log(data.data.message);
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message,
+      });
+
+      toast.error(error.response.data.message || "Error adding downlink");
+    }
+
+    setCommandButton(null);
   };
 
   const handlePageChange = (newPage) => {
@@ -309,19 +347,19 @@ const RobotOperating = () => {
             <CCol>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(startall)}
+                onClick={() => sendMulticastDownlink(start, 1)}
               >
                 START ALL
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(stopall)}
+                onClick={() => sendMulticastDownlink(stop, 2)}
               >
                 STOP ALL
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(returnall)}
+                onClick={() => sendMulticastDownlink(returntodock, 3)}
               >
                 RETURN TO DOCK ALL
               </CButton>
@@ -746,14 +784,44 @@ const RobotOperating = () => {
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
                   <p>Cleaning Cycle</p>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow">
-                    START
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow"
+                    onClick={() => sendsingleDownlink(start, 1)}
+                  >
+                    {commandButton === 1 ? (
+                      <>
+                        START&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "START"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    STOP
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(stop, 2)}
+                  >
+                    {commandButton === 2 ? (
+                      <>
+                        STOP&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "STOP"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    RETURN
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(returntodock, 3)}
+                  >
+                    {commandButton === 3 ? (
+                      <>
+                        RETURN&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "RETURN"
+                    )}
                   </CButton>
                 </CCardBody>
               </CCard>
