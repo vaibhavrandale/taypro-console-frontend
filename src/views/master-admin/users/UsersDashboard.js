@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   CTable,
@@ -22,9 +22,43 @@ import {
 import { departments, role_permissions } from "../../../data"; // Ensure correct path
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
+import PaginateInput from "../../../components/PaginateInput";
 // import logo from '../../../assets/brand/logoforwhitebg.png';
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        users: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
 const UsersDashboard = () => {
+  const [
+    { error, loading, users, totalPages, hasNextPage, hasPrevPage },
+    dispatch,
+  ] = useReducer(reducer, {
+    users: [],
+    loading: false,
+    error: "",
+    updateError: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
   // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
@@ -34,29 +68,53 @@ const UsersDashboard = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
-  const [users, setUsers] = useState([]); // State for users
+  // const [users, setUsers] = useState([]); // State for users
+  const [pageInput, setPageInput] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  // const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchUsers = async () => {
+      let pagination = {
+        pg: page,
+        limit: limit,
+      };
+      dispatch({ type: "FETCH_REQUEST" });
       try {
-        const response = await axios.get("/api/v1/users", {
+        const result = await axios.post("/api/v1/users/get-users", pagination, {
           headers: { authorization: `Bearer ${authtoken}` },
         }); // Replace with your API endpoint
-
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
         // setUsers(filteredUsers)
-        const data = response.data.data;
-
-        setUsers(data);
-        setLoading(false);
+        const data = result.data.data;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+        // setUsers(data);
+        // setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: "Failed to fetch users",
+        });
       }
     };
 
     fetchUsers();
-  }, [authtoken, userInfo]); // Runs only once on mount
+  }, [authtoken, limit, page, userInfo]); // Runs only once on mount
 
   // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
@@ -107,6 +165,24 @@ const UsersDashboard = () => {
         user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.department.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
 
   return (
     <div className="">
@@ -242,7 +318,16 @@ const UsersDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
       {/* Update User Modal */}
       <CModal
         visible={modalVisible}
