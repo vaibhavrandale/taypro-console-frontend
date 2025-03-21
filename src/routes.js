@@ -29,10 +29,19 @@ const AddRobotUsingLoraNo = React.lazy(() =>
   import("./views/master-admin/add-robot/AddRobotUsingLoraNo")
 );
 
-const Clients = React.lazy(() => import("./views/pages/clients/Clients"));
-const ClientsData = React.lazy(() =>
-  import("./views/pages/clients/ClientData")
+// const Clients = React.lazy(() => import("./views/pages/clients/Clients"));
+
+const ClientsDasboard = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/Clients")
 );
+
+const ClientsDataDasboard = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/ClientData")
+);
+
+// const ClientsData = React.lazy(() =>
+//   import("./views/pages/clients/ClientData")
+// );
 
 const ServiceTicketDashboard = React.lazy(() =>
   import("./views/master-admin/service-tickets/ServiceTicketDashboard")
@@ -344,16 +353,28 @@ const routes = [
   },
 
   {
-    path: "/master-admin/clients",
-    name: "Clients data",
-    element: Clients,
+    path: "/master-admin/clients-dashboard",
+    name: "Clients",
+    element: ClientsDasboard,
   },
 
   {
-    path: "/master-admin/clients/clients-data/:client_id",
-    name: "Client data",
-    element: ClientsData,
+    path: "/master-admin/clients-data-dashboard/client-data/:client_id",
+    name: "Clients Data",
+    element: ClientsDataDasboard,
   },
+
+  // {
+  //   path: "/master-admin/clients",
+  //   name: "Clients data",
+  //   element: Clients,
+  // },
+
+  // {
+  //   path: "/master-admin/clients/clients-data/:client_id",
+  //   name: "Client data",
+  //   element: ClientsData,
+  // },
   {
     path: "/master-admin/robots",
     name: "All Robots",

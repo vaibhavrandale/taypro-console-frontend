@@ -132,36 +132,13 @@ const ServiceTicketDashboard = () => {
   // const limit = parseInt(queryParams.get("limit")) || 10;
 
   // 📌 Open modal with selected ticket data
-  const openUpdateModal = async (id) => {
-    // setSelectedTicket(ticket);
-    // setFormData(ticket);
-
-    setModalVisible(true);
-
-    try {
-      dispatch({ type: "FETCH_TICKET_REQUEST" });
-      const response = await axios.get(`/api/v1/servicetickets/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-
-      console.log(response);
-
-      let result = response.data.data;
-
-      dispatch({ type: "FETCH_TICKET_SUCCESS", payload: result });
-      // setSelectedTicket(result);
-    } catch (error) {
-      console.error("Error fetching ticket:", error);
-      dispatch({ type: "FETCH_TICKET_FAIL", payload: error });
-    }
-  };
 
   const openViewModal = async (id) => {
     setViewModalVisible(true);
 
     try {
       dispatch({ type: "FETCH_TICKET_REQUEST" });
-      const response = await axios.get(`/api/v1/servicetickets/${id}`, {
+      const response = await axios.get(`/api/v1/servicetickets/getone/${id}`, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
 

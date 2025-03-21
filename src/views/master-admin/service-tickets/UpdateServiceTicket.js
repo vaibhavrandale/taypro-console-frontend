@@ -83,9 +83,12 @@ const UpdateServiceTicket = () => {
     const fetchTicket = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get(`/api/v1/servicetickets/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.get(
+          `/api/v1/servicetickets/getone/${id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
       } catch (error) {
