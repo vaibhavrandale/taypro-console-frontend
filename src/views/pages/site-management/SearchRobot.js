@@ -18,7 +18,15 @@ const reducer = (state, action) => {
     case "FETCH_REQUEST":
       return { ...state, loading: true, error: "" };
     case "FETCH_SUCCESS":
-      return { ...state, robots: action.payload, loading: false };
+      return {
+        ...state,
+        //  robots: action.payload,
+        robots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loading: false,
+      };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     default:
@@ -26,38 +34,70 @@ const reducer = (state, action) => {
   }
 };
 const SearchRobot = () => {
-  const [{ loading, error, robots }, dispatch] = useReducer(reducer, {
-    downlink: {},
+  const [
+    { loading, error, robots, totalPages, hasNextPage, hasPrevPage },
+    dispatch,
+  ] = useReducer(reducer, {
+    robots: [],
     loading: true,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   useEffect(() => {
-    const fetchDownlink = async () => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+    const fetchRobots = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const { data } = await axios.get(`/api/v1/robots`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const result = await axios.post(
+          `/api/v1/robots/get-robots`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
 
-        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
-        console.log(data.data);
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          //  payload: data.data
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
       } catch (error) {
+        console.log(error.response.statusText);
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data || "Failed to fetch data",
+          payload: error.response.statusText,
         });
-        toast.error(error.response?.data || "Failed to fetch data");
+        toast.error(error.response.statusText);
       }
     };
 
-    fetchDownlink();
-  }, [authtoken]);
+    fetchRobots();
+  }, [authtoken, limit, page]);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;

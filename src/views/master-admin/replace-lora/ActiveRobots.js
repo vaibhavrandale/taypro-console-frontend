@@ -1,181 +1,4 @@
-// import React, { useState } from 'react';
-// import {
-//   CTable,
-//   CTableHead,
-//   CTableRow,
-//   CTableHeaderCell,
-//   CTableBody,
-//   CTableDataCell,
-//   CButton,
-//   CBadge,
-//   CModal,
-//   CModalHeader,
-//   CModalTitle,
-//   CModalBody,
-//   CModalFooter,
-//   CFormInput,
-//   CRow,
-//   CCol,
-// } from '@coreui/react';
-// import { robots } from '../../../data'; // Import your robots data
-
-// const ActiveRobots = () => {
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [selectedRobot, setSelectedRobot] = useState(null);
-//   const [formData, setFormData] = useState({});
-//   const [searchTerm, setSearchTerm] = useState('');
-
-//   // Filter active robots
-//   const activeRobots = robots.filter((robot) => robot.activate === 1);
-
-//   // Filter robots based on search term
-//   const filteredRobots = activeRobots.filter(
-//     (robot) =>
-//       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//       robot.lora_no.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   // Open modal with selected robot data
-//   const openModal = (robot) => {
-//     setSelectedRobot(robot);
-//     setFormData(robot);
-//     setModalVisible(true);
-//   };
-
-//   // Handle input change
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   // Handle update (currently logs updated data)
-//   const handleUpdate = () => {
-//     console.log('Updated Data:', formData);
-//     setModalVisible(false);
-//   };
-
-//   return (
-//     <div className="p-4">
-//       <h2>Active Robots</h2>
-//       <CRow className="justify-content-end">
-//         <CCol md={4} lg={4}>
-//           {/* Search Input */}
-//           <CFormInput
-//             type="text"
-//             placeholder="Search by Robot No, Deveui, or Lora No"
-//             className="mb-3"
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//           />
-//         </CCol>
-//       </CRow>
-//       <CTable bordered hover responsive className="text-center">
-//         <CTableHead >
-//           <CTableRow>
-//             <CTableHeaderCell>Sr</CTableHeaderCell>
-//             <CTableHeaderCell>Robot No</CTableHeaderCell>
-//             <CTableHeaderCell>Deveui</CTableHeaderCell>
-//             <CTableHeaderCell>Current Lora No</CTableHeaderCell>
-//             <CTableHeaderCell>OLD Lora No</CTableHeaderCell>
-//             <CTableHeaderCell>Status</CTableHeaderCell>
-//             <CTableHeaderCell>Action</CTableHeaderCell>
-//           </CTableRow>
-//         </CTableHead>
-//         <CTableBody>
-//           {filteredRobots.map((robot, index) => (
-//             <CTableRow key={index}>
-//               <CTableDataCell>{index + 1}</CTableDataCell>
-//               <CTableDataCell>{robot.robot_no}</CTableDataCell>
-//               <CTableDataCell>{robot.deveui}</CTableDataCell>
-//               <CTableDataCell>{robot.lora_no}</CTableDataCell>
-//               <CTableDataCell>{robot.old_lora_no}</CTableDataCell>
-//               <CTableDataCell>
-//                 <CBadge color="success">Active</CBadge>
-//               </CTableDataCell>
-//               <CTableDataCell>
-//                 <CButton
-//                   color="primary"
-//                   size="sm"
-//                   onClick={() => openModal(robot)}
-//                 >
-//                   Update
-//                 </CButton>
-//               </CTableDataCell>
-//             </CTableRow>
-//           ))}
-//         </CTableBody>
-//       </CTable>
-
-//       {/* Update Modal */}
-//       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-//         <CModalHeader>
-//           <CModalTitle>Update Robot Data</CModalTitle>
-//         </CModalHeader>
-//         <CModalBody>
-//           {selectedRobot && (
-//             <div>
-//               <CFormInput
-//                 type="text"
-//                 name="robot_no"
-//                 value={formData.robot_no}
-//                 label="Robot No"
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               />
-//               <CFormInput
-//                 type="text"
-//                 name="deveui"
-//                 value={formData.deveui}
-//                 label="Deveui"
-//                 disabled
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               />
-//               <CFormInput
-//                 type="text"
-//                 name="lora_no"
-//                 disabled
-//                 value={formData.lora_no}
-//                 label="Current Lora No"
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               />
-//               <CFormInput
-//                 type="text"
-//                 name="old_lora_no"
-//                 disabled
-//                 value={formData.old_lora_no}
-//                 label="Old Lora No"
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               />
-//               <CFormInput
-//                 type="text"
-//                 name="new_lora_no"
-//                 value={formData.new_lora_no}
-//                 label="New Lora No"
-//                 onChange={handleChange}
-//                 className="mb-3"
-//               />
-//             </div>
-//           )}
-//         </CModalBody>
-//         <CModalFooter>
-//           <CButton color="secondary" onClick={() => setModalVisible(false)}>
-//             Cancel
-//           </CButton>
-//           <CButton color="primary" onClick={handleUpdate}>
-//             Save Changes
-//           </CButton>
-//         </CModalFooter>
-//       </CModal>
-//     </div>
-//   );
-// };
-
-// export default ActiveRobots;
-
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -194,9 +17,65 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-import { robots } from "../../../data"; // Import your robots data
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import PaginateInput from "../../../components/PaginateInput";
+import { Link, useNavigate } from "react-router-dom";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+// import { robots } from "../../../data"; // Import your robots data
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_ROBOTS_REQUEST":
+      return { ...state, loadingRobots: true, error: "" };
+    case "FETCH_ROBOTS_SUCCESS":
+      return {
+        ...state,
+        loadingRobots: false,
+        //  robots: action.payload
+        robots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+    case "FETCH_ROBOTS_FAIL":
+      return { ...state, loadingRobots: false, error: action.payload };
+
+    case "UPDATE_REQUEST":
+      return { ...state, updateloading: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, updateloading: false, success: true };
+    case "UPDATE_FAIL":
+      return { ...state, updateloading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 const ActiveRobots = () => {
+  const [
+    {
+      loadingRobots,
+      error,
+      robots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      updateloading,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robots: [],
+
+    loadingaddRobots: false,
+    updateloading: false,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
   const [formData, setFormData] = useState({
@@ -206,13 +85,62 @@ const ActiveRobots = () => {
     old_lora_no: "",
     new_lora_no: "",
   });
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [pageInput, setPageInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const authtoken = useSelector((state) => state.authtoken);
+
+  useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+    const fetchRobots = async () => {
+      dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+      try {
+        const result = await axios.post(`/api/v1/robots/active`, pagination, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        // console.log(result.data.data);
+        console.log("active");
+        console.log(result.data);
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          // payload: result.data.data
+
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+        // console.log(result.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: "Failed to fetch robots",
+        });
+        toast.error("Failed to fetch robots");
+      }
+    };
+
+    fetchRobots();
+  }, [authtoken, limit, page]);
 
   // Filter active robots
-  const activeRobots = robots.filter((robot) => robot.activate === 1);
 
   // Filter robots based on search term
-  const filteredRobots = activeRobots.filter(
+  const filteredRobots = robots.filter(
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -238,14 +166,72 @@ const ActiveRobots = () => {
   };
 
   // Handle update (currently logs updated data)
-  const handleUpdate = () => {
+  const handleUpdate = async (e) => {
     console.log("Updated Data:", formData);
+    e.preventDefault();
+    dispatch({ type: "UPDATE_REQUEST" });
+    try {
+      const {
+        createdAt,
+        _id,
+        last_activity,
+        last_uplink,
+        manufactured_date,
+        ...filteredFormData
+      } = formData;
+
+      await axios.put(
+        `/api/v1/robots/deactivate-and-delete-from-lns`,
+        filteredFormData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success(`${filteredFormData.robot_no}  updated successfully!`);
+      navigate("/master-admin/replace-lora/in-active-robots"); // Redirect after update
+    } catch (error) {
+      console.log(error.response);
+      dispatch({
+        type: "UPDATE_FAIL",
+        payload: error.response?.data?.message || error.message,
+      });
+
+      toast.error("Failed to update robot!");
+    }
     setModalVisible(false);
+  };
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
   };
 
   return (
     <div className="p-4">
-      <h2>Active Robots</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Active Robots</h2>
+        <Link
+          className="btn btn-sm btn-danger text-white"
+          to="/master-admin/replace-lora/in-active-robots"
+        >
+          In Active Robots
+        </Link>
+      </div>
       <CRow className="justify-content-end">
         <CCol md={4} lg={4}>
           {/* Search Input */}
@@ -271,98 +257,136 @@ const ActiveRobots = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredRobots.map((robot, index) => (
-            <CTableRow key={index}>
-              <CTableDataCell>{index + 1}</CTableDataCell>
-              <CTableDataCell>{robot.robot_no}</CTableDataCell>
-              <CTableDataCell>{robot.deveui}</CTableDataCell>
-              <CTableDataCell>{robot.lora_no}</CTableDataCell>
-              <CTableDataCell>{robot.old_lora_no}</CTableDataCell>
-              <CTableDataCell>
-                <CBadge color="success">Active</CBadge>
-              </CTableDataCell>
-              <CTableDataCell>
-                <CButton
-                  color="primary"
-                  size="sm"
-                  onClick={() => openModal(robot)}
-                >
-                  Update
-                </CButton>
+          {filteredRobots.length === 0 ? (
+            <CTableRow>
+              <CTableDataCell colSpan={7}>
+                No active Robots Found
               </CTableDataCell>
             </CTableRow>
-          ))}
+          ) : (
+            filteredRobots.map((robot, index) => (
+              <CTableRow key={index}>
+                <CTableDataCell>{index + 1}</CTableDataCell>
+                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell>{robot.deveui}</CTableDataCell>
+                <CTableDataCell>{robot.lora_no}</CTableDataCell>
+                <CTableDataCell>{robot.old_lora_no}</CTableDataCell>
+                <CTableDataCell>
+                  {robot.activate ? (
+                    <CBadge color="success">Active</CBadge>
+                  ) : (
+                    <CBadge color="danger">In Active</CBadge>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="primary"
+                    className="text-white"
+                    size="sm"
+                    onClick={() => openModal(robot)}
+                  >
+                    Deactivate
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            ))
+          )}
         </CTableBody>
       </CTable>
-
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
       {/* Update Modal */}
-      <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+      <CModal
+        backdrop="static"
+        size="xl"
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      >
         <CModalHeader>
           <CModalTitle>
-            Update Robot : <span className="badge bg-success"></span>
+            Deactivate Robot -{" "}
+            <span className="badge bg-success">{formData.robot_no}</span>
           </CModalTitle>
         </CModalHeader>
-        <CModalBody>
-          {selectedRobot && (
-            <div>
-              <CFormInput
-                type="text"
-                name="robot_no"
-                value={formData.robot_no}
-                label="Robot No"
-                onChange={handleChange}
-                className="mb-3"
-              />
-              <CFormInput
-                type="text"
-                name="deveui"
-                value={formData.deveui}
-                label="Deveui"
-                disabled
-                onChange={handleChange}
-                className="mb-3"
-              />
-              <CFormInput
-                type="text"
-                name="lora_no"
-                disabled
-                value={formData.lora_no}
-                label="Current Lora No"
-                onChange={handleChange}
-                className="mb-3"
-              />
-              <CFormInput
-                type="text"
-                name="old_lora_no"
-                disabled
-                value={formData.old_lora_no}
-                label="Old Lora No"
-                onChange={handleChange}
-                className="mb-3"
-              />
-              <CFormInput
-                type="text"
-                name="new_lora_no"
-                value={formData.new_lora_no}
-                label="New Lora No"
-                onChange={handleChange}
-                className="mb-3"
-              />
-            </div>
-          )}
-        </CModalBody>
-        <CModalFooter>
-          <CButton
-            color="secondary"
-            size="sm"
-            onClick={() => setModalVisible(false)}
-          >
-            Cancel
-          </CButton>
-          <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes
-          </CButton>
-        </CModalFooter>
+        <form onSubmit={handleUpdate}>
+          <CModalBody>
+            {selectedRobot && (
+              <div>
+                <CFormInput
+                  type="text"
+                  name="robot_no"
+                  value={formData.robot_no}
+                  label="Robot No"
+                  onChange={handleChange}
+                  className="mb-3"
+                  readOnly
+                />
+                <CFormInput
+                  type="text"
+                  name="deveui"
+                  value={formData.deveui}
+                  label="Deveui"
+                  readOnly
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+                <CFormInput
+                  type="text"
+                  name="lora_no"
+                  readOnly
+                  value={formData.lora_no}
+                  label="Current Lora No"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+                <CFormInput
+                  type="text"
+                  name="old_lora_no"
+                  readOnly
+                  value={formData.old_lora_no}
+                  label="Old Lora No"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+                <CFormInput
+                  type="text"
+                  name="newLoraNo"
+                  value={formData.newLoraNo}
+                  label="New Lora No"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </div>
+            )}
+          </CModalBody>
+          <CModalFooter>
+            <CButton
+              color="secondary"
+              size="sm"
+              onClick={() => setModalVisible(false)}
+            >
+              Cancel
+            </CButton>
+            <CButton color="primary" size="sm" type="submit">
+              {updateloading ? (
+                <>
+                  Deactivating...
+                  <LoadingSpinner />
+                </>
+              ) : (
+                "Deactivate"
+              )}
+            </CButton>
+          </CModalFooter>
+        </form>
       </CModal>
     </div>
   );

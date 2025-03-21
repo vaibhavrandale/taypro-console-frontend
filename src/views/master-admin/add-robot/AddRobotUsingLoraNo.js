@@ -24,7 +24,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingloraconfig: false,
-        lora_configuration: action.payload,
+        // lora_configuration: action.payload,
+        lora_configuration: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_LORACONFIG_FAIL":
       return { ...state, loadingloraconfig: false, error: action.payload };
@@ -32,7 +36,15 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_REQUEST":
       return { ...state, loadingRobots: true, error: "" };
     case "FETCH_ROBOTS_SUCCESS":
-      return { ...state, loadingRobots: false, robots: action.payload };
+      return {
+        ...state,
+        loadingRobots: false,
+        //  robots: action.payload
+        robots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
     case "FETCH_ROBOTS_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
 
@@ -70,6 +82,9 @@ const AddRobotUsingLoraNo = () => {
       loadingaddRobots,
       selectedLora,
       loadingFields,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -81,6 +96,9 @@ const AddRobotUsingLoraNo = () => {
     loadingFields: false, // New state
     selectedLora: null,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
 
   const [formData, setFormData] = useState({
@@ -89,17 +107,45 @@ const AddRobotUsingLoraNo = () => {
     deveui: "",
     site_id: "",
   });
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/robots`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+        const result = await axios.post(
+          `/api/v1/robots/get-robots`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          // payload: result.data.data
+
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
         });
-        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
         // console.log(result.data.data);
       } catch (error) {
         dispatch({
@@ -112,13 +158,28 @@ const AddRobotUsingLoraNo = () => {
     const fetchloraconfigurations = async () => {
       dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/loraconfigurations`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-        console.log(result.data.data);
+        const result = await axios.post(
+          `/api/v1/loraconfigurations/get-loraconfigurations`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+        // console.log(result.data.data);
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
-          payload: result.data.data,
+          // payload: result.data.data,
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
         });
       } catch (error) {
         dispatch({
@@ -132,7 +193,7 @@ const AddRobotUsingLoraNo = () => {
     fetchloraconfigurations();
 
     fetchRobots();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   const navigate = useNavigate();
   // Get only available lora_no (not already in robots array)
@@ -163,8 +224,6 @@ const AddRobotUsingLoraNo = () => {
   // };
 
   const handleLoraChange = (e) => {
-    console.log("clicked");
-
     dispatch({ type: "SELECT_LORA_REQUEST" });
 
     const selectedLoraNo = e.target.value;

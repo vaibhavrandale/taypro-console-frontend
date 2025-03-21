@@ -26,7 +26,7 @@ import {
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PieChart from "./PieChart";
 import "./servicetickts.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LastActivity from "../../../components/LastActivity";
@@ -274,6 +274,7 @@ const ServiceTicketDashboard = () => {
           item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
@@ -296,7 +297,7 @@ const ServiceTicketDashboard = () => {
     <div className="">
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
 
-      {/* <PieChart /> */}
+      <PieChart />
 
       {/* 📋 Service Tickets Table */}
       <CCard className="mt-4">

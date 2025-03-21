@@ -230,6 +230,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -239,7 +240,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         fetchingRobots: false,
-        inactiverobots: action.payload,
+        // inactiverobots: action.payload,
+        inactiverobots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_ROBOTS_FAIL":
       return { ...state, fetchingRobots: false, error: action.payload };
@@ -274,6 +279,9 @@ const ActivateRobots = () => {
       error,
       inactiverobots,
       activatedRobots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -282,20 +290,45 @@ const ActivateRobots = () => {
     loadingActivateRobots: false,
     fetchingRobots: false,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
 
   const [selectedRobots, setSelectedRobots] = useState([]);
   const authtoken = useSelector((state) => state.authtoken);
+  const [pageInput, setPageInput] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/robots/inactive`, {
+        const result = await axios.post(`/api/v1/robots/inactive`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
 
-        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          //  payload: result.data.data
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -306,7 +339,7 @@ const ActivateRobots = () => {
     };
 
     fetchRobots();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   // ✅ Handle Checkbox Selection
   const handleCheckboxChange = (robot) => {
@@ -345,6 +378,23 @@ const ActivateRobots = () => {
     }
   };
 
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
   return (
     <div className="p-2">
       <h4>Activate Robots</h4>
@@ -439,7 +489,7 @@ const ActivateRobots = () => {
                   </CTableDataCell>
                   <CTableDataCell>{index + 1}</CTableDataCell>
                   <CTableDataCell>{robot.robot_no}</CTableDataCell>
-                  <CTableDataCell>{robot.lora_serial_no}</CTableDataCell>
+                  <CTableDataCell>{robot.lora_no}</CTableDataCell>
                   <CTableDataCell>{robot.deveui}</CTableDataCell>
                   <CTableDataCell>{robot.site_id}</CTableDataCell>
                   <CTableDataCell>{robot.block}</CTableDataCell>
@@ -448,6 +498,16 @@ const ActivateRobots = () => {
             )}
           </CTableBody>
         </CTable>
+        <PaginateInput
+          page={page}
+          totalPages={totalPages}
+          hasPrevPage={hasPrevPage}
+          hasNextPage={hasNextPage}
+          pageInput={pageInput}
+          handlePageChange={handlePageChange}
+          handlePageInputChange={handlePageInputChange}
+          handlePageInputSubmit={handlePageInputSubmit}
+        />
       </CCardBody>
     </div>
   );

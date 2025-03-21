@@ -17,12 +17,21 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import PaginateInput from "../../../components/PaginateInput";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
       return { ...state, loading: true, error: "" };
     case "FETCH_SUCCESS":
-      return { ...state, sites: action.payload, loading: false };
+      return {
+        ...state,
+        // sites: action.payload,
+        sites: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loading: false,
+      };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     default:
@@ -30,25 +39,52 @@ const reducer = (state, action) => {
   }
 };
 const SiteManagement = () => {
-  const [{ loading, error, sites }, dispatch] = useReducer(reducer, {
+  const [
+    { loading, error, sites, totalPages, hasNextPage, hasPrevPage },
+    dispatch,
+  ] = useReducer(reducer, {
     sites: [],
     loading: true,
     error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
   });
   const [searchTerm, setSearchTerm] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
     const fetchDownlink = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const { data } = await axios.get(`/api/v1/sites`, {
+        const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-
-        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          //  payload: data.data
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -59,7 +95,7 @@ const SiteManagement = () => {
     };
 
     fetchDownlink();
-  }, [authtoken]);
+  }, [authtoken, limit, page]);
 
   // Filter table rows based on search term
   const filteredData = sites.filter(
@@ -67,6 +103,24 @@ const SiteManagement = () => {
       site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       site.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
 
   return (
     <div className="">
@@ -85,7 +139,6 @@ const SiteManagement = () => {
           </CInputGroup>
         </CCol>
       </CRow>
-
       {/* Dynamic Data Table */}
       <CTable bordered hover responsive>
         <CTableHead color="secondary">
@@ -143,6 +196,16 @@ const SiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
     </div>
   );
 };

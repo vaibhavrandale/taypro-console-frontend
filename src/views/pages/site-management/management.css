@@ -25,7 +25,7 @@
 
 /* Tooltip Arrow */
 .tooltip-container .tooltip-text::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%; /* Below the tooltip */
   left: 50%;
@@ -95,7 +95,7 @@
   background-color: #96db00;
 
   border-radius: 5px;
-  color: #fff;
+  color: #000000;
 }
 
 .offline {

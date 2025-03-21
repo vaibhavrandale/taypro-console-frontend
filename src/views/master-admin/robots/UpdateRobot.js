@@ -172,6 +172,8 @@ const UpdateRobot = () => {
                 "battery_voltage",
                 "temperature",
                 "rssi",
+                "lora_no",
+                "old_lora_no",
                 "snr",
                 "row_length",
                 "row_number",

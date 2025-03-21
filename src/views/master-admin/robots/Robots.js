@@ -152,8 +152,7 @@ const Robots = () => {
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.lora_no.toString().includes(searchTerm) // Convert lora_no to string
+      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Open modal and load robot data

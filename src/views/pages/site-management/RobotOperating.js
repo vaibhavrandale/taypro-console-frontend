@@ -35,6 +35,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
+import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -95,6 +96,9 @@ const RobotOperating = () => {
   const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
+
+  const [pageInput, setPageInput] = useState("");
+
   let start = "C1";
   let stop = "CC";
   let returntodock = "D1";
@@ -126,52 +130,21 @@ const RobotOperating = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const location = useLocation();
+
   const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("pg")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 10;
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
-    const getDownlinks = async () => {
+    const getRobots = async () => {
       try {
-        dispatch({ type: "FETCH_REQUEST" });
+        dispatch({ type: "FETCH_ROBOTS_REQUEST" });
         const response = await axios.get(
-          `/api/v1/downlinks?pg=${page}&limit=${limit}`,
+          `/api/v1/robots/site/${site_id}/${block}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(response.data.data);
-
-        let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
-        );
-        let next = response.data.hasNextPage;
-        let prev = response.data.hasPrevPage;
-        dispatch({
-          type: "FETCH_SUCCESS",
-          payload: {
-            data: response.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
-          },
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: error.response ? error.response.data.message : error.message,
-        });
-      }
-    };
-
-    const getRobots = async () => {
-      try {
-        dispatch({ type: "FETCH_ROBOTS_REQUEST" });
-        const response = await axios.get(`/api/v1/robots/site/${site_id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-
+        // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
         // console.log(robotsData);
 
@@ -200,14 +173,54 @@ const RobotOperating = () => {
       }
     };
 
+    getRobots();
+  }, [block, site_id, authtoken]);
+
+  useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+    const getDownlinks = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.post(
+          `/api/v1/downlinks/get-downlinks`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        console.log(response);
+
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit)
+        );
+        let next = response.data.hasNextPage;
+        let prev = response.data.hasPrevPage;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: response.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response ? error.response.data.message : error.message,
+        });
+      }
+    };
+
     if (successDelete) {
       dispatch({ type: "DELETE_RESET" });
     } else {
       getDownlinks();
     }
-
-    getRobots();
-  }, [block, site_id, successDelete, authtoken, page, limit]);
+  }, [successDelete, authtoken, page, limit]);
 
   const filteredDownlink = downlinks.filter((item) =>
     item.downlink.toLowerCase().includes(searchTerm.toLowerCase())
@@ -318,9 +331,24 @@ const RobotOperating = () => {
     setCommandButton(null);
   };
 
-  const handlePageChange = (newPage) => {
-    navigate(`?pg=${newPage}&limit=${limit}`);
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
   };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
+
   return (
     <>
       {loadingRobots ? (
@@ -660,7 +688,7 @@ const RobotOperating = () => {
                   {loading ? (
                     <CTableRow className="text-center">
                       <CTableDataCell colSpan={7}>
-                        <CSpinner color="primary" />
+                        <LoadingSpinner />
                       </CTableDataCell>
                     </CTableRow>
                   ) : error ? (
@@ -735,44 +763,24 @@ const RobotOperating = () => {
                 </CTableBody>
               </CTable>
 
-              <CRow className="mt-3">
-                <CCol className="d-flex justify-content-end">
-                  <CButton
-                    color="secondary"
-                    disabled={!hasPrevPage}
-                    onClick={() => handlePageChange(page - 1)}
-                    className="mx-1"
-                    size="sm"
-                  >
-                    Prev
-                  </CButton>
-
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <CButton
-                      key={i + 1}
-                      color={page === i + 1 ? "primary" : ""}
-                      onClick={() => handlePageChange(i + 1)}
-                      className="mx-1"
-                    >
-                      {i + 1}
-                    </CButton>
-                  ))}
-
-                  <CButton
-                    color="secondary"
-                    disabled={!hasNextPage}
-                    onClick={() => handlePageChange(page + 1)}
-                    className="mx-1"
-                    size="sm"
-                  >
-                    Next
-                  </CButton>
-                </CCol>
-              </CRow>
+              <PaginateInput
+                page={page}
+                totalPages={totalPages}
+                hasPrevPage={hasPrevPage}
+                hasNextPage={hasNextPage}
+                pageInput={pageInput}
+                handlePageChange={handlePageChange}
+                handlePageInputChange={handlePageInputChange}
+                handlePageInputSubmit={handlePageInputSubmit}
+              />
             </CModalBody>
 
             <CModalFooter>
-              <CButton color="secondary" onClick={() => setModalVisible(false)}>
+              <CButton
+                size="sm"
+                color="secondary"
+                onClick={() => setModalVisible(false)}
+              >
                 Close
               </CButton>
             </CModalFooter>
