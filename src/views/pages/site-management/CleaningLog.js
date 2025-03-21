@@ -29,6 +29,8 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import PaginateInput from "../../../components/PaginateInput";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -65,32 +67,40 @@ const CleaningLog = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("pg")) || 1;
-  const limit = parseInt(queryParams.get("limit")) || 10;
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [pageInput, setPageInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
-    const fetchDownlink = async () => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+    const fetchCleaningLogs = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const { data } = await axios.get(
-          `/api/v1/rawcleaninglogs/robot/${robot_no}?pg=${page}&limit=${limit}`,
+        const response = await axios.post(
+          `/api/v1/rawcleaninglogs/robot/${robot_no}`,
+          pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
 
-        let total = Math.ceil(Number(data.total) / Number(data.limit));
-        let next = data.hasNextPage;
-        let prev = data.hasPrevPage;
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit)
+        );
+        let next = response.data.hasNextPage;
+        let prev = response.data.hasPrevPage;
+        let result = response.data.data;
 
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: data.data,
+            data: result,
             totalPages: total,
             hasNextPage: next,
             hasPrevPage: prev,
@@ -109,7 +119,7 @@ const CleaningLog = () => {
       }
     };
 
-    fetchDownlink();
+    fetchCleaningLogs();
   }, [authtoken, limit, page, robot_no]);
 
   // Filter logs based on robot_no
@@ -160,8 +170,22 @@ const CleaningLog = () => {
     XLSX.writeFile(workbook, `CleaningLogs_${robot_no}.xlsx`);
   };
 
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
-    navigate(`?pg=${newPage}&limit=${limit}`);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
   };
 
   return (
@@ -289,6 +313,16 @@ const CleaningLog = () => {
                 )}
               </CTableBody>
             </CTable>
+            <PaginateInput
+              page={page}
+              totalPages={totalPages}
+              hasPrevPage={hasPrevPage}
+              hasNextPage={hasNextPage}
+              pageInput={pageInput}
+              handlePageChange={handlePageChange}
+              handlePageInputChange={handlePageInputChange}
+              handlePageInputSubmit={handlePageInputSubmit}
+            />
             <CRow className="mt-3">
               <CCol className="d-flex justify-content-end">
                 <CButton

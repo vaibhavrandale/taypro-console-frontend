@@ -88,8 +88,8 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "Client Data",
-        to: "/master-admin/clients",
+        name: "Client Dashboard",
+        to: "/master-admin/clients-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: "success",
