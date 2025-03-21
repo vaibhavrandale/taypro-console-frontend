@@ -349,6 +349,8 @@ const RobotOperating = () => {
     }
   };
 
+  // console.log(Robotdata[0].last_uplink);
+
   return (
     <>
       {loadingRobots ? (
@@ -549,7 +551,7 @@ const RobotOperating = () => {
                             SC : {Robotdata[0].stuck_count}
                           </span>
                         </CTableDataCell>
-                        <CTableDataCell>
+                        {/* <CTableDataCell>
                           {Robotdata[0].last_uplink === null ? (
                             <CBadge
                               className="badge bg-danger"
@@ -559,6 +561,37 @@ const RobotOperating = () => {
                             </CBadge>
                           ) : (
                             <span className="">
+                              <CTooltip
+                                content={new Date(
+                                  Robotdata[0].last_uplink
+                                ).toLocaleString()}
+                                placement="top"
+                              >
+                                <span>
+                                  {formatDistanceToNow(
+                                    new Date(Robotdata[0].last_uplink),
+                                    {
+                                      addSuffix: true,
+                                    }
+                                  )}
+                                </span>
+                              </CTooltip>
+                            </span>
+                          )}
+                        </CTableDataCell> */}
+                        <CTableDataCell>
+                          {!Robotdata[0].last_uplink ||
+                          isNaN(
+                            new Date(Robotdata[0].last_uplink).getTime()
+                          ) ? (
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
+                            >
+                              Robot is not activated
+                            </CBadge>
+                          ) : (
+                            <span>
                               <CTooltip
                                 content={new Date(
                                   Robotdata[0].last_uplink
