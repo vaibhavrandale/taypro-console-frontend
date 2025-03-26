@@ -149,7 +149,7 @@ const UpdateServiceItem = () => {
     <div className="container mt-4">
       <CCard>
         <CCardHeader>
-          Update Service Item -{""}
+          Update Service Item -{" "}
           <b className="badge bg-success">{serviceItemData.item_name}</b>
         </CCardHeader>
         {loading ? (
