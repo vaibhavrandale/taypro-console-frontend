@@ -14,10 +14,9 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
-  CButton,
 } from "@coreui/react";
 // import { robots, sites } from "../../../data"; // Import robots data
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";

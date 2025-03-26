@@ -35,8 +35,12 @@ const ClientsDasboard = React.lazy(() =>
   import("./views/master-admin/clients-and-sites/Clients")
 );
 
-const ClientsDataDasboard = React.lazy(() =>
-  import("./views/master-admin/clients-and-sites/ClientData")
+const ClientAssignedSites = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/ClientAssignedSites")
+);
+
+const EditClient = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/EditClient")
 );
 
 // const ClientsData = React.lazy(() =>
@@ -178,6 +182,9 @@ const AddInventory = React.lazy(() =>
 );
 const AddServiceItem = React.lazy(() =>
   import("./views/master-admin/inventories/AddServiceItem")
+);
+const UpdateServiceItem = React.lazy(() =>
+  import("./views/master-admin/inventories/UpdateServiceItem")
 );
 // const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
@@ -373,9 +380,14 @@ const routes = [
   },
 
   {
-    path: "/master-admin/clients-data-dashboard/client-data/:client_id",
-    name: "Clients Data",
-    element: ClientsDataDasboard,
+    path: "/master-admin/clients-data-dashboard/edit-client/:id",
+    name: "Edit Client",
+    element: EditClient,
+  },
+  {
+    path: "/master-admin/clients-dashboard/clients-data/:id",
+    name: "Client Assigned Sites",
+    element: ClientAssignedSites,
   },
 
   // {
@@ -423,6 +435,11 @@ const routes = [
     path: "/master-admin/inventories/add-service-item",
     name: "Add Service Item",
     element: AddServiceItem,
+  },
+  {
+    path: "/master-admin/inventories/update-service-item/:id",
+    name: "Update Service Item",
+    element: UpdateServiceItem,
   },
   {
     path: "/master-admin/timers",

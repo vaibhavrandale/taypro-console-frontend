@@ -13,8 +13,12 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CCard,
-  CCardBody,
+  CTab,
+  CTabContent,
+  CTabList,
+  CTabPanel,
+  CTabs,
+  CImage,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -25,52 +29,22 @@ import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
 
 const InventoryTab = () => {
-  const [selectedTab, setSelectedTab] = useState("inventory");
-
   return (
     <div>
-      {" "}
-      {/* Increased padding */}
-      {/* Toggle Cards */}
-      <CRow className="my-1 text-center">
-        <CCol md={4} className="my-2 p-8">
-          <CCard
-            className={`shadow-sm border-0 ${
-              selectedTab === "inventory" ? "border-success" : "bg-dark"
-            }`}
-            onClick={() => setSelectedTab("inventory")}
-            style={{
-              cursor: "pointer",
-              backgroundColor:
-                selectedTab === "inventory" ? "#96db00" : "#052638",
-              color: selectedTab === "inventory" ? "black" : "white",
-            }}
-          >
-            <CCardBody>
-              <h6 className="fw-bold">Service Inventory</h6>
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol md={4} className="my-2 p-8">
-          <CCard
-            className={`shadow-sm border-0 ${
-              selectedTab === "item" ? "border-success" : "bg-dark"
-            }`}
-            onClick={() => setSelectedTab("item")}
-            style={{
-              cursor: "pointer",
-              backgroundColor: selectedTab === "item" ? "#96db00" : "#052638",
-              color: selectedTab === "item" ? "black" : "white",
-            }}
-          >
-            <CCardBody>
-              <h6 className="fw-bold">Service Item</h6>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
-      {/* Conditional Rendering */}
-      {selectedTab === "inventory" ? <Inventories /> : <ServiceItems />}
+      <CTabs activeItemKey="inventory">
+        <CTabList variant="tabs">
+          <CTab itemKey="inventory">Service Inventory</CTab>
+          <CTab itemKey="item">Service Item</CTab>
+        </CTabList>
+        <CTabContent>
+          <CTabPanel className="p-3" itemKey="inventory">
+            <Inventories />
+          </CTabPanel>
+          <CTabPanel className="p-3" itemKey="item">
+            <ServiceItems />
+          </CTabPanel>
+        </CTabContent>
+      </CTabs>
     </div>
   );
 };
@@ -150,7 +124,6 @@ const Inventories = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
     item_name: "",
     item_code: "",
@@ -235,25 +208,25 @@ const Inventories = () => {
     }
   };
 
-  //   const deleteInventory = async (inventory) => {
-  //     if (
-  //       window.confirm(
-  //         `Are you sure you want to delete Inventory item - ${inventory.item_name}`
-  //       )
-  //     ) {
-  //       try {
-  //         await axios.delete(`/api/v1/service-inventory/${inventory._id}`, {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
-  //         });
+  const deleteInventory = async (inventory) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete Inventory item - ${inventory.item_name}`
+      )
+    ) {
+      try {
+        await axios.delete(`/api/v1/service-inventory/${inventory._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
 
-  //         toast.success("Service Inventory deleted successfully");
-  //         dispatch({ type: "DELETE_SUCCESS" });
-  //       } catch (err) {
-  //         toast.error(err.response ? err.response.data.message : err.message);
-  //         dispatch({ type: "DELETE_FAIL" });
-  //       }
-  //     }
-  //   };
+        toast.success("Service Inventory deleted successfully");
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (err) {
+        toast.error(err.response ? err.response.data.message : err.message);
+        dispatch({ type: "DELETE_FAIL" });
+      }
+    }
+  };
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Inventory List</h2>
@@ -341,14 +314,14 @@ const Inventories = () => {
                   >
                     Update
                   </Link>
-                  {/* <Link
+                  <Link
                     color="danger"
                     size="sm"
                     className=" btn btn-sm btn-danger m-1 text-white"
                     onClick={() => deleteInventory(inventory)}
                   >
                     Delete
-                  </Link> */}
+                  </Link>
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -381,7 +354,7 @@ const Inventories = () => {
         <CModalHeader>
           <CModalTitle>
             Inventory Data :&nbsp;
-            <span className="badge bg-success">{formData.robot_no}</span>{" "}
+            <span className="badge bg-success">{formData.site_id}</span>{" "}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
@@ -448,9 +421,7 @@ const ServiceItems = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState(null);
-
   const [pageInput, setPageInput] = useState("");
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -536,25 +507,25 @@ const ServiceItems = () => {
     }
   };
 
-  //   const deleteServiceItem = async (serviceItem) => {
-  //     if (
-  //       window.confirm(
-  //         `Are you sure you want to delete Inventory item - ${serviceItem.item_name}`
-  //       )
-  //     ) {
-  //       try {
-  //         await axios.delete(`/api/v1/service-serviceItem/${serviceItem._id}`, {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
-  //         });
+  const deleteServiceItem = async (serviceItem) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete Service item - ${serviceItem.item_name}`
+      )
+    ) {
+      try {
+        await axios.delete(`/api/v1/service-items/${serviceItem._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
 
-  //         toast.success("Service Inventory deleted successfully");
-  //         dispatch({ type: "DELETE_SUCCESS" });
-  //       } catch (err) {
-  //         toast.error(err.response ? err.response.data.message : err.message);
-  //         dispatch({ type: "DELETE_FAIL" });
-  //       }
-  //     }
-  //   };
+        toast.success("Service Item deleted successfully");
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (err) {
+        toast.error(err.response ? err.response.data.message : err.message);
+        dispatch({ type: "DELETE_FAIL" });
+      }
+    }
+  };
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Item List</h2>
@@ -563,7 +534,7 @@ const ServiceItems = () => {
           className="btn btn-sm btn-primary m-1"
           to="/master-admin/inventories/add-service-item"
         >
-          Add Items
+          Add Item
         </Link>
       </div>
       {/* Search Input */}
@@ -620,11 +591,10 @@ const ServiceItems = () => {
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_name}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_code}</CTableDataCell>
-                {/* <CTableDataCell>{serviceItem.item_image}</CTableDataCell> */}
                 <CTableDataCell>
                   <img
                     src={serviceItem.item_image}
-                    alt="Client Logo"
+                    alt="Service item"
                     className="img-thumbnail border-0"
                     width="100"
                     height="50"
@@ -643,18 +613,18 @@ const ServiceItems = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    // to={`/master-admin/serviceItems/${serviceItem._id}`}
+                    to={`/master-admin/inventories/update-service-item/${serviceItem._id}`}
                   >
                     Update
                   </Link>
-                  {/* <Link
+                  <Link
                     color="danger"
                     size="sm"
                     className=" btn btn-sm btn-danger m-1 text-white"
                     onClick={() => deleteServiceItem(serviceItem)}
                   >
                     Delete
-                  </Link> */}
+                  </Link>
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -687,7 +657,7 @@ const ServiceItems = () => {
         <CModalHeader>
           <CModalTitle>
             Service Item Data :&nbsp;
-            <span className="badge bg-success">{formData.robot_no}</span>{" "}
+            <span className="badge bg-success">{formData.item_name}</span>{" "}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
@@ -709,9 +679,22 @@ const ServiceItems = () => {
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="text-dark fw-medium">
-                            {String(value)}
-                          </span>
+                          {key === "item_image" ? (
+                            <CImage
+                              fluid
+                              src={String(value)}
+                              alt={key}
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <span className="text-dark fw-medium">
+                              {String(value)}
+                            </span>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                     ))}
