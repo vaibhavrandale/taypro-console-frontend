@@ -35,8 +35,12 @@ const ClientsDasboard = React.lazy(() =>
   import("./views/master-admin/clients-and-sites/Clients")
 );
 
-const ClientsDataDasboard = React.lazy(() =>
-  import("./views/master-admin/clients-and-sites/ClientData")
+const ClientAssignedSites = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/ClientAssignedSites")
+);
+
+const EditClient = React.lazy(() =>
+  import("./views/master-admin/clients-and-sites/EditClient")
 );
 
 // const ClientsData = React.lazy(() =>
@@ -359,9 +363,14 @@ const routes = [
   },
 
   {
-    path: "/master-admin/clients-data-dashboard/client-data/:client_id",
-    name: "Clients Data",
-    element: ClientsDataDasboard,
+    path: "/master-admin/clients-data-dashboard/edit-client/:id",
+    name: "Edit Client",
+    element: EditClient,
+  },
+  {
+    path: "/master-admin/clients-dashboard/clients-data/:id",
+    name: "Client Assigned Sites",
+    element: ClientAssignedSites,
   },
 
   // {
