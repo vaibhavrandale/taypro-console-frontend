@@ -18,11 +18,16 @@ import {
   CModalHeader,
   CModal,
   CFormSelect,
+  CBadge,
+  CFormCheck,
 } from "@coreui/react";
 import { departments, role_permissions } from "../../../data"; // Ensure correct path
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
 import PaginateInput from "../../../components/PaginateInput";
+import toast from "react-hot-toast";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 // import logo from '../../../assets/brand/logoforwhitebg.png';
 
 const reducer = (state, action) => {
@@ -41,6 +46,43 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "UPLOAD_REQUEST":
+      return { ...state, loadingUpload: true, errorUpload: "" };
+    case "UPLOAD_SUCCESS":
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: "",
+      };
+    case "UPLOAD_FAIL":
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
+
+    case "ADD_USER_REQUEST":
+      return { ...state, userAddloading: true, error: "" };
+    case "ADD_USER_SUCCESS":
+      return { ...state, userAddloading: false, users: action.payload };
+    case "ADD_USER_FAIL":
+      return { ...state, userAddloading: false, error: action.payload };
+
+    case "UPDATE_REQUEST":
+      return { ...state, updatingUserLoading: true, updateError: "" };
+
+    case "UPDATE_SUCCESS":
+      return {
+        ...state,
+        updatingUserLoading: false,
+        users: state.users.map((user) =>
+          user._id === action.payload._id ? action.payload : user
+        ),
+      };
+
+    case "UPDATE_FAIL":
+      return {
+        ...state,
+        updatingUserLoading: false,
+        updateError: action.payload,
+      };
+
     default:
       return state;
   }
@@ -48,11 +90,24 @@ const reducer = (state, action) => {
 
 const UsersDashboard = () => {
   const [
-    { error, loading, users, totalPages, hasNextPage, hasPrevPage },
+    {
+      error,
+      loading,
+      users,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      loadingUpload,
+      userAddloading,
+      updatingUserLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     users: [],
     loading: false,
+    loadingUpload: false,
+    userAddloading: false,
+    updatingUserLoading: false,
     error: "",
     updateError: "",
     totalPages: 1,
@@ -70,10 +125,12 @@ const UsersDashboard = () => {
   const [formData, setFormData] = useState({});
   // const [users, setUsers] = useState([]); // State for users
   const [pageInput, setPageInput] = useState("");
+  const [image, setImage] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   // const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     // setLoading(true);
     const fetchUsers = async () => {
@@ -96,7 +153,7 @@ const UsersDashboard = () => {
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: result.data.data,
+            data: data,
             totalPages: total,
             hasNextPage: next,
             hasPrevPage: prev,
@@ -112,7 +169,6 @@ const UsersDashboard = () => {
         });
       }
     };
-
     fetchUsers();
   }, [authtoken, limit, page, userInfo]); // Runs only once on mount
 
@@ -139,21 +195,48 @@ const UsersDashboard = () => {
   };
 
   // Handle Input Change
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   // Handle Update User
-  const handleUpdate = () => {
-    console.log("Updated User:", formData);
-    setModalVisible(false);
-  };
+  // const handleUpdate = () => {
+  //   console.log("Updated User:", formData);
+  //   setModalVisible(false);
+  // };
 
-  // Handle Add User
-  const handleAdd = () => {
-    console.log("New User Added:", formData);
-    users.push(formData);
-    setAddModalVisible(false);
+  const handleAdd = async () => {
+    try {
+      dispatch({ type: "ADD_USER_REQUEST" });
+      const newdata = { ...formData, profile_image: image };
+      const response = await axios.post("/api/v1/users", newdata, {
+        headers: { authorization: `Bearer ${authtoken}` },
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        console.log("User successfully added:", response.data);
+        dispatch({
+          type: "ADD_USER_SUCCESS",
+          payload: [...users, response.data.data], // Append new robot to state
+        });
+        setAddModalVisible(false);
+      }
+      toast.success(response.data.message);
+      setImage("");
+    } catch (error) {
+      console.error(error);
+      dispatch({ type: "ADD_USER_FAIL", payload: error.response.data.error });
+      alert(error.response.data.error);
+    }
   };
 
   // Filter Users based on Search Term and ensure they are "Internal" type
@@ -181,6 +264,77 @@ const UsersDashboard = () => {
     const pageNumber = parseInt(pageInput);
     if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
       handlePageChange(pageNumber);
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/client-logo",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      dispatch({ type: "UPLOAD_SUCCESS" });
+      //   console.log(data);
+
+      setImage(data.url);
+
+      toast.success("Image uploaded successfully");
+    } catch (err) {
+      console.error(error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      console.log(formData);
+
+      dispatch({ type: "UPDATE_REQUEST" });
+      const {
+        createdAt,
+        _id,
+        last_activity,
+        addedAt,
+
+        ...filteredFormData
+      } = formData;
+
+      // const newdata = { ...filteredFormData, profile_image: image };
+
+      const newdata = image
+        ? { ...filteredFormData, profile_image: image }
+        : filteredFormData;
+
+      const response = await axios.put(
+        `/api/v1/users/${formData._id}`,
+        newdata,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({
+        type: "UPDATE_SUCCESS",
+        payload: response.data.data,
+      });
+
+      toast.success(`${filteredFormData.username} user updated successfully!`);
+      setModalVisible(false);
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_FAIL",
+        payload: error.response?.data?.message || "Failed to update user",
+      });
+      toast.error(error.response?.data?.message);
     }
   };
 
@@ -230,48 +384,6 @@ const UsersDashboard = () => {
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        {/* <CTableBody>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user, index) =>
-              loading ? (
-                <LoadingSpinner />
-              ) : (
-                <CTableRow key={index}>
-                  <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>
-                    <img
-                      src={user.profile_image}
-                      alt="Profile"
-                      className="rounded-circle"
-                      width="50"
-                      height="50"
-                    />
-                  </CTableDataCell>
-                  <CTableDataCell>{user.username}</CTableDataCell>
-                  <CTableDataCell>{user.email}</CTableDataCell>
-                  <CTableDataCell>{user.role}</CTableDataCell>
-                  <CTableDataCell>{user.department}</CTableDataCell>
-                  <CTableDataCell>{user.phone}</CTableDataCell>
-                  <CTableDataCell>
-                    <CButton
-                      color="primary"
-                      size="sm"
-                      onClick={() => openModal(user)}
-                    >
-                      Update
-                    </CButton>
-                  </CTableDataCell>
-                </CTableRow>
-              )
-            )
-          ) : (
-            <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center text-danger">
-                No users found.
-              </CTableDataCell>
-            </CTableRow>
-          )}
-        </CTableBody> */}
 
         <CTableBody>
           {loading ? (
@@ -282,7 +394,10 @@ const UsersDashboard = () => {
             </CTableRow>
           ) : filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
-              <CTableRow key={index}>
+              <CTableRow
+                key={index}
+                className={user.is_delete ? " table-danger" : ""}
+              >
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>
                   <img
@@ -332,7 +447,7 @@ const UsersDashboard = () => {
       <CModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        backdrop
+        backdrop="static"
       >
         <CModalHeader>
           <CModalTitle>Update User - {formData.username}</CModalTitle>
@@ -373,22 +488,82 @@ const UsersDashboard = () => {
             value={formData.phone}
             onChange={handleChange}
           />
+          <br />
+          <CFormLabel>
+            Active Status
+            <span className="text-muted ms-2">
+              (If it is checked then user cannot be logged in)
+            </span>
+          </CFormLabel>{" "}
+          <br />
+          <CFormCheck
+            id="is_delete"
+            name="is_delete"
+            checked={formData.is_delete || false}
+            onChange={handleChange}
+          />{" "}
+          <br />
           <CFormLabel>Image</CFormLabel>
-
           <CFormInput
             type="file"
             name="profile_image"
-            onChange={handleChange}
+            onChange={handleFileChange}
           />
-          <div className="m-2 ">
-            <img
-              src={formData.profile_image}
-              alt={formData.username}
-              className="img-fluid"
-            />
-            <br />
-            <span className="text-mutes">(Available Image)</span>
-          </div>
+          {loadingUpload ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : image ? (
+            <div className="my-2">
+              <img
+                src={image}
+                alt="Uploaded Logo"
+                width="100"
+                height="100"
+                style={{ objectFit: "cover", borderRadius: "5px" }}
+              />
+              <CBadge
+                color="primary"
+                position="absolute"
+                top="0"
+                left="0"
+                shape="rounded-pill"
+                className="p-1"
+              >
+                <CIcon
+                  icon={cilX}
+                  cursor="pointer"
+                  // onClick={removeLogo}
+                  title="Remove file"
+                />
+              </CBadge>
+            </div>
+          ) : formData.profile_image ? (
+            <div className="my-2">
+              <img
+                src={formData.profile_image}
+                alt="Uploaded Logo"
+                width="100"
+                height="100"
+                style={{ objectFit: "cover", borderRadius: "5px" }}
+              />
+              <CBadge
+                color="primary"
+                position="absolute"
+                top="0"
+                left="0"
+                shape="rounded-pill"
+                className="p-1"
+              >
+                <CIcon
+                  icon={cilX}
+                  cursor="pointer"
+                  // onClick={removeLogo}
+                  title="Remove file"
+                />
+              </CBadge>
+            </div>
+          ) : null}
         </CModalBody>
         <CModalFooter>
           <CButton
@@ -398,8 +573,18 @@ const UsersDashboard = () => {
           >
             Cancel
           </CButton>
-          <CButton color="primary" size="sm" onClick={handleUpdate}>
+          {/* <CButton color="primary" size="sm" onClick={handleUpdate}>
             Save Changes
+          </CButton> */}
+          <CButton color="primary" className="btn-sm" onClick={handleUpdate}>
+            {updatingUserLoading ? (
+              <>
+                Updating..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Update"
+            )}
           </CButton>
         </CModalFooter>
       </CModal>
@@ -500,11 +685,11 @@ const UsersDashboard = () => {
         </CModalFooter>
       </CModal>
 
-      {/* Add User Modal
+      {/* Add User Modal */}
       <CModal
+        backdrop="static"
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
-        backdrop
       >
         <CModalHeader>
           <CModalTitle>Add New User</CModalTitle>
@@ -545,13 +730,50 @@ const UsersDashboard = () => {
             value={formData.phone}
             onChange={handleChange}
           />
+          <CFormLabel>Password</CFormLabel>
+          <CFormInput
+            type="text"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
           <CFormLabel>Profile Image </CFormLabel>
           <CFormInput
             type="file"
             name="profile_image"
             value={formData.profile_image}
-            onChange={handleChange}
-          />
+            onChange={handleFileChange}
+          />{" "}
+          {loadingUpload ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : image ? (
+            <div className="my-2">
+              <img
+                src={image}
+                alt="Uploaded Logo"
+                width="100"
+                height="100"
+                style={{ objectFit: "cover", borderRadius: "5px" }}
+              />
+              <CBadge
+                color="primary"
+                position="absolute"
+                top="0"
+                left="0"
+                shape="rounded-pill"
+                className="p-1"
+              >
+                {/* <CIcon
+                    icon={cilX}
+                    cursor="pointer"
+                    // onClick={removeLogo}
+                    title="Remove file"
+                  /> */}
+              </CBadge>
+            </div>
+          ) : null}
         </CModalBody>
         <CModalFooter>
           <CButton
@@ -567,10 +789,17 @@ const UsersDashboard = () => {
             className="text-white"
             onClick={handleAdd}
           >
-            Add User
+            {userAddloading ? (
+              <>
+                Adding..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Add User"
+            )}
           </CButton>
         </CModalFooter>
-      </CModal> */}
+      </CModal>
     </div>
   );
 };

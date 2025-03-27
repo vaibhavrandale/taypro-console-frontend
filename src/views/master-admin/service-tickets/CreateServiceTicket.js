@@ -104,9 +104,12 @@ const CreateServiceTicket = () => {
       try {
         dispatch({ type: "FETCH_ROBOTS_REQUEST" });
 
-        const response = await axios.get("/api/v1/robots", {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.get(
+          "/api/v1/robots/get-robots/robots-without-pg",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -125,9 +128,12 @@ const CreateServiceTicket = () => {
     const fetchAllFaults = async () => {
       try {
         dispatch({ type: "FETCH_FAULTS_REQUEST" });
-        const response = await axios.get("/api/v1/serviceticketsfaults", {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.get(
+          "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
 
         dispatch({
           type: "FETCH_FAULTS_SUCCESS",
@@ -171,6 +177,8 @@ const CreateServiceTicket = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    console.log(formData);
+
     try {
       const response = await axios.post("/api/v1/servicetickets", formData, {
         headers: { Authorization: `Bearer ${authtoken}` },
@@ -261,11 +269,11 @@ const CreateServiceTicket = () => {
                 {searchTerm && filteredRobots.length === 0 ? (
                   <CListGroupItem>No robots found</CListGroupItem>
                 ) : (
-                  filteredRobots.map((robot) => (
+                  filteredRobots.map((robot, index) => (
                     <CListGroupItem
                       id="robot_no"
                       style={{ cursor: "pointer" }}
-                      key={robot.robot_no}
+                      key={index}
                       action
                       onClick={() => selectRobotFromSearch(robot)}
                     >
@@ -348,7 +356,7 @@ const CreateServiceTicket = () => {
                   <option value="">Select Fault Type</option>
                   {serviceticketsfault
                     ? serviceticketsfault.map((fault, index) => (
-                        <option key={index} value={fault.name}>
+                        <option key={index} value={fault.fault_name}>
                           {fault.fault_name.replace(/-/g, " ")}
                         </option>
                       ))
@@ -369,9 +377,9 @@ const CreateServiceTicket = () => {
                 placeholder="Add any additional notes..."
                 className="mb-3"
               />
-              {[1, 2, 3, 4, 5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num, index) => (
                 <CRow>
-                  <CCol md={2} key={`resolved-${num}`}>
+                  <CCol md={2} key={`resolved-${index}`}>
                     <div className="container-btn-file p-2 m-2 w-80">
                       <CIcon icon={cilCloudUpload} className="upload-icon" />
                       {`Image ${num}`}

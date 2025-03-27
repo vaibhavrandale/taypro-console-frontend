@@ -68,7 +68,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     const fetchNotifications = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get("/api/v1/notifications", {
+        const response = await axios.get("/api/v1/notifications/getall", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         let result = response.data.data;

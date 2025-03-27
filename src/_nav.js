@@ -79,7 +79,7 @@ const _nav = [
       {
         component: CNavItem,
         name: "Preventive Maint.",
-        to: "/master-admin/preventive-maintanance",
+        to: "/master-admin/preventive-maintanance-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: "danger",

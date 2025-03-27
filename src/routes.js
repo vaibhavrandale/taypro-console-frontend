@@ -1,4 +1,7 @@
 import React from "react";
+import PreventiveMaintanancrDashboard from "./views/master-admin/preventive-maintanance/PreventiveMaintanancrDashboard";
+import UpdatePreventivemaintanance from "./views/master-admin/preventive-maintanance/UpdatePreventivemaintanance";
+import CreatePreventivemaintanance from "./views/master-admin/preventive-maintanance/CreatePreventivemaintanance";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -430,7 +433,6 @@ const routes = [
     name: "Create New Internal Tickets",
     element: CreateNewInternalTicket,
   },
-
   {
     path: "/master-admin/users",
     name: "All Users",
@@ -470,6 +472,24 @@ const routes = [
     element: AllSiteDpr,
   },
 
+  //preveantive maintanance
+  {
+    path: "/master-admin/preventive-maintanance-dashboard",
+    name: "Master Admin Preventive maintanance Dashboard",
+    element: PreventiveMaintanancrDashboard,
+  },
+  {
+    path: "/master-admin/preventive-maintanance-dashboard/create-pm",
+    name: "Create Preventive maintanance",
+    element: CreatePreventivemaintanance,
+  },
+  {
+    path: "/master-admin/preventive-maintanance-dashboard/update/:id",
+    name: "Update Preventive maintanance",
+    element: UpdatePreventivemaintanance,
+  },
+
+  //preveantive maintanance
   // ------------------------master admin---------------------------------
 
   // ------------------------client admin---------------------------------

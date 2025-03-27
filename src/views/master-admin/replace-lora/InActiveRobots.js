@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // import { robots } from "../../../data"; // Import your robots data
 
 const reducer = (state, action) => {
@@ -92,6 +92,7 @@ const InActiveRobots = () => {
   const [limit, setLimit] = useState(10);
 
   const authtoken = useSelector((state) => state.authtoken);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let pagination = {
@@ -164,10 +165,47 @@ const InActiveRobots = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  // Handle update (currently logs updated data)
-  const handleUpdate = () => {
-    console.log("Updated Data:", formData);
+  // Handle update (currently logs updated data)  activate-and-add-in-lns
+  // const handleUpdate = () => {
+  //   console.log("Updated Data:", formData);
 
+  //   setModalVisible(false);
+  // };
+
+  const handleUpdate = async (e) => {
+    console.log("Updated Data:", formData);
+    e.preventDefault();
+    dispatch({ type: "UPDATE_REQUEST" });
+    try {
+      const {
+        createdAt,
+        _id,
+        last_activity,
+        last_uplink,
+        manufactured_date,
+        ...filteredFormData
+      } = formData;
+
+      await axios.put(
+        `/api/v1/robots/activate-and-add-in-lns`,
+        filteredFormData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success(`${filteredFormData.robot_no}  updated successfully!`);
+      navigate("/master-admin/replace-lora/active-robots"); // Redirect after update
+    } catch (error) {
+      console.log(error.response);
+      dispatch({
+        type: "UPDATE_FAIL",
+        payload: error.response?.data?.error || error.message,
+      });
+
+      toast.error(error.response?.data?.error);
+    }
     setModalVisible(false);
   };
 
@@ -320,14 +358,6 @@ const InActiveRobots = () => {
                 readOnly
                 value={formData.old_lora_no}
                 label="Old Lora No"
-                onChange={handleChange}
-                className="mb-3"
-              />
-              <CFormInput
-                type="text"
-                name="new_lora_no"
-                value={formData.new_lora_no}
-                label="New Lora No"
                 onChange={handleChange}
                 className="mb-3"
               />

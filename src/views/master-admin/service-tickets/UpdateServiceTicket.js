@@ -99,9 +99,12 @@ const UpdateServiceTicket = () => {
     const fetchAllFaults = async () => {
       try {
         dispatch({ type: "FETCH_FAULTS_REQUEST" });
-        const response = await axios.get("/api/v1/serviceticketsfaults", {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.get(
+          "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
 
         dispatch({
           type: "FETCH_FAULTS_SUCCESS",
