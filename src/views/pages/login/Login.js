@@ -219,23 +219,24 @@ const Login = () => {
 
   // Get userInfo from Redux state
   const userInfo = useSelector((state) => state.userInfo);
-  const storedTheme = useSelector((state) => state.theme) || "light"; // ✅ Ensure default theme
+  const authtoken = useSelector((state) => state.authtoken);
+  // const storedTheme = useSelector((state) => state.theme) || "light"; // ✅ Ensure default theme
   // const [username, setUsername] = useState('');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { search } = useLocation();
-  const redirectInUrl = new URLSearchParams(search).get("redirect");
-  const redirect = redirectInUrl ? redirectInUrl : "/user-dashboard";
+  // const { search } = useLocation();
+  // const redirectInUrl = new URLSearchParams(search).get("redirect");
+  // const redirect = "/user-dashboard";
 
   const theme = localStorage.getItem("theme");
   useEffect(() => {
-    if (userInfo) {
-      navigate(redirect);
+    if (!userInfo && !authtoken) {
+      navigate("/login");
     }
-  }, [navigate, redirect, userInfo]); // ✅ Updated dependency list
+  }, [authtoken, navigate, userInfo]); // ✅ Updated dependency list
   //login
   const handleLogin = async (e) => {
     e.preventDefault();
