@@ -17,7 +17,6 @@ import {
   CCol,
   CForm,
   CBadge,
-  CAvatar,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -427,14 +426,13 @@ const Clients = () => {
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
-            <CTableHeaderCell>Logo</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Client Name
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Client ID
             </CTableHeaderCell>
-
+            <CTableHeaderCell>Logo</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -451,18 +449,17 @@ const Clients = () => {
             filteredData.map((client, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
+                <CTableDataCell>{client.client_name}</CTableDataCell>
+                <CTableDataCell>{client.client_id}</CTableDataCell>
                 <CTableDataCell>
-                  <CAvatar
+                  <img
                     src={client.logo}
                     alt="Client Logo"
                     className="img-thumbnail border-0"
                     width="100"
                     height="50"
-                  ></CAvatar>
+                  />
                 </CTableDataCell>
-                <CTableDataCell>{client.client_name}</CTableDataCell>
-                <CTableDataCell>{client.client_id}</CTableDataCell>
-
                 <CTableDataCell>
                   <div className="d-flex justify-content-center align-items-center">
                     {" "}
@@ -471,20 +468,19 @@ const Clients = () => {
                       style={{ minWidth: "200px" }}
                       color="primary"
                       size="sm"
-                      to={`clients-data/${client.client_id}`}
-                      // onClick={() => openViewModal(client._id)}
+                      //   to={`clients-data/${client.client_id}`}
+                      onClick={() => openViewModal(client._id)}
                     >
                       View Assigned Sites
                     </Link>
-                    <Link
-                      className="btn btn-sm btn-warning m-1 text-decoration-none"
+                    <CButton
+                      className="m-1"
                       color="warning"
                       size="sm"
-                      to={`/master-admin/clients-data-dashboard/edit-client/${client._id}`}
-                      // onClick={() => openUpdateModal(client)}
+                      onClick={() => openUpdateModal(client)}
                     >
                       Update
-                    </Link>
+                    </CButton>
                   </div>
                 </CTableDataCell>
               </CTableRow>
