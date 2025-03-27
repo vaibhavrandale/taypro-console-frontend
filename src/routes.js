@@ -172,6 +172,23 @@ const UpdateRobots = React.lazy(() =>
   import("./views/master-admin/robots/UpdateRobot")
 );
 
+const Inventories = React.lazy(() =>
+  import("./views/master-admin/inventories/Inventories")
+);
+
+const UpdateInventory = React.lazy(() =>
+  import("./views/master-admin/inventories/UpdateInventory")
+);
+
+const AddInventory = React.lazy(() =>
+  import("./views/master-admin/inventories/AddInventory")
+);
+const AddServiceItem = React.lazy(() =>
+  import("./views/master-admin/inventories/AddServiceItem")
+);
+const UpdateServiceItem = React.lazy(() =>
+  import("./views/master-admin/inventories/UpdateServiceItem")
+);
 // const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
 //common pages
@@ -401,6 +418,31 @@ const routes = [
     path: "/master-admin/robots/:id",
     name: "Update Robot",
     element: UpdateRobots,
+  },
+  {
+    path: "/master-admin/inventories",
+    name: "Inventories",
+    element: Inventories,
+  },
+  {
+    path: "/master-admin/inventories/:id",
+    name: "Update Inventory",
+    element: UpdateInventory,
+  },
+  {
+    path: "/master-admin/inventories/add-inventory",
+    name: "Add Inventory",
+    element: AddInventory,
+  },
+  {
+    path: "/master-admin/inventories/add-service-item",
+    name: "Add Service Item",
+    element: AddServiceItem,
+  },
+  {
+    path: "/master-admin/inventories/update-service-item/:id",
+    name: "Update Service Item",
+    element: UpdateServiceItem,
   },
   {
     path: "/master-admin/timers",

@@ -201,27 +201,6 @@ const AddRobotUsingLoraNo = () => {
   const availableLoraConfig = lora_configuration.filter(
     (lora) => !assignedLoraNos.includes(lora.serial) // `serial` as unique lora_no
   );
-  // console.log(availableLoraConfig);
-
-  // // Handle Lora selection
-  // const handleLoraChange = (e) => {
-  //   console.log("clicked");
-
-  //   const selectedLoraNo = e.target.value;
-  //   const selectedLora = lora_configuration.find(
-  //     (lora) => lora.serial.toString() === selectedLoraNo
-  //   );
-  //   console.log(selectedLora);
-
-  //   if (selectedLora) {
-  //     setFormData({
-  //       lora_no: selectedLora.serial,
-  //       robot_no: selectedLora.robot_no,
-  //       deveui: selectedLora.formatted_deveui,
-  //       site_id: selectedLora.site_id,
-  //     });
-  //   }
-  // };
 
   const handleLoraChange = (e) => {
     dispatch({ type: "SELECT_LORA_REQUEST" });
