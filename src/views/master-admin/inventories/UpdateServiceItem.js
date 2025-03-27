@@ -113,7 +113,6 @@ const UpdateServiceItem = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-      console.log(data);
 
       setImage(data.url);
 
@@ -128,10 +127,18 @@ const UpdateServiceItem = () => {
 
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      const { createdAt, _id, last_activity, ...filteredFormData } =
-        serviceItemData;
+      const {
+        createdAt,
+        _id,
+        item_id,
+        updatedAt,
+        last_activity,
 
-      await axios.put(`/api/v1/service-items/${id}`, filteredFormData, {
+        ...filteredFormData
+      } = serviceItemData;
+
+      const newData = { ...filteredFormData, item_image: image };
+      await axios.put(`/api/v1/service-items/${id}`, newData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
 

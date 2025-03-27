@@ -102,6 +102,7 @@ const Inventories = () => {
       totalPages,
       hasNextPage,
       hasPrevPage,
+      successDelete,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -172,9 +173,12 @@ const Inventories = () => {
         toast.error("Failed to fetch Inventories");
       }
     };
-
-    fetchInventories();
-  }, [authtoken, limit, page]);
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      fetchInventories();
+    }
+  }, [successDelete, authtoken, limit, page]);
 
   const filteredInventories = inventories.filter(
     (inventory) =>
@@ -291,7 +295,10 @@ const Inventories = () => {
             </CTableRow>
           ) : filteredInventories.length > 0 ? (
             filteredInventories.map((inventory, index) => (
-              <CTableRow key={index}>
+              <CTableRow
+                key={index}
+                className={inventory.is_delete ? "table-danger" : ""}
+              >
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{inventory.item_name}</CTableDataCell>
                 <CTableDataCell>{inventory.item_code}</CTableDataCell>
@@ -405,6 +412,7 @@ const ServiceItems = () => {
       totalPages,
       hasNextPage,
       hasPrevPage,
+      successDelete,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -472,9 +480,12 @@ const ServiceItems = () => {
         toast.error("Failed to fetch Service Items");
       }
     };
-
-    fetchServiceItems();
-  }, [authtoken, limit, page]);
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      fetchServiceItems();
+    }
+  }, [successDelete, authtoken, limit, page]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
@@ -587,7 +598,10 @@ const ServiceItems = () => {
             </CTableRow>
           ) : filteredInventories.length > 0 ? (
             filteredInventories.map((serviceItem, index) => (
-              <CTableRow key={index}>
+              <CTableRow
+                key={index}
+                className={serviceItem.is_delete ? "table-danger" : ""}
+              >
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_name}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_code}</CTableDataCell>

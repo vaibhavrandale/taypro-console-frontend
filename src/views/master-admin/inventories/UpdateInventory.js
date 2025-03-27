@@ -57,9 +57,13 @@ const UpdateInventory = () => {
     const fetchInventory = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/v1/service-inventory/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const { data } = await axios.get(
+          `/api/v1/service-inventory/get-one/${id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        console.log(data.data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setInventoryData(data.data);
       } catch (error) {
@@ -87,8 +91,14 @@ const UpdateInventory = () => {
 
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      const { createdAt, _id, last_activity, ...filteredFormData } =
-        inventoryData;
+      const {
+        createdAt,
+        _id,
+        item_id,
+        updatedAt,
+        last_activity,
+        ...filteredFormData
+      } = inventoryData;
 
       await axios.put(`/api/v1/service-inventory/${id}`, filteredFormData, {
         headers: { Authorization: `Bearer ${authtoken}` },
