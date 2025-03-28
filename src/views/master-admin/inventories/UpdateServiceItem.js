@@ -11,7 +11,9 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
+  CFormCheck,
   CFormInput,
+  CFormLabel,
   CRow,
 } from "@coreui/react";
 
@@ -90,10 +92,11 @@ const UpdateServiceItem = () => {
   }, [id, authtoken]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setServiceItemData((prev) => ({
-      ...prev,
-      [name]: value,
+    const { name, type, checked, value } = e.target;
+
+    setServiceItemData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
   const handleImageUpload = async (e) => {
@@ -205,10 +208,29 @@ const UpdateServiceItem = () => {
                     />
                   </div>
                 </CCol>
+
+                <CCol>
+                  <CFormLabel>
+                    Delete Inventory :
+                    <span className="text-muted ms-2">
+                      {" "}
+                      (When checked, it will be soft deleted)
+                    </span>
+                  </CFormLabel>{" "}
+                  <br />
+                  <CFormCheck
+                    id="is_delete"
+                    name="is_delete"
+                    checked={serviceItemData.is_delete || false}
+                    onChange={handleChange}
+                  />{" "}
+                </CCol>
+              </CRow>
+
+              <CRow className="mb-3">
                 <CCol md="6">
                   <div className="mb-3">
                     <label className="form-label">Item Image</label>
-
                     <CFormInput
                       type="file"
                       name="item_image"
@@ -217,31 +239,26 @@ const UpdateServiceItem = () => {
                     />
                   </div>
                 </CCol>
+
+                <CCol md="6" className="d-flex align-items-center">
+                  {loadingUpload ? (
+                    <div className="d-flex justify-content-center w-100">
+                      <LoadingSpinner />
+                    </div>
+                  ) : image || serviceItemData.item_image ? (
+                    <div className="d-flex align-items-center">
+                      <img
+                        src={image || serviceItemData.item_image}
+                        alt="Uploaded logo"
+                        width="100"
+                        height="100"
+                        style={{ objectFit: "cover", borderRadius: "5px" }}
+                      />
+                    </div>
+                  ) : null}
+                </CCol>
               </CRow>
 
-              {loadingUpload ? (
-                <div className="mt-2 d-flex justify-content-center">
-                  <LoadingSpinner />
-                </div>
-              ) : image || serviceItemData.item_image ? (
-                <div className="my-2">
-                  <img
-                    src={image || serviceItemData.item_image} // ✅ Use either the uploaded or existing image
-                    alt="Uploaded logo"
-                    width="100"
-                    height="100"
-                    style={{ objectFit: "cover", borderRadius: "5px" }}
-                  />
-                  <CBadge
-                    color="primary"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    shape="rounded-pill"
-                    className="p-1"
-                  ></CBadge>
-                </div>
-              ) : null}
               <button
                 type="submit"
                 className="btn btn-warning btn-sm"
