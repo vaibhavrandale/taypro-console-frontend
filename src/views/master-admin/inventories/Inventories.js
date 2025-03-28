@@ -27,16 +27,22 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
+import InventoryOverview from "./InventoryOverview";
+import * as XLSX from "xlsx"; // Import xlsx for Excel export
 
 const InventoryTab = () => {
   return (
     <div>
-      <CTabs activeItemKey="inventory">
+      <CTabs activeItemKey="inventoryOverview">
         <CTabList variant="tabs">
+          <CTab itemKey="inventoryOverview">Inventory Overview</CTab>
           <CTab itemKey="inventory">Service Inventory</CTab>
           <CTab itemKey="item">Service Item</CTab>
         </CTabList>
         <CTabContent>
+          <CTabPanel className="p-3" itemKey="inventoryOverview">
+            <InventoryOverview />
+          </CTabPanel>
           <CTabPanel className="p-3" itemKey="inventory">
             <Inventories />
           </CTabPanel>
@@ -198,7 +204,7 @@ const Inventories = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
+  // // console.item(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -231,15 +237,43 @@ const Inventories = () => {
       }
     }
   };
+
+  const exportToExcel = () => {
+    if (filteredInventories.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredInventories.map((item, index) => ({
+        "#": index + 1,
+        "Item Name": item.item_name,
+        "Item Code": item.item_code,
+        "Site Id": item.site_id,
+        Quantity: item.quantity,
+        Threshold: item.threshold,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Inventories");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Service Inventory.xlsx");
+  };
+
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Inventory List</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
-          className="btn btn-sm btn-primary m-1"
+          className="btn btn-sm btn-secondary m-1"
           to="/master-admin/inventories/add-inventory"
         >
           Add Inventory
+        </Link>
+        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+          Export
         </Link>
       </div>
       {/* Search Input */}
@@ -504,7 +538,7 @@ const ServiceItems = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
+  // // console.item(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -537,15 +571,61 @@ const ServiceItems = () => {
       }
     }
   };
+
+  const exportToExcel = () => {
+    if (filteredInventories.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredInventories.map((item, index) => ({
+        "#": index + 1,
+        "Item Name": item.item_name,
+        "Item Code": item.item_code,
+        "Item Description": item.item_description,
+        "Item Image": "View Image",
+      }))
+    );
+
+    // Get the range of the worksheet
+    const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+    // to get the column for which hyperlink is to be set
+    for (let row = range.s.r + 1; row <= range.e.r; row++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: row, c: 4 });
+
+      // check if the item has image url
+      const imageUrl = filteredInventories[row - 1]?.item_image;
+      if (worksheet[cellAddress] && imageUrl) {
+        worksheet[cellAddress].l = {
+          Target: imageUrl,
+          Tooltip: "Click to view image",
+        };
+      }
+    }
+
+    // Create workbook and append sheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Items");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Service_Item.xlsx");
+  };
+
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Item List</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
-          className="btn btn-sm btn-primary m-1"
+          className="btn btn-sm btn-secondary m-1"
           to="/master-admin/inventories/add-service-item"
         >
           Add Item
+        </Link>
+        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+          Export
         </Link>
       </div>
       {/* Search Input */}
