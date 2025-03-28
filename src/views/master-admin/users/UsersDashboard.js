@@ -20,6 +20,12 @@ import {
   CFormSelect,
   CBadge,
   CFormCheck,
+  CTabPane,
+  CTabContent,
+  CNav,
+  CNavItem,
+  CNavLink,
+  CForm,
 } from "@coreui/react";
 import { departments, role_permissions } from "../../../data"; // Ensure correct path
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -45,6 +51,17 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, error: "" };
+    case "FETCH_SITES_SUCCESS":
+      return {
+        ...state,
+        loadingSites: false,
+        sites: action.payload,
+      };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, error: action.payload };
 
     case "UPLOAD_REQUEST":
       return { ...state, loadingUpload: true, errorUpload: "" };
@@ -94,6 +111,7 @@ const UsersDashboard = () => {
       error,
       loading,
       users,
+      sites,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -104,6 +122,7 @@ const UsersDashboard = () => {
     dispatch,
   ] = useReducer(reducer, {
     users: [],
+    sites: [],
     loading: false,
     loadingUpload: false,
     userAddloading: false,
@@ -121,14 +140,21 @@ const UsersDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [assignedSitesModalVisible, setassignedSitesModalVisible] =
+    useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
+  const [assgnedSites, setAssignedSites] = useState([]);
   // const [users, setUsers] = useState([]); // State for users
   const [pageInput, setPageInput] = useState("");
   const [image, setImage] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+
+  const [activeTab, setActiveTab] = useState("assigned");
+
+  const [selectedSite, setSelectedSite] = useState("");
   // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -169,6 +195,27 @@ const UsersDashboard = () => {
         });
       }
     };
+
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+        // console.log("Sites:", result.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response?.data?.error || "Error fetching sites",
+        });
+        toast.error(error.response.data.error || "Error fetching sites");
+      }
+    };
+    fetchSites();
     fetchUsers();
   }, [authtoken, limit, page, userInfo]); // Runs only once on mount
 
@@ -177,6 +224,11 @@ const UsersDashboard = () => {
     setSelectedUser(user);
     setFormData(user);
     setModalVisible(true);
+  };
+
+  const openAssignedSitesModal = (assigned_sites) => {
+    setAssignedSites(assigned_sites);
+    setassignedSitesModalVisible(true);
   };
 
   // Open Add User Modal
@@ -338,6 +390,31 @@ const UsersDashboard = () => {
     }
   };
 
+  const handleAssignSite = async (userId) => {
+    if (!selectedSite) {
+      toast.error("Please select a site to assign.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/assign-site", {
+        userId,
+        siteId: selectedSite,
+      });
+
+      if (response.data.success) {
+        // Update assigned sites in UI
+        setAssignedSites([...assgnedSites, response.data.data]);
+
+        // Reset selection
+        setSelectedSite("");
+        setActiveTab("assigned"); // Switch back to Assigned Sites tab
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Error assigning site.");
+    }
+  };
+
   return (
     <div className="">
       {/* <img src={logo} alt="logo" className="border" /> */}
@@ -381,6 +458,7 @@ const UsersDashboard = () => {
             <CTableHeaderCell>Role</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
             <CTableHeaderCell>Phone</CTableHeaderCell>
+
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -410,13 +488,27 @@ const UsersDashboard = () => {
                 </CTableDataCell>
                 <CTableDataCell>{user.username}</CTableDataCell>
                 <CTableDataCell>{user.email}</CTableDataCell>
-                <CTableDataCell>{user.role}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "120px" }}>
+                  {user.role}
+                </CTableDataCell>
                 <CTableDataCell>{user.department}</CTableDataCell>
-                <CTableDataCell>{user.phone}</CTableDataCell>
-                <CTableDataCell>
+                <CTableDataCell style={{ minWidth: "120px" }}>
+                  {user.phone}
+                </CTableDataCell>
+
+                <CTableDataCell style={{ minWidth: "260px" }}>
+                  <CButton
+                    color="secondary"
+                    size="sm"
+                    className="m-1"
+                    onClick={() => openAssignedSitesModal(user.assigned_sites)}
+                  >
+                    view Assigned Sites
+                  </CButton>
                   <CButton
                     color="primary"
                     size="sm"
+                    className="m-1"
                     onClick={() => openModal(user)}
                   >
                     Update
@@ -443,8 +535,130 @@ const UsersDashboard = () => {
         handlePageInputChange={handlePageInputChange}
         handlePageInputSubmit={handlePageInputSubmit}
       />
-      {/* Update User Modal */}
+
+      {/*------------- Add User Modal  start---------------------*/}
       <CModal
+        size="lg"
+        scrollable
+        backdrop="static"
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+      >
+        <CModalHeader>
+          <CModalTitle>Add New User</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CFormLabel>Username</CFormLabel>
+          <CFormInput
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+          <CFormLabel>Email</CFormLabel>
+          <CFormInput
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <CFormLabel>Role</CFormLabel>
+          <CFormInput
+            type="text"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+          />
+          <CFormLabel>Department</CFormLabel>
+          <CFormInput
+            type="text"
+            name="department"
+            value={formData.department}
+            onChange={handleChange}
+          />
+          <CFormLabel>Phone</CFormLabel>
+          <CFormInput
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          <CFormLabel>Password</CFormLabel>
+          <CFormInput
+            type="text"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <CFormLabel>Profile Image </CFormLabel>
+          <CFormInput
+            type="file"
+            name="profile_image"
+            value={formData.profile_image}
+            onChange={handleFileChange}
+          />{" "}
+          {loadingUpload ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : image ? (
+            <div className="my-2">
+              <img
+                src={image}
+                alt="Uploaded Logo"
+                width="100"
+                height="100"
+                style={{ objectFit: "cover", borderRadius: "5px" }}
+              />
+              <CBadge
+                color="primary"
+                position="absolute"
+                top="0"
+                left="0"
+                shape="rounded-pill"
+                className="p-1"
+              >
+                {/* <CIcon
+                    icon={cilX}
+                    cursor="pointer"
+                    // onClick={removeLogo}
+                    title="Remove file"
+                  /> */}
+              </CBadge>
+            </div>
+          ) : null}
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => setAddModalVisible(false)}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white"
+            onClick={handleAdd}
+          >
+            {userAddloading ? (
+              <>
+                Adding..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Add User"
+            )}
+          </CButton>
+        </CModalFooter>
+      </CModal>
+      {/*---------------------- Add User Modal  end-----------------------------*/}
+
+      {/* ---------------------Update User Modal  start ----------------------*/}
+      <CModal
+        size="lg"
+        scrollable
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         backdrop="static"
@@ -588,218 +802,108 @@ const UsersDashboard = () => {
           </CButton>
         </CModalFooter>
       </CModal>
+      {/*---------------------- -Update User Modal  end-----------------------------*/}
 
+      {/*---------------- Assigned Sites modal Modal start ------------------*/}
       <CModal
-        visible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
-        backdrop
-      >
-        <CModalHeader>
-          <CModalTitle>Add New User</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {/* Username */}
-          <CFormLabel>Username</CFormLabel>
-          <CFormInput
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-
-          {/* Email */}
-          <CFormLabel>Email</CFormLabel>
-          <CFormInput
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-
-          {/* Role Dropdown */}
-          <CFormLabel>Role</CFormLabel>
-          <CFormSelect
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          >
-            <option value="">Select Role</option>
-            {role_permissions.map((role, index) => (
-              <option key={index} value={role.role}>
-                {role.role}
-              </option>
-            ))}
-          </CFormSelect>
-
-          {/* Department Dropdown */}
-          <CFormLabel>Department</CFormLabel>
-          <CFormSelect
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-          >
-            <option value="">Select Department</option>
-            {departments.map((dept, index) => (
-              <option key={index} value={dept.department}>
-                {dept.department}
-              </option>
-            ))}
-          </CFormSelect>
-
-          {/* Auto-Filled Department Email (Hidden Input) */}
-          <CFormInput
-            type="hidden"
-            name="department_email"
-            value={formData.department_email}
-          />
-
-          {/* Phone */}
-          <CFormLabel>Phone</CFormLabel>
-          <CFormInput
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-
-          {/* Profile Image Upload */}
-          <CFormLabel>Profile Image</CFormLabel>
-          <CFormInput type="file" name="profile_image" />
-        </CModalBody>
-        <CModalFooter>
-          <CButton
-            color="secondary"
-            size="sm"
-            onClick={() => setAddModalVisible(false)}
-          >
-            Cancel
-          </CButton>
-          <CButton
-            color="success"
-            size="sm"
-            className="text-white"
-            onClick={() => handleAdd(formData)}
-          >
-            Add User
-          </CButton>
-        </CModalFooter>
-      </CModal>
-
-      {/* Add User Modal */}
-      <CModal
+        size="lg"
+        scrollable
+        visible={assignedSitesModalVisible}
+        onClose={() => setassignedSitesModalVisible(false)}
         backdrop="static"
-        visible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
       >
         <CModalHeader>
-          <CModalTitle>Add New User</CModalTitle>
+          <CModalTitle>Assigned Sites of Vaibhav Randale</CModalTitle>
         </CModalHeader>
+
         <CModalBody>
-          <CFormLabel>Username</CFormLabel>
-          <CFormInput
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-          <CFormLabel>Email</CFormLabel>
-          <CFormInput
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <CFormLabel>Role</CFormLabel>
-          <CFormInput
-            type="text"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          />
-          <CFormLabel>Department</CFormLabel>
-          <CFormInput
-            type="text"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-          />
-          <CFormLabel>Phone</CFormLabel>
-          <CFormInput
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-          <CFormLabel>Password</CFormLabel>
-          <CFormInput
-            type="text"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <CFormLabel>Profile Image </CFormLabel>
-          <CFormInput
-            type="file"
-            name="profile_image"
-            value={formData.profile_image}
-            onChange={handleFileChange}
-          />{" "}
-          {loadingUpload ? (
-            <div className="mt-2 d-flex justify-content-center">
-              <LoadingSpinner />
-            </div>
-          ) : image ? (
-            <div className="my-2">
-              <img
-                src={image}
-                alt="Uploaded Logo"
-                width="100"
-                height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
-              />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
+          {/* Tabs Navigation */}
+          <CNav variant="tabs">
+            <CNavItem>
+              <CNavLink
+                active={activeTab === "assigned"}
+                onClick={() => setActiveTab("assigned")}
               >
-                {/* <CIcon
-                    icon={cilX}
-                    cursor="pointer"
-                    // onClick={removeLogo}
-                    title="Remove file"
-                  /> */}
-              </CBadge>
-            </div>
-          ) : null}
+                Assigned Sites
+              </CNavLink>
+            </CNavItem>
+            <CNavItem>
+              <CNavLink
+                active={activeTab === "assign"}
+                onClick={() => setActiveTab("assign")}
+              >
+                Assign New Site
+              </CNavLink>
+            </CNavItem>
+          </CNav>
+
+          {/* Tab Content */}
+          <CTabContent>
+            {/* Assigned Sites Tab */}
+            <CTabPane visible={activeTab === "assigned"}>
+              <CTable bordered hover responsive className="text-center mt-3">
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Site ID</CTableHeaderCell>
+                    <CTableHeaderCell>Site Name</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {assgnedSites.length > 0 ? (
+                    assgnedSites.map((site, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{site.site_id}</CTableDataCell>
+                        <CTableDataCell>{site.siteName}</CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell
+                        colSpan="3"
+                        className="text-center text-danger"
+                      >
+                        No sites found.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+            </CTabPane>
+
+            {/* Assign New Site Tab */}
+            <CTabPane visible={activeTab === "assign"}>
+              <CForm className="mt-3">
+                <div className="mb-3">
+                  <CFormLabel>Select Site</CFormLabel>
+                  <CFormSelect
+                    name="item_name"
+                    // value={formData.assigned_sites.siteId}
+                    //  onChange={handleSiteChange}
+                  >
+                    <option value="">Assign Site</option>
+                    {sites?.length > 0 &&
+                      sites.map((item, index) => (
+                        <option key={index} value={item.site_id}>
+                          {item.site_id}-({item.siteName})
+                        </option>
+                      ))}
+                  </CFormSelect>
+                </div>
+                <CButton
+                  color="primary"
+                  // onClick={() => handleAssignSite(selectedSite)}
+                  // disabled={!selectedSite}
+                >
+                  Assign Site
+                </CButton>
+              </CForm>
+            </CTabPane>
+          </CTabContent>
         </CModalBody>
-        <CModalFooter>
-          <CButton
-            color="secondary"
-            size="sm"
-            onClick={() => setAddModalVisible(false)}
-          >
-            Cancel
-          </CButton>
-          <CButton
-            color="success"
-            size="sm"
-            className="text-white"
-            onClick={handleAdd}
-          >
-            {userAddloading ? (
-              <>
-                Adding..
-                <LoadingSpinner />
-              </>
-            ) : (
-              "Add User"
-            )}
-          </CButton>
-        </CModalFooter>
       </CModal>
+      {/*----------------- Assigned Sites modal Modal end -------------------*/}
     </div>
   );
 };
