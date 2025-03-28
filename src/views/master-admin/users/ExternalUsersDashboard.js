@@ -1,3 +1,11 @@
+// import React from "react";
+
+// const ExternalUsersDashboard = () => {
+//   return <div>ExternalUsersDashboard</div>;
+// };
+
+// export default ExternalUsersDashboard;
+
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -157,7 +165,7 @@ const reducer = (state, action) => {
   }
 };
 
-const UsersDashboard = () => {
+const ExternalUsersDashboard = () => {
   const [
     {
       error,
@@ -227,7 +235,7 @@ const UsersDashboard = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.post(
-          "/api/v1/users/get-internal-users",
+          "/api/v1/users/get-external-users",
           pagination,
           {
             headers: { authorization: `Bearer ${authtoken}` },
@@ -307,7 +315,7 @@ const UsersDashboard = () => {
       role: "",
       department: "",
       phone: "",
-      type: "Internal",
+      type: "External",
       profile_image: "",
     });
     setAddModalVisible(true);
@@ -503,45 +511,6 @@ const UsersDashboard = () => {
     }
   };
 
-  // const handleRemoveSite = async (sitedata) => {
-  //   if (
-  //     !window.confirm(
-  //       `Are you sure you want to remove this site 🚨 ${sitedata.site_id}?`
-  //     )
-  //   )
-  //     return;
-
-  //   try {
-  //     const response = await fetch(`/api/v1/users/remove-assign-site`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${authtoken}`, // Replace with actual user auth token if needed
-  //       },
-  //       body: JSON.stringify({
-  //         userId: selectedUser._id,
-  //         siteId: sitedata._id,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-  //     // console.log(data);
-
-  //     if (response.ok) {
-  //       toast.success(data.message); // Success message
-  //       setAssignedSites((prevSites) =>
-  //         prevSites.filter((site) => site._id !== sitedata._id)
-  //       );
-  //     }
-  //     // } else {
-  //     //   toast.error(error.error || "Failed to remove site");
-  //     // }
-  //   } catch (error) {
-  //     console.error("Error removing site:", error);
-  //     toast.error(error.response.data.error);
-  //   }
-  // };
-
   const handleRemoveSite = async (sitedata) => {
     if (
       !window.confirm(
@@ -598,20 +567,20 @@ const UsersDashboard = () => {
       {/* <img src={logo} alt="logo" className="border" /> */}
       {/* Search & Add User Button */}
       <div>
-        <h2 className="text-center ">Internal Users</h2>
+        <h2 className="text-center">External Users </h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <Link
-            to="/master-admin/external-users"
+            to="/master-admin/users"
             className="btn btn-sm btn-secondary m-1"
           >
-            External Users
+            Internal Users
           </Link>
           <CButton
             color="success"
             size="sm"
-            className="text-white m-1"
+            className="text-whit m-1e"
             onClick={openAddModal}
           >
             + Add User
@@ -1151,4 +1120,4 @@ const UsersDashboard = () => {
   );
 };
 
-export default UsersDashboard;
+export default ExternalUsersDashboard;

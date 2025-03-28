@@ -363,7 +363,7 @@ const ServiceTicketDashboard = () => {
                         </CTooltip>
                       </span>
                     </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: "150px" }}>
+                    <CTableDataCell style={{ minWidth: "210px" }}>
                       <CButton
                         color="secondary"
                         size="sm"
@@ -380,6 +380,14 @@ const ServiceTicketDashboard = () => {
                         // onClick={() => openUpdateModal(ticket._id)}
                       >
                         Update
+                      </Link>
+                      <Link
+                        size="sm"
+                        className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                        to={`resolve-service-ticket/${ticket._id}`}
+                        // onClick={() => openUpdateModal(ticket._id)}
+                      >
+                        Resolve
                       </Link>
                     </CTableDataCell>
                   </CTableRow>
