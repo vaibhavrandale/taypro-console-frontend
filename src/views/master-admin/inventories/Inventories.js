@@ -219,6 +219,10 @@ const Inventories = () => {
   };
 
   const deleteInventory = async (inventory) => {
+    if (inventory.is_delete) {
+      toast.error("This Service Inventory Item is already deleted.");
+      return;
+    }
     if (
       window.confirm(
         `Are you sure you want to delete Inventory item - ${inventory.item_name}`
@@ -553,6 +557,10 @@ const ServiceItems = () => {
   };
 
   const deleteServiceItem = async (serviceItem) => {
+    if (serviceItem.is_delete) {
+      toast.error("This Service Item is already deleted.");
+      return;
+    }
     if (
       window.confirm(
         `Are you sure you want to delete Service item - ${serviceItem.item_name}`
@@ -686,7 +694,8 @@ const ServiceItems = () => {
                 <CTableDataCell>{serviceItem.item_name}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_code}</CTableDataCell>
                 <CTableDataCell>
-                  <img
+                  <CImage
+                    fluid
                     src={serviceItem.item_image}
                     alt="Service item"
                     className="img-thumbnail border-0"

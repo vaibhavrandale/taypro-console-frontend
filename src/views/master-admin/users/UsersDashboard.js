@@ -938,7 +938,7 @@ const UsersDashboard = () => {
           <CFormLabel>
             Active Status
             <span className="text-muted ms-2">
-              (If it is checked then user cannot be logged in)
+              (If it is checked then user can't Login.)
             </span>
           </CFormLabel>{" "}
           <br />

@@ -10,6 +10,8 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
+  CFormCheck,
+  CFormLabel,
   CRow,
 } from "@coreui/react";
 
@@ -79,10 +81,11 @@ const UpdateInventory = () => {
   }, [id, authtoken]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInventoryData((prev) => ({
-      ...prev,
-      [name]: value,
+    const { name, type, checked, value } = e.target;
+
+    setInventoryData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -204,7 +207,20 @@ const UpdateInventory = () => {
                   </div>
                 </CCol>
               </CRow>
-
+              <CRow>
+                <CCol>
+                  <CFormLabel>
+                    Delete Inventory :<span className="text-muted ms-2"></span>
+                  </CFormLabel>{" "}
+                  {/* <br /> */}
+                  <CFormCheck
+                    id="is_delete"
+                    name="is_delete"
+                    checked={inventoryData.is_delete || false}
+                    onChange={handleChange}
+                  />{" "}
+                </CCol>
+              </CRow>
               <button
                 type="submit"
                 className="btn btn-warning btn-sm"
