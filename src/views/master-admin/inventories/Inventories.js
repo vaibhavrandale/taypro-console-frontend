@@ -694,7 +694,8 @@ const ServiceItems = () => {
                 <CTableDataCell>{serviceItem.item_name}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_code}</CTableDataCell>
                 <CTableDataCell>
-                  <img
+                  <CImage
+                    fluid
                     src={serviceItem.item_image}
                     alt="Service item"
                     className="img-thumbnail border-0"

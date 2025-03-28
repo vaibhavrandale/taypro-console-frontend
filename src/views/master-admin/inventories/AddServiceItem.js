@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useReducer, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -10,22 +10,14 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
-  CFormInput,
   CRow,
 } from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
+import "../service-tickets/servicetickts.css";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "UPLOAD_REQUEST":
-      return { ...state, loadingUpload: true, errorUpload: "" };
-    case "UPLOAD_SUCCESS":
-      return {
-        ...state,
-        loadingUpload: false,
-        errorUpload: "",
-      };
-    case "UPLOAD_FAIL":
-      return { ...state, loadingUpload: false, errorUpload: action.payload };
     case "SUBMIT_REQUEST":
       return { ...state, loading: true, success: false };
     case "SUBMIT_SUCCESS":
@@ -64,9 +56,9 @@ const NewServiceItem = () => {
     loading: false,
     success: false,
     loadingUpload: false,
-    errorUpload: "",
   });
   const [image, setImage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {
     dispatch({
@@ -76,12 +68,42 @@ const NewServiceItem = () => {
     });
   };
 
+  // const handleImageUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+  //   try {
+  //     dispatch({ type: "UPLOAD_REQUEST" });
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/service-item",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+  //     dispatch({ type: "UPLOAD_SUCCESS" });
+  //     console.log(data);
+
+  //     setImage(data.url);
+
+  //     toast.success("Image uploaded successfully. click Update to apply it");
+  //   } catch (err) {
+  //     console.error(state.error);
+  //   }
+  // };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
+
     try {
-      dispatch({ type: "UPLOAD_REQUEST" });
+      setUploading(true);
       const { data } = await axios.post(
         "/api/v1/image-upload/service-item",
         bodyFormData,
@@ -92,16 +114,21 @@ const NewServiceItem = () => {
           },
         }
       );
-      dispatch({ type: "UPLOAD_SUCCESS" });
-      console.log(data);
 
       setImage(data.url);
-
-      toast.success("Image uploaded successfully. click Update to apply it");
+      toast.success("Image uploaded successfully. Click Update to apply it.");
     } catch (err) {
-      console.error(state.error);
+      toast.error("Image upload failed. Please try again.");
+    } finally {
+      setUploading(false);
     }
   };
+
+  const deleteImageHandler = () => {
+    setImage("");
+    toast.success("Image removed.");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "SUBMIT_REQUEST" });
@@ -178,43 +205,53 @@ const NewServiceItem = () => {
                   />
                 </div>
               </CCol>
-              <CCol md="6">
+              <CCol md="3">
                 <div className="mb-3">
                   <label className="form-label">Item Image</label>
-
-                  <CFormInput
-                    type="file"
-                    name="item_image"
-                    onChange={handleImageUpload}
-                    className="mb-3 file"
-                  />
+                  <div className="container-btn-file p-2 m-2 w-80">
+                    <CIcon icon={cilCloudUpload} className="upload-icon" />
+                    <input
+                      type="file"
+                      name="item_image"
+                      onChange={handleImageUpload}
+                      className="mb-3 file"
+                      disabled={uploading}
+                    />
+                  </div>
                 </div>
               </CCol>
+              <CCol md="3">
+                {uploading ? (
+                  <div className=" d-flex justify-content-center">
+                    <LoadingSpinner />
+                  </div>
+                ) : image ? (
+                  <div className="position-relative d-inline-block">
+                    <img
+                      src={image}
+                      alt="Uploaded Item"
+                      width="100"
+                      height="100"
+                      style={{ objectFit: "cover", borderRadius: "5px" }}
+                    />
+                    <CBadge
+                      color="primary"
+                      className="p-1 position-absolute"
+                      style={{
+                        top: "-8px",
+                        right: "-8px",
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                        backgroundColor: "red",
+                      }}
+                      onClick={deleteImageHandler}
+                    >
+                      <CIcon icon={cilX} size="sm" />
+                    </CBadge>
+                  </div>
+                ) : null}
+              </CCol>
             </CRow>
-
-            {state.loadingUpload ? (
-              <div className="mt-2 d-flex justify-content-center">
-                <LoadingSpinner />
-              </div>
-            ) : image ? (
-              <div className="my-2">
-                <img
-                  src={image}
-                  alt="Uploaded logo"
-                  width="100"
-                  height="100"
-                  style={{ objectFit: "cover", borderRadius: "5px" }}
-                />
-                <CBadge
-                  color="primary"
-                  position="absolute"
-                  top="0"
-                  left="0"
-                  shape="rounded-pill"
-                  className="p-1"
-                ></CBadge>
-              </div>
-            ) : null}
 
             <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
               {state.loading ? (

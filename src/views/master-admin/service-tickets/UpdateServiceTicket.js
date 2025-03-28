@@ -15,6 +15,7 @@ import {
   CFormTextarea,
   CFormSelect,
   CBadge,
+  CImage,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -493,7 +494,8 @@ const UpdateServiceTicket = () => {
                         </div>
                       ) : formData[`ticket_resolved_images${num}`] ? (
                         <div className="my-2">
-                          <img
+                          <CImage
+                            fluid
                             src={formData[`ticket_resolved_images${num}`]}
                             alt={`Resolved Image ${num}`}
                             width="80"
