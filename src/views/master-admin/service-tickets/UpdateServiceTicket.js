@@ -30,6 +30,14 @@ const reducer = (state, action) => {
       return { ...state, ticket: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "FETCH_SERVICE_ITEMS_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SERVICE_ITEMS_SUCCESS":
+      return { ...state, serviceitems: action.payload, loading: false };
+    case "FETCH_SERVICE_ITEMS_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
     case "UPDATE_SUCCESS":
       return { ...state, updating: false, success: true };
     case "UPDATE_FAIL":
@@ -279,12 +287,13 @@ const UpdateServiceTicket = () => {
                     </span>
                   ) : (
                     <CFormSelect
+                      label="Fault Type"
                       name="fault_type"
                       value={formData.fault_type}
                       onChange={(e) =>
                         setFormData({ ...formData, fault_type: e.target.value })
                       }
-                      className="mb-3 mt-3"
+                      className="mb-3 "
                     >
                       <option value="">Select Fault Type</option>
                       {state.serviceticketsfault
@@ -412,7 +421,7 @@ const UpdateServiceTicket = () => {
                           />
                           <CBadge
                             color="primary"
-                            position="absolute"
+                            position="top-end"
                             top="0"
                             left="0"
                             shape="rounded-pill"
@@ -515,15 +524,15 @@ const UpdateServiceTicket = () => {
 
               <div className="d-flex justify-content-end">
                 <CButton
-                  className="my-2 w-25 "
+                  className="my-2  "
                   type="submit"
-                  size="md"
+                  size="sm"
                   color="secondary"
                   disabled={state.updating || state.loadingUpload} // ✅ Merge both loading states
                 >
                   {state.updating || state.loadingUpload ? (
                     <>
-                      Processing <LoadingSpinner />
+                      Updating... <LoadingSpinner />
                     </>
                   ) : (
                     "Update Ticket"

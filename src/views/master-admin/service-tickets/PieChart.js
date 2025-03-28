@@ -177,7 +177,7 @@ const PieChart = () => {
             ) : error ? (
               <p className="text-danger text-center">{error}</p>
             ) : (
-              <div style={{ width: "100%", height: "100%" }} className="border">
+              <div style={{ width: "100%", height: "100%" }} className="">
                 <CChartPie
                   data={{
                     labels: siteLabels.map(
@@ -225,7 +225,12 @@ const PieChart = () => {
             // style={{ minHeight: "350px" }}
           >
             {loading ? (
-              <LoadingSpinner />
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "100px", width: "100px" }}
+              >
+                <LoadingSpinner />
+              </div>
             ) : error ? (
               <p>{error}</p>
             ) : (
