@@ -68,33 +68,6 @@ const NewServiceItem = () => {
     });
   };
 
-  // const handleImageUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.append("file", file);
-  //   try {
-  //     dispatch({ type: "UPLOAD_REQUEST" });
-  //     const { data } = await axios.post(
-  //       "/api/v1/image-upload/service-item",
-  //       bodyFormData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authtoken}`,
-  //         },
-  //       }
-  //     );
-  //     dispatch({ type: "UPLOAD_SUCCESS" });
-  //     console.log(data);
-
-  //     setImage(data.url);
-
-  //     toast.success("Image uploaded successfully. click Update to apply it");
-  //   } catch (err) {
-  //     console.error(state.error);
-  //   }
-  // };
-
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -178,6 +151,7 @@ const NewServiceItem = () => {
                   />
                 </div>
               </CCol>
+
               <CCol md="6">
                 <div className="mb-3">
                   <label className="form-label">Item Code</label>
@@ -205,9 +179,10 @@ const NewServiceItem = () => {
                   />
                 </div>
               </CCol>
+
               <CCol md="3">
                 <div className="mb-3">
-                  <label className="form-label">Item Image</label>
+                  <label className="form-label">Upload Image</label>
                   <div className="container-btn-file p-2 m-2 w-80">
                     <CIcon icon={cilCloudUpload} className="upload-icon" />
                     <input
@@ -220,6 +195,7 @@ const NewServiceItem = () => {
                   </div>
                 </div>
               </CCol>
+
               <CCol md="3">
                 {uploading ? (
                   <div className=" d-flex justify-content-center">

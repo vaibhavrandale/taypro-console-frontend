@@ -189,6 +189,10 @@ const AddServiceItem = React.lazy(() =>
 const UpdateServiceItem = React.lazy(() =>
   import("./views/master-admin/inventories/UpdateServiceItem")
 );
+
+const AddDpr = React.lazy(() =>
+  import("./views/master-admin/all-site-dpr/AddDpr")
+);
 // const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
 //common pages
@@ -443,6 +447,11 @@ const routes = [
     path: "/master-admin/inventories/update-service-item/:id",
     name: "Update Service Item",
     element: UpdateServiceItem,
+  },
+  {
+    path: "/master-admin/all-site-dpr/add-dpr",
+    name: "Add DPR",
+    element: AddDpr,
   },
   {
     path: "/master-admin/timers",

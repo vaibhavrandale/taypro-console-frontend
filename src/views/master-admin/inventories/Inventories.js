@@ -194,7 +194,7 @@ const Inventories = () => {
       inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Open modal and load robot data
+  // Open modal and load inventory data
   const openModal = (inventory) => {
     setSelectedInventory(inventory);
     setFormData(inventory);

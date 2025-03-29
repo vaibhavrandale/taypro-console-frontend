@@ -12,10 +12,12 @@ import {
   CCardHeader,
   CCol,
   CFormCheck,
-  CFormInput,
   CFormLabel,
   CRow,
 } from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
+import "../service-tickets/servicetickts.css";
 
 // Reducer function
 const reducer = (state, action) => {
@@ -32,35 +34,25 @@ const reducer = (state, action) => {
       return { ...state, updating: false };
     case "UPDATE_FAIL":
       return { ...state, updating: false, error: action.payload };
-    case "UPLOAD_REQUEST":
-      return { ...state, loadingUpload: true, errorUpload: "" };
-    case "UPLOAD_SUCCESS":
-      return {
-        ...state,
-        loadingUpload: false,
-        errorUpload: "",
-      };
-    case "UPLOAD_FAIL":
-      return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     default:
       return state;
   }
 };
 
 const UpdateServiceItem = () => {
-  const [{ loading, error, updating, loadingUpload, errorUpload }, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      error: "",
-      updating: false,
-      loadingUpload: false,
-      errorUpload: "",
-    });
+  const [{ loading, error, updating }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+    updating: false,
+    loadingUpload: false,
+  });
 
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [image, setImage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const [serviceItemData, setServiceItemData] = useState({
     item_name: "",
@@ -101,10 +93,13 @@ const UpdateServiceItem = () => {
   };
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
+
     try {
-      dispatch({ type: "UPLOAD_REQUEST" });
+      setUploading(true);
       const { data } = await axios.post(
         "/api/v1/image-upload/service-item",
         bodyFormData,
@@ -115,14 +110,19 @@ const UpdateServiceItem = () => {
           },
         }
       );
-      dispatch({ type: "UPLOAD_SUCCESS" });
 
       setImage(data.url);
-
-      toast.success("Image uploaded successfully. click Update to apply it");
+      toast.success("Image uploaded successfully. Click Update to apply it.");
     } catch (err) {
-      console.error(error);
+      toast.error("Image upload failed. Please try again.");
+    } finally {
+      setUploading(false);
     }
+  };
+
+  const deleteImageHandler = () => {
+    setImage("");
+    toast.success("Image removed.");
   };
 
   const handleSubmit = async (e) => {
@@ -182,6 +182,7 @@ const UpdateServiceItem = () => {
                     />
                   </div>
                 </CCol>
+
                 <CCol md="6">
                   <div className="mb-3">
                     <label className="form-label">Item Code</label>
@@ -194,8 +195,7 @@ const UpdateServiceItem = () => {
                     />
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol md="6">
                   <div className="mb-3">
                     <label className="form-label">Item Description</label>
@@ -209,7 +209,7 @@ const UpdateServiceItem = () => {
                   </div>
                 </CCol>
 
-                <CCol>
+                <CCol md="6">
                   <CFormLabel>
                     Delete Inventory :
                     <span className="text-muted ms-2">
@@ -225,23 +225,25 @@ const UpdateServiceItem = () => {
                     onChange={handleChange}
                   />{" "}
                 </CCol>
-              </CRow>
 
-              <CRow className="mb-3">
-                <CCol md="6">
+                <CCol md="3">
                   <div className="mb-3">
-                    <label className="form-label">Item Image</label>
-                    <CFormInput
-                      type="file"
-                      name="item_image"
-                      onChange={handleImageUpload}
-                      className="mb-3 file"
-                    />
+                    <label className="form-label">Upload Image</label>
+                    <div className="container-btn-file p-2 m-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      <input
+                        type="file"
+                        name="item_image"
+                        onChange={handleImageUpload}
+                        className="mb-3 file"
+                        // disabled={uploading}
+                      />
+                    </div>
                   </div>
                 </CCol>
 
-                <CCol md="6" className="d-flex align-items-center">
-                  {loadingUpload ? (
+                <CCol md="3" className="d-flex align-items-center">
+                  {uploading ? (
                     <div className="d-flex justify-content-center w-100">
                       <LoadingSpinner />
                     </div>
@@ -249,11 +251,25 @@ const UpdateServiceItem = () => {
                     <div className="d-flex align-items-center">
                       <img
                         src={image || serviceItemData.item_image}
-                        alt="Uploaded logo"
+                        alt="Uploaded Item"
                         width="100"
                         height="100"
                         style={{ objectFit: "cover", borderRadius: "5px" }}
                       />
+                      <CBadge
+                        color="primary"
+                        className="p-1 position-absolute"
+                        style={{
+                          top: "-8px",
+                          right: "-8px",
+                          cursor: "pointer",
+                          borderRadius: "50%",
+                          backgroundColor: "red",
+                        }}
+                        onClick={deleteImageHandler}
+                      >
+                        <CIcon icon={cilX} size="sm" />
+                      </CBadge>
                     </div>
                   ) : null}
                 </CCol>

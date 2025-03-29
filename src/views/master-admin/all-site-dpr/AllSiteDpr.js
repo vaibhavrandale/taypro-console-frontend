@@ -1,106 +1,346 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
-  CContainer,
   CTable,
-  CTableBody,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
+  CTableBody,
   CTableDataCell,
   CFormInput,
   CRow,
   CCol,
-  CButton,
   CModal,
-  CModalBody,
   CModalHeader,
   CModalTitle,
-  CModalFooter,
+  CModalBody,
   CAvatar,
+  CFormSelect,
 } from "@coreui/react";
-import moment from "moment";
-import {
-  service_technitian_daily_progress_report as dprData,
-  users,
-} from "../../../data"; // Import DPR data
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
-import "./dpr.css";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import LastActivity from "../../../components/LastActivity";
+import PaginateInput from "../../../components/PaginateInput";
+import * as XLSX from "xlsx"; // Import xlsx for Excel export
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_DPRBYDATE_REQUEST":
+      return { ...state, loadingDprs: true, error: "" };
+
+    case "FETCH_DPRBYDATE_SUCCESS":
+      return {
+        ...state,
+        loadingDprs: false,
+        dprs: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+
+    case "FETCH_DPRBYDATE_FAIL":
+      return { ...state, loadingDprs: false, error: action.payload };
+
+    case "FETCH_SITEID_REQUEST":
+      return { ...state, loadingSiteIds: true, error: "" };
+    case "FETCH_SITEID_SUCCESS":
+      return {
+        ...state,
+        loadingSiteIds: false,
+        siteIds: action.payload,
+      };
+    case "FETCH_SITEID_FAIL":
+      return { ...state, loadingSiteIds: false, error: action.payload };
+
+    case "SELECT_SITENAME_REQUEST":
+      return { ...state, loadingFields: true };
+
+    case "SELECT_SITENAME_SUCCESS":
+      return {
+        ...state,
+        loadingFields: false,
+        selectedSiteName: action.payload,
+      };
+    case "SELECT_SITENAME_FAIL":
+      return { ...state, loadingFields: false };
+
+    case "DELETE_REQUEST":
+      return { ...state, loadingDelete: true, successDelete: false };
+
+    case "DELETE_SUCCESS":
+      return { ...state, loadingDelete: false, successDelete: true };
+
+    case "DELETE_FAIL":
+      return { ...state, loadingDelete: false, successDelete: false };
+
+    case "DELETE_RESET":
+      return { ...state, successDelete: false };
+    default:
+      return state;
+  }
+};
+
 const AllSiteDpr = () => {
+  const [
+    {
+      error,
+      dprs,
+      loadingDprs,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      successDelete,
+      loadingSiteIds,
+      loadingFields,
+      siteIds,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    dprs: [],
+    loading: true,
+    loadingDprs: true,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    loadingSiteIds: false,
+    loadingFields: false,
+    siteIds: [],
+  });
+  const authtoken = useSelector((state) => state.authtoken);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [selectedDPR, setSelectedDPR] = useState(null);
-  const [viewModal, setViewModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
-  const [updatedDPR, setUpdatedDPR] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [filteredDPRs, setFilteredDPRs] = useState([]);
-  // const [showSuggestions, setShowSuggestions] = useState(false); // Manage visibility
-  const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [site_id, setSiteId] = useState("all");
+  const [fromDate, setFromDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedInventory, setSelectedInventory] = useState(null);
+
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const [formData, setFormData] = useState({
+    site_id: "",
+    total_running_robots: "",
+    total_failed_robots: "",
+    robots_run_by: "",
+    total_robots: "",
+    comments: "",
+  });
 
   useEffect(() => {
-    setLoading(true); // Start loading
-    setTimeout(() => {
-      const filtered = dprData.filter((dpr) => {
-        const submittedDate = moment(dpr.submittedAt, "YYYY-MM-DD HH:mm:ss");
-        const from = fromDate ? moment(fromDate, "YYYY-MM-DD") : null;
-        const to = toDate ? moment(toDate, "YYYY-MM-DD") : null;
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
 
-        const matchesSearch =
-          dpr.technitian_username
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          dpr.technitian_email
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          dpr.site_id.toLowerCase().includes(searchTerm.toLowerCase());
+    const fetchSiteIds = async () => {
+      dispatch({ type: "FETCH_SITEID_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITEID_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITEID_FAIL",
+          payload: error.response?.data?.error || "Error fetching sites",
+        });
+        toast.error(error.response.data.error || "Error fetching sites");
+      }
+    };
 
-        const matchesDate =
-          (!from || submittedDate.isSameOrAfter(from, "day")) &&
-          (!to || submittedDate.isSameOrBefore(to, "day"));
+    const fetchDprDates = async () => {
+      dispatch({ type: "FETCH_DPRBYDATE_REQUEST" });
 
-        return matchesSearch && matchesDate;
-      });
+      try {
+        // Ensure the correct keys match the backend API
+        const data = {
+          startDate: new Date(fromDate).toISOString().split("T")[0], // Convert to proper format
+          endDate: new Date(toDate).toISOString().split("T")[0],
+          siteId: site_id, // Ensure the key matches
+          pagination,
+        };
 
-      setFilteredDPRs(filtered);
-      setLoading(false); // Stop loading
-    }, 500); // Simulating API call delay
-  }, [searchTerm, fromDate, toDate]);
+        const result = await axios.post(
+          `/api/v1/techniciandprs/site_date_wise`,
+          data,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
 
-  // Open View Modal
-  const handleView = (dpr) => {
-    if (!dpr) return; // Prevent null errors
-    setSelectedDPR(dpr);
-    setViewModal(true);
+        let total = Math.ceil(
+          Number(result.data.data.total) / Number(result.data.data.limit)
+        );
+        console.log(total);
+
+        let next = result.data.data.hasNextPage;
+        let prev = result.data.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_DPRBYDATE_SUCCESS",
+          payload: {
+            data: result.data.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_DPRBYDATE_FAIL",
+          payload: error.response?.data?.error || "Failed to fetch DPR by Date",
+        });
+        toast.error(
+          error.response?.data?.error || "Failed to fetch DPR by Date"
+        );
+      }
+    };
+
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      fetchDprDates();
+    }
+
+    fetchSiteIds();
+  }, [successDelete, authtoken, limit, page, fromDate, toDate, site_id]);
+
+  const filteredInventories = dprs.filter((dpr) =>
+    dpr.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Open modal and load robot data
+  const openModal = (dpr) => {
+    setSelectedInventory(dpr);
+    setFormData(dpr);
+    setModalVisible(true);
   };
 
-  // Open Update Modal
-  const handleUpdate = (dpr) => {
-    if (!dpr) return; // Prevent null errors
-    setUpdatedDPR({ ...dpr }); // Ensure default values are set
-    setUpdateModal(true);
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
   };
 
-  // Handle Input Change in Update Form
-  const handleUpdateChange = (e) => {
-    setUpdatedDPR({ ...updatedDPR, [e.target.name]: e.target.value });
+  // // console.item(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
+
+  const handleSiteNameChange = (e) => {
+    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+
+    const selectedSiteName = e.target.value;
+    const selectedSite = siteIds.find(
+      (site) => site.site_id.toString() === selectedSiteName
+    );
+
+    if (selectedSite) {
+      setSiteId(selectedSite.site_id);
+
+      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
+    } else {
+      dispatch({ type: "SELECT_SITENAME_FAIL" });
+    }
+  };
+
+  const deleteDpr = async (dpr) => {
+    if (dpr.is_delete) {
+      toast.error("This DPR is already deleted.");
+      return;
+    }
+    if (
+      window.confirm(
+        `Are you sure you want to delete DPR of site - ${dpr.site_id}`
+      )
+    ) {
+      try {
+        await axios.delete(`/api/v1/techniciandprs/${dpr._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        toast.success("DPR deleted successfully");
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (err) {
+        toast.error(err.response ? err.response.data.message : err.message);
+        dispatch({ type: "DELETE_FAIL" });
+      }
+    }
+  };
+
+  const exportToExcel = () => {
+    if (filteredInventories.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredInventories.map((item, index) => ({
+        "#": index + 1,
+        "Site Id": item.site_id,
+        "Running Robots": item.total_running_robots,
+        "Failed Robots": item.total_failed_robots,
+        "Total Robots": item.total_robots,
+        "Robots Run By": item.robots_run_by,
+        Comment: item.comments,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "DPR");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Technician_DPR.xlsx");
   };
 
   return (
-    <div className="mt-5 mx-2">
-      <h2 className="text-center mb-4">Daily Progress Reports (DPRs)</h2>
-
-      {/* Search and Date Filters */}
-      <CRow className="mb-3">
-        <CCol md={4} className="m-1">
-          <CFormInput
-            type="text"
-            placeholder="Search by technician, email, or site"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="p-2">
+      <h2 className="text-center mt-4">Daily Progress Reports</h2>
+      <div className="d-flex justify-content-end mb-3">
+        <Link
+          className="btn btn-sm btn-secondary m-1"
+          to="/master-admin/all-site-dpr/add-dpr"
+        >
+          Add DPR
+        </Link>
+        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+          Export
+        </Link>
+      </div>
+      {/* Search Input */}
+      <CRow className="justify-content-end mb-3">
+        <CCol md={3} className="m-1">
+          <CFormSelect
+            name="site_id"
+            value={site_id}
+            onChange={handleSiteNameChange}
+          >
+            <option value="">Select Site Id</option>
+            {siteIds?.length > 0 &&
+              siteIds.map((item) => (
+                <option key={item.site_id} value={item.site_id}>
+                  {item.site_id}
+                </option>
+              ))}
+          </CFormSelect>
         </CCol>
         <CCol md={3} className="m-1">
           <CFormInput
@@ -116,423 +356,205 @@ const AllSiteDpr = () => {
             onChange={(e) => setToDate(e.target.value)}
           />
         </CCol>
+        <CCol md={4} className="mt-3">
+          <CFormInput
+            type="text"
+            placeholder="Search by Site Id..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </CCol>
       </CRow>
 
-      {/* DPR Table */}
-      <CTable striped bordered hover responsive className="text-center">
+      {/* Inventories Table */}
+      <CTable bordered hover responsive className="text-center shadow-sm">
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Site Id
+            </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Site ID
+              Running Robots
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Failed Robots
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Total Robots
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Run by
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Comments
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Date
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Total Running Robots
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Failed Robots
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Run By
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Actions
+              Action
             </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        {loading ? (
-          <CTableBody>
-            <CTableRow className="text-center">
-              <CTableDataCell colSpan={7}>
+        <CTableBody>
+          {loadingDprs ? (
+            <CTableRow>
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          </CTableBody>
-        ) : (
-          <CTableBody>
-            {filteredDPRs.length > 0 ? (
-              filteredDPRs.map((dpr, index) => (
-                <CTableRow key={dpr.id}>
-                  <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                  <CTableDataCell>{dpr.site_id}</CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    {dpr.submittedAt.split(" ")[0]}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "160px" }}>
-                    {dpr.total_running_robots}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "140px" }}>
-                    {dpr.total_failed_robots}
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    {dpr.robots_run_by.toUpperCase()}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    <CButton
-                      color="info"
-                      size="sm"
-                      className="btn-secondary m-1"
-                      onClick={() => handleView(dpr)}
-                    >
-                      View
-                    </CButton>
-                    <CButton
-                      color="warning"
-                      className="btn-primary m-1"
-                      size="sm"
-                      onClick={() => handleUpdate(dpr)}
-                    >
-                      Update
-                    </CButton>
-                  </CTableDataCell>
-                </CTableRow>
-              ))
-            ) : (
-              <CTableRow>
-                <CTableDataCell colSpan="7" className="text-center text-muted">
-                  No records found
+          ) : error ? (
+            <CTableRow>
+              {" "}
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
+                {error}
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredInventories.length > 0 ? (
+            filteredInventories.map((dpr, index) => (
+              <CTableRow
+                key={index}
+                className={dpr.is_delete ? "table-danger" : ""}
+              >
+                <CTableDataCell>{index + 1}</CTableDataCell>
+                <CTableDataCell>{dpr.site_id}</CTableDataCell>
+                <CTableDataCell>{dpr.total_running_robots}</CTableDataCell>
+                <CTableDataCell>{dpr.total_failed_robots}</CTableDataCell>
+                <CTableDataCell>{dpr.total_robots}</CTableDataCell>
+                <CTableDataCell>
+                  {dpr.robots_run_by.toUpperCase()}
+                </CTableDataCell>
+                <CTableDataCell>{dpr.comments}</CTableDataCell>
+                {/* <CTableDataCell>{dpr.createdAt}</CTableDataCell> */}
+                <CTableDataCell>
+                  {new Date(dpr.createdAt)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")}
+                </CTableDataCell>
+                <CTableDataCell>
+                  <Link
+                    className="btn btn-sm btn-secondary m-1"
+                    color="secondary"
+                    size="sm"
+                    onClick={() => openModal(dpr)}
+                  >
+                    View
+                  </Link>
+
+                  <Link
+                    className="btn btn-sm btn-warning m-1"
+                    to={`/master-admin/dprs/${dpr._id}`}
+                  >
+                    Update
+                  </Link>
+                  <Link
+                    color="danger"
+                    size="sm"
+                    className=" btn btn-sm btn-danger m-1 text-white"
+                    onClick={() => deleteDpr(dpr)}
+                  >
+                    Delete
+                  </Link>
                 </CTableDataCell>
               </CTableRow>
-            )}
-          </CTableBody>
-        )}
+            ))
+          ) : (
+            <CTableRow>
+              <CTableDataCell colSpan="7" className="text-center fw-bold">
+                No matching DPR found.
+              </CTableDataCell>
+            </CTableRow>
+          )}
+        </CTableBody>
       </CTable>
-
-      {/* View Modal */}
-      <CModal visible={viewModal} onClose={() => setViewModal(false)} size="xl">
-        {selectedDPR ? (
-          <>
-            <CModalHeader closeButton>
-              <CModalTitle className="d-flex flex-wrap">
-                <span> View DPR Details : </span>&nbsp;
-                <p className="text-primary">
-                  {selectedDPR.site_id}&nbsp;(
-                  {selectedDPR.submittedAt.split(" ")[0]})
-                </p>
-              </CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-              <CTable striped bordered hover responsive>
-                <CTableBody>
-                  {Object.entries(selectedDPR).map(([key, value]) => (
-                    <CTableRow key={key}>
-                      <CTableHeaderCell>
-                        {key.replace(/_/g, " ")}
-                      </CTableHeaderCell>
-                      <CTableDataCell>
-                        {Array.isArray(value) ? (
-                          key === "technitian_present" ? (
-                            <CTable className=" border-0">
-                              <CTableBody>
-                                {value.map((tech, index) => {
-                                  return (
-                                    <CTableRow key={index} className="border">
-                                      <CTableDataCell className="border-0">
-                                        {index + 1})
-                                      </CTableDataCell>
-                                      <CTableDataCell className="border-0">
-                                        <CAvatar
-                                          src={tech.profile_image}
-                                          className="me-2"
-                                        />
-                                      </CTableDataCell>
-                                      <CTableDataCell className="border-0">
-                                        {tech.technitian_username}
-                                      </CTableDataCell>
-                                      {/* <CTableDataCell className="border-0">
-                                      {tech.technitian_email}
-                                    </CTableDataCell> */}
-                                    </CTableRow>
-                                  );
-                                })}
-                              </CTableBody>
-                            </CTable>
-                          ) : (
-                            JSON.stringify(value)
-                          )
-                        ) : (
-                          value?.toString() || "N/A"
-                        )}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-            </CModalBody>
-          </>
-        ) : (
-          <p className="text-center text-muted">No data available</p>
-        )}
-      </CModal>
-
-      {/* Update Modal */}
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      />
+      {/* view Modal */}
       <CModal
-        backdrop="static"
-        visible={updateModal}
-        onClose={() => setUpdateModal(false)}
         size="xl"
+        scrollable
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       >
-        <CModalHeader closeButton>
+        <CModalHeader>
           <CModalTitle>
-            Update DPR Details -
-            <span className="text-danger">
-              {updatedDPR?.site_id || "N/A"} ({updatedDPR?.submittedAt || "N/A"}
-              )
-            </span>
+            DPR Data :&nbsp;
+            <span className="badge bg-success">{formData.site_id}</span>{" "}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {updatedDPR ? (
-            <CRow className="mb-3">
-              <CCol md={6}>
-                <label className="fw-bold">Technician Username</label>
-                <CFormInput
-                  type="text"
-                  name="technitian_username"
-                  value={updatedDPR.technitian_username || ""}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6}>
-                <label className="fw-bold">Technician Email</label>
-                <CFormInput
-                  type="email"
-                  name="technitian_email"
-                  value={updatedDPR.technitian_email || ""}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6} className="mt-2">
-                <label className="fw-bold">Site ID</label>
-                <CFormInput
-                  type="text"
-                  name="site_id"
-                  value={updatedDPR.site_id || ""}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6} className="mt-2">
-                <label className="fw-bold">Total Running Robots</label>
-                <CFormInput
-                  type="number"
-                  name="total_running_robots"
-                  value={updatedDPR.total_running_robots || 0}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6} className="mt-2">
-                <label className="fw-bold">Total Failed Robots</label>
-                <CFormInput
-                  type="number"
-                  name="total_failed_robots"
-                  value={updatedDPR.total_failed_robots || 0}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6} className="mt-2">
-                <label className="fw-bold">Robots Run By</label>
-                <CFormInput
-                  type="text"
-                  name="robots_run_by"
-                  value={updatedDPR.robots_run_by || ""}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={12} className="mt-2">
-                <label className="fw-bold">Comments</label>
-                <CFormInput
-                  type="text"
-                  name="comments"
-                  value={updatedDPR.comments || ""}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol md={6} className="mt-2">
-                <label className="fw-bold">Submitted At</label>
-                <CFormInput
-                  type="datetime-local"
-                  name="submittedAt"
-                  value={moment(updatedDPR.submittedAt || new Date()).format(
-                    "YYYY-MM-DDTHH:mm"
-                  )}
-                  onChange={handleUpdateChange}
-                />
-              </CCol>
-
-              <CCol
-                md={12}
-                className="mt-4 d-flex justify-content-between align-items-center"
-              >
-                <h5 className="fw-bold">Technicians Present</h5>
-                <CButton
-                  color="success"
-                  size="sm"
-                  onClick={() => {
-                    setUpdatedDPR({
-                      ...updatedDPR,
-                      technitian_present: [
-                        ...updatedDPR.technitian_present,
-                        {
-                          technitian_username: "",
-                          technitian_email: "",
-                          technitian_id: "",
-                        },
-                      ],
-                    });
-                  }}
-                >
-                  + Add Technician
-                </CButton>
-              </CCol>
-
-              {/* Technician Table */}
-              <CTable striped bordered className="mt-2">
+          {selectedInventory && (
+            <>
+              <CTable bordered responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Name</CTableHeaderCell>
-                    {/* <CTableHeaderCell>Email</CTableHeaderCell>
-                    <CTableHeaderCell>ID</CTableHeaderCell> */}
-                    <CTableHeaderCell style={{ width: "80px" }}>
-                      Actions
-                    </CTableHeaderCell>
+                    <CTableHeaderCell>Field</CTableHeaderCell>
+                    <CTableHeaderCell>Value</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
-
                 <CTableBody>
-                  {updatedDPR.technitian_present.map((tech, index) => (
-                    <CTableRow key={index}>
-                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-
-                      {/* Technician Name with Auto-Suggestions */}
-                      <CTableDataCell className="position-relative">
-                        <CFormInput
-                          type="text"
-                          value={tech.technitian_username}
-                          onChange={(e) => {
-                            const value = e.target.value;
-
-                            // Filter users based on input
-                            // const filtered = users.filter((user) =>
-                            //   user.username
-                            //     .toLowerCase()
-                            //     .includes(value.toLowerCase())
-                            // );
-
-                            const filtered = users
-                              .filter(
-                                (user) =>
-                                  user.role === "Site Technician" && // Only "Site Technician"
-                                  user.username
-                                    .toLowerCase()
-                                    .includes(value.toLowerCase())
-                              )
-                              .slice(0, 5); // Limit to 5 suggestions
-
-                            setFilteredUsers(filtered.slice(0, 5)); // Show max 5 suggestions
-                            setShowSuggestionsIndex(index); // Set suggestion visibility for this row
-
-                            const newTechnicianPresent = [
-                              ...updatedDPR.technitian_present,
-                            ];
-                            newTechnicianPresent[index].technitian_username =
-                              value;
-                            setUpdatedDPR({
-                              ...updatedDPR,
-                              technitian_present: newTechnicianPresent,
-                            });
-                          }}
-                          onFocus={() => setShowSuggestionsIndex(index)} // Show suggestions when input is focused
-                          onBlur={() =>
-                            setTimeout(() => setShowSuggestionsIndex(null), 200)
-                          } // Hide dropdown on blur
-                        />
-
-                        {/* Suggestions List */}
-                        {showSuggestionsIndex === index &&
-                          filteredUsers.length > 0 && (
-                            <div className="suggestion-dropdown">
-                              {filteredUsers.map((user, idx) => (
-                                <div
-                                  key={idx}
-                                  className="suggestion-item"
-                                  onClick={() => {
-                                    const newTechnicianPresent = [
-                                      ...updatedDPR.technitian_present,
-                                    ];
-                                    newTechnicianPresent[index] = {
-                                      technitian_username: user.username,
-                                      technitian_email: user.email,
-                                      technitian_id: user.id,
-                                    };
-                                    setUpdatedDPR({
-                                      ...updatedDPR,
-                                      technitian_present: newTechnicianPresent,
-                                    });
-                                    setShowSuggestionsIndex(null);
-                                  }}
-                                >
-                                  <CAvatar
-                                    src={user.profile_image}
-                                    className="me-2"
-                                  />
-                                  {user.username}
-                                </div>
-                              ))}
-                            </div>
+                  {Object.entries(formData)
+                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
+                    .map(([key, value]) => (
+                      <CTableRow key={key}>
+                        <CTableHeaderCell>
+                          {key.replace(/_/g, " ")}
+                        </CTableHeaderCell>
+                        <CTableDataCell>
+                          {Array.isArray(value) ? (
+                            key === "technician_present" ? (
+                              <CTable className=" border-0">
+                                <CTableBody>
+                                  {value.map((tech, index) => {
+                                    return (
+                                      <CTableRow key={index} className="border">
+                                        <CTableDataCell className="border-0">
+                                          {index + 1})
+                                        </CTableDataCell>
+                                        <CTableDataCell className="border-0">
+                                          <CAvatar
+                                            src={tech.profile_image}
+                                            className="me-2"
+                                          />
+                                        </CTableDataCell>
+                                        <CTableDataCell className="border-0">
+                                          {tech.name}
+                                        </CTableDataCell>
+                                        {/* <CTableDataCell className="border-0">
+                                      {tech.technitian_email}
+                                    </CTableDataCell> */}
+                                      </CTableRow>
+                                    );
+                                  })}
+                                </CTableBody>
+                              </CTable>
+                            ) : (
+                              JSON.stringify(value)
+                            )
+                          ) : (
+                            value?.toString() || "N/A"
                           )}
-                        <CFormInput
-                          type="hidden"
-                          value={tech.technitian_email}
-                        />
-                        <CFormInput type="hidden" value={tech.technitian_id} />
-                      </CTableDataCell>
-
-                      {/* Remove Button */}
-                      <CTableDataCell className="text-center">
-                        <CButton
-                          size="sm"
-                          onClick={() => {
-                            const newTechnicianPresent =
-                              updatedDPR.technitian_present.filter(
-                                (_, i) => i !== index
-                              );
-                            setUpdatedDPR({
-                              ...updatedDPR,
-                              technitian_present: newTechnicianPresent,
-                            });
-                          }}
-                        >
-                          ❌
-                        </CButton>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
                 </CTableBody>
               </CTable>
-            </CRow>
-          ) : (
-            <p className="text-center text-muted">No data available</p>
+
+              {formData.last_activity && (
+                <LastActivity lastactivity={formData.last_activity} />
+              )}
+            </>
           )}
         </CModalBody>
-        <CModalFooter>
-          <CButton color="success" onClick={() => setUpdateModal(false)}>
-            Save
-          </CButton>
-          <CButton color="secondary" onClick={() => setUpdateModal(false)}>
-            Cancel
-          </CButton>
-        </CModalFooter>
       </CModal>
     </div>
   );
