@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 const reducer = (state, action) => {
   switch (action.type) {
     case "CREATE_TICKET_REQUEST":
@@ -397,8 +398,20 @@ const CreateInternalTicket = () => {
                 </CCol> */}
 
                 <CCol md={12}>
-                  <CButton className="" type="submit" color="primary">
-                    Create
+                  <CButton
+                    className=""
+                    type="submit"
+                    color="primary"
+                    disabled={createTicketloading}
+                  >
+                    {createTicketloading ? (
+                      <>
+                        {" "}
+                        Creating... <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Create"
+                    )}
                   </CButton>
                 </CCol>
               </CRow>

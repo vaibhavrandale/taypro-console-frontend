@@ -250,7 +250,12 @@ const UpdateInternalTicket = () => {
               />
             </CCol>
           </CRow>
-          <CButton type="submit" color="primary" disabled={state.updating}>
+          <CButton
+            className="mt-4"
+            type="submit"
+            color="primary"
+            disabled={state.updating}
+          >
             {state.updating ? "Updating..." : "Update Ticket"}
           </CButton>
         </CForm>

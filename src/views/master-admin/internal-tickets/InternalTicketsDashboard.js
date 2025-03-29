@@ -268,9 +268,9 @@ const InternalTicketsDashboard = () => {
                 <CTableDataCell>
                   <CBadge
                     color={
-                      formData.status === "Resolved"
+                      ticket.status === "Resolved"
                         ? "success"
-                        : formData.status === "Open"
+                        : ticket.status === "Open"
                         ? "danger"
                         : "warning"
                     }

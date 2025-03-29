@@ -19,6 +19,7 @@ import {
   CTabPanel,
   CTabs,
   CImage,
+  CBadge,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -341,7 +342,15 @@ const Inventories = () => {
                 <CTableDataCell>{inventory.item_name}</CTableDataCell>
                 <CTableDataCell>{inventory.item_code}</CTableDataCell>
                 <CTableDataCell>{inventory.site_id}</CTableDataCell>
-                <CTableDataCell>{inventory.quantity}</CTableDataCell>
+                {inventory.quantity <= inventory.threshold ? (
+                  <CTableDataCell>
+                    {" "}
+                    <CBadge color="danger"> {inventory.quantity}</CBadge>
+                  </CTableDataCell>
+                ) : (
+                  <CTableDataCell>{inventory.quantity}</CTableDataCell>
+                )}
+
                 <CTableDataCell>{inventory.threshold}</CTableDataCell>
                 <CTableDataCell>
                   <Link
