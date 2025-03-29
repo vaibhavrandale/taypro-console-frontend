@@ -517,7 +517,7 @@ const UpdateServiceTicket = () => {
                   />
                 </CCol>
 
-                <CCol md={6}>
+                {/* <CCol md={6}>
                   {state.loadingInventories ? (
                     <LoadingSpinner />
                   ) : state.inventoryerror ? (
@@ -555,6 +555,60 @@ const UpdateServiceTicket = () => {
                     name="replaced_part_quantity"
                     type="number"
                     value={formData.replaced_part_quantity || 0}
+                    onChange={handleChange}
+                  />
+                </CCol> */}
+
+                <CCol md={6}>
+                  {state.loadingInventories ? (
+                    <LoadingSpinner />
+                  ) : state.inventoryerror ? (
+                    <span className="badge bg-danger p-2">
+                      {state.inventoryerror}
+                    </span>
+                  ) : (
+                    <CFormSelect
+                      label="Select a part If Replaced"
+                      name="part_replaced_id"
+                      value={formData.part_replaced_id}
+                      onChange={(e) => {
+                        const selectedPart = state.inventories.find(
+                          (inv) => inv.item_id === e.target.value
+                        );
+
+                        setFormData({
+                          ...formData,
+                          part_replaced_id: e.target.value,
+                          part_replaced: selectedPart
+                            ? `${selectedPart.item_name} - ${selectedPart.item_code}`
+                            : "",
+                        });
+                      }}
+                      className="mb-3 "
+                    >
+                      <option value="">Select Part</option>
+                      {state.inventories &&
+                        state.inventories.map((inventory, index) => (
+                          <option key={index} value={inventory.item_id}>
+                            {inventory.item_name} - {inventory.item_code}
+                          </option>
+                        ))}
+                    </CFormSelect>
+                  )}
+                  {/* Hidden Field to Store replaced_part */}
+                  <input
+                    type="hidden"
+                    name="part_replaced"
+                    value={formData.part_replaced}
+                  />
+                </CCol>
+
+                <CCol md={6}>
+                  <CFormInput
+                    label="Part Replaced Quantity"
+                    name="replaced_part_quantity"
+                    type="number"
+                    value={formData.replaced_part_quantity}
                     onChange={handleChange}
                   />
                 </CCol>

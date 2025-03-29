@@ -528,32 +528,6 @@ const ResolveServiceTicket = () => {
                   />
                 </CCol>
 
-                {/* <CCol md={6}>
-                  {state.loadingInventories ? (
-                    <LoadingSpinner />
-                  ) : state.inventoryerror ? (
-                    <span className="badge bg-danger p-2">
-                      {state.inventoryerror}
-                    </span>
-                  ) : (
-                    <CFormSelect
-                      label="Select a part If Replaced"
-                      name="part_replaced_id"
-                      value={formData.part_replaced}
-                      onChange={handleChange}
-                      className="mb-3 "
-                    >
-                      <option value="">Select Part</option>
-                      {state.inventories
-                        ? state.inventories.map((inventory, index) => (
-                            <option key={index} value={inventory.item_id}>
-                              {inventory.item_name}- {inventory.item_code}
-                            </option>
-                          ))
-                        : []}
-                    </CFormSelect>
-                  )}
-                </CCol> */}
                 <CCol md={6}>
                   {state.loadingInventories ? (
                     <LoadingSpinner />
@@ -574,7 +548,7 @@ const ResolveServiceTicket = () => {
                         setFormData({
                           ...formData,
                           part_replaced_id: e.target.value,
-                          replaced_part: selectedPart
+                          part_replaced: selectedPart
                             ? `${selectedPart.item_name} - ${selectedPart.item_code}`
                             : "",
                         });
@@ -593,8 +567,8 @@ const ResolveServiceTicket = () => {
                   {/* Hidden Field to Store replaced_part */}
                   <input
                     type="hidden"
-                    name="replaced_part"
-                    value={formData.replaced_part}
+                    name="part_replaced"
+                    value={formData.part_replaced}
                   />
                 </CCol>
 
