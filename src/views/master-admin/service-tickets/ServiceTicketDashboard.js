@@ -363,7 +363,7 @@ const ServiceTicketDashboard = () => {
                         </CTooltip>
                       </span>
                     </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: "150px" }}>
+                    <CTableDataCell style={{ minWidth: "210px" }}>
                       <CButton
                         color="secondary"
                         size="sm"
@@ -381,12 +381,30 @@ const ServiceTicketDashboard = () => {
                       >
                         Update
                       </Link>
+                      <Link
+                        size="sm"
+                        className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                        to={`resolve-service-ticket/${ticket._id}`}
+                        // onClick={() => openUpdateModal(ticket._id)}
+                      >
+                        Resolve
+                      </Link>
                     </CTableDataCell>
                   </CTableRow>
                 ))
               )}
             </CTableBody>
           </CTable>
+          {/* <PaginateInput
+            page={page}
+            totalPages={totalPages}
+            hasPrevPage={hasPrevPage}
+            hasNextPage={hasNextPage}
+            pageInput={pageInput}
+            handlePageChange={handlePageChange}
+            handlePageInputChange={handlePageInputChange}
+            handlePageInputSubmit={handlePageInputSubmit}
+          /> */}
           <PaginateInput
             page={page}
             totalPages={totalPages}
@@ -396,6 +414,8 @@ const ServiceTicketDashboard = () => {
             handlePageChange={handlePageChange}
             handlePageInputChange={handlePageInputChange}
             handlePageInputSubmit={handlePageInputSubmit}
+            limit={limit}
+            handleLimitChange={setLimit} // New prop
           />
         </CCardBody>
       </CCard>

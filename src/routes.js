@@ -2,6 +2,9 @@ import React from "react";
 import PreventiveMaintanancrDashboard from "./views/master-admin/preventive-maintanance/PreventiveMaintanancrDashboard";
 import UpdatePreventivemaintanance from "./views/master-admin/preventive-maintanance/UpdatePreventivemaintanance";
 import CreatePreventivemaintanance from "./views/master-admin/preventive-maintanance/CreatePreventivemaintanance";
+import ExternalUsersDashboard from "./views/master-admin/users/ExternalUsersDashboard";
+import ResolveServiceTicket from "./views/master-admin/service-tickets/ResolveServiceTicket";
+import UpdateInternalTicket from "./views/master-admin/internal-tickets/UpdateInternalTicket";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -470,6 +473,11 @@ const routes = [
     element: UpdateServiceTicket,
   },
   {
+    path: "/master-admin/service-tickets/resolve-service-ticket/:id",
+    name: "Resolve Service Ticket",
+    element: ResolveServiceTicket,
+  },
+  {
     path: "/master-admin/service-tickets/create-new-ticket",
     name: "Create new Tickets",
     element: CreateNewServiceTicket,
@@ -485,9 +493,19 @@ const routes = [
     element: CreateNewInternalTicket,
   },
   {
+    path: "/master-admin/internal-tickets/update-internal-ticket/:id",
+    name: "Update Internal Tickets",
+    element: UpdateInternalTicket,
+  },
+  {
     path: "/master-admin/users",
-    name: "All Users",
+    name: "All  Internal Users",
     element: UsersDashboard,
+  },
+  {
+    path: "/master-admin/external-users",
+    name: "All  External Users",
+    element: ExternalUsersDashboard,
   },
 
   {
