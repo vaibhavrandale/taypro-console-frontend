@@ -5,6 +5,7 @@ import CreatePreventivemaintanance from "./views/master-admin/preventive-maintan
 import ExternalUsersDashboard from "./views/master-admin/users/ExternalUsersDashboard";
 import ResolveServiceTicket from "./views/master-admin/service-tickets/ResolveServiceTicket";
 import UpdateInternalTicket from "./views/master-admin/internal-tickets/UpdateInternalTicket";
+import UpdateDpr from "./views/master-admin/all-site-dpr/UpdateDpr";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -451,11 +452,7 @@ const routes = [
     name: "Update Service Item",
     element: UpdateServiceItem,
   },
-  {
-    path: "/master-admin/all-site-dpr/add-dpr",
-    name: "Add DPR",
-    element: AddDpr,
-  },
+
   {
     path: "/master-admin/timers",
     name: "Update Timers",
@@ -539,6 +536,17 @@ const routes = [
     path: "/master-admin/all-site-dpr",
     name: "Master Admin  All Site Dpr",
     element: AllSiteDpr,
+  },
+
+  {
+    path: "/master-admin/all-site-dpr/add-dpr",
+    name: "Add DPR",
+    element: AddDpr,
+  },
+  {
+    path: "/master-admin/update-dpr/:id",
+    name: "Update DPR",
+    element: UpdateDpr,
   },
 
   //preveantive maintanance

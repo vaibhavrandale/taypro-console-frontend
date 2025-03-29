@@ -135,11 +135,6 @@ const AllSiteDpr = () => {
   });
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
-
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
@@ -168,7 +163,8 @@ const AllSiteDpr = () => {
           startDate: new Date(fromDate).toISOString().split("T")[0], // Convert to proper format
           endDate: new Date(toDate).toISOString().split("T")[0],
           siteId: site_id, // Ensure the key matches
-          pagination,
+          pg: page,
+          limit: limit,
         };
 
         const result = await axios.post(
@@ -308,7 +304,7 @@ const AllSiteDpr = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "DPR");
 
     // Trigger download
-    XLSX.writeFile(workbook, "Technician_DPR.xlsx");
+    XLSX.writeFile(workbook, `${site_id}_${fromDate}_${toDate}_DPR.xlsx`);
   };
 
   return (
@@ -333,7 +329,7 @@ const AllSiteDpr = () => {
             value={site_id}
             onChange={handleSiteNameChange}
           >
-            <option value="">Select Site Id</option>
+            <option value="">All</option>
             {siteIds?.length > 0 &&
               siteIds.map((item) => (
                 <option key={item.site_id} value={item.site_id}>
@@ -425,7 +421,13 @@ const AllSiteDpr = () => {
                 <CTableDataCell>
                   {dpr.robots_run_by.toUpperCase()}
                 </CTableDataCell>
-                <CTableDataCell>{dpr.comments}</CTableDataCell>
+                {/* <CTableDataCell>{dpr.comments}</CTableDataCell> */}
+                <CTableDataCell>
+                  {dpr.comments.length > 30
+                    ? `${dpr.comments.slice(0, 30)}...`
+                    : dpr.comments}
+                </CTableDataCell>
+
                 {/* <CTableDataCell>{dpr.createdAt}</CTableDataCell> */}
                 <CTableDataCell>
                   {new Date(dpr.createdAt)
@@ -444,7 +446,7 @@ const AllSiteDpr = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/dprs/${dpr._id}`}
+                    to={`/master-admin/update-dpr/${dpr._id}`}
                   >
                     Update
                   </Link>
@@ -461,7 +463,7 @@ const AllSiteDpr = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
                 No matching DPR found.
               </CTableDataCell>
             </CTableRow>
@@ -477,7 +479,10 @@ const AllSiteDpr = () => {
         handlePageChange={handlePageChange}
         handlePageInputChange={handlePageInputChange}
         handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
       />
+
       {/* view Modal */}
       <CModal
         size="xl"

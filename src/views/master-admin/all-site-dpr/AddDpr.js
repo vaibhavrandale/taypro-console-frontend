@@ -12,6 +12,7 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
+  CFormCheck,
   CFormInput,
   CFormSelect,
   CRow,
@@ -34,7 +35,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingSiteIds: false,
-        siteIds: action.payload,
+        sites: action.payload,
       };
     case "FETCH_SITEID_FAIL":
       return { ...state, loadingSiteIds: false, error: action.payload };
@@ -78,6 +79,7 @@ const AddDpr = () => {
 
   const [state, dispatch] = useReducer(reducer, {
     dprData: {
+      site_id: "",
       total_running_robots: "",
       total_failed_robots: "",
       robots_run_by: "",
@@ -85,7 +87,7 @@ const AddDpr = () => {
       comments: "",
       technician_present: [],
     },
-    siteIds: [],
+    sites: [],
     technicians: [],
     loading: false,
     loadingSiteIds: false,
@@ -148,22 +150,15 @@ const AddDpr = () => {
       value: e.target.value,
     });
   };
-
   const handleSiteNameChange = (e) => {
-    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+    const selectedSiteId = e.target.value;
+    setSiteId(selectedSiteId); // Updates local state
 
-    const selectedSiteName = e.target.value;
-    const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
-    );
-
-    if (selectedSite) {
-      setSiteId(selectedSite.site_id);
-
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
-    } else {
-      dispatch({ type: "SELECT_SITENAME_FAIL" });
-    }
+    dispatch({
+      type: "SET_FIELD",
+      name: "site_id",
+      value: selectedSiteId, // Ensures it's stored in dprData
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -174,9 +169,9 @@ const AddDpr = () => {
     }
     const newdata = {
       ...state.dprData,
-      siteId: site_id,
-      ...filteredTechnicians,
+      site_id: state.dprData.site_id, // Use the correct state variable
     };
+
     try {
       console.log(state.dprData);
       const data = await axios.post("/api/v1/techniciandprs", newdata, {
@@ -218,8 +213,8 @@ const AddDpr = () => {
                     onChange={handleSiteNameChange}
                   >
                     <option value="">Select Site Id</option>
-                    {state.siteIds?.length > 0 &&
-                      state.siteIds.map((item) => (
+                    {state.sites?.length > 0 &&
+                      state.sites.map((item) => (
                         <option key={item.site_id} value={item.site_id}>
                           {item.site_id}
                         </option>
@@ -269,6 +264,19 @@ const AddDpr = () => {
                   />
                 </div>
               </CCol>
+              <CCol md="6">
+                <div className="mb-3">
+                  <label className="form-label">robots_run_by</label>
+
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="robots_run_by"
+                    value={state.dprData.robots_run_by}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
 
               <CCol md="6">
                 <div className="mb-3">
@@ -283,117 +291,110 @@ const AddDpr = () => {
                   />
                 </div>
               </CCol>
-              <CCol
-                md={12}
-                className="mt-4 d-flex justify-content-between align-items-center"
-              >
-                <h5 className="fw-bold">Technicians Present</h5>
-                <CButton
-                  color="success"
-                  size="sm"
-                  onClick={() => {
-                    dispatch({
-                      type: "SET_FIELD",
-                      name: "technician_present",
-                      value: [
-                        ...state.dprData.technician_present,
-                        { username: "", id: "" },
-                      ],
-                    });
-                  }}
-                >
-                  + Add Technician
-                </CButton>
-              </CCol>
-
-              {/* Technician Table */}
-              <CTable striped bordered className="mt-2">
+              {/* <CTable striped bordered className="mt-2">
                 <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Image</CTableHeaderCell>
                     <CTableHeaderCell>Name</CTableHeaderCell>
-
                     <CTableHeaderCell style={{ width: "80px" }}>
                       Actions
                     </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
-
                 <CTableBody>
-                  {state.dprData.technician_present.map((tech, index) => (
+                  {state.technicians.map((tech, index) => (
                     <CTableRow key={index}>
                       <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                      <CTableDataCell className="position-relative">
-                        <CFormInput
-                          type="text"
-                          placeholder="Search Technician..."
-                          onChange={(e) => {
-                            const searchValue = e.target.value.toLowerCase();
-                            const filtered = state.technicians
-                              .filter((tech) =>
-                                tech.username
-                                  .toLowerCase()
-                                  .includes(searchValue)
-                              )
-                              .slice(0, 5);
-                            setFilteredTechnicians(filtered);
-                            setShowSuggestionsIndex(0);
-                          }}
-                          onFocus={() => setShowSuggestionsIndex(0)}
-                          onBlur={() =>
-                            setTimeout(() => setShowSuggestionsIndex(null), 200)
-                          }
-                        />
-
-                        {showSuggestionsIndex !== null &&
-                          filteredTechnicians.length > 0 && (
-                            <div className="suggestion-dropdown">
-                              {filteredTechnicians.map((tech, idx) => (
-                                <div
-                                  key={idx}
-                                  className="suggestion-item m-2"
-                                  onClick={() => {
-                                    dispatch({
-                                      type: "SET_FIELD",
-                                      name: "technician_present",
-                                      value: [
-                                        ...state.dprData.technician_present,
-                                        tech,
-                                      ],
-                                    });
-                                    setFilteredTechnicians([]);
-                                    setShowSuggestionsIndex(null);
-                                  }}
-                                >
-                                  <CAvatar
-                                    src={tech.profile_image}
-                                    className="me-2"
-                                  />
-                                  {tech.username}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                      <CTableDataCell>
+                        <CAvatar src={tech.profile_image} className="me-2" />
                       </CTableDataCell>
+                      <CTableDataCell>
+                        {tech.username} - {tech.email}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                      <CFormCheck
+            checked={state.dprData.technician_present.some(
+              (t) => t._id === tech._id
+            )}
+            onChange={(e) => {
+              const updatedList = e.target.checked
+                ? [
+                    ...state.dprData.technician_present,
+                    {
+                     name: tech.username,
+                      email: tech.email,
+                      technician_id: tech._id,
+                      role: tech.role,
+                      profile_image: tech.profile_image,
+                    },
+                  ]
+                : state.dprData.technician_present.filter(
+                    (t) => t._id !== tech._id
+                  );
 
-                      {/* Remove Button */}
-                      <CTableDataCell className="text-center">
-                        <CButton
-                          size="sm"
-                          onClick={() => {
-                            const updatedTechs =
-                              state.dprData.technician_present.filter(
-                                (_, i) => i !== index
-                              );
+              dispatch({
+                type: "SET_FIELD",
+                name: "technician_present",
+                value: updatedList,
+              });
+            }}
+          />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable> */}
+              <CTable striped bordered className="mt-2">
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Image</CTableHeaderCell>
+                    <CTableHeaderCell>Name</CTableHeaderCell>
+                    <CTableHeaderCell style={{ width: "80px" }}>
+                      Actions
+                    </CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {state.technicians.map((tech, index) => (
+                    <CTableRow key={index}>
+                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                      <CTableDataCell>
+                        <CAvatar src={tech.profile_image} className="me-2" />
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {tech.username} - {tech.email}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CFormCheck
+                          checked={state.dprData.technician_present.some(
+                            (t) => t.technician_id === tech._id
+                          )}
+                          onChange={(e) => {
+                            const updatedList = e.target.checked
+                              ? [
+                                  ...state.dprData.technician_present,
+                                  {
+                                    name: tech.username,
+                                    email: tech.email,
+                                    technician_id: tech._id, // Ensure consistent field name
+                                    _id: tech._id, // Ensure consistent field name
+                                    role: tech.role,
+                                    profile_image: tech.profile_image,
+                                  },
+                                ]
+                              : state.dprData.technician_present.filter(
+                                  (t) => t.technician_id !== tech._id // Match correctly
+                                );
+
                             dispatch({
                               type: "SET_FIELD",
                               name: "technician_present",
-                              value: updatedTechs,
+                              value: updatedList,
                             });
                           }}
-                        >
-                          ❌
-                        </CButton>
+                        />
                       </CTableDataCell>
                     </CTableRow>
                   ))}
