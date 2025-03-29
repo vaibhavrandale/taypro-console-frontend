@@ -240,7 +240,7 @@ const CreateInternalTicket = () => {
         payload: response.data.data, // Append new robot to state
       });
 
-      toast.success(response.data.data.message);
+      toast.success(response.data.message);
       navigate("/master-admin/internal-tickets"); // Redirect after success
     } catch (error) {
       console.error(error);

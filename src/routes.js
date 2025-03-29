@@ -4,6 +4,7 @@ import UpdatePreventivemaintanance from "./views/master-admin/preventive-maintan
 import CreatePreventivemaintanance from "./views/master-admin/preventive-maintanance/CreatePreventivemaintanance";
 import ExternalUsersDashboard from "./views/master-admin/users/ExternalUsersDashboard";
 import ResolveServiceTicket from "./views/master-admin/service-tickets/ResolveServiceTicket";
+import UpdateInternalTicket from "./views/master-admin/internal-tickets/UpdateInternalTicket";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -481,6 +482,11 @@ const routes = [
     path: "/master-admin/internal-tickets/create-new-internal-ticket",
     name: "Create New Internal Tickets",
     element: CreateNewInternalTicket,
+  },
+  {
+    path: "/master-admin/internal-tickets/update-internal-ticket/:id",
+    name: "Update Internal Tickets",
+    element: UpdateInternalTicket,
   },
   {
     path: "/master-admin/users",
