@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -12,50 +12,130 @@ import {
   CCol,
   CListGroup,
   CListGroupItem,
-} from '@coreui/react';
+} from "@coreui/react";
 
-import { users, departments } from '../../../data';
-import './internaltickts.css';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { departments } from "../../../data";
+import "./internaltickts.css";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "CREATE_TICKET_REQUEST":
+      return { ...state, createTicketloading: true, error: "" };
+    case "CREATE_TICKET_SUCCESS":
+      return {
+        ...state,
+        createTicketloading: false,
+        internal_tickets: action.payload,
+      };
+    case "CREATE_TICKET_FAIL":
+      return { ...state, createTicketloading: false, error: action.payload };
 
+    case "FETCH_USERS_REQUEST":
+      return { ...state, fetchusersloading: true, error: "" };
+    case "FETCH_USERS_SUCCESS":
+      return {
+        ...state,
+        fetchusersloading: false,
+        users: action.payload,
+      };
+    case "FETCH_USERS_FAIL":
+      return { ...state, fetchusersloading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 const CreateInternalTicket = () => {
-  const [formData, setFormData] = useState({
-    ticket_id: `IT-${Date.now()}`, // Generate unique Ticket ID
-    department: '',
-    subject: '',
-    description: '',
-    priority: 'Medium',
-    status: 'Open',
-    assigned_to: '',
-    assigned_to_email: '',
-    assigned_to_id: '',
-    created_by: 'Current User', // Replace with Authenticated User
-    created_by_email: 'currentuser@taypro.in', // Replace with Authenticated User Email
-    created_by_id: 'user123', // Replace with Authenticated User ID
-    created_at: new Date().toISOString().slice(0, 16), // Format Date
-  });
+  const [
+    { error, createTicketloading, internal_tickets, users, fetchusersloading },
+    dispatch,
+  ] = useReducer(reducer, {
+    users: [],
+    error: "",
+    createTicketloading: false,
+    internal_tickets: {},
 
-  const [searchTerm, setSearchTerm] = useState('');
+    fetchusersloading: false,
+  });
+  // const { userInfo, authtoken } = useSelector((state) => state);
+  // const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const navigate = useNavigate();
-  // Handle Form Changes
+  const [formData, setFormData] = useState({
+    department: "",
+    subject: "",
+    description: "",
+    priority: "",
+    status: "Open",
+    assigned_to: "",
+    assigned_to_email: "",
+    assigned_to_id: "",
+  });
+
+  useEffect(() => {
+    // setLoading(true);
+    const fetchUsers = async () => {
+      dispatch({ type: "FETCH_USERS_REQUEST" });
+      try {
+        const result = await axios.get(
+          "/api/v1/users/get-all-internal-users-without-pg",
+
+          {
+            headers: { authorization: `Bearer ${authtoken}` },
+          }
+        ); // Replace with your API endpoint
+        console.log(result.data.data);
+
+        const data = result.data.data;
+        dispatch({
+          type: "FETCH_USERS_SUCCESS",
+          payload: data,
+        });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        dispatch({
+          type: "FETCH_USERS_FAIL",
+          payload: "Failed to fetch users",
+        });
+      }
+    };
+
+    fetchUsers();
+  }, [authtoken]); // Runs only once on mount
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Department Selection & Auto-Fill Department Email
+  // const handleDepartmentChange = (e) => {
+  //   const selectedDepartment = e.target.value;
+  //   const departmentData = departments.find(
+  //     (dept) => dept.department === selectedDepartment
+  //   );
+
+  //   setFormData({
+  //     ...formData,
+  //     department: selectedDepartment,
+  //     department_email: departmentData ? departmentData.email : "",
+  //   });
+  // };
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
     const departmentData = departments.find(
       (dept) => dept.department === selectedDepartment
     );
 
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       department: selectedDepartment,
-      department_email: departmentData ? departmentData.email : '',
-    });
+      department_email: departmentData ? departmentData.email : "", // Ensure correct department email
+      assigned_to_email: prev.assigned_to ? prev.assigned_to.email : "", // Keep assigned user email separate
+    }));
   };
 
   const handleSearchChange = (e) => {
@@ -63,62 +143,115 @@ const CreateInternalTicket = () => {
     setSearchTerm(term);
 
     if (term.length === 0) {
-      // If user clears the input, reset assigned fields
-      setFormData({
-        ...formData,
-        assigned_to: '',
-        assigned_to_email: '',
-        assigned_to_id: '',
-      });
+      setFormData({ ...formData, assigned_to: null });
       setFilteredUsers([]);
       return;
     }
 
-    // Filter users by email
     const filteredUserEmails = users.filter((user) =>
       user.email.toLowerCase().includes(term)
     );
 
-    // Filter departments by email
     const filteredDepartmentEmails = departments.filter((dept) =>
       dept.email.toLowerCase().includes(term)
     );
 
-    // Combine both results
     const combinedResults = [
       ...filteredUserEmails.map((user) => ({
-        username: user.username,
-        email: user.email,
         id: user.id,
+        email: user.email,
+
+        username: user.username,
+        profile_image: user.profile_image,
+        role: user.role,
       })),
       ...filteredDepartmentEmails.map((dept) => ({
-        username: dept.department,
+        id: dept.id,
         email: dept.email,
-        id: dept.id, // Unique ID for departments
+        name: dept.department,
       })),
     ];
 
     setFilteredUsers(combinedResults);
   };
 
-  const selectUser = (item) => {
+  const selectUser = (user) => {
     setFormData({
       ...formData,
-      assigned_to: item.username,
-      assigned_to_email: item.email,
-      assigned_to_id: item.id,
+      assigned_to: user, // Store the entire user object
     });
 
-    setSearchTerm(item.email); // Show the selected email in the input
-    setFilteredUsers([]); // Hide search results
+    setSearchTerm(user.email);
+    setFilteredUsers([]);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('New Ticket Created:', formData);
-    toast.success('Ticket Created Successfully!');
-    navigate('/master-admin/internal-tickets');
-    // 🚀 Send Data to Backend or Store in State
+  // const selectUser = (user) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     assigned_to: user.username,
+  //     assigned_to_email: user.email,
+  //     assigned_to_id: user.id,
+  //     department_email: prev.department_email, // Keep department email unchanged
+  //   }));
+
+  //   setSearchTerm(user.email);
+  //   setFilteredUsers([]);
+  // };
+
+  // const handleSubmit = async () => {
+  //   console.log(formData);
+  //   try {
+  //     dispatch({ type: "CREATE_TICKET_REQUEST" });
+  //     const response = await axios.post("/api/v1/internaltickets", formData, {
+  //       headers: { authorization: `Bearer ${authtoken}` },
+  //     });
+
+  //     console.log("Ticket successfully created:", response.data);
+  //     dispatch({
+  //       type: "CREATE_TICKET_SUCCESS",
+  //       payload: response.data.data, // Append new robot to state
+  //     });
+
+  //     toast.success(response.data.data.message);
+  //   } catch (error) {
+  //     console.error(error);
+  //     dispatch({
+  //       type: "CREATE_TICKET_FAIL",
+  //       payload: error.response.data.error,
+  //     });
+  //     alert(error.response.data.error);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
+    console.log(formData);
+    try {
+      dispatch({ type: "CREATE_TICKET_REQUEST" });
+
+      const response = await axios.post("/api/v1/internaltickets", formData, {
+        headers: { authorization: `Bearer ${authtoken}` },
+      });
+
+      console.log("Ticket successfully created:", response.data);
+      dispatch({
+        type: "CREATE_TICKET_SUCCESS",
+        payload: response.data.data, // Append new robot to state
+      });
+
+      toast.success(response.data.data.message);
+      navigate("/master-admin/internal-tickets"); // Redirect after success
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: "CREATE_TICKET_FAIL",
+        payload: error.response
+          ? error.response.data.error
+          : "An error occurred",
+      });
+      alert(error.response ? error.response.data.error : "An error occurred");
+    }
   };
 
   return (
@@ -131,34 +264,46 @@ const CreateInternalTicket = () => {
           <CCardBody>
             <CForm onSubmit={handleSubmit}>
               <CRow>
-                {/* Department */}
-                {/* <CCol md={6}>
-                  <CFormSelect
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
-                    label="To Department"
-                    required
-                    className="mb-3"
-                  >
-                    {departments
-                      .sort((a, b) => a.department.localeCompare(b.department)) // Sorting Alphabetically
-                      .map((item, index) => (
-                        <option key={index} value={item.department}>
-                          {item.department} -{item.email}
-                        </option>
-                      ))}
-                  </CFormSelect>
+                {/* Assign To Email (Search) */}
+                <CCol md={6}>
                   <CFormInput
-                    type="hidden"
-                    name="department_email"
-                    value={formData.department_email}
-                    onChange={handleChange}
-                    label=""
-                    required
+                    type="email"
+                    name="assigned_to_email"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    label="Assign To Email"
+                    className="mb-3"
+                    autoComplete="off"
+                    placeholder="Search by email..."
+                  />
+
+                  {/* 📌 Display Search Suggestions */}
+                  {filteredUsers.length > 0 && (
+                    <CListGroup className="mb-3" id="userlist">
+                      {filteredUsers.map((user, index) => (
+                        <CListGroupItem
+                          key={index}
+                          id="userlistitem"
+                          onClick={() => selectUser(user)}
+                        >
+                          {user.username} - {user.email}
+                        </CListGroupItem>
+                      ))}
+                    </CListGroup>
+                  )}
+                </CCol>
+
+                {/* Assigned To Name (Auto-filled) */}
+                <CCol md={6}>
+                  <CFormInput
+                    type="text"
+                    name="assigned_to"
+                    readOnly
+                    value={formData.assigned_to.username}
+                    label="Assign To"
                     className="mb-3"
                   />
-                </CCol> */}
+                </CCol>
 
                 <CCol md={6}>
                   <CFormSelect
@@ -184,7 +329,7 @@ const CreateInternalTicket = () => {
                   {formData.department_email ? (
                     <span className="text-muted">(this email is for cc)</span>
                   ) : (
-                    ''
+                    ""
                   )}
                   {/* Hidden Department Email Field (Auto-Filled) */}
                   <CFormInput
@@ -231,55 +376,12 @@ const CreateInternalTicket = () => {
                     label="Priority"
                     className="mb-3"
                   >
-                    <option value="" selected>
-                      Select
-                    </option>
+                    <option value="">Select</option>
                     <option value="Critical">Critical</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
                   </CFormSelect>
-                </CCol>
-
-                {/* Assign To Email (Search) */}
-                <CCol md={6}>
-                  <CFormInput
-                    type="email"
-                    name="assigned_to_email"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    label="Assign To Email"
-                    className="mb-3"
-                    placeholder="Search by email..."
-                  />
-
-                  {/* 📌 Display Search Suggestions */}
-                  {filteredUsers.length > 0 && (
-                    <CListGroup className="mb-3" id="userlist">
-                      {filteredUsers.map((user) => (
-                        <CListGroupItem
-                          id="userlistitem"
-                          key={user.id}
-                          action
-                          onClick={() => selectUser(user)}
-                        >
-                          {user.username} - {user.email}
-                        </CListGroupItem>
-                      ))}
-                    </CListGroup>
-                  )}
-                </CCol>
-
-                {/* Assigned To Name (Auto-filled) */}
-                <CCol md={6}>
-                  <CFormInput
-                    type="text"
-                    name="assigned_to"
-                    readOnly
-                    value={formData.assigned_to}
-                    label="Assign To"
-                    className="mb-3"
-                  />
                 </CCol>
 
                 {/* Created At (Auto-Filled) */}

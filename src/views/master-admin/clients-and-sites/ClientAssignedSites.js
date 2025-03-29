@@ -360,6 +360,16 @@ const ClientAssignedSites = () => {
                   )}
                 </CTableBody>
               </CTable>
+              {/* <PaginateInput
+                page={page}
+                totalPages={state.totalPages}
+                hasPrevPage={state.hasPrevPage}
+                hasNextPage={state.hasNextPage}
+                pageInput={pageInput}
+                handlePageChange={handlePageChange}
+                handlePageInputChange={handlePageInputChange}
+                handlePageInputSubmit={handlePageInputSubmit}
+              /> */}
               <PaginateInput
                 page={page}
                 totalPages={state.totalPages}
@@ -369,6 +379,8 @@ const ClientAssignedSites = () => {
                 handlePageChange={handlePageChange}
                 handlePageInputChange={handlePageInputChange}
                 handlePageInputSubmit={handlePageInputSubmit}
+                limit={limit}
+                handleLimitChange={setLimit} // New prop
               />
             </>
           </div>

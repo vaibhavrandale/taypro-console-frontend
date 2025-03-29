@@ -18,6 +18,7 @@ import {
   CModalFooter,
   CFormSelect,
   CFormTextarea,
+  CTooltip,
 } from "@coreui/react";
 // import { internal_tickets } from "../../../data";
 import { Link } from "react-router-dom";
@@ -37,6 +38,9 @@ import // CModal,
 // CBadge,
 // CTooltip,
 "@coreui/react";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { formatDistanceToNow } from "date-fns";
+import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -84,7 +88,7 @@ const InternalTicketsDashboard = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
   const authtoken = useSelector((state) => state.authtoken);
-
+  const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   useEffect(() => {
@@ -145,7 +149,7 @@ const InternalTicketsDashboard = () => {
   );
 
   /** ✏️ Open Update Modal */
-  const openModal = (ticket) => {
+  const openUpdateModal = (ticket) => {
     setSelectedTicket(ticket);
     setFormData(ticket);
     setModalVisible(true);
@@ -161,6 +165,24 @@ const InternalTicketsDashboard = () => {
   const handleUpdate = () => {
     console.log("Updated Ticket:", formData);
     setModalVisible(false);
+  };
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
   };
 
   return (
@@ -206,13 +228,29 @@ const InternalTicketsDashboard = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredTickets.length > 0 ? (
+          {loadingTickets ? (
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : error ? (
+            <CTableRow>{error}</CTableRow>
+          ) : filteredTickets.length > 0 ? (
             filteredTickets.map((ticket, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{ticket.ticket_id}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {ticket.ticket_id}
+                </CTableDataCell>
                 <CTableDataCell>{ticket.department}</CTableDataCell>
-                <CTableDataCell>{ticket.subject}</CTableDataCell>
+                {/* <CTableDataCell>{ticket.subject}</CTableDataCell> */}
+                <CTableDataCell>
+                  {ticket.subject.length > 30
+                    ? `${ticket.subject.slice(0, 30)}...`
+                    : ticket.subject}
+                </CTableDataCell>
+
                 <CTableDataCell>
                   <CBadge
                     color={
@@ -239,14 +277,28 @@ const InternalTicketsDashboard = () => {
                     {ticket.status}
                   </CBadge>
                 </CTableDataCell>
-                <CTableDataCell>{ticket.assigned_to.name}</CTableDataCell>
+                <CTableDataCell>{ticket.assigned_to.username}</CTableDataCell>
                 <CTableDataCell>{ticket.created_by.name}</CTableDataCell>
-                <CTableDataCell>{ticket.createdAt}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {/* {ticket.createdAt} */}
+                  <span className="">
+                    <CTooltip
+                      content={new Date(ticket.createdAt).toLocaleString()}
+                      placement="top"
+                    >
+                      <span>
+                        {formatDistanceToNow(new Date(ticket.createdAt), {
+                          addSuffix: true,
+                        })}
+                      </span>
+                    </CTooltip>
+                  </span>
+                </CTableDataCell>
                 <CTableDataCell>
                   <CButton
                     color="primary"
                     size="sm"
-                    onClick={() => openModal(ticket)}
+                    onClick={() => openUpdateModal(ticket)}
                   >
                     Update
                   </CButton>
@@ -262,8 +314,275 @@ const InternalTicketsDashboard = () => {
           )}
         </CTableBody>
       </CTable>
+      {/* <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      /> */}
+
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
+      />
+      {/* 🛠 Update Modal */}
 
       {/* 🛠 Update Modal */}
+      <CModal
+        size="xl"
+        scrollable
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      >
+        <CModalHeader>
+          <CModalTitle>
+            Update Ticket:{" "}
+            <span className="badge bg-success">{formData.ticket_id}</span>
+          </CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {selectedTicket && (
+            <CRow>
+              {/* Ticket ID & Department */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="ticket_id"
+                  value={formData.ticket_id}
+                  label="Ticket ID"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+              {/* Assigned To & Assigned Email */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="assigned_to"
+                  value={formData.assigned_to.name}
+                  label="Assigned To"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  type="email"
+                  name="assigned_to_email"
+                  value={formData.assigned_to.email}
+                  label="Assigned To Email"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* Assigned ID (Disabled) */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="assigned_to_id"
+                  value={formData.assigned_to.id}
+                  label="Assigned To ID"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="department"
+                  value={formData.department}
+                  label="Department"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* Subject & Description */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  label="Subject"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </CCol>
+              <CCol md={12}>
+                <CFormTextarea
+                  name="description"
+                  value={formData.description}
+                  label="Ticket Generateing description"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* Priority & Status */}
+              <CCol md={6}>
+                <CFormSelect
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  label="Priority"
+                  className="mb-3"
+                >
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </CFormSelect>
+              </CCol>
+              <CCol md={6}>
+                <CFormSelect
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  label="Status"
+                  className="mb-3"
+                >
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </CFormSelect>
+              </CCol>
+
+              {/* Created By & Created At */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="created_by"
+                  value={formData.created_by.name}
+                  label="Created By"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  type="email"
+                  name="created_by_email"
+                  value={formData.created_by.email}
+                  label="Created By Email"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* Created By ID (Disabled) */}
+              <CCol md={6}>
+                <CFormInput
+                  type="text"
+                  name="created_by_id"
+                  value={formData.created_by.userId}
+                  label="Created By ID"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* Created At (Disabled) */}
+              <CCol md={6}>
+                <CFormInput
+                  type="datetime-local"
+                  name="created_at"
+                  value={formData.created_at}
+                  label="Created At"
+                  disabled
+                  className="mb-3"
+                />
+              </CCol>
+
+              {/* If Resolved, Show Resolved By & Resolved At */}
+              {formData.status === "Resolved" && (
+                <>
+                  <CCol md={6}>
+                    <CFormInput
+                      type="text"
+                      name="resolved_by"
+                      value={formData.resolved_by.name || ""}
+                      label="Resolved By"
+                      onChange={handleChange}
+                      className="mb-3"
+                    />
+                  </CCol>
+                  <CCol md={6}>
+                    <CFormInput
+                      type="email"
+                      name="resolved_by_email"
+                      value={formData.resolved_by.email || ""}
+                      label="Resolved By Email"
+                      onChange={handleChange}
+                      className="mb-3"
+                    />
+                  </CCol>
+
+                  {/* Resolved By ID (Disabled) */}
+                  <CCol md={6}>
+                    <CFormInput
+                      type="text"
+                      name="resolved_by_id"
+                      value={formData.resolved_by.id || ""}
+                      label="Resolved By ID"
+                      disabled
+                      className="mb-3"
+                    />
+                  </CCol>
+
+                  {/* Resolved At */}
+                  <CCol md={6}>
+                    <CFormInput
+                      type="datetime-local"
+                      name="resolved_at"
+                      value={formData.resolved_at || ""}
+                      label="Resolved At"
+                      onChange={handleChange}
+                      className="mb-3"
+                    />
+                  </CCol>
+                </>
+              )}
+
+              {/* Resolution Notes */}
+              <CCol md={12}>
+                <CFormTextarea
+                  name="resolution_notes"
+                  value={formData.resolution_notes}
+                  label="Resolution Notes"
+                  onChange={handleChange}
+                  className="mb-3"
+                />
+              </CCol>
+            </CRow>
+          )}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            size="sm"
+            color="secondary"
+            onClick={() => setModalVisible(false)}
+          >
+            Cancel
+          </CButton>
+          <CButton size="sm" color="primary" onClick={handleUpdate}>
+            Save Changes
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };

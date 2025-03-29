@@ -196,6 +196,16 @@ const SiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
+      {/* <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      /> */}
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -205,6 +215,8 @@ const SiteManagement = () => {
         handlePageChange={handlePageChange}
         handlePageInputChange={handlePageInputChange}
         handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
       />
     </div>
   );

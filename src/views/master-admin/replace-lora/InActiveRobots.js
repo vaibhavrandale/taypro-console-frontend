@@ -299,6 +299,16 @@ const InActiveRobots = () => {
           )}
         </CTableBody>
       </CTable>
+      {/* <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+      /> */}
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -308,6 +318,8 @@ const InActiveRobots = () => {
         handlePageChange={handlePageChange}
         handlePageInputChange={handlePageInputChange}
         handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
       />
       {/* Update Modal */}
       <CModal
