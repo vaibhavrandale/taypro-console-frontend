@@ -187,14 +187,11 @@ const ClientAssignedSites = () => {
       return;
     }
     try {
+      const { id, ...filderedData } = state.formData;
       dispatch({ type: "ADD_SITE_START" });
-      const response = await axios.post(
-        `${API_BASE_URL}/sites`,
-        state.formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/sites`, filderedData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
       // dispatch({ type: "ADD_SITE", payload: response.data.data });
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
 

@@ -126,7 +126,8 @@ const PreventiveMaintananceNotifications = () => {
     ? preventivemaintanancenotifications.filter(
         (robot) =>
           robot.pm_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          robot.message.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 
@@ -138,7 +139,7 @@ const PreventiveMaintananceNotifications = () => {
         <CCol md={4}>
           <CFormInput
             type="text"
-            placeholder="Search by Robot No or Site ID..."
+            placeholder="Search by Robot No or Site ID or message..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -157,6 +158,7 @@ const PreventiveMaintananceNotifications = () => {
             <CTableHeaderCell>client ID</CTableHeaderCell>
             <CTableHeaderCell>site_location</CTableHeaderCell>
             <CTableHeaderCell>Message</CTableHeaderCell>
+            <CTableHeaderCell>Action By</CTableHeaderCell>
             <CTableHeaderCell>Time</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -183,6 +185,7 @@ const PreventiveMaintananceNotifications = () => {
                 <CTableDataCell>{pm.client_id}</CTableDataCell>
                 <CTableDataCell>{pm.site_location}</CTableDataCell>
                 <CTableDataCell>{pm.message}</CTableDataCell>
+                <CTableDataCell>{pm.last_activity?.name}</CTableDataCell>
                 <CTableDataCell>
                   {/* {pm.createdAt} */}
                   <span>

@@ -468,8 +468,8 @@ const Clients = () => {
                       style={{ minWidth: "200px" }}
                       color="primary"
                       size="sm"
-                      //   to={`clients-data/${client.client_id}`}
-                      onClick={() => openViewModal(client._id)}
+                      to={`clients-data/${client.client_id}`}
+                      // onClick={() => openViewModal(client._id)}
                     >
                       View Assigned Sites
                     </Link>
