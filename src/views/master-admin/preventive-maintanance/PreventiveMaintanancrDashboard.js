@@ -24,6 +24,8 @@ import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
+import CIcon from "@coreui/icons-react";
+import { cilBell } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -141,11 +143,13 @@ const PreventiveMaintanancrDashboard = () => {
     fetchPreventivemaintenances();
   }, [authtoken, limit, page]);
 
-  const FilteredPreventivemaintenances = preventivemaintanance.filter(
-    (robot) =>
-      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const FilteredPreventivemaintenances = preventivemaintanance
+    ? preventivemaintanance.filter(
+        (robot) =>
+          robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -180,6 +184,13 @@ const PreventiveMaintanancrDashboard = () => {
         >
           Create New
         </Link>
+        <Link
+          className="btn btn-sm btn-secondary m-1 d-flex justify-content-center align-items-center"
+          to="/master-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications"
+        >
+          All PM Activity
+          <CIcon icon={cilBell} />
+        </Link>
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
@@ -196,6 +207,7 @@ const PreventiveMaintanancrDashboard = () => {
       <CTable bordered hover responsive className="text-center shadow-sm">
         <CTableHead color="secondary">
           <CTableRow>
+            <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>PM ID</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Robot No
@@ -224,6 +236,7 @@ const PreventiveMaintanancrDashboard = () => {
           ) : FilteredPreventivemaintenances.length > 0 ? (
             FilteredPreventivemaintenances.map((pm, index) => (
               <CTableRow key={index}>
+                <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{pm.pm_id}</CTableDataCell>
                 <CTableDataCell>{pm.robot_no}</CTableDataCell>
                 <CTableDataCell>{pm.site_id}</CTableDataCell>
@@ -354,7 +367,7 @@ const PreventiveMaintanancrDashboard = () => {
                     ))}
                 </CTableBody> */}
 
-                <CTableBody>
+                {/* <CTableBody>
                   {Object.entries(formData)
                     .filter(
                       ([key]) => key !== "last_activity" && key !== "is_delete"
@@ -410,6 +423,54 @@ const PreventiveMaintanancrDashboard = () => {
                               )}
                             </div>
                           ) : (
+                            <span className="text-dark fw-medium">
+                              {String(value)}
+                            </span>
+                          )}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
+                </CTableBody> */}
+
+                <CTableBody>
+                  {Object.entries(formData)
+                    .filter(
+                      ([key]) => key !== "last_activity" && key !== "is_delete"
+                    )
+                    .map(([key, value]) => (
+                      <CTableRow key={key} className="align-middle">
+                        {/* Label Column */}
+                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                          {key.replace(/_/g, " ")}
+                        </CTableDataCell>
+
+                        {/* Value Column */}
+                        <CTableDataCell>
+                          {/* Boolean Fields (Active/Inactive) */}
+                          {typeof value === "boolean" ? (
+                            <CBadge
+                              color={value ? "success" : "danger"}
+                              shape="rounded-pill"
+                            >
+                              {value ? "Active" : "Inactive"}
+                            </CBadge>
+                          ) : /* Image Fields */
+                          key.includes("_image") && value ? (
+                            <img src={value} alt={key} width="50" height="50" />
+                          ) : /* Date Fields */
+                          key.includes("atedAt") && key !== "site_location" ? (
+                            <CTooltip
+                              content={new Date(value).toLocaleString()}
+                              placement="top"
+                            >
+                              <span>
+                                {formatDistanceToNow(new Date(value), {
+                                  addSuffix: true,
+                                })}
+                              </span>
+                            </CTooltip>
+                          ) : (
+                            /* Default Text Value */
                             <span className="text-dark fw-medium">
                               {String(value)}
                             </span>

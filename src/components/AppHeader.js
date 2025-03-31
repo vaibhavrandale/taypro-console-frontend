@@ -60,7 +60,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   });
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
-
+  const [count, setCount] = useState(0);
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
   const navigate = useNavigate();
@@ -68,10 +68,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     const fetchNotifications = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get("/api/v1/notifications/getall", {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        const response = await axios.get(
+          "/api/v1/notifications/get-ten-notifications",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
         let result = response.data.data;
+        setCount(response.data.count);
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
         console.log(error);
@@ -223,13 +228,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               >
                 <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
               </CDropdownItem>
-              {/* <CDropdownItem
-              as="button"
-              active={colorMode === 'auto'}
-              onClick={() => setColorMode('auto')}
-            >
-              <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
-            </CDropdownItem> */}
             </CDropdownMenu>
           </CDropdown>
         </CHeaderNav>
@@ -255,9 +253,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       className="badge bg-danger d-flex justify-content-center align-items-center"
                       style={{
                         height:
-                          unreadNotifications.length > 99 ? "22px" : "18px",
+                          unreadNotifications.length > 99 ? "36px" : "22px",
                         width:
-                          unreadNotifications.length > 99 ? "22px" : "18px",
+                          unreadNotifications.length > 99 ? "35px" : "25px",
                         borderRadius: "50%",
                         fontSize: "12px",
                         display: "flex",
@@ -267,7 +265,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       position="top-end"
                       shape="rounded-pill"
                     >
-                      {unreadNotifications.length}
+                      {/* {unreadNotifications.length} */}
+                      {count}
                     </CBadge>
                   </span>
                 ) : (

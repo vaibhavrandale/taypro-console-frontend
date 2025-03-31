@@ -228,7 +228,7 @@ const AddDpr = () => {
                   <label className="form-label">Running Robots</label>
 
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     name="total_running_robots"
                     value={state.dprData.total_running_robots}
@@ -242,7 +242,7 @@ const AddDpr = () => {
                   <label className="form-label">Failed Robots</label>
 
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     name="total_failed_robots"
                     value={state.dprData.total_failed_robots}
@@ -256,7 +256,7 @@ const AddDpr = () => {
                   <label className="form-label">Total Robots</label>
 
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     name="total_robots"
                     value={state.dprData.total_robots}

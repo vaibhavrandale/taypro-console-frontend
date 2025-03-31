@@ -82,8 +82,8 @@ const _nav = [
         to: "/master-admin/preventive-maintanance-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
-          color: "danger",
-          text: "PENDING",
+          color: "success",
+          text: "DONE",
         },
       },
       {
@@ -164,7 +164,7 @@ const _nav = [
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: "success",
-          text: "DONE",
+          text: "PENDING",
         },
       },
 
@@ -175,7 +175,7 @@ const _nav = [
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: "success",
-          text: "DONE",
+          text: "PENDING",
         },
       },
       {
@@ -185,7 +185,7 @@ const _nav = [
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
           color: "success",
-          text: "DONE",
+          text: "PENDING",
         },
       },
       {

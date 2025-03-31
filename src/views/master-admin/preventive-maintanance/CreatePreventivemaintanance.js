@@ -1,14 +1,6 @@
-// import React from "react";
-
-// const CreatePreventivemaintanance = () => {
-//   return <div>CreatePreventivemaintanance</div>;
-// };
-
-// export default CreatePreventivemaintanance;
-import React, { useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-
 import {
   CCard,
   CCardHeader,
@@ -16,66 +8,284 @@ import {
   CForm,
   CFormLabel,
   CFormInput,
-  CFormSelect,
-  CButton,
+  CListGroup,
+  CListGroupItem,
   CRow,
   CCol,
+  CButton,
+  CFormTextarea,
+  CFormSelect,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload } from "@coreui/icons";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
-const CreatePreventivemaintanance = () => {
-  const [formData, setFormData] = useState({
-    robot_no: "",
-    robot_type: "",
-    client_name: "",
-    site_location: "",
-    physical_condition_of_transPipe: { condition: "", image: "" },
-    physical_condition_of_channel: { condition: "", image: "" },
-    physical_condition_of_top_bottom_cover: { condition: "", image: "" },
-    oiling_need_for_bearing: { condition: "", image: "" },
-    oiling_need_for_coupling: { condition: "", image: "" },
-    oiling_need_for_motors: { condition: "", image: "" },
-    alignment: { mf_clothes: "", wheels: "" },
-  });
+const initialState = {
+  pm_id: "",
+  robot_no: "",
+  robot_type: "",
+  client_id: "",
+  site_name: "",
+  site_id: "",
+  site_location: "",
+  physical_condition_of_transPipe_condition: "",
+  physical_condition_of_transPipe_image: "",
+  physical_condition_of_channel_condition: "",
+  physical_condition_of_channel_image: "",
+  oiling_need_for_bearing_condition: "",
+  oiling_need_for_bearing_condition_image: "",
+  oiling_need_for_motors_condition: "",
+  oiling_need_for_motors_image: "",
+  mf_clothes_alignment: "",
+  wheels_alignment: "",
+  is_wheels_loose: "",
+  is_nutbolt_loose: "",
+  start_date: "",
+  end_date: "",
+  loadingUpload: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_PM_REQUEST":
+      return { ...state, loadingPM: true, error: "" };
+
+    case "ADD_PM_SUCCESS":
+      return {
+        ...state,
+        loadingPM: false,
+        pmData: action.payload,
+        success: true,
+      };
+
+    case "ADD_PM_FAIL":
+      return {
+        ...state,
+        loadingPM: false,
+        error: action.payload,
+        success: false,
+      };
+
+    case "UPDATE_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "FILL_ROBOT_DATA":
+      return { ...state, ...action.data };
+    case "SET_IMAGE":
+      return { ...state, [action.field]: action.url };
+
+    // case "UPLOAD_REQUEST":
+    //   return { ...state, loadingUpload: true, errorUpload: "" };
+    // case "UPLOAD_SUCCESS":
+    //   return {
+    //     ...state,
+    //     loadingUpload: false,
+    //     errorUpload: "",
+    //   };
+    // case "UPLOAD_FAIL":
+    //   return { ...state, loadingUpload: false, errorUpload: action.payload };
+
+    case "UPLOAD_REQUEST":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: true },
+      };
+
+    case "UPLOAD_SUCCESS":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: false },
+      };
+
+    case "UPLOAD_FAIL":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: false },
+        errorUpload: action.payload,
+      };
+
+    case "RESET":
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+const CreatePreventiveMaintenance = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const [loading, setLoading] = useState(false);
+  const [robots, setRobots] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRobots, setFilteredRobots] = useState([]);
+
+  useEffect(() => {
+    const fetchRobots = async () => {
+      try {
+        const { data } = await axios.get(
+          "/api/v1/robots/get-robots/robots-without-pg",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        setRobots(data.data);
+      } catch (error) {
+        toast.error("Failed to fetch robots");
+      }
+    };
+    fetchRobots();
+  }, [authtoken]);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.length > 0) {
+      const filtered = robots.filter(
+        (robot) =>
+          robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
+          robot.site_id.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredRobots(filtered);
+    } else {
+      setFilteredRobots([]);
+    }
   };
 
-  const handleObjectChange = (e, key) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        [name]: value,
+  const selectRobotFromSearch = (robot) => {
+    dispatch({
+      type: "FILL_ROBOT_DATA",
+      data: {
+        robot_no: robot.robot_no,
+        robot_type: robot.robot_type,
+        site_id: robot.site_id,
       },
-    }));
+    });
+    setSearchTerm("");
+    setFilteredRobots([]);
+  };
+
+  // const handleImageUpload = async (e, fieldName) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/preventive-maintanance",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+  //     dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
+  //     toast.success("Image uploaded successfully.");
+  //   } catch (err) {
+  //     toast.error("Image upload failed.");
+  //   }
+  // };
+
+  // const handleImageUpload = async (e, fieldName) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   dispatch({ type: "UPLOAD_REQUEST" }); // Show loading
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/preventive-maintanance",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
+
+  //     dispatch({ type: "UPLOAD_SUCCESS" }); // Hide loading
+  //     toast.success("Image uploaded successfully.");
+  //   } catch (err) {
+  //     dispatch({ type: "UPLOAD_FAIL", payload: "Image upload failed" });
+  //     toast.error("Image upload failed.");
+  //   }
+  // };
+
+  const handleImageUpload = async (e, fieldName) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+
+    dispatch({ type: "UPLOAD_REQUEST", field: fieldName }); // Set loading for this specific field
+
+    try {
+      const { data } = await axios.post(
+        "/api/v1/image-upload/preventive-maintanance",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      if (data?.url) {
+        dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
+      }
+
+      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName }); // Stop loading for this field
+      toast.success("Image uploaded successfully.");
+    } catch (err) {
+      dispatch({
+        type: "UPLOAD_FAIL",
+        field: fieldName,
+        payload: "Upload failed",
+      });
+      toast.error("Image upload failed.");
+    }
+  };
+
+  const handleChange = (e) => {
+    dispatch({
+      type: "UPDATE_FIELD",
+      field: e.target.name,
+      value: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(
-        "/api/v1/preventivemaintenances",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-      console.log(response);
+      dispatch({ type: "ADD_PM_REQUEST" });
 
-      toast.success(response.data.message);
+      const data = await axios.post("/api/v1/preventivemaintenances", state, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
+      toast.success("Preventive Maintenance Created Successfully!");
+
+      // toast.success("Preventive Maintenance Created!");
       navigate("/master-admin/preventive-maintanance-dashboard");
     } catch (error) {
-      console.error(error);
-      toast.error(error.response.data.error);
+      toast.error(error.response?.data?.error || "Something went wrong");
+      dispatch({ type: "ADD_PM_FAIL", payload: error.message });
+      toast.error(error.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -87,84 +297,155 @@ const CreatePreventivemaintanance = () => {
       <CCardBody>
         <CForm onSubmit={handleSubmit}>
           <CRow className="gy-3">
-            <CCol md={6}>
-              <CFormLabel>Robot No</CFormLabel>
+            <CCol md={12}>
+              <CFormLabel>Search Robot</CFormLabel>
               <CFormInput
                 type="text"
-                name="robot_no"
-                value={formData.robot_no}
-                onChange={handleChange}
-                required
+                placeholder="Search Robot No or Site ID..."
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
+              <CListGroup className="mb-3">
+                {searchTerm && filteredRobots.length === 0 ? (
+                  <CListGroupItem>No robots found</CListGroupItem>
+                ) : (
+                  filteredRobots.map((robot, index) => (
+                    <CListGroupItem
+                      key={index}
+                      action
+                      onClick={() => selectRobotFromSearch(robot)}
+                    >
+                      {robot.robot_no} - {robot.site_id}
+                    </CListGroupItem>
+                  ))
+                )}
+              </CListGroup>
             </CCol>
-            <CCol md={6}>
-              <CFormLabel>Robot Type</CFormLabel>
-              <CFormInput
-                type="text"
-                name="robot_type"
-                value={formData.robot_type}
-                onChange={handleChange}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Client Name</CFormLabel>
-              <CFormInput
-                type="text"
-                name="client_name"
-                value={formData.client_name}
-                onChange={handleChange}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Site Location</CFormLabel>
-              <CFormInput
-                type="text"
-                name="site_location"
-                value={formData.site_location}
-                onChange={handleChange}
-                required
-              />
-            </CCol>
-          </CRow>
 
-          {/* Dynamic Object Inputs */}
-          {[
-            "physical_condition_of_transPipe",
-            "physical_condition_of_channel",
-            "physical_condition_of_top_bottom_cover",
-            "oiling_need_for_bearing",
-            "oiling_need_for_coupling",
-            "oiling_need_for_motors",
-          ].map((key) => (
-            <CRow key={key} className="gy-3 mt-3">
-              <CCol md={6}>
-                <CFormLabel>{key.replace(/_/g, " ")}</CFormLabel>
-                <CFormSelect
-                  name="condition"
-                  value={formData[key].condition}
-                  onChange={(e) => handleObjectChange(e, key)}
-                >
-                  <option value="">Select Condition</option>
-                  <option value="Good">Good</option>
-                  <option value="Needs Repair">Needs Repair</option>
-                </CFormSelect>
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel>Image URL</CFormLabel>
+            {["robot_no", "robot_type", "site_id"].map((field) => (
+              <CCol md={6} key={field}>
+                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
                 <CFormInput
                   type="text"
-                  name="image"
-                  value={formData[key].image}
-                  onChange={(e) => handleObjectChange(e, key)}
+                  name={field}
+                  value={state[field]}
+                  readOnly
                 />
               </CCol>
-            </CRow>
-          ))}
+            ))}
 
-          <CButton color="primary" type="submit" className="mt-4">
-            Submit
+            {[
+              "physical_condition_of_transPipe_condition",
+              "physical_condition_of_channel_condition",
+              "physical_condition_of_top_bottom_cover_condition",
+              "oiling_need_for_bearing_condition",
+              "oiling_need_for_coupling_condition",
+              "oiling_need_for_motors_condition",
+              "mf_clothes_alignment",
+              "wheels_alignment",
+              "is_wheels_loose",
+              "is_nutbolt_loose",
+            ].map((field) => (
+              <CCol md={6} key={field}>
+                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+
+                <CFormSelect
+                  name={field}
+                  value={state[field]}
+                  onChange={handleChange}
+                >
+                  {[
+                    "mf_clothes_alignment",
+                    "wheels_alignment",
+                    "physical_condition_of_transPipe_condition",
+                    "physical_condition_of_channel_condition",
+                    "physical_condition_of_top_bottom_cover_condition",
+                  ].includes(field) ? (
+                    <>
+                      <option value="">Select</option>
+                      <option value="OK">OK</option>
+                      <option value="Not OK">Not OK</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="">Select</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </>
+                  )}
+                </CFormSelect>
+              </CCol>
+            ))}
+
+            {/* {[
+              "physical_condition_of_transPipe_image",
+              "physical_condition_of_channel_image",
+              "oiling_need_for_bearing_condition_image",
+              "oiling_need_for_motors_image",
+            ].map((field) => (
+              <CCol md={6} key={field}>
+                <CFormLabel>Upload {field.replace(/_/g, " ")}</CFormLabel>
+                {state.loadingUpload[field] ? (
+                  <LoadingSpinner /> // Show loading spinner while uploading
+                ) : [field] ? (
+                  <Link to={[field]} target="blank">
+                    {" "}
+                    View
+                  </Link>
+                ) : (
+                  ""
+                )}
+                <div className="container-btn-file p-2 m-2 w-20">
+                  <CIcon icon={cilCloudUpload} className="upload-icon" />
+                  {`Image`}
+                  <CFormInput
+                    className="file"
+                    type="file"
+                    onChange={(e) => handleImageUpload(e, field)}
+                  />
+                </div>
+                {state[field] && (
+                  <img src={state[field]} alt="Uploaded Preview" width="100" />
+                )}
+              </CCol>
+            ))} */}
+
+            {[
+              "physical_condition_of_transPipe_image",
+              "physical_condition_of_channel_image",
+              "physical_condition_of_top_bottom_cover_image",
+              "oiling_need_for_bearing_condition_image",
+              "oiling_need_for_coupling_image",
+              "oiling_need_for_motors_image",
+            ].map((field) => (
+              <CCol md={6} key={field}>
+                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+
+                {state.loadingUpload[field] ? ( // Show spinner while uploading
+                  <LoadingSpinner />
+                ) : state[field] ? ( // Show View link only if image exists
+                  <Link to={state[field]} target="_blank">
+                    View
+                  </Link>
+                ) : (
+                  <p>No Image Available</p> // Show this only when no image is uploaded
+                )}
+
+                <CFormInput
+                  type="file"
+                  onChange={(e) => handleImageUpload(e, field)}
+                />
+              </CCol>
+            ))}
+          </CRow>
+
+          <CButton
+            color="primary"
+            type="submit"
+            className="mt-4"
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit"}
           </CButton>
         </CForm>
       </CCardBody>
@@ -172,4 +453,4 @@ const CreatePreventivemaintanance = () => {
   );
 };
 
-export default CreatePreventivemaintanance;
+export default CreatePreventiveMaintenance;

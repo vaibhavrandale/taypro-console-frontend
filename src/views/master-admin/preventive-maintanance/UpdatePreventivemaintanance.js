@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useReducer, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import {
+  CAvatar,
   CButton,
   CCard,
   CCardBody,
@@ -17,46 +18,81 @@ import {
   CRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload } from "@coreui/icons";
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        preventivemaintanance: action.payload,
+        loading: false,
+      };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    case "UPDATE_REQUEST":
+      return { ...state, updating: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, updating: false };
+    case "UPDATE_FAIL":
+      return { ...state, updating: false, error: action.payload };
+    // case "UPLOAD_REQUEST":
+    //   return { ...state, loadingUpload: true, errorUpload: "" };
+    // case "UPLOAD_SUCCESS":
+    //   return {
+    //     ...state,
+    //     loadingUpload: false,
+    //     errorUpload: "",
+    //   };
+    // case "UPLOAD_FAIL":
+    //   return { ...state, loadingUpload: false, errorUpload: action.payload };
+
+    case "UPLOAD_REQUEST":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: true },
+      };
+
+    case "UPLOAD_SUCCESS":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: false },
+      };
+
+    case "UPLOAD_FAIL":
+      return {
+        ...state,
+        loadingUpload: { ...state.loadingUpload, [action.field]: false },
+        errorUpload: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
 const UpdatePreventiveMaintenance = () => {
+  const [{ loading, error, updating, loadingUpload }, dispatch] = useReducer(
+    reducer,
+    {
+      preventivemaintanance: {},
+      loading: true,
+      error: "",
+      updating: false,
+      loadingUpload: false,
+    }
+  );
   const { id } = useParams();
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
-
-  // Individual useState for each field
-  const [pm_id, setPmId] = useState("");
-  const [robot_no, setRobotNo] = useState("");
-  const [robot_type, setRobotType] = useState("");
-  const [client_name, setClientName] = useState("");
-  const [doc_no, setDocNo] = useState("TPL/SR/F-01");
-  const [revision_no, setRevisionNo] = useState("");
-  const [revised_by, setRevisedBy] = useState("Abhay Singh");
-  const [site_location, setSiteLocation] = useState("");
-  const [physical_condition_of_transPipe, setPhysicalConditionOfTransPipe] =
-    useState({});
-  const [physical_condition_of_channel, setPhysicalConditionOfChannel] =
-    useState({});
-  const [
-    physical_condition_of_top_bottom_cover,
-    setPhysicalConditionOfTopBottomCover,
-  ] = useState({});
-  const [oiling_need_for_bearing, setOilingNeedForBearing] = useState({});
-  const [oiling_need_for_coupling, setOilingNeedForCoupling] = useState({});
-  const [oiling_need_for_motors, setOilingNeedForMotors] = useState({});
-  const [alignment, setAlignment] = useState({});
-  const [is_wheels_loose, setIsWheelsLoose] = useState("");
-  const [is_nutbolt_loose, setIsNutBoltLoose] = useState("");
-  const [start_date, setStartDate] = useState("");
-  const [end_date, setEndDate] = useState("");
-  const [is_delete, setIsDelete] = useState(false);
-  const [last_activity, setLastActivity] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     const fetchMaintenance = async () => {
       try {
+        dispatch({ type: "FETCH_REQUEST" }); // Show loading
         const response = await axios.get(
           `/api/v1/preventivemaintenances/${id}`,
           {
@@ -64,310 +100,282 @@ const UpdatePreventiveMaintenance = () => {
           }
         );
         const data = response.data?.data || {};
-
-        setPmId(data.pm_id || "");
-        setRobotNo(data.robot_no || "");
-        setRobotType(data.robot_type || "");
-        setClientName(data.client_name || "");
-        setDocNo(data.doc_no || "TPL/SR/F-01");
-        setRevisionNo(data.revision_no || "");
-        setRevisedBy(data.revised_by || "Abhay Singh");
-        setSiteLocation(data.site_location || "");
-        setPhysicalConditionOfTransPipe(
-          data.physical_condition_of_transPipe || {}
-        );
-        setPhysicalConditionOfChannel(data.physical_condition_of_channel || {});
-        setPhysicalConditionOfTopBottomCover(
-          data.physical_condition_of_top_bottom_cover || {}
-        );
-        setOilingNeedForBearing(data.oiling_need_for_bearing || {});
-        setOilingNeedForCoupling(data.oiling_need_for_coupling || {});
-        setOilingNeedForMotors(data.oiling_need_for_motors || {});
-        setAlignment(data.alignment || {});
-        setIsWheelsLoose(data.is_wheels_loose || "");
-        setIsNutBoltLoose(data.is_nutbolt_loose || "");
-        setStartDate(data.start_date || "");
-        setEndDate(data.end_date || "");
-        setIsDelete(data.is_delete || false);
-        setLastActivity(data.last_activity || []);
-
-        setLoading(false);
+        dispatch({ type: "FETCH_SUCCESS" }); // Show loading
+        setFormData(data);
       } catch (error) {
-        setError(error.response?.data?.message || "Failed to fetch data");
-        setLoading(false);
+        dispatch({ type: "FETCH_FAIL", payload: error.response?.data?.error });
+        toast.error(error.response?.data?.error || "Failed to fetch data");
       }
     };
 
     fetchMaintenance();
   }, [id, authtoken]);
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch({ type: "UPDATE_REQUEST" }); // Show loading
+      const { createdAt, _id, last_activity, ...filteredFormData } = formData;
       await axios.put(
         `/api/v1/preventivemaintenances/${id}`,
-        {
-          pm_id,
-          robot_no,
-          robot_type,
-          client_name,
-          doc_no,
-          revision_no,
-          revised_by,
-          site_location,
-          physical_condition_of_transPipe,
-          physical_condition_of_channel,
-          physical_condition_of_top_bottom_cover,
-          oiling_need_for_bearing,
-          oiling_need_for_coupling,
-          oiling_need_for_motors,
-          alignment,
-          is_wheels_loose,
-          is_nutbolt_loose,
-          start_date,
-          end_date,
-        },
+
+        filteredFormData,
+
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-
+      dispatch({ type: "UPDATE_SUCCESS" }); // Show loading
       toast.success("Preventive Maintenance updated successfully!");
       navigate("/master-admin/preventive-maintanance-dashboard");
     } catch (error) {
+      dispatch({ type: "UPDATE_FAIL", error: error.response?.data?.error });
       toast.error(
         error.response?.data?.error || "Failed to update maintenance"
       );
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <p className="error">{error}</p>;
+  // const handleImageUpload = async (e, fieldName) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/preventive-maintanance",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (data?.url) {
+  //       // Ensure the response contains the image URL
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         [fieldName]: data.url, // Update the specific field with the uploaded image URL
+  //       }));
+  //     }
+
+  //     toast.success("Image uploaded successfully.");
+  //   } catch (err) {
+  //     toast.error("Image upload failed.");
+  //   }
+  // };
+
+  const handleImageUpload = async (e, fieldName) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+
+    dispatch({ type: "UPLOAD_REQUEST", field: fieldName }); // Set loading for this specific field
+
+    try {
+      const { data } = await axios.post(
+        "/api/v1/image-upload/preventive-maintanance",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      if (data?.url) {
+        setFormData((prev) => ({
+          ...prev,
+          [fieldName]: data.url, // Update only the specific field
+        }));
+      }
+
+      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName }); // Stop loading for this field
+      toast.success("Image uploaded successfully.");
+    } catch (err) {
+      dispatch({
+        type: "UPLOAD_FAIL",
+        field: fieldName,
+        payload: "Upload failed",
+      });
+      toast.error("Image upload failed.");
+    }
+  };
 
   return (
     <CCard className="max-w-3xl mx-auto p-6 shadow-lg rounded-lg">
       <CCardHeader>
-        <h2>Update Preventive Maintenance: {robot_no}</h2>
+        <h2>Update Preventive Maintenance: {}</h2>
       </CCardHeader>
+
       <CCardBody>
-        <CForm onSubmit={handleSubmit}>
-          <CRow className="gy-3">
-            <CCol md={6}>
-              <CFormLabel>PM ID</CFormLabel>
-              <CFormInput
-                value={pm_id}
-                onChange={(e) => setPmId(e.target.value)}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Robot No</CFormLabel>
-              <CFormInput
-                value={robot_no}
-                onChange={(e) => setRobotNo(e.target.value)}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Robot Type</CFormLabel>
-              <CFormInput
-                value={robot_type}
-                onChange={(e) => setRobotType(e.target.value)}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Client Name</CFormLabel>
-              <CFormInput
-                value={client_name}
-                onChange={(e) => setClientName(e.target.value)}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Site Location</CFormLabel>
-              <CFormInput
-                value={site_location}
-                onChange={(e) => setSiteLocation(e.target.value)}
-                required
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Start Date</CFormLabel>
-              <CFormInput
-                type="date"
-                value={start_date}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>End Date</CFormLabel>
-              <CFormInput
-                type="date"
-                value={end_date}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </CCol>
-          </CRow>
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <CForm onSubmit={handleSubmit}>
+            <CRow className="gy-3">
+              {[
+                "pm_id",
+                "robot_no",
+                "robot_type",
+                "client_id",
+                "site_name",
+                "site_id",
+                "site_location",
+                // "doc_no",
+                // "revision_no",
+                // "revised_by",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                  <CFormInput
+                    name={field}
+                    value={formData[field] || ""}
+                    onChange={handleChange}
+                    required
+                  />
+                </CCol>
+              ))}
 
-          <CRow className="gy-3">
-            {/* Physical Condition of Transmission Pipe */}
-            <CCol md={6}>
-              <CFormLabel>Physical Condition of TransPipe</CFormLabel>
-              <CFormSelect
-                value={physical_condition_of_transPipe.condition || ""}
-                onChange={(e) =>
-                  setPhysicalConditionOfTransPipe({
-                    ...physical_condition_of_transPipe,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Condition</option>
-                <option value="Good">Good</option>
-                <option value="Needs Repair">Needs Repair</option>
-              </CFormSelect>
-            </CCol>
+              {[
+                "physical_condition_of_transPipe_condition",
+                "physical_condition_of_channel_condition",
+                "physical_condition_of_top_bottom_cover_condition",
+                "mf_clothes_alignment",
+                "wheels_alignment",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                  <CFormSelect
+                    name={field}
+                    value={formData[field] || ""}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="OK">OK</option>
+                    <option value="Not OK">Not OK</option>
+                  </CFormSelect>
+                </CCol>
+              ))}
 
-            {/* Physical Condition of Channel */}
-            <CCol md={6}>
-              <CFormLabel>Physical Condition of Channel</CFormLabel>
-              <CFormSelect
-                value={physical_condition_of_channel.condition || ""}
-                onChange={(e) =>
-                  setPhysicalConditionOfChannel({
-                    ...physical_condition_of_channel,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Condition</option>
-                <option value="Good">Good</option>
-                <option value="Needs Repair">Needs Repair</option>
-              </CFormSelect>
-            </CCol>
+              {[
+                "oiling_need_for_bearing_condition",
+                "oiling_need_for_coupling_condition",
+                "oiling_need_for_motors_condition",
 
-            {/* Physical Condition of Top/Bottom Cover */}
-            <CCol md={6}>
-              <CFormLabel>Physical Condition of Top/Bottom Cover</CFormLabel>
-              <CFormSelect
-                value={physical_condition_of_top_bottom_cover.condition || ""}
-                onChange={(e) =>
-                  setPhysicalConditionOfTopBottomCover({
-                    ...physical_condition_of_top_bottom_cover,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Condition</option>
-                <option value="Good">Good</option>
-                <option value="Needs Repair">Needs Repair</option>
-              </CFormSelect>
-            </CCol>
+                "is_wheels_loose",
+                "is_nutbolt_loose",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                  <CFormSelect
+                    name={field}
+                    value={formData[field] || ""}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </CFormSelect>
+                </CCol>
+              ))}
+              {/* {[
+                "physical_condition_of_transPipe_image",
+                "physical_condition_of_channel_image",
+                "physical_condition_of_top_bottom_cover_image",
+                "oiling_need_for_bearing_condition_image",
+                "oiling_need_for_coupling_image",
+                "oiling_need_for_motors_image",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
 
-            {/* Oiling Need for Bearings */}
-            <CCol md={6}>
-              <CFormLabel>Oiling Need for Bearings</CFormLabel>
-              <CFormSelect
-                value={oiling_need_for_bearing.condition || ""}
-                onChange={(e) =>
-                  setOilingNeedForBearing({
-                    ...oiling_need_for_bearing,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Need</option>
-                <option value="Required">Required</option>
-                <option value="Not Required">Not Required</option>
-              </CFormSelect>
-            </CCol>
+                  {loadingUpload[field] ? (
+                    <LoadingSpinner /> // Show loading spinner while uploading
+                  ) : formData[field] ? (
+                    <Link to={formData[field]} target="blank">
+                      {" "}
+                      View
+                    </Link>
+                  ) : (
+                    ""
+                  )}
 
-            {/* Oiling Need for Coupling */}
-            <CCol md={6}>
-              <CFormLabel>Oiling Need for Coupling</CFormLabel>
-              <CFormSelect
-                value={oiling_need_for_coupling.condition || ""}
-                onChange={(e) =>
-                  setOilingNeedForCoupling({
-                    ...oiling_need_for_coupling,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Need</option>
-                <option value="Required">Required</option>
-                <option value="Not Required">Not Required</option>
-              </CFormSelect>
-            </CCol>
+                  <CFormInput
+                    type="file"
+                    onChange={(e) => handleImageUpload(e, field)}
+                  />
+                </CCol>
+              ))}
+              
+              */}
 
-            {/* Oiling Need for Motors */}
-            <CCol md={6}>
-              <CFormLabel>Oiling Need for Motors</CFormLabel>
-              <CFormSelect
-                value={oiling_need_for_motors.condition || ""}
-                onChange={(e) =>
-                  setOilingNeedForMotors({
-                    ...oiling_need_for_motors,
-                    condition: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Need</option>
-                <option value="Required">Required</option>
-                <option value="Not Required">Not Required</option>
-              </CFormSelect>
-            </CCol>
+              {[
+                "physical_condition_of_transPipe_image",
+                "physical_condition_of_channel_image",
+                "physical_condition_of_top_bottom_cover_image",
+                "oiling_need_for_bearing_condition_image",
+                "oiling_need_for_coupling_image",
+                "oiling_need_for_motors_image",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
 
-            {/* Alignment */}
-            <CCol md={6}>
-              <CFormLabel>Alignment</CFormLabel>
-              <CFormInput
-                type="text"
-                value={alignment.mf_clothes || ""}
-                placeholder="MF Clothes Condition"
-                onChange={(e) =>
-                  setAlignment({ ...alignment, mf_clothes: e.target.value })
-                }
-              />
-              <CFormInput
-                type="text"
-                value={alignment.wheels || ""}
-                placeholder="Wheels Condition"
-                onChange={(e) =>
-                  setAlignment({ ...alignment, wheels: e.target.value })
-                }
-              />
-            </CCol>
+                  {loadingUpload[field] ? ( // Show spinner only for this field
+                    <LoadingSpinner />
+                  ) : formData[field] ? (
+                    <Link to={formData[field]} target="_blank">
+                      View
+                    </Link>
+                  ) : (
+                    <p>No Image Available</p>
+                  )}
 
-            <CCol md={6}>
-              <CFormLabel>Are Wheels Loose?</CFormLabel>
-              <CFormSelect
-                value={is_wheels_loose}
-                onChange={(e) => setIsWheelsLoose(e.target.value)}
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </CFormSelect>
-            </CCol>
+                  <CFormInput
+                    type="file"
+                    onChange={(e) => handleImageUpload(e, field)}
+                  />
+                </CCol>
+              ))}
 
-            {/* Is Nut Bolt Loose */}
-            <CCol md={6}>
-              <CFormLabel>Are Nut Bolts Loose?</CFormLabel>
-              <CFormSelect
-                value={is_nutbolt_loose}
-                onChange={(e) => setIsNutBoltLoose(e.target.value)}
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </CFormSelect>
-            </CCol>
-          </CRow>
+              <CCol md={6}>
+                <CFormLabel>Start Date</CFormLabel>
+                <CFormInput
+                  type="date"
+                  name="start_date"
+                  value={formData.start_date || ""}
+                  onChange={handleChange}
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel>End Date</CFormLabel>
+                <CFormInput
+                  type="date"
+                  name="end_date"
+                  value={formData.end_date || ""}
+                  onChange={handleChange}
+                />
+              </CCol>
 
-          <CButton type="submit" color="primary" className="mt-3">
-            Update Maintenance
-          </CButton>
-        </CForm>
+              <CButton type="submit" color="primary" className="mt-3">
+                Update Maintenance
+              </CButton>
+            </CRow>
+          </CForm>
+        )}
       </CCardBody>
     </CCard>
   );
