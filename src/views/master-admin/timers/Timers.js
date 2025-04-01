@@ -12,20 +12,13 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CButton,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
-  CFormLabel,
-  CFormInput,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -65,12 +58,6 @@ const reducer = (state, action) => {
       };
     case "FETCH_TIMER_FAIL":
       return { ...state, loadingAllTimers: false, error: action.payload };
-    case "UPDATE_REQUEST":
-      return { ...state, updateLoading: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, updateLoading: false };
-    case "UPDATE_FAIL":
-      return { ...state, updateLoading: false, error: action.payload };
     default:
       return state;
   }
@@ -89,19 +76,9 @@ const Timers = () => {
 
   const [pageInput, setPageInput] = useState("");
   const [site_id, setSiteId] = useState("");
-  const [siteidd, setSiteIdd] = useState("");
-  const [block, setBlock] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
-  const [formData, setFormData] = useState({
-    timer1: "",
-    timer1_date: "",
-    timer2: "",
-    timer2_date: "",
-    timer3: "",
-    timer3_date: "",
-  });
 
   useEffect(() => {
     const fetchSiteIds = async () => {
@@ -135,7 +112,6 @@ const Timers = () => {
         const result = await axios.post(`/api/v1/robots/get-timer`, data, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log(result);
 
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
@@ -164,10 +140,6 @@ const Timers = () => {
     fetchAllTimers();
   }, [authtoken, limit, page, site_id]);
 
-  const [filteredBlocks, setFilteredBlocks] = useState([]);
-  const [editData, setEditData] = useState(null);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
@@ -190,8 +162,6 @@ const Timers = () => {
     }
   };
 
-  // Handle Site Selection Change
-
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
@@ -206,49 +176,6 @@ const Timers = () => {
       dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
     } else {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
-    }
-  };
-
-  // Open Modal for Editing
-  const openEditModal = (block, site) => {
-    if (!block || !block.robots || block.robots.length === 0) {
-      console.error("Invalid block data", block);
-      return;
-    }
-    setBlock(block.block);
-    setSiteIdd(site.site_id);
-    setEditModalVisible(true);
-  };
-
-  // Handle Input Changes in Modal
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      dispatch({ type: "UPDATE_REQUEST" });
-      const newData = { ...formData, block: block, site_id: siteidd };
-      await axios.put(`/api/v1/robots/update-timer-blockwise`, newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-
-      dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success("Timer Updated Successfully!");
-
-      setEditModalVisible(false);
-    } catch (error) {
-      dispatch({
-        type: "UPDATE_FAIL",
-        payload: error.response.data.error || "Update failed",
-      });
-      toast.error("Update failed");
     }
   };
 
@@ -332,13 +259,12 @@ const Timers = () => {
                         {block.robots[0]?.timer3_date}
                       </CTableDataCell>
                       <CTableDataCell>
-                        <CButton
-                          color="primary"
-                          size="sm"
-                          onClick={() => openEditModal(block, site)}
+                        <Link
+                          className="btn btn-sm btn-warning m-1"
+                          to={`/master-admin/timers/${block.block}/${site.site_id}`}
                         >
                           Update
-                        </CButton>
+                        </Link>
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -365,115 +291,10 @@ const Timers = () => {
             handlePageInputChange={handlePageInputChange}
             handlePageInputSubmit={handlePageInputSubmit}
             limit={limit}
-            handleLimitChange={setLimit} // New prop
+            handleLimitChange={setLimit}
           />
         </CCardBody>
       </CCard>
-
-      {/* 🔹 Update Timers Modal */}
-      <CModal
-        alignment="center"
-        size="lg"
-        visible={editModalVisible}
-        onClose={() => setEditModalVisible(false)}
-      >
-        <CModalHeader>
-          <CModalTitle>
-            Update Timers for : {editData?.site_id} ({editData?.block})
-          </CModalTitle>
-        </CModalHeader>
-        {editData?.robots ? (
-          <CModalBody>
-            <CRow>
-              <CCol md={6}>
-                <CFormLabel>Timer 1</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="timer1"
-                  value={editData.robots[0]?.timer1 || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel>Executed Date 1</CFormLabel>
-                <CFormInput
-                  type="date"
-                  name="timer1_date"
-                  value={editData.robots[0]?.timer1_date || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-            </CRow>
-
-            <CRow>
-              <CCol md={6}>
-                <CFormLabel>Timer 2</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="timer2"
-                  value={editData.robots[0]?.timer2 || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel>Executed Date 2</CFormLabel>
-                <CFormInput
-                  type="date"
-                  name="timer2_date"
-                  value={editData.robots[0]?.timer2_date || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md={6}>
-                <CFormLabel>Timer 3</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="timer3"
-                  value={editData.robots[0]?.timer3 || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel>Executed Date 3</CFormLabel>
-                <CFormInput
-                  type="date"
-                  name="timer3_date"
-                  value={editData.robots[0]?.timer3_date || ""}
-                  onChange={handleEditChange}
-                />
-              </CCol>
-            </CRow>
-          </CModalBody>
-        ) : (
-          []
-        )}
-
-        <CModalFooter>
-          <CButton
-            size="sm"
-            color="secondary"
-            onClick={() => setEditModalVisible(false)}
-          >
-            Cancel
-          </CButton>
-          <CButton
-            size="sm"
-            className="text-white"
-            color="success"
-            onClick={handleSubmit}
-          >
-            {state.updateLoading ? (
-              <>
-                Saving ... <LoadingSpinner />
-              </>
-            ) : (
-              "Save Chnages"
-            )}
-          </CButton>
-        </CModalFooter>
-      </CModal>
     </div>
   );
 };
