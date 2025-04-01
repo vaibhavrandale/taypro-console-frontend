@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   CTable,
   CTableHead,
@@ -21,70 +21,202 @@ import {
   CFormLabel,
   CFormInput,
 } from "@coreui/react";
-import { robots, sites } from "../../../data"; // Import Robots & Sites Data
+import { useSelector } from "react-redux";
+import axios from "axios";
+import toast from "react-hot-toast";
+import PaginateInput from "../../../components/PaginateInput";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_SITEID_REQUEST":
+      return { ...state, loadingSiteIds: true, error: "" };
+    case "FETCH_SITEID_SUCCESS":
+      return {
+        ...state,
+        loadingSiteIds: false,
+        siteIds: action.payload,
+      };
+    case "FETCH_SITEID_FAIL":
+      return { ...state, loadingSiteIds: false, error: action.payload };
+
+    case "SELECT_SITENAME_REQUEST":
+      return { ...state, loadingFields: true };
+
+    case "SELECT_SITENAME_SUCCESS":
+      return {
+        ...state,
+        loadingFields: false,
+        selectedSiteName: action.payload,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+    case "SELECT_SITENAME_FAIL":
+      return { ...state, loadingFields: false };
+
+    case "FETCH_TIMER_REQUEST":
+      return { ...state, loadingAllTimers: true, error: "" };
+    case "FETCH_TIMER_SUCCESS":
+      return {
+        ...state,
+        loadingAllTimers: false,
+        timers: action.payload.data,
+      };
+    case "FETCH_TIMER_FAIL":
+      return { ...state, loadingAllTimers: false, error: action.payload };
+    case "UPDATE_REQUEST":
+      return { ...state, updateLoading: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, updateLoading: false };
+    case "UPDATE_FAIL":
+      return { ...state, updateLoading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 const Timers = () => {
-  const [selectedSite, setSelectedSite] = useState("");
+  const [state, dispatch] = useReducer(reducer, {
+    timers: {},
+    loadingAllTimers: true,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    updateLoading: false,
+  });
+
+  const [pageInput, setPageInput] = useState("");
+  const [site_id, setSiteId] = useState("");
+  const [siteidd, setSiteIdd] = useState("");
+  const [block, setBlock] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const authtoken = useSelector((state) => state.authtoken);
+  const [formData, setFormData] = useState({
+    timer1: "",
+    timer1_date: "",
+    timer2: "",
+    timer2_date: "",
+    timer3: "",
+    timer3_date: "",
+  });
+
+  useEffect(() => {
+    const fetchSiteIds = async () => {
+      dispatch({ type: "FETCH_SITEID_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITEID_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITEID_FAIL",
+          payload: error.response?.data?.error || "Error fetching sites",
+        });
+        toast.error(error.response.data.error || "Error fetching sites");
+      }
+    };
+
+    const fetchAllTimers = async () => {
+      dispatch({ type: "FETCH_TIMER_REQUEST" });
+      try {
+        const data = {
+          pg: page,
+          limit: limit,
+          site_id: site_id,
+        };
+
+        const result = await axios.post(`/api/v1/robots/get-timer`, data, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        console.log(result);
+
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_TIMER_SUCCESS",
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_TIMER_FAIL",
+          payload: "Failed to fetch the Timers",
+        });
+        toast.error("Failed to fetch the Timers");
+      }
+    };
+    fetchSiteIds();
+    fetchAllTimers();
+  }, [authtoken, limit, page, site_id]);
+
   const [filteredBlocks, setFilteredBlocks] = useState([]);
   const [editData, setEditData] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
 
-  // Get Unique Site IDs for Dropdown
-  const siteOptions = sites.map((site) => ({
-    site_id: site.site_id,
-    site_name: site.siteName, // Add the actual site name instead of ID
-    site_location: site.location, // Add the actual site name instead of ID
-  }));
-
-  // Function to get Site Name from site_id
-  const getSiteName = (site_id) => {
-    const site = sites.find((s) => s.site_id === site_id);
-    return site ? site.site_id : "Unknown";
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
   };
 
-  // Function to Filter Blocks Based on Site
-  const filterBlocks = (siteID) => {
-    const siteRobots = siteID
-      ? robots.filter((robot) => robot.site_id === siteID)
-      : robots; // Show all robots if no site selected
-
-    const blockGroups = siteRobots.reduce((acc, robot) => {
-      if (!acc[robot.block]) {
-        acc[robot.block] = {
-          block: robot.block,
-          site_id: robot.site_id,
-          total_robots: 0,
-          timer1: robot.timer1,
-          timer1_date: robot.timer1_date,
-          timer2: robot.timer2,
-          timer2_date: robot.timer2_date,
-          timer3: robot.timer3,
-          timer3_date: robot.timer3_date,
-        };
-      }
-      acc[robot.block].total_robots += 1;
-
-      return acc;
-    }, {});
-
-    setFilteredBlocks(Object.values(blockGroups));
+  // // console.item(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= state.totalPages) {
+      setPage(newPage);
+    }
   };
 
-  // Set Default View (Show All Blocks)
-  useEffect(() => {
-    filterBlocks("");
-  }, []);
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (
+      !isNaN(pageNumber) &&
+      pageNumber >= 1 &&
+      pageNumber <= state.totalPages
+    ) {
+      handlePageChange(pageNumber);
+    }
+  };
 
   // Handle Site Selection Change
-  const handleSiteChange = (e) => {
-    const siteID = e.target.value;
-    setSelectedSite(siteID);
-    filterBlocks(siteID);
+
+  const handleSiteNameChange = (e) => {
+    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+
+    const selectedSiteName = e.target.value;
+    const selectedSite = state.siteIds.find(
+      (site) => site.site_id.toString() === selectedSiteName
+    );
+
+    if (selectedSite) {
+      setSiteId(selectedSite.site_id);
+
+      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
+    } else {
+      dispatch({ type: "SELECT_SITENAME_FAIL" });
+    }
   };
 
   // Open Modal for Editing
-  const openEditModal = (block) => {
-    setEditData({ ...block });
+  const openEditModal = (block, site) => {
+    if (!block || !block.robots || block.robots.length === 0) {
+      console.error("Invalid block data", block);
+      return;
+    }
+    setBlock(block.block);
+    setSiteIdd(site.site_id);
     setEditModalVisible(true);
   };
 
@@ -97,14 +229,27 @@ const Timers = () => {
     }));
   };
 
-  // Handle Save Changes
-  const handleSaveChanges = () => {
-    setFilteredBlocks((prevBlocks) =>
-      prevBlocks.map((block) =>
-        block.block === editData.block ? { ...editData } : block
-      )
-    );
-    setEditModalVisible(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch({ type: "UPDATE_REQUEST" });
+      const newData = { ...formData, block: block, site_id: siteidd };
+      await axios.put(`/api/v1/robots/update-timer-blockwise`, newData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success("Timer Updated Successfully!");
+
+      setEditModalVisible(false);
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_FAIL",
+        payload: error.response.data.error || "Update failed",
+      });
+      toast.error("Update failed");
+    }
   };
 
   return (
@@ -114,13 +259,18 @@ const Timers = () => {
       {/* 📌 Site Filter */}
       <CRow className="justify-content-start mb-3">
         <CCol md={4}>
-          <CFormSelect value={selectedSite} onChange={handleSiteChange}>
-            <option value="">All Sites</option>
-            {siteOptions.map((site, index) => (
-              <option key={index} value={site.site_id}>
-                {site.site_name},{site.site_location}
-              </option>
-            ))}
+          <CFormSelect
+            name="site_id"
+            value={site_id}
+            onChange={handleSiteNameChange}
+          >
+            <option value="">All</option>
+            {state.siteIds?.length > 0 &&
+              state.siteIds.map((item) => (
+                <option key={item.site_id} value={item.site_id}>
+                  {item.site_id}
+                </option>
+              ))}
           </CFormSelect>
         </CCol>
       </CRow>
@@ -130,7 +280,7 @@ const Timers = () => {
         <CCardHeader>
           <h5 className="m-0">
             📋 Timers for &nbsp;
-            <b>{selectedSite ? getSiteName(selectedSite) : "All Sites"}</b>
+            <b>{site_id ? site_id : "All Sites"}</b>
           </h5>
         </CCardHeader>
         <CCardBody>
@@ -151,32 +301,48 @@ const Timers = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {filteredBlocks.length > 0 ? (
-                filteredBlocks.map((block, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{index + 1}</CTableDataCell>
-                    <CTableDataCell>
-                      {getSiteName(block.site_id)}
-                    </CTableDataCell>
-                    <CTableDataCell>{block.block}</CTableDataCell>
-                    <CTableDataCell>{block.total_robots}</CTableDataCell>
-                    <CTableDataCell>{block.timer1}</CTableDataCell>
-                    <CTableDataCell>{block.timer1_date}</CTableDataCell>
-                    <CTableDataCell>{block.timer2}</CTableDataCell>
-                    <CTableDataCell>{block.timer2_date}</CTableDataCell>
-                    <CTableDataCell>{block.timer3}</CTableDataCell>
-                    <CTableDataCell>{block.timer3_date}</CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        onClick={() => openEditModal(block)}
-                      >
-                        update
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                ))
+              {state.loadingAllTimers ? (
+                <CTableRow className="text-center">
+                  <CTableDataCell colSpan={11}>
+                    <LoadingSpinner />
+                  </CTableDataCell>
+                </CTableRow>
+              ) : state.timers.length > 0 ? (
+                state.timers.flatMap((site, siteIndex) =>
+                  site.blocks.map((block, blockIndex) => (
+                    <CTableRow key={`${siteIndex}-${blockIndex}`}>
+                      <CTableDataCell>
+                        {siteIndex * site.blocks.length + blockIndex + 1}
+                      </CTableDataCell>
+                      <CTableDataCell>{site.site_id}</CTableDataCell>
+                      <CTableDataCell>{block.block}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.total_robots_in_block}
+                      </CTableDataCell>
+                      <CTableDataCell>{block.robots[0]?.timer1}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer1_date}
+                      </CTableDataCell>
+                      <CTableDataCell>{block.robots[0]?.timer2}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer2_date}
+                      </CTableDataCell>
+                      <CTableDataCell>{block.robots[0]?.timer3}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer3_date}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CButton
+                          color="primary"
+                          size="sm"
+                          onClick={() => openEditModal(block, site)}
+                        >
+                          Update
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                )
               ) : (
                 <CTableRow>
                   <CTableDataCell
@@ -189,6 +355,18 @@ const Timers = () => {
               )}
             </CTableBody>
           </CTable>
+          <PaginateInput
+            page={page}
+            totalPages={state.totalPages}
+            hasPrevPage={state.hasPrevPage}
+            hasNextPage={state.hasNextPage}
+            pageInput={pageInput}
+            handlePageChange={handlePageChange}
+            handlePageInputChange={handlePageInputChange}
+            handlePageInputSubmit={handlePageInputSubmit}
+            limit={limit}
+            handleLimitChange={setLimit} // New prop
+          />
         </CCardBody>
       </CCard>
 
@@ -201,73 +379,77 @@ const Timers = () => {
       >
         <CModalHeader>
           <CModalTitle>
-            Update Timers for {getSiteName(editData?.site_id)} (
-            {editData?.block})
+            Update Timers for : {editData?.site_id} ({editData?.block})
           </CModalTitle>
         </CModalHeader>
-        <CModalBody>
-          <CRow>
-            <CCol md={6}>
-              <CFormLabel>Timer 1</CFormLabel>
-              <CFormInput
-                type="text"
-                name="timer1"
-                value={editData?.timer1}
-                onChange={handleEditChange}
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Executed Date 1</CFormLabel>
-              <CFormInput
-                type="date"
-                name="timer1_date"
-                value={editData?.timer1_date}
-                onChange={handleEditChange}
-              />
-            </CCol>
-          </CRow>
+        {editData?.robots ? (
+          <CModalBody>
+            <CRow>
+              <CCol md={6}>
+                <CFormLabel>Timer 1</CFormLabel>
+                <CFormInput
+                  type="text"
+                  name="timer1"
+                  value={editData.robots[0]?.timer1 || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel>Executed Date 1</CFormLabel>
+                <CFormInput
+                  type="date"
+                  name="timer1_date"
+                  value={editData.robots[0]?.timer1_date || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+            </CRow>
 
-          <CRow>
-            <CCol md={6}>
-              <CFormLabel>Timer 2</CFormLabel>
-              <CFormInput
-                type="text"
-                name="timer2"
-                value={editData?.timer2}
-                onChange={handleEditChange}
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Executed Date 2</CFormLabel>
-              <CFormInput
-                type="date"
-                name="timer2_date"
-                value={editData?.timer2_date}
-                onChange={handleEditChange}
-              />
-            </CCol>
-          </CRow>
-          <CRow>
-            <CCol md={6}>
-              <CFormLabel>Timer 3</CFormLabel>
-              <CFormInput
-                type="text"
-                name="timer3"
-                value={editData?.timer3}
-                onChange={handleEditChange}
-              />
-            </CCol>
-            <CCol md={6}>
-              <CFormLabel>Executed Date 3</CFormLabel>
-              <CFormInput
-                type="date"
-                name="timer3_date"
-                value={editData?.timer3_date}
-                onChange={handleEditChange}
-              />
-            </CCol>
-          </CRow>
-        </CModalBody>
+            <CRow>
+              <CCol md={6}>
+                <CFormLabel>Timer 2</CFormLabel>
+                <CFormInput
+                  type="text"
+                  name="timer2"
+                  value={editData.robots[0]?.timer2 || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel>Executed Date 2</CFormLabel>
+                <CFormInput
+                  type="date"
+                  name="timer2_date"
+                  value={editData.robots[0]?.timer2_date || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md={6}>
+                <CFormLabel>Timer 3</CFormLabel>
+                <CFormInput
+                  type="text"
+                  name="timer3"
+                  value={editData.robots[0]?.timer3 || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel>Executed Date 3</CFormLabel>
+                <CFormInput
+                  type="date"
+                  name="timer3_date"
+                  value={editData.robots[0]?.timer3_date || ""}
+                  onChange={handleEditChange}
+                />
+              </CCol>
+            </CRow>
+          </CModalBody>
+        ) : (
+          []
+        )}
+
         <CModalFooter>
           <CButton
             size="sm"
@@ -280,9 +462,15 @@ const Timers = () => {
             size="sm"
             className="text-white"
             color="success"
-            onClick={handleSaveChanges}
+            onClick={handleSubmit}
           >
-            Save Changes
+            {state.updateLoading ? (
+              <>
+                Saving ... <LoadingSpinner />
+              </>
+            ) : (
+              "Save Chnages"
+            )}
           </CButton>
         </CModalFooter>
       </CModal>
