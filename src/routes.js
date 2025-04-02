@@ -201,6 +201,11 @@ const AddDpr = React.lazy(() =>
 );
 // const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
+
+const UpdateTimer = React.lazy(() =>
+  import("./views/master-admin/timers/UpdateTimer")
+);
+
 //common pages
 
 const Dashboard = React.lazy(() => import("./views/dashboard/Dashboard"));
@@ -460,7 +465,11 @@ const routes = [
     name: "Update Timers",
     element: Timers,
   },
-
+  {
+    path: "/master-admin/timers/:block/:site_id",
+    name: "Update Robot Timer",
+    element: UpdateTimer,
+  },
   {
     path: "/master-admin/service-tickets",
     name: "Service Tickets",
