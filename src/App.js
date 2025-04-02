@@ -67,7 +67,7 @@ const App = () => {
         <Routes>
           <Route
             exact
-            path="/reset-password"
+            path="/reset-password/:id"
             name="Reset Password"
             element={<ResetPassword />}
           />

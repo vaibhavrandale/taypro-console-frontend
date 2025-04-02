@@ -179,6 +179,12 @@ const PreventiveMaintanancrDashboard = () => {
       <h2 className="text-center">All Preventive Maintenances</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
+          className="btn btn-sm btn-danger m-1"
+          to="/master-admin/preventive-maintanance-dashboard/view"
+        >
+          View Sitewise
+        </Link>
+        <Link
           className="btn btn-sm btn-primary m-1"
           to="/master-admin/preventive-maintanance-dashboard/create-pm"
         >

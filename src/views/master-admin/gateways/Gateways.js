@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CContainer,
   CTable,
@@ -16,47 +16,191 @@ import {
   CCol,
   CInputGroup,
   CFormInput,
+  CBadge,
 } from "@coreui/react";
-import { gateways, robots } from "../../../data"; // Import the gateways data
+// import { gateways, robots } from "../../../data"; // Import the gateways data
 import { Link } from "react-router-dom";
 import LastOnlineStatus from "../../../components/LastOnlineStatus";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import toast from "react-hot-toast";
+import PaginateInput from "../../../components/PaginateInput";
+import LastActivity from "../../../components/LastActivity";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_GATEWAY_REQUEST":
+      return { ...state, loadingGateways: true, error: "" };
+
+    case "FETCH_GATEWAY_SUCCESS":
+      return {
+        ...state,
+        loadingGateways: false,
+        gateways: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+
+    case "FETCH_GATEWAY_FAIL":
+      return { ...state, loadingGateways: false, error: action.payload };
+
+    case "FETCH_ROBOT_REQUEST":
+      return { ...state, loadingRobot: true, error: "" };
+
+    case "FETCH_ROBOT_SUCCESS":
+      return {
+        ...state,
+        loadingRobot: false,
+        robot: action.payload.data,
+      };
+
+    case "FETCH_ROBOT_FAIL":
+      return { ...state, loadingRobot: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const Gateways = () => {
+  const [
+    {
+      error,
+      gateways,
+      robot,
+      loadingGateways,
+      loadingRobot,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    gateways: [],
+    robot: {},
+    loadingGateways: true,
+    loadingRobot: true,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    loadingSiteIds: false,
+    loadingFields: false,
+    siteIds: [],
+  });
+  const authtoken = useSelector((state) => state.authtoken);
   const [selectedGateway, setSelectedGateway] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [filteredGateways, setFilteredGateways] = useState([]);
 
-  useEffect(() => {
-    setLoading(true); // Start loading
-    setTimeout(() => {
-      const Gateways = gateways.filter(
-        (gateway) =>
-          gateway.gateway_robot_no
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          gateway.gateway_name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          gateway.gateway_name_in_lns_server
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          gateway.gateway_robot_no
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const [pageInput, setPageInput] = useState("");
 
-      setFilteredGateways(Gateways);
-      setLoading(false); // Stop loading
-    }, 500); // Simulating API call delay
-  }, [searchTerm]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  useEffect(() => {
+    const fetchGateways = async () => {
+      dispatch({ type: "FETCH_GATEWAY_REQUEST" });
+
+      try {
+        // Ensure the correct keys match the backend API
+        const data = {
+          pg: page,
+          limit: limit,
+        };
+
+        const result = await axios.post(`/api/v1/gateways/get-gateways`, data, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        let total = Math.ceil(
+          Number(result.data.data.total) / Number(result.data.data.limit)
+        );
+        // console.log(total);
+
+        let next = result.data.data.hasNextPage;
+        let prev = result.data.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_GATEWAY_SUCCESS",
+          payload: {
+            data: result.data.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_GATEWAY_FAIL",
+          payload: error.response?.data?.error || "Failed to fetch DPR by Date",
+        });
+        toast.error(
+          error.response?.data?.error || "Failed to fetch DPR by Date"
+        );
+      }
+    };
+
+    fetchGateways();
+
+    // fetchRobots();
+  }, [authtoken, limit, page]);
+
+  const Gateways = gateways.filter(
+    (gateway) =>
+      gateway.gateway_robot_no
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      gateway.gateway_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      gateway.gateway_name_in_lns_server
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      gateway.gateway_robot_no
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // setFilteredGateways(Gateways);
+  // Function to fetch robot details
+  const fetchRobotByGateway = async (gateway) => {
+    // if (!gateway.gateway_robot_no) {
+    //   toast.error("No robot associated with this gateway.");
+    //   return;
+    // }
+
+    dispatch({ type: "FETCH_ROBOT_REQUEST" });
+
+    try {
+      const data = await axios.get(
+        `/api/v1/robots/get-robot-using-robot-no/${gateway.gateway_robot_no}`,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log(data.data);
+
+      dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: data.data });
+    } catch (error) {
+      console.log(error);
+
+      dispatch({
+        type: "FETCH_ROBOT_FAIL",
+        payload: error.response.data.error,
+      });
+      toast.error(error.response?.data?.error);
+    }
+  };
 
   // Function to handle modal open
-  const openModal = (gateway) => {
+  const openModal = async (gateway) => {
     setSelectedGateway(gateway);
+    if (gateway.gateway_type === "Outdoor" && gateway.gateway_robot_no !== "") {
+      await fetchRobotByGateway(gateway); // Fetch robot only when modal opens
+    }
     setModalVisible(true);
   };
 
@@ -65,8 +209,26 @@ const Gateways = () => {
     setModalVisible(false);
     setSelectedGateway(null);
   };
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
 
   return (
+    // <>Gateways</>
     <CContainer className="mt-5">
       <h2 className="text-center mb-4">Gateways</h2>
       <CRow className="justify-content-end">
@@ -87,6 +249,7 @@ const Gateways = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Gateway Name</CTableHeaderCell>
+            <CTableHeaderCell>Gateway ID</CTableHeaderCell>
             <CTableHeaderCell>Type</CTableHeaderCell>
             <CTableHeaderCell>Latitude</CTableHeaderCell>
             <CTableHeaderCell>Longitude</CTableHeaderCell>
@@ -104,43 +267,63 @@ const Gateways = () => {
           </CTableBody>
         ) : (
           <CTableBody>
-            {filteredGateways.map((gateway, index) => (
-              <CTableRow key={gateway.id}>
-                <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                <CTableDataCell>{gateway.gateway_name}</CTableDataCell>
-                <CTableDataCell>
-                  {gateway.gateway_type.toUpperCase()}
-                </CTableDataCell>
-                <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
-                <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
-                <CTableDataCell style={{ minWidth: "160px" }}>
-                  {gateway.last_online_update}
-                </CTableDataCell>
-                <CTableDataCell style={{ minWidth: "180px" }}>
-                  <CButton
-                    color="warning"
-                    size="sm"
-                    className="m-1"
-                    onClick={() => openModal(gateway)}
-                  >
-                    View Details
-                  </CButton>
-                  <Link
-                    type="button"
-                    color="primary"
-                    size="sm"
-                    to={`/master-admin/update-gateway/${gateway.id}`}
-                    className="btn btn-secondary  btn-sm m-1"
-                  >
-                    Update
-                  </Link>
-                </CTableDataCell>
+            {loadingGateways ? (
+              <CTableRow className="text-center">
+                <CTableHeaderCell colSpan={7}>
+                  <LoadingSpinner />
+                </CTableHeaderCell>
               </CTableRow>
-            ))}
+            ) : (
+              Gateways.map((gateway, index) => (
+                <CTableRow key={index}>
+                  <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                  <CTableDataCell>{gateway.gateway_id}</CTableDataCell>
+                  <CTableDataCell>{gateway.gateway_name}</CTableDataCell>
+                  <CTableDataCell>
+                    {gateway.gateway_type.toUpperCase()}
+                  </CTableDataCell>
+                  <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
+                  <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "160px" }}>
+                    {gateway.last_uplink}
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "180px" }}>
+                    <CButton
+                      color="warning"
+                      size="sm"
+                      className="m-1"
+                      onClick={() => openModal(gateway)}
+                    >
+                      View Details
+                    </CButton>
+                    <Link
+                      type="button"
+                      color="primary"
+                      size="sm"
+                      to={`/master-admin/update-gateway/${gateway.id}`}
+                      className="btn btn-secondary  btn-sm m-1"
+                    >
+                      Update
+                    </Link>
+                  </CTableDataCell>
+                </CTableRow>
+              ))
+            )}
           </CTableBody>
         )}
       </CTable>
-
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
+      />
       <CModal
         visible={modalVisible}
         onClose={closeModal}
@@ -149,7 +332,13 @@ const Gateways = () => {
         scrollable
       >
         <CModalHeader closeButton>
-          <CModalTitle>{selectedGateway?.gateway_name} Details</CModalTitle>
+          <CModalTitle>
+            Gateway{" "}
+            <CBadge color="success">
+              {selectedGateway?.gateway_name}-{selectedGateway?.gateway_id}
+            </CBadge>{" "}
+            Details
+          </CModalTitle>
         </CModalHeader>
         <CModalBody>
           {selectedGateway && (
@@ -164,12 +353,6 @@ const Gateways = () => {
                       {selectedGateway.gateway_id_in_lns_server}
                     </CTableDataCell>
                   </CTableRow>
-                  {/* <CTableRow>
-                    <CTableHeaderCell>Gateway Status</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.last_online_update}
-                    </CTableDataCell>
-                  </CTableRow> */}
 
                   <CTableRow>
                     <CTableHeaderCell>Gateway Status</CTableHeaderCell>
@@ -228,14 +411,11 @@ const Gateways = () => {
                 </CTableBody>
               </CTable>
 
-              {/* Finding matching robots */}
+              {/* Finding the connected robot */}
               <h5 className="mt-4 mb-3">Connected Robot/Lora</h5>
-              {robots.filter(
-                (robot) =>
-                  robot.robot_no === selectedGateway.gateway_robot_no &&
-                  robot.deveui === selectedGateway.gateway_lora_deveui &&
-                  robot.lora_no === selectedGateway.gateway_lora_no
-              ).length > 0 ? (
+              {loadingRobot ? (
+                <LoadingSpinner />
+              ) : robot.robot_no === selectedGateway.gateway_robot_no ? (
                 <CTable striped bordered hover responsive>
                   <CTableHead color="secondary">
                     <CTableRow>
@@ -248,69 +428,37 @@ const Gateways = () => {
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
-                    {robots
-                      .filter(
-                        (robot) =>
-                          robot.robot_no === selectedGateway.gateway_robot_no &&
-                          robot.deveui ===
-                            selectedGateway.gateway_lora_deveui &&
-                          robot.lora_no === selectedGateway.gateway_lora_no &&
-                          robot.robot_type === "gateway"
-                      )
-                      .map((robot, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell>{robot.robot_no} </CTableDataCell>
-                          <CTableDataCell>
-                            {robot.lora_state === 1 ? (
-                              <span className="badge bg-success">online</span>
-                            ) : (
-                              <span className="badge bg-danger">offline</span>
-                            )}
-                          </CTableDataCell>
-                          <CTableDataCell>{robot.site_id}</CTableDataCell>
-                          <CTableDataCell>
-                            {robot.lora_no}&nbsp;&nbsp;({robot.deveui})
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            {robot.battery_percentage}%
-                          </CTableDataCell>
-                          <CTableDataCell>{robot.last_update}</CTableDataCell>
-                        </CTableRow>
-                      ))}
+                    <CTableRow>
+                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell>
+                        {robot.lora_state === 1 ? (
+                          <span className="badge bg-success">online</span>
+                        ) : (
+                          <span className="badge bg-danger">offline</span>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>{robot.site_id}</CTableDataCell>
+                      <CTableDataCell>
+                        {robot.lora_no}&nbsp;&nbsp;({robot.deveui})
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {robot.battery_voltage}&nbsp;%
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {robot.last_update === "" || null ? (
+                          <CBadge>Lora is not Activaed Yet</CBadge>
+                        ) : (
+                          robot.last_update
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
                   </CTableBody>
                 </CTable>
               ) : (
-                <p className="text-muted">No connected robots found.</p>
+                <p className="text-muted">No connected robot found.</p>
               )}
 
-              {/* Update Logs */}
-              <h5 className="mt-4 mb-3">last Update Logs</h5>
-              {selectedGateway.update_log.length > 0 ? (
-                <CTable striped bordered hover responsive>
-                  <CTableHead color="secondary">
-                    <CTableRow>
-                      <CTableHeaderCell>#</CTableHeaderCell>
-                      <CTableHeaderCell>Updated By</CTableHeaderCell>
-                      <CTableHeaderCell>Email</CTableHeaderCell>
-                      <CTableHeaderCell>Comments</CTableHeaderCell>
-                      <CTableHeaderCell>Updated At</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {selectedGateway.update_log.map((log, index) => (
-                      <CTableRow key={log.id}>
-                        <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                        <CTableDataCell>{log.updated_by}</CTableDataCell>
-                        <CTableDataCell>{log.updated_by_email}</CTableDataCell>
-                        <CTableDataCell>{log.comments}</CTableDataCell>
-                        <CTableDataCell>{log.updated_at}</CTableDataCell>
-                      </CTableRow>
-                    ))}
-                  </CTableBody>
-                </CTable>
-              ) : (
-                <p className="text-muted">No updates available.</p>
-              )}
+              <LastActivity lastactivity={selectedGateway.last_activity} />
             </div>
           )}
         </CModalBody>

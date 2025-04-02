@@ -54,7 +54,7 @@ const UpdateRobot = () => {
     const fetchRobot = async () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
-        const response = await axios.get(`/api/v1/robots/${id}`, {
+        const response = await axios.get(`/api/v1/robots/get-one/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
