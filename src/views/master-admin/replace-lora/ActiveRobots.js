@@ -198,7 +198,7 @@ const ActiveRobots = () => {
         payload: error.response?.data?.message || error.message,
       });
 
-      toast.error("Failed to update robot!");
+      toast.error(error.response?.data?.error);
     }
     setModalVisible(false);
   };

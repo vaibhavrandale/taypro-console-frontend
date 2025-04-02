@@ -61,6 +61,7 @@ const reducer = (state, action) => {
               location: "",
               site_id: "",
               site_type: "",
+              client_id: "",
             }, // Reset form when closing
       };
 
@@ -114,72 +115,52 @@ const ClientAssignedSites = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const fetchClientSites = async () => {
-    try {
-      dispatch({ type: "FETCH_START" });
-      const response = await axios.post(
-        `${API_BASE_URL}/sites/get-sites/${id}`,
-        { pg: page, limit: limit },
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-
-      let total = Math.ceil(
-        Number(response.data.total) / Number(response.data.limit)
-      );
-      let next = response.data.hasNextPage;
-      let prev = response.data.hasPrevPage;
-
-      dispatch({
-        type: "FETCH_SUCCESS",
-        payload: {
-          data: response.data.data,
-          totalPages: total,
-          hasNextPage: next,
-          hasPrevPage: prev,
-        },
-      });
-
-      // dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
-    } catch (error) {
-      // console.log(error.response.data.message);
-
-      dispatch({
-        type: "FETCH_ERROR",
-        payload: error.response?.data?.error || error.response.data.message,
-      });
-      toast.error(error.response?.data?.error || error.response.data.message);
-    }
-  };
   useEffect(() => {
+    const fetchClientSites = async () => {
+      try {
+        dispatch({ type: "FETCH_START" });
+        const response = await axios.post(
+          `${API_BASE_URL}/sites/get-sites/${id}`,
+          { pg: page, limit: limit },
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit)
+        );
+        let next = response.data.hasNextPage;
+        let prev = response.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: response.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+
+        // dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
+      } catch (error) {
+        // console.log(error.response.data.message);
+
+        dispatch({
+          type: "FETCH_ERROR",
+          payload: error.response?.data?.error || error.response.data.message,
+        });
+        toast.error(error.response?.data?.error || error.response.data.message);
+      }
+    };
     fetchClientSites();
-  }, [authtoken, id]);
+  }, [authtoken, id, limit, page]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     dispatch({ type: "UPDATE_FORM", field: name, value });
   };
-
-  // const handleAddSite = async () => {
-  //   if (!state.formData.siteName || !state.formData.location) {
-  //     toast.error("Please fill in all fields");
-  //     return;
-  //   }
-  //   try {
-  //     dispatch({ type: "ADD_SITE_START" });
-  //     const response = await axios.post(`${API_BASE_URL}/sites`, state.formData, {
-  //       headers: { Authorization: `Bearer ${authtoken}` },
-  //     });
-  //     dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
-  //     toast.success("Site added successfully!");
-  //   } catch (error) {
-  //     dispatch({ type: "ADD_SITE_ERROR" });
-  //     toast.error("Failed to add site.");
-  //   }
-  // };
-
-  // Handle adding new site
 
   const handleAddSite = async () => {
     if (!state.formData.siteName || !state.formData.location) {
@@ -188,6 +169,8 @@ const ClientAssignedSites = () => {
     }
     try {
       const { id, ...filderedData } = state.formData;
+      console.log(id);
+
       dispatch({ type: "ADD_SITE_START" });
       const response = await axios.post(`${API_BASE_URL}/sites`, filderedData, {
         headers: { Authorization: `Bearer ${authtoken}` },
@@ -196,7 +179,7 @@ const ClientAssignedSites = () => {
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
 
       console.log(response.data.data);
-      fetchClientSites();
+      // fetchClientSites();
       dispatch({ type: "SET_ADD_MODAL", payload: false });
       toast.success("Site added successfully!");
     } catch (error) {
@@ -388,9 +371,10 @@ const ClientAssignedSites = () => {
       <CModal
         visible={state.addModalVisible}
         onClose={() => dispatch({ type: "SET_ADD_MODAL", payload: false })}
+        backdrop="static"
       >
         <CModalHeader>
-          <CModalTitle>Add New Site</CModalTitle>
+          <CModalTitle>Add New Site : {id}</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm>
@@ -426,6 +410,15 @@ const ClientAssignedSites = () => {
               name="site_type"
               placeholder="site_type"
               value={state.formData.site_type}
+              onChange={handleChange}
+              className="mt-3"
+            />
+            <CFormInput
+              type="text"
+              label="client_id"
+              name="client_id"
+              placeholder="client_id"
+              value={id}
               onChange={handleChange}
               className="mt-3"
             />
