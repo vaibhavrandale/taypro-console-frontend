@@ -72,14 +72,14 @@
   font-size: 16px;
 }
 
-.dropdown-menu {
+.dropdown-menu-robot {
   width: 200px;
   border: none;
   max-height: 200px;
   overflow-y: auto;
 }
 
-.dropdown-menu .dropdown-item {
+.dropdown-menu-robot .dropdown-item {
   margin: 5px 0px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }

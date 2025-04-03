@@ -2220,6 +2220,16 @@ const _nav = [
           text: "DONE",
         },
       },
+      {
+        component: CNavItem,
+        name: "Users",
+        to: "/client-admin/external-users",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
 
       // {
       //   component: CNavItem,

@@ -25,6 +25,7 @@ import ClientRobotOperating from "./views/client-admin/site-management/ClientRob
 import ClientSearchRobot from "./views/client-admin/site-management/ClientSearchRobot";
 import ClientTimers from "./views/client-admin/timers/ClientTimers";
 import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
+import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -649,6 +650,12 @@ const routes = [
     path: "/client-admin/timers/:block/:site_id",
     name: "Update Block Timer",
     element: ClientUpdateTimer,
+  },
+
+  {
+    path: "/client-admin/external-users",
+    name: "All  External Users",
+    element: ClientUsersManagement,
   },
   // ------------------------client admin---------------------------------
 

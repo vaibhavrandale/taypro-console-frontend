@@ -76,7 +76,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         );
 
         let result = response.data.data;
-        setCount(response.data.count);
+        setCount(response.data.unread_count);
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
         console.log(error);
@@ -320,6 +320,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             ? `${notification.details.substring(0, 30)}...`
                             : notification.details}
                         </small>
+
                         <small className="d-block" style={{ fontSize: "12px" }}>
                           {notification.performed_by.name} |{" "}
                           {moment(notification.timestamp).format(

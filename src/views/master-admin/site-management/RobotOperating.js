@@ -425,7 +425,7 @@ const RobotOperating = () => {
                   </CButton>
                 )}
 
-                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu border">
+                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
                   {siteRobots.length === 1
                     ? ""
                     : siteRobots.map((item, index) => (
