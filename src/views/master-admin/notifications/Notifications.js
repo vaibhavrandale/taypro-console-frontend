@@ -264,9 +264,11 @@ const Notifications = () => {
                 <CTableDataCell>{notification.action}</CTableDataCell>
                 <CTableDataCell>{notification.module}</CTableDataCell>
                 <CTableDataCell>
-                  {notification.details.length > 30
-                    ? `${notification.details}`
-                    : notification.details}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: notification.details,
+                    }}
+                  ></span>
                 </CTableDataCell>
                 <CTableDataCell>
                   {notification.performed_by.role}
@@ -319,7 +321,6 @@ const Notifications = () => {
         limit={limit}
         handleLimitChange={setLimit} // New prop
       />
-
       {/* 📌 Read Users Modal */}
       <CModal
         scrollable

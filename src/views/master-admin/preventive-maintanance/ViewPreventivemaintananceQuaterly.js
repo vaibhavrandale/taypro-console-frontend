@@ -180,6 +180,10 @@ const ViewPreventivemaintananceQuaterly = () => {
       console.error("Table not found!");
       return;
     }
+    if (preventivemaintanance.length === 0) {
+      toast.error("No data found to export");
+      return;
+    }
 
     // Convert table to worksheet
     const workbook = XLSX.utils.book_new();
@@ -196,18 +200,18 @@ const ViewPreventivemaintananceQuaterly = () => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
     });
 
-    saveAs(data, "Preventive_Maintenance.xlsx");
+    saveAs(data, `${site_id}_Site_Preventive_Maintenance.xlsx`);
   };
-  const exportToPDF = () => {
-    const doc = new jsPDF("landscape");
-    doc.text("Preventive Maintenance Report", 14, 10);
+  // const exportToPDF = () => {
+  //   const doc = new jsPDF("landscape");
+  //   doc.text("Preventive Maintenance Report", 14, 10);
 
-    const table = document.querySelector("table");
+  //   const table = document.querySelector("table");
 
-    autoTable(doc, { html: table, startY: 20 }); // Ensure autoTable is used this way
+  //   autoTable(doc, { html: table, startY: 20 }); // Ensure autoTable is used this way
 
-    doc.save("Preventive_Maintenance.pdf");
-  };
+  //   doc.save("Preventive_Maintenance.pdf");
+  // };
 
   return (
     <div>
@@ -222,56 +226,62 @@ const ViewPreventivemaintananceQuaterly = () => {
             <>
               <form>
                 <CRow className="my-3">
-                  <CCol md={3}>
-                    <div className="m-1">
-                      {/* <label className="form-label">Site Id</label> */}
-                      <CFormSelect
-                        name="site_id"
-                        value={site_id}
-                        onChange={handleSiteNameChange}
-                      >
-                        <option value="all">All Data</option>
+                  {/* Inputs aligned to the left */}
+                  <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
+                    <CCol md={3} xs={12}>
+                      <div className="m-1">
+                        <CFormSelect
+                          name="site_id"
+                          value={site_id}
+                          onChange={handleSiteNameChange}
+                        >
+                          <option value="all">All Data</option>
+                          {loadingSites ? (
+                            <LoadingSpinner />
+                          ) : (
+                            sites?.length > 0 &&
+                            sites.map((item) => (
+                              <option key={item.site_id} value={item.site_id}>
+                                {item.site_id}
+                              </option>
+                            ))
+                          )}
+                        </CFormSelect>
+                      </div>
+                    </CCol>
+                    <CCol md={2} xs={12} className="m-1">
+                      <CFormInput
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                      />
+                    </CCol>
+                    <CCol md={2} xs={12} className="m-1">
+                      <CFormInput
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                      />
+                    </CCol>
+                  </CCol>
 
-                        {loadingSites ? (
-                          <LoadingSpinner />
-                        ) : (
-                          sites?.length > 0 &&
-                          sites.map((item) => (
-                            <option key={item.site_id} value={item.site_id}>
-                              {item.site_id}
-                            </option>
-                          ))
-                        )}
-                      </CFormSelect>
-                    </div>
+                  {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
+                  <CCol
+                    md={5}
+                    xs={12}
+                    className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
+                  >
+                    <CButton color="primary" size="sm" onClick={exportToExcel}>
+                      Export
+                    </CButton>
                   </CCol>
-                  <CCol md={3} className="m-1">
-                    <CFormInput
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
-                  </CCol>
-                  <CCol md={3} className="m-1">
-                    <CFormInput
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
-                  </CCol>
-                  <CRow className="mb-3">
-                    <CCol>
-                      <CButton color="primary" onClick={exportToExcel}>
-                        Export to Excel
-                      </CButton>
-                    </CCol>
-                    <CCol>
-                      <CButton color="danger" onClick={exportToPDF}>
-                        Export to PDF
-                      </CButton>
-                    </CCol>
-                  </CRow>
                 </CRow>
+
+                {/* <CCol md={3} className="m-1">
+                    <CButton color="danger" onClick={exportToPDF}>
+                      Export to PDF
+                    </CButton>
+                  </CCol> */}
               </form>
               <div className="table-responsive">
                 <CTable bordered hover>
@@ -418,7 +428,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                   <CTableHead>
                     {/* Top Row - Branding & Title */}
                     <CTableRow className="bg-dark text-white">
-                      <CTableHeaderCell colSpan={2} className="text-center">
+                      <CTableHeaderCell colSpan={1} className="text-center">
                         <CAvatar
                           src={TayproLogo}
                           alt="Taypro Logo"
@@ -430,7 +440,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                           }}
                         />
                       </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={7} className="text-center">
+                      <CTableHeaderCell colSpan={2} className="text-center">
                         <h3>Preventive Maintenance Checklist - Quarterly</h3>
                       </CTableHeaderCell>
                       <CTableHeaderCell colSpan={1}>Doc. No.</CTableHeaderCell>
@@ -442,6 +452,14 @@ const ViewPreventivemaintananceQuaterly = () => {
                       <CTableHeaderCell>Revised By</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
                         Abhay Singh
+                      </CTableHeaderCell>
+                      <CTableHeaderCell>Start Date</CTableHeaderCell>
+                      <CTableHeaderCell className="fw-bold">
+                        24/05/2025
+                      </CTableHeaderCell>
+                      <CTableHeaderCell>End Date</CTableHeaderCell>
+                      <CTableHeaderCell className="fw-bold">
+                        24/05/2025
                       </CTableHeaderCell>
                     </CTableRow>
 
@@ -464,14 +482,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                       <CTableHeaderCell className="fw-bold">
                         Vaibhav Randale
                       </CTableHeaderCell>
-                      <CTableHeaderCell>Start Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        24/05/2025
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>End Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        24/05/2025
-                      </CTableHeaderCell>
+
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
                         Automatic
@@ -479,12 +490,14 @@ const ViewPreventivemaintananceQuaterly = () => {
                     </CTableRow>
 
                     {/* Main Table Header */}
-                    <CTableRow className="text-center bg-primary text-white">
-                      <CTableHeaderCell>Sr. No</CTableHeaderCell>
+                    <CTableRow className="text-center ">
+                      <CTableHeaderCell style={{ maxWidth: "100px" }}>
+                        Sr. No
+                      </CTableHeaderCell>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      <CTableHeaderCell>Site Name</CTableHeaderCell>
-                      <CTableHeaderCell>Site Location</CTableHeaderCell>
+                      {/* <CTableHeaderCell>Site Name</CTableHeaderCell> */}
+                      {/* <CTableHeaderCell>Site Location</CTableHeaderCell> */}
                       <CTableHeaderCell>
                         Physical Condition - TransPipe
                       </CTableHeaderCell>
@@ -516,10 +529,10 @@ const ViewPreventivemaintananceQuaterly = () => {
                             <CTableDataCell>{idx + 1}</CTableDataCell>
                             <CTableDataCell>{record.robot_no}</CTableDataCell>
                             <CTableDataCell>{record.robot_type}</CTableDataCell>
-                            <CTableDataCell>{client.site_name}</CTableDataCell>
+                            {/* <CTableDataCell>{client.site_name}</CTableDataCell>
                             <CTableDataCell>
                               {record.site_location}
-                            </CTableDataCell>
+                            </CTableDataCell> */}
                             <CTableDataCell>
                               {record.physical_condition_of_transPipe_condition}
                             </CTableDataCell>

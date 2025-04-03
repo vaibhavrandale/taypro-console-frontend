@@ -2180,6 +2180,46 @@ const _nav = [
         to: "/client-admin/dashboard",
         icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
       },
+      {
+        component: CNavItem,
+        name: "All Site Data",
+        to: "/client-admin/site-management/all-site-data",
+        icon: <CIcon icon={cilFactory} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "Site Management",
+        to: "/client-admin/site-management",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/client-admin/search-robot",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "All Sites Timers",
+        to: "/client-admin/timers",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
 
       // {
       //   component: CNavItem,
