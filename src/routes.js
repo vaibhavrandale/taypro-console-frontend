@@ -207,9 +207,11 @@ const UpdateInventory = React.lazy(() =>
 const AddInventory = React.lazy(() =>
   import("./views/master-admin/inventories/AddInventory")
 );
+
 const AddServiceItem = React.lazy(() =>
   import("./views/master-admin/inventories/AddServiceItem")
 );
+
 const UpdateServiceItem = React.lazy(() =>
   import("./views/master-admin/inventories/UpdateServiceItem")
 );
@@ -222,6 +224,18 @@ const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
 
 const UpdateTimer = React.lazy(() =>
   import("./views/master-admin/timers/UpdateTimer")
+);
+
+const ProjectClosureForm = React.lazy(() =>
+  import("./views/master-admin/project-closure/ProjectClosureDashboard")
+);
+
+const AddProjectClosureForm = React.lazy(() =>
+  import("./views/master-admin/project-closure/AddProjectClosureForm")
+);
+
+const UpdateProjectClosureForm = React.lazy(() =>
+  import("./views/master-admin/project-closure/UpdateProjectClosureForm")
 );
 
 //common pages
@@ -458,7 +472,7 @@ const routes = [
     element: Inventories,
   },
   {
-    path: "/master-admin/inventories/:id",
+    path: "/master-admin/inventories/update-inventory/:id",
     name: "Update Inventory",
     element: UpdateInventory,
   },
@@ -487,6 +501,21 @@ const routes = [
     path: "/master-admin/timers/:block/:site_id",
     name: "Update Robot Timer",
     element: UpdateTimer,
+  },
+  {
+    path: "/master-admin/project-closure",
+    name: "Project Closure",
+    element: ProjectClosureForm,
+  },
+  {
+    path: "/master-admin/project-closure/add-project-closure",
+    name: "Add Project Closure",
+    element: AddProjectClosureForm,
+  },
+  {
+    path: "/master-admin/project-closure/:id",
+    name: "Update Project Closure",
+    element: UpdateProjectClosureForm,
   },
   {
     path: "/master-admin/service-tickets",

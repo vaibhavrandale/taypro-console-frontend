@@ -364,7 +364,7 @@ const Inventories = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/inventories/${inventory._id}`}
+                    to={`/master-admin/inventories/update-inventory/${inventory._id}`}
                   >
                     Update
                   </Link>

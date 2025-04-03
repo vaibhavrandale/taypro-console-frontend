@@ -138,6 +138,16 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Project Closure",
+        to: "/master-admin/project-closure",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
         name: "Lora Configuration",
         to: "/master-admin/lora-configuration",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
