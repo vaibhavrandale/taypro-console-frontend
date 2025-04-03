@@ -42,15 +42,10 @@ const reducer = (state, action) => {
       return { ...state, updating: false };
     case "UPDATE_FAIL":
       return { ...state, updating: false, error: action.payload };
-    case "UPDATE_ROBOT_DETAILS":
-      return {
-        ...state,
-        robot_details: action.payload,
-      };
     case "UPDATE_HANDOVER_CHECKLIST":
       return {
         ...state,
-        handover_checklist: action.payload,
+        handoverChecklist: action.payload,
       };
 
     default:
@@ -64,9 +59,23 @@ const UpdateProjectClosureForm = () => {
     error: "",
     updating: false,
     loadingUpload: false,
-    robot_details: [{ block: "", automatic: "", semi_automatic: "" }],
-    handover_checklist: [{ task_name: "", status: "", remark: "" }],
   });
+
+  const [robotDetails, setRobotDetails] = useState([
+    {
+      block: "",
+      automatic: "",
+      semi_automatic: "",
+    },
+  ]);
+
+  const [checkListDetails, setCheckListDetails] = useState([
+    {
+      task_name: "",
+      status: "",
+      remark: "",
+    },
+  ]);
 
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
@@ -93,8 +102,6 @@ const UpdateProjectClosureForm = () => {
     rs_setup: "",
     lora_pole_setup: "",
     lora_pole_coordinated: "",
-    robot_details: [{ block: "", automatic: "", semi_automatic: "" }],
-    handover_checklist: [{ task_name: "", status: "", remark: "" }],
     commissioning_document: "",
     is_portal_access_provided: false,
     is_client_training_conducted: false,
@@ -104,18 +111,19 @@ const UpdateProjectClosureForm = () => {
   });
 
   useEffect(() => {
-    const fetchServiceItem = async () => {
+    const fetchProjectHandoverDoc = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/projectdocs/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
 
-        console.log(data.data);
-
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
+
         setServiceItemData(data.data);
-        setImage(data.data.item_image);
+        setRobotDetails(data.data.robot_details || []);
+        setCheckListDetails(data.data.handover_checklist || []);
+        setImage(data.data.commissioning_document);
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -125,9 +133,13 @@ const UpdateProjectClosureForm = () => {
       }
     };
 
-    fetchServiceItem();
+    fetchProjectHandoverDoc();
   }, [id, authtoken]);
 
+  const deleteImageHandler = () => {
+    setImage("");
+    toast.success("Image removed.");
+  };
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
 
@@ -137,49 +149,57 @@ const UpdateProjectClosureForm = () => {
     }));
   };
 
+  const handleRobotChange = (e, index) => {
+    const { name, value } = e.target;
+    setRobotDetails((prevRobotDetails) =>
+      prevRobotDetails.map((robot, i) =>
+        i === index ? { ...robot, [name]: value } : robot
+      )
+    );
+  };
+
+  const handleHandoverChange = (e, index) => {
+    const { name, value } = e.target;
+    const newChecklist = [...checkListDetails];
+    newChecklist[index] = {
+      ...newChecklist[index],
+      [name]: value,
+    };
+    setCheckListDetails(newChecklist);
+  };
+
   const addRobot = () => {
-    dispatch({
-      type: "UPDATE_ROBOT_DETAILS",
-      payload: [
-        ...serviceItemData.robot_details,
-        { block: "", automatic: "", semi_automatic: "" },
-      ],
-    });
-  };
-
-  const handleRobotChange = (index, field, value) => {
-    const updatedRobots = [...serviceItemData.robot_details];
-    updatedRobots[index][field] = value;
-    dispatch({ type: "UPDATE_ROBOT_DETAILS", payload: updatedRobots });
-  };
-
-  const removeRobot = (index) => {
-    dispatch({
-      type: "UPDATE_ROBOT_DETAILS",
-      payload: serviceItemData.robot_details.filter((_, i) => i !== index),
-    });
+    setRobotDetails([
+      ...robotDetails,
+      {
+        block: "",
+        automatic: "",
+        semi_automatic: "",
+      },
+    ]);
   };
 
   const addHandoverTask = () => {
-    dispatch({
-      type: "UPDATE_HANDOVER_CHECKLIST",
-      payload: [
-        ...serviceItemData.handover_checklist,
-        { task_name: "", status: "", remark: "" },
-      ],
-    });
+    setCheckListDetails([
+      ...checkListDetails,
+      {
+        task_name: "",
+        status: "",
+        remark: "",
+      },
+    ]);
   };
-  const handleHandoverChange = (index, field, value) => {
-    const updatedChecklist = [...serviceItemData.handover_checklist];
-    updatedChecklist[index][field] = value;
-    dispatch({ type: "UPDATE_HANDOVER_CHECKLIST", payload: updatedChecklist });
+
+  const removeRobot = (index) => {
+    const newData = [...robotDetails];
+    newData.splice(index, 1);
+    setRobotDetails(newData);
   };
 
   const removeHandoverTask = (index) => {
-    dispatch({
-      type: "UPDATE_HANDOVER_CHECKLIST",
-      payload: serviceItemData.handover_checklist.filter((_, i) => i !== index),
-    });
+    const newData = [...checkListDetails];
+    newData.splice(index, 1);
+    setCheckListDetails(newData);
   };
 
   const handleImageUpload = async (e) => {
@@ -211,11 +231,6 @@ const UpdateProjectClosureForm = () => {
     }
   };
 
-  const deleteImageHandler = () => {
-    setImage("");
-    toast.success("Image removed.");
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault(); // Fix: Prevent default form submission
 
@@ -233,10 +248,11 @@ const UpdateProjectClosureForm = () => {
 
       const newData = {
         ...filteredFormData,
-        item_image: image,
-        robot_details: serviceItemData.robot_details,
-        handover_checklist: serviceItemData.handover_checklist,
+        commissioning_document: image,
+        robot_details: robotDetails,
+        handover_checklist: checkListDetails,
       };
+      console.log(newData);
       await axios.put(`/api/v1/projectdocs/${id}`, newData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
@@ -422,7 +438,7 @@ const UpdateProjectClosureForm = () => {
                       type="text"
                       className="form-control"
                       name="total_no_of_systems"
-                      value={serviceItemData.total_no_of_systems || ""}
+                      value={serviceItemData.total_no_of_systems}
                       onChange={handleChange}
                     />
                   </div>
@@ -437,7 +453,7 @@ const UpdateProjectClosureForm = () => {
                       type="text"
                       className="form-control"
                       name="modalA_count"
-                      value={serviceItemData.modalA_count || ""}
+                      value={serviceItemData.modalA_count}
                       onChange={handleChange}
                     />
                   </div>
@@ -452,7 +468,7 @@ const UpdateProjectClosureForm = () => {
                       type="text"
                       className="form-control"
                       name="modalB_count"
-                      value={serviceItemData.modalB_count || ""}
+                      value={serviceItemData.modalB_count}
                       onChange={handleChange}
                     />
                   </div>
@@ -467,7 +483,7 @@ const UpdateProjectClosureForm = () => {
                       type="text"
                       className="form-control"
                       name="modalT_count"
-                      value={serviceItemData.modalT_count || ""}
+                      value={serviceItemData.modalT_count}
                       onChange={handleChange}
                     />
                   </div>
@@ -482,7 +498,7 @@ const UpdateProjectClosureForm = () => {
                       type="text"
                       className="form-control"
                       name="plant_capacity"
-                      value={serviceItemData.plant_capacity || ""}
+                      value={serviceItemData.plant_capacity}
                       onChange={handleChange}
                     />
                   </div>
@@ -566,7 +582,7 @@ const UpdateProjectClosureForm = () => {
                 <CCol md="3">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
-                      Lora Pole Coordinated
+                      Lora Pole Coordinates
                     </CFormLabel>
                     <textarea
                       type="text"
@@ -619,44 +635,33 @@ const UpdateProjectClosureForm = () => {
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
-                    {state.robot_details.map((robot, index) => (
+                    {robotDetails.map((robot, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="block"
                             value={robot.block}
-                            onChange={(e) =>
-                              handleRobotChange(index, "block", e.target.value)
-                            }
+                            onChange={(e) => handleRobotChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="automatic"
                             value={robot.automatic}
-                            onChange={(e) =>
-                              handleRobotChange(
-                                index,
-                                "automatic",
-                                e.target.value
-                              )
-                            }
+                            onChange={(e) => handleRobotChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="semi_automatic"
                             value={robot.semi_automatic}
-                            onChange={(e) =>
-                              handleRobotChange(
-                                index,
-                                "semi_automatic",
-                                e.target.value
-                              )
-                            }
+                            onChange={(e) => handleRobotChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
@@ -709,48 +714,33 @@ const UpdateProjectClosureForm = () => {
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
-                    {state.handover_checklist.map((list, index) => (
+                    {checkListDetails.map((list, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="task_name"
                             value={list.task_name}
-                            onChange={(e) =>
-                              handleHandoverChange(
-                                index,
-                                "task_name",
-                                e.target.value
-                              )
-                            }
+                            onChange={(e) => handleHandoverChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="status"
                             value={list.status}
-                            onChange={(e) =>
-                              handleHandoverChange(
-                                index,
-                                "status",
-                                e.target.value
-                              )
-                            }
+                            onChange={(e) => handleHandoverChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
                           <CFormInput
                             type="text"
                             className="form-control"
+                            name="remark"
                             value={list.remark}
-                            onChange={(e) =>
-                              handleHandoverChange(
-                                index,
-                                "remark",
-                                e.target.value
-                              )
-                            }
+                            onChange={(e) => handleHandoverChange(e, index)}
                           />
                         </CTableDataCell>
                         <CTableDataCell>
@@ -800,10 +790,10 @@ const UpdateProjectClosureForm = () => {
                     <div className="d-flex justify-content-center w-100">
                       <LoadingSpinner />
                     </div>
-                  ) : image || serviceItemData.item_image ? (
+                  ) : image || serviceItemData.commissioning_document ? (
                     <div className="d-flex align-items-center">
                       <img
-                        src={image || serviceItemData.item_image}
+                        src={image || serviceItemData.commissioning_document}
                         alt="Uploaded Item"
                         width="100"
                         height="100"

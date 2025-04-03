@@ -201,7 +201,7 @@ const NewProjectClosure = () => {
     }
     const newdata = {
       ...state.projectDocData,
-      item_image: image,
+      commissioning_document: image,
       robot_details: state.robotDetails,
       handover_checklist: state.handoverChecklist,
     };
@@ -541,7 +541,7 @@ const NewProjectClosure = () => {
               <CCol md="6">
                 <div className="mb-3">
                   <CFormLabel className="form-CFormLabel">
-                    Lora Pole Coordinated
+                    Lora Pole Coordinates
                   </CFormLabel>
 
                   <textarea
@@ -830,12 +830,11 @@ const NewProjectClosure = () => {
             <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
               {state.loading ? (
                 <>
-                  Adding..
+                  Saving...
                   <LoadingSpinner />
-                  NewProjectClosure
                 </>
               ) : (
-                "Add"
+                "Save to Draft"
               )}
             </Link>
           </form>
