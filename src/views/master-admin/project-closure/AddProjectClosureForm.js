@@ -89,13 +89,13 @@ const NewProjectClosure = () => {
       robot_details: [],
       handover_checklist: [],
       commissioning_document: "",
-      is_portal_access_provided: "",
-      is_client_training_conducted: "",
+      is_portal_access_provided: false,
+      is_client_training_conducted: false,
       client_name: "",
       client_role: "",
       client_email: "",
     },
-    robotDetails: [{ block: "", automatic: "", semiAutomatic: "" }],
+    robotDetails: [{ block: "", automatic: "", semi_automatic: "" }],
     handoverChecklist: [{ task_name: "", status: "", remark: "" }],
     loading: false,
     success: false,
@@ -114,25 +114,26 @@ const NewProjectClosure = () => {
     });
   };
 
+  const addRobot = () => {
+    dispatch({
+      type: "UPDATE_ROBOT_DETAILS",
+      payload: [
+        ...state.robotDetails,
+        { block: "", automatic: "", semi_automatic: "" },
+      ],
+    });
+  };
+
   const handleRobotChange = (index, field, value) => {
     const updatedRobots = [...state.robotDetails];
     updatedRobots[index][field] = value;
     dispatch({ type: "UPDATE_ROBOT_DETAILS", payload: updatedRobots });
   };
 
-  const handleHandoverChange = (index, field, value) => {
-    const updatedChecklist = [...state.handoverChecklist];
-    updatedChecklist[index][field] = value;
-    dispatch({ type: "UPDATE_HANDOVER_CHECKLIST", payload: updatedChecklist });
-  };
-
-  const addRobot = () => {
+  const removeRobot = (index) => {
     dispatch({
       type: "UPDATE_ROBOT_DETAILS",
-      payload: [
-        ...state.robotDetails,
-        { block: "", automatic: "", semiAutomatic: "" },
-      ],
+      payload: state.robotDetails.filter((_, i) => i !== index),
     });
   };
 
@@ -145,12 +146,10 @@ const NewProjectClosure = () => {
       ],
     });
   };
-
-  const removeRobot = (index) => {
-    dispatch({
-      type: "UPDATE_ROBOT_DETAILS",
-      payload: state.robotDetails.filter((_, i) => i !== index),
-    });
+  const handleHandoverChange = (index, field, value) => {
+    const updatedChecklist = [...state.handoverChecklist];
+    updatedChecklist[index][field] = value;
+    dispatch({ type: "UPDATE_HANDOVER_CHECKLIST", payload: updatedChecklist });
   };
 
   const removeHandoverTask = (index) => {
@@ -462,7 +461,7 @@ const NewProjectClosure = () => {
               <CCol md="3">
                 <div className="mb-3">
                   <CFormLabel className="form-CFormLabel">
-                    Water Stored
+                    Water Stored(ltr)
                   </CFormLabel>
 
                   <CFormInput
@@ -629,11 +628,11 @@ const NewProjectClosure = () => {
                         <CFormInput
                           type="text"
                           className="form-control"
-                          value={robot.semiAutomatic}
+                          value={robot.semi_automatic}
                           onChange={(e) =>
                             handleRobotChange(
                               index,
-                              "semiAutomatic",
+                              "semi_automatic",
                               e.target.value
                             )
                           }

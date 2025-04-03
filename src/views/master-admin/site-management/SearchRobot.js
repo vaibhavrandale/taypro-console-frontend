@@ -51,40 +51,23 @@ const SearchRobot = () => {
   const [filteredRobot, setFilteredRobot] = useState([]);
   const [pageInput, setPageInput] = useState("");
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchRobots = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const result = await axios.post(
-          `/api/v1/robots/get-robots`,
-          pagination,
+        const result = await axios.get(
+          `/api/v1/robots/get-robots-no`,
+
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
           //  payload: data.data
-          payload: {
-            data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
-          },
+          payload: result.data,
         });
       } catch (error) {
         console.log(error.response.statusText);
@@ -97,7 +80,7 @@ const SearchRobot = () => {
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [authtoken]);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;

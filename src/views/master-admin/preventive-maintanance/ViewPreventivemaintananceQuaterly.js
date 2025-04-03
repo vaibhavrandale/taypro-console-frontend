@@ -29,7 +29,12 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_PM_REQUEST":
-      return { ...state, pmloading: true, error: "" };
+      return {
+        ...state,
+        pmloading: true,
+        error: "",
+        preventivemaintanance: [],
+      }; //
     case "FETCH_PM_SUCCESS":
       return {
         ...state,
@@ -109,25 +114,27 @@ const ViewPreventivemaintananceQuaterly = () => {
       dispatch({ type: "FETCH_PM_REQUEST" });
       try {
         const result = await axios.get(
-          `/api/v1/preventivemaintenances/${startDate}/${endDate}/${site_id}`,
+          `/api/v1/preventivemaintenances/sites-with-date/${startDate}/${endDate}/${site_id}`,
 
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
 
-        // console.log(result.data.data);
-
         dispatch({
           type: "FETCH_PM_SUCCESS",
-          payload: result.data.data,
+          payload: result.data,
         });
       } catch (error) {
         dispatch({
           type: "FETCH_PM_FAIL",
-          payload: error.response.data.error,
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error(error.response.data.error);
+        toast.error(error.response.data.error || error.response.data.message);
+        dispatch({
+          type: "FETCH_PM_SUCCESS",
+          payload: [],
+        });
       }
     };
     fetchSites();
@@ -139,45 +146,14 @@ const ViewPreventivemaintananceQuaterly = () => {
     setSiteId(selectedSiteId); // Updates local state
   };
 
-  // const exportToExcel = () => {
-  //   // Get the table element by ID or reference
-  //   const table = document.querySelector("table"); // Assuming your table is rendered in <table>
-
-  //   const workbook = XLSX.utils.book_new();
-  //   const worksheet = XLSX.utils.table_to_sheet(table); // Converts the full table as it appears
-
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Preventive Maintenance");
-  //   XLSX.writeFile(workbook, "Preventive_Maintenance.xlsx");
-  // };
-
-  // const exportToExcel = () => {
-  //   const table = document.querySelector("table"); // Select the table
-  //   if (!table) {
-  //     console.error("Table not found!");
-  //     return;
-  //   }
-
-  //   const workbook = XLSX.utils.book_new(); // Create a new workbook
-  //   const worksheet = XLSX.utils.table_to_sheet(table); // Convert table to sheet
-
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Preventive Maintenance");
-
-  //   const excelBuffer = XLSX.write(workbook, {
-  //     bookType: "xlsx",
-  //     type: "array",
-  //   });
-
-  //   const data = new Blob([excelBuffer], {
-  //     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-  //   });
-
-  //   saveAs(data, "Preventive_Maintenance.xlsx");
-  // };
-
   const exportToExcel = () => {
     const table = document.querySelector("table");
     if (!table) {
       console.error("Table not found!");
+      return;
+    }
+    if (preventivemaintanance.length === 0) {
+      toast.error("No data found to export");
       return;
     }
 
@@ -196,18 +172,21 @@ const ViewPreventivemaintananceQuaterly = () => {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
     });
 
-    saveAs(data, "Preventive_Maintenance.xlsx");
+    saveAs(
+      data,
+      `${site_id}_${startDate}_${endDate}_Site_Preventive_Maintenance.xlsx`
+    );
   };
-  const exportToPDF = () => {
-    const doc = new jsPDF("landscape");
-    doc.text("Preventive Maintenance Report", 14, 10);
+  // const exportToPDF = () => {
+  //   const doc = new jsPDF("landscape");
+  //   doc.text("Preventive Maintenance Report", 14, 10);
 
-    const table = document.querySelector("table");
+  //   const table = document.querySelector("table");
 
-    autoTable(doc, { html: table, startY: 20 }); // Ensure autoTable is used this way
+  //   autoTable(doc, { html: table, startY: 20 }); // Ensure autoTable is used this way
 
-    doc.save("Preventive_Maintenance.pdf");
-  };
+  //   doc.save("Preventive_Maintenance.pdf");
+  // };
 
   return (
     <div>
@@ -216,209 +195,73 @@ const ViewPreventivemaintananceQuaterly = () => {
           <h2>Preventive Maintenance Records</h2>
           {pmloading ? (
             <CSpinner />
-          ) : error ? (
-            <p>{error}</p>
           ) : (
             <>
               <form>
                 <CRow className="my-3">
-                  <CCol md={3}>
-                    <div className="m-1">
-                      {/* <label className="form-label">Site Id</label> */}
-                      <CFormSelect
-                        name="site_id"
-                        value={site_id}
-                        onChange={handleSiteNameChange}
-                      >
-                        <option value="all">All Data</option>
+                  {/* Inputs aligned to the left */}
+                  <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
+                    <CCol md={4} xs={12}>
+                      <div className="m-1">
+                        <CFormSelect
+                          name="site_id"
+                          value={site_id}
+                          onChange={handleSiteNameChange}
+                        >
+                          <option value="all">All Data</option>
+                          {loadingSites ? (
+                            <LoadingSpinner />
+                          ) : (
+                            sites?.length > 0 &&
+                            sites.map((item) => (
+                              <option key={item.site_id} value={item.site_id}>
+                                {item.site_id}
+                              </option>
+                            ))
+                          )}
+                        </CFormSelect>
+                      </div>
+                    </CCol>
+                    <CCol md={3} xs={12} className="m-1">
+                      <CFormInput
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                      />
+                    </CCol>
+                    <CCol md={3} xs={12} className="m-1">
+                      <CFormInput
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                      />
+                    </CCol>
+                  </CCol>
 
-                        {loadingSites ? (
-                          <LoadingSpinner />
-                        ) : (
-                          sites?.length > 0 &&
-                          sites.map((item) => (
-                            <option key={item.site_id} value={item.site_id}>
-                              {item.site_id}
-                            </option>
-                          ))
-                        )}
-                      </CFormSelect>
-                    </div>
+                  {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
+                  <CCol
+                    md={5}
+                    xs={12}
+                    className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
+                  >
+                    <CButton color="primary" size="sm" onClick={exportToExcel}>
+                      Export
+                    </CButton>
                   </CCol>
-                  <CCol md={3} className="m-1">
-                    <CFormInput
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
-                  </CCol>
-                  <CCol md={3} className="m-1">
-                    <CFormInput
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
-                  </CCol>
-                  <CRow className="mb-3">
-                    <CCol>
-                      <CButton color="primary" onClick={exportToExcel}>
-                        Export to Excel
-                      </CButton>
-                    </CCol>
-                    <CCol>
-                      <CButton color="danger" onClick={exportToPDF}>
-                        Export to PDF
-                      </CButton>
-                    </CCol>
-                  </CRow>
                 </CRow>
+
+                {/* <CCol md={3} className="m-1">
+                    <CButton color="danger" onClick={exportToPDF}>
+                      Export to PDF
+                    </CButton>
+                  </CCol> */}
               </form>
               <div className="table-responsive">
                 <CTable bordered hover>
-                  {/* <CTableHead>
-                    <CTableRow>
-                      <CTableHeaderCell>
-                        <CAvatar
-                          src={TayproLogo}
-                          alt="Taypro Logo"
-                          className="sidebar-brand-full logo"
-                          style={{
-                            height: "70px",
-                            width: "200px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={10} className="text-center">
-                        <h4>Preventive Maintenance Checklist Quarterly</h4>
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell colSpan={1} className="text-start">
-                        <CTableRow>
-                          <CTableHeaderCell>Doc No</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>Revision No</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>Revised By</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>
-                            <CTableHeaderCell>Site Location</CTableHeaderCell>
-                          </CTableHeaderCell>
-                        </CTableRow>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1} className="text-center">
-                        <CTableRow>
-                          <CTableHeaderCell>TPL-12</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>1</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>Abhay Singh</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>
-                            <CTableHeaderCell>Agar Malwa</CTableHeaderCell>
-                          </CTableHeaderCell>
-                        </CTableRow>
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell className="text-center">
-                        <CTableRow>
-                          <CTableHeaderCell>Tech. name</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell> Start Date</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell> End Date</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>
-                            <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                          </CTableHeaderCell>
-                        </CTableRow>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell className="text-start">
-                        <CTableRow>
-                          <CTableHeaderCell>Vaibhav Randale</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>24/05/2025</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell> 24/05/2025</CTableHeaderCell>
-                        </CTableRow>
-                        <CTableRow>
-                          <CTableHeaderCell>
-                            <CTableHeaderCell>Automatic</CTableHeaderCell>
-                          </CTableHeaderCell>
-                        </CTableRow>
-                      </CTableHeaderCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell colSpan={1}></CTableHeaderCell>
-                      <CTableHeaderCell colSpan={5} className="">
-                        Client Name
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={10} className="text-start">
-                        Site location
-                      </CTableHeaderCell>
-                    </CTableRow>
-                    <CTableRow className="text-center">
-                      <CTableHeaderCell colSpan={1}>Sr</CTableHeaderCell>
-
-                      <CTableHeaderCell style={{ minWidth: "120px" }}>
-                        Robot No
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "130px" }}>
-                        Robot Type
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Site Name
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Site Location
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Physical Condition - TransPipe
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Physical Condition - Channel
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Oiling Needed (Bearing)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Oiling Needed (Motors)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        MF Clothes Alignment
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Wheels Alignment
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Is Wheels Loose
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Is Nut-Bolt Loose
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        Start Date
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "230px" }}>
-                        End Date
-                      </CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead> */}
                   <CTableHead>
                     {/* Top Row - Branding & Title */}
                     <CTableRow className="bg-dark text-white">
-                      <CTableHeaderCell colSpan={2} className="text-center">
+                      <CTableHeaderCell colSpan={1} className="text-center">
                         <CAvatar
                           src={TayproLogo}
                           alt="Taypro Logo"
@@ -430,18 +273,28 @@ const ViewPreventivemaintananceQuaterly = () => {
                           }}
                         />
                       </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={7} className="text-center">
+                      <CTableHeaderCell colSpan={2} className="text-center">
                         <h3>Preventive Maintenance Checklist - Quarterly</h3>
                       </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1}>Doc. No.</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        TPL-12
+                      <CTableHeaderCell colSpan={1}>
+                        Doc. No. : TPL-12
                       </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1}>Rev. No.</CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1}>1</CTableHeaderCell>
+
+                      <CTableHeaderCell colSpan={1}>
+                        Rev. No.: 1
+                      </CTableHeaderCell>
+
                       <CTableHeaderCell>Revised By</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
                         Abhay Singh
+                      </CTableHeaderCell>
+                      <CTableHeaderCell>Start Date</CTableHeaderCell>
+                      <CTableHeaderCell className="fw-bold">
+                        {preventivemaintanance.start_date}
+                      </CTableHeaderCell>
+                      <CTableHeaderCell>End Date</CTableHeaderCell>
+                      <CTableHeaderCell className="fw-bold">
+                        {preventivemaintanance.end_date}
                       </CTableHeaderCell>
                     </CTableRow>
 
@@ -449,29 +302,22 @@ const ViewPreventivemaintananceQuaterly = () => {
                     <CTableRow className="bg-light">
                       <CTableHeaderCell>Site Id</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
-                        avaada_agar
+                        {preventivemaintanance.site_id}
                       </CTableHeaderCell>
                       <CTableHeaderCell colSpan={1}>Client</CTableHeaderCell>
                       <CTableHeaderCell colSpan={1} className="fw-bold">
-                        Avaada Pvt.ltd
+                        {preventivemaintanance.site_name}
                       </CTableHeaderCell>
                       <CTableHeaderCell>Location</CTableHeaderCell>
                       <CTableHeaderCell colSpan={2} className="fw-bold">
-                        Agar Malwa ,gerg ,wejfweiu,ogjoweru
+                        {preventivemaintanance.site_location}
                       </CTableHeaderCell>
 
                       <CTableHeaderCell>Tech. Name</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
-                        Vaibhav Randale
+                        {preventivemaintanance.technician_present?.join(", ")}
                       </CTableHeaderCell>
-                      <CTableHeaderCell>Start Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        24/05/2025
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>End Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        24/05/2025
-                      </CTableHeaderCell>
+
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
                       <CTableHeaderCell className="fw-bold">
                         Automatic
@@ -479,12 +325,14 @@ const ViewPreventivemaintananceQuaterly = () => {
                     </CTableRow>
 
                     {/* Main Table Header */}
-                    <CTableRow className="text-center bg-primary text-white">
-                      <CTableHeaderCell>Sr. No</CTableHeaderCell>
+                    <CTableRow className="text-center ">
+                      <CTableHeaderCell style={{ maxWidth: "100px" }}>
+                        Sr. No
+                      </CTableHeaderCell>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      <CTableHeaderCell>Site Name</CTableHeaderCell>
-                      <CTableHeaderCell>Site Location</CTableHeaderCell>
+                      {/* <CTableHeaderCell>Site Name</CTableHeaderCell> */}
+                      {/* <CTableHeaderCell>Site Location</CTableHeaderCell> */}
                       <CTableHeaderCell>
                         Physical Condition - TransPipe
                       </CTableHeaderCell>
@@ -501,25 +349,25 @@ const ViewPreventivemaintananceQuaterly = () => {
                       <CTableHeaderCell>Wheels Alignment</CTableHeaderCell>
                       <CTableHeaderCell>Are Wheels Loose?</CTableHeaderCell>
                       <CTableHeaderCell>Are Nut-Bolts Loose?</CTableHeaderCell>
-                      <CTableHeaderCell>Start Date</CTableHeaderCell>
-                      <CTableHeaderCell>End Date</CTableHeaderCell>
+                      {/* <CTableHeaderCell>Start Date</CTableHeaderCell>
+                      <CTableHeaderCell>End Date</CTableHeaderCell> */}
                     </CTableRow>
                   </CTableHead>
 
                   <CTableBody>
                     {pmloading ? (
                       <LoadingSpinner />
-                    ) : preventivemaintanance?.length > 0 ? (
-                      preventivemaintanance.map((client, index) =>
+                    ) : preventivemaintanance.data?.length > 0 ? (
+                      preventivemaintanance.data.map((client, index) =>
                         client.robots.map((record, idx) => (
                           <CTableRow key={idx} className="text-center">
                             <CTableDataCell>{idx + 1}</CTableDataCell>
                             <CTableDataCell>{record.robot_no}</CTableDataCell>
                             <CTableDataCell>{record.robot_type}</CTableDataCell>
-                            <CTableDataCell>{client.site_name}</CTableDataCell>
+                            {/* <CTableDataCell>{client.site_name}</CTableDataCell>
                             <CTableDataCell>
                               {record.site_location}
-                            </CTableDataCell>
+                            </CTableDataCell> */}
                             <CTableDataCell>
                               {record.physical_condition_of_transPipe_condition}
                             </CTableDataCell>
@@ -544,12 +392,12 @@ const ViewPreventivemaintananceQuaterly = () => {
                             <CTableDataCell>
                               {record.is_nutbolt_loose ? "Yes" : "No"}
                             </CTableDataCell>
-                            <CTableDataCell>
-                              {new Date(record.start_date).toLocaleString()}
+                            {/* <CTableDataCell>
+                              {record.start_date.split("T")[0]}
                             </CTableDataCell>
                             <CTableDataCell>
-                              {new Date(record.end_date).toLocaleString()}
-                            </CTableDataCell>
+                              {record.end_date.split("T")[0]}
+                            </CTableDataCell> */}
                           </CTableRow>
                         ))
                       )

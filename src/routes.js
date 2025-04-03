@@ -8,6 +8,23 @@ import UpdateInternalTicket from "./views/master-admin/internal-tickets/UpdateIn
 import UpdateDpr from "./views/master-admin/all-site-dpr/UpdateDpr";
 import PreventiveMaintananceNotifications from "./views/master-admin/preventive-maintanance/PreventiveMaintananceNotifications";
 import ViewPreventivemaintananceQuaterly from "./views/master-admin/preventive-maintanance/ViewPreventivemaintananceQuaterly";
+import TayproDashboard from "./views/master-admin/site-management/TayproDashboard";
+import SiteManagement from "./views/master-admin/site-management/SiteManagement";
+import BlockManagement from "./views/master-admin/site-management/BlockManagement";
+import RobotOperating from "./views/master-admin/site-management/RobotOperating";
+import SearchRobot from "./views/master-admin/site-management/SearchRobot";
+import DebugLog from "./views/master-admin/site-management/DebugLog";
+import CleaningLog from "./views/master-admin/site-management/CleaningLog";
+import NewDownlink from "./views/master-admin/site-management/NewDownlink";
+import UpdateDownlink from "./views/master-admin/site-management/UpdateDownlink";
+import ViewDownlink from "./views/master-admin/site-management/ViewDownlink";
+import ClientDashboard from "./views/client-admin/site-management/ClientDashboard";
+import ClientSiteManagement from "./views/client-admin/site-management/ClientSiteManagement";
+import ClientBlockManagement from "./views/client-admin/site-management/ClientBlockManagement";
+import ClientRobotOperating from "./views/client-admin/site-management/ClientRobotOperating";
+import ClientSearchRobot from "./views/client-admin/site-management/ClientSearchRobot";
+import ClientTimers from "./views/client-admin/timers/ClientTimers";
+import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -133,45 +150,46 @@ const ServiceAdminDahboard = React.lazy(() =>
 
 //common pages
 
-const SiteManagement = React.lazy(() =>
-  import("./views/pages/site-management/SiteManagement")
-);
+// const SiteManagement = React.lazy(() =>
+//   import("./views/pages/site-management/SiteManagement")
+// );
 
-const NewDownlink = React.lazy(() =>
-  import("./views/pages/site-management/NewDownlink")
-);
+// const NewDownlink = React.lazy(() =>
+//   import("./views/pages/site-management/NewDownlink")
+// );
 
-const UpdateDownlink = React.lazy(() =>
-  import("./views/pages/site-management/UpdateDownlink")
-);
+// const UpdateDownlink = React.lazy(() =>
+//   import("./views/pages/site-management/UpdateDownlink")
+// );
 
-const ViewDownlink = React.lazy(() =>
-  import("./views/pages/site-management/ViewDownlink")
-);
+// const ViewDownlink = React.lazy(() =>
+//   import("./views/pages/site-management/ViewDownlink")
+// );
 
-const BlockManagement = React.lazy(() =>
-  import("./views/pages/site-management/BlockManagement")
-);
+// const BlockManagement = React.lazy(() =>
+//   import("./views/pages/site-management/BlockManagement")
+// );
 
-const RobotOperating = React.lazy(() =>
-  import("./views/pages/site-management/RobotOperating")
-);
+// const RobotOperating = React.lazy(() =>
+//   import("./views/pages/site-management/RobotOperating")
+// );
 
-const DebugLog = React.lazy(() =>
-  import("./views/pages/site-management/DebugLog")
-);
+// const DebugLog = React.lazy(() =>
+//   import("./views/pages/site-management/DebugLog")
+// );
 
-const CleaningLog = React.lazy(() =>
-  import("./views/pages/site-management/CleaningLog")
-);
+// const CleaningLog = React.lazy(() =>
+//   import("./views/pages/site-management/CleaningLog")
+// );
 
-const SearchRobot = React.lazy(() =>
-  import("./views/pages/site-management/SearchRobot")
-);
+// const SearchRobot = React.lazy(() =>
+//   import("./views/pages/site-management/SearchRobot")
+// );
 
-const TayproDashboard = React.lazy(() =>
-  import("./views/pages/site-management/TayproDashboard")
-);
+// const TayproDashboard = React.lazy(() =>
+//   import("./views/pages/site-management/TayproDashboard")
+// );
+
 const Robots = React.lazy(() => import("./views/master-admin/robots/Robots"));
 
 const UpdateRobots = React.lazy(() =>
@@ -625,7 +643,42 @@ const routes = [
     name: "Client Admin Dashboard",
     element: ClientAdminDashboard,
   },
+  {
+    path: "/client-admin/site-management/all-site-data",
+    name: "Your Sites Data",
+    element: ClientDashboard,
+  },
+  {
+    path: "/client-admin/site-management",
+    name: "Site Management",
+    element: ClientSiteManagement,
+  },
+  {
+    path: "/client-admin/site-management/block-management/:site_id",
+    name: "Block Management",
+    element: ClientBlockManagement,
+  },
+  {
+    path: "/client-admin/site-management/block-management/:site_id/:block/:robot_no",
+    name: "Robot Configuration",
+    element: ClientRobotOperating,
+  },
+  {
+    path: "/client-admin/search-robot",
+    name: "Search Robot",
+    element: ClientSearchRobot,
+  },
 
+  {
+    path: "/client-admin/timers",
+    name: "Timers",
+    element: ClientTimers,
+  },
+  {
+    path: "/client-admin/timers/:block/:site_id",
+    name: "Update Block Timer",
+    element: ClientUpdateTimer,
+  },
   // ------------------------client admin---------------------------------
 
   //------------------------project admin---------------------------------
