@@ -372,13 +372,15 @@ const ExternalUsersDashboard = () => {
   };
 
   // Filter Users based on Search Term and ensure they are "Internal" type
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.department.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = users
+    ? users.filter(
+        (user) =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.department.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
