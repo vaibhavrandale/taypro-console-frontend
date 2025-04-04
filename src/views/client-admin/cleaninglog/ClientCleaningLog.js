@@ -178,17 +178,35 @@ const ClientCleaningLog = () => {
     ];
 
     const csvRows = cleaninglogs.map((log, index) => {
-      const startBattery = log.start_battery_percentage;
-      const endBattery = log.finish_battery_percentage;
-      const cleaningFinishedTime = log.finish_timestamp;
+      const startBattery = log.start_battery_percentage ?? "";
+      const endBattery = log.finish_battery_percentage ?? "";
 
-      return `${index + 1},${log.robot_no},${log.row_number},${
-        log.row_length
-      },${log.start_timestamp.split(" ")[0]},${
-        log.start_timestamp
-      },${startBattery},${cleaningFinishedTime},${endBattery},${
-        log.calculated_distance
-      },${log.cleaning_status}`;
+      // Convert timestamps properly
+      const cleaningDate = log.start_timestamp
+        ? new Date(log.start_timestamp).toISOString().split("T")[0]
+        : "";
+      const cleaningStartTime = log.start_timestamp
+        ? new Date(log.start_timestamp).toLocaleTimeString()
+        : "";
+      const cleaningFinishedTime = log.finish_timestamp
+        ? new Date(log.finish_timestamp).toLocaleTimeString()
+        : "";
+
+      return [
+        index + 1,
+        log.robot_no ?? "",
+        log.row_number ?? "",
+        log.row_length ?? "",
+        cleaningDate,
+        cleaningStartTime,
+        startBattery,
+        cleaningFinishedTime,
+        endBattery,
+        log.calculated_distance ?? "",
+        log.cleaning_status ?? "",
+      ]
+        .map((field) => `"${field}"`) // Wrap fields in quotes to avoid issues
+        .join(",");
     });
 
     const csvContent = [csvHeader, ...csvRows].join("\n");
