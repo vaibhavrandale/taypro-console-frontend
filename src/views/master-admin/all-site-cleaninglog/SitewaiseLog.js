@@ -192,7 +192,7 @@ const SitewaiseLog = () => {
       },${log.start_timestamp.split(" ")[0]},${
         log.start_timestamp
       },${startBattery},${cleaningFinishedTime},${endBattery},${
-        log.claculated_distance
+        log.calculated_distance
       },${log.cleaning_status}`;
     });
 
