@@ -26,6 +26,8 @@ import ClientSearchRobot from "./views/client-admin/site-management/ClientSearch
 import ClientTimers from "./views/client-admin/timers/ClientTimers";
 import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
+import Sites from "./views/client-admin/cleaninglog/Sites";
+import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -685,6 +687,17 @@ const routes = [
     path: "/client-admin/external-users",
     name: "All  External Users",
     element: ClientUsersManagement,
+  },
+
+  {
+    path: "/client-admin/cleaning-log-sites",
+    name: "Your Assigned Sites",
+    element: Sites,
+  },
+  {
+    path: "/client-admin/cleaning-log-sites/:site_id",
+    name: "Cleaning Log",
+    element: ClientCleaningLog,
   },
   // ------------------------client admin---------------------------------
 

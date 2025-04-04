@@ -2240,6 +2240,16 @@ const _nav = [
           text: "DONE",
         },
       },
+      {
+        component: CNavItem,
+        name: "Cleaning Log",
+        to: "/client-admin/cleaning-log-sites",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
 
       // {
       //   component: CNavItem,
