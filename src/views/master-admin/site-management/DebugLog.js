@@ -198,6 +198,7 @@ const DebugLog = () => {
               <CTableHeaderCell>Sr</CTableHeaderCell>
               <CTableHeaderCell>Robot No</CTableHeaderCell>
               <CTableHeaderCell>Data</CTableHeaderCell>
+              <CTableHeaderCell>Topic</CTableHeaderCell>
               <CTableHeaderCell>DevEUI</CTableHeaderCell>
               <CTableHeaderCell>Timestamp</CTableHeaderCell>
             </CTableRow>
@@ -221,6 +222,7 @@ const DebugLog = () => {
                   <CTableDataCell>{index + 1}</CTableDataCell>
                   <CTableDataCell>{log.robot_no}</CTableDataCell>
                   <CTableDataCell>{log.data}</CTableDataCell>
+                  <CTableDataCell>{log.topic}</CTableDataCell>
                   <CTableDataCell>{log.deveui}</CTableDataCell>
                   <CTableDataCell>
                     {" "}
