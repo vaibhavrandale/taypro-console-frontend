@@ -345,7 +345,7 @@ const SitewaiseLog = () => {
                           {log.finish_battery_percentage}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {log.claculated_distance}
+                          {log.calculated_distance}
                         </CTableDataCell>
                         <CTableDataCell>{log.cleaning_status}</CTableDataCell>
                       </>
