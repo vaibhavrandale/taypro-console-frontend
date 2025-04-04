@@ -263,41 +263,6 @@ const DebugLog = () => {
           limit={limit}
           handleLimitChange={setLimit} // New prop
         />
-
-        <CRow className="mt-3">
-          <CCol className="d-flex justify-content-end">
-            <CButton
-              color="secondary"
-              disabled={!hasPrevPage}
-              onClick={() => handlePageChange(page - 1)}
-              className="mx-1"
-              size="sm"
-            >
-              Prev
-            </CButton>
-
-            {Array.from({ length: totalPages }, (_, i) => (
-              <CButton
-                key={i + 1}
-                color={page === i + 1 ? "primary" : ""}
-                onClick={() => handlePageChange(i + 1)}
-                className="mx-1"
-              >
-                {i + 1}
-              </CButton>
-            ))}
-
-            <CButton
-              color="secondary"
-              disabled={!hasNextPage}
-              onClick={() => handlePageChange(page + 1)}
-              className="mx-1"
-              size="sm"
-            >
-              Next
-            </CButton>
-          </CCol>
-        </CRow>
       </CCardBody>
     </CCard>
   );
