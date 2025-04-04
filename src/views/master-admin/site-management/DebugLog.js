@@ -206,13 +206,13 @@ const DebugLog = () => {
           <CTableBody>
             {loading ? (
               <CTableRow>
-                <CTableHeaderCell colSpan="5" className="text-center">
+                <CTableHeaderCell colSpan="6" className="text-center">
                   <LoadingSpinner />
                 </CTableHeaderCell>
               </CTableRow>
             ) : error ? (
               <CTableRow>
-                <CTableHeaderCell colSpan="5" className="text-center">
+                <CTableHeaderCell colSpan="6" className="text-center">
                   {error}
                 </CTableHeaderCell>
               </CTableRow>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
   CTableHead,
@@ -13,50 +13,167 @@ import {
   CCardBody,
   CCardHeader,
   CSpinner,
-  CButton, // Import Loading Spinner
+  CButton,
+  CFormSelect, // Import Loading Spinner
 } from "@coreui/react";
 import { cleaning_log } from "../../../data"; // Import cleaning logs data
 import { useParams } from "react-router-dom";
 // import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import PaginateInput from "../../../components/PaginateInput";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        cleaninglogs: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    // case "FETCH_SITES_REQUEST":
+    //   return { ...state, loadingSites: true, error: "" };
+    // case "FETCH_SITES_SUCCESS":
+    //   return {
+    //     ...state,
+    //     loadingSites: false,
+    //     sites: action.payload,
+    //   };
+    // case "FETCH_SITES_FAIL":
+    //   return { ...state, loadingSites: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const SitewaiseLog = () => {
+  const [
+    {
+      loading,
+      cleaninglogs,
+      // sites,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      loadingSites,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    cleaninglogs: [],
+    // sites: [],
+    loading: false,
+    // loadingSites: false,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+  // const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [selectedDate, setSelectedDate] = useState("");
-  const [filteredLogs, setFilteredLogs] = useState([]);
-  const [loading, setLoading] = useState(false); // 🔄 Loading state
+  // const [filteredLogs, setFilteredLogs] = useState([]);
 
-  // Set default date when the component mounts
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [selectedsite, setSelectedsiteid] = useState("all");
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    setSelectedDate(today);
-    filterLogs(today);
-  }, []);
+    // const fetchSites = async () => {
+    //   dispatch({ type: "FETCH_SITES_REQUEST" });
+    //   try {
+    //     const result = await axios.get(`/api/v1/sites`, {
+    //       headers: { Authorization: `Bearer ${authtoken}` },
+    //     });
+    //     dispatch({
+    //       type: "FETCH_SITES_SUCCESS",
+    //       payload: result.data.data,
+    //     });
+    //   } catch (error) {
+    //     dispatch({
+    //       type: "FETCH_SITES_FAIL",
+    //       payload: error.response.data.error,
+    //     });
+    //     toast.error("Failed to fetch sites");
+    //   }
+    // };
 
-  // Function to filter logs
-  const filterLogs = (date) => {
-    setLoading(true); // Start loading
-    setTimeout(() => {
-      const logs = cleaning_log
-        .filter((log) => log.site_id === site_id) // Filter by Site ID
-        .filter((log) => (date ? log.start_timestamp.startsWith(date) : true)); // Filter by selected date
-      setFilteredLogs(logs);
-      setLoading(false); // Stop loading
-    }, 800); // Simulate network delay for smooth UI
-  };
+    const fetchCleaningLogs = async () => {
+      let pagination = {
+        pg: page,
+        limit: limit,
+      };
 
-  // Handle Date Change
-  const handleDateChange = (e) => {
-    const newDate = e.target.value;
-    setSelectedDate(newDate);
-    filterLogs(newDate);
-  };
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const result = await axios.post(
+          `/api/v1/cleaninglogs/${startDate}/${endDate}/${site_id}`,
+          pagination,
+          {
+            headers: {
+              Authorization: `Bearer ${authtoken}`, // Attach Authorization token
+            },
+          }
+        );
+        // setNotifications(response.data.data);
+        // console.log(response.data);
+        console.log(result.data.data);
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+        // setUsers(filteredUsers)
+        const data = result.data.data;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response.data.error,
+        });
+        toast.error(error.response ? error.response.data.error : error.message);
+      }
+    };
+
+    fetchCleaningLogs();
+    // fetchSites();
+  }, [authtoken, endDate, limit, page, site_id, startDate]);
 
   // Function to export data to Excel
 
+  const handleSiteNameChange = (e) => {
+    const site = e.target.value;
+    setSelectedsiteid(site); // Updates local state
+  };
+
   // 🔽 Export to CSV Function
   const exportToCSV = () => {
-    if (filteredLogs.length === 0) {
+    if (cleaninglogs.length === 0) {
       toast.error("No data available to export.");
       return;
     }
@@ -65,7 +182,7 @@ const SitewaiseLog = () => {
       "Sr,Robot No,Row Number,Row Length (Meters),Cleaning Date,Cleaning Start Time,Battery Start (%),Cleaning Finished Time,Battery Finished (%),Distance Covered (Meters),Status",
     ];
 
-    const csvRows = filteredLogs.map((log, index) => {
+    const csvRows = cleaninglogs.map((log, index) => {
       const startBattery = log.start_battery_percentage;
       const endBattery = log.finish_battery_percentage;
       const cleaningFinishedTime = log.finish_timestamp;
@@ -84,127 +201,182 @@ const SitewaiseLog = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Cleaning_Log_${selectedDate}.csv`;
+    a.download = `Cleaning_Log_${site_id}_${startDate}_To_${endDate}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.log(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
+
   return (
     <div className="p-4">
-      <h2 className="mb-4">
-        Cleaning Logs of <b className="text-success">{site_id}</b>
-      </h2>
+      <h4 className="mb-4">
+        📝 Cleaning Log Report of -&nbsp;
+        <span className="text-danger">{site_id}</span>
+      </h4>
 
-      {/* 📅 Date Picker */}
-      <CRow className="justify-content-between mb-3">
-        <CCol md={2}>
-          <CFormInput
-            type="date"
-            value={selectedDate}
-            onChange={handleDateChange}
-            className="mb-3"
-          />
-        </CCol>
-        <CCol md={4} className="text-end">
-          <CButton
-            color="success"
-            className="text-white"
-            as="button"
-            onClick={exportToCSV}
-            // disabled={filteredLogs.length === 0}
+      <form>
+        <CRow className="my-3">
+          {/* Inputs aligned to the left */}
+          <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
+            <CCol md={3} xs={12} className="m-1">
+              <CFormInput
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </CCol>
+            <CCol md={3} xs={12} className="m-1">
+              <CFormInput
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </CCol>
+          </CCol>
+
+          {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
+          <CCol
+            md={5}
+            xs={12}
+            className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
           >
-            📥 Export CSV
-          </CButton>
-        </CCol>
-      </CRow>
+            <CButton color="primary" size="sm" onClick={exportToCSV}>
+              Export
+            </CButton>
+          </CCol>
+        </CRow>
+      </form>
 
       {/* 📝 Show Table Only if Date is Selected */}
-      {selectedDate && (
-        <CCard className="shadow-sm">
-          <CCardHeader>
-            <h5 className="m-0">📝 Cleaning Log Report</h5>
-          </CCardHeader>
-          <CCardBody>
-            {/* 🔄 Loading Indicator */}
-            {loading ? (
-              <div className="text-center my-4">
-                <CSpinner color="primary" />
-              </div>
-            ) : (
-              <CTable bordered hover responsive className="text-center">
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>Sr</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
-                      Robot No
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>Row Number</CTableHeaderCell>
-                    <CTableHeaderCell>Row Length (Meters)</CTableHeaderCell>
-                    <CTableHeaderCell>Cleaning Date</CTableHeaderCell>
-                    <CTableHeaderCell>Cleaning Start Time</CTableHeaderCell>
-                    <CTableHeaderCell>Battery Start (%)</CTableHeaderCell>
-                    <CTableHeaderCell>Cleaning Finished Time</CTableHeaderCell>
-                    <CTableHeaderCell>Battery Finished (%)</CTableHeaderCell>
-                    <CTableHeaderCell>
-                      Distance Covered (Meters)
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {filteredLogs.length > 0 ? (
-                    filteredLogs.map((log, index) => (
-                      <CTableRow key={log.id}>
-                        <CTableDataCell>{index + 1}</CTableDataCell>
-                        <CTableDataCell>{log.robot_no}</CTableDataCell>
-                        <CTableDataCell>{log.row_number}</CTableDataCell>
-                        <CTableDataCell>{log.row_length}</CTableDataCell>
-                        <CTableDataCell>
-                          {log.start_timestamp.split(" ")[0]}
-                        </CTableDataCell>
-                        <CTableDataCell>{log.start_timestamp}</CTableDataCell>
-                        <CTableDataCell>
-                          {log.start_battery_percentage}
-                        </CTableDataCell>
-                        {log.finish_timestamp === null ? (
-                          <CTableDataCell colSpan={4} className="text-center">
-                            <span className="badge bg-warning">
-                              Cleaning in progress
-                            </span>
-                          </CTableDataCell>
-                        ) : (
-                          <>
-                            <CTableDataCell>
-                              {log.finish_timestamp}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {log.finish_battery_percentage}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {log.claculated_distance}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {log.cleaning_status}
-                            </CTableDataCell>
-                          </>
-                        )}
-                      </CTableRow>
-                    ))
-                  ) : (
-                    <CTableRow>
-                      <CTableDataCell
-                        colSpan="11"
-                        className="text-center text-danger"
-                      >
-                        No logs found for the selected date.
+
+      {/* 🔄 Loading Indicator */}
+      {loading ? (
+        <div className="text-center my-4">
+          <CSpinner color="primary" />
+        </div>
+      ) : (
+        <>
+          <CTable bordered hover responsive className="text-center">
+            <CTableHead color="secondary">
+              <CTableRow>
+                <CTableHeaderCell>Sr</CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  Robot No
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Row Number
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Row Length (Meters)
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "160px" }}>
+                  Cleaning Date
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Started At
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  Battery Start (%)
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Finished At
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Battery Finished (%)
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "190px" }}>
+                  Distance Covered (Meters)
+                </CTableHeaderCell>
+                <CTableHeaderCell>Status</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              {cleaninglogs.length > 0 ? (
+                cleaninglogs.map((log, index) => (
+                  <CTableRow key={index}>
+                    <CTableDataCell>{index + 1}</CTableDataCell>
+                    <CTableDataCell>{log.robot_no}</CTableDataCell>
+                    <CTableDataCell>{log.row_number}</CTableDataCell>
+                    <CTableDataCell>{log.row_length}</CTableDataCell>
+                    <CTableDataCell>
+                      {
+                        new Date(log.start_timestamp)
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                      {new Date(log.start_timestamp).toLocaleString()}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {log.start_battery_percentage}
+                    </CTableDataCell>
+                    {log.finish_timestamp === null ? (
+                      <CTableDataCell colSpan={4} className="text-center">
+                        <span className="badge bg-warning">
+                          Cleaning in progress
+                        </span>
                       </CTableDataCell>
-                    </CTableRow>
-                  )}
-                </CTableBody>
-              </CTable>
-            )}
-          </CCardBody>
-        </CCard>
+                    ) : (
+                      <>
+                        <CTableDataCell>
+                          {/* {log.finish_timestamp} */}
+                          {new Date(log.finish_timestamp).toLocaleString()}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {log.finish_battery_percentage}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {log.claculated_distance}
+                        </CTableDataCell>
+                        <CTableDataCell>{log.cleaning_status}</CTableDataCell>
+                      </>
+                    )}
+                  </CTableRow>
+                ))
+              ) : (
+                <CTableRow>
+                  <CTableDataCell
+                    colSpan="11"
+                    className="text-center text-danger"
+                  >
+                    No logs found for the selected date.
+                  </CTableDataCell>
+                </CTableRow>
+              )}
+            </CTableBody>
+          </CTable>
+          <PaginateInput
+            page={page}
+            totalPages={totalPages}
+            hasPrevPage={hasPrevPage}
+            hasNextPage={hasNextPage}
+            pageInput={pageInput}
+            handlePageChange={handlePageChange}
+            handlePageInputChange={handlePageInputChange}
+            handlePageInputSubmit={handlePageInputSubmit}
+            limit={limit}
+            handleLimitChange={setLimit} // New prop
+          />
+        </>
       )}
     </div>
   );
