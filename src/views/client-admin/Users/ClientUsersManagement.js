@@ -262,7 +262,7 @@ const ClientUsersManagement = () => {
         console.error("Error fetching users:", error);
         dispatch({
           type: "FETCH_FAIL",
-          payload: "Failed to fetch users",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
       }
     };
@@ -281,9 +281,9 @@ const ClientUsersManagement = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
-          payload: error.response?.data?.error || "Error fetching sites",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error(error.response.data.error || "Error fetching sites");
+        toast.error(error.response.data.error || error.response?.data?.message);
       }
     };
     fetchSites();
@@ -426,7 +426,7 @@ const ClientUsersManagement = () => {
   };
 
   const filteredUsers = users
-    ? users.filter(
+    ? users?.filter(
         (user) =>
           user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

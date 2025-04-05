@@ -624,8 +624,8 @@ const ExternalUsersDashboard = () => {
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ) : filteredUsers.length > 0 ? (
-            filteredUsers.map((user, index) => (
+          ) : filteredUsers?.length > 0 ? (
+            filteredUsers?.map((user, index) => (
               <CTableRow
                 key={index}
                 className={user.is_delete ? " table-danger" : ""}

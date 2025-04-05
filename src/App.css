@@ -1,4 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap");
+
+body {
+  overflow-y: scroll;
+  margin: 0; /* Fallback for old browsers */
+  scrollbar-gutter: stable; /* Modern behavior */
+}
+
 :root {
   --primary-green: #96db00;
   --primary-text: #052638;

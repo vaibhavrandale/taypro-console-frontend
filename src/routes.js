@@ -28,6 +28,9 @@ import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
+import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
+import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
+import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -640,6 +643,30 @@ const routes = [
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
+  //------------------------project admin---------------------------------
+  {
+    path: "/project-admin/dashboard",
+    name: "Project Admin Dashboard",
+    element: ProjectAdminDashboard,
+  },
+
+  {
+    path: "/project-admin/project-handover",
+    name: "Project Handover",
+    element: ProjectHandoverDashboard,
+  },
+
+  //------------------------project admin---------------------------------
+
+  //------------------------service admin---------------------------------
+  {
+    path: "/service-admin/dashboard",
+    name: "Service Admin Dashboard",
+    element: ServiceAdminDahboard,
+  },
+
+  //------------------------service admin---------------------------------
+
   // ------------------------client admin---------------------------------
   {
     path: "/client-admin/dashboard",
@@ -701,23 +728,128 @@ const routes = [
   },
   // ------------------------client admin---------------------------------
 
-  //------------------------project admin---------------------------------
+  // ---------------------client Site Incharge--------------------------------
   {
-    path: "/project-admin/dashboard",
-    name: "Project Admin Dashboard",
-    element: ProjectAdminDashboard,
+    path: "/client-site-incharge/dashboard",
+    name: "client-site-incharge Dashboard",
+    element: ClientSiteInchargeDashboard,
+  },
+  {
+    path: "/client-site-incharge/site-management/all-site-data",
+    name: "Your Sites Data",
+    element: ClientDashboard,
+  },
+  {
+    path: "/client-site-incharge/site-management",
+    name: "Site Management",
+    element: ClientSiteManagement,
+  },
+  {
+    path: "/client-site-incharge/site-management/block-management/:site_id",
+    name: "Block Management",
+    element: ClientBlockManagement,
+  },
+  {
+    path: "/client-site-incharge/site-management/block-management/:site_id/:block/:robot_no",
+    name: "Robot Configuration",
+    element: ClientRobotOperating,
+  },
+  {
+    path: "/client-site-incharge/search-robot",
+    name: "Search Robot",
+    element: ClientSearchRobot,
   },
 
-  //------------------------project admin---------------------------------
-
-  //------------------------service admin---------------------------------
   {
-    path: "/service-admin/dashboard",
-    name: "Service Admin Dashboard",
-    element: ServiceAdminDahboard,
+    path: "/client-site-incharge/timers",
+    name: "Timers",
+    element: ClientTimers,
+  },
+  {
+    path: "/client-site-incharge/timers/:block/:site_id",
+    name: "Update Block Timer",
+    element: ClientUpdateTimer,
   },
 
-  //------------------------service admin---------------------------------
+  {
+    path: "/client-site-incharge/external-users",
+    name: "All  External Users",
+    element: ClientUsersManagement,
+  },
+
+  {
+    path: "/client-site-incharge/cleaning-log-sites",
+    name: "Your Assigned Sites",
+    element: Sites,
+  },
+  {
+    path: "/client-site-incharge/cleaning-log-sites/:site_id",
+    name: "Cleaning Log",
+    element: ClientCleaningLog,
+  },
+  // ------------------------client Site Incharge---------------------------------
+
+  // ClientSiteTechnicianDashboard
+  // ---------------------client Site Technician--------------------------------
+  {
+    path: "/client-site-technician/dashboard",
+    name: "client-site-technician Dashboard",
+    element: ClientSiteTechnicianDashboard,
+  },
+  {
+    path: "/client-site-technician/site-management/all-site-data",
+    name: "Your Sites Data",
+    element: ClientDashboard,
+  },
+  {
+    path: "/client-site-technician/site-management",
+    name: "Site Management",
+    element: ClientSiteManagement,
+  },
+  {
+    path: "/client-site-technician/site-management/block-management/:site_id",
+    name: "Block Management",
+    element: ClientBlockManagement,
+  },
+  {
+    path: "/client-site-technician/site-management/block-management/:site_id/:block/:robot_no",
+    name: "Robot Configuration",
+    element: ClientRobotOperating,
+  },
+  {
+    path: "/client-site-technician/search-robot",
+    name: "Search Robot",
+    element: ClientSearchRobot,
+  },
+
+  {
+    path: "/client-site-technician/timers",
+    name: "Timers",
+    element: ClientTimers,
+  },
+  {
+    path: "/client-site-technician/timers/:block/:site_id",
+    name: "Update Block Timer",
+    element: ClientUpdateTimer,
+  },
+
+  {
+    path: "/client-site-technician/external-users",
+    name: "All  External Users",
+    element: ClientUsersManagement,
+  },
+
+  {
+    path: "/client-site-technician/cleaning-log-sites",
+    name: "Your Assigned Sites",
+    element: Sites,
+  },
+  {
+    path: "/client-site-technician/cleaning-log-sites/:site_id",
+    name: "Cleaning Log",
+    element: ClientCleaningLog,
+  },
+  // ------------------------client Site Technician---------------------------------
 
   //common pages
 

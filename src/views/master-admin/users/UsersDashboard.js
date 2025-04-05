@@ -360,7 +360,7 @@ const UsersDashboard = () => {
   };
 
   // Filter Users based on Search Term and ensure they are "Internal" type
-  const filteredUsers = users.filter(
+  const filteredUsers = users?.filter(
     (user) =>
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -649,8 +649,8 @@ const UsersDashboard = () => {
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ) : filteredUsers.length > 0 ? (
-            filteredUsers.map((user, index) => (
+          ) : filteredUsers?.length > 0 ? (
+            filteredUsers?.map((user, index) => (
               <CTableRow
                 key={index}
                 className={user.is_delete ? " table-danger" : ""}
@@ -704,16 +704,7 @@ const UsersDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}

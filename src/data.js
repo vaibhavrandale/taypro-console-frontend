@@ -377,6 +377,35 @@ export const role_permissions = [
     ],
   },
   {
+    role: "Site Incharge",
+    permissions: [
+      {
+        id: "P022",
+        description: "Perform robot operations",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P023",
+        description: "Monitor robot status",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P024",
+        description: "Perform site-specific tasks",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+    ],
+  },
+  {
     role: "Client Technician",
     permissions: [
       {
