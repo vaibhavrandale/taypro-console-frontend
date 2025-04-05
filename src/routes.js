@@ -238,6 +238,9 @@ const AddProjectClosureForm = React.lazy(() =>
 const UpdateProjectClosureForm = React.lazy(() =>
   import("./views/master-admin/project-closure/UpdateProjectClosureForm")
 );
+const ViewProjectClosureDocument = React.lazy(() =>
+  import("./views/master-admin/project-closure/ViewProjectClosureDocument")
+);
 
 //common pages
 
@@ -492,7 +495,6 @@ const routes = [
     name: "Update Service Item",
     element: UpdateServiceItem,
   },
-
   {
     path: "/master-admin/timers",
     name: "Update Timers",
@@ -514,9 +516,14 @@ const routes = [
     element: AddProjectClosureForm,
   },
   {
-    path: "/master-admin/project-closure/:id",
+    path: "/master-admin/project-closure/update/:id",
     name: "Update Project Closure",
     element: UpdateProjectClosureForm,
+  },
+  {
+    path: "/master-admin/project-closure/view/:id",
+    name: "View Project Closure Document",
+    element: ViewProjectClosureDocument,
   },
   {
     path: "/master-admin/service-tickets",
