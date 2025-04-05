@@ -38,7 +38,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const AllSiteCleaningLog = () => {
+const Sites = () => {
   const [
     { loading, error, sites, totalPages, hasNextPage, hasPrevPage },
     dispatch,
@@ -174,7 +174,8 @@ const AllSiteCleaningLog = () => {
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
                     // to={`block-management/${site.site_id}`}
-                    to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
+                    // to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
+                    to={`/client-admin/cleaning-log-sites/${site.site_id}`}
                   >
                     Manage
                   </Link>
@@ -214,4 +215,4 @@ const AllSiteCleaningLog = () => {
   );
 };
 
-export default AllSiteCleaningLog;
+export default Sites;

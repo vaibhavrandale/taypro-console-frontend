@@ -56,7 +56,7 @@ const reducer = (state, action) => {
   }
 };
 
-const SitewaiseLog = () => {
+const ClientCleaningLog = () => {
   const [
     {
       loading,
@@ -165,11 +165,6 @@ const SitewaiseLog = () => {
   }, [authtoken, endDate, limit, page, site_id, startDate]);
 
   // Function to export data to Excel
-
-  const handleSiteNameChange = (e) => {
-    const site = e.target.value;
-    setSelectedsiteid(site); // Updates local state
-  };
 
   // 🔽 Export to CSV Function
   const exportToCSV = () => {
@@ -400,4 +395,4 @@ const SitewaiseLog = () => {
   );
 };
 
-export default SitewaiseLog;
+export default ClientCleaningLog;
