@@ -1,12 +1,4 @@
-// import React from 'react';
-
-// const ProjectAdminDashboard = () => {
-//   return <div>ProjectAdminDashboard</div>;
-// };
-
-// export default ProjectAdminDashboard;
-
-import React from 'react';
+import React from "react";
 import {
   CContainer,
   CRow,
@@ -15,9 +7,9 @@ import {
   CCardBody,
   CCardTitle,
   CCardText,
-} from '@coreui/react';
-import { Link } from 'react-router-dom';
-import CIcon from '@coreui/icons-react';
+} from "@coreui/react";
+import { Link } from "react-router-dom";
+import CIcon from "@coreui/icons-react";
 import {
   //   cilSpeedometer,
   cilUser,
@@ -29,53 +21,53 @@ import {
   //   cilPeople,
   cilBell,
   cilEnvelopeOpen,
-} from '@coreui/icons';
+} from "@coreui/icons";
 
 const dashboardItems = [
   //   { id: 1, title: 'Dashboard', icon: cilSpeedometer, link: '/dashboard' },
   {
     id: 2,
-    title: 'Users',
+    title: "Users",
     icon: cilUser,
-    link: '/project-admin/users',
+    link: "/project-admin/users",
   },
 
   {
     id: 3,
-    title: 'Reports',
+    title: "Reports",
     icon: cilChartPie,
-    link: '/project-admin/reports',
+    link: "/project-admin/reports",
   },
-  { id: 4, title: 'Service', icon: cilTask, link: '/project-admin/service' },
+  { id: 4, title: "Service", icon: cilTask, link: "/project-admin/service" },
   {
     id: 5,
-    title: 'Notifications',
+    title: "Notifications",
     icon: cilBell,
-    link: '/project-admin/notifications',
+    link: "/project-admin/notifications",
   },
   {
     id: 6,
-    title: 'Live chat',
+    title: "Live chat",
     icon: cilEnvelopeOpen,
-    link: '/project-admin/messages',
+    link: "/project-admin/messages",
   },
   {
     id: 7,
-    title: 'Projects',
+    title: "Projects",
     icon: cilFolderOpen,
-    link: '/project-admin/projects',
+    link: "/project-admin/projects",
   },
   {
     id: 8,
-    title: 'Roles & Permissions',
+    title: "Roles & Permissions",
     icon: cilList,
-    link: '/project-admin/roles',
+    link: "/project-admin/roles",
   },
   {
     id: 9,
-    title: 'Settings',
+    title: "Settings",
     icon: cilSettings,
-    link: '/project-admin/settings',
+    link: "/project-admin/settings",
   },
 ];
 

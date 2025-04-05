@@ -1,0 +1,102 @@
+body {
+  font-family: Calibri, sans-serif;
+  font-size: 15px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 40px 20px;
+  text-align: left;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  margin: 8px 0;
+}
+
+.compact p {
+  margin: 2px 0;
+}
+
+ul {
+  padding-left: 20px;
+  margin: 5px 0 10px 0;
+}
+
+li {
+  margin-bottom: 4px;
+}
+
+.section-title {
+  font-weight: bold;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #999;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.signature-box p {
+  margin: 5px 0;
+}
+
+/* ... your other styles ... */
+.signature-section {
+  justify-content: space-between;
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
+.signature-box {
+  width: 45%;
+}
+
+.signature-box p {
+  margin: 4px 0;
+  /* Reduced line spacing */
+}
+
+.signature-line {
+  margin-top: 8px;
+}
+
+.end-page {
+  page-break-after: always;
+  break-after: page;
+  height: 1px; /* Prevent blank space */
+  visibility: hidden;
+}
