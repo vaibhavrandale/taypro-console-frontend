@@ -31,6 +31,7 @@ import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLo
 import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
 import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
 import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
+import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -661,6 +662,12 @@ const routes = [
     path: "/project-admin/project-handover",
     name: "Project Handover",
     element: ProjectHandoverDashboard,
+  },
+
+  {
+    path: "/project-admin/project-handover/view/:id",
+    name: "Project Handover",
+    element: ViewProjectHandoverDocument,
   },
 
   //------------------------project admin---------------------------------

@@ -294,7 +294,7 @@ const ProjectHandoverDashboard = () => {
                     className="btn btn-sm btn-secondary m-1"
                     color="secondary"
                     size="sm"
-                    // onClick={() => openModal(doc)}
+                    to={`/project-admin/project-closure/view/${doc._id}`}
                   >
                     View
                   </Link>
