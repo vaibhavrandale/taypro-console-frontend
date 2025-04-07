@@ -188,6 +188,12 @@ const Robots = () => {
           Add Robots
         </Link>
         <Link
+          className="btn btn-sm btn-primary m-1"
+          to="/master-admin/robots/shift-block-wise"
+        >
+          Shift Block Wise
+        </Link>
+        <Link
           className="btn btn-sm btn-secondary m-1"
           to="/master-admin/activate-robots"
         >

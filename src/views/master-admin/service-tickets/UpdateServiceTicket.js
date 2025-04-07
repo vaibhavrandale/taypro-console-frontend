@@ -89,6 +89,18 @@ const UpdateServiceTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   const [state, dispatch] = useReducer(reducer, {
     ticket: {},
     inventories: [],
@@ -193,7 +205,7 @@ const UpdateServiceTicket = () => {
       toast.success(
         `${filteredFormData.ticket_id} Service ticket updated successfully`
       );
-      navigate("/master-admin/service-tickets");
+      navigate(`/${adminroute}/service-tickets`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: error.response.data.error });
       toast.error(error.response.data.error);

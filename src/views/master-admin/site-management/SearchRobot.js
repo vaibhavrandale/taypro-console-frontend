@@ -46,6 +46,7 @@ const SearchRobot = () => {
     hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
@@ -94,6 +95,16 @@ const SearchRobot = () => {
       setFilteredRobot([]);
     }
   };
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   return (
     <div className="my-3">
       <CCard className="shadow border-0" style={{ minHeight: "73vh" }}>
@@ -135,7 +146,7 @@ const SearchRobot = () => {
                     <Link
                       key={index}
                       // ✅ Move the key to the <li> (not the <Link>)
-                      to={`/master-admin/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                      to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                       className="text-decoration-none w-100 "
                     >
                       <li

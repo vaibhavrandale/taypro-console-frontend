@@ -174,25 +174,37 @@ const PreventiveMaintanancrDashboard = () => {
     setFormData(robot);
     setModalVisible(true);
   };
+
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   return (
     <div className="p-2">
       <h2 className="text-center">All Preventive Maintenances</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-danger m-1"
-          to="/master-admin/preventive-maintanance-dashboard/view"
+          to={`/${adminroute}/preventive-maintanance-dashboard/view`}
         >
           View Sitewise
         </Link>
         <Link
           className="btn btn-sm btn-primary m-1"
-          to="/master-admin/preventive-maintanance-dashboard/create-pm"
+          to={`/${adminroute}/preventive-maintanance-dashboard/create-pm`}
         >
           Create New
         </Link>
         <Link
           className="btn btn-sm btn-secondary m-1 d-flex justify-content-center align-items-center"
-          to="/master-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications"
+          to={`/${adminroute}/preventive-maintanance-dashboard/preventive-maintanance-notifications`}
         >
           All PM Activity
           <CIcon icon={cilBell} />
@@ -269,7 +281,7 @@ const PreventiveMaintanancrDashboard = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/preventive-maintanance-dashboard/update/${pm._id}`}
+                    to={`${adminroute}/preventive-maintanance-dashboard/update/${pm._id}`}
                   >
                     Update
                   </Link>

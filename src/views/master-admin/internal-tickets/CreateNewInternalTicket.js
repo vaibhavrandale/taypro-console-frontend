@@ -73,9 +73,10 @@ const CreateInternalTicket = () => {
     description: "",
     priority: "",
     status: "Open",
-    assigned_to: "",
-    assigned_to_email: "",
-    assigned_to_id: "",
+    assigned_to: null, // <-- now it's an object, not a string
+    // assigned_to: "",
+    // assigned_to_email: "",
+    // assigned_to_id: "",
   });
 
   useEffect(() => {
@@ -119,12 +120,16 @@ const CreateInternalTicket = () => {
   //     (dept) => dept.department === selectedDepartment
   //   );
 
-  //   setFormData({
-  //     ...formData,
+  //   setFormData((prev) => ({
+  //     ...prev,
   //     department: selectedDepartment,
-  //     department_email: departmentData ? departmentData.email : "",
-  //   });
+  //     department_email: departmentData ? departmentData.email : "", // Ensure correct department email
+  //     assigned_to_email: prev.assigned_to ? prev.assigned_to.email : "",
+  //     assigned_to_id: prev.assigned_to ? prev.assigned_to._id : "",
+
+  //   }));
   // };
+
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
     const departmentData = departments.find(
@@ -134,8 +139,7 @@ const CreateInternalTicket = () => {
     setFormData((prev) => ({
       ...prev,
       department: selectedDepartment,
-      department_email: departmentData ? departmentData.email : "", // Ensure correct department email
-      assigned_to_email: prev.assigned_to ? prev.assigned_to.email : "", // Keep assigned user email separate
+      department_email: departmentData ? departmentData.email : "",
     }));
   };
 
@@ -159,9 +163,8 @@ const CreateInternalTicket = () => {
 
     const combinedResults = [
       ...filteredUserEmails.map((user) => ({
-        id: user.id,
+        id: user._id,
         email: user.email,
-
         username: user.username,
         profile_image: user.profile_image,
         role: user.role,
@@ -177,52 +180,21 @@ const CreateInternalTicket = () => {
   };
 
   const selectUser = (user) => {
+    // setFormData({
+    //   ...formData,
+    //   assigned_to: user, // Store the entire user object
+    // });
     setFormData({
       ...formData,
-      assigned_to: user, // Store the entire user object
+      assigned_to: user, // ✅ this is the full user object
     });
 
+    // setSearchTerm(user.email);
+
     setSearchTerm(user.email);
+
     setFilteredUsers([]);
   };
-
-  // const selectUser = (user) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     assigned_to: user.username,
-  //     assigned_to_email: user.email,
-  //     assigned_to_id: user.id,
-  //     department_email: prev.department_email, // Keep department email unchanged
-  //   }));
-
-  //   setSearchTerm(user.email);
-  //   setFilteredUsers([]);
-  // };
-
-  // const handleSubmit = async () => {
-  //   console.log(formData);
-  //   try {
-  //     dispatch({ type: "CREATE_TICKET_REQUEST" });
-  //     const response = await axios.post("/api/v1/internaltickets", formData, {
-  //       headers: { authorization: `Bearer ${authtoken}` },
-  //     });
-
-  //     console.log("Ticket successfully created:", response.data);
-  //     dispatch({
-  //       type: "CREATE_TICKET_SUCCESS",
-  //       payload: response.data.data, // Append new robot to state
-  //     });
-
-  //     toast.success(response.data.data.message);
-  //   } catch (error) {
-  //     console.error(error);
-  //     dispatch({
-  //       type: "CREATE_TICKET_FAIL",
-  //       payload: error.response.data.error,
-  //     });
-  //     alert(error.response.data.error);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -300,7 +272,7 @@ const CreateInternalTicket = () => {
                     type="text"
                     name="assigned_to"
                     readOnly
-                    value={formData.assigned_to.username}
+                    value={formData.assigned_to?.username || ""}
                     label="Assign To"
                     className="mb-3"
                   />

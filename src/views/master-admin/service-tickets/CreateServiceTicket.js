@@ -96,7 +96,17 @@ const CreateServiceTicket = () => {
   const [uploadingFields, setUploadingFields] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   // 📌 Handle search input change
 
   useEffect(() => {
@@ -187,7 +197,7 @@ const CreateServiceTicket = () => {
         `${response.data.data.ticket_id}, Ticket Created Successfully!`
       );
       setLoading(false);
-      navigate("/master-admin/service-tickets");
+      navigate(`/${adminroute}/service-tickets`);
       console.log("Created Ticket:", response.data);
     } catch (error) {
       console.error("Error creating ticket:", error);

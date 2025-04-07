@@ -142,6 +142,7 @@ const Clients = () => {
     success: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -399,6 +400,16 @@ const Clients = () => {
       console.error(error);
     }
   };
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   return (
     <div className="p-4">
@@ -468,7 +479,7 @@ const Clients = () => {
                       style={{ minWidth: "200px" }}
                       color="primary"
                       size="sm"
-                      to={`clients-data/${client.client_id}`}
+                      to={`/${adminroute}/clients-dashboard/clients-data/${client.client_id}`}
                       // onClick={() => openViewModal(client._id)}
                     >
                       View Assigned Sites

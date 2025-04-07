@@ -32,6 +32,7 @@ import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSite
 import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
 import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
 import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
+import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -477,6 +478,11 @@ const routes = [
     element: UpdateRobots,
   },
   {
+    path: "/master-admin/robots/shift-block-wise",
+    name: "Shift Block Wise Robot",
+    element: ShiftBlockwiseRobots,
+  },
+  {
     path: "/master-admin/inventories",
     name: "Inventories",
     element: Inventories,
@@ -652,6 +658,12 @@ const routes = [
   // ------------------------master admin---------------------------------
 
   //------------------------project admin---------------------------------
+
+  {
+    path: "/project-admin/all-site-data",
+    name: "Taypro All Site Data",
+    element: TayproDashboard,
+  },
   {
     path: "/project-admin/dashboard",
     name: "Project Admin Dashboard",
@@ -668,6 +680,188 @@ const routes = [
     path: "/project-admin/project-handover/view/:id",
     name: "Project Handover",
     element: ViewProjectHandoverDocument,
+  },
+
+  {
+    path: "/project-admin/site-management",
+    name: "Site Management",
+    element: SiteManagement,
+  },
+  {
+    path: "/project-admin/site-management/block-management/:site_id",
+    name: "Block Management",
+    element: BlockManagement,
+  },
+  {
+    path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no",
+    name: "Robot Configuration",
+    element: RobotOperating,
+  },
+
+  {
+    path: "/project-admin/search-robot",
+    name: "Search Robot",
+    element: SearchRobot,
+  },
+
+  {
+    path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
+    name: "Debug Log",
+    element: DebugLog,
+  },
+
+  {
+    path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
+    name: "Cleaning Log",
+    element: CleaningLog,
+  },
+
+  {
+    path: "/project-admin/clients-dashboard",
+    name: "Clients",
+    element: ClientsDasboard,
+  },
+
+  //preveantive maintanance
+  {
+    path: "/project-admin/preventive-maintanance-dashboard",
+    name: "Project Admin Preventive maintanance Dashboard",
+    element: PreventiveMaintanancrDashboard,
+  },
+  {
+    path: "/project-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications",
+    name: "Project Admin Preventive maintanance Notifications",
+    element: PreventiveMaintananceNotifications,
+  },
+  {
+    path: "/project-admin/preventive-maintanance-dashboard/create-pm",
+    name: "Create Preventive maintanance",
+    element: CreatePreventivemaintanance,
+  },
+  {
+    path: "/project-admin/preventive-maintanance-dashboard/update/:id",
+    name: "Update Preventive maintanance",
+    element: UpdatePreventivemaintanance,
+  },
+  {
+    path: "/project-admin/preventive-maintanance-dashboard/view",
+    name: "View Preventive maintanance",
+    element: ViewPreventivemaintananceQuaterly,
+  },
+
+  {
+    path: "/project-admin/clients-data-dashboard/edit-client/:id",
+    name: "Edit Client",
+    element: EditClient,
+  },
+  {
+    path: "/project-admin/clients-dashboard/clients-data/:id",
+    name: "Client Assigned Sites",
+    element: ClientAssignedSites,
+  },
+
+  {
+    path: "/project-admin/robots/shift-block-wise",
+    name: "Shift Block Wise Robot",
+    element: ShiftBlockwiseRobots,
+  },
+
+  //preveantive maintanance
+
+  {
+    path: "/project-admin/service-tickets",
+    name: "Service Tickets",
+    element: ServiceTicketDashboard,
+  },
+  {
+    path: "/project-admin/service-tickets/update-service-ticket/:id",
+    name: "Update Service Ticket",
+    element: UpdateServiceTicket,
+  },
+  {
+    path: "/project-admin/service-tickets/resolve-service-ticket/:id",
+    name: "Resolve Service Ticket",
+    element: ResolveServiceTicket,
+  },
+  {
+    path: "/project-admin/service-tickets/create-new-ticket",
+    name: "Create new Tickets",
+    element: CreateNewServiceTicket,
+  },
+  {
+    path: "/project-admin/internal-tickets",
+    name: "Internal Tickets",
+    element: InternalTicketsDashboard,
+  },
+  {
+    path: "/project-admin/internal-tickets/create-new-internal-ticket",
+    name: "Create New Internal Tickets",
+    element: CreateNewInternalTicket,
+  },
+  {
+    path: "/project-admin/internal-tickets/update-internal-ticket/:id",
+    name: "Update Internal Tickets",
+    element: UpdateInternalTicket,
+  },
+  {
+    path: "/project-admin/users",
+    name: "All  Internal Users",
+    element: UsersDashboard,
+  },
+  {
+    path: "/project-admin/external-users",
+    name: "All  External Users",
+    element: ExternalUsersDashboard,
+  },
+
+  {
+    path: "/project-admin/notifications",
+    name: "Master Admin Notifications",
+    element: Notifications,
+  },
+
+  {
+    path: "/project-admin/all-site-cleaning-log",
+    name: "Master Admin All Site Cleaning Log",
+    element: AllSiteCleaningLog,
+  },
+
+  {
+    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    name: "Master Admin  Sitewise Cleaning Log",
+    element: SitewaiseLog,
+  },
+  {
+    path: "/project-admin/all-site-gateways",
+    name: "Master Admin  All Site Gateways",
+    element: Gateways,
+  },
+  {
+    path: "/project-admin/all-site-gateways/update-gateway/:id",
+    name: "Master Admin  Update Gateway",
+    element: UpdateGateway,
+  },
+  {
+    path: "/project-admin/all-site-dpr",
+    name: "Master Admin  All Site Dpr",
+    element: AllSiteDpr,
+  },
+
+  {
+    path: "/project-admin/all-site-dpr/add-dpr",
+    name: "Add DPR",
+    element: AddDpr,
+  },
+  {
+    path: "/project-admin/update-dpr/:id",
+    name: "Update DPR",
+    element: UpdateDpr,
+  },
+
+  {
+    path: "/project-admin/inventories",
+    name: "Inventories",
+    element: Inventories,
   },
 
   //------------------------project admin---------------------------------
