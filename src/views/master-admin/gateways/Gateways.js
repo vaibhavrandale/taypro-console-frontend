@@ -79,8 +79,8 @@ const Gateways = () => {
   ] = useReducer(reducer, {
     gateways: [],
     robot: {},
-    loadingGateways: true,
-    loadingRobot: true,
+    loadingGateways: false,
+    loadingRobot: false,
     error: "",
     totalPages: 1,
     hasNextPage: false,
@@ -94,6 +94,7 @@ const Gateways = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modalOpendloading, setModalOpendloadingg] = useState(false);
   const [filteredGateways, setFilteredGateways] = useState([]);
 
   const [pageInput, setPageInput] = useState("");
@@ -171,7 +172,7 @@ const Gateways = () => {
     //   toast.error("No robot associated with this gateway.");
     //   return;
     // }
-
+    setModalOpendloadingg(true);
     dispatch({ type: "FETCH_ROBOT_REQUEST" });
 
     try {
@@ -184,6 +185,7 @@ const Gateways = () => {
       console.log(data.data);
 
       dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: data.data });
+      setModalOpendloadingg(false);
     } catch (error) {
       console.log(error);
 
@@ -192,6 +194,7 @@ const Gateways = () => {
         payload: error.response.data.error,
       });
       toast.error(error.response?.data?.error);
+      setModalOpendloadingg(false);
     }
   };
 
@@ -300,7 +303,7 @@ const Gateways = () => {
                       type="button"
                       color="primary"
                       size="sm"
-                      to={`/master-admin/update-gateway/${gateway.id}`}
+                      to={`/master-admin/all-site-gateways/update-gateway/${gateway._id}`}
                       className="btn btn-secondary  btn-sm m-1"
                     >
                       Update
@@ -331,137 +334,143 @@ const Gateways = () => {
         backdrop="static"
         scrollable
       >
-        <CModalHeader closeButton>
-          <CModalTitle>
-            Gateway{" "}
-            <CBadge color="success">
-              {selectedGateway?.gateway_name}-{selectedGateway?.gateway_id}
-            </CBadge>{" "}
-            Details
-          </CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {selectedGateway && (
-            <div>
-              {/* Gateway Information Table */}
-              <h5 className="mb-3">Gateway Information</h5>
-              <CTable striped bordered responsive>
-                <CTableBody>
-                  <CTableRow>
-                    <CTableHeaderCell>Gateway ID</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_id_in_lns_server}
-                    </CTableDataCell>
-                  </CTableRow>
+        {modalOpendloading ? (
+          <LoadingSpinner />
+        ) : (
+          <>
+            <CModalHeader closeButton>
+              <CModalTitle>
+                Gateway{" "}
+                <CBadge color="success">
+                  {selectedGateway?.gateway_name}-{selectedGateway?.gateway_id}
+                </CBadge>{" "}
+                Details
+              </CModalTitle>
+            </CModalHeader>
+            <CModalBody>
+              {selectedGateway && (
+                <div>
+                  {/* Gateway Information Table */}
+                  <h5 className="mb-3">Gateway Information</h5>
+                  <CTable striped bordered responsive>
+                    <CTableBody>
+                      <CTableRow>
+                        <CTableHeaderCell>Gateway ID</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_id_in_lns_server}
+                        </CTableDataCell>
+                      </CTableRow>
 
-                  <CTableRow>
-                    <CTableHeaderCell>Gateway Status</CTableHeaderCell>
-                    <CTableDataCell>
-                      <LastOnlineStatus
-                        lastOnlineTime={selectedGateway.last_online_update}
-                      />
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>
-                      Gateway Name in LNS Server
-                    </CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_name_in_lns_server}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Longitude,Latitude</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
-                      {selectedGateway.gateway_lattitude}&nbsp;{" "}
-                      <Link
-                        target="blank"
-                        to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
-                      >
-                        view on map
-                      </Link>
-                    </CTableDataCell>
-                  </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Gateway Status</CTableHeaderCell>
+                        <CTableDataCell>
+                          <LastOnlineStatus
+                            lastOnlineTime={selectedGateway.last_online_update}
+                          />
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>
+                          Gateway Name in LNS Server
+                        </CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_name_in_lns_server}
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Longitude,Latitude</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
+                          {selectedGateway.gateway_lattitude}&nbsp;{" "}
+                          <Link
+                            target="blank"
+                            to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
+                          >
+                            view on map
+                          </Link>
+                        </CTableDataCell>
+                      </CTableRow>
 
-                  <CTableRow>
-                    <CTableHeaderCell>SIM Number</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_simnumber}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Robot Number</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_robot_no}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>LoRa Number</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.gateway_lora_no}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Last Online Update</CTableHeaderCell>
-                    <CTableDataCell>
-                      {selectedGateway.last_online_update}
-                    </CTableDataCell>
-                  </CTableRow>
-                </CTableBody>
-              </CTable>
+                      <CTableRow>
+                        <CTableHeaderCell>SIM Number</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_simnumber}
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Robot Number</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_robot_no}
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>LoRa Number</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.gateway_lora_no}
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableHeaderCell>Last Online Update</CTableHeaderCell>
+                        <CTableDataCell>
+                          {selectedGateway.last_online_update}
+                        </CTableDataCell>
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
 
-              {/* Finding the connected robot */}
-              <h5 className="mt-4 mb-3">Connected Robot/Lora</h5>
-              {loadingRobot ? (
-                <LoadingSpinner />
-              ) : robot.robot_no === selectedGateway.gateway_robot_no ? (
-                <CTable striped bordered hover responsive>
-                  <CTableHead color="secondary">
-                    <CTableRow>
-                      <CTableHeaderCell>Robot No</CTableHeaderCell>
-                      <CTableHeaderCell>Status</CTableHeaderCell>
-                      <CTableHeaderCell>Site ID</CTableHeaderCell>
-                      <CTableHeaderCell>LoRa Serial No</CTableHeaderCell>
-                      <CTableHeaderCell>Battery %</CTableHeaderCell>
-                      <CTableHeaderCell>Last Seen</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    <CTableRow>
-                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
-                      <CTableDataCell>
-                        {robot.lora_state === 1 ? (
-                          <span className="badge bg-success">online</span>
-                        ) : (
-                          <span className="badge bg-danger">offline</span>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>{robot.site_id}</CTableDataCell>
-                      <CTableDataCell>
-                        {robot.lora_no}&nbsp;&nbsp;({robot.deveui})
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {robot.battery_voltage}&nbsp;%
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {robot.last_update === "" || null ? (
-                          <CBadge>Lora is not Activaed Yet</CBadge>
-                        ) : (
-                          robot.last_update
-                        )}
-                      </CTableDataCell>
-                    </CTableRow>
-                  </CTableBody>
-                </CTable>
-              ) : (
-                <p className="text-muted">No connected robot found.</p>
+                  {/* Finding the connected robot */}
+                  <h5 className="mt-4 mb-3">Connected Robot/Lora</h5>
+                  {loadingRobot ? (
+                    <LoadingSpinner />
+                  ) : robot.robot_no === selectedGateway.gateway_robot_no ? (
+                    <CTable striped bordered hover responsive>
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Status</CTableHeaderCell>
+                          <CTableHeaderCell>Site ID</CTableHeaderCell>
+                          <CTableHeaderCell>LoRa Serial No</CTableHeaderCell>
+                          <CTableHeaderCell>Battery %</CTableHeaderCell>
+                          <CTableHeaderCell>Last Seen</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        <CTableRow>
+                          <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                          <CTableDataCell>
+                            {robot.lora_state === 1 ? (
+                              <span className="badge bg-success">online</span>
+                            ) : (
+                              <span className="badge bg-danger">offline</span>
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell>{robot.site_id}</CTableDataCell>
+                          <CTableDataCell>
+                            {robot.lora_no}&nbsp;&nbsp;({robot.deveui})
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {robot.battery_voltage}&nbsp;%
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {robot.last_update === "" || null ? (
+                              <CBadge>Lora is not Activaed Yet</CBadge>
+                            ) : (
+                              robot.last_update
+                            )}
+                          </CTableDataCell>
+                        </CTableRow>
+                      </CTableBody>
+                    </CTable>
+                  ) : (
+                    <p className="text-muted">No connected robot found.</p>
+                  )}
+
+                  <LastActivity lastactivity={selectedGateway.last_activity} />
+                </div>
               )}
-
-              <LastActivity lastactivity={selectedGateway.last_activity} />
-            </div>
-          )}
-        </CModalBody>
+            </CModalBody>
+          </>
+        )}
       </CModal>
     </CContainer>
   );

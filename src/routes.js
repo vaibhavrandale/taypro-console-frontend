@@ -596,11 +596,11 @@ const routes = [
   },
   {
     path: "/master-admin/all-site-gateways",
-    name: "Master Admin  All Site Gateway/Router Status",
+    name: "Master Admin  All Site Gateways",
     element: Gateways,
   },
   {
-    path: "/master-admin/update-gateway/:gatewayid",
+    path: "/master-admin/all-site-gateways/update-gateway/:id",
     name: "Master Admin  Update Gateway",
     element: UpdateGateway,
   },
