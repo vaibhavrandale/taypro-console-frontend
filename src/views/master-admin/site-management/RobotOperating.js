@@ -96,6 +96,7 @@ const RobotOperating = () => {
   const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
   const [pageInput, setPageInput] = useState("");
 
@@ -350,7 +351,15 @@ const RobotOperating = () => {
   };
 
   // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   return (
     <>
       {loadingRobots ? (
@@ -394,13 +403,13 @@ const RobotOperating = () => {
                 RETURN TO DOCK ALL
               </CButton>
               <Link
-                to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
+                to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
                 className="btn btn-sm btn-secondary  btn-sm m-1 shadow-sm"
               >
                 DEBUG LOG
               </Link>
               <Link
-                to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
+                to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
               >
                 CLEANING LOG

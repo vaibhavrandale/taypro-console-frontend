@@ -645,13 +645,65 @@ const _nav = [
         to: "/project-admin/dashboard",
         icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
       },
+
+      {
+        component: CNavItem,
+        name: "All Site Data",
+        to: "/project-admin/all-site-data",
+        icon: <CIcon icon={cilFactory} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: "Site Management",
+        to: "/project-admin/site-management",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
+
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/project-admin/search-robot",
+        icon: <CIcon icon={cibProbot} customClassName="nav-icon" />,
+      },
+
       {
         component: CNavItem,
         name: "Project Handover",
         to: "/project-admin/project-handover",
         icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
       },
+      {
+        component: CNavItem,
+        name: "Preventive Maint.",
+        to: "/project-admin/preventive-maintanance-dashboard",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: "All Clients",
+        to: "/project-admin/clients-dashboard",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: "Shift Robots",
+        to: "/project-admin/robots/shift-block-wise",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
 
+      {
+        component: CNavItem,
+        name: "Service Tickets",
+        to: "/project-admin/service-tickets",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
+
+      {
+        component: CNavItem,
+        name: "Internal Tickets",
+        to: "/project-admin/internal-tickets",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      },
       // {
       //   component: CNavItem,
       //   name: 'All Site Data',

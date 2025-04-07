@@ -112,7 +112,17 @@ const ResolveServiceTicket = () => {
   });
   const [formData, setFormData] = useState({});
   const [uploadingFields, setUploadingFields] = useState({});
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -204,7 +214,7 @@ const ResolveServiceTicket = () => {
       toast.success(
         `${filteredFormData.ticket_id} Service ticket Resolved successfully`
       );
-      navigate("/master-admin/service-tickets");
+      navigate(`/${adminroute}/service-tickets`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: error.response.data.error });
       toast.error(error.response.data.error);

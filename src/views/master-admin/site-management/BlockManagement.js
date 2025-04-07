@@ -486,6 +486,7 @@ const BlockManagement = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [visible, setVisible] = useState(false);
@@ -536,6 +537,15 @@ const BlockManagement = () => {
           robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
@@ -701,7 +711,7 @@ const BlockManagement = () => {
                   <div className="p-2 d-flex justify-content-center">
                     {robot ? (
                       <Link
-                        to={`/master-admin/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
+                        to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
                         className="btn btn-sm btn-secondary"
                       >
                         MANAGE
