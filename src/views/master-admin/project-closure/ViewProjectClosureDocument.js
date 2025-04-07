@@ -2,11 +2,12 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./projectDoc.css";
 import header from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import { CButton } from "@coreui/react";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -15,7 +16,17 @@ const reducer = (state, action) => {
       return { ...state, projectdoc: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-
+    case "SUBMIT_REQUEST":
+      return { ...state, loading: true, success: false };
+    case "SUBMIT_SUCCESS":
+      return { ...state, loading: false, success: true };
+    case "SUBMIT_FAIL":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        success: false,
+      };
     default:
       return state;
   }
@@ -28,7 +39,10 @@ const ViewProjectClosureDocument = () => {
     updating: false,
   });
   const { id } = useParams();
+  const userInfo = useSelector((state) => state.userInfo);
+
   const authtoken = useSelector((state) => state.authtoken);
+  const navigate = useNavigate();
 
   const [serviceItemData, setServiceItemData] = useState({});
 
@@ -55,6 +69,38 @@ const ViewProjectClosureDocument = () => {
     fetchProjectHandoverDoc();
   }, [id, authtoken]);
 
+  const approveHandoverDoc = async (data) => {
+    // console.log(data);
+    dispatch({ type: "SUBMIT_REQUEST" });
+    try {
+      const result = await axios.put(
+        `/api/v1/projectdocs/change-status/${data._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log(result.data);
+      dispatch({
+        type: "SUBMIT_SUCCESS",
+      });
+      toast.success(
+        result.data.message || "Project Handover Approved Successfully."
+      );
+
+      navigate(`/master-admin/project-closure/view/${data._id}`);
+    } catch (error) {
+      dispatch({
+        type: "SUBMIT_FAIL",
+        payload:
+          error.response?.data?.error || "Failed to send an approval request",
+      });
+      toast.error(
+        error.response?.data?.error || "Failed to send an approval request"
+      );
+    }
+  };
+
   const exportToPDF = () => {
     const doc = new jsPDF("p", "pt", "a4");
 
@@ -69,8 +115,6 @@ const ViewProjectClosureDocument = () => {
       autoPaging: true,
       html2canvas: {
         scale: 0.6,
-        // useCORS: true,
-        // logging: true,
       },
     });
   };
@@ -78,6 +122,7 @@ const ViewProjectClosureDocument = () => {
   return (
     <div className="main-container">
       <CButton onClick={exportToPDF}>Export</CButton>
+
       <div className="second-container">
         <table className="site-details-table ">
           <thead>
@@ -385,6 +430,22 @@ const ViewProjectClosureDocument = () => {
                     .split("T")[0]
                 : ""}
             </p>
+            {userInfo.role === "Service Admin" &&
+              serviceItemData.approval_status !== "Approved" && (
+                <Link
+                  className="btn btn-sm btn-success mt-2"
+                  size="sm"
+                  onClick={() => approveHandoverDoc(serviceItemData)}
+                >
+                  {state.loading ? (
+                    <>
+                      Approving... <LoadingSpinner />
+                    </>
+                  ) : (
+                    "Approve"
+                  )}
+                </Link>
+              )}
           </div>
         </div>
       </div>
