@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import "./projectDoc.css";
+import header from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import { CButton } from "@coreui/react";
 const reducer = (state, action) => {
@@ -57,28 +58,56 @@ const ViewProjectClosureDocument = () => {
   const exportToPDF = () => {
     const doc = new jsPDF("p", "pt", "a4");
 
-    const element = document.querySelector(".container");
+    const element = document.querySelector(".second-container");
 
     doc.html(element, {
       callback: function (doc) {
-        doc.save("Project_Closure.pdf");
+        doc.save("Project_Handover.pdf");
       },
-      x: 20,
+      x: 30,
       y: 20,
       autoPaging: true,
       html2canvas: {
-        scale: 0.6, // match 1:1 styling, or try 0.8 if text overflows
-        useCORS: true,
-        logging: true,
+        scale: 0.6,
+        // useCORS: true,
+        // logging: true,
       },
     });
   };
 
   return (
-    <div>
+    <div className="main-container">
       <CButton onClick={exportToPDF}>Export</CButton>
-      <div className="container">
-        <h2>Taypro Pvt. Ltd. Project to Service Handover Document</h2>
+      <div className="second-container">
+        <table className="site-details-table ">
+          <thead>
+            <tr className="">
+              <td colSpan={1} className="text-center">
+                <img
+                  src={header}
+                  alt="Taypro Logo"
+                  className="sidebar-brand-full logo"
+                  style={{
+                    height: "50px",
+                    width: "110px",
+                    objectFit: "contain",
+                  }}
+                />
+              </td>
+              <td colSpan={2} className="text-center">
+                <h5>Project to Service Handover Document</h5>
+              </td>
+              <td colSpan={1}>Doc. No. : TPL-12</td>
+
+              {/* <td colSpan={1}>Rev. No.: 1</td>
+
+              <td>Revised By</td>
+              <td className="fw-bold">Abhay Singh</td>
+              <td>Start Date</td>
+              <td className="fw-bold">22/04/2025</td> */}
+            </tr>
+          </thead>
+        </table>
         <div className="section-title">1. Introduction</div>
         <p>
           This document serves as a formal handover from the Project Team to the
@@ -91,16 +120,20 @@ const ViewProjectClosureDocument = () => {
         <div className="compact">
           <p>
             <span className="label">
-              Project&nbsp;&nbsp;Name&nbsp;&nbsp;:&nbsp;&nbsp;
+              Project&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
             </span>{" "}
             {serviceItemData.project_name}
           </p>
           <p>
-            <span className="label">Project Location:</span>{" "}
+            <span className="label">
+              Project&nbsp;&nbsp;Location&nbsp;&nbsp;:
+            </span>{" "}
             {serviceItemData.project_location}
           </p>
           <p>
-            <span className="label">Project Completion Date:</span>{" "}
+            <span className="label">
+              Project&nbsp;&nbsp;Completion&nbsp;&nbsp;Date&nbsp;&nbsp;:
+            </span>{" "}
             {serviceItemData.project_completion_date
               ? new Date(serviceItemData.project_completion_date)
                   .toISOString()
@@ -108,28 +141,34 @@ const ViewProjectClosureDocument = () => {
               : ""}
           </p>
           <p>
-            <span className="label">Prepared By:</span>{" "}
+            <span className="label">Prepared&nbsp;&nbsp;By&nbsp;&nbsp;:</span>{" "}
             {serviceItemData.prepared_by}
           </p>
 
           <p>
-            <span className="label">Approved By:</span>{" "}
+            <span className="label">Approved&nbsp;&nbsp;By&nbsp;&nbsp;:</span>{" "}
             {serviceItemData.project_approved_by}
           </p>
         </div>
-        <div className="section-title">2. Project Overview</div>
+        <div className="section-title">2. Project&nbsp;&nbsp;Overview</div>
         <ul>
           <li>
-            <span class="label">Scope of Work:</span>&nbsp;
+            <span class="label">
+              Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
+            </span>
+            &nbsp;
             {serviceItemData.scope_of_work}
           </li>
           <li>
-            <strong>Key Milestones Achieved:</strong> For{" "}
-            {serviceItemData.plant_capacity}MW, {serviceItemData.water_stored}
+            <strong>
+              Key&nbsp;&nbsp;Milestones&nbsp;&nbsp;Achieved&nbsp;&nbsp;:
+            </strong>{" "}
+            For {serviceItemData.plant_capacity}MW,{" "}
+            {serviceItemData.water_stored}
             liters per year water is being saved.
           </li>
           <li>
-            <strong>Project Duration:</strong>{" "}
+            <strong>Project&nbsp;&nbsp;Duration&nbsp;&nbsp;:</strong>{" "}
             {serviceItemData.project_completion_date
               ? new Date(serviceItemData.project_completion_date)
                   .toISOString()
@@ -143,49 +182,63 @@ const ViewProjectClosureDocument = () => {
               : ""}
           </li>
           <li>
-            <strong>Challenges Faced:</strong>{" "}
+            <strong>Challenges&nbsp;&nbsp;Faced&nbsp;&nbsp;:</strong>{" "}
             {serviceItemData.challenges_faced}
           </li>
         </ul>
-        <div className="section-title">3. System Details</div>
+        <div className="section-title">3. System&nbsp;&nbsp;Details</div>
         <ul>
           <li>
-            <strong>Total Number of Systems Installed:</strong>{" "}
+            <strong>
+              Total&nbsp;&nbsp;Number&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+            </strong>{" "}
             {serviceItemData.total_no_of_systems} Systems
           </li>
           <li>
-            <strong>Model/Type of Systems:</strong>
+            <strong>
+              Model&nbsp;&nbsp;/&nbsp;&nbsp;Type&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;:
+            </strong>
             <ul>
-              <li>
-                Model A – Automatic Systems ({serviceItemData.modalA_count})
+              <li style={{ listStyleType: "none" }}>
+                1)&nbsp;&nbsp;Model&nbsp;&nbsp;A&nbsp;&nbsp;–&nbsp;&nbsp;Automatic&nbsp;&nbsp;Systems&nbsp;&nbsp;
+                {serviceItemData.modalA_count}
               </li>
-              <li>
-                Model B – Semi-Automatic Systems ({serviceItemData.modalB_count}
-                )
+              <li style={{ listStyleType: "none" }}>
+                2)&nbsp;&nbsp;Model&nbsp;&nbsp;B&nbsp;&nbsp;–&nbsp;&nbsp;Semi-Automatic&nbsp;&nbsp;Systems
+                ({serviceItemData.modalB_count})
               </li>
-              <li>
-                Model T – Tracker Systems ({serviceItemData.modalT_count})
+              <li style={{ listStyleType: "none" }}>
+                3)&nbsp;&nbsp;Model&nbsp;&nbsp;T&nbsp;&nbsp;–&nbsp;&nbsp;Tracker&nbsp;&nbsp;Systems
+                ({serviceItemData.modalT_count})
               </li>
             </ul>
           </li>
           <li>
-            <strong>DS Setup Installed:</strong> {serviceItemData.ds_setup}
+            <strong>
+              DS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.ds_setup}
           </li>
           <li>
-            <strong>RS Setup Installed:</strong> {serviceItemData.rs_setup}
+            <strong>
+              RS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.rs_setup}
           </li>
           <li>
-            <strong>LoRa Pole Setup:</strong>
+            <strong>LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Setup&nbsp;&nbsp;:</strong>
             {serviceItemData.lora_pole_setup}
           </li>
           <li>
-            <strong>LoRa Pole Coordinates:</strong>{" "}
+            <strong>
+              LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Coordinates&nbsp;&nbsp;:
+            </strong>{" "}
             {serviceItemData.lora_pole_coordinated}
           </li>
         </ul>
-        <div className="end-page"></div>
-        <div className="section-title">4. Site Details</div>
-        <table>
+
+        <div className="section-title">4. Site&nbsp;&nbsp;Details</div>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>BLOCK</th>
@@ -203,14 +256,15 @@ const ViewProjectClosureDocument = () => {
             ))}
           </tbody>
         </table>
+        <div className="page-break"></div>
 
-        <div className="section-title">6. Handover Checklist</div>
-        <table>
+        <div className="section-title">6. Handover&nbsp;&nbsp;Checklist</div>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>Task</th>
-              <th>Status (✔)</th>
-              <th>Remarks (If Any)</th>
+              <th>Status&nbsp;&nbsp;(✔)</th>
+              <th>Remarks&nbsp;&nbsp;(If Any)</th>
             </tr>
           </thead>
           <tbody>
@@ -224,25 +278,33 @@ const ViewProjectClosureDocument = () => {
           </tbody>
         </table>
         <div className="end-page"></div>
-        <div className="section-title">7. Handover Documents & Details</div>
+        <div className="section-title">
+          7. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
+        </div>
         <ul>
           <li>
-            <strong>Portal Access Provided:</strong>{" "}
+            <strong>
+              Portal&nbsp;&nbsp;Access&nbsp;&nbsp;Provided&nbsp;&nbsp;:
+            </strong>{" "}
             {serviceItemData.is_portal_access_provided ? "Yes" : "No"}
           </li>
           <li>
-            <strong>Client Training Conducted:</strong>{" "}
+            <strong>
+              Client&nbsp;&nbsp;Training&nbsp;&nbsp;Conducted&nbsp;&nbsp;:
+            </strong>{" "}
             {serviceItemData.is_client_training_conducted ? "Yes" : "No"}
           </li>
           <li>
-            <strong>Commissioning Documents:</strong>{" "}
+            <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
             <Link target="blank" to={serviceItemData.commissioning_document}>
-              Click Here
+              Click&nbsp;&nbsp;Here
             </Link>
           </li>
         </ul>
-        <div className="section-title">8. Points of Contact</div>
-        <table>
+        <div className="section-title">
+          8. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
+        </div>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>Role</th>
@@ -252,13 +314,13 @@ const ViewProjectClosureDocument = () => {
           </thead>
           <tbody>
             <tr>
-              <td>Project Team Lead</td>
-              <td>Jitesh Kute</td>
+              <td>Project&nbsp;&nbsp;Team&nbsp;&nbsp;Lead</td>
+              <td>Jitesh&nbsp;&nbsp;Kute</td>
               <td>jitesh.kute@taypro.in</td>
             </tr>
             <tr>
-              <td>Asst. Service Manager</td>
-              <td>Abhay Singh</td>
+              <td>Asst.&nbsp;&nbsp;Service&nbsp;&nbsp;Manager</td>
+              <td>Abhay&nbsp;&nbsp;Singh</td>
               <td>abhay.singh@taypro.in</td>
             </tr>
             <tr>
@@ -271,19 +333,24 @@ const ViewProjectClosureDocument = () => {
         <div className="signature-section">
           <div className="signature-box">
             <p>
-              <strong>Project Team</strong>
+              <strong>Project&nbsp;&nbsp;Team</strong>
             </p>
-            <p>Name: {serviceItemData.created_by?.name}</p>
-            <p>Designation: {serviceItemData.created_by?.designation || ""}</p>
+            <p>
+              Name&nbsp;&nbsp;:&nbsp;&nbsp;{serviceItemData.created_by?.name}
+            </p>
+            <p>
+              Designation&nbsp;&nbsp;:&nbsp;&nbsp;
+              {serviceItemData.created_by?.designation || ""}
+            </p>
             <p className="signature-line">
-              Signature:{" "}
+              Signature&nbsp;&nbsp;:&nbsp;&nbsp;
               <span style={{ fontWeight: "bold", color: "green" }}>
                 Verified
               </span>
             </p>
 
             <p>
-              Date:{" "}
+              Date&nbsp;&nbsp;:&nbsp;&nbsp;
               {serviceItemData.created_by?.timestamp
                 ? new Date(serviceItemData.created_by.timestamp)
                     .toISOString()
@@ -294,20 +361,24 @@ const ViewProjectClosureDocument = () => {
           <br />
           <div className="signature-box">
             <p>
-              <strong>Service Team</strong>
+              <strong>Service&nbsp;&nbsp;Team</strong>
             </p>
-            <p>Name: {serviceItemData.approval_sent_by?.name || ""}</p>
             <p>
-              Designation: {serviceItemData.approval_sent_by?.designation || ""}{" "}
+              Name&nbsp;&nbsp;:&nbsp;&nbsp;
+              {serviceItemData.approval_sent_by?.name || ""}
+            </p>
+            <p>
+              Designation&nbsp;&nbsp;:&nbsp;&nbsp;
+              {serviceItemData.approval_sent_by?.designation || ""}{" "}
             </p>
             <p className="signature-line">
-              Signature:{" "}
+              Signature&nbsp;&nbsp;:&nbsp;&nbsp;
               <span style={{ fontWeight: "bold", color: "green" }}>
                 Verified
               </span>
             </p>
             <p>
-              Date:{" "}
+              Date&nbsp;&nbsp;:&nbsp;&nbsp;
               {serviceItemData.approval_sent_by?.timestamp
                 ? new Date(serviceItemData.approval_sent_by.timestamp)
                     .toISOString()

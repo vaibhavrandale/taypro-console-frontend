@@ -1,5 +1,7 @@
-body {
-  font-family: Calibri, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap");
+
+.main-container {
+  font-family: "Blinker", sans-serif !important;
   font-size: 15px;
   background-color: white;
   color: black;
@@ -8,11 +10,12 @@ body {
   padding: 0;
 }
 
-.container {
+.second-container {
   max-width: 800px;
   margin: auto;
   padding: 40px 20px;
   text-align: left;
+  font-family: "Blinker", sans-serif;
 }
 
 h2 {
@@ -47,34 +50,28 @@ li {
   font-weight: bold;
 }
 
-table {
+/* Enhanced table styling */
+.site-details-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
   margin-bottom: 20px;
+  font-family: "Blinker", sans-serif;
+  font-size: 14px;
 }
 
-table,
-th,
-td {
+.site-details-table th,
+.site-details-table td {
   border: 1px solid #999;
-}
-
-th,
-td {
   padding: 8px;
   text-align: center;
 }
 
-th {
-  background-color: #f2f2f2;
+.site-details-table th {
+  background-color: #dadada;
+  color: #000;
 }
 
-.signature-box p {
-  margin: 5px 0;
-}
-
-/* ... your other styles ... */
 .signature-section {
   justify-content: space-between;
   margin-top: 30px;
@@ -87,7 +84,6 @@ th {
 
 .signature-box p {
   margin: 4px 0;
-  /* Reduced line spacing */
 }
 
 .signature-line {
@@ -97,6 +93,9 @@ th {
 .end-page {
   page-break-after: always;
   break-after: page;
-  height: 1px; /* Prevent blank space */
+  height: 1px;
   visibility: hidden;
+}
+.page-break {
+  margin-top: 250px;
 }

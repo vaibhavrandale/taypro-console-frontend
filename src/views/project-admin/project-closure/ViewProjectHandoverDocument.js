@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import "./projectDoc.css";
 import jsPDF from "jspdf";
 import { CButton } from "@coreui/react";
+import header from "../../../assets/brand/logoforwhitebg.png";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -76,7 +77,7 @@ const ViewProjectHandoverDocument = () => {
   const exportToPDF = () => {
     const doc = new jsPDF("p", "pt", "a4");
 
-    const element = document.querySelector(".container");
+    const element = document.querySelector(".second-container");
 
     doc.html(element, {
       callback: function (doc) {
@@ -93,10 +94,38 @@ const ViewProjectHandoverDocument = () => {
     });
   };
   return (
-    <div>
+    <div className="main-container">
       <CButton onClick={exportToPDF}>Export</CButton>
-      <div className="container">
-        <h2>Taypro Pvt. Ltd. Project to Service Handover Document</h2>
+      <div className="second-container">
+        <table className="site-details-table ">
+          <thead>
+            <tr className="">
+              <td colSpan={1} className="text-center">
+                <img
+                  src={header}
+                  alt="Taypro Logo"
+                  className="sidebar-brand-full logo"
+                  style={{
+                    height: "50px",
+                    width: "110px",
+                    objectFit: "contain",
+                  }}
+                />
+              </td>
+              <td colSpan={2} className="text-center">
+                <h5>Project to Service Handover Document</h5>
+              </td>
+              <td colSpan={1}>Doc. No. : TPL-12</td>
+
+              {/* <td colSpan={1}>Rev. No.: 1</td>
+    
+                  <td>Revised By</td>
+                  <td className="fw-bold">Abhay Singh</td>
+                  <td>Start Date</td>
+                  <td className="fw-bold">22/04/2025</td> */}
+            </tr>
+          </thead>
+        </table>
         <div className="section-title">1. Introduction</div>
         <p>
           This document serves as a formal handover from the Project Team to the
@@ -225,9 +254,9 @@ const ViewProjectHandoverDocument = () => {
             {serviceItemData.lora_pole_coordinated}
           </li>
         </ul>
-        <div className="end-page"></div>
+
         <div className="section-title">4. Site&nbsp;&nbsp;Details</div>
-        <table>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>BLOCK</th>
@@ -245,9 +274,10 @@ const ViewProjectHandoverDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="end-page"></div>
+        <div className="page-break"></div>
+
         <div className="section-title">6. Handover&nbsp;&nbsp;Checklist</div>
-        <table>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>Task</th>
@@ -292,7 +322,7 @@ const ViewProjectHandoverDocument = () => {
         <div className="section-title">
           8. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
         </div>
-        <table>
+        <table className="site-details-table">
           <thead>
             <tr>
               <th>Role</th>
