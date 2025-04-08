@@ -87,34 +87,7 @@ const ProjectClosureDashboard = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const [formData, setFormData] = useState({
-    // project_name: "",
-    // project_location: "",
-    // prepared_by: "",
-    // project_start_date: "",
-    // project_completion_date: "",
-    // project_approved_by: "",
-    // scope_of_work: "",
-    // challenges_faced: "",
-    // plant_capacity: "",
-    // water_stored: "",
-    // total_no_of_systems: 0,
-    // modalA_count: 0,
-    // modalB_count: 0,
-    // modalT_count: 0,
-    // ds_setup: "",
-    // rs_setup: "",
-    // lora_pole_setup: "",
-    // lora_pole_coordinated: "",
-    // robot_details: [],
-    // handover_checklist: [],
-    // commissioning_document: "",
-    // is_portal_access_provided: "",
-    // is_client_training_conducted: "",
-    // client_name: "",
-    // client_role: "",
-    // client_email: "",
-  });
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     let pagination = {
@@ -230,30 +203,6 @@ const ProjectClosureDashboard = () => {
     }
   };
 
-  //   const exportToExcel = () => {
-  //     if (filteredProjectDocs.length === 0) {
-  //       toast.error("No data available for export.");
-  //       return;
-  //     }
-
-  //     // Convert JSON to sheet
-  //     const worksheet = XLSX.utils.json_to_sheet(
-  //       filteredProjectDocs.map((item, index) => ({
-  //         "#": index + 1,
-  //         "Item Name": item.item_name,
-  //         "Item Code": item.item_code,
-  //         "Site Id": item.site_id,
-  //         Quantity: item.quantity,
-  //         Threshold: item.threshold,
-  //       }))
-  //     );
-  //     const workbook = XLSX.utils.book_new();
-  //     XLSX.utils.book_append_sheet(workbook, worksheet, "Service projectDocs");
-
-  //     // Trigger download
-  //     XLSX.writeFile(workbook, "Service Inventory.xlsx");
-  //   };
-
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Project Closure Data</h2>
@@ -264,12 +213,6 @@ const ProjectClosureDashboard = () => {
         >
           Project Closure Form
         </Link>
-        {/* <Link
-          className="btn btn-sm btn-primary m-1"
-          //  onClick={exportToExcel}
-        >
-          Export
-        </Link> */}
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">

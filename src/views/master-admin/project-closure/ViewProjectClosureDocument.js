@@ -121,7 +121,13 @@ const ViewProjectClosureDocument = () => {
 
   return (
     <div className="main-container">
-      <CButton onClick={exportToPDF}>Export</CButton>
+      <Link
+        className="btn btn-sm btn-secondary"
+        size="sm"
+        onClick={exportToPDF}
+      >
+        Export
+      </Link>
 
       <div className="second-container">
         <table className="site-details-table ">
@@ -143,13 +149,6 @@ const ViewProjectClosureDocument = () => {
                 <h5>Project to Service Handover Document</h5>
               </td>
               <td colSpan={1}>Doc. No. : TPL-12</td>
-
-              {/* <td colSpan={1}>Rev. No.: 1</td>
-
-              <td>Revised By</td>
-              <td className="fw-bold">Abhay Singh</td>
-              <td>Start Date</td>
-              <td className="fw-bold">22/04/2025</td> */}
             </tr>
           </thead>
         </table>
@@ -198,7 +197,7 @@ const ViewProjectClosureDocument = () => {
         <div className="section-title">2. Project&nbsp;&nbsp;Overview</div>
         <ul>
           <li>
-            <span class="label">
+            <span className="label">
               Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
             </span>
             &nbsp;
@@ -280,6 +279,18 @@ const ViewProjectClosureDocument = () => {
             </strong>{" "}
             {serviceItemData.lora_pole_coordinated}
           </li>
+          <li>
+            <strong>
+              Half&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.half_table_length}
+          </li>
+          <li>
+            <strong>
+              Full&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.full_table_length}
+          </li>
         </ul>
 
         <div className="section-title">4. Site&nbsp;&nbsp;Details</div>
@@ -301,7 +312,7 @@ const ViewProjectClosureDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="page-break"></div>
+        {/* <div className="page-break"></div> */}
 
         <div className="section-title">5. Handover&nbsp;&nbsp;Checklist</div>
         <table className="site-details-table">

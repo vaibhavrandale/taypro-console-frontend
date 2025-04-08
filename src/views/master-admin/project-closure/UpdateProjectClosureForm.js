@@ -94,6 +94,8 @@ const UpdateProjectClosureForm = () => {
     challenges_faced: "",
     plant_capacity: "",
     water_stored: "",
+    half_table_length: "",
+    full_table_length: "",
     total_no_of_systems: 0,
     modalA_count: 0,
     modalB_count: 0,
@@ -136,10 +138,6 @@ const UpdateProjectClosureForm = () => {
     fetchProjectHandoverDoc();
   }, [id, authtoken]);
 
-  const deleteImageHandler = () => {
-    setImage("");
-    toast.success("Image removed.");
-  };
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
 
@@ -522,6 +520,56 @@ const UpdateProjectClosureForm = () => {
                 <CCol md="3">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
+                      Half Table Length
+                    </CFormLabel>
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="half_table_length"
+                      value={serviceItemData.half_table_length || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
+                      Full Table Length
+                    </CFormLabel>
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="full_table_length"
+                      value={serviceItemData.full_table_length || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                {[
+                  "is_portal_access_provided",
+                  "is_client_training_conducted",
+                ].map((field) => (
+                  <CCol key={field} md={3} className="my-2">
+                    <div className="flex items-center space-x-2 my-2">
+                      <CFormCheck
+                        id={field}
+                        name={field}
+                        checked={serviceItemData[field] || false}
+                        onChange={handleChange}
+                      />
+                      &nbsp;&nbsp;
+                      <CFormLabel htmlFor={field}>
+                        {field.replace(/_/g, " ").toUpperCase()}
+                      </CFormLabel>
+                    </div>
+                  </CCol>
+                ))}
+
+                <CCol md="6">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
                       DS Setup
                     </CFormLabel>
                     <textarea
@@ -534,7 +582,7 @@ const UpdateProjectClosureForm = () => {
                   </div>
                 </CCol>
 
-                <CCol md="3">
+                <CCol md="6">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
                       RS Setup
@@ -549,7 +597,7 @@ const UpdateProjectClosureForm = () => {
                   </div>
                 </CCol>
 
-                <CCol md="3">
+                <CCol md="6">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
                       Scope of Work
@@ -564,7 +612,7 @@ const UpdateProjectClosureForm = () => {
                   </div>
                 </CCol>
 
-                <CCol md="3">
+                <CCol md="6">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
                       Lora Pole Setup
@@ -579,7 +627,7 @@ const UpdateProjectClosureForm = () => {
                   </div>
                 </CCol>
 
-                <CCol md="3">
+                <CCol md="6">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
                       Lora Pole Coordinates
@@ -594,7 +642,7 @@ const UpdateProjectClosureForm = () => {
                   </div>
                 </CCol>
 
-                <CCol md="3">
+                <CCol md="6">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
                       Challenges Faced
@@ -799,43 +847,9 @@ const UpdateProjectClosureForm = () => {
                         height="100"
                         style={{ objectFit: "cover", borderRadius: "5px" }}
                       />
-                      <CBadge
-                        color="primary"
-                        className="p-1 position-absolute"
-                        style={{
-                          top: "-8px",
-                          right: "-8px",
-                          cursor: "pointer",
-                          borderRadius: "50%",
-                          backgroundColor: "red",
-                        }}
-                        onClick={deleteImageHandler}
-                      >
-                        <CIcon icon={cilX} size="sm" />
-                      </CBadge>
                     </div>
                   ) : null}
                 </CCol>
-
-                {[
-                  "is_portal_access_provided",
-                  "is_client_training_conducted",
-                ].map((field) => (
-                  <CCol key={field} md={3} className="my-2">
-                    <div className="flex items-center space-x-2 my-2">
-                      <CFormCheck
-                        id={field}
-                        name={field}
-                        checked={serviceItemData[field] || false}
-                        onChange={handleChange}
-                      />
-                      &nbsp;&nbsp;
-                      <CFormLabel htmlFor={field}>
-                        {field.replace(/_/g, " ").toUpperCase()}
-                      </CFormLabel>
-                    </div>
-                  </CCol>
-                ))}
               </CRow>
 
               <button
