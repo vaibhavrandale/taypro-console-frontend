@@ -169,8 +169,8 @@ const ProjectClosureDashboard = () => {
       );
       setFormData(result.data.data);
       setModalVisible(false);
-
-      navigate(`/master-admin/project-handover/view/${data._id}`);
+      //  to={
+      navigate(`/${adminroute}/project-handover/view/${data._id}`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -214,16 +214,21 @@ const ProjectClosureDashboard = () => {
     }
   };
 
+  // const userInfo = useSelector((state) => state.userInfo);
+
   return (
     <div className="p-2">
-      <h2 className="text-center mt-4">Project Closure Data</h2>
+      <h2 className="text-center mt-4">Project Handover Data</h2>
       <div className="d-flex justify-content-end mb-3">
-        <Link
-          className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/project-handover/add-project-handover"
-        >
-          Project Closure Form
-        </Link>
+        {(userInfo.role === "Master Admin" ||
+          userInfo.role === "Project Admin") && (
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to={`/${adminroute}/project-handover/add-project-handover`}
+          >
+            New Project Handover
+          </Link>
+        )}
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
@@ -335,18 +340,19 @@ const ProjectClosureDashboard = () => {
                   {/* 👁 View Button */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    to={`/master-admin/project-handover/view/${doc._id}`}
+                    to={`/${adminroute}/project-handover/view/${doc._id}`}
                   >
                     View
                   </Link>
-
-                  {/* ✏️ Update Button */}
-                  <Link
-                    className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/project-handover/update/${doc._id}`}
-                  >
-                    Update
-                  </Link>
+                  {(userInfo.role === "Master Admin" ||
+                    userInfo.role === "Project Admin") && (
+                    <Link
+                      className="btn btn-sm btn-warning m-1"
+                      to={`/${adminroute}/project-handover/update/${doc._id}`}
+                    >
+                      Update
+                    </Link>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

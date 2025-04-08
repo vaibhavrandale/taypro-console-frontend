@@ -40,7 +40,16 @@ const ViewProjectClosureDocument = () => {
   });
   const { id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
+  // const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const contentRef = useRef();
@@ -87,7 +96,7 @@ const ViewProjectClosureDocument = () => {
         result.data.message || "Project Handover Approved Successfully."
       );
 
-      navigate(`/master-admin/project-closure/view/${data._id}`);
+      navigate(`/${adminroute}/project-closure/view/${data._id}`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
