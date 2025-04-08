@@ -63,6 +63,17 @@ const CreateInternalTicket = () => {
   // const { userInfo, authtoken } = useSelector((state) => state);
   // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -214,7 +225,7 @@ const CreateInternalTicket = () => {
       });
 
       toast.success(response.data.message);
-      navigate("/master-admin/internal-tickets"); // Redirect after success
+      navigate(`/${adminroute}/internal-tickets`); // Redirect after success
     } catch (error) {
       console.error(error);
       dispatch({
@@ -372,6 +383,7 @@ const CreateInternalTicket = () => {
                 <CCol md={12}>
                   <CButton
                     className=""
+                    size="sm"
                     type="submit"
                     color="primary"
                     disabled={createTicketloading}

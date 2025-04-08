@@ -307,13 +307,25 @@ const AllSiteDpr = () => {
     XLSX.writeFile(workbook, `${site_id}_${fromDate}_${toDate}_DPR.xlsx`);
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Daily Progress Reports</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/all-site-dpr/add-dpr"
+          to={`/${adminroute}/all-site-dpr/add-dpr`}
         >
           Add DPR
         </Link>
@@ -446,7 +458,7 @@ const AllSiteDpr = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/update-dpr/${dpr._id}`}
+                    to={`/${adminroute}/update-dpr/${dpr._id}`}
                   >
                     Update
                   </Link>

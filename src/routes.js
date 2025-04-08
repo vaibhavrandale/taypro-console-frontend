@@ -812,47 +812,32 @@ const routes = [
     name: "Update Internal Tickets",
     element: UpdateInternalTicket,
   },
-  {
-    path: "/project-admin/users",
-    name: "All  Internal Users",
-    element: UsersDashboard,
-  },
-  {
-    path: "/project-admin/external-users",
-    name: "All  External Users",
-    element: ExternalUsersDashboard,
-  },
-
-  {
-    path: "/project-admin/notifications",
-    name: "Master Admin Notifications",
-    element: Notifications,
-  },
 
   {
     path: "/project-admin/all-site-cleaning-log",
-    name: "Master Admin All Site Cleaning Log",
+    name: "Project Admin All Site Cleaning Log",
     element: AllSiteCleaningLog,
   },
 
   {
-    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
-    name: "Master Admin  Sitewise Cleaning Log",
+    path: "/project-admin/all-site-cleaning-log/:site_id",
+    name: "Project Admin Sitewise Cleaning Log",
     element: SitewaiseLog,
   },
+
   {
-    path: "/project-admin/all-site-gateways",
-    name: "Master Admin  All Site Gateways",
-    element: Gateways,
+    path: "/project-admin/timers",
+    name: "All Site Timers",
+    element: Timers,
   },
   {
-    path: "/project-admin/all-site-gateways/update-gateway/:id",
-    name: "Master Admin  Update Gateway",
-    element: UpdateGateway,
+    path: "/project-admin/timers/:block/:site_id",
+    name: "Update Block Timer",
+    element: UpdateTimer,
   },
   {
     path: "/project-admin/all-site-dpr",
-    name: "Master Admin  All Site Dpr",
+    name: "Project Admin All Site Dpr",
     element: AllSiteDpr,
   },
 
@@ -865,6 +850,34 @@ const routes = [
     path: "/project-admin/update-dpr/:id",
     name: "Update DPR",
     element: UpdateDpr,
+  },
+
+  {
+    path: "/project-admin/all-site-gateways",
+    name: "All Site Gateways",
+    element: Gateways,
+  },
+  {
+    path: "/project-admin/all-site-gateways/update-gateway/:id",
+    name: "Update Gateway",
+    element: UpdateGateway,
+  },
+
+  {
+    path: "/project-admin/users",
+    name: "All Internal Users",
+    element: UsersDashboard,
+  },
+  {
+    path: "/project-admin/external-users",
+    name: "All  External Users",
+    element: ExternalUsersDashboard,
+  },
+
+  {
+    path: "/project-admin/notifications",
+    name: "Master Admin Notifications",
+    element: Notifications,
   },
 
   {

@@ -27,7 +27,12 @@ import {
   CTab,
   CTabPanel,
 } from "@coreui/react";
-import { departments, role_permissions } from "../../../data"; // Ensure correct path
+import {
+  departments,
+  projects_role_permissions,
+  role_permissions,
+  service_role_permissions,
+} from "../../../data"; // Ensure correct path
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
 import PaginateInput from "../../../components/PaginateInput";
@@ -192,6 +197,14 @@ const UsersDashboard = () => {
   });
   // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
+  let roles = [];
+  if (userInfo.role === "Master Admin") {
+    roles = role_permissions;
+  } else if (userInfo.role === "Project Admin") {
+    roles = projects_role_permissions;
+  } else {
+    roles = service_role_permissions;
+  }
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -758,8 +771,8 @@ const UsersDashboard = () => {
             value={formData.role}
           >
             <option value="">Select Role</option>
-            {role_permissions?.length > 0 &&
-              role_permissions.map((role, index) => (
+            {roles?.length > 0 &&
+              roles.map((role, index) => (
                 <option key={index} value={role.role}>
                   {role.role}
                 </option>

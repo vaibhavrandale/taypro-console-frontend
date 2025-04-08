@@ -96,7 +96,17 @@ const Gateways = () => {
   const [loading, setLoading] = useState(false);
   const [modalOpendloading, setModalOpendloadingg] = useState(false);
   const [filteredGateways, setFilteredGateways] = useState([]);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -313,7 +323,7 @@ const Gateways = () => {
                       type="button"
                       color="primary"
                       size="sm"
-                      to={`/master-admin/all-site-gateways/update-gateway/${gateway._id}`}
+                      to={`/${adminroute}/all-site-gateways/${gateway._id}`}
                       className="btn btn-secondary  btn-sm m-1"
                     >
                       Update

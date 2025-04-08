@@ -57,7 +57,17 @@ const UpdateGateway = () => {
     gateway_lora_deveui: "",
     gateway_lora_no: "",
   });
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   // Fetch gateway data on component mount
   useEffect(() => {
     const fetchGateway = async () => {
@@ -97,7 +107,7 @@ const UpdateGateway = () => {
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(result.data.message);
-      navigate(`/master-admin/all-site-gateways`);
+      navigate(`/${adminroute}/all-site-gateways`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: "Update failed" });
       toast.error("Update failed");

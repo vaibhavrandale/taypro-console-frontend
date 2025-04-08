@@ -122,6 +122,18 @@ const AllSiteCleaningLog = () => {
     }
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   return (
     <div className="">
       <h2 className="blinker-semibold">Site Management</h2>
@@ -174,7 +186,7 @@ const AllSiteCleaningLog = () => {
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
                     // to={`block-management/${site.site_id}`}
-                    to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
+                    to={`/${adminroute}/all-site-cleaning-log/${site.site_id}`}
                   >
                     Manage
                   </Link>

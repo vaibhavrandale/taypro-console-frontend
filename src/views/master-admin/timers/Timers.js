@@ -79,7 +79,17 @@ const Timers = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -261,7 +271,7 @@ const Timers = () => {
                       <CTableDataCell>
                         <Link
                           className="btn btn-sm btn-warning m-1"
-                          to={`/master-admin/timers/${block.block}/${site.site_id}`}
+                          to={`/${adminroute}/${block.block}/${site.site_id}`}
                         >
                           Update
                         </Link>
