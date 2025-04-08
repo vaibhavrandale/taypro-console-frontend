@@ -325,17 +325,17 @@ const ProjectClosureDashboard = () => {
                 </CTableDataCell>
                 <CTableDataCell>
                   {/* 🔴 Show "Send to Service Team" only if not sent OR user is Admin */}
-                  {(!doc.is_sent_for_approval ||
+                  {!doc.is_sent_for_approval &&
                     ["Master Admin", "Project Admin"].includes(
                       userInfo.role
-                    )) && (
-                    <Link
-                      className="btn btn-sm btn-danger m-1 text-white"
-                      onClick={() => openModal(doc)}
-                    >
-                      Send To Service Team
-                    </Link>
-                  )}
+                    ) && (
+                      <Link
+                        className="btn btn-sm btn-danger m-1 text-white"
+                        onClick={() => openModal(doc)}
+                      >
+                        Send To Service Team
+                      </Link>
+                    )}
 
                   {/* 👁 View Button */}
                   <Link
@@ -387,7 +387,7 @@ const ProjectClosureDashboard = () => {
       >
         <CModalHeader>
           <CModalTitle>
-            Project Handover Document Approval Request :&nbsp;
+            Project Handover Document Approval Request:&nbsp;
             <span className="badge bg-success">
               {formData.project_name}
             </span>{" "}
