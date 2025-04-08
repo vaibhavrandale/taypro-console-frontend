@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+
+import React, { useReducer, useEffect } from "react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 import {
@@ -35,6 +36,11 @@ const reducer = (state, action) => {
         ...state,
         gatewayData: { ...state.gatewayData, [action.name]: action.value },
       };
+    case "SET_SITES":
+      return {
+        ...state,
+        sites: action.payload,
+      };
     default:
       return state;
   }
@@ -52,11 +58,14 @@ const CreateGateway = () => {
       gateway_type: "",
       gateway_lattitude: "",
       gateway_longitude: "",
-      last_uplink: "",
+      gateway_simnumber: "",
+      gateway_id_in_lns_server: "",
+      gateway_name_in_lns_server: "",
     },
     loading: false,
     success: false,
     error: "",
+    sites: [],
   });
 
   const handleChange = (e) => {
@@ -66,6 +75,23 @@ const CreateGateway = () => {
       value: e.target.value,
     });
   };
+
+  useEffect(() => {
+    const fetchSites = async () => {
+      try {
+        const { data } = await axios.get("/api/v1/sites", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        console.log("Fetched sites:", data.data);
+
+        dispatch({ type: "SET_SITES", payload: data.data });
+      } catch (err) {
+        toast.error("Failed to load sites");
+      }
+    };
+
+    fetchSites();
+  }, [authtoken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -125,28 +151,39 @@ const CreateGateway = () => {
                 </CCol>
                 {/* Site ID */}
                 <CCol md={6}>
-                  <CFormInput
-                    type="text"
+                  <CFormSelect
                     name="site_id"
                     value={gatewayData.site_id}
                     onChange={handleChange}
                     label="Site ID"
                     required
                     className="mb-3"
-                  />
+                  >
+                    <option value="">Select a Site ID</option>
+                    {state.sites.map((site) => (
+                      <option key={site.site_id} value={site.site_id}>
+                        {site.site_id}
+                      </option>
+                    ))}
+                  </CFormSelect>
                 </CCol>
+
                 {/* Gateway Type */}
                 <CCol md={6}>
-                  <CFormInput
-                    type="text"
+                  <CFormSelect
                     name="gateway_type"
                     value={gatewayData.gateway_type}
                     onChange={handleChange}
                     label="Gateway Type"
                     required
                     className="mb-3"
-                  />
+                  >
+                    <option value="">Select Gateway Type</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Outdoor">Outdoor</option>
+                  </CFormSelect>
                 </CCol>
+
                 {/* Latitude */}
                 <CCol md={6}>
                   <CFormInput

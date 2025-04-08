@@ -297,11 +297,18 @@ const Gateways = () => {
                     <CButton
                       color="warning"
                       size="sm"
-                      className="m-1"
+                      className=" btn-sm m-1"
                       onClick={() => openModal(gateway)}
                     >
                       View Details
                     </CButton>
+                    <Link
+                      type="button"
+                      className="btn btn-info btn-sm m-1"
+                      to={`/master-admin/all-site-gateways/assign-gateway/${gateway._id}`}
+                    >
+                      Assign Gateway
+                    </Link>
                     <Link
                       type="button"
                       color="primary"
