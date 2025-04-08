@@ -237,7 +237,16 @@ const Gateways = () => {
   return (
     // <>Gateways</>
     <CContainer className="mt-5">
-      <h2 className="text-center mb-4">Gateways</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="mb-0">Gateways</h2>
+        <Link
+          to="/master-admin/all-site-gateways/create-new-gateway"
+          className="btn btn-warning btn-sm"
+        >
+          Add
+        </Link>
+      </div>
+
       <CRow className="justify-content-end">
         <CCol xs={12} sm={10} md={8} lg={5}>
           <CInputGroup className="mb-3">

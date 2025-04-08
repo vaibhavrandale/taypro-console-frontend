@@ -125,6 +125,9 @@ const UpdateGateway = React.lazy(() =>
   import("./views/master-admin/gateways/UpdateGateway")
 );
 
+const CreateNewGateways = React.lazy(() =>
+  import("./views/master-admin/gateways/CreateNewGateways")
+);
 const AllSiteDpr = React.lazy(() =>
   import("./views/master-admin/all-site-dpr/AllSiteDpr")
 );
@@ -611,6 +614,12 @@ const routes = [
     element: UpdateGateway,
   },
   {
+    path: "/master-admin/all-site-gateways/create-new-gateway",
+    name: " Master Admin Create New Gateway",
+    element: CreateNewGateways,
+  },
+
+  {
     path: "/master-admin/all-site-dpr",
     name: "Master Admin  All Site Dpr",
     element: AllSiteDpr,
@@ -1070,6 +1079,7 @@ const routes = [
     name: "Cleaning Log",
     element: ClientCleaningLog,
   },
+
   // ------------------------client Site Technician---------------------------------
 
   //common pages
