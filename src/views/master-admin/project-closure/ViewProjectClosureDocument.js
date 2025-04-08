@@ -57,6 +57,14 @@ const ViewProjectClosureDocument = () => {
   const [serviceItemData, setServiceItemData] = useState({});
 
   useEffect(() => {
+    toast("Please Export the Document while using the Light Mode...", {
+      icon: "⚠️",
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
     const fetchProjectHandoverDoc = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
@@ -96,7 +104,7 @@ const ViewProjectClosureDocument = () => {
         result.data.message || "Project Handover Approved Successfully."
       );
 
-      navigate(`/${adminroute}/project-closure/view/${data._id}`);
+      navigate(`/${adminroute}/project-handover/view/${data._id}`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -137,7 +145,7 @@ const ViewProjectClosureDocument = () => {
   return (
     <div className="main-container">
       <Link
-        className="btn btn-sm btn-secondary"
+        className="btn btn-sm btn-secondary mt-2"
         size="sm"
         onClick={exportToPDF}
       >
@@ -152,7 +160,7 @@ const ViewProjectClosureDocument = () => {
                 <img
                   src={header}
                   alt="Taypro Logo"
-                  className="sidebar-brand-full logo mb-2"
+                  className="sidebar-brand-full logo"
                   style={{
                     height: "50px",
                     width: "110px",

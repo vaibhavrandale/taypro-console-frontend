@@ -11,8 +11,6 @@
 .main-container {
   font-family: "Blinker", sans-serif !important;
   font-size: 15px;
-  background-color: white;
-  color: black;
   text-align: center;
   margin: 0;
   padding: 0;
@@ -76,8 +74,8 @@ li {
 }
 
 .site-details-table th {
-  background-color: #dadada;
-  color: #000;
+  /* background-color: #dadada;
+  color: #000; */
 }
 
 .signature-section {
