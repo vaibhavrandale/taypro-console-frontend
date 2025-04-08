@@ -82,7 +82,16 @@ const UpdateProjectClosureForm = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const [serviceItemData, setServiceItemData] = useState({
     project_name: "",
     project_location: "",
@@ -258,7 +267,7 @@ const UpdateProjectClosureForm = () => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Project Document Updated Successfully!");
 
-      navigate(`/master-admin/project-closure`);
+      navigate(`/${adminroute}/project-handover`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: "Update failed" });
       toast.error("Update failed");

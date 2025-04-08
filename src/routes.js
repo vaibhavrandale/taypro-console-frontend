@@ -30,9 +30,10 @@ import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
 import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
 import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
-import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
-import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
+// import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
+// import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
 import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
+// import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const UserBasedLinkDashboard = React.lazy(() =>
@@ -63,8 +64,6 @@ const AddRobotUsingLoraNo = React.lazy(() =>
   import("./views/master-admin/add-robot/AddRobotUsingLoraNo")
 );
 
-// const Clients = React.lazy(() => import("./views/pages/clients/Clients"));
-
 const ClientsDasboard = React.lazy(() =>
   import("./views/master-admin/clients-and-sites/Clients")
 );
@@ -76,10 +75,6 @@ const ClientAssignedSites = React.lazy(() =>
 const EditClient = React.lazy(() =>
   import("./views/master-admin/clients-and-sites/EditClient")
 );
-
-// const ClientsData = React.lazy(() =>
-//   import("./views/pages/clients/ClientData")
-// );
 
 const ServiceTicketDashboard = React.lazy(() =>
   import("./views/master-admin/service-tickets/ServiceTicketDashboard")
@@ -527,22 +522,22 @@ const routes = [
   },
   {
     path: "/master-admin/project-handover",
-    name: "Project Closure",
+    name: "Project Handover",
     element: ProjectClosureForm,
   },
   {
     path: "/master-admin/project-handover/add-project-handover",
-    name: "Add Project Closure",
+    name: "Add Project Handover",
     element: AddProjectClosureForm,
   },
   {
     path: "/master-admin/project-handover/update/:id",
-    name: "Update Project Closure",
+    name: "Update Project Handover",
     element: UpdateProjectClosureForm,
   },
   {
     path: "/master-admin/project-handover/view/:id",
-    name: "View Project Closure Document",
+    name: "View Project Handover Document",
     element: ViewProjectClosureDocument,
   },
   {
@@ -688,27 +683,48 @@ const routes = [
     element: ProjectAdminDashboard,
   },
 
+  // {
+  //   path: "/project-admin/project-handover",
+  //   name: "Project Handover",
+  //   element: ProjectHandoverDashboard,
+  // },
+
+  // {
+  //   path: "/project-admin/project-handover/add-project-handover",
+  //   name: "Add Project Handover",
+  //   element: AddProjectHandover,
+  // },
+
+  // {
+  //   path: "/project-admin/project-handover/view/:id",
+  //   name: "Project Handover",
+  //   element: ViewProjectHandoverDocument,
+  // },
+  // {
+  //   path: "/project-admin/project-handover/update/:id",
+  //   name: "Update Project Handover",
+  //   element: UpdateProjectClosureForm,
+  // },
+
   {
     path: "/project-admin/project-handover",
     name: "Project Handover",
-    element: ProjectHandoverDashboard,
+    element: ProjectClosureForm,
   },
-
   {
     path: "/project-admin/project-handover/add-project-handover",
     name: "Add Project Handover",
     element: AddProjectClosureForm,
   },
-
-  {
-    path: "/project-admin/project-handover/view/:id",
-    name: "Project Handover",
-    element: ViewProjectHandoverDocument,
-  },
   {
     path: "/project-admin/project-handover/update/:id",
     name: "Update Project Handover",
     element: UpdateProjectClosureForm,
+  },
+  {
+    path: "/project-admin/project-handover/view/:id",
+    name: "View Project Handover Document",
+    element: ViewProjectClosureDocument,
   },
 
   {
@@ -928,16 +944,37 @@ const routes = [
   //   element: ProjectAdminDashboard,
   // },
 
+  // {
+  //   path: "/service-admin/project-handover",
+  //   name: "Project Handover",
+  //   element: ProjectHandoverDashboard,
+  // },
+
+  // {
+  //   path: "/service-admin/project-handover/view/:id",
+  //   name: "Project Handover",
+  //   element: ViewProjectHandoverDocument,
+  // },
+
   {
     path: "/service-admin/project-handover",
     name: "Project Handover",
-    element: ProjectHandoverDashboard,
+    element: ProjectClosureForm,
   },
-
   {
-    path: "/project-admin/project-handover/view/:id",
-    name: "Project Handover",
-    element: ViewProjectHandoverDocument,
+    path: "/service-admin/project-handover/add-project-handover",
+    name: "Add Project Handover",
+    element: AddProjectClosureForm,
+  },
+  {
+    path: "/service-admin/project-handover/update/:id",
+    name: "Update Project Handover",
+    element: UpdateProjectClosureForm,
+  },
+  {
+    path: "/service-admin/project-handover/view/:id",
+    name: "View Project Handover Document",
+    element: ViewProjectClosureDocument,
   },
 
   {

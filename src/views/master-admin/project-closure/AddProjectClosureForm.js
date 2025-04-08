@@ -105,7 +105,17 @@ const NewProjectClosure = () => {
   });
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const userInfo = useSelector((state) => state.userInfo);
+  // const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -214,7 +224,7 @@ const NewProjectClosure = () => {
       toast.success("Project Closure Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 
-      navigate(`/master-admin/project-closure`);
+      navigate(`/${adminroute}/project-handover`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
