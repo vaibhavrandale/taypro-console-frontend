@@ -123,6 +123,11 @@ const UpdateGateway = React.lazy(() =>
 const CreateNewGateways = React.lazy(() =>
   import("./views/master-admin/gateways/CreateNewGateways")
 );
+
+const AssignGateway = React.lazy(() =>
+  import("./views/master-admin/gateways/AssignGateway")
+);
+
 const AllSiteDpr = React.lazy(() =>
   import("./views/master-admin/all-site-dpr/AllSiteDpr")
 );
@@ -613,7 +618,11 @@ const routes = [
     name: " Master Admin Create New Gateway",
     element: CreateNewGateways,
   },
-
+  {
+    path: "/master-admin/all-site-gateways/assign-gateway/:id",
+    name: "Assign Gateway",
+    element: AssignGateway,
+  },
   {
     path: "/master-admin/all-site-dpr",
     name: "Master Admin  All Site Dpr",
