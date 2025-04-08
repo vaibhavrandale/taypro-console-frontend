@@ -77,11 +77,22 @@ const ProjectClosureDashboard = () => {
   });
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedProjectDoc, setSelectedInventory] = useState(null);
   const [selectedProjectDoc, setSelectedProjectDoc] = useState(null);
-
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -186,7 +197,7 @@ const ProjectClosureDashboard = () => {
       setFormData(result.data.data);
       setModalVisible(false);
 
-      navigate(`/master-admin/project-closure/view/${data._id}`);
+      navigate(`/master-admin/project-handover/view/${data._id}`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -260,7 +271,7 @@ const ProjectClosureDashboard = () => {
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/project-closure/add-project-closure"
+          to="/master-admin/project-handover/add-project-handover"
         >
           Project Closure Form
         </Link>
@@ -365,7 +376,11 @@ const ProjectClosureDashboard = () => {
                     : "-"}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {!doc.is_sent_for_approval && (
+                  {/* 🔴 Show "Send to Service Team" only if not sent OR user is Admin */}
+                  {(!doc.is_sent_for_approval ||
+                    ["Master Admin", "Project Admin"].includes(
+                      userInfo.role
+                    )) && (
                     <Link
                       className="btn btn-sm btn-danger m-1 text-white"
                       onClick={() => openModal(doc)}
@@ -374,18 +389,18 @@ const ProjectClosureDashboard = () => {
                     </Link>
                   )}
 
+                  {/* 👁 View Button */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    size="sm"
-                    // onClick={() => openModal(doc)}
-                    to={`/master-admin/project-closure/view/${doc._id}`}
+                    to={`/master-admin/project-handover/view/${doc._id}`}
                   >
                     View
                   </Link>
 
+                  {/* ✏️ Update Button */}
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/project-closure/update/${doc._id}`}
+                    to={`/master-admin/project-handover/update/${doc._id}`}
                   >
                     Update
                   </Link>
