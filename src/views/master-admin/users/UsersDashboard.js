@@ -83,8 +83,15 @@ const reducer = (state, action) => {
 
     case "ADD_USER_REQUEST":
       return { ...state, userAddloading: true, error: "" };
+    // case "ADD_USER_SUCCESS":
+    //   return { ...state, userAddloading: false, users: action.payload };
     case "ADD_USER_SUCCESS":
-      return { ...state, userAddloading: false, users: action.payload };
+      return {
+        ...state,
+        userAddloading: false,
+        users: [...state.users, action.payload], // ✅ add new user
+      };
+
     case "ADD_USER_FAIL":
       return { ...state, userAddloading: false, error: action.payload };
 
@@ -214,7 +221,7 @@ const UsersDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [assgnedSites, setAssignedSites] = useState([]);
-  // const [users, setUsers] = useState([]); // State for users
+
   const [pageInput, setPageInput] = useState("");
   const [image, setImage] = useState("");
 
@@ -318,6 +325,7 @@ const UsersDashboard = () => {
       phone: "",
       type: "Internal",
       profile_image: "",
+      designation: "",
     });
     setAddModalVisible(true);
   };
@@ -354,12 +362,14 @@ const UsersDashboard = () => {
       const response = await axios.post("/api/v1/users", newdata, {
         headers: { authorization: `Bearer ${authtoken}` },
       });
+      // console.log(response);
 
       if (response.status === 201 || response.status === 200) {
         console.log("User successfully added:", response.data);
         dispatch({
           type: "ADD_USER_SUCCESS",
-          payload: [...users, response.data.data], // Append new robot to state
+          payload: response.data.data.user,
+          // Append new robot to state
         });
         setAddModalVisible(false);
       }
@@ -373,13 +383,29 @@ const UsersDashboard = () => {
   };
 
   // Filter Users based on Search Term and ensure they are "Internal" type
-  const filteredUsers = users?.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.department.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredUsers = users
+  //   ? users.filter(
+  //       (user) =>
+  //         user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         user.department.toLowerCase().includes(searchTerm.toLowerCase())
+  //     )
+  //   : [];
+
+  const filteredUsers = users
+    ? users.filter(
+        (user) =>
+          (user.username || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (user.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (user.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (user.department || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -511,45 +537,6 @@ const UsersDashboard = () => {
       toast.error(err.response.data.error);
     }
   };
-
-  // const handleRemoveSite = async (sitedata) => {
-  //   if (
-  //     !window.confirm(
-  //       `Are you sure you want to remove this site 🚨 ${sitedata.site_id}?`
-  //     )
-  //   )
-  //     return;
-
-  //   try {
-  //     const response = await fetch(`/api/v1/users/remove-assign-site`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${authtoken}`, // Replace with actual user auth token if needed
-  //       },
-  //       body: JSON.stringify({
-  //         userId: selectedUser._id,
-  //         siteId: sitedata._id,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-  //     // console.log(data);
-
-  //     if (response.ok) {
-  //       toast.success(data.message); // Success message
-  //       setAssignedSites((prevSites) =>
-  //         prevSites.filter((site) => site._id !== sitedata._id)
-  //       );
-  //     }
-  //     // } else {
-  //     //   toast.error(error.error || "Failed to remove site");
-  //     // }
-  //   } catch (error) {
-  //     console.error("Error removing site:", error);
-  //     toast.error(error.response.data.error);
-  //   }
-  // };
 
   const handleRemoveSite = async (sitedata) => {
     if (
@@ -799,6 +786,13 @@ const UsersDashboard = () => {
             value={formData.phone}
             onChange={handleChange}
           />
+          <CFormLabel>Designation</CFormLabel>
+          <CFormInput
+            type="text"
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+          />
           <CFormLabel>Password</CFormLabel>
           <CFormInput
             type="text"
@@ -944,6 +938,13 @@ const UsersDashboard = () => {
             type="text"
             name="phone"
             value={formData.phone}
+            onChange={handleChange}
+          />
+          <CFormLabel>Designation</CFormLabel>
+          <CFormInput
+            type="text"
+            name="designation"
+            value={formData.designation}
             onChange={handleChange}
           />
           <br />

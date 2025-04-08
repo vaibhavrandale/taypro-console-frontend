@@ -146,7 +146,7 @@ const InternalTicketsDashboard = () => {
       ticket.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.created_by.toLowerCase().includes(searchTerm.toLowerCase())
+      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   /** ✏️ Open Update Modal */
@@ -163,10 +163,10 @@ const InternalTicketsDashboard = () => {
   };
 
   /** ✅ Handle Update */
-  const handleUpdate = () => {
-    console.log("Updated Ticket:", formData);
-    setModalVisible(false);
-  };
+  // const handleUpdate = () => {
+  //   console.log("Updated Ticket:", formData);
+  //   setModalVisible(false);
+  // };
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -218,13 +218,21 @@ const InternalTicketsDashboard = () => {
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Ticket ID</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
-            <CTableHeaderCell>Subject</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "300px" }}>
+              Subject
+            </CTableHeaderCell>
             <CTableHeaderCell>Priority</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Assigned To</CTableHeaderCell>
-            <CTableHeaderCell>Created By</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Assigned To
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Created By
+            </CTableHeaderCell>
             <CTableHeaderCell>Created At</CTableHeaderCell>
-            <CTableHeaderCell>Action</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Action
+            </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
