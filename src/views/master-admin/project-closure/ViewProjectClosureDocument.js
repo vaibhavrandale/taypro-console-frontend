@@ -303,7 +303,7 @@ const ViewProjectClosureDocument = () => {
         </table>
         <div className="page-break"></div>
 
-        <div className="section-title">6. Handover&nbsp;&nbsp;Checklist</div>
+        <div className="section-title">5. Handover&nbsp;&nbsp;Checklist</div>
         <table className="site-details-table">
           <thead>
             <tr>
@@ -324,7 +324,7 @@ const ViewProjectClosureDocument = () => {
         </table>
         <div className="end-page"></div>
         <div className="section-title">
-          7. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
+          6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
         </div>
         <ul>
           <li>
@@ -347,7 +347,7 @@ const ViewProjectClosureDocument = () => {
           </li>
         </ul>
         <div className="section-title">
-          8. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
+          7. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
         </div>
         <table className="site-details-table">
           <thead>
@@ -410,22 +410,24 @@ const ViewProjectClosureDocument = () => {
             </p>
             <p>
               Name&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.name || ""}
+              {serviceItemData.approved_by?.name || ""}
             </p>
             <p>
               Designation&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.designation || ""}{" "}
+              {serviceItemData.approved_by?.designation || ""}{" "}
             </p>
             <p className="signature-line">
               Signature&nbsp;&nbsp;:&nbsp;&nbsp;
-              <span style={{ fontWeight: "bold", color: "green" }}>
-                Verified
-              </span>
+              {serviceItemData.approved_by && (
+                <span style={{ fontWeight: "bold", color: "green" }}>
+                  Verified
+                </span>
+              )}
             </p>
             <p>
               Date&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.timestamp
-                ? new Date(serviceItemData.approval_sent_by.timestamp)
+              {serviceItemData.approved_by?.timestamp
+                ? new Date(serviceItemData.approved_by.timestamp)
                     .toISOString()
                     .split("T")[0]
                 : ""}
