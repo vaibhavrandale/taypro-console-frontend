@@ -1,13 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "./projectDoc.css";
 import header from "../../../assets/brand/logoforwhitebg.png";
-import jsPDF from "jspdf";
-import { CButton } from "@coreui/react";
+import html2pdf from "html2pdf.js";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -43,6 +43,7 @@ const ViewProjectClosureDocument = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
+  const contentRef = useRef();
 
   const [serviceItemData, setServiceItemData] = useState({});
 
@@ -70,7 +71,6 @@ const ViewProjectClosureDocument = () => {
   }, [id, authtoken]);
 
   const approveHandoverDoc = async (data) => {
-    // console.log(data);
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
       const result = await axios.put(
@@ -80,7 +80,6 @@ const ViewProjectClosureDocument = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(result.data);
       dispatch({
         type: "SUBMIT_SUCCESS",
       });
@@ -102,28 +101,41 @@ const ViewProjectClosureDocument = () => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF("p", "pt", "a4");
+    const element = contentRef.current;
 
-    const element = document.querySelector(".second-container");
-
-    doc.html(element, {
-      callback: function (doc) {
-        doc.save("Project_Handover.pdf");
-      },
-      x: 30,
-      y: 20,
-      autoPaging: true,
+    const opt = {
+      margin: [0.5, 0.5],
+      filename: `${serviceItemData.project_name}_handover.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: {
-        scale: 0.6,
+        scale: 2,
+        useCORS: true,
       },
-    });
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "portrait",
+      },
+      pagebreak: {
+        mode: ["css", "legacy"],
+        before: [".page-break", ".end-page"],
+      },
+    };
+
+    html2pdf().set(opt).from(element).save();
   };
 
   return (
     <div className="main-container">
-      <CButton onClick={exportToPDF}>Export</CButton>
+      <Link
+        className="btn btn-sm btn-secondary"
+        size="sm"
+        onClick={exportToPDF}
+      >
+        Export
+      </Link>
 
-      <div className="second-container">
+      <div className="second-container" ref={contentRef}>
         <table className="site-details-table ">
           <thead>
             <tr className="">
@@ -131,7 +143,7 @@ const ViewProjectClosureDocument = () => {
                 <img
                   src={header}
                   alt="Taypro Logo"
-                  className="sidebar-brand-full logo"
+                  className="sidebar-brand-full logo mb-2"
                   style={{
                     height: "50px",
                     width: "110px",
@@ -143,17 +155,10 @@ const ViewProjectClosureDocument = () => {
                 <h5>Project to Service Handover Document</h5>
               </td>
               <td colSpan={1}>Doc. No. : TPL-12</td>
-
-              {/* <td colSpan={1}>Rev. No.: 1</td>
-
-              <td>Revised By</td>
-              <td className="fw-bold">Abhay Singh</td>
-              <td>Start Date</td>
-              <td className="fw-bold">22/04/2025</td> */}
             </tr>
           </thead>
         </table>
-        <div className="section-title">1. Introduction</div>
+        <div className="section-title mt-6">1. Introduction</div>
         <p>
           This document serves as a formal handover from the Project Team to the
           Service Team for the successful completion and transition of{" "}
@@ -195,10 +200,10 @@ const ViewProjectClosureDocument = () => {
             {serviceItemData.project_approved_by}
           </p>
         </div>
-        <div className="section-title">2. Project&nbsp;&nbsp;Overview</div>
+        <div className="section-title mt-6">2. Project&nbsp;&nbsp;Overview</div>
         <ul>
           <li>
-            <span class="label">
+            <span className="label">
               Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
             </span>
             &nbsp;
@@ -231,7 +236,7 @@ const ViewProjectClosureDocument = () => {
             {serviceItemData.challenges_faced}
           </li>
         </ul>
-        <div className="section-title">3. System&nbsp;&nbsp;Details</div>
+        <div className="section-title mt-6">3. System&nbsp;&nbsp;Details</div>
         <ul>
           <li>
             <strong>
@@ -280,9 +285,21 @@ const ViewProjectClosureDocument = () => {
             </strong>{" "}
             {serviceItemData.lora_pole_coordinated}
           </li>
+          <li>
+            <strong>
+              Half&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.half_table_length}
+          </li>
+          <li>
+            <strong>
+              Full&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.full_table_length}
+          </li>
         </ul>
-
-        <div className="section-title">4. Site&nbsp;&nbsp;Details</div>
+        <br />
+        <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
         <table className="site-details-table">
           <thead>
             <tr>
@@ -301,7 +318,6 @@ const ViewProjectClosureDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="page-break"></div>
 
         <div className="section-title">5. Handover&nbsp;&nbsp;Checklist</div>
         <table className="site-details-table">
@@ -322,10 +338,11 @@ const ViewProjectClosureDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="end-page"></div>
-        <div className="section-title">
+
+        <div className="section-title page-break">
           6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
         </div>
+
         <ul>
           <li>
             <strong>
