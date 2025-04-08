@@ -257,6 +257,7 @@ const UpdateInternalTicket = () => {
               </CCol>
             </CRow>
             <CButton
+              size="sm"
               className="mt-4"
               type="submit"
               color="primary"

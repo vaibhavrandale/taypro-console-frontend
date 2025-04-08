@@ -436,6 +436,55 @@ export const role_permissions = [
   },
 ];
 
+export const projects_role_permissions = [
+  {
+    role: "Project Admin",
+  },
+  {
+    role: "Project Engineer",
+  },
+  {
+    role: "Service Admin",
+  },
+  {
+    role: "Service User",
+  },
+
+  {
+    role: "Site Technician",
+  },
+  {
+    role: "Client Admin",
+  },
+  {
+    role: "Site Incharge",
+  },
+  {
+    role: "Client Technician",
+  },
+];
+
+export const service_role_permissions = [
+  {
+    role: "Service Admin",
+  },
+  {
+    role: "Service User",
+  },
+
+  {
+    role: "Site Technician",
+  },
+  {
+    role: "Client Admin",
+  },
+  {
+    role: "Site Incharge",
+  },
+  {
+    role: "Client Technician",
+  },
+];
 //done
 export const users = [
   {

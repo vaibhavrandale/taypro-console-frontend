@@ -188,9 +188,8 @@ const InternalTicketsDashboard = () => {
 
   return (
     <div className="">
-      <div className="d-flex justify-content-between align-items-center">
-        {" "}
-        <h2>Internal Tickets</h2>
+      <h2 className="text-center">Internal Tickets</h2>
+      <div className="d-flex justify-content-end my-2 align-items-center">
         <Link
           to="create-new-internal-ticket"
           className="btn btn-sm btn-primary"
