@@ -208,11 +208,9 @@ const NewProjectClosure = () => {
       handover_checklist: state.handoverChecklist,
     };
     try {
-      console.log(state.projectDocData);
-      const data = await axios.post("/api/v1/projectdocs", newdata, {
+      await axios.post("/api/v1/projectdocs", newdata, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data);
       toast.success("Project Closure Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 

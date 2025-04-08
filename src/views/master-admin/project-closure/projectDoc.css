@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap");
+@media print {
+  .page-break {
+    page-break-before: always;
+  }
+  .end-page {
+    page-break-after: always;
+  }
+}
 
 .main-container {
   font-family: "Blinker", sans-serif !important;
@@ -88,14 +96,4 @@ li {
 
 .signature-line {
   margin-top: 8px;
-}
-
-.end-page {
-  page-break-after: always;
-  break-after: page;
-  height: 1px;
-  visibility: hidden;
-}
-.page-break {
-  margin-top: 250px;
 }

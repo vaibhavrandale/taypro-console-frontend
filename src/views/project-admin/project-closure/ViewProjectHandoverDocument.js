@@ -1,12 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./projectDoc.css";
-import jsPDF from "jspdf";
-import { CButton } from "@coreui/react";
 import header from "../../../assets/brand/logoforwhitebg.png";
+import html2pdf from "html2pdf.js";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -15,7 +16,17 @@ const reducer = (state, action) => {
       return { ...state, projectdoc: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-
+    case "SUBMIT_REQUEST":
+      return { ...state, loading: true, success: false };
+    case "SUBMIT_SUCCESS":
+      return { ...state, loading: false, success: true };
+    case "SUBMIT_FAIL":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        success: false,
+      };
     default:
       return state;
   }
@@ -28,7 +39,11 @@ const ViewProjectHandoverDocument = () => {
     updating: false,
   });
   const { id } = useParams();
+  const userInfo = useSelector((state) => state.userInfo);
+
   const authtoken = useSelector((state) => state.authtoken);
+  const navigate = useNavigate();
+  const contentRef = useRef();
 
   const [serviceItemData, setServiceItemData] = useState({});
 
@@ -55,48 +70,72 @@ const ViewProjectHandoverDocument = () => {
     fetchProjectHandoverDoc();
   }, [id, authtoken]);
 
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF("p", "pt", "a4");
+  const approveHandoverDoc = async (data) => {
+    dispatch({ type: "SUBMIT_REQUEST" });
+    try {
+      const result = await axios.put(
+        `/api/v1/projectdocs/change-status/${data._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      dispatch({
+        type: "SUBMIT_SUCCESS",
+      });
+      toast.success(
+        result.data.message || "Project Handover Approved Successfully."
+      );
 
-  //   const element = document.querySelector(".container");
-
-  //   doc.html(element, {
-  //     callback: function (doc) {
-  //       doc.save("Project_Handover.pdf");
-  //     },
-  //     x: 20,
-  //     y: 20,
-  //     autoPaging: true,
-  //     html2canvas: {
-  //       scale: 0.6, // match 1:1 styling, or try 0.8 if text overflows
-  //       useCORS: true,
-  //       logging: true,
-  //     },
-  //   });
-  // };
-  const exportToPDF = () => {
-    const doc = new jsPDF("p", "pt", "a4");
-
-    const element = document.querySelector(".second-container");
-
-    doc.html(element, {
-      callback: function (doc) {
-        doc.save("Project_Handover.pdf");
-      },
-      x: 20,
-      y: 20,
-      autoPaging: true,
-      html2canvas: {
-        scale: 0.6,
-        useCORS: true,
-        logging: true,
-      },
-    });
+      navigate(`/master-admin/project-closure/view/${data._id}`);
+    } catch (error) {
+      dispatch({
+        type: "SUBMIT_FAIL",
+        payload:
+          error.response?.data?.error || "Failed to send an approval request",
+      });
+      toast.error(
+        error.response?.data?.error || "Failed to send an approval request"
+      );
+    }
   };
+
+  const exportToPDF = () => {
+    const element = contentRef.current;
+
+    const opt = {
+      margin: [0.5, 0.5],
+      filename: `${serviceItemData.project_name}_handover.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+      },
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "portrait",
+      },
+      pagebreak: {
+        mode: ["css", "legacy"],
+        before: [".page-break", ".end-page"],
+      },
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
     <div className="main-container">
-      <CButton onClick={exportToPDF}>Export</CButton>
-      <div className="second-container">
+      <Link
+        className="btn btn-sm btn-secondary"
+        size="sm"
+        onClick={exportToPDF}
+      >
+        Export
+      </Link>
+
+      <div className="second-container" ref={contentRef}>
         <table className="site-details-table ">
           <thead>
             <tr className="">
@@ -104,7 +143,7 @@ const ViewProjectHandoverDocument = () => {
                 <img
                   src={header}
                   alt="Taypro Logo"
-                  className="sidebar-brand-full logo"
+                  className="sidebar-brand-full logo mb-2"
                   style={{
                     height: "50px",
                     width: "110px",
@@ -116,17 +155,10 @@ const ViewProjectHandoverDocument = () => {
                 <h5>Project to Service Handover Document</h5>
               </td>
               <td colSpan={1}>Doc. No. : TPL-12</td>
-
-              {/* <td colSpan={1}>Rev. No.: 1</td>
-    
-                  <td>Revised By</td>
-                  <td className="fw-bold">Abhay Singh</td>
-                  <td>Start Date</td>
-                  <td className="fw-bold">22/04/2025</td> */}
             </tr>
           </thead>
         </table>
-        <div className="section-title">1. Introduction</div>
+        <div className="section-title mt-6">1. Introduction</div>
         <p>
           This document serves as a formal handover from the Project Team to the
           Service Team for the successful completion and transition of{" "}
@@ -168,10 +200,10 @@ const ViewProjectHandoverDocument = () => {
             {serviceItemData.project_approved_by}
           </p>
         </div>
-        <div className="section-title">2. Project&nbsp;&nbsp;Overview</div>
+        <div className="section-title mt-6">2. Project&nbsp;&nbsp;Overview</div>
         <ul>
           <li>
-            <span class="label">
+            <span className="label">
               Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
             </span>
             &nbsp;
@@ -204,7 +236,7 @@ const ViewProjectHandoverDocument = () => {
             {serviceItemData.challenges_faced}
           </li>
         </ul>
-        <div className="section-title">3. System&nbsp;&nbsp;Details</div>
+        <div className="section-title mt-6">3. System&nbsp;&nbsp;Details</div>
         <ul>
           <li>
             <strong>
@@ -253,9 +285,21 @@ const ViewProjectHandoverDocument = () => {
             </strong>{" "}
             {serviceItemData.lora_pole_coordinated}
           </li>
+          <li>
+            <strong>
+              Half&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.half_table_length}
+          </li>
+          <li>
+            <strong>
+              Full&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+            </strong>{" "}
+            {serviceItemData.full_table_length}
+          </li>
         </ul>
-
-        <div className="section-title">4. Site&nbsp;&nbsp;Details</div>
+        <br />
+        <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
         <table className="site-details-table">
           <thead>
             <tr>
@@ -274,9 +318,8 @@ const ViewProjectHandoverDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="page-break"></div>
 
-        <div className="section-title">6. Handover&nbsp;&nbsp;Checklist</div>
+        <div className="section-title">5. Handover&nbsp;&nbsp;Checklist</div>
         <table className="site-details-table">
           <thead>
             <tr>
@@ -295,10 +338,11 @@ const ViewProjectHandoverDocument = () => {
             ))}
           </tbody>
         </table>
-        <div className="end-page"></div>
-        <div className="section-title">
-          7. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
+
+        <div className="section-title page-break">
+          6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
         </div>
+
         <ul>
           <li>
             <strong>
@@ -320,7 +364,7 @@ const ViewProjectHandoverDocument = () => {
           </li>
         </ul>
         <div className="section-title">
-          8. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
+          7. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
         </div>
         <table className="site-details-table">
           <thead>
@@ -383,26 +427,44 @@ const ViewProjectHandoverDocument = () => {
             </p>
             <p>
               Name&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.name || ""}
+              {serviceItemData.approved_by?.name || ""}
             </p>
             <p>
               Designation&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.designation || ""}{" "}
+              {serviceItemData.approved_by?.designation || ""}{" "}
             </p>
             <p className="signature-line">
               Signature&nbsp;&nbsp;:&nbsp;&nbsp;
-              <span style={{ fontWeight: "bold", color: "green" }}>
-                Verified
-              </span>
+              {serviceItemData.approved_by && (
+                <span style={{ fontWeight: "bold", color: "green" }}>
+                  Verified
+                </span>
+              )}
             </p>
             <p>
               Date&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approval_sent_by?.timestamp
-                ? new Date(serviceItemData.approval_sent_by.timestamp)
+              {serviceItemData.approved_by?.timestamp
+                ? new Date(serviceItemData.approved_by.timestamp)
                     .toISOString()
                     .split("T")[0]
                 : ""}
             </p>
+            {userInfo.role === "Service Admin" &&
+              serviceItemData.approval_status !== "Approved" && (
+                <Link
+                  className="btn btn-sm btn-success mt-2"
+                  size="sm"
+                  onClick={() => approveHandoverDoc(serviceItemData)}
+                >
+                  {state.loading ? (
+                    <>
+                      Approving... <LoadingSpinner />
+                    </>
+                  ) : (
+                    "Approve"
+                  )}
+                </Link>
+              )}
           </div>
         </div>
       </div>
