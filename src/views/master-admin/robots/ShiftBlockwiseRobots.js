@@ -78,10 +78,10 @@ const ShiftBlockwiseRobots = () => {
   const [
     {
       loadingShiftRobots,
+      shiftRobots,
       fetchingRobots,
       error,
       shiftrobots,
-
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -91,7 +91,7 @@ const ShiftBlockwiseRobots = () => {
     dispatch,
   ] = useReducer(reducer, {
     shiftrobots: [],
-
+    shiftRobots: [],
     loadingSites: false,
     sites: [],
     loadingShiftRobots: false,
@@ -173,8 +173,9 @@ const ShiftBlockwiseRobots = () => {
         toast.error("Failed to fetch sites");
       }
     };
-    fetchSites();
+
     fetchRobots();
+    fetchSites();
   }, [authtoken, limit, page, site_id]);
 
   // ✅ Handle Checkbox Selection
@@ -185,35 +186,6 @@ const ShiftBlockwiseRobots = () => {
         : [...prev, robot]
     );
   };
-
-  // ✅ Activate Selected Robots
-  //   const activateSelectedRobots = async () => {
-  //     if (selectedRobots.length === 0) {
-  //       toast.error("Please select at least one robot to activate.");
-  //       return;
-  //     }
-
-  //     dispatch({ type: "ACTIVATE_ROBOTS_REQUEST" });
-
-  //     try {
-  //       const response = await axios.put(
-  //         "/api/v1/robots/activate",
-  //         { deveuiArray: selectedRobots.map((robot) => robot.deveui) },
-  //         { headers: { Authorization: `Bearer ${authtoken}` } }
-  //       );
-  //       console.log(response);
-
-  //       dispatch({ type: "ACTIVATE_ROBOTS_SUCCESS", payload: selectedRobots });
-  //       toast.success("Selected robots Shifted in other block successfully.");
-  //       setSelectedRobots([]); // Clear selection after activation
-  //     } catch (error) {
-  //       dispatch({
-  //         type: "ACTIVATE_ROBOTS_FAIL",
-  //         payload: error.response?.data?.message || error.response?.data?.error,
-  //       });
-  //       toast.error(error.response?.data?.message || error.response?.data?.error);
-  //     }
-  //   };
 
   const activateSelectedRobots = async () => {
     if (!targetBlock) {
@@ -242,6 +214,7 @@ const ShiftBlockwiseRobots = () => {
 
       dispatch({ type: "SHIFT_ROBOTS_SUCCESS", payload: selectedRobots });
       toast.success("Selected robots shifted to new block successfully.");
+      console.log(response.data);
       setSelectedRobots([]);
       setShowModal(false); // Close modal
       setTargetBlock(""); // Clear input
@@ -272,10 +245,6 @@ const ShiftBlockwiseRobots = () => {
     }
   };
 
-  //   const handleSiteNameChange = (e) => {
-  //     const selectedSiteId = e.target.value;
-  //     setSiteId(selectedSiteId); // Updates local state
-  //   };
   return (
     <div className="p-2">
       <h4>Update Blocks of Robots</h4>
@@ -290,15 +259,17 @@ const ShiftBlockwiseRobots = () => {
               All Robots
             </Link>
           )}
+          {selectedRobots.length > 0 && (
+            <CButton
+              color="success"
+              size="sm"
+              onClick={() => setShowModal(true)}
+              disabled={loadingShiftRobots}
+            >
+              Shift Selected
+            </CButton>
+          )}
 
-          <CButton
-            color="success"
-            size="sm"
-            onClick={() => setShowModal(true)}
-            disabled={loadingShiftRobots}
-          >
-            Shift Selected
-          </CButton>
           {showModal && (
             <CModal
               backdrop="static"

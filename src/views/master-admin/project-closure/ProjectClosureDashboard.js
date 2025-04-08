@@ -77,44 +77,28 @@ const ProjectClosureDashboard = () => {
   });
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedProjectDoc, setSelectedInventory] = useState(null);
   const [selectedProjectDoc, setSelectedProjectDoc] = useState(null);
-
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const [formData, setFormData] = useState({
-    // project_name: "",
-    // project_location: "",
-    // prepared_by: "",
-    // project_start_date: "",
-    // project_completion_date: "",
-    // project_approved_by: "",
-    // scope_of_work: "",
-    // challenges_faced: "",
-    // plant_capacity: "",
-    // water_stored: "",
-    // total_no_of_systems: 0,
-    // modalA_count: 0,
-    // modalB_count: 0,
-    // modalT_count: 0,
-    // ds_setup: "",
-    // rs_setup: "",
-    // lora_pole_setup: "",
-    // lora_pole_coordinated: "",
-    // robot_details: [],
-    // handover_checklist: [],
-    // commissioning_document: "",
-    // is_portal_access_provided: "",
-    // is_client_training_conducted: "",
-    // client_name: "",
-    // client_role: "",
-    // client_email: "",
-  });
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     let pagination = {
@@ -186,7 +170,7 @@ const ProjectClosureDashboard = () => {
       setFormData(result.data.data);
       setModalVisible(false);
 
-      navigate(`/master-admin/project-closure/view/${data._id}`);
+      navigate(`/master-admin/project-handover/view/${data._id}`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -230,46 +214,16 @@ const ProjectClosureDashboard = () => {
     }
   };
 
-  //   const exportToExcel = () => {
-  //     if (filteredProjectDocs.length === 0) {
-  //       toast.error("No data available for export.");
-  //       return;
-  //     }
-
-  //     // Convert JSON to sheet
-  //     const worksheet = XLSX.utils.json_to_sheet(
-  //       filteredProjectDocs.map((item, index) => ({
-  //         "#": index + 1,
-  //         "Item Name": item.item_name,
-  //         "Item Code": item.item_code,
-  //         "Site Id": item.site_id,
-  //         Quantity: item.quantity,
-  //         Threshold: item.threshold,
-  //       }))
-  //     );
-  //     const workbook = XLSX.utils.book_new();
-  //     XLSX.utils.book_append_sheet(workbook, worksheet, "Service projectDocs");
-
-  //     // Trigger download
-  //     XLSX.writeFile(workbook, "Service Inventory.xlsx");
-  //   };
-
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Project Closure Data</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/project-closure/add-project-closure"
+          to="/master-admin/project-handover/add-project-handover"
         >
           Project Closure Form
         </Link>
-        {/* <Link
-          className="btn btn-sm btn-primary m-1"
-          //  onClick={exportToExcel}
-        >
-          Export
-        </Link> */}
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
@@ -365,7 +319,11 @@ const ProjectClosureDashboard = () => {
                     : "-"}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {!doc.is_sent_for_approval && (
+                  {/* 🔴 Show "Send to Service Team" only if not sent OR user is Admin */}
+                  {(!doc.is_sent_for_approval ||
+                    ["Master Admin", "Project Admin"].includes(
+                      userInfo.role
+                    )) && (
                     <Link
                       className="btn btn-sm btn-danger m-1 text-white"
                       onClick={() => openModal(doc)}
@@ -374,18 +332,18 @@ const ProjectClosureDashboard = () => {
                     </Link>
                   )}
 
+                  {/* 👁 View Button */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    size="sm"
-                    // onClick={() => openModal(doc)}
-                    to={`/master-admin/project-closure/view/${doc._id}`}
+                    to={`/master-admin/project-handover/view/${doc._id}`}
                   >
                     View
                   </Link>
 
+                  {/* ✏️ Update Button */}
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/project-closure/update/${doc._id}`}
+                    to={`/master-admin/project-handover/update/${doc._id}`}
                   >
                     Update
                   </Link>

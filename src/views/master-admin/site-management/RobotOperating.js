@@ -95,6 +95,9 @@ const RobotOperating = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [text, setText] = useState("");
+  const [base64Text, setBase64Text] = useState("");
+
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
@@ -133,6 +136,7 @@ const RobotOperating = () => {
   });
 
   const navigate = useNavigate();
+  const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   useEffect(() => {
@@ -284,10 +288,44 @@ const RobotOperating = () => {
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
-        payload: error.response?.data?.message,
+        payload: error.response?.data?.message || error.response.data.error,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+    setLoadingRow(null);
+    setCommandButton(null);
+  };
+  const sendCustomDownlink = async (command) => {
+    // console.log(command);
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: Robotdata[0].deveui,
+      robot_no: Robotdata[0].robot_no,
+      site_id: site_id,
+      command: command,
+      lora_no: Robotdata[0].lora_no,
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/custom-downlink",
+        robotdownlink,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log(data.data.message);
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+
+      toast.error(error.response.data.message || error.response?.data?.error);
     }
     setLoadingRow(null);
     setCommandButton(null);
@@ -360,6 +398,17 @@ const RobotOperating = () => {
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
   }
+
+  const TextToBase64 = (text) => {
+    const base64 = btoa(text);
+    console.log(base64);
+    setBase64Text(base64);
+    setTimeout(() => {
+      setBase64Text("");
+    }, 5000);
+    setText("");
+    return base64;
+  };
   return (
     <>
       {loadingRobots ? (
@@ -627,33 +676,46 @@ const RobotOperating = () => {
             </CCol>
 
             {/* Third Card (Custom Downlink) */}
-            <CCol md={3} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h6 className="fw-bold">Custom Downlink</h6>
-                    <FaCircleInfo
-                      className="text-primary"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setModalVisible(true)}
-                    />
-                  </div>
-                  <form className="position-relative mt-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter command"
-                    />
-                    <CButton
-                      type="button"
-                      className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
-                    >
-                      <FaArrowUp />
-                    </CButton>
-                  </form>
-                </CCardBody>
-              </CCard>
-            </CCol>
+            {userInfo.role === "Master Admin" && (
+              <CCol md={3} className="mt-2">
+                <CCard className="shadow border-0 " style={{ height: "100%" }}>
+                  <CCardBody>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <h6 className="fw-bold">Custom Downlink</h6>
+                      <FaCircleInfo
+                        className="text-primary"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setModalVisible(true)}
+                      />
+                    </div>
+                    <form className="position-relative mt-4">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter command"
+                        name={customDownlink}
+                        onChange={(e) => setCustomDownlink(e.target.value)}
+                      />
+                      <CButton
+                        disabled={!customDownlink}
+                        onClick={() => sendCustomDownlink(customDownlink)}
+                        type="button"
+                        className="d-flex justify-content-center align-items-center btn-sm send-button"
+                      >
+                        <span className="d-flex justify-content-center align-items-center">
+                          {" "}
+                          {sendingCommandloading ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <FaArrowUp />
+                          )}
+                        </span>
+                      </CButton>
+                    </form>
+                  </CCardBody>
+                </CCard>
+              </CCol>
+            )}
           </CRow>
 
           {/* Modal for Commands */}
@@ -926,28 +988,36 @@ const RobotOperating = () => {
             </CCol>
 
             {/* Fourth Card - Text To Base64 */}
-            <CCol md={3} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h6 className="fw-bold">Text to Base64</h6>
-                  </div>
-                  <form className="position-relative mt-4">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter value"
-                    />
-                    <CButton
-                      type="button"
-                      className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
-                    >
-                      <FaArrowUp />
-                    </CButton>
-                  </form>
-                </CCardBody>
-              </CCard>
-            </CCol>
+            {userInfo.role === "Master Admin" && (
+              <CCol md={3} className="mt-2">
+                <CCard className="shadow border-0 " style={{ height: "100%" }}>
+                  <CCardBody>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <h6 className="fw-bold">Text to Base64</h6>
+                      <span className="text-danger fst-italic">
+                        {base64Text}
+                      </span>
+                    </div>
+                    <form className="position-relative mt-4">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter value"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                      />
+                      <CButton
+                        onClick={() => TextToBase64(text)}
+                        type="button"
+                        className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
+                      >
+                        <FaArrowUp />
+                      </CButton>
+                    </form>
+                  </CCardBody>
+                </CCard>
+              </CCol>
+            )}
           </CRow>
         </div>
       )}

@@ -124,14 +124,17 @@ const ServiceTicketDashboard = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   // const [loading, setLoading] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
-  // const location = useLocation();
-  // const navigate = useNavigate();
-  // const queryParams = new URLSearchParams(location.search);
-  // const page = parseInt(queryParams.get("pg")) || 1;
-  // const limit = parseInt(queryParams.get("limit")) || 10;
-
-  // 📌 Open modal with selected ticket data
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const openViewModal = async (id) => {
     setViewModalVisible(true);
@@ -158,12 +161,6 @@ const ServiceTicketDashboard = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // 📌 Handle ticket update (currently logs data)
-  // const handleUpdate = (id) => {
-  //   console.log("Updated Ticket:", serviceticket);
-  //   setModalVisible(false);
-  // };
 
   const handleUpdate = async (id) => {
     try {
@@ -372,15 +369,18 @@ const ServiceTicketDashboard = () => {
                       >
                         View
                       </CButton>
-                      <Link
-                        color="primary"
-                        size="sm"
-                        className="m-1 btn btn-sm btn-primary text-decoration-none"
-                        to={`update-service-ticket/${ticket._id}`}
-                        // onClick={() => openUpdateModal(ticket._id)}
-                      >
-                        Update
-                      </Link>
+
+                      {userInfo.role === "Master Admin" && (
+                        <Link
+                          color="primary"
+                          size="sm"
+                          className="m-1 btn btn-sm btn-primary text-decoration-none"
+                          to={`update-service-ticket/${ticket._id}`}
+                          // onClick={() => openUpdateModal(ticket._id)}
+                        >
+                          Update
+                        </Link>
+                      )}
                       <Link
                         size="sm"
                         className="m-1 btn btn-sm btn-secondary text-decoration-none"
@@ -395,16 +395,7 @@ const ServiceTicketDashboard = () => {
               )}
             </CTableBody>
           </CTable>
-          {/* <PaginateInput
-            page={page}
-            totalPages={totalPages}
-            hasPrevPage={hasPrevPage}
-            hasNextPage={hasNextPage}
-            pageInput={pageInput}
-            handlePageChange={handlePageChange}
-            handlePageInputChange={handlePageInputChange}
-            handlePageInputSubmit={handlePageInputSubmit}
-          /> */}
+
           <PaginateInput
             page={page}
             totalPages={totalPages}

@@ -1,4 +1,5 @@
 import {
+  CButton,
   CCol,
   CFormInput,
   CModal,
@@ -17,11 +18,11 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import * as XLSX from "xlsx"; // Import xlsx for Excel export
+import { Link, useNavigate } from "react-router-dom";
+// import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
-import LastActivity from "../../../components/LastActivity";
+// import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,11 +39,22 @@ const reducer = (state, action) => {
       };
     case "FETCH_PROJECTDOC_FAIL":
       return { ...state, loadingProjectDocs: false, error: action.payload };
+
+    case "SUBMIT_REQUEST":
+      return { ...state, loading: true, success: false };
+    case "SUBMIT_SUCCESS":
+      return { ...state, loading: false, success: true };
+    case "SUBMIT_FAIL":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        success: false,
+      };
     default:
       return state;
   }
 };
-
 const ProjectHandoverDashboard = () => {
   const [
     {
@@ -52,22 +64,26 @@ const ProjectHandoverDashboard = () => {
       totalPages,
       hasNextPage,
       hasPrevPage,
+      loading,
     },
     dispatch,
   ] = useReducer(reducer, {
     projectDocs: [],
-    loading: true,
+    loading: false,
     loadingProjectDocs: true,
     error: "",
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
 
+  const navigate = useNavigate();
+  const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState(null);
+  // const [selectedInventory, setSelectedInventory] = useState(null);
+  const [selectedProjectDoc, setSelectedProjectDoc] = useState(null);
 
   const [pageInput, setPageInput] = useState("");
 
@@ -161,11 +177,77 @@ const ProjectHandoverDashboard = () => {
 
   // Open modal and load doc data
   const openModal = (doc) => {
-    setSelectedInventory(doc);
+    setSelectedProjectDoc(doc);
     setFormData(doc);
     setModalVisible(true);
   };
 
+  const updateApprovalSentStatus = async (data) => {
+    // console.log(data);
+    dispatch({ type: "SUBMIT_REQUEST" });
+    try {
+      const result = await axios.put(
+        `/api/v1/projectdocs/project-doc/send-for-approval/${data._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      console.log(result.data);
+      dispatch({
+        type: "SUBMIT_SUCCESS",
+      });
+      toast.success(
+        result.data.message || "Approval request sent successfully."
+      );
+      setFormData(result.data.data);
+      setModalVisible(false);
+
+      navigate(`/master-admin/project-handover/view/${data._id}`);
+    } catch (error) {
+      dispatch({
+        type: "SUBMIT_FAIL",
+        payload:
+          error.response?.data?.error || "Failed to send an approval request",
+      });
+      toast.error(
+        error.response?.data?.error || "Failed to send an approval request"
+      );
+    }
+  };
+  // const updateApprovalSentStatus = async (data) => {
+  //   // console.log(data);
+  //   dispatch({ type: "SUBMIT_REQUEST" });
+  //   try {
+  //     const result = await axios.put(
+  //       `/api/v1/projectdocs/project-doc/send-for-approval/${data._id}`,
+  //       {},
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
+  //     console.log(result.data);
+  //     dispatch({
+  //       type: "SUBMIT_SUCCESS",
+  //     });
+  //     toast.success(
+  //       result.data.message || "Approval request sent successfully."
+  //     );
+  //     setFormData(result.data.data);
+  //     setModalVisible(false);
+
+  //     navigate(`/master-admin/project-handover/view/${data._id}`);
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "SUBMIT_FAIL",
+  //       payload:
+  //         error.response?.data?.error || "Failed to send an approval request",
+  //     });
+  //     toast.error(
+  //       error.response?.data?.error || "Failed to send an approval request"
+  //     );
+  //   }
+  // };
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
@@ -185,7 +267,7 @@ const ProjectHandoverDashboard = () => {
 
   return (
     <div className="p-2">
-      <h2 className="text-center mt-4">Project Handover Data</h2>
+      <h2 className="text-center mt-4">Project Handover </h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
@@ -238,7 +320,7 @@ const ProjectHandoverDashboard = () => {
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Approved By
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
+            <CTableHeaderCell style={{ minWidth: "300px" }}>
               Action
             </CTableHeaderCell>
           </CTableRow>
@@ -290,18 +372,35 @@ const ProjectHandoverDashboard = () => {
                     : "-"}
                 </CTableDataCell>
                 <CTableDataCell>
+                  {/* 🔴 Show the button if user has access */}
+                  {["Master Admin", "Project Admin"].includes(
+                    userInfo.role
+                  ) && (
+                    <button
+                      className="btn btn-sm btn-danger m-1 text-white"
+                      onClick={() =>
+                        !doc.is_sent_for_approval && openModal(doc)
+                      }
+                      disabled={doc.is_sent_for_approval}
+                    >
+                      {doc.is_sent_for_approval
+                        ? "Sent to Service Team wait for response"
+                        : "Send To Service Team"}
+                    </button>
+                  )}
+
+                  {/* 👁 View Button */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
-                    to={`/project-admin/project-closure/view/${doc._id}`}
+                    to={`/master-admin/project-handover/view/${doc._id}`}
                   >
                     View
                   </Link>
 
+                  {/* ✏️ Update Button */}
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/project-closure/${doc._id}`}
+                    to={`/master-admin/project-handover/update/${doc._id}`}
                   >
                     Update
                   </Link>
@@ -331,7 +430,7 @@ const ProjectHandoverDashboard = () => {
         handleLimitChange={setLimit} // New prop
       />
       {/* view Modal */}
-      {/* <CModal
+      <CModal
         size="xl"
         scrollable
         visible={modalVisible}
@@ -339,45 +438,32 @@ const ProjectHandoverDashboard = () => {
       >
         <CModalHeader>
           <CModalTitle>
-            Inventory Data :&nbsp;
-            <span className="badge bg-success">{formData.site_id}</span>{" "}
+            Project Handover Document Approval Request :&nbsp;
+            <span className="badge bg-success">
+              {formData.project_name}
+            </span>{" "}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {selectedInventory && (
+          {selectedProjectDoc && (
             <>
-              <CTable bordered responsive>
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>Field</CTableHeaderCell>
-                    <CTableHeaderCell>Value</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {Object.entries(formData)
-                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className="text-dark fw-medium">
-                            {String(value)}
-                          </span>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody>
-              </CTable>
-
-              {formData.last_activity && (
-                <LastActivity lastactivity={formData.last_activity} />
-              )}
+              <CButton
+                color="secondary"
+                onClick={() => updateApprovalSentStatus(formData)}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    Sending... <LoadingSpinner />
+                  </>
+                ) : (
+                  "Send Approval Request"
+                )}
+              </CButton>
             </>
           )}
         </CModalBody>
-      </CModal> */}
+      </CModal>
     </div>
   );
 };
