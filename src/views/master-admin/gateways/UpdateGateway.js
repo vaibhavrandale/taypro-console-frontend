@@ -33,7 +33,7 @@ const reducer = (state, action) => {
   }
 };
 
-const UpdateGateway = () => {
+const AssignGateway = () => {
   const [{ loading, error, updating }, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
@@ -280,44 +280,4 @@ const UpdateGateway = () => {
   );
 };
 
-export default UpdateGateway;
-
-//   {/* Robot Data Table */}
-//   {/* <h4 className="mt-5">Connected Robots/Lora</h4>
-//   {matchingRobots.length > 0 ? (
-//     <CTable striped bordered hover responsive className="mt-3">
-//       <CTableHead color="secondary">
-//         <CTableRow>
-//           <CTableHeaderCell>Robot No</CTableHeaderCell>
-//           <CTableHeaderCell>Status</CTableHeaderCell>
-//           <CTableHeaderCell>Site ID</CTableHeaderCell>
-//           <CTableHeaderCell>LoRa No</CTableHeaderCell>
-//           <CTableHeaderCell>LoRa DEVEUI</CTableHeaderCell>
-//           <CTableHeaderCell>Battery %</CTableHeaderCell>
-//           <CTableHeaderCell>Last Seen</CTableHeaderCell>
-//         </CTableRow>
-//       </CTableHead>
-//       <CTableBody>
-//         {matchingRobots.map((robot, index) => (
-//           <CTableRow key={index}>
-//             <CTableDataCell>{robot.robot_no}</CTableDataCell>
-//             <CTableDataCell>
-//               {robot.lora_state === 1 ? (
-//                 <span className="badge bg-success">online</span>
-//               ) : (
-//                 <span className="badge bg-danger">offline</span>
-//               )}
-//             </CTableDataCell>
-//             <CTableDataCell>{robot.site_id}</CTableDataCell>
-//             <CTableDataCell>{robot.lora_no}</CTableDataCell>
-//             <CTableDataCell>{robot.deveui}</CTableDataCell>
-//             <CTableDataCell>{robot.battery_percentage}%</CTableDataCell>
-//             <CTableDataCell>{robot.last_update}</CTableDataCell>
-//           </CTableRow>
-//         ))}
-//       </CTableBody>
-//     </CTable>
-//   ) : (
-//     <p className="text-muted">No connected robots found.</p>
-//   )} */}
-// </>
+export default AssignGateway;

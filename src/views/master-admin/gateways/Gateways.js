@@ -323,7 +323,7 @@ const Gateways = () => {
                       type="button"
                       color="primary"
                       size="sm"
-                      to={`/${adminroute}/all-site-gateways/${gateway._id}`}
+                      to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
                       className="btn btn-secondary  btn-sm m-1"
                     >
                       Update
