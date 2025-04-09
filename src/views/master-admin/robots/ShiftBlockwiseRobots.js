@@ -44,18 +44,7 @@ const reducer = (state, action) => {
 
     case "SHIFT_ROBOTS_REQUEST":
       return { ...state, loadingShiftRobots: true, error: "" };
-    // case "SHIFT_ROBOTS_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loadingShiftRobots: false,
-    //     shiftrobots: state.shiftrobots.filter(
-    //       (robot) =>
-    //         !action.payload.some(
-    //           (activated) => activated.deveui === robot.deveui
-    //         )
-    //     ),
-    //     shiftRobots: [...state.shiftRobots, ...action.payload],
-    //   };
+
     case "SHIFT_ROBOTS_SUCCESS":
       return {
         ...state,
