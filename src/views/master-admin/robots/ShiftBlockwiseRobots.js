@@ -44,16 +44,11 @@ const reducer = (state, action) => {
 
     case "SHIFT_ROBOTS_REQUEST":
       return { ...state, loadingShiftRobots: true, error: "" };
+
     case "SHIFT_ROBOTS_SUCCESS":
       return {
         ...state,
         loadingShiftRobots: false,
-        shiftrobots: state.shiftrobots.filter(
-          (robot) =>
-            !action.payload.some(
-              (activated) => activated.deveui === robot.deveui
-            )
-        ),
         shiftRobots: [...state.shiftRobots, ...action.payload],
       };
     case "SHIFT_ROBOTS_FAIL":
@@ -178,6 +173,42 @@ const ShiftBlockwiseRobots = () => {
     fetchSites();
   }, [authtoken, limit, page, site_id]);
 
+  const fetchRobots = async () => {
+    dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+    try {
+      const pagination = { pg: page, limit: limit };
+      const result = await axios.post(
+        `/api/v1/robots/site/${site_id}`,
+        pagination,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      let total = Math.ceil(
+        Number(result.data.total) / Number(result.data.limit)
+      );
+      let next = result.data.hasNextPage;
+      let prev = result.data.hasPrevPage;
+
+      dispatch({
+        type: "FETCH_ROBOTS_SUCCESS",
+        payload: {
+          data: result.data.data,
+          totalPages: total,
+          hasNextPage: next,
+          hasPrevPage: prev,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: "FETCH_ROBOTS_FAIL",
+        payload: "Failed to fetch robots",
+      });
+      toast.error("Failed to fetch robots");
+    }
+  };
+
   // ✅ Handle Checkbox Selection
   const handleCheckboxChange = (robot) => {
     setSelectedRobots((prev) =>
@@ -218,6 +249,8 @@ const ShiftBlockwiseRobots = () => {
       setSelectedRobots([]);
       setShowModal(false); // Close modal
       setTargetBlock(""); // Clear input
+
+      fetchRobots();
     } catch (error) {
       dispatch({
         type: "SHIFT_ROBOTS_FAIL",
