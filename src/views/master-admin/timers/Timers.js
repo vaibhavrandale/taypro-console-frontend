@@ -83,11 +83,11 @@ const Timers = () => {
   // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
-  if (userInfo.role === "Master Admin") {
+  if (userInfo?.role === "Master Admin") {
     adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
+  } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
+  } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
   }
   useEffect(() => {
