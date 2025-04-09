@@ -70,6 +70,8 @@ const SiteManagement = () => {
         const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
+        console.log(result);
+
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -88,9 +90,9 @@ const SiteManagement = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data || "Failed to fetch data",
+          payload: error.response?.data.error || error.response?.data.message,
         });
-        toast.error(error.response?.data || "Failed to fetch data");
+        toast.error(error.response?.data.error || error.response?.data.message);
       }
     };
 
@@ -156,15 +158,9 @@ const SiteManagement = () => {
                 <LoadingSpinner />
               </CTableHeaderCell>
             </CTableRow>
-          ) : error ? (
-            <CTableRow>
-              <CTableHeaderCell colSpan="4" className="text-center">
-                {error}
-              </CTableHeaderCell>
-            </CTableRow>
           ) : filteredData.length > 0 ? (
             filteredData.map((site, index) => (
-              <CTableRow key={site.id}>
+              <CTableRow key={index}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                 <CTableDataCell>{site.siteName}</CTableDataCell>
                 <CTableDataCell>{site.location}</CTableDataCell>

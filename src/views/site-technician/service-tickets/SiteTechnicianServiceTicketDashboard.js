@@ -313,8 +313,13 @@ const SiteTechnicianServiceTicketDashboard = () => {
                     <LoadingSpinner />
                   </CTableDataCell>
                 </CTableRow>
-              ) : error ? (
-                <CTableRow>{error}</CTableRow>
+              ) : filteredData.length === 0 ? (
+                <CTableRow>
+                  {" "}
+                  <CTableDataCell colSpan="8" className="text-center">
+                    No Tickets Found{" "}
+                  </CTableDataCell>
+                </CTableRow>
               ) : (
                 filteredData.map((ticket, index) => (
                   <CTableRow key={index}>

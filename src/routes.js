@@ -46,6 +46,8 @@ import SiteTechnicianCleaningLog from "./views/site-technician/cleaninglog/SiteT
 import SiteTechnicianServiceTicketDashboard from "./views/site-technician/service-tickets/SiteTechnicianServiceTicketDashboard";
 import SiteTechnicianCreateServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianCreateServiceTicket";
 import SiteTechnicianResolveServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianResolveServiceTicket";
+import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnicianDprDashboard";
+import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -1211,6 +1213,16 @@ const routes = [
     path: "/site-technician/service-tickets/resolve-service-ticket/:id",
     name: "Resolve Service Ticket",
     element: SiteTechnicianResolveServiceTicket,
+  },
+  {
+    path: "/site-technician/dpr",
+    name: "All DPR",
+    element: SiteTechnicianDprDashboard,
+  },
+  {
+    path: "/site-technician/dpr/add-dpr",
+    name: "New DPR",
+    element: SiteTechnicianAddDpr,
   },
   //------------------------service Site Technician---------------------------------
 
