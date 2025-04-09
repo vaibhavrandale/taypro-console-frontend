@@ -213,8 +213,6 @@ const Clients = () => {
 
   // Open modal for fetching client
   const openViewModal = async (id) => {
-    // setSelectedClient(client);
-    // setFormData(client);
     setModalVisible(true);
     try {
       dispatch({ type: "FETCH_CLIENT_REQUEST" });
@@ -222,14 +220,15 @@ const Clients = () => {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
 
-      //   console.log(response);
-
       let result = response.data.data;
 
       dispatch({ type: "FETCH_CLIENT_SUCCESS", payload: result });
     } catch (error) {
       console.error("Error fetching Client Data:", error);
-      dispatch({ type: "FETCH_CLIENT_FAIL", payload: error });
+      dispatch({
+        type: "FETCH_CLIENT_FAIL",
+        payload: error.response?.data?.message || error.message,
+      });
     }
   };
 

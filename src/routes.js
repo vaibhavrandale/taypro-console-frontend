@@ -768,11 +768,6 @@ const routes = [
   },
 
   {
-    path: "/project-admin/clients-data-dashboard/edit-client/:id",
-    name: "Edit Client",
-    element: EditClient,
-  },
-  {
     path: "/project-admin/clients-dashboard/clients-data/:id",
     name: "Client Assigned Sites",
     element: ClientAssignedSites,
