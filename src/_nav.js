@@ -78,7 +78,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "Preventive Maint.",
+        name: "Preventive Maintenance",
         to: "/master-admin/preventive-maintanance-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
         badge: {
@@ -674,7 +674,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "Preventive Maint.",
+        name: "Preventive Maintenance",
         to: "/project-admin/preventive-maintanance-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
       },
@@ -781,7 +781,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "Preventive Maint.",
+        name: "Preventive Maintenance",
         to: "/service-admin/preventive-maintanance-dashboard",
         icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
       },
