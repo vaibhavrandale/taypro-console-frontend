@@ -33,6 +33,19 @@ import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteT
 // import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
 // import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
 import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
+import SiteTechnicianDashboard from "./views/site-technician/SiteTechnicianDashboard";
+import AllSiteData from "./views/site-technician/AllSiteData";
+import SiteTechnicianSiteManagement from "./views/site-technician/site-management/SiteTechnicianSiteManagement";
+import SiteTechnicianBlockManagement from "./views/site-technician/site-management/SiteTechnicianBlockManagement";
+import SiteTechnicianRobotOperating from "./views/site-technician/site-management/SiteTechnicianRobotOperating";
+import SiteTechnicianSearchRobot from "./views/site-technician/site-management/SiteTechnicianSearchRobot";
+import SiteTechnicianTimers from "./views/site-technician/timers/SiteTechnicianTimers";
+import SiteTechnicianUpdateTimer from "./views/site-technician/timers/SiteTechnicianUpdateTimer";
+import SiteTechnicianSites from "./views/site-technician/cleaninglog/SiteTechnicianSites";
+import SiteTechnicianCleaningLog from "./views/site-technician/cleaninglog/SiteTechnicianCleaningLog";
+import SiteTechnicianServiceTicketDashboard from "./views/site-technician/service-tickets/SiteTechnicianServiceTicketDashboard";
+import SiteTechnicianCreateServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianCreateServiceTicket";
+import SiteTechnicianResolveServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianResolveServiceTicket";
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -158,48 +171,6 @@ const ServiceAdminDahboard = React.lazy(() =>
   import("./views/service-admin/ServiceAdminDashboard")
 );
 //--------------------------------------service admin---------------------------------
-
-//common pages
-
-// const SiteManagement = React.lazy(() =>
-//   import("./views/pages/site-management/SiteManagement")
-// );
-
-// const NewDownlink = React.lazy(() =>
-//   import("./views/pages/site-management/NewDownlink")
-// );
-
-// const UpdateDownlink = React.lazy(() =>
-//   import("./views/pages/site-management/UpdateDownlink")
-// );
-
-// const ViewDownlink = React.lazy(() =>
-//   import("./views/pages/site-management/ViewDownlink")
-// );
-
-// const BlockManagement = React.lazy(() =>
-//   import("./views/pages/site-management/BlockManagement")
-// );
-
-// const RobotOperating = React.lazy(() =>
-//   import("./views/pages/site-management/RobotOperating")
-// );
-
-// const DebugLog = React.lazy(() =>
-//   import("./views/pages/site-management/DebugLog")
-// );
-
-// const CleaningLog = React.lazy(() =>
-//   import("./views/pages/site-management/CleaningLog")
-// );
-
-// const SearchRobot = React.lazy(() =>
-//   import("./views/pages/site-management/SearchRobot")
-// );
-
-// const TayproDashboard = React.lazy(() =>
-//   import("./views/pages/site-management/TayproDashboard")
-// );
 
 const Robots = React.lazy(() => import("./views/master-admin/robots/Robots"));
 
@@ -1173,6 +1144,75 @@ const routes = [
   },
 
   //------------------------service admin---------------------------------
+
+  //------------------------service Site Technician---------------------------------
+  {
+    path: "/site-technician/dashboard",
+    name: "Dashboard",
+    element: SiteTechnicianDashboard,
+  },
+  {
+    path: "/site-technician/all-site-data",
+    name: "Dashboard",
+    element: AllSiteData,
+  },
+  {
+    path: "/site-technician/site-management",
+    name: "Dashboard",
+    element: SiteTechnicianSiteManagement,
+  },
+  {
+    path: "/site-technician/site-management/block-management/:site_id",
+    name: "Block Management",
+    element: SiteTechnicianBlockManagement,
+  },
+  {
+    path: "/site-technician/site-management/block-management/:site_id/:block/:robot_no",
+    name: "Robot Operating",
+    element: SiteTechnicianRobotOperating,
+  },
+  {
+    path: "/site-technician/search-robot",
+    name: "Search Robot",
+    element: SiteTechnicianSearchRobot,
+  },
+  {
+    path: "/site-technician/timers",
+    name: "Timers",
+    element: SiteTechnicianTimers,
+  },
+  {
+    path: "/site-technician/timers/:block/:site_id",
+    name: "Update Block Timer",
+
+    element: SiteTechnicianUpdateTimer,
+  },
+  {
+    path: "/site-technician/cleaning-log-sites",
+    name: "Your Assigned Sites",
+    element: SiteTechnicianSites,
+  },
+  {
+    path: "/site-technician/cleaning-log-sites/:site_id",
+    name: "Cleaning Log",
+    element: SiteTechnicianCleaningLog,
+  },
+  {
+    path: "/site-technician/service-tickets",
+    name: "Service Tickets",
+    element: SiteTechnicianServiceTicketDashboard,
+  },
+  {
+    path: "/site-technician/service-tickets/create-new-ticket",
+    name: "New Service Tickets",
+    element: SiteTechnicianCreateServiceTicket,
+  },
+  {
+    path: "/site-technician/service-tickets/resolve-service-ticket/:id",
+    name: "Resolve Service Ticket",
+    element: SiteTechnicianResolveServiceTicket,
+  },
+  //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
   {

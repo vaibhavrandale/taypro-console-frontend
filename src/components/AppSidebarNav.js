@@ -125,6 +125,8 @@ export const AppSidebarNav = () => {
       return navItem.name === "Service Admin"; // Show only Service Admin items
     } else if (storedUser.role === "Service User") {
       return navItem.name === "Service User"; // Show only Service Admin items
+    } else if (storedUser.role === "Site Technician") {
+      return navItem.name === "Site Technician"; // Show only Service Admin items
     } else if (storedUser.role === "Client Admin") {
       return navItem.name === "Client Admin"; // Show only Client Admin items
     } else if (storedUser.role === "Site Incharge") {
