@@ -236,7 +236,7 @@ const Gateways = () => {
 
   return (
     // <>Gateways</>
-    <CContainer className="mt-5">
+    <div className="mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gateways</h2>
         <Link
@@ -492,7 +492,7 @@ const Gateways = () => {
           </>
         )}
       </CModal>
-    </CContainer>
+    </div>
   );
 };
 

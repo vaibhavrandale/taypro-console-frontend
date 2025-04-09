@@ -38,7 +38,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const SiteManagement = () => {
+const SiteTechnicianSites = () => {
   const [
     { loading, error, sites, totalPages, hasNextPage, hasPrevPage },
     dispatch,
@@ -70,8 +70,6 @@ const SiteManagement = () => {
         const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log(result);
-
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -90,9 +88,9 @@ const SiteManagement = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data.error || error.response?.data.message,
+          payload: error.response?.data || "Failed to fetch data",
         });
-        toast.error(error.response?.data.error || error.response?.data.message);
+        toast.error(error.response?.data || "Failed to fetch data");
       }
     };
 
@@ -158,9 +156,15 @@ const SiteManagement = () => {
                 <LoadingSpinner />
               </CTableHeaderCell>
             </CTableRow>
+          ) : error ? (
+            <CTableRow>
+              <CTableHeaderCell colSpan="4" className="text-center">
+                {error}
+              </CTableHeaderCell>
+            </CTableRow>
           ) : filteredData.length > 0 ? (
             filteredData.map((site, index) => (
-              <CTableRow key={index}>
+              <CTableRow key={site.id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                 <CTableDataCell>{site.siteName}</CTableDataCell>
                 <CTableDataCell>{site.location}</CTableDataCell>
@@ -169,7 +173,9 @@ const SiteManagement = () => {
                     color="primary"
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
-                    to={`block-management/${site.site_id}`}
+                    // to={`block-management/${site.site_id}`}
+                    // to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
+                    to={`/site-technician/cleaning-log-sites/${site.site_id}`}
                   >
                     Manage
                   </Link>
@@ -192,16 +198,7 @@ const SiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -218,4 +215,4 @@ const SiteManagement = () => {
   );
 };
 
-export default SiteManagement;
+export default SiteTechnicianSites;

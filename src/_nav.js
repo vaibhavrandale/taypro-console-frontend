@@ -846,6 +846,103 @@ const _nav = [
 
   //---------------------------------service admin---------------------------------------------
 
+  //---------------------------------Taypro Site Techncian ---------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Site Technician",
+    to: "/base",
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/site-technician/dashboard",
+        icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: "All Site Data",
+        to: "/site-technician/all-site-data",
+        icon: <CIcon icon={cilFactory} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "Site Management",
+        to: "/site-technician/site-management",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/site-technician/search-robot",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "All Sites Timers",
+        to: "/site-technician/timers",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      // {
+      //   component: CNavItem,
+      //   name: "Users",
+      //   to: "/client-site-incharge/external-users",
+      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+      //   badge: {
+      //     color: "success",
+      //     text: "DONE",
+      //   },
+      // },
+      {
+        component: CNavItem,
+        name: "Cleaning Log",
+        to: "/site-technician/cleaning-log-sites",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "Service Tickets",
+        to: "/site-technician/service-tickets",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+      {
+        component: CNavItem,
+        name: "DPR",
+        to: "/site-technician/dpr",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
+    ],
+  },
+  //---------------------------------Taypro Site Techncian ---------------------------------------------
+
   //---------------------------------service User---------------------------------------------
   {
     component: CNavGroup,
