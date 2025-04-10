@@ -78,7 +78,6 @@ const ProjectClosureDashboard = () => {
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -150,7 +149,6 @@ const ProjectClosureDashboard = () => {
   }, [authtoken, limit, page]);
 
   const updateApprovalSentStatus = async (data) => {
-    // console.log(data);
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
       const result = await axios.put(
@@ -160,7 +158,6 @@ const ProjectClosureDashboard = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(result.data);
       dispatch({
         type: "SUBMIT_SUCCESS",
       });
