@@ -4162,3 +4162,62 @@ export const notifications = [
     clienttechnitian: true,
   },
 ];
+
+export const sitelocation = [
+  {
+    _id: "1",
+    site_id: "taypro_office",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "2",
+    site_id: "ssss",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "3",
+    site_id: "avaada_agar",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "4",
+    site_id: "taypro_factory",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "5",
+    site_id: "testing_vclient",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "6",
+    site_id: "soyegawon",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "7",
+    site_id: "sangali_123",
+    latitude: 24.6485237,
+    longitude: 99.8313678,
+    radius: 5000,
+  },
+  {
+    _id: "8",
+    site_id: "avaada_soyegaon",
+    latitude: 18.6485237,
+    longitude: 73.8313678,
+    radius: 5000,
+  },
+];
