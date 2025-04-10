@@ -11,11 +11,11 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...state, loading: true, error: "" };
+      return { ...state, fetchloading: true, error: "" };
     case "FETCH_SUCCESS":
-      return { ...state, projectdoc: action.payload, loading: false };
+      return { ...state, projectdoc: action.payload, fetchloading: false };
     case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, fetchloading: false, error: action.payload };
     case "SUBMIT_REQUEST":
       return { ...state, loading: true, success: false };
     case "SUBMIT_SUCCESS":
@@ -34,7 +34,8 @@ const reducer = (state, action) => {
 
 const ViewProjectClosureDocument = () => {
   const [state, dispatch] = useReducer(reducer, {
-    loading: true,
+    fetchloading: true,
+    loading: false,
     error: "",
     updating: false,
   });
@@ -103,7 +104,7 @@ const ViewProjectClosureDocument = () => {
         result.data.message || "Project Handover Approved Successfully."
       );
 
-      navigate(`/${adminroute}/project-handover/view/${data._id}`);
+      navigate(`/${adminroute}/project-handover`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -143,347 +144,366 @@ const ViewProjectClosureDocument = () => {
 
   return (
     <div className="main-container">
-      <Link
-        className="btn btn-sm btn-secondary mt-2"
-        size="sm"
-        onClick={exportToPDF}
-      >
-        Export
-      </Link>
+      {state.fetchloading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          <Link
+            className="btn btn-sm btn-secondary mt-2"
+            size="sm"
+            onClick={exportToPDF}
+          >
+            Export
+          </Link>
 
-      <div className="second-container" ref={contentRef}>
-        <table className="site-details-table ">
-          <thead>
-            <tr className="">
-              <td colSpan={1} className="text-center">
-                <img
-                  src={header}
-                  alt="Taypro Logo"
-                  className="sidebar-brand-full logo"
-                  style={{
-                    height: "50px",
-                    width: "110px",
-                    objectFit: "contain",
-                  }}
-                />
-              </td>
-              <td colSpan={2} className="text-center">
-                <h5>Project to Service Handover Document</h5>
-              </td>
-              <td colSpan={1}>Doc. No. : TPL-12</td>
-            </tr>
-          </thead>
-        </table>
-        <div className="section-title mt-6">1. Introduction</div>
-        <p>
-          This document serves as a formal handover from the Project Team to the
-          Service Team for the successful completion and transition of{" "}
-          <b>{serviceItemData.project_name}</b>. The handover ensures that all
-          relevant details, responsibilities, and documentation are shared
-          effectively to enable seamless operation and maintenance of the
-          system.
-        </p>
-        <div className="compact">
-          <p>
-            <span className="label">
-              Project&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
-            </span>{" "}
-            {serviceItemData.project_name}
-          </p>
-          <p>
-            <span className="label">
-              Project&nbsp;&nbsp;Location&nbsp;&nbsp;:
-            </span>{" "}
-            {serviceItemData.project_location}
-          </p>
-          <p>
-            <span className="label">
-              Project&nbsp;&nbsp;Completion&nbsp;&nbsp;Date&nbsp;&nbsp;:
-            </span>{" "}
-            {serviceItemData.project_completion_date
-              ? new Date(serviceItemData.project_completion_date)
-                  .toISOString()
-                  .split("T")[0]
-              : ""}
-          </p>
-          <p>
-            <span className="label">Prepared&nbsp;&nbsp;By&nbsp;&nbsp;:</span>{" "}
-            {serviceItemData.prepared_by}
-          </p>
+          <div className="second-container" ref={contentRef}>
+            <table className="site-details-table ">
+              <thead>
+                <tr className="">
+                  <td colSpan={1} className="text-center">
+                    <img
+                      src={header}
+                      alt="Taypro Logo"
+                      className="sidebar-brand-full logo"
+                      style={{
+                        height: "50px",
+                        width: "160px",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </td>
+                  <td colSpan={2} className="text-center">
+                    <h5>Project to Service Handover Document</h5>
+                  </td>
+                  <td colSpan={1}>Doc. No. : TPL-12</td>
+                </tr>
+              </thead>
+            </table>
+            <div className="section-title mt-6">1. Introduction</div>
+            <p>
+              This document serves as a formal handover from the Project Team to
+              the Service Team for the successful completion and transition of{" "}
+              <b>{serviceItemData.project_name}</b>. The handover ensures that
+              all relevant details, responsibilities, and documentation are
+              shared effectively to enable seamless operation and maintenance of
+              the system.
+            </p>
+            <div className="compact">
+              <p>
+                <span className="label">
+                  Project&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+                </span>{" "}
+                {serviceItemData.project_name}
+              </p>
+              <p>
+                <span className="label">
+                  Project&nbsp;&nbsp;Location&nbsp;&nbsp;:
+                </span>{" "}
+                {serviceItemData.project_location}
+              </p>
+              <p>
+                <span className="label">
+                  Project&nbsp;&nbsp;Completion&nbsp;&nbsp;Date&nbsp;&nbsp;:
+                </span>{" "}
+                {serviceItemData.project_completion_date
+                  ? new Date(serviceItemData.project_completion_date)
+                      .toISOString()
+                      .split("T")[0]
+                  : ""}
+              </p>
+              <p>
+                <span className="label">
+                  Prepared&nbsp;&nbsp;By&nbsp;&nbsp;:
+                </span>{" "}
+                {serviceItemData.prepared_by}
+              </p>
 
-          <p>
-            <span className="label">Approved&nbsp;&nbsp;By&nbsp;&nbsp;:</span>{" "}
-            {serviceItemData.project_approved_by}
-          </p>
-        </div>
-        <div className="section-title mt-6">2. Project&nbsp;&nbsp;Overview</div>
-        <ul>
-          <li>
-            <span className="label">
-              Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
-            </span>
-            &nbsp;
-            {serviceItemData.scope_of_work}
-          </li>
-          <li>
-            <strong>
-              Key&nbsp;&nbsp;Milestones&nbsp;&nbsp;Achieved&nbsp;&nbsp;:
-            </strong>{" "}
-            For {serviceItemData.plant_capacity}MW,{" "}
-            {serviceItemData.water_stored}
-            liters per year water is being saved.
-          </li>
-          <li>
-            <strong>Project&nbsp;&nbsp;Duration&nbsp;&nbsp;:</strong>{" "}
-            {serviceItemData.project_completion_date
-              ? new Date(serviceItemData.project_completion_date)
-                  .toISOString()
-                  .split("T")[0]
-              : ""}{" "}
-            to{" "}
-            {serviceItemData.project_start_date
-              ? new Date(serviceItemData.project_start_date)
-                  .toISOString()
-                  .split("T")[0]
-              : ""}
-          </li>
-          <li>
-            <strong>Challenges&nbsp;&nbsp;Faced&nbsp;&nbsp;:</strong>{" "}
-            {serviceItemData.challenges_faced}
-          </li>
-        </ul>
-        <div className="section-title mt-6">3. System&nbsp;&nbsp;Details</div>
-        <ul>
-          <li>
-            <strong>
-              Total&nbsp;&nbsp;Number&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;Installed&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.total_no_of_systems} Systems
-          </li>
-          <li>
-            <strong>
-              Model&nbsp;&nbsp;/&nbsp;&nbsp;Type&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;:
-            </strong>
+              <p>
+                <span className="label">
+                  Approved&nbsp;&nbsp;By&nbsp;&nbsp;:
+                </span>{" "}
+                {serviceItemData.project_approved_by}
+              </p>
+            </div>
+            <div className="section-title mt-6">
+              2. Project&nbsp;&nbsp;Overview
+            </div>
             <ul>
-              <li style={{ listStyleType: "none" }}>
-                1)&nbsp;&nbsp;Model&nbsp;&nbsp;A&nbsp;&nbsp;–&nbsp;&nbsp;Automatic&nbsp;&nbsp;Systems&nbsp;&nbsp;
-                {serviceItemData.modalA_count}
+              <li>
+                <span className="label">
+                  Scope&nbsp;&nbsp;of&nbsp;&nbsp;Work&nbsp;&nbsp;:
+                </span>
+                &nbsp;
+                {serviceItemData.scope_of_work}
               </li>
-              <li style={{ listStyleType: "none" }}>
-                2)&nbsp;&nbsp;Model&nbsp;&nbsp;B&nbsp;&nbsp;–&nbsp;&nbsp;Semi-Automatic&nbsp;&nbsp;Systems
-                ({serviceItemData.modalB_count})
+              <li>
+                <strong>
+                  Key&nbsp;&nbsp;Milestones&nbsp;&nbsp;Achieved&nbsp;&nbsp;:
+                </strong>{" "}
+                For {serviceItemData.plant_capacity}MW,{" "}
+                {serviceItemData.water_stored}
+                liters per year water is being saved.
               </li>
-              <li style={{ listStyleType: "none" }}>
-                3)&nbsp;&nbsp;Model&nbsp;&nbsp;T&nbsp;&nbsp;–&nbsp;&nbsp;Tracker&nbsp;&nbsp;Systems
-                ({serviceItemData.modalT_count})
+              <li>
+                <strong>Project&nbsp;&nbsp;Duration&nbsp;&nbsp;:</strong>{" "}
+                {serviceItemData.project_completion_date
+                  ? new Date(serviceItemData.project_completion_date)
+                      .toISOString()
+                      .split("T")[0]
+                  : ""}{" "}
+                to{" "}
+                {serviceItemData.project_start_date
+                  ? new Date(serviceItemData.project_start_date)
+                      .toISOString()
+                      .split("T")[0]
+                  : ""}
+              </li>
+              <li>
+                <strong>Challenges&nbsp;&nbsp;Faced&nbsp;&nbsp;:</strong>{" "}
+                {serviceItemData.challenges_faced}
               </li>
             </ul>
-          </li>
-          <li>
-            <strong>
-              DS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.ds_setup}
-          </li>
-          <li>
-            <strong>
-              RS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.rs_setup}
-          </li>
-          <li>
-            <strong>LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Setup&nbsp;&nbsp;:</strong>
-            {serviceItemData.lora_pole_setup}
-          </li>
-          <li>
-            <strong>
-              LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Coordinates&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.lora_pole_coordinated}
-          </li>
-          <li>
-            <strong>
-              Half&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.half_table_length}
-          </li>
-          <li>
-            <strong>
-              Full&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.full_table_length}
-          </li>
-        </ul>
-        <br />
-        <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
-        <table className="site-details-table">
-          <thead>
-            <tr>
-              <th>BLOCK</th>
-              <th>AUTOMATIC</th>
-              <th>SEMI-AUTOMATIC</th>
-            </tr>
-          </thead>
-          <tbody>
-            {serviceItemData.robot_details?.map((item, index) => (
-              <tr key={index}>
-                <td>{item.block}</td>
-                <td>{item.automatic}</td>
-                <td>{item.semi_automatic}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="section-title">5. Handover&nbsp;&nbsp;Checklist</div>
-        <table className="site-details-table">
-          <thead>
-            <tr>
-              <th>Task</th>
-              <th>Status&nbsp;&nbsp;(✔)</th>
-              <th>Remarks&nbsp;&nbsp;(If Any)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {serviceItemData.handover_checklist?.map((item, index) => (
-              <tr key={index}>
-                <td>{item.task_name}</td>
-                <td>{item.status}</td>
-                <td>{item.remark}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="section-title page-break">
-          6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
-        </div>
-
-        <ul>
-          <li>
-            <strong>
-              Portal&nbsp;&nbsp;Access&nbsp;&nbsp;Provided&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.is_portal_access_provided ? "Yes" : "No"}
-          </li>
-          <li>
-            <strong>
-              Client&nbsp;&nbsp;Training&nbsp;&nbsp;Conducted&nbsp;&nbsp;:
-            </strong>{" "}
-            {serviceItemData.is_client_training_conducted ? "Yes" : "No"}
-          </li>
-          <li>
-            <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
-            <Link target="blank" to={serviceItemData.commissioning_document}>
-              Click&nbsp;&nbsp;Here
-            </Link>
-          </li>
-        </ul>
-        <div className="section-title">
-          7. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
-        </div>
-        <table className="site-details-table">
-          <thead>
-            <tr>
-              <th>Role</th>
-              <th>Name</th>
-              <th>E-Mail</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Project&nbsp;&nbsp;Team&nbsp;&nbsp;Lead</td>
-              <td>Jitesh&nbsp;&nbsp;Kute</td>
-              <td>jitesh.kute@taypro.in</td>
-            </tr>
-            <tr>
-              <td>Asst.&nbsp;&nbsp;Service&nbsp;&nbsp;Manager</td>
-              <td>Abhay&nbsp;&nbsp;Singh</td>
-              <td>abhay.singh@taypro.in</td>
-            </tr>
-            <tr>
-              <td>{serviceItemData.client_role}</td>
-              <td>{serviceItemData.client_name}</td>
-              <td>{serviceItemData.client_email}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="signature-section">
-          <div className="signature-box">
-            <p>
-              <strong>Project&nbsp;&nbsp;Team</strong>
-            </p>
-            <p>
-              Name&nbsp;&nbsp;:&nbsp;&nbsp;{serviceItemData.created_by?.name}
-            </p>
-            <p>
-              Designation&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.created_by?.designation || ""}
-            </p>
-            <p className="signature-line">
-              Signature&nbsp;&nbsp;:&nbsp;&nbsp;
-              <span style={{ fontWeight: "bold", color: "green" }}>
-                Verified
-              </span>
-            </p>
-
-            <p>
-              Date&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.created_by?.timestamp
-                ? new Date(serviceItemData.created_by.timestamp)
-                    .toISOString()
-                    .split("T")[0]
-                : ""}
-            </p>
-          </div>
-          <br />
-          <div className="signature-box">
-            <p>
-              <strong>Service&nbsp;&nbsp;Team</strong>
-            </p>
-            <p>
-              Name&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approved_by?.name || ""}
-            </p>
-            <p>
-              Designation&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approved_by?.designation || ""}{" "}
-            </p>
-            <p className="signature-line">
-              Signature&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approved_by && (
-                <span style={{ fontWeight: "bold", color: "green" }}>
-                  Verified
-                </span>
-              )}
-            </p>
-            <p>
-              Date&nbsp;&nbsp;:&nbsp;&nbsp;
-              {serviceItemData.approved_by?.timestamp
-                ? new Date(serviceItemData.approved_by.timestamp)
-                    .toISOString()
-                    .split("T")[0]
-                : ""}
-            </p>
-            {userInfo.role === "Service Admin" &&
-              serviceItemData.approval_status !== "Approved" && (
+            <div className="section-title mt-6">
+              3. System&nbsp;&nbsp;Details
+            </div>
+            <ul>
+              <li>
+                <strong>
+                  Total&nbsp;&nbsp;Number&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.total_no_of_systems} Systems
+              </li>
+              <li>
+                <strong>
+                  Model&nbsp;&nbsp;/&nbsp;&nbsp;Type&nbsp;&nbsp;of&nbsp;&nbsp;Systems&nbsp;&nbsp;:
+                </strong>
+                <ul>
+                  <li style={{ listStyleType: "none" }}>
+                    1)&nbsp;&nbsp;Model&nbsp;&nbsp;A&nbsp;&nbsp;–&nbsp;&nbsp;Automatic&nbsp;&nbsp;Systems&nbsp;&nbsp;
+                    {serviceItemData.modalA_count}
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    2)&nbsp;&nbsp;Model&nbsp;&nbsp;B&nbsp;&nbsp;–&nbsp;&nbsp;Semi-Automatic&nbsp;&nbsp;Systems
+                    ({serviceItemData.modalB_count})
+                  </li>
+                  <li style={{ listStyleType: "none" }}>
+                    3)&nbsp;&nbsp;Model&nbsp;&nbsp;T&nbsp;&nbsp;–&nbsp;&nbsp;Tracker&nbsp;&nbsp;Systems
+                    ({serviceItemData.modalT_count})
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>
+                  DS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.ds_setup}
+              </li>
+              <li>
+                <strong>
+                  RS&nbsp;&nbsp;Setup&nbsp;&nbsp;Installed&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.rs_setup}
+              </li>
+              <li>
+                <strong>
+                  LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Setup&nbsp;&nbsp;:
+                </strong>
+                {serviceItemData.lora_pole_setup}
+              </li>
+              <li>
+                <strong>
+                  LoRa&nbsp;&nbsp;Pole&nbsp;&nbsp;Coordinates&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.lora_pole_coordinated}
+              </li>
+              <li>
+                <strong>
+                  Half&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.half_table_length}
+              </li>
+              <li>
+                <strong>
+                  Full&nbsp;&nbsp;Table&nbsp;&nbsp;Length&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.full_table_length}
+              </li>
+            </ul>
+            <br /> <br />
+            <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
+            <table className="site-details-table">
+              <thead>
+                <tr>
+                  <th>BLOCK</th>
+                  <th>AUTOMATIC</th>
+                  <th>SEMI-AUTOMATIC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {serviceItemData.robot_details?.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.block}</td>
+                    <td>{item.automatic}</td>
+                    <td>{item.semi_automatic}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="section-title">
+              5. Handover&nbsp;&nbsp;Checklist
+            </div>
+            <table className="site-details-table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Status&nbsp;&nbsp;(✔)</th>
+                  <th>Remarks&nbsp;&nbsp;(If Any)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {serviceItemData.handover_checklist?.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.task_name}</td>
+                    <td>{item.status}</td>
+                    <td>{item.remark}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="section-title page-break">
+              6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
+            </div>
+            <ul>
+              <li>
+                <strong>
+                  Portal&nbsp;&nbsp;Access&nbsp;&nbsp;Provided&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.is_portal_access_provided ? "Yes" : "No"}
+              </li>
+              <li>
+                <strong>
+                  Client&nbsp;&nbsp;Training&nbsp;&nbsp;Conducted&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.is_client_training_conducted ? "Yes" : "No"}
+              </li>
+              <li>
+                <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
                 <Link
-                  className="btn btn-sm btn-success mt-2"
-                  size="sm"
-                  onClick={() => approveHandoverDoc(serviceItemData)}
+                  target="blank"
+                  to={serviceItemData.commissioning_document}
                 >
-                  {state.loading ? (
-                    <>
-                      Approving... <LoadingSpinner />
-                    </>
-                  ) : (
-                    "Approve"
-                  )}
+                  Click&nbsp;&nbsp;Here
                 </Link>
-              )}
+              </li>
+            </ul>
+            <div className="section-title">
+              7. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
+            </div>
+            <table className="site-details-table">
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Name</th>
+                  <th>E-Mail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Project&nbsp;&nbsp;Team&nbsp;&nbsp;Lead</td>
+                  <td>Jitesh&nbsp;&nbsp;Kute</td>
+                  <td>jitesh.kute@taypro.in</td>
+                </tr>
+                <tr>
+                  <td>Asst.&nbsp;&nbsp;Service&nbsp;&nbsp;Manager</td>
+                  <td>Abhay&nbsp;&nbsp;Singh</td>
+                  <td>abhay.singh@taypro.in</td>
+                </tr>
+                <tr>
+                  <td>{serviceItemData.client_role}</td>
+                  <td>{serviceItemData.client_name}</td>
+                  <td>{serviceItemData.client_email}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="signature-section">
+              <div className="signature-box">
+                <p>
+                  <strong>Project&nbsp;&nbsp;Team</strong>
+                </p>
+                <p>
+                  Name&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.created_by?.name}
+                </p>
+                <p>
+                  Designation&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.created_by?.designation || ""}
+                </p>
+                <p className="signature-line">
+                  Signature&nbsp;&nbsp;:&nbsp;&nbsp;
+                  <span style={{ fontWeight: "bold", color: "green" }}>
+                    Verified
+                  </span>
+                </p>
+
+                <p>
+                  Date&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.created_by?.timestamp
+                    ? new Date(serviceItemData.created_by.timestamp)
+                        .toISOString()
+                        .split("T")[0]
+                    : ""}
+                </p>
+              </div>
+              <br />
+              <div className="signature-box">
+                <p>
+                  <strong>Service&nbsp;&nbsp;Team</strong>
+                </p>
+                <p>
+                  Name&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.approved_by?.name || ""}
+                </p>
+                <p>
+                  Designation&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.approved_by?.designation || ""}{" "}
+                </p>
+                <p className="signature-line">
+                  Signature&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.approved_by && (
+                    <span style={{ fontWeight: "bold", color: "green" }}>
+                      Verified
+                    </span>
+                  )}
+                </p>
+                <p>
+                  Date&nbsp;&nbsp;:&nbsp;&nbsp;
+                  {serviceItemData.approved_by?.timestamp
+                    ? new Date(serviceItemData.approved_by.timestamp)
+                        .toISOString()
+                        .split("T")[0]
+                    : ""}
+                </p>
+                {userInfo.role === "Service Admin" &&
+                  serviceItemData.approval_status !== "Approved" && (
+                    <Link
+                      className="btn btn-sm btn-success mt-2"
+                      size="sm"
+                      onClick={() => approveHandoverDoc(serviceItemData)}
+                    >
+                      {state.loading ? (
+                        <>
+                          Approving... <LoadingSpinner />
+                        </>
+                      ) : (
+                        "Approve"
+                      )}
+                    </Link>
+                  )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

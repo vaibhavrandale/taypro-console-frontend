@@ -101,7 +101,17 @@ const NewServiceItem = () => {
     setImage("");
     toast.success("Image removed.");
   };
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
 
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "SUBMIT_REQUEST" });
@@ -118,7 +128,7 @@ const NewServiceItem = () => {
       toast.success("Service Item Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 
-      navigate(`/master-admin/inventories`);
+      navigate(`/${adminroute}/inventories`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",

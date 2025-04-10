@@ -107,6 +107,18 @@ const NewInventory = () => {
     site_id: "",
   });
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   useEffect(() => {
     const fetchSites = async () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
@@ -221,7 +233,7 @@ const NewInventory = () => {
         item_id: "",
         item_code: "",
       });
-      navigate(`/master-admin/inventories`);
+      navigate(`${adminroute}/inventories`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -365,5 +377,3 @@ const NewInventory = () => {
   );
 };
 export default NewInventory;
-
-//////////////////////////////

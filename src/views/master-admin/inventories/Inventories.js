@@ -267,13 +267,25 @@ const Inventories = () => {
     XLSX.writeFile(workbook, "Service Inventory.xlsx");
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Inventory List</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/inventories/add-inventory"
+          to={`/${adminroute}/inventories/add-inventory`}
         >
           Add Inventory
         </Link>
@@ -364,7 +376,7 @@ const Inventories = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/inventories/update-inventory/${inventory._id}`}
+                    to={`/${adminroute}/inventories/update-inventory/${inventory._id}`}
                   >
                     Update
                   </Link>
@@ -643,13 +655,25 @@ const ServiceItems = () => {
     XLSX.writeFile(workbook, "Service_Item.xlsx");
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Service Item List</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
           className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/inventories/add-service-item"
+          to={`/${adminroute}/inventories/add-service-item`}
         >
           Add Item
         </Link>
@@ -737,7 +761,7 @@ const ServiceItems = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/inventories/update-service-item/${serviceItem._id}`}
+                    to={`/${adminroute}/inventories/update-service-item/${serviceItem._id}`}
                   >
                     Update
                   </Link>

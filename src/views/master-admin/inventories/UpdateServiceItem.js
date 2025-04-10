@@ -50,6 +50,17 @@ const UpdateServiceItem = () => {
 
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -148,7 +159,7 @@ const UpdateServiceItem = () => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Service Item Updated Successfully!");
 
-      navigate(`/master-admin/inventories`);
+      navigate(`/${adminroute}/inventories`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: "Update failed" });
       toast.error("Update failed");
