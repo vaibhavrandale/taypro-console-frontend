@@ -48,6 +48,7 @@ import SiteTechnicianCreateServiceTicket from "./views/site-technician/service-t
 import SiteTechnicianResolveServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianResolveServiceTicket";
 import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnicianDprDashboard";
 import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
+import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -1218,6 +1219,11 @@ const routes = [
     path: "/site-technician/dpr/add-dpr",
     name: "New DPR",
     element: SiteTechnicianAddDpr,
+  },
+  {
+    path: "/site-technician/inventory",
+    name: "Site Inventory",
+    element: InventoryTab,
   },
   //------------------------service Site Technician---------------------------------
 

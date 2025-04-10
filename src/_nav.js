@@ -939,6 +939,16 @@ const _nav = [
           text: "DONE",
         },
       },
+      {
+        component: CNavItem,
+        name: "Inventory",
+        to: "/site-technician/inventory",
+        icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+        badge: {
+          color: "success",
+          text: "DONE",
+        },
+      },
     ],
   },
   //---------------------------------Taypro Site Techncian ---------------------------------------------
