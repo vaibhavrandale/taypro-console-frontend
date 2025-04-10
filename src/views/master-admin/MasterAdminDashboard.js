@@ -154,7 +154,7 @@ const MasterAdminDashboard = () => {
       <h3 className="text-center my-2 text-primary">Project Dashboard</h3>
       <CRow className="g-4 my-3">
         {filteredNav[0].items.map((item, index) => (
-          <CCol md={4} lg={3} key={index}>
+          <CCol md={3} lg={3} key={index}>
             <CCard className="shadow-sm border-0 text-center">
               <CCardBody>
                 {/* <CIcon
@@ -167,7 +167,10 @@ const MasterAdminDashboard = () => {
 
                 <CCardTitle className="my-2 fs-6">
                   {" "}
-                  <Link to={item.to} className="text-decoration-none">
+                  <Link
+                    to={item.to}
+                    className=" text-primary text-decoration-none"
+                  >
                     {item.name}
                   </Link>
                 </CCardTitle>
