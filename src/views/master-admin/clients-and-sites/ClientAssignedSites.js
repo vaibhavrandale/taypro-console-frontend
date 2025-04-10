@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   CButton,
   CTable,
@@ -28,6 +28,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_START":
@@ -76,6 +77,20 @@ const reducer = (state, action) => {
     case "ADD_SITE_ERROR":
       return { ...state, adding: false };
 
+    case "SET_SELECTED_SITE":
+      return { ...state, selectedSite: action.payload };
+
+    case "DELETE_REQUEST":
+      return { ...state, loadingDelete: true, successDelete: false };
+
+    case "DELETE_SUCCESS":
+      return { ...state, loadingDelete: false, successDelete: true };
+
+    case "DELETE_FAIL":
+      return { ...state, loadingDelete: false, successDelete: false };
+
+    case "DELETE_RESET":
+      return { ...state, successDelete: false };
     default:
       return state;
   }
@@ -111,6 +126,7 @@ const ClientAssignedSites = () => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [pageInput, setPageInput] = useState("");
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -142,11 +158,7 @@ const ClientAssignedSites = () => {
             hasPrevPage: prev,
           },
         });
-
-        // dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
       } catch (error) {
-        // console.log(error.response.data.message);
-
         dispatch({
           type: "FETCH_ERROR",
           payload: error.response?.data?.error || error.response.data.message,
@@ -177,6 +189,7 @@ const ClientAssignedSites = () => {
       });
       // dispatch({ type: "ADD_SITE", payload: response.data.data });
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
+      dispatch({ type: "RESET_FORM" }); // 👈 add this here
 
       console.log(response.data.data);
       // fetchClientSites();
@@ -191,39 +204,57 @@ const ClientAssignedSites = () => {
   };
 
   // Handle updating site
-  const handleUpdate = async (site) => {
-    dispatch({ type: "SET_SELECTED_SITE", payload: site });
-    try {
-      dispatch({ type: "UPDATE_SITE_START" });
-      const response = await axios.put(
-        `${API_BASE_URL}/sites/${state.selectedSite._id}`,
-        state.formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-      console.log(response);
+  // const handleUpdate = async (site) => {
+  //   dispatch({ type: "SET_SELECTED_SITE", payload: site });
+  //   try {
+  //     dispatch({ type: "UPDATE_SITE_START" });
+  //     const response = await axios.put(
+  //       `${API_BASE_URL}/sites/${state.selectedSite._id}`,
+  //       state.formData,
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
+  //     console.log(response);
 
-      dispatch({ type: "UPDATE_SITE_SUCCESS", payload: response.data.data });
-      dispatch({ type: "SET_MODAL", payload: false });
-      toast.success("Site updated successfully!");
-    } catch (error) {
-      dispatch({ type: "UPDATE_SITE_ERROR", error: error.response.data.error });
-      toast.error(error.response.data.error);
-    }
-  };
+  //     dispatch({ type: "UPDATE_SITE_SUCCESS", payload: response.data.data });
+  //     dispatch({ type: "SET_MODAL", payload: false });
+  //     toast.success("Site updated successfully!");
+  //   } catch (error) {
+  //     dispatch({ type: "UPDATE_SITE_ERROR", error: error.response.data.error });
+  //     toast.error(error.response.data.error);
+  //   }
+  // };
 
   // Handle delete site
-  const handleDelete = async () => {
+  const handleDelete = async (site) => {
+    if (site.is_delete) {
+      toast.error("This site is already deleted.");
+      return;
+    }
+
+    const confirm = window.confirm(
+      `Are you sure you want to ${
+        site.is_delete ? "permanently " : ""
+      }delete site - ${site.site_name}?`
+    );
+
+    if (!confirm) return;
+
     try {
-      await axios.delete(`${API_BASE_URL}/sites/${state.formData.site_type}`, {
+      dispatch({ type: "DELETE_REQUEST" });
+
+      await axios.delete(`${API_BASE_URL}/sites/${site._id}`, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      dispatch({ type: "DELETE_SITE", payload: state.formData.site_id });
-      dispatch({ type: "SET_DELETE_MODAL", payload: false });
-      toast.success("Site deleted successfully!");
-    } catch (error) {
-      toast.error("Failed to delete site.");
+
+      toast.success(
+        `Site ${site.is_delete ? "permanently " : ""}deleted successfully`
+      );
+      dispatch({ type: "DELETE_SUCCESS" });
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+      dispatch({ type: "DELETE_FAIL" });
     }
   };
 
@@ -248,7 +279,6 @@ const ClientAssignedSites = () => {
       handlePageChange(pageNumber);
     }
   };
-
   return (
     <div className="mt-4">
       <CRow>
@@ -269,100 +299,88 @@ const ClientAssignedSites = () => {
               </CButton>
             </div>
 
-            <>
-              <CTable striped hover responsive className="mt-3">
-                <CTableHead color="dark">
+            <CTable striped hover responsive className="mt-3">
+              <CTableHead color="dark">
+                <CTableRow>
+                  <CTableHeaderCell>#</CTableHeaderCell>
+                  <CTableHeaderCell>Site ID</CTableHeaderCell>
+                  <CTableHeaderCell>Site Name</CTableHeaderCell>
+                  <CTableHeaderCell>Location</CTableHeaderCell>
+                  <CTableHeaderCell>Type</CTableHeaderCell>
+                  <CTableHeaderCell>Actions</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {state.loading ? (
                   <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Site ID</CTableHeaderCell>
-                    <CTableHeaderCell>Site Name</CTableHeaderCell>
-                    <CTableHeaderCell>Location</CTableHeaderCell>
-                    <CTableHeaderCell>Type</CTableHeaderCell>
-                    <CTableHeaderCell>Actions</CTableHeaderCell>
+                    <CTableDataCell colSpan={6} className="text-center">
+                      <LoadingSpinner />
+                    </CTableDataCell>
                   </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {state.loading ? (
-                    <CTableRow>
-                      <CTableDataCell colSpan={6} className="text-center">
-                        <LoadingSpinner />
+                ) : state.error ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={6} className="text-center">
+                      {state.error}
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : (
+                  state.sites.map((site, index) => (
+                    <CTableRow
+                      key={site.site_id}
+                      className={site.is_delete ? "table-danger" : ""} // Apply the conditional class here
+                    >
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>{site.site_id}</CTableDataCell>
+                      <CTableDataCell>{site.siteName}</CTableDataCell>
+                      <CTableDataCell>{site.location}</CTableDataCell>
+                      <CTableDataCell>{site.site_type}</CTableDataCell>
+                      <CTableDataCell>
+                        <CButton
+                          color="warning"
+                          className="m-1"
+                          size="sm"
+                          onClick={() => {
+                            dispatch({
+                              type: "SET_SELECTED_SITE",
+                              payload: site,
+                            });
+                            navigate(
+                              `/master-admin/clients-data-dashboard/edit-client/${site._id}`
+                            );
+                          }}
+                        >
+                          Edit
+                        </CButton>
+                        <CButton
+                          color="danger"
+                          size="sm"
+                          onClick={() => handleDelete(site)}
+                          disabled={site.is_delete}
+                          {...(site.is_delete && {
+                            title: "This site is already deleted",
+                          })}
+                        >
+                          Delete
+                        </CButton>
                       </CTableDataCell>
                     </CTableRow>
-                  ) : state.error ? (
-                    <CTableRow>
-                      <CTableDataCell colSpan={6} className="text-center">
-                        {state.error}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ) : (
-                    state.sites.map((site, index) => (
-                      <CTableRow key={site.site_id}>
-                        <CTableDataCell>{index + 1}</CTableDataCell>
-                        <CTableDataCell>{site.site_id}</CTableDataCell>
-                        <CTableDataCell>{site.siteName}</CTableDataCell>
-                        <CTableDataCell>{site.location}</CTableDataCell>
-                        <CTableDataCell>{site.site_type}</CTableDataCell>
-                        <CTableDataCell>
-                          <CButton
-                            color="warning"
-                            className="m-1"
-                            size="sm"
-                            onClick={() =>
-                              dispatch({
-                                type: "SET_SELECTED_SITE",
-                                payload: site,
-                              })
-                            }
-                          >
-                            Edit
-                          </CButton>{" "}
-                          <CButton
-                            color="danger"
-                            size="sm"
-                            className="m-1"
-                            onClick={() => {
-                              dispatch({
-                                type: "SET_DELETE_MODAL",
-                                payload: true,
-                              });
-                              dispatch({
-                                type: "UPDATE_FORM",
-                                field: "_id",
-                                value: site._id,
-                              });
-                            }}
-                          >
-                            Delete
-                          </CButton>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))
-                  )}
-                </CTableBody>
-              </CTable>
-              {/* <PaginateInput
-                page={page}
-                totalPages={state.totalPages}
-                hasPrevPage={state.hasPrevPage}
-                hasNextPage={state.hasNextPage}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-              /> */}
-              <PaginateInput
-                page={page}
-                totalPages={state.totalPages}
-                hasPrevPage={state.hasPrevPage}
-                hasNextPage={state.hasNextPage}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-                limit={limit}
-                handleLimitChange={setLimit} // New prop
-              />
-            </>
+                  ))
+                )}
+              </CTableBody>
+            </CTable>
+
+            <PaginateInput
+              page={page}
+              totalPages={state.totalPages}
+              hasPrevPage={state.hasPrevPage}
+              hasNextPage={state.hasNextPage}
+              pageInput={pageInput}
+              handlePageChange={handlePageChange}
+              handlePageInputChange={handlePageInputChange}
+              handlePageInputSubmit={handlePageInputSubmit}
+              limit={limit}
+              handleLimitChange={setLimit}
+            />
           </div>
         </CCol>
       </CRow>
@@ -403,7 +421,6 @@ const ClientAssignedSites = () => {
               onChange={handleChange}
               className="mt-3"
             />
-
             <CFormInput
               type="text"
               label="site_type"
@@ -450,123 +467,19 @@ const ClientAssignedSites = () => {
         </CModalFooter>
       </CModal>
 
-      {/* Edit Site Modal */}
-      <CModal
-        visible={state.modalVisible}
-        onClose={() => dispatch({ type: "SET_MODAL", payload: false })}
-      >
-        <CModalHeader>
-          <CModalTitle>Edit Site</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {/* <CForm>
-            <CInputGroup className="mb-3">
-              <CFormInput
-                placeholder="Site Name"
-                name="siteName"
-                value={state.formData.siteName}
-                onChange={handleChange}
-              />
-              <CFormInput
-                placeholder="Site Id"
-                name="site_id"
-                type="hidden"
-                value={state.formData.site_id}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-            <CInputGroup className="mb-3">
-              <CFormInput
-                placeholder="Site Type"
-                name="site_type"
-                value={state.formData.site_type}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-            <CInputGroup className="mb-3">
-              <CFormInput
-                placeholder="Location"
-                name="location"
-                value={state.formData.location}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-          </CForm> */}
-          <CForm>
-            <CInputGroup className="mb-3">
-              <CInputGroupText>Site Name</CInputGroupText>
-              <CFormInput
-                placeholder="Site Name"
-                name="siteName"
-                value={state.formData.siteName}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText>Site Type</CInputGroupText>
-              <CFormInput
-                placeholder="Site Type"
-                name="site_type"
-                value={state.formData.site_type}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText>Location</CInputGroupText>
-              <CFormInput
-                placeholder="Location"
-                name="location"
-                value={state.formData.location}
-                onChange={handleChange}
-              />
-            </CInputGroup>
-
-            {/* Hidden input for site_id */}
-            <CFormInput
-              name="site_id"
-              type="hidden"
-              value={state.formData.site_id}
-              onChange={handleChange}
-            />
-          </CForm>
-        </CModalBody>
-        <CModalFooter>
-          <CButton
-            color="secondary"
-            onClick={() => dispatch({ type: "SET_MODAL", payload: false })}
-          >
-            Cancel
-          </CButton>
-          <CButton
-            color="primary"
-            onClick={() => handleUpdate(state.formData)}
-            disabled={state.updating}
-          >
-            {state.updating ? (
-              <>
-                Updating...
-                <LoadingSpinner />
-              </>
-            ) : (
-              "Update Site"
-            )}
-          </CButton>
-        </CModalFooter>
-      </CModal>
-
       {/* Delete Confirmation Modal */}
       <CModal
-        visible={state.deleteModal}
+        visible={state.deleteModalVisible}
         onClose={() => dispatch({ type: "SET_DELETE_MODAL", payload: false })}
       >
         <CModalHeader>
           <CModalTitle>Confirm Delete</CModalTitle>
         </CModalHeader>
+
         <CModalBody>
-          <p>Are you sure you want to delete this site ?</p>
+          <p>Are you sure you want to delete this site?</p>
         </CModalBody>
+
         <CModalFooter>
           <CButton
             color="secondary"
@@ -578,17 +491,13 @@ const ClientAssignedSites = () => {
           </CButton>
           <CButton
             color="danger"
-            onClick={() => handleDelete(state.formData._id)}
-            disabled={state.deleting}
+            size="sm"
+            onClick={() => {
+              handleDelete(); // call delete
+              dispatch({ type: "SET_DELETE_MODAL", payload: false }); // close modal
+            }}
           >
-            {state.deleting ? (
-              <>
-                Deleting...
-                <LoadingSpinner />
-              </>
-            ) : (
-              "Delete"
-            )}
+            Delete
           </CButton>
         </CModalFooter>
       </CModal>

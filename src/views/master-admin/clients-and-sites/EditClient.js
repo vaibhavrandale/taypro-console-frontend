@@ -9,6 +9,9 @@ import {
   CCardHeader,
   CSpinner,
   CBadge,
+  CCol,
+  CFormLabel,
+  CFormCheck,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -53,29 +56,43 @@ const EditClient = () => {
     client_name: "",
     client_id: "",
     logo: "",
+    is_deleted: false, // <-- Add this field to track soft delete status
   });
   const [logoFile, setLogoFile] = useState(null);
 
   useEffect(() => {
-    const fetchClient = async () => {
+    const fetchSite = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get(`/api/v1/clients/${id}`, {
+
+        const { data } = await axios.get(`/api/v1/sites/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        dispatch({ type: "FETCH_SUCCESS", payload: response.data });
-        console.log(response.data.data);
+
+        console.log("Fetched site data:", data);
+
+        dispatch({ type: "FETCH_SUCCESS", payload: data.data });
 
         setFormData({
-          client_name: response.data.data.client_name,
-          client_id: response.data.data.client_id,
-          logo: response.data.data.logo,
+          site_id: data.data.site_id || "",
+          site_type: data.data.site_type || "",
+          siteName: data.data.siteName || "",
+          location: data.data.location || "",
+          logo: data.data.logo || "",
+          client_id: data.data.client_id || "",
+          password: data.data.password || "",
+          is_deleted: data.data.is_delete || false,
         });
       } catch (error) {
-        dispatch({ type: "FETCH_FAIL", payload: error.message });
+        console.error(
+          "Failed to fetch site:",
+          error.response?.data || error.message
+        );
+        dispatch({ type: "FETCH_FAIL", payload: "Failed to fetch site" });
       }
     };
-    fetchClient();
+
+    fetchSite();
   }, [id, authtoken]);
 
   const handleFileChange = (e) => {
@@ -88,6 +105,7 @@ const EditClient = () => {
       dispatch({ type: "UPDATE_REQUEST" });
       let updatedData = { ...formData };
 
+      // Upload logo if a new file is selected
       if (logoFile) {
         const formDataUpload = new FormData();
         formDataUpload.append("file", logoFile);
@@ -104,15 +122,16 @@ const EditClient = () => {
         updatedData.logo = uploadRes.data.url;
       }
 
-      const response = await axios.put(`/api/v1/clients/${id}`, updatedData, {
+      const response = await axios.put(`/api/v1/sites/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
+
       dispatch({ type: "UPDATE_SUCCESS", payload: response.data });
-      toast.success("Client updated successfully!");
+      toast.success("Site updated successfully!");
       navigate("/master-admin/clients-dashboard");
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: error.message });
-      toast.error("Failed to update client.");
+      toast.error("Failed to update site.");
     }
   };
 
@@ -129,26 +148,71 @@ const EditClient = () => {
         ) : (
           <CForm onSubmit={handleUpdate}>
             <CFormInput
-              label="Client Id"
+              label="Site ID"
+              type="text"
+              value={formData.site_id}
+              onChange={(e) =>
+                setFormData({ ...formData, site_id: e.target.value })
+              }
+              placeholder="Enter Site ID"
+              className="my-3"
+            />
+
+            <CFormInput
+              label="Site Type"
+              type="text"
+              value={formData.site_type}
+              onChange={(e) =>
+                setFormData({ ...formData, site_type: e.target.value })
+              }
+              placeholder="Enter Site Type"
+              className="my-3"
+            />
+
+            <CFormInput
+              label="Site Name"
+              type="text"
+              value={formData.siteName}
+              onChange={(e) =>
+                setFormData({ ...formData, siteName: e.target.value })
+              }
+              placeholder="Enter Site Name"
+              className="my-3"
+            />
+
+            <CFormInput
+              label="Location"
+              type="text"
+              value={formData.location}
+              onChange={(e) =>
+                setFormData({ ...formData, location: e.target.value })
+              }
+              placeholder="Enter Location"
+              className="my-3"
+            />
+
+            <CFormInput
+              label="Client ID"
               type="text"
               value={formData.client_id}
-              className="my-3"
-              placeholder="Client ID"
               onChange={(e) =>
                 setFormData({ ...formData, client_id: e.target.value })
               }
-            />
-            <CFormInput
-              label="Client Name"
-              type="text"
-              value={formData.client_name}
-              onChange={(e) =>
-                setFormData({ ...formData, client_name: e.target.value })
-              }
-              placeholder="Enter client name"
-              required
+              placeholder="Client ID"
               className="my-3"
             />
+
+            <CFormInput
+              label="Password"
+              type="text"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="Enter Password"
+              className="my-3"
+            />
+
             <CFormInput
               label="Logo"
               type="file"
@@ -163,7 +227,28 @@ const EditClient = () => {
                 className="mt-3"
               />
             )}
-            <br />
+
+            {/* Delete Inventory Section */}
+            <CCol md="6">
+              <CFormLabel>
+                Delete Site:
+                <span className="text-muted ms-2">
+                  {" "}
+                  (When checked, it will be soft deleted)
+                </span>
+              </CFormLabel>
+              <br />
+              <CFormCheck
+                id="is_delete"
+                name="is_delete"
+                checked={formData.is_delete || false} // Make sure to use formData instead of serviceItemData
+                onChange={
+                  (e) =>
+                    setFormData({ ...formData, is_delete: e.target.checked }) // Handling change to set the 'is_delete' value
+                }
+              />
+            </CCol>
+
             <div className="d-flex justify-content-end">
               <CButton
                 size="sm"
@@ -174,8 +259,8 @@ const EditClient = () => {
               >
                 {updateLoading ? (
                   <>
-                    Upading....
-                    <LoadingSpinner />
+                    Updating...
+                    <CSpinner size="sm" />
                   </>
                 ) : (
                   "Update"

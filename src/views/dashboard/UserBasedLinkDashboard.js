@@ -190,7 +190,7 @@ const UserBasedLinkDashboard = () => {
       icon: faTools,
     },
     "Site Technician": {
-      path: "/service-admin/dashboard",
+      path: "/site-technician/dashboard",
       dept: "Field Operations",
       icon: faTools,
     },
