@@ -272,7 +272,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
 
       {/* 📋 Service Tickets Table */}
       <div className="mt-4">
-        <div className="d-flex justify-content-end align-items-center">
+        <div className="m-2 d-flex justify-content-end align-items-center">
           <Link to="create-new-ticket" className="btn btn-sm btn-primary">
             NEW
           </Link>
@@ -382,14 +382,18 @@ const SiteTechnicianServiceTicketDashboard = () => {
                           Update
                         </Link>
                       )}
-                      <Link
-                        size="sm"
-                        className="m-1 btn btn-sm btn-secondary text-decoration-none"
-                        to={`resolve-service-ticket/${ticket._id}`}
-                        // onClick={() => openUpdateModal(ticket._id)}
-                      >
-                        Resolve
-                      </Link>
+
+                      {ticket.ticket_resolved ? (
+                        ""
+                      ) : (
+                        <Link
+                          size="sm"
+                          className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                          to={`resolve-service-ticket/${ticket._id}`}
+                        >
+                          Resolve
+                        </Link>
+                      )}
                     </CTableDataCell>
                   </CTableRow>
                 ))
