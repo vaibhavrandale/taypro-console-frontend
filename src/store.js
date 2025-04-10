@@ -41,8 +41,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, userInfo: action.payload, authtoken: action.token };
 
     case "EMP_SIGNOUT":
-      localStorage.removeItem("userInfo"); // Remove from localStorage
-      localStorage.removeItem("authtoken"); // Remove from localStorage
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("authtoken");
       return { ...state, userInfo: null, authtoken: null };
 
     case "set":

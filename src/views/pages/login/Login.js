@@ -32,8 +32,9 @@ const Login = () => {
   const dispatch = useDispatch();
 
   // Get userInfo from Redux state
-  const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const userInfo = useSelector((state) => state.userInfo);
+  // const authtoken = useSelector((state) => state.authtoken);
+  const { userInfo, authtoken } = useSelector((state) => state);
   // const storedTheme = useSelector((state) => state.theme) || "light"; // ✅ Ensure default theme
   // const [username, setUsername] = useState('');
   const [email, setEmail] = useState("");
@@ -46,14 +47,14 @@ const Login = () => {
   // const redirect = "/user-dashboard";
 
   const theme = localStorage.getItem("theme");
+  // ✅ Updated dependency list
+  //login
   useEffect(() => {
     if (!userInfo && !authtoken) {
       navigate("/login");
-    } else {
-      navigate("/user-dashboard");
     }
-  }, [authtoken, navigate, userInfo]); // ✅ Updated dependency list
-  //login
+  }, [userInfo, authtoken, navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -62,6 +63,7 @@ const Login = () => {
         email,
         password,
       });
+      console.log(data);
       // ✅ Dispatch to Redux
       dispatch({
         type: "EMP_SIGNIN",
@@ -73,8 +75,13 @@ const Login = () => {
       navigate("/user-dashboard");
       // toast.success(`Login Successfull!`);
       toast.success(`Welcome Back!  ${data.data.user.username}`);
-    } catch (err) {
-      toast.error(err.response.data.error);
+    } catch (error) {
+      toast.error(error.response.data.error);
+      // dispatch({ type: "EMP_SIGNOUT" });
+      // navigate("/login");
+      // toast.error(
+      //   error.response?.data?.error || "Something went wrong. Please try again."
+      // );
     }
     setLoading(false);
   };

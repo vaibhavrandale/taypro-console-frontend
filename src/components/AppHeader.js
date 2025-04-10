@@ -64,6 +64,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -85,12 +86,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           dispatch({
             type: "EMP_SIGNOUT",
           });
-
-          localStorage.removeItem("userInfo");
-          localStorage.removeItem("authtoken");
-          setTimeout(() => {
-            navigate("/login");
-          }, 5000);
+          navigate("/login");
         }
         dispatch({
           type: "FETCH_FAIL",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CAvatar,
 
@@ -13,7 +13,7 @@ import {
   // CModalBody,
   // CModalHeader,
   // CModalTitle,
-} from '@coreui/react';
+} from "@coreui/react";
 import {
   // cilBell,
   // cilCreditCard,
@@ -24,13 +24,13 @@ import {
   cilSettings,
   // cilTask,
   cilUser,
-} from '@coreui/icons';
-import CIcon from '@coreui/icons-react';
+} from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 // import avatar8 from './../../assets/images/avatars/vaibhav.jpg';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 // import store from '../../store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
 const AppHeaderDropdown = () => {
   const dispatch = useDispatch(); // ✅ FIXED: Initialize dispatch
@@ -47,17 +47,17 @@ const AppHeaderDropdown = () => {
   const LogoutHandler = () => {
     logoutModal();
 
-    dispatch({ type: 'EMP_SIGNOUT' });
-    localStorage.removeItem('userInfo');
-    navigate('/login');
-    toast.success('Sign out Successfully');
+    dispatch({ type: "EMP_SIGNOUT" });
+    localStorage.removeItem("userInfo");
+    navigate("/login");
+    toast.success("Sign out Successfully");
   };
 
   const image = userInfo
     ? userInfo.profile_image
       ? userInfo.profile_image
-      : 'https://www.pngitem.com/pimgs/m/146-1462217_profile-icon-png-image-free-download-searchpng-employee.png'
-    : '';
+      : "https://www.pngitem.com/pimgs/m/146-1462217_profile-icon-png-image-free-download-searchpng-employee.png"
+    : "";
 
   return (
     <>
@@ -67,7 +67,14 @@ const AppHeaderDropdown = () => {
           className="py-0 pe-0"
           caret={false}
         >
-          <CAvatar src={image} size="md" />
+          <img
+            src={image}
+            alt="Profile"
+            className="rounded-circle"
+            width="50"
+            height="50"
+            style={{ objectFit: "cover" }}
+          />
         </CDropdownToggle>
 
         <CDropdownMenu className="pt-0" placement="bottom-end">
