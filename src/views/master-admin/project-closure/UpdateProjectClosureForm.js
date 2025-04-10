@@ -259,7 +259,6 @@ const UpdateProjectClosureForm = () => {
         robot_details: robotDetails,
         handover_checklist: checkListDetails,
       };
-      console.log(newData);
       await axios.put(`/api/v1/projectdocs/${id}`, newData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
