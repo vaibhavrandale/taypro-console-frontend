@@ -891,6 +891,27 @@ const routes = [
     element: Inventories,
   },
 
+  {
+    path: "/project-admin/inventories/update-inventory/:id",
+    name: "Update Inventory",
+    element: UpdateInventory,
+  },
+  {
+    path: "/project-admin/inventories/add-inventory",
+    name: "Add Inventory",
+    element: AddInventory,
+  },
+  {
+    path: "/project-admin/inventories/add-service-item",
+    name: "Add Service Item",
+    element: AddServiceItem,
+  },
+  {
+    path: "/project-admin/inventories/update-service-item/:id",
+    name: "Update Service Item",
+    element: UpdateServiceItem,
+  },
+
   //------------------------project admin---------------------------------
 
   //------------------------service admin---------------------------------
@@ -1139,6 +1160,27 @@ const routes = [
     path: "/service-admin/inventories",
     name: "Inventories",
     element: Inventories,
+  },
+
+  {
+    path: "/service-admin/inventories/update-inventory/:id",
+    name: "Update Inventory",
+    element: UpdateInventory,
+  },
+  {
+    path: "/service-admin/inventories/add-inventory",
+    name: "Add Inventory",
+    element: AddInventory,
+  },
+  {
+    path: "/service-admin/inventories/add-service-item",
+    name: "Add Service Item",
+    element: AddServiceItem,
+  },
+  {
+    path: "/service-admin/inventories/update-service-item/:id",
+    name: "Update Service Item",
+    element: UpdateServiceItem,
   },
 
   //------------------------service admin---------------------------------

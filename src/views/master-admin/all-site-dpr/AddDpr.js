@@ -101,6 +101,17 @@ const AddDpr = () => {
   const [filteredTechnicians, setFilteredTechnicians] = useState([]);
   const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
 
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -181,7 +192,7 @@ const AddDpr = () => {
       toast.success("Daily Progress Report Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 
-      navigate(`/master-admin/all-site-dpr`);
+      navigate(`/${adminroute}/all-site-dpr`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",

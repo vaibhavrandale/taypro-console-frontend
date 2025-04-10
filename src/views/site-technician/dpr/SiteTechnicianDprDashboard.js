@@ -450,14 +450,14 @@ const SiteTechnicianDprDashboard = () => {
                   >
                     Update
                   </Link> */}
-                  <Link
+                  {/* <Link
                     color="danger"
                     size="sm"
                     className=" btn btn-sm btn-danger m-1 text-white"
                     onClick={() => deleteDpr(dpr)}
                   >
                     Delete
-                  </Link>
+                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))

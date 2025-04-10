@@ -87,9 +87,11 @@ import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 import { CBadge, CNavLink, CSidebarNav } from "@coreui/react";
 import _nav from "../_nav"; // Import Navigation Data
+import { useSelector } from "react-redux";
 
 export const AppSidebarNav = () => {
-  const [storedUser, setStoredUser] = useState(null);
+  // const [userInfo, setStoredUser] = useState(null);
+  const userInfo = useSelector((state) => state.userInfo);
   const headerRef = useRef();
   const navigate = useNavigate();
 
@@ -102,36 +104,34 @@ export const AppSidebarNav = () => {
         );
     });
 
-    const user = JSON.parse(localStorage.getItem("userInfo"));
-    if (!user) {
+    // const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (!userInfo) {
       navigate("/login"); // Redirect to login if user is not found
-    } else {
-      setStoredUser(user);
     }
-  }, [navigate]);
+  }, [navigate, userInfo]);
 
-  if (!storedUser) {
+  if (!userInfo) {
     return null; // Prevent rendering if user isn't loaded
   }
 
   // 🔍 Filter Navigation Links Based on User Role
   const filteredNav = _nav.filter((navItem) => {
-    if (storedUser.role === "Master Admin") {
+    if (userInfo.role === "Master Admin") {
       // return true; // Show all menu items
       return navItem.name === "Master Admin";
-    } else if (storedUser.role === "Project Admin") {
+    } else if (userInfo.role === "Project Admin") {
       return navItem.name === "Project Admin"; // Show only Service Admin items
-    } else if (storedUser.role === "Service Admin") {
+    } else if (userInfo.role === "Service Admin") {
       return navItem.name === "Service Admin"; // Show only Service Admin items
-    } else if (storedUser.role === "Service User") {
+    } else if (userInfo.role === "Service User") {
       return navItem.name === "Service User"; // Show only Service Admin items
-    } else if (storedUser.role === "Site Technician") {
+    } else if (userInfo.role === "Site Technician") {
       return navItem.name === "Site Technician"; // Show only Service Admin items
-    } else if (storedUser.role === "Client Admin") {
+    } else if (userInfo.role === "Client Admin") {
       return navItem.name === "Client Admin"; // Show only Client Admin items
-    } else if (storedUser.role === "Site Incharge") {
+    } else if (userInfo.role === "Site Incharge") {
       return navItem.name === "Site Incharge"; // Show only Client Admin items
-    } else if (storedUser.role === "Client Technician") {
+    } else if (userInfo.role === "Client Technician") {
       return navItem.name === "Client Technician"; // Show only Client Admin items
     }
     return false;
