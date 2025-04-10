@@ -40,7 +40,6 @@ const ViewProjectClosureDocument = () => {
   });
   const { id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
-  // const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
