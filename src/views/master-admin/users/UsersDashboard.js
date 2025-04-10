@@ -205,7 +205,7 @@ const UsersDashboard = () => {
   // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
   let roles = [];
-  if (userInfo.role === "Master Admin") {
+  if (userInfo?.role === "Master Admin") {
     roles = role_permissions;
   } else if (userInfo.role === "Project Admin") {
     roles = projects_role_permissions;
@@ -432,7 +432,7 @@ const UsersDashboard = () => {
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
       const { data } = await axios.post(
-        "/api/v1/image-upload/client-logo",
+        "/api/v1/image-upload/profile-image",
         bodyFormData,
         {
           headers: {
@@ -663,6 +663,7 @@ const UsersDashboard = () => {
                     className="rounded-circle"
                     width="50"
                     height="50"
+                    style={{ objectFit: "cover" }}
                   />
                 </CTableDataCell>
                 <CTableDataCell>{user.username}</CTableDataCell>
