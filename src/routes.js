@@ -49,6 +49,7 @@ import SiteTechnicianResolveServiceTicket from "./views/site-technician/service-
 import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnicianDprDashboard";
 import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
+import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
@@ -647,6 +648,12 @@ const routes = [
     element: ViewPreventivemaintananceQuaterly,
   },
 
+  {
+    path: "/master-admin/technician-attendance",
+    name: "Technician Attendance",
+    element: TechnicianAttendanceDashboard,
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -917,7 +924,11 @@ const routes = [
     name: "Update Service Item",
     element: UpdateServiceItem,
   },
-
+  {
+    path: "/project-admin/technician-attendance",
+    name: "Technician Attendance",
+    element: TechnicianAttendanceDashboard,
+  },
   //------------------------project admin---------------------------------
 
   //------------------------service admin---------------------------------
@@ -1188,7 +1199,11 @@ const routes = [
     name: "Update Service Item",
     element: UpdateServiceItem,
   },
-
+  {
+    path: "/service-admin/technician-attendance",
+    name: "Technician Attendance",
+    element: TechnicianAttendanceDashboard,
+  },
   //------------------------service admin---------------------------------
 
   //------------------------service Site Technician---------------------------------

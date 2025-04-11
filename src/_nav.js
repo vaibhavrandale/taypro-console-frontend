@@ -16,6 +16,22 @@ import {
   cilSpeedometer,
   cilFactory,
   cilStar,
+  cilSpreadsheet,
+  cilBuilding,
+  cilSearch,
+  cilSwapHorizontal,
+  cilCalendarCheck,
+  cilUser,
+  cilMemory,
+  cilTask,
+  cilNoteAdd,
+  cilStorage,
+  cilCheckCircle,
+  cilCog,
+  cilGroup,
+  cilListRich,
+  cilLan,
+  cilClock,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -28,9 +44,9 @@ const _nav = [
     to: "/base",
     icon: (
       <CIcon
-        icon={cilPuzzle}
+        icon={cilSpeedometer}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -40,9 +56,9 @@ const _nav = [
         to: "/master-admin/dashboard",
         icon: (
           <CIcon
-            icon={cilSpeedometer}
+            icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -55,7 +71,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -65,9 +81,9 @@ const _nav = [
         to: "/master-admin/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -78,9 +94,9 @@ const _nav = [
         to: "/master-admin/search-robot",
         icon: (
           <CIcon
-            icon={cibProbot}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -90,9 +106,9 @@ const _nav = [
         to: "/master-admin/replace-lora/active-robots",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSwapHorizontal}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -102,9 +118,9 @@ const _nav = [
         to: "/master-admin/preventive-maintanance-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilCalendarCheck}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -114,9 +130,9 @@ const _nav = [
         to: "/master-admin/clients-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilUser}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -126,9 +142,9 @@ const _nav = [
         to: "/master-admin/robots",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilMemory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -138,9 +154,9 @@ const _nav = [
         to: "/master-admin/service-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -150,9 +166,9 @@ const _nav = [
         to: "/master-admin/internal-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilNoteAdd}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -162,21 +178,21 @@ const _nav = [
         to: "/master-admin/inventories",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
       {
         component: CNavItem,
-        name: "Project Closure",
+        name: "Project Handover",
         to: "/master-admin/project-handover",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -186,9 +202,9 @@ const _nav = [
         to: "/master-admin/lora-configuration",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilCog}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -199,9 +215,9 @@ const _nav = [
         //internal external
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -211,9 +227,9 @@ const _nav = [
         to: "/master-admin/all-site-cleaning-log",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -224,9 +240,9 @@ const _nav = [
         to: "/master-admin/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -236,9 +252,9 @@ const _nav = [
         to: "/master-admin/all-site-gateways",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilLan}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -248,9 +264,21 @@ const _nav = [
         to: "/master-admin/all-site-dpr",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSpreadsheet}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Technician Attendance",
+        to: "/master-admin/technician-attendance",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -266,7 +294,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilDrop}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       // },
@@ -278,7 +306,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilPencil}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       // },
@@ -294,7 +322,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilPuzzle}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -434,7 +462,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilCursor}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -476,7 +504,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilNotes}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -609,7 +637,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilChartPie}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       // },
@@ -620,7 +648,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilStar}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -648,7 +676,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilBell}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -682,7 +710,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilCalculator}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   badge: {
@@ -701,7 +729,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilStar}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       //   items: [
@@ -735,7 +763,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilDescription}
       //       customClassName="nav-icon"
-      //       style={{ height: "50px" }}
+      //     style={{ height: "30px" }}
       //     />
       //   ),
       // },
@@ -753,7 +781,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -765,7 +793,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -778,7 +806,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -788,9 +816,9 @@ const _nav = [
         to: "/project-admin/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -801,9 +829,9 @@ const _nav = [
         to: "/project-admin/search-robot",
         icon: (
           <CIcon
-            icon={cibProbot}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -814,9 +842,9 @@ const _nav = [
         to: "/project-admin/project-handover",
         icon: (
           <CIcon
-            icon={cilSpeedometer}
+            icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -826,9 +854,9 @@ const _nav = [
         to: "/project-admin/preventive-maintanance-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilCalendarCheck}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -838,9 +866,9 @@ const _nav = [
         to: "/project-admin/clients-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilUser}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -852,7 +880,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -863,9 +891,9 @@ const _nav = [
         to: "/project-admin/service-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -876,9 +904,9 @@ const _nav = [
         to: "/project-admin/internal-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilNoteAdd}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -888,9 +916,9 @@ const _nav = [
         to: "/project-admin/all-site-cleaning-log",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -900,9 +928,9 @@ const _nav = [
         to: "/project-admin/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -912,9 +940,9 @@ const _nav = [
         to: "/project-admin/all-site-dpr",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSpreadsheet}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -924,9 +952,9 @@ const _nav = [
         to: "/project-admin/all-site-gateways",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilLan}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -936,9 +964,21 @@ const _nav = [
         to: "/project-admin/users",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Technician Attendance",
+        to: "/project-admin/technician-attendance",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -956,7 +996,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -968,7 +1008,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -981,7 +1021,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -991,9 +1031,9 @@ const _nav = [
         to: "/service-admin/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1004,9 +1044,9 @@ const _nav = [
         to: "/service-admin/search-robot",
         icon: (
           <CIcon
-            icon={cibProbot}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1017,9 +1057,9 @@ const _nav = [
         to: "/service-admin/project-handover",
         icon: (
           <CIcon
-            icon={cilSpeedometer}
+            icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1029,9 +1069,9 @@ const _nav = [
         to: "/service-admin/preventive-maintanance-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilCalendarCheck}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1041,9 +1081,9 @@ const _nav = [
         to: "/service-admin/clients-dashboard",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilUser}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1055,7 +1095,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1065,9 +1105,9 @@ const _nav = [
         to: "/service-admin/inventories",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1077,9 +1117,9 @@ const _nav = [
         to: "/service-admin/service-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1090,9 +1130,9 @@ const _nav = [
         to: "/service-admin/internal-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilNoteAdd}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1102,9 +1142,9 @@ const _nav = [
         to: "/service-admin/all-site-cleaning-log",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1114,9 +1154,9 @@ const _nav = [
         to: "/service-admin/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1126,9 +1166,9 @@ const _nav = [
         to: "/service-admin/all-site-dpr",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSpreadsheet}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1138,9 +1178,9 @@ const _nav = [
         to: "/service-admin/all-site-gateways",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilLan}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1150,9 +1190,21 @@ const _nav = [
         to: "/service-admin/users",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Technician Attendance",
+        to: "/service-admin/technician-attendance",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1170,7 +1222,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -1182,7 +1234,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1194,7 +1246,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1204,9 +1256,9 @@ const _nav = [
         to: "/site-technician/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1216,9 +1268,9 @@ const _nav = [
         to: "/site-technician/search-robot",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1228,9 +1280,9 @@ const _nav = [
         to: "/site-technician/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1238,7 +1290,7 @@ const _nav = [
       //   component: CNavItem,
       //   name: "Users",
       //   to: "/client-site-incharge/external-users",
-      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"  style={{ height: "50px" }} />,
+      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"style={{ height: "30px" }} />,
       //   badge: {
       //     color: "success",
       //     text: "DONE",
@@ -1250,9 +1302,9 @@ const _nav = [
         to: "/site-technician/cleaning-log-sites",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1262,9 +1314,9 @@ const _nav = [
         to: "/site-technician/service-tickets",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1274,9 +1326,9 @@ const _nav = [
         to: "/site-technician/dpr",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSpreadsheet}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1286,9 +1338,9 @@ const _nav = [
         to: "/site-technician/inventory",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1305,7 +1357,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -1317,7 +1369,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1334,7 +1386,7 @@ const _nav = [
           <CIcon
             icon={cilDrop}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1346,7 +1398,7 @@ const _nav = [
           <CIcon
             icon={cilPencil}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1362,7 +1414,7 @@ const _nav = [
           <CIcon
             icon={cilPuzzle}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1502,7 +1554,7 @@ const _nav = [
           <CIcon
             icon={cilCursor}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1544,7 +1596,7 @@ const _nav = [
           <CIcon
             icon={cilNotes}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1677,7 +1729,7 @@ const _nav = [
           <CIcon
             icon={cilChartPie}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1688,7 +1740,7 @@ const _nav = [
           <CIcon
             icon={cilStar}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1716,7 +1768,7 @@ const _nav = [
           <CIcon
             icon={cilBell}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1750,7 +1802,7 @@ const _nav = [
           <CIcon
             icon={cilCalculator}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         badge: {
@@ -1769,7 +1821,7 @@ const _nav = [
           <CIcon
             icon={cilStar}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
         items: [
@@ -1803,7 +1855,7 @@ const _nav = [
           <CIcon
             icon={cilDescription}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1820,7 +1872,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -1832,7 +1884,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1844,7 +1896,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1854,9 +1906,9 @@ const _nav = [
         to: "/client-admin/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1866,9 +1918,9 @@ const _nav = [
         to: "/client-admin/search-robot",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1878,9 +1930,9 @@ const _nav = [
         to: "/client-admin/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1890,9 +1942,9 @@ const _nav = [
         to: "/client-admin/external-users",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1902,9 +1954,9 @@ const _nav = [
         to: "/client-admin/cleaning-log-sites",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1922,7 +1974,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -1934,7 +1986,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1946,7 +1998,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1956,9 +2008,9 @@ const _nav = [
         to: "/client-site-incharge/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1968,9 +2020,9 @@ const _nav = [
         to: "/client-site-incharge/search-robot",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1980,9 +2032,9 @@ const _nav = [
         to: "/client-site-incharge/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -1990,7 +2042,7 @@ const _nav = [
       //   component: CNavItem,
       //   name: "Users",
       //   to: "/client-site-incharge/external-users",
-      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"  style={{ height: "50px" }} />,
+      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"style={{ height: "30px" }} />,
       //   badge: {
       //     color: "success",
       //     text: "DONE",
@@ -2002,9 +2054,9 @@ const _nav = [
         to: "/client-site-incharge/cleaning-log-sites",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2021,7 +2073,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2033,7 +2085,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2045,7 +2097,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2055,9 +2107,9 @@ const _nav = [
         to: "/client-site-technician/site-management",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2067,9 +2119,9 @@ const _nav = [
         to: "/client-site-technician/search-robot",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilSearch}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2079,9 +2131,9 @@ const _nav = [
         to: "/client-site-technician/timers",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilClock}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2089,7 +2141,7 @@ const _nav = [
       //   component: CNavItem,
       //   name: "Users",
       //   to: "/client-site-incharge/external-users",
-      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"  style={{ height: "50px" }} />,
+      //   icon: <CIcon icon={cilSettings} customClassName="nav-icon"style={{ height: "30px" }} />,
       //   badge: {
       //     color: "success",
       //     text: "DONE",
@@ -2101,9 +2153,9 @@ const _nav = [
         to: "/client-site-technician/cleaning-log-sites",
         icon: (
           <CIcon
-            icon={cilSettings}
+            icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "50px" }}
+            style={{ height: "30px" }}
           />
         ),
       },
@@ -2123,7 +2175,7 @@ const _nav = [
       <CIcon
         icon={cilDrop}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
   },
@@ -2135,7 +2187,7 @@ const _nav = [
       <CIcon
         icon={cilPencil}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
   },
@@ -2151,7 +2203,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2291,7 +2343,7 @@ const _nav = [
       <CIcon
         icon={cilCursor}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2333,7 +2385,7 @@ const _nav = [
       <CIcon
         icon={cilNotes}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2466,7 +2518,7 @@ const _nav = [
       <CIcon
         icon={cilChartPie}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
   },
@@ -2477,7 +2529,7 @@ const _nav = [
       <CIcon
         icon={cilStar}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2505,7 +2557,7 @@ const _nav = [
       <CIcon
         icon={cilBell}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2539,7 +2591,7 @@ const _nav = [
       <CIcon
         icon={cilCalculator}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     badge: {
@@ -2558,7 +2610,7 @@ const _nav = [
       <CIcon
         icon={cilStar}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
     items: [
@@ -2592,7 +2644,7 @@ const _nav = [
       <CIcon
         icon={cilDescription}
         customClassName="nav-icon"
-        style={{ height: "50px" }}
+        style={{ height: "30px" }}
       />
     ),
   },
