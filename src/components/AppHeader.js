@@ -199,7 +199,19 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           </CNavItem>
         </CHeaderNav>
 
+        <CHeaderNav className="ms-auto"></CHeaderNav>
+
         <CHeaderNav className="ms-auto">
+          {" "}
+          <Link
+            to={`/master-admin/site-management/robot-activity`}
+            className="text-decoration-none text-body m-1"
+          >
+            🤖
+          </Link>{" "}
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
           {/* 🌗 Theme Toggle */}
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>

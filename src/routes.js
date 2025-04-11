@@ -50,6 +50,7 @@ import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnici
 import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
+import RobotActivity from "./views/master-admin/site-management/RobotActivity";
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -351,6 +352,11 @@ const routes = [
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
     element: RobotOperating,
+  },
+  {
+    path: "/master-admin/site-management/robot-activity",
+    name: "Robot Activity",
+    element: RobotActivity,
   },
 
   {
