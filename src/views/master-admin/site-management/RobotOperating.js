@@ -463,6 +463,12 @@ const RobotOperating = () => {
               >
                 CLEANING LOG
               </Link>
+              <Link
+                to={`/${adminroute}/site-management/robot-activity`}
+                className="btn btn-sm btn-secondary m-1 shadow-sm"
+              >
+                Robot Activity
+              </Link>
 
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
