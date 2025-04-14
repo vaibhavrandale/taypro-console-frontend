@@ -144,6 +144,7 @@ const SiteTechnicianDashboard = () => {
   };
 
   useEffect(() => {
+    if (!userInfo) return; // ⛔️
     const userSites = userInfo.assigned_sites || [];
     setSites(userSites);
 
@@ -178,7 +179,7 @@ const SiteTechnicianDashboard = () => {
       },
       (err) => console.error("Geolocation error:", err)
     );
-  }, [punchedIn, userInfo.assigned_sites]);
+  }, [punchedIn, userInfo]);
 
   useEffect(() => {
     if (punchedIn && !punchedOut) {
