@@ -258,10 +258,14 @@ const ViewProjectClosureDocument = () => {
                       .split("T")[0]
                   : ""}
               </li>
-              <li>
-                <strong>Challenges&nbsp;&nbsp;Faced&nbsp;&nbsp;:</strong>{" "}
-                {serviceItemData.challenges_faced}
-              </li>
+              {serviceItemData.challenges_faced === "-" ? (
+                ""
+              ) : (
+                <li>
+                  <strong>Challenges&nbsp;&nbsp;Faced&nbsp;&nbsp;:</strong>
+                  {serviceItemData.challenges_faced}
+                </li>
+              )}
             </ul>
             <div className="section-title mt-6">
               3. System&nbsp;&nbsp;Details
@@ -364,7 +368,7 @@ const ViewProjectClosureDocument = () => {
                 {serviceItemData.handover_checklist?.map((item, index) => (
                   <tr key={index}>
                     <td>{item.task_name}</td>
-                    <td>{item.status}</td>
+                    <td>{item.status === "Done" ? "✔" : item.status}</td>
                     <td>{item.remark}</td>
                   </tr>
                 ))}
