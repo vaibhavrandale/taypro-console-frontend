@@ -117,6 +117,31 @@ const ViewProjectClosureDocument = () => {
     }
   };
 
+  // const exportToPDF = () => {
+  //   const element = contentRef.current;
+
+  //   const opt = {
+  //     margin: [0.5, 0.5],
+  //     filename: `${serviceItemData.project_name}_handover.pdf`,
+  //     image: { type: "jpeg", quality: 0.98 },
+  //     html2canvas: {
+  //       scale: 2,
+  //       useCORS: true,
+  //     },
+  //     jsPDF: {
+  //       unit: "in",
+  //       format: "a4",
+  //       orientation: "portrait",
+  //     },
+  //     pagebreak: {
+  //       mode: ["css", "legacy"],
+  //       before: [".page-break", ".end-page"],
+  //     },
+  //   };
+
+  //   html2pdf().set(opt).from(element).save();
+  // };
+
   const exportToPDF = () => {
     const element = contentRef.current;
 
@@ -139,7 +164,24 @@ const ViewProjectClosureDocument = () => {
       },
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .toPdf()
+      .get("pdf")
+      .then((pdf) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        for (let i = 1; i <= totalPages; i++) {
+          pdf.setPage(i);
+          pdf.setDrawColor(0); // Black border
+          pdf.setLineWidth(0.01); // Adjust border thickness here
+          pdf.rect(0.25, 0.25, pageWidth - 0.5, pageHeight - 0.5); // Border inside margin
+        }
+      })
+      .save();
   };
 
   return (
@@ -175,7 +217,9 @@ const ViewProjectClosureDocument = () => {
                   <td colSpan={2} className="text-center">
                     <h5>Project to Service Handover Document</h5>
                   </td>
-                  <td colSpan={1}>Doc. No. : TPL-12</td>
+                  <td colSpan={1}>
+                    <b>TPL_PRH-R00</b>
+                  </td>
                 </tr>
               </thead>
             </table>
@@ -333,6 +377,7 @@ const ViewProjectClosureDocument = () => {
                 {serviceItemData.full_table_length}
               </li>
             </ul>
+            <br /> <br />
             <br /> <br />
             <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
             <table className="site-details-table">
