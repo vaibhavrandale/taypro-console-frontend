@@ -155,6 +155,18 @@ const ActivateRobots = React.lazy(() =>
   import("./views/master-admin/robots/ActivateRobots")
 );
 
+const SiteCoordinates = React.lazy(() =>
+  import("./views/master-admin/sites-coordinates/SitesCoordinates")
+);
+
+const UpdateSiteCoordinates = React.lazy(() =>
+  import("./views/master-admin/sites-coordinates/UpdateSitesCoordinates")
+);
+
+const AddSiteCoordinates = React.lazy(() =>
+  import("./views/master-admin/sites-coordinates/AddSitesCoordinates")
+);
+
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
@@ -183,6 +195,14 @@ const UpdateRobots = React.lazy(() =>
   import("./views/master-admin/robots/UpdateRobot")
 );
 
+const AddServiceItem = React.lazy(() =>
+  import("./views/master-admin/inventories/AddServiceItem")
+);
+
+const UpdateServiceItem = React.lazy(() =>
+  import("./views/master-admin/inventories/UpdateServiceItem")
+);
+
 const Inventories = React.lazy(() =>
   import("./views/master-admin/inventories/Inventories")
 );
@@ -193,14 +213,6 @@ const UpdateInventory = React.lazy(() =>
 
 const AddInventory = React.lazy(() =>
   import("./views/master-admin/inventories/AddInventory")
-);
-
-const AddServiceItem = React.lazy(() =>
-  import("./views/master-admin/inventories/AddServiceItem")
-);
-
-const UpdateServiceItem = React.lazy(() =>
-  import("./views/master-admin/inventories/UpdateServiceItem")
 );
 
 const AddDpr = React.lazy(() =>
@@ -654,6 +666,22 @@ const routes = [
     element: TechnicianAttendanceDashboard,
   },
 
+  {
+    path: "/master-admin/sites-coordinates",
+    name: "Site Coordinates",
+    element: SiteCoordinates,
+  },
+  {
+    path: "/master-admin/sites-coordinates/update-sitescoordinates/:id",
+    name: "Update Site Coordinates",
+    element: UpdateSiteCoordinates,
+  },
+  {
+    path: "/master-admin/sites-coordinates/add-sitescoordinates",
+    name: "Add Site Coordinates",
+    element: AddSiteCoordinates,
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -924,6 +952,7 @@ const routes = [
     name: "Update Service Item",
     element: UpdateServiceItem,
   },
+
   {
     path: "/project-admin/technician-attendance",
     name: "Technician Attendance",

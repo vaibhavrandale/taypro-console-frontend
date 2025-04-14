@@ -223,6 +223,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Sites Coordinates",
+        to: "/master-admin/sites-coordinates",
+        icon: (
+          <CIcon
+            icon={cilListRich}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "All Sites Cleaning Log",
         to: "/master-admin/all-site-cleaning-log",
         icon: (
