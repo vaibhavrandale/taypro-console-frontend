@@ -378,7 +378,7 @@ const ViewProjectClosureDocument = () => {
               </li>
             </ul>
             <br /> <br />
-            <br /> <br />
+            <br /> <br /> <br />
             <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
             <table className="site-details-table">
               <thead>
