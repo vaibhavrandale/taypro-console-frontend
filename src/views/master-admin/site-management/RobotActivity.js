@@ -1,21 +1,18 @@
+import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import PaginateInput from "../../../components/PaginateInput";
 import {
-  CCard,
-  CCardBody,
-  CRow,
-  CCol,
   CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
   CTableBody,
   CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
 } from "@coreui/react";
-import axios from "axios";
-import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import PaginateInput from "../../../components/PaginateInput";
-import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -24,10 +21,11 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        notifications: action.payload.data,
-        currentPage: action.payload.currentPage,
-        totalPages: action.payload.totalPages,
         loading: false,
+        robotNotifications: action.payload.data,
+        totalPages: action.payload.totalPages,
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
@@ -37,148 +35,160 @@ const reducer = (state, action) => {
 };
 
 const RobotActivity = () => {
-  const [{ loading, error, notifications, currentPage, totalPages }, dispatch] =
-    useReducer(reducer, {
-      notifications: [],
-      currentPage: 1,
-      totalPages: 1,
-      loading: true,
-      error: "",
-    });
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [pageInput, setPageInput] = useState(1);
+  const [
+    {
+      loading,
+      error,
+      robotNotifications,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robotNotifications: [],
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+    loading: true,
+    error: "",
+  });
 
   const authtoken = useSelector((state) => state.authtoken);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [pageInput, setPageInput] = useState("");
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+
+    const fetchRobotActivity = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `/api/v1/robot-notification?page=${page}&limit=${limit}`,
+
+        const result = await axios.post(
+          `/api/v1/robot-notification`,
+          pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
+
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data?.message || "Failed to fetch data",
+          payload: error.response?.data.error || error.response?.data.message,
         });
-        toast.error(error.response?.data?.message || "Failed to fetch data");
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
-    fetchNotifications();
-  }, [authtoken, page, limit]);
 
-  const filtered = notifications.filter((item) =>
-    item.robot_no?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    fetchRobotActivity();
+  }, [authtoken, limit, page]);
+
+  const handlePageInputChange = (e) => setPageInput(e.target.value);
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
-    setPageInput(newPage);
-  };
-
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
   };
 
   const handlePageInputSubmit = () => {
-    const newPage = Math.max(1, Math.min(Number(pageInput), totalPages));
-    setPage(newPage);
-  };
-
-  const handleLimitChange = (newLimit) => {
-    setLimit(newLimit);
-    setPage(1);
-    setPageInput(1);
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
   };
 
   return (
-    <div className="my-3">
-      <CCard className="shadow border-0" style={{ minHeight: "73vh" }}>
-        <CCardBody>
-          <CRow className="justify-content-between mb-3">
-            <CCol md={4}>
-              <h5 className="text-primary">Robot Notifications</h5>
-            </CCol>
-            <CCol md={4} className="text-end">
-              <input
-                type="text"
-                placeholder="Search by Robot No"
-                value={searchTerm}
-                className="form-control form-control-sm"
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </CCol>
-          </CRow>
-
+    <div>
+      <CTable bordered hover responsive>
+        <CTableHead color="dark">
+          <CTableRow>
+            <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell>Robot No</CTableHeaderCell>
+            <CTableHeaderCell>Command</CTableHeaderCell>
+            <CTableHeaderCell>DevEUI</CTableHeaderCell>
+            <CTableHeaderCell>Site ID</CTableHeaderCell>
+            <CTableHeaderCell>Sent By</CTableHeaderCell>
+            <CTableHeaderCell>Email</CTableHeaderCell>
+            <CTableHeaderCell>Timestamp</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
+        <CTableBody>
           {loading ? (
-            <div className="text-center my-5">
-              <LoadingSpinner />
-            </div>
-          ) : error ? (
-            <h6 className="text-danger text-center">{error}</h6>
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : robotNotifications?.length > 0 ? (
+            robotNotifications.map((item, index) => (
+              <CTableRow key={item._id}>
+                <CTableDataCell>
+                  {(page - 1) * limit + index + 1}
+                </CTableDataCell>
+                <CTableDataCell>{item.robot_no}</CTableDataCell>
+                <CTableDataCell>{item.command}</CTableDataCell>
+                <CTableDataCell>{item.deveui}</CTableDataCell>
+                <CTableDataCell>{item.site_id}</CTableDataCell>
+                <CTableDataCell>{item.last_activity?.name}</CTableDataCell>
+                <CTableDataCell>{item.last_activity?.email}</CTableDataCell>
+                <CTableDataCell>
+                  {new Date(item.createdAt).toLocaleString("en-IN", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </CTableDataCell>
+              </CTableRow>
+            ))
           ) : (
-            <>
-              <CTable striped hover responsive bordered>
-                <CTableHead color="dark">
-                  <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Robot No</CTableHeaderCell>
-                    <CTableHeaderCell>Command</CTableHeaderCell>
-                    <CTableHeaderCell>DevEUI</CTableHeaderCell>
-                    <CTableHeaderCell>Site ID</CTableHeaderCell>
-                    <CTableHeaderCell>Sent By</CTableHeaderCell>
-                    <CTableHeaderCell>Email</CTableHeaderCell>
-                    <CTableHeaderCell>Timestamp</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {filtered.map((item, index) => (
-                    <CTableRow key={item._id}>
-                      <CTableDataCell>
-                        {(page - 1) * limit + index + 1}
-                      </CTableDataCell>
-                      <CTableDataCell>{item.robot_no}</CTableDataCell>
-                      <CTableDataCell>{item.command}</CTableDataCell>
-                      <CTableDataCell>{item.deveui}</CTableDataCell>
-                      <CTableDataCell>{item.site_id}</CTableDataCell>
-                      <CTableDataCell>
-                        {item.last_activity?.name}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {item.last_activity?.email}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {new Date(item.createdAt).toLocaleString("en-GB")}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-
-              <PaginateInput
-                page={page}
-                totalPages={totalPages}
-                hasPrevPage={page > 1}
-                hasNextPage={page < totalPages}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-                limit={limit}
-                handleLimitChange={handleLimitChange}
-              />
-            </>
+            <CTableRow>
+              <CTableDataCell colSpan="8" className="text-center">
+                No robot activity found
+              </CTableDataCell>
+            </CTableRow>
           )}
-        </CCardBody>
-      </CCard>
+        </CTableBody>
+      </CTable>
+
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit}
+      />
     </div>
   );
 };
