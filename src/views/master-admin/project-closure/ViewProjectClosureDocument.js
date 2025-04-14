@@ -439,7 +439,7 @@ const ViewProjectClosureDocument = () => {
                 <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
                 <Link
                   target="blank"
-                  to={`https://dashboard-backend.taypro.in/${serviceItemData.commissioning_document}`}
+                  to={`https://dashboard-backend.taypro.in${serviceItemData.commissioning_document}`}
                 >
                   Click&nbsp;&nbsp;Here
                 </Link>
