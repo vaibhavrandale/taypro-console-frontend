@@ -171,9 +171,9 @@ const LoraConfiguration = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_LORACONFIG_FAIL",
-          payload: "Failed to fetch loraconfigurations",
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error("Failed to fetch loraconfigurations");
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
 
@@ -191,9 +191,9 @@ const LoraConfiguration = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
-          payload: "Failed to fetch sites",
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error("Failed to fetch sites");
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
 

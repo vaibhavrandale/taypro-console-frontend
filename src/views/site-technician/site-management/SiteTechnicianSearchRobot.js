@@ -72,9 +72,9 @@ const SiteTechnicianSearchRobot = () => {
         console.log(error.response.statusText);
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response.statusText,
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error(error.response.statusText);
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
 
