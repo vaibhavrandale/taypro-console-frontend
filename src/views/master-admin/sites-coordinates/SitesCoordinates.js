@@ -1,0 +1,409 @@
+import React, { useEffect, useReducer, useState } from "react";
+import {
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
+  CFormInput,
+  CRow,
+  CCol,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+} from "@coreui/react";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import LastActivity from "../../../components/LastActivity";
+import PaginateInput from "../../../components/PaginateInput";
+import * as XLSX from "xlsx"; // Import xlsx for Excel export
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_COORDINATES_REQUEST":
+      return { ...state, loadingCoordinates: true, error: "" };
+    case "FETCH_COORDINATES_SUCCESS":
+      return {
+        ...state,
+        loadingCoordinates: false,
+        coordinates: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+      };
+    case "FETCH_COORDINATES_FAIL":
+      return { ...state, loadingCoordinates: false, error: action.payload };
+    case "DELETE_REQUEST":
+      return { ...state, loadingDelete: true, successDelete: false };
+
+    case "DELETE_SUCCESS":
+      return { ...state, loadingDelete: false, successDelete: true };
+
+    case "DELETE_FAIL":
+      return { ...state, loadingDelete: false, successDelete: false };
+
+    case "DELETE_RESET":
+      return { ...state, successDelete: false };
+    default:
+      return state;
+  }
+};
+
+const SitesCoordinates = () => {
+  const [
+    {
+      error,
+      coordinates,
+      loadingCoordinates,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      successDelete,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    coordinates: [],
+    loading: true,
+    loadingCoordinates: true,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+  const authtoken = useSelector((state) => state.authtoken);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedInventory, setSelectedInventory] = useState(null);
+
+  const [pageInput, setPageInput] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const [formData, setFormData] = useState({
+    item_name: "",
+    item_code: "",
+    item_id: "",
+    site_id: "",
+    quantity: "",
+    threshold: "",
+  });
+
+  useEffect(() => {
+    let pagination = {
+      pg: page,
+      limit: limit,
+    };
+    const fetchInventories = async () => {
+      dispatch({ type: "FETCH_COORDINATES_REQUEST" });
+      try {
+        const result = await axios.post(
+          `/api/v1/sites-coordinates/get-all`,
+          pagination,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        let total = Math.ceil(
+          Number(result.data.total) / Number(result.data.limit)
+        );
+        let next = result.data.hasNextPage;
+        let prev = result.data.hasPrevPage;
+
+        dispatch({
+          type: "FETCH_COORDINATES_SUCCESS",
+          payload: {
+            data: result.data.data,
+            totalPages: total,
+            hasNextPage: next,
+            hasPrevPage: prev,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_COORDINATES_FAIL",
+          payload: "Failed to fetch Sites Coordinates",
+        });
+        toast.error("Failed to fetch Sites Coordinates");
+      }
+    };
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      fetchInventories();
+    }
+  }, [successDelete, authtoken, limit, page]);
+
+  const filteredCoordinates = coordinates.filter(
+    (coordinates) =>
+      coordinates.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coordinates.longitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coordinates.latitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coordinates.radius.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Open modal and load coordinates data
+  const openModal = (coordinates) => {
+    setSelectedInventory(coordinates);
+    setFormData(coordinates);
+    setModalVisible(true);
+  };
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  // // console.item(uniqueSitenames);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
+
+  const deleteInventory = async (coordinates) => {
+    if (coordinates.is_delete) {
+      toast.error("This Site Coordinate Data is already deleted.");
+      return;
+    }
+    if (
+      window.confirm(
+        `Are you sure you want to delete Site Coordinate Data of - ${coordinates.site_id}`
+      )
+    ) {
+      try {
+        await axios.delete(`/api/v1/sites-coordinates/${coordinates._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        toast.success(
+          `Site Coordinate Data of - ${coordinates.site_id} deleted successfully`
+        );
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (err) {
+        toast.error(err.response ? err.response.data.message : err.message);
+        dispatch({ type: "DELETE_FAIL" });
+      }
+    }
+  };
+
+  const exportToExcel = () => {
+    if (filteredCoordinates.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredCoordinates.map((item, index) => ({
+        "Sr No.": index + 1,
+        "Site Id": item.site_id,
+        Longitude: item.longitude,
+        Latitude: item.latitude,
+        "Radius(cm)": item.radius,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sites Coordinates");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Sites Coordinates.xlsx");
+  };
+
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
+  return (
+    <div className="p-2">
+      <h2 className="text-center mt-4">Site Coordinates List</h2>
+      <div className="d-flex justify-content-end mb-3">
+        <Link
+          className="btn btn-sm btn-secondary m-1"
+          to={`/${adminroute}/sites-coordinates/add-sitescoordinates`}
+        >
+          Add
+        </Link>
+        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+          Export
+        </Link>
+      </div>
+      {/* Search Input */}
+      <CRow className="justify-content-end mb-3">
+        <CCol md={4}>
+          <CFormInput
+            type="text"
+            placeholder="Search by Site Id, Longitude, Latitude, or Site radius..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </CCol>
+      </CRow>
+
+      {/* Coordinates Table */}
+      <CTable bordered hover responsive className="text-center shadow-sm">
+        <CTableHead color="secondary">
+          <CTableRow>
+            <CTableHeaderCell>#</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Site Id
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Longitude
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Latitude
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Radius(cm)
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Action
+            </CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
+        <CTableBody>
+          {loadingCoordinates ? (
+            <CTableRow>
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : error ? (
+            <CTableRow>
+              {" "}
+              <CTableDataCell colSpan="9" className="text-center fw-bold">
+                {error}
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredCoordinates.length > 0 ? (
+            filteredCoordinates.map((coordinates, index) => (
+              <CTableRow
+                key={index}
+                className={coordinates.is_delete ? "table-danger" : ""}
+              >
+                <CTableDataCell>{index + 1}</CTableDataCell>
+                <CTableDataCell>{coordinates.site_id}</CTableDataCell>
+                <CTableDataCell>{coordinates.longitude}</CTableDataCell>
+                <CTableDataCell>{coordinates.latitude}</CTableDataCell>
+                <CTableDataCell>{coordinates.radius}</CTableDataCell>
+                <CTableDataCell>
+                  <Link
+                    className="btn btn-sm btn-secondary m-1"
+                    color="secondary"
+                    size="sm"
+                    onClick={() => openModal(coordinates)}
+                  >
+                    View
+                  </Link>
+
+                  <Link
+                    className="btn btn-sm btn-warning m-1"
+                    to={`/${adminroute}/sites-coordinates/update-sitescoordinates/${coordinates._id}`}
+                  >
+                    Update
+                  </Link>
+                  <Link
+                    color="danger"
+                    size="sm"
+                    className=" btn btn-sm btn-danger m-1 text-white"
+                    onClick={() => deleteInventory(coordinates)}
+                  >
+                    Delete
+                  </Link>
+                </CTableDataCell>
+              </CTableRow>
+            ))
+          ) : (
+            <CTableRow>
+              <CTableDataCell colSpan="7" className="text-center fw-bold">
+                No matching Site Coordinates found.
+              </CTableDataCell>
+            </CTableRow>
+          )}
+        </CTableBody>
+      </CTable>
+      <PaginateInput
+        page={page}
+        totalPages={totalPages}
+        hasPrevPage={hasPrevPage}
+        hasNextPage={hasNextPage}
+        pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
+        limit={limit}
+        handleLimitChange={setLimit} // New prop
+      />
+      {/* view Modal */}
+      <CModal
+        size="xl"
+        scrollable
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      >
+        <CModalHeader>
+          <CModalTitle>
+            Site Coordinate Data :&nbsp;
+            <span className="badge bg-success">{formData.site_id}</span>{" "}
+          </CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {selectedInventory && (
+            <>
+              <CTable bordered responsive>
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>Field</CTableHeaderCell>
+                    <CTableHeaderCell>Value</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {Object.entries(formData)
+                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
+                    .map(([key, value]) => (
+                      <CTableRow key={key} className="align-middle">
+                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                          {key.replace(/_/g, " ")}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <span className="text-dark fw-medium">
+                            {String(value)}
+                          </span>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
+                </CTableBody>
+              </CTable>
+
+              {formData.last_activity && (
+                <LastActivity lastactivity={formData.last_activity} />
+              )}
+            </>
+          )}
+        </CModalBody>
+      </CModal>
+    </div>
+  );
+};
+
+export default SitesCoordinates;
