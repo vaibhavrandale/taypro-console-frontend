@@ -208,19 +208,18 @@ const SitesCoordinates = () => {
     // Convert JSON to sheet
     const worksheet = XLSX.utils.json_to_sheet(
       filteredCoordinates.map((item, index) => ({
-        "#": index + 1,
-        "Item Name": item.item_name,
-        "Item Code": item.item_code,
+        "Sr No.": index + 1,
         "Site Id": item.site_id,
-        Quantity: item.quantity,
-        Threshold: item.threshold,
+        Longitude: item.longitude,
+        Latitude: item.latitude,
+        "Radius(cm)": item.radius,
       }))
     );
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Inventories");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sites Coordinates");
 
     // Trigger download
-    XLSX.writeFile(workbook, "Service Inventory.xlsx");
+    XLSX.writeFile(workbook, "Sites Coordinates.xlsx");
   };
 
   const userInfo = useSelector((state) => state.userInfo);
