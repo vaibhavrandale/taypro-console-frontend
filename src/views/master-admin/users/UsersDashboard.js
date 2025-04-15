@@ -42,6 +42,7 @@ import { cilTrash, cilX } from "@coreui/icons";
 import { Link } from "react-router-dom";
 // import InventoryOverview from "../inventories/InventoryOverview";
 // import logo from '../../../assets/brand/logoforwhitebg.png';
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -232,6 +233,8 @@ const UsersDashboard = () => {
 
   const [selectedSite, setSelectedSite] = useState("");
   // const [loading, setLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
 
   useEffect(() => {
     // setLoading(true);
@@ -313,7 +316,12 @@ const UsersDashboard = () => {
     setSelectedUser(user);
     setassignedSitesModalVisible(true);
   };
+  const openViewModal = (user) => {
+    setSelectedItem(user);
+    console.log(user);
 
+    setViewModalVisible(true);
+  };
   // Open Add User Modal
   const openAddModal = () => {
     setFormData({
@@ -657,15 +665,19 @@ const UsersDashboard = () => {
               >
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>
-                  <img
-                    src={user.profile_image}
-                    alt="Profile"
-                    className="rounded-circle"
-                    width="50"
-                    height="50"
-                    style={{ objectFit: "cover" }}
-                  />
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={user.profile_image}
+                      alt="Profile"
+                      className="rounded-circle"
+                      width="50"
+                      height="50"
+                      style={{ objectFit: "cover", cursor: "pointer" }}
+                      onClick={() => openViewModal(user)} // Open modal when image is clicked
+                    />
+                  </div>
                 </CTableDataCell>
+
                 <CTableDataCell>{user.username}</CTableDataCell>
                 <CTableDataCell>{user.email}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "120px" }}>
@@ -680,19 +692,27 @@ const UsersDashboard = () => {
                   <CButton
                     color="secondary"
                     size="sm"
-                    className="m-1"
+                    className=" m-1"
                     onClick={() => openAssignedSitesModal(user)}
                   >
-                    view Assigned Sites
+                    View Assigned Sites
                   </CButton>
                   <CButton
-                    color="primary"
+                    color="success"
                     size="sm"
-                    className="m-1"
+                    className=" m-1"
                     onClick={() => openModal(user)}
                   >
                     Update
                   </CButton>
+                  {/* <CButton
+                    color="primary"
+                    size="sm"
+                    className="btn-sm m-1"
+                    onClick={() => openViewModal(user)}
+                  >
+                    View
+                  </CButton> */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -1050,6 +1070,98 @@ const UsersDashboard = () => {
       </CModal>
       {/*---------------------- -Update User Modal  end-----------------------------*/}
 
+      {/*---------------------- -View User Modal  end-----------------------------*/}
+
+      <CModal
+        scrollable
+        visible={viewModalVisible}
+        size="xl"
+        onClose={() => setViewModalVisible(false)}
+      >
+        {selectedItem && (
+          <>
+            <CModalHeader>
+              <CModalTitle>
+                View User Details:{" "}
+                <CBadge className="badge bg-primary">
+                  {selectedItem.username}
+                </CBadge>
+              </CModalTitle>
+            </CModalHeader>
+            <CModalBody>
+              <CTable bordered hover responsive>
+                <CTableBody>
+                  <CTableRow>
+                    <CTableHeaderCell>Username</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.username}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Email</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.email}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Phone</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.phone}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Role</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.role}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Department</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.department}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Designation</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedItem.designation || "N/A"}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Location</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedItem.location || "N/A"}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Type</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.type}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Employee ID</CTableHeaderCell>
+                    <CTableDataCell>
+                      {selectedItem.employee_id || "N/A"}
+                    </CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Profile Image</CTableHeaderCell>
+                    <CTableDataCell>
+                      <img
+                        src={selectedItem.profile_image}
+                        alt="Profile"
+                        width="100"
+                        height="100"
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
+                      />
+                    </CTableDataCell>
+                  </CTableRow>
+                </CTableBody>
+              </CTable>
+
+              <LastActivity lastactivity={selectedItem.last_activity} />
+            </CModalBody>
+            <CModalFooter>
+              <CButton
+                color="secondary"
+                onClick={() => setViewModalVisible(false)}
+              >
+                Close
+              </CButton>
+            </CModalFooter>
+          </>
+        )}
+      </CModal>
+
       {/*---------------- Assigned Sites modal Modal start ------------------*/}
       <CModal
         size="lg"
@@ -1083,7 +1195,9 @@ const UsersDashboard = () => {
                       <CTableHeaderCell>#</CTableHeaderCell>
                       <CTableHeaderCell>Site ID</CTableHeaderCell>
                       <CTableHeaderCell>Site Name</CTableHeaderCell>
-                      <CTableHeaderCell>Action</CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: "300px" }}>
+                        Action
+                      </CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>

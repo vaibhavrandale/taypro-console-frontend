@@ -30,7 +30,7 @@ import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
 import InventoryOverview from "./InventoryOverview";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
-
+import image from "./tool.png";
 const InventoryTab = () => {
   return (
     <div>
@@ -739,14 +739,25 @@ const ServiceItems = () => {
                 <CTableDataCell>{serviceItem.item_name}</CTableDataCell>
                 <CTableDataCell>{serviceItem.item_code}</CTableDataCell>
                 <CTableDataCell>
-                  <CImage
-                    fluid
-                    src={serviceItem.item_image}
-                    alt="Service item"
-                    className="img-thumbnail border-0"
-                    width="100"
-                    height="50"
-                  />
+                  {serviceItem.item_image ? (
+                    <CImage
+                      fluid
+                      src={serviceItem.item_image}
+                      alt="Service item"
+                      className="img-thumbnail border-0"
+                      width="100"
+                      height="50"
+                    />
+                  ) : (
+                    <CImage
+                      fluid
+                      src={image}
+                      alt="Service item"
+                      className="img-thumbnail border-0"
+                      width="100"
+                      height="50"
+                    />
+                  )}
                 </CTableDataCell>
                 <CTableDataCell>{serviceItem.item_description}</CTableDataCell>
                 <CTableDataCell>
