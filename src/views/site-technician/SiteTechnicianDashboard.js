@@ -131,7 +131,7 @@ const SiteTechnicianDashboard = () => {
   const fetchCoordinates = async (selectedId) => {
     try {
       const res = await axios.post(
-        "/api/v1/sites-coordinates/site/get-by-siteId",
+        "/api/v1/sites-coordinates/get-by-siteId",
         { site_id: selectedId },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
