@@ -345,7 +345,7 @@ const routes = [
   {
     path: "/user-dashboard",
     name: "User Links",
-    element: UserBasedLinkDashboard,
+    element: <UserBasedLinkDashboard />,
   },
 
   // new features
