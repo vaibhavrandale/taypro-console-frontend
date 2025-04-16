@@ -186,7 +186,7 @@ const AllSiteCleaningLog = () => {
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
                     // to={`block-management/${site.site_id}`}
-                    to={`/${adminroute}/all-site-cleaning-log/${site.site_id}`}
+                    to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
                   >
                     Manage
                   </Link>

@@ -12,6 +12,7 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
+  CBadge,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -256,22 +257,40 @@ const Timers = () => {
                       <CTableDataCell>
                         {block.total_robots_in_block}
                       </CTableDataCell>
-                      <CTableDataCell>{block.robots[0]?.timer1}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer1 === "25:00:00" ? (
+                          <CBadge color="danger">Disabled</CBadge>
+                        ) : (
+                          block.robots[0]?.timer1
+                        )}
+                      </CTableDataCell>
                       <CTableDataCell>
                         {block.robots[0]?.timer1_date}
                       </CTableDataCell>
-                      <CTableDataCell>{block.robots[0]?.timer2}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer2 === "25:00:00" ? (
+                          <CBadge color="danger">Disabled</CBadge>
+                        ) : (
+                          block.robots[0]?.timer2
+                        )}
+                      </CTableDataCell>
                       <CTableDataCell>
                         {block.robots[0]?.timer2_date}
                       </CTableDataCell>
-                      <CTableDataCell>{block.robots[0]?.timer3}</CTableDataCell>
+                      <CTableDataCell>
+                        {block.robots[0]?.timer3 === "25:00:00" ? (
+                          <CBadge color="danger">Disabled</CBadge>
+                        ) : (
+                          block.robots[0]?.timer3
+                        )}
+                      </CTableDataCell>
                       <CTableDataCell>
                         {block.robots[0]?.timer3_date}
                       </CTableDataCell>
                       <CTableDataCell>
                         <Link
                           className="btn btn-sm btn-warning m-1"
-                          to={`/${adminroute}/${block.block}/${site.site_id}`}
+                          to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
                         >
                           Update
                         </Link>
