@@ -32,6 +32,7 @@ import {
   cilListRich,
   cilLan,
   cilClock,
+  cilLocationPin,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -227,7 +228,7 @@ const _nav = [
         to: "/master-admin/sites-coordinates",
         icon: (
           <CIcon
-            icon={cilListRich}
+            icon={cilLocationPin}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
