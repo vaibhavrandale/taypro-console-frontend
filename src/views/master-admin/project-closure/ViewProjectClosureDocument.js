@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "./projectDoc.css";
 import header from "../../../assets/brand/logoforwhitebg.png";
+// eslint-disable-next-line
 import html2pdf from "html2pdf.js";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 

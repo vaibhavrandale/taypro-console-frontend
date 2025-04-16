@@ -1,12 +1,13 @@
 import React, { Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { CSpinner } from "@coreui/react";
 
 // routes config
 import routes from "../routes";
-import Dashboard from "../views/dashboard/Dashboard";
 
 const AppContent = () => {
+  const Page404 = React.lazy(() => import("../views/pages/page404/Page404"));
+
   return (
     <div className="mx-3 my-2">
       <Suspense fallback={<CSpinner color="primary" />}>
@@ -19,12 +20,21 @@ const AppContent = () => {
                   path={route.path}
                   exact={route.exact}
                   name={route.name}
-                  element={<route.element />}
+                  element={route.element} // ✅ FIXED
                 />
               )
             );
           })}
-          {/* <Route path="/" element={<Dashboard />} /> */}
+
+          {/* Catch-all route for 404 */}
+          <Route
+            path="*"
+            element={
+              <React.Suspense fallback={<CSpinner />}>
+                <Page404 />
+              </React.Suspense>
+            }
+          />
         </Routes>
       </Suspense>
     </div>

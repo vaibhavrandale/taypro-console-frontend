@@ -51,9 +51,21 @@ import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddD
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
+// import ServiceAdminRoute from "./UserRoutes";
+import {
+  ServiceAdminRoute,
+  ProjectAdminRoute,
+  MasterAdminRoute,
+  SiteTechnicianRoute,
+  ClientAdminRoute,
+  ClientSiteTechnicianRoute,
+} from "./UserRoutes";
+
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
+const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
+
 const UserBasedLinkDashboard = React.lazy(() =>
   import("./views/dashboard/UserBasedLinkDashboard")
 );
@@ -340,346 +352,573 @@ const routes = [
   { path: "/apps", name: "App", element: App },
 
   // ------------------------master admin---------------------------------
+
   {
     path: "/master-admin/dashboard",
     name: "Master Admin Dashboard",
-    element: MasterAdminDashboard,
+    element: (
+      <MasterAdminRoute>
+        <MasterAdminDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/all-site-data",
     name: "Taypro All Site Data",
-    element: TayproDashboard,
+    element: (
+      <MasterAdminRoute>
+        <TayproDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management",
     name: "Site Management",
-    element: SiteManagement,
+    element: (
+      <MasterAdminRoute>
+        <SiteManagement />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/block-management/:site_id",
     name: "Block Management",
-    element: BlockManagement,
+    element: (
+      <MasterAdminRoute>
+        <BlockManagement />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: RobotOperating,
+    element: (
+      <MasterAdminRoute>
+        <RobotOperating />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/robot-activity",
     name: "Robot Activity",
-    element: RobotActivity,
+    element: (
+      <MasterAdminRoute>
+        <RobotActivity />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/search-robot",
     name: "Search Robot",
-    element: SearchRobot,
+    element: (
+      <MasterAdminRoute>
+        <SearchRobot />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
-    element: DebugLog,
+    element: (
+      <MasterAdminRoute>
+        <DebugLog />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
     name: "Cleaning Log",
-    element: CleaningLog,
+    element: (
+      <MasterAdminRoute>
+        <CleaningLog />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/add-downlink",
     name: "Add Downlink",
-    element: NewDownlink,
+    element: (
+      <MasterAdminRoute>
+        <NewDownlink />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/update-downlink/:id",
     name: "Update Downlink",
-    element: UpdateDownlink,
+    element: (
+      <MasterAdminRoute>
+        <UpdateDownlink />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/view-downlink/:id",
     name: "View Downlink",
-    element: ViewDownlink,
+    element: (
+      <MasterAdminRoute>
+        <ViewDownlink />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/lora-configuration",
     name: "Lora Configuration",
-    element: LoraConfiguration,
+    element: (
+      <MasterAdminRoute>
+        <LoraConfiguration />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/replace-lora",
     name: "Replace Lora",
-    element: ReplaceLora,
+    element: (
+      <MasterAdminRoute>
+        <ReplaceLora />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/replace-lora/in-active-robots",
     name: "In Active Robots",
-    element: InActiveRobots,
+    element: (
+      <MasterAdminRoute>
+        <InActiveRobots />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/replace-lora/active-robots",
     name: "Active Robots",
-    element: ActiveRobots,
+    element: (
+      <MasterAdminRoute>
+        <ActiveRobots />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/add-robot/add-robot-using-lorano",
     name: "Add Robot",
-    element: AddRobotUsingLoraNo,
+    element: (
+      <MasterAdminRoute>
+        <AddRobotUsingLoraNo />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/clients-dashboard",
     name: "Clients",
-    element: ClientsDasboard,
+    element: (
+      <MasterAdminRoute>
+        <ClientsDasboard />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/clients-data-dashboard/edit-client/:id",
     name: "Edit Client",
-    element: EditClient,
+    element: (
+      <MasterAdminRoute>
+        <EditClient />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/clients-dashboard/clients-data/:id",
     name: "Client Assigned Sites",
-    element: ClientAssignedSites,
+    element: (
+      <MasterAdminRoute>
+        <ClientAssignedSites />
+      </MasterAdminRoute>
+    ),
   },
-
-  // {
-  //   path: "/master-admin/clients",
-  //   name: "Clients data",
-  //   element: Clients,
-  // },
-
-  // {
-  //   path: "/master-admin/clients/clients-data/:client_id",
-  //   name: "Client data",
-  //   element: ClientsData,
-  // },
   {
     path: "/master-admin/robots",
     name: "All Robots",
-    element: Robots,
+    element: (
+      <MasterAdminRoute>
+        <Robots />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/activate-robots",
     name: "All Inactivate Robots",
-    element: ActivateRobots,
+    element: (
+      <MasterAdminRoute>
+        <ActivateRobots />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/robots/:id",
     name: "Update Robot",
-    element: UpdateRobots,
+    element: (
+      <MasterAdminRoute>
+        <UpdateRobots />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/robots/shift-block-wise",
     name: "Shift Block Wise Robot",
-    element: ShiftBlockwiseRobots,
+    element: (
+      <MasterAdminRoute>
+        <ShiftBlockwiseRobots />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/inventories",
     name: "Inventories",
-    element: Inventories,
+    element: (
+      <MasterAdminRoute>
+        <Inventories />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/inventories/update-inventory/:id",
     name: "Update Inventory",
-    element: UpdateInventory,
+    element: (
+      <MasterAdminRoute>
+        <UpdateInventory />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/inventories/add-inventory",
     name: "Add Inventory",
-    element: AddInventory,
+    element: (
+      <MasterAdminRoute>
+        <AddInventory />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/inventories/add-service-item",
     name: "Add Service Item",
-    element: AddServiceItem,
+    element: (
+      <MasterAdminRoute>
+        <AddServiceItem />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/inventories/update-service-item/:id",
     name: "Update Service Item",
-    element: UpdateServiceItem,
+    element: (
+      <MasterAdminRoute>
+        <UpdateServiceItem />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/timers",
     name: "Update Timers",
-    element: Timers,
+    element: (
+      <MasterAdminRoute>
+        <Timers />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/timers/:block/:site_id",
     name: "Update Robot Timer",
-    element: UpdateTimer,
+    element: (
+      <MasterAdminRoute>
+        <UpdateTimer />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/project-handover",
     name: "Project Handover",
-    element: ProjectClosureForm,
+    element: (
+      <MasterAdminRoute>
+        <ProjectClosureForm />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/project-handover/add-project-handover",
     name: "Add Project Handover",
-    element: AddProjectClosureForm,
+    element: (
+      <MasterAdminRoute>
+        <AddProjectClosureForm />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/project-handover/update/:id",
     name: "Update Project Handover",
-    element: UpdateProjectClosureForm,
+    element: (
+      <MasterAdminRoute>
+        <UpdateProjectClosureForm />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/project-handover/view/:id",
     name: "View Project Handover Document",
-    element: ViewProjectClosureDocument,
+    element: (
+      <MasterAdminRoute>
+        <ViewProjectClosureDocument />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/service-tickets",
     name: "Service Tickets",
-    element: ServiceTicketDashboard,
+    element: (
+      <MasterAdminRoute>
+        <ServiceTicketDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/service-tickets/update-service-ticket/:id",
     name: "Update Service Ticket",
-    element: UpdateServiceTicket,
+    element: (
+      <MasterAdminRoute>
+        <UpdateServiceTicket />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/service-tickets/resolve-service-ticket/:id",
     name: "Resolve Service Ticket",
-    element: ResolveServiceTicket,
+    element: (
+      <MasterAdminRoute>
+        <ResolveServiceTicket />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/service-tickets/create-new-ticket",
     name: "Create new Tickets",
-    element: CreateNewServiceTicket,
+    element: (
+      <MasterAdminRoute>
+        <CreateNewServiceTicket />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/internal-tickets",
     name: "Internal Tickets",
-    element: InternalTicketsDashboard,
+    element: (
+      <MasterAdminRoute>
+        <InternalTicketsDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/internal-tickets/create-new-internal-ticket",
     name: "Create New Internal Tickets",
-    element: CreateNewInternalTicket,
+    element: (
+      <MasterAdminRoute>
+        <CreateNewInternalTicket />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/internal-tickets/update-internal-ticket/:id",
     name: "Update Internal Tickets",
-    element: UpdateInternalTicket,
+    element: (
+      <MasterAdminRoute>
+        <UpdateInternalTicket />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/users",
-    name: "All  Internal Users",
-    element: UsersDashboard,
+    name: "All Internal Users",
+    element: (
+      <MasterAdminRoute>
+        <UsersDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/external-users",
-    name: "All  External Users",
-    element: ExternalUsersDashboard,
+    name: "All External Users",
+    element: (
+      <MasterAdminRoute>
+        <ExternalUsersDashboard />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/notifications",
     name: "Master Admin Notifications",
-    element: Notifications,
+    element: (
+      <MasterAdminRoute>
+        <Notifications />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/all-site-cleaning-log",
     name: "Master Admin All Site Cleaning Log",
-    element: AllSiteCleaningLog,
+    element: (
+      <MasterAdminRoute>
+        <AllSiteCleaningLog />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
-    name: "Master Admin  Sitewise Cleaning Log",
-    element: SitewaiseLog,
+    name: "Master Admin Sitewise Cleaning Log",
+    element: (
+      <MasterAdminRoute>
+        <SitewaiseLog />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/all-site-gateways",
-    name: "Master Admin  All Site Gateways",
-    element: Gateways,
+    name: "Master Admin All Site Gateways",
+    element: (
+      <MasterAdminRoute>
+        <Gateways />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/all-site-gateways/update-gateway/:id",
-    name: "Master Admin  Update Gateway",
-    element: UpdateGateway,
+    name: "Master Admin Update Gateway",
+    element: (
+      <MasterAdminRoute>
+        <UpdateGateway />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/all-site-gateways/create-new-gateway",
-    name: " Master Admin Create New Gateway",
-    element: CreateNewGateways,
+    name: "Master Admin Create New Gateway",
+    element: (
+      <MasterAdminRoute>
+        <CreateNewGateways />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/all-site-gateways/assign-gateway/:id",
     name: "Assign Gateway",
-    element: AssignGateway,
+    element: (
+      <MasterAdminRoute>
+        <AssignGateway />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/all-site-dpr",
-    name: "Master Admin  All Site Dpr",
-    element: AllSiteDpr,
+    name: "Master Admin All Site Dpr",
+    element: (
+      <MasterAdminRoute>
+        <AllSiteDpr />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/all-site-dpr/add-dpr",
     name: "Add DPR",
-    element: AddDpr,
+    element: (
+      <MasterAdminRoute>
+        <AddDpr />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/update-dpr/:id",
     name: "Update DPR",
-    element: UpdateDpr,
+    element: (
+      <MasterAdminRoute>
+        <UpdateDpr />
+      </MasterAdminRoute>
+    ),
   },
-
-  //preveantive maintanance
   {
     path: "/master-admin/preventive-maintanance-dashboard",
     name: "Master Admin Preventive maintanance Dashboard",
-    element: PreventiveMaintanancrDashboard,
+    element: (
+      <MasterAdminRoute>
+        <PreventiveMaintanancrDashboard />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications",
     name: "Master Admin Preventive maintanance Notifications",
-    element: PreventiveMaintananceNotifications,
+    element: (
+      <MasterAdminRoute>
+        <PreventiveMaintananceNotifications />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/preventive-maintanance-dashboard/create-pm",
     name: "Create Preventive maintanance",
-    element: CreatePreventivemaintanance,
+    element: (
+      <MasterAdminRoute>
+        <CreatePreventivemaintanance />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/preventive-maintanance-dashboard/update/:id",
     name: "Update Preventive maintanance",
-    element: UpdatePreventivemaintanance,
+    element: (
+      <MasterAdminRoute>
+        <UpdatePreventivemaintanance />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/preventive-maintanance-dashboard/view",
     name: "View Preventive maintanance",
-    element: ViewPreventivemaintananceQuaterly,
+    element: (
+      <MasterAdminRoute>
+        <ViewPreventivemaintananceQuaterly />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/technician-attendance",
     name: "Technician Attendance",
-    element: TechnicianAttendanceDashboard,
+    element: (
+      <MasterAdminRoute>
+        <TechnicianAttendanceDashboard />
+      </MasterAdminRoute>
+    ),
   },
-
   {
     path: "/master-admin/sites-coordinates",
     name: "Site Coordinates",
-    element: SiteCoordinates,
+    element: (
+      <MasterAdminRoute>
+        <SiteCoordinates />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/sites-coordinates/update-sitescoordinates/:id",
     name: "Update Site Coordinates",
-    element: UpdateSiteCoordinates,
+    element: (
+      <MasterAdminRoute>
+        <UpdateSiteCoordinates />
+      </MasterAdminRoute>
+    ),
   },
   {
     path: "/master-admin/sites-coordinates/add-sitescoordinates",
     name: "Add Site Coordinates",
-    element: AddSiteCoordinates,
+    element: (
+      <MasterAdminRoute>
+        <AddSiteCoordinates />
+      </MasterAdminRoute>
+    ),
   },
 
   //preveantive maintanance
@@ -690,274 +929,409 @@ const routes = [
   {
     path: "/project-admin/all-site-data",
     name: "Taypro All Site Data",
-    element: TayproDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <TayproDashboard />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/dashboard",
     name: "Project Admin Dashboard",
-    element: ProjectAdminDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <ProjectAdminDashboard />
+      </ProjectAdminRoute>
+    ),
   },
-
-  // {
-  //   path: "/project-admin/project-handover",
-  //   name: "Project Handover",
-  //   element: ProjectHandoverDashboard,
-  // },
-
-  // {
-  //   path: "/project-admin/project-handover/add-project-handover",
-  //   name: "Add Project Handover",
-  //   element: AddProjectHandover,
-  // },
-
-  // {
-  //   path: "/project-admin/project-handover/view/:id",
-  //   name: "Project Handover",
-  //   element: ViewProjectHandoverDocument,
-  // },
-  // {
-  //   path: "/project-admin/project-handover/update/:id",
-  //   name: "Update Project Handover",
-  //   element: UpdateProjectClosureForm,
-  // },
-
   {
     path: "/project-admin/project-handover",
     name: "Project Handover",
-    element: ProjectClosureForm,
+    element: (
+      <ProjectAdminRoute>
+        <ProjectClosureForm />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/project-handover/add-project-handover",
     name: "Add Project Handover",
-    element: AddProjectClosureForm,
+    element: (
+      <ProjectAdminRoute>
+        <AddProjectClosureForm />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/project-handover/update/:id",
     name: "Update Project Handover",
-    element: UpdateProjectClosureForm,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateProjectClosureForm />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/project-handover/view/:id",
     name: "View Project Handover Document",
-    element: ViewProjectClosureDocument,
+    element: (
+      <ProjectAdminRoute>
+        <ViewProjectClosureDocument />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/site-management",
     name: "Site Management",
-    element: SiteManagement,
+    element: (
+      <ProjectAdminRoute>
+        <SiteManagement />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/site-management/block-management/:site_id",
     name: "Block Management",
-    element: BlockManagement,
+    element: (
+      <ProjectAdminRoute>
+        <BlockManagement />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: RobotOperating,
+    element: (
+      <ProjectAdminRoute>
+        <RobotOperating />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/search-robot",
     name: "Search Robot",
-    element: SearchRobot,
+    element: (
+      <ProjectAdminRoute>
+        <SearchRobot />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
-    element: DebugLog,
+    element: (
+      <ProjectAdminRoute>
+        <DebugLog />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
     name: "Cleaning Log",
-    element: CleaningLog,
+    element: (
+      <ProjectAdminRoute>
+        <CleaningLog />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/clients-dashboard",
     name: "Clients",
-    element: ClientsDasboard,
+    element: (
+      <ProjectAdminRoute>
+        <ClientsDasboard />
+      </ProjectAdminRoute>
+    ),
   },
-
-  //preveantive maintanance
   {
     path: "/project-admin/preventive-maintanance-dashboard",
-    name: "Project Admin Preventive maintanance Dashboard",
-    element: PreventiveMaintanancrDashboard,
+    name: "Project Admin Preventive Maintenance Dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <PreventiveMaintanancrDashboard />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications",
-    name: "Project Admin Preventive maintanance Notifications",
-    element: PreventiveMaintananceNotifications,
+    name: "Project Admin Preventive Maintenance Notifications",
+    element: (
+      <ProjectAdminRoute>
+        <PreventiveMaintananceNotifications />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/preventive-maintanance-dashboard/create-pm",
-    name: "Create Preventive maintanance",
-    element: CreatePreventivemaintanance,
+    name: "Create Preventive Maintenance",
+    element: (
+      <ProjectAdminRoute>
+        <CreatePreventivemaintanance />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/preventive-maintanance-dashboard/update/:id",
-    name: "Update Preventive maintanance",
-    element: UpdatePreventivemaintanance,
+    name: "Update Preventive Maintenance",
+    element: (
+      <ProjectAdminRoute>
+        <UpdatePreventivemaintanance />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/preventive-maintanance-dashboard/view",
-    name: "View Preventive maintanance",
-    element: ViewPreventivemaintananceQuaterly,
+    name: "View Preventive Maintenance",
+    element: (
+      <ProjectAdminRoute>
+        <ViewPreventivemaintananceQuaterly />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/clients-dashboard/clients-data/:id",
     name: "Client Assigned Sites",
-    element: ClientAssignedSites,
+    element: (
+      <ProjectAdminRoute>
+        <ClientAssignedSites />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/robots/shift-block-wise",
     name: "Shift Block Wise Robot",
-    element: ShiftBlockwiseRobots,
+    element: (
+      <ProjectAdminRoute>
+        <ShiftBlockwiseRobots />
+      </ProjectAdminRoute>
+    ),
   },
-
-  //preveantive maintanance
-
   {
     path: "/project-admin/service-tickets",
     name: "Service Tickets",
-    element: ServiceTicketDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <ServiceTicketDashboard />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/service-tickets/update-service-ticket/:id",
     name: "Update Service Ticket",
-    element: UpdateServiceTicket,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateServiceTicket />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/service-tickets/resolve-service-ticket/:id",
     name: "Resolve Service Ticket",
-    element: ResolveServiceTicket,
+    element: (
+      <ProjectAdminRoute>
+        <ResolveServiceTicket />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/service-tickets/create-new-ticket",
-    name: "Create new Tickets",
-    element: CreateNewServiceTicket,
+    name: "Create New Ticket",
+    element: (
+      <ProjectAdminRoute>
+        <CreateNewServiceTicket />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/internal-tickets",
     name: "Internal Tickets",
-    element: InternalTicketsDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <InternalTicketsDashboard />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/internal-tickets/create-new-internal-ticket",
-    name: "Create New Internal Tickets",
-    element: CreateNewInternalTicket,
+    name: "Create New Internal Ticket",
+    element: (
+      <ProjectAdminRoute>
+        <CreateNewInternalTicket />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/internal-tickets/update-internal-ticket/:id",
-    name: "Update Internal Tickets",
-    element: UpdateInternalTicket,
+    name: "Update Internal Ticket",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateInternalTicket />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/all-site-cleaning-log",
     name: "Project Admin All Site Cleaning Log",
-    element: AllSiteCleaningLog,
+    element: (
+      <ProjectAdminRoute>
+        <AllSiteCleaningLog />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/all-site-cleaning-log/:site_id",
     name: "Project Admin Sitewise Cleaning Log",
-    element: SitewaiseLog,
+    element: (
+      <ProjectAdminRoute>
+        <SitewaiseLog />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/timers",
     name: "All Site Timers",
-    element: Timers,
+    element: (
+      <ProjectAdminRoute>
+        <Timers />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/timers/:block/:site_id",
     name: "Update Block Timer",
-    element: UpdateTimer,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateTimer />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/all-site-dpr",
-    name: "Project Admin All Site Dpr",
-    element: AllSiteDpr,
+    name: "Project Admin All Site DPR",
+    element: (
+      <ProjectAdminRoute>
+        <AllSiteDpr />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/all-site-dpr/add-dpr",
     name: "Add DPR",
-    element: AddDpr,
+    element: (
+      <ProjectAdminRoute>
+        <AddDpr />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/update-dpr/:id",
     name: "Update DPR",
-    element: UpdateDpr,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateDpr />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/all-site-gateways",
     name: "All Site Gateways",
-    element: Gateways,
+    element: (
+      <ProjectAdminRoute>
+        <Gateways />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/all-site-gateways/update-gateway/:id",
     name: "Update Gateway",
-    element: UpdateGateway,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateGateway />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/users",
     name: "All Internal Users",
-    element: UsersDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <UsersDashboard />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/external-users",
-    name: "All  External Users",
-    element: ExternalUsersDashboard,
+    name: "All External Users",
+    element: (
+      <ProjectAdminRoute>
+        <ExternalUsersDashboard />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/notifications",
-    name: "Master Admin Notifications",
-    element: Notifications,
+    name: "Project Admin Notifications",
+    element: (
+      <ProjectAdminRoute>
+        <Notifications />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/inventories",
     name: "Inventories",
-    element: Inventories,
+    element: (
+      <ProjectAdminRoute>
+        <Inventories />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/inventories/update-inventory/:id",
     name: "Update Inventory",
-    element: UpdateInventory,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateInventory />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/inventories/add-inventory",
     name: "Add Inventory",
-    element: AddInventory,
+    element: (
+      <ProjectAdminRoute>
+        <AddInventory />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/inventories/add-service-item",
     name: "Add Service Item",
-    element: AddServiceItem,
+    element: (
+      <ProjectAdminRoute>
+        <AddServiceItem />
+      </ProjectAdminRoute>
+    ),
   },
   {
     path: "/project-admin/inventories/update-service-item/:id",
     name: "Update Service Item",
-    element: UpdateServiceItem,
+    element: (
+      <ProjectAdminRoute>
+        <UpdateServiceItem />
+      </ProjectAdminRoute>
+    ),
   },
-
   {
     path: "/project-admin/technician-attendance",
     name: "Technician Attendance",
-    element: TechnicianAttendanceDashboard,
+    element: (
+      <ProjectAdminRoute>
+        <TechnicianAttendanceDashboard />
+      </ProjectAdminRoute>
+    ),
   },
+
   //------------------------project admin---------------------------------
 
   //------------------------service admin---------------------------------
@@ -965,419 +1339,691 @@ const routes = [
   {
     path: "/service-admin/all-site-data",
     name: "Taypro All Site Data",
-    element: TayproDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <TayproDashboard /> ,
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/dashboard",
     name: "Service Admin Dashboard",
-    element: ServiceAdminDahboard,
+    element: (
+      <ServiceAdminRoute>
+        <ServiceAdminDahboard />
+      </ServiceAdminRoute>
+    ),
   },
-
-  // {
-  //   path: "/project-admin/dashboard",
-  //   name: "Project Admin Dashboard",
-  //   element: ProjectAdminDashboard,
-  // },
-
-  // {
-  //   path: "/service-admin/project-handover",
-  //   name: "Project Handover",
-  //   element: ProjectHandoverDashboard,
-  // },
-
-  // {
-  //   path: "/service-admin/project-handover/view/:id",
-  //   name: "Project Handover",
-  //   element: ViewProjectHandoverDocument,
-  // },
 
   {
     path: "/service-admin/project-handover",
     name: "Project Handover",
-    element: ProjectClosureForm,
+    element: (
+      <ServiceAdminRoute>
+        <ProjectClosureForm />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/project-handover/add-project-handover",
     name: "Add Project Handover",
-    element: AddProjectClosureForm,
+    element: (
+      <ServiceAdminRoute>
+        <AddProjectClosureForm />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/project-handover/update/:id",
     name: "Update Project Handover",
-    element: UpdateProjectClosureForm,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateProjectClosureForm />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/project-handover/view/:id",
     name: "View Project Handover Document",
-    element: ViewProjectClosureDocument,
+    element: (
+      <ServiceAdminRoute>
+        <ViewProjectClosureDocument />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/site-management",
     name: "Site Management",
-    element: SiteManagement,
+    element: (
+      <ServiceAdminRoute>
+        <SiteManagement />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/site-management/block-management/:site_id",
     name: "Block Management",
-    element: BlockManagement,
+    element: (
+      <ServiceAdminRoute>
+        <BlockManagement />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: RobotOperating,
+    element: (
+      <ServiceAdminRoute>
+        <RobotOperating />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/search-robot",
     name: "Search Robot",
-    element: SearchRobot,
+    element: (
+      <ServiceAdminRoute>
+        <SearchRobot />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
-    element: DebugLog,
+    element: (
+      <ServiceAdminRoute>
+        <DebugLog />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
     name: "Cleaning Log",
-    element: CleaningLog,
+    element: (
+      <ServiceAdminRoute>
+        <CleaningLog />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/clients-dashboard",
     name: "Clients",
-    element: ClientsDasboard,
+    element: (
+      <ServiceAdminRoute>
+        <ClientsDasboard />
+      </ServiceAdminRoute>
+    ),
   },
 
-  //preveantive maintanance
   {
     path: "/service-admin/preventive-maintanance-dashboard",
     name: "Project Admin Preventive maintanance Dashboard",
-    element: PreventiveMaintanancrDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <PreventiveMaintanancrDashboard />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/preventive-maintanance-dashboard/preventive-maintanance-notifications",
     name: "Project Admin Preventive maintanance Notifications",
-    element: PreventiveMaintananceNotifications,
+    element: (
+      <ServiceAdminRoute>
+        <PreventiveMaintananceNotifications />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/preventive-maintanance-dashboard/create-pm",
     name: "Create Preventive maintanance",
-    element: CreatePreventivemaintanance,
+    element: (
+      <ServiceAdminRoute>
+        <CreatePreventivemaintanance />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/preventive-maintanance-dashboard/update/:id",
     name: "Update Preventive maintanance",
-    element: UpdatePreventivemaintanance,
+    element: (
+      <ServiceAdminRoute>
+        <UpdatePreventivemaintanance />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/preventive-maintanance-dashboard/view",
     name: "View Preventive maintanance",
-    element: ViewPreventivemaintananceQuaterly,
+    element: (
+      <ServiceAdminRoute>
+        <ViewPreventivemaintananceQuaterly />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/clients-data-dashboard/edit-client/:id",
     name: "Edit Client",
-    element: EditClient,
+    element: (
+      <ServiceAdminRoute>
+        <EditClient />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/clients-dashboard/clients-data/:id",
     name: "Client Assigned Sites",
-    element: ClientAssignedSites,
+    element: (
+      <ServiceAdminRoute>
+        <ClientAssignedSites />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/robots/shift-block-wise",
     name: "Shift Block Wise Robot",
-    element: ShiftBlockwiseRobots,
+    element: (
+      <ServiceAdminRoute>
+        <ShiftBlockwiseRobots />
+      </ServiceAdminRoute>
+    ),
   },
-
-  //preveantive maintanance
 
   {
     path: "/service-admin/service-tickets",
     name: "Service Tickets",
-    element: ServiceTicketDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <ServiceTicketDashboard />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/service-tickets/update-service-ticket/:id",
     name: "Update Service Ticket",
-    element: UpdateServiceTicket,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateServiceTicket />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/service-tickets/resolve-service-ticket/:id",
     name: "Resolve Service Ticket",
-    element: ResolveServiceTicket,
+    element: (
+      <ServiceAdminRoute>
+        <ResolveServiceTicket />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/service-tickets/create-new-ticket",
     name: "Create new Tickets",
-    element: CreateNewServiceTicket,
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewServiceTicket />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/internal-tickets",
     name: "Internal Tickets",
-    element: InternalTicketsDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <InternalTicketsDashboard />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/internal-tickets/create-new-internal-ticket",
     name: "Create New Internal Tickets",
-    element: CreateNewInternalTicket,
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewInternalTicket />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/internal-tickets/update-internal-ticket/:id",
     name: "Update Internal Tickets",
-    element: UpdateInternalTicket,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateInternalTicket />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/all-site-cleaning-log",
     name: "Project Admin All Site Cleaning Log",
-    element: AllSiteCleaningLog,
+    element: (
+      <ServiceAdminRoute>
+        <AllSiteCleaningLog />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/all-site-cleaning-log/:site_id",
     name: "Project Admin Sitewise Cleaning Log",
-    element: SitewaiseLog,
+    element: (
+      <ServiceAdminRoute>
+        <SitewaiseLog />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/timers",
     name: "All Site Timers",
-    element: Timers,
+    element: (
+      <ServiceAdminRoute>
+        <Timers />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/timers/:block/:site_id",
     name: "Update Block Timer",
-    element: UpdateTimer,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateTimer />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/all-site-dpr",
     name: "Project Admin All Site Dpr",
-    element: AllSiteDpr,
+    element: (
+      <ServiceAdminRoute>
+        <AllSiteDpr />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/all-site-dpr/add-dpr",
     name: "Add DPR",
-    element: AddDpr,
+    element: (
+      <ServiceAdminRoute>
+        <AddDpr />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/update-dpr/:id",
     name: "Update DPR",
-    element: UpdateDpr,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateDpr />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/all-site-gateways",
     name: "All Site Gateways",
-    element: Gateways,
+    element: (
+      <ServiceAdminRoute>
+        <Gateways />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/all-site-gateways/update-gateway/:id",
     name: "Update Gateway",
-    element: UpdateGateway,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateGateway />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/users",
     name: "All Internal Users",
-    element: UsersDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <UsersDashboard />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/external-users",
-    name: "All  External Users",
-    element: ExternalUsersDashboard,
+    name: "All External Users",
+    element: (
+      <ServiceAdminRoute>
+        <ExternalUsersDashboard />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/notifications",
     name: "Master Admin Notifications",
-    element: Notifications,
+    element: (
+      <ServiceAdminRoute>
+        <Notifications />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/inventories",
     name: "Inventories",
-    element: Inventories,
+    element: (
+      <ServiceAdminRoute>
+        <Inventories />
+      </ServiceAdminRoute>
+    ),
   },
 
   {
     path: "/service-admin/inventories/update-inventory/:id",
     name: "Update Inventory",
-    element: UpdateInventory,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateInventory />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/inventories/add-inventory",
     name: "Add Inventory",
-    element: AddInventory,
+    element: (
+      <ServiceAdminRoute>
+        <AddInventory />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/inventories/add-service-item",
     name: "Add Service Item",
-    element: AddServiceItem,
+    element: (
+      <ServiceAdminRoute>
+        <AddServiceItem />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/inventories/update-service-item/:id",
     name: "Update Service Item",
-    element: UpdateServiceItem,
+    element: (
+      <ServiceAdminRoute>
+        <UpdateServiceItem />
+      </ServiceAdminRoute>
+    ),
   },
   {
     path: "/service-admin/technician-attendance",
     name: "Technician Attendance",
-    element: TechnicianAttendanceDashboard,
+    element: (
+      <ServiceAdminRoute>
+        <TechnicianAttendanceDashboard />
+      </ServiceAdminRoute>
+    ),
   },
+
   //------------------------service admin---------------------------------
 
   //------------------------service Site Technician---------------------------------
+
   {
     path: "/site-technician/dashboard",
     name: "Dashboard",
-    element: SiteTechnicianDashboard,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianDashboard />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/all-site-data",
     name: "Dashboard",
-    element: AllSiteData,
+    element: (
+      <SiteTechnicianRoute>
+        <AllSiteData />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/site-management",
     name: "Dashboard",
-    element: SiteTechnicianSiteManagement,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianSiteManagement />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/site-management/block-management/:site_id",
     name: "Block Management",
-    element: SiteTechnicianBlockManagement,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianBlockManagement />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Operating",
-    element: SiteTechnicianRobotOperating,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianRobotOperating />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/search-robot",
     name: "Search Robot",
-    element: SiteTechnicianSearchRobot,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianSearchRobot />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/timers",
     name: "Timers",
-    element: SiteTechnicianTimers,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianTimers />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/timers/:block/:site_id",
     name: "Update Block Timer",
-
-    element: SiteTechnicianUpdateTimer,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianUpdateTimer />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/cleaning-log-sites",
     name: "Your Assigned Sites",
-    element: SiteTechnicianSites,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianSites />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/cleaning-log-sites/:site_id",
     name: "Cleaning Log",
-    element: SiteTechnicianCleaningLog,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianCleaningLog />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/service-tickets",
     name: "Service Tickets",
-    element: SiteTechnicianServiceTicketDashboard,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianServiceTicketDashboard />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/service-tickets/create-new-ticket",
     name: "New Service Tickets",
-    element: SiteTechnicianCreateServiceTicket,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianCreateServiceTicket />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/service-tickets/resolve-service-ticket/:id",
     name: "Resolve Service Ticket",
-    element: SiteTechnicianResolveServiceTicket,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianResolveServiceTicket />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/dpr",
     name: "All DPR",
-    element: SiteTechnicianDprDashboard,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianDprDashboard />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/dpr/add-dpr",
     name: "New DPR",
-    element: SiteTechnicianAddDpr,
+    element: (
+      <SiteTechnicianRoute>
+        <SiteTechnicianAddDpr />
+      </SiteTechnicianRoute>
+    ),
   },
   {
     path: "/site-technician/inventory",
     name: "Site Inventory",
-    element: InventoryTab,
+    element: (
+      <SiteTechnicianRoute>
+        <InventoryTab />
+      </SiteTechnicianRoute>
+    ),
   },
+
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
+
   {
     path: "/client-admin/dashboard",
     name: "Client Admin Dashboard",
-    element: ClientAdminDashboard,
+    element: (
+      <ClientAdminRoute>
+        <ClientAdminDashboard />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/site-management/all-site-data",
     name: "Your Sites Data",
-    element: ClientDashboard,
+    element: (
+      <ClientAdminRoute>
+        <ClientDashboard />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/site-management",
     name: "Site Management",
-    element: ClientSiteManagement,
+    element: (
+      <ClientAdminRoute>
+        <ClientSiteManagement />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/site-management/block-management/:site_id",
     name: "Block Management",
-    element: ClientBlockManagement,
+    element: (
+      <ClientAdminRoute>
+        <ClientBlockManagement />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: ClientRobotOperating,
+    element: (
+      <ClientAdminRoute>
+        <ClientRobotOperating />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/search-robot",
     name: "Search Robot",
-    element: ClientSearchRobot,
+    element: (
+      <ClientAdminRoute>
+        <ClientSearchRobot />
+      </ClientAdminRoute>
+    ),
   },
-
   {
     path: "/client-admin/timers",
     name: "Timers",
-    element: ClientTimers,
+    element: (
+      <ClientAdminRoute>
+        <ClientTimers />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/timers/:block/:site_id",
     name: "Update Block Timer",
-    element: ClientUpdateTimer,
+    element: (
+      <ClientAdminRoute>
+        <ClientUpdateTimer />
+      </ClientAdminRoute>
+    ),
   },
-
   {
     path: "/client-admin/external-users",
     name: "All  External Users",
-    element: ClientUsersManagement,
+    element: (
+      <ClientAdminRoute>
+        <ClientUsersManagement />
+      </ClientAdminRoute>
+    ),
   },
-
   {
     path: "/client-admin/cleaning-log-sites",
     name: "Your Assigned Sites",
-    element: Sites,
+    element: (
+      <ClientAdminRoute>
+        <Sites />
+      </ClientAdminRoute>
+    ),
   },
   {
     path: "/client-admin/cleaning-log-sites/:site_id",
     name: "Cleaning Log",
-    element: ClientCleaningLog,
+    element: (
+      <ClientAdminRoute>
+        <ClientCleaningLog />
+      </ClientAdminRoute>
+    ),
   },
+
   // ------------------------client admin---------------------------------
 
   // ---------------------client Site Incharge--------------------------------
@@ -1443,63 +2089,105 @@ const routes = [
 
   // ClientSiteTechnicianDashboard
   // ---------------------client Site Technician--------------------------------
+
   {
     path: "/client-site-technician/dashboard",
     name: "client-site-technician Dashboard",
-    element: ClientSiteTechnicianDashboard,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientSiteTechnicianDashboard />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/site-management/all-site-data",
     name: "Your Sites Data",
-    element: ClientDashboard,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientDashboard />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/site-management",
     name: "Site Management",
-    element: ClientSiteManagement,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientSiteManagement />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/site-management/block-management/:site_id",
     name: "Block Management",
-    element: ClientBlockManagement,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientBlockManagement />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: ClientRobotOperating,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientRobotOperating />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/search-robot",
     name: "Search Robot",
-    element: ClientSearchRobot,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientSearchRobot />
+      </ClientSiteTechnicianRoute>
+    ),
   },
-
   {
     path: "/client-site-technician/timers",
     name: "Timers",
-    element: ClientTimers,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientTimers />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/timers/:block/:site_id",
     name: "Update Block Timer",
-    element: ClientUpdateTimer,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientUpdateTimer />
+      </ClientSiteTechnicianRoute>
+    ),
   },
-
   {
     path: "/client-site-technician/external-users",
     name: "All  External Users",
-    element: ClientUsersManagement,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientUsersManagement />
+      </ClientSiteTechnicianRoute>
+    ),
   },
-
   {
     path: "/client-site-technician/cleaning-log-sites",
     name: "Your Assigned Sites",
-    element: Sites,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <Sites />
+      </ClientSiteTechnicianRoute>
+    ),
   },
   {
     path: "/client-site-technician/cleaning-log-sites/:site_id",
     name: "Cleaning Log",
-    element: ClientCleaningLog,
+    element: (
+      <ClientSiteTechnicianRoute>
+        <ClientCleaningLog />
+      </ClientSiteTechnicianRoute>
+    ),
   },
 
   // ------------------------client Site Technician---------------------------------
@@ -1563,6 +2251,10 @@ const routes = [
     name: "Notifications",
     element: Alerts,
     exact: true,
+  },
+  {
+    path: "*",
+    element: <Page404 />,
   },
   { path: "/notifications/alerts", name: "Alerts", element: Alerts },
   { path: "/notifications/badges", name: "Badges", element: Badges },
