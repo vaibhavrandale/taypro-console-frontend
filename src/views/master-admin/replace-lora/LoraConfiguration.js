@@ -507,7 +507,7 @@ const LoraConfiguration = () => {
                       View
                     </CButton>
                     <CButton
-                      color="primary"
+                      color="success"
                       className="btn-sm m-1"
                       onClick={() => openModal(item)}
                     >

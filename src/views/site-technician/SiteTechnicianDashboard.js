@@ -138,8 +138,11 @@ const SiteTechnicianDashboard = () => {
       console.log(res);
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
     } catch (error) {
-      toast.error("Failed to fetch site coordinates.");
-      dispatch({ type: "PUNCH_FAIL", payload: "Could not fetch coordinates" });
+      toast.error(error.response.data.message || error.response.data.error);
+      dispatch({
+        type: "PUNCH_FAIL",
+        payload: error.response.data.message || error.response.data.error,
+      });
     }
   };
 

@@ -171,7 +171,36 @@ const NewProjectClosure = () => {
     });
   };
 
-  const handleImageUpload = async (e) => {
+  // const handleImageUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   try {
+  //     setUploading(true);
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/commissioning-document",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     setImage(data.url);
+  //     toast.success("Image uploaded successfully. Click Update to apply it.");
+  //   } catch (err) {
+  //     toast.error("Image upload failed. Please try again.");
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // };
+
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -181,6 +210,7 @@ const NewProjectClosure = () => {
     try {
       setUploading(true);
       const { data } = await axios.post(
+        // "https://dashboard-backend.ta ypro. in/api/v1/image-upload/commissioning-document", // <- this hits your local multer route
         "/api/v1/image-upload/commissioning-document",
         bodyFormData,
         {
@@ -191,10 +221,11 @@ const NewProjectClosure = () => {
         }
       );
 
-      setImage(data.url);
-      toast.success("Image uploaded successfully. Click Update to apply it.");
+      setImage(data.filePath); // data.filePath = '/uploads/filename.pdf'
+      toast.success("File uploaded successfully.");
     } catch (err) {
-      toast.error("Image upload failed. Please try again.");
+      console.error(err);
+      toast.error("File upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -828,7 +859,7 @@ const NewProjectClosure = () => {
                     <CFormInput
                       type="file"
                       name="commissioning_document"
-                      onChange={handleImageUpload}
+                      onChange={handleFileUpload}
                       className="mb-3 file"
                       disabled={uploading}
                     />
@@ -836,7 +867,7 @@ const NewProjectClosure = () => {
                 </div>
               </CCol>
 
-              <CCol md="3">
+              {/* <CCol md="3">
                 {uploading ? (
                   <div className=" d-flex justify-content-center">
                     <LoadingSpinner />
@@ -850,6 +881,46 @@ const NewProjectClosure = () => {
                       height="100"
                       style={{ objectFit: "cover", borderRadius: "5px" }}
                     />
+                    <CBadge
+                      color="primary"
+                      className="p-1 position-absolute"
+                      style={{
+                        top: "-8px",
+                        right: "-8px",
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                        backgroundColor: "red",
+                      }}
+                      onClick={deleteImageHandler}
+                    >
+                      <CIcon icon={cilX} size="sm" />
+                    </CBadge>
+                  </div>
+                ) : null}
+              </CCol> */}
+              <CCol md="3">
+                {uploading ? (
+                  <div className="d-flex justify-content-center">
+                    <LoadingSpinner />
+                  </div>
+                ) : image ? (
+                  <div className="position-relative d-inline-block">
+                    <Link
+                      to={image}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-block",
+                        padding: "8px 12px",
+                        backgroundColor: "#007bff",
+                        color: "#fff",
+                        borderRadius: "5px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      View File
+                    </Link>
+
                     <CBadge
                       color="primary"
                       className="p-1 position-absolute"
