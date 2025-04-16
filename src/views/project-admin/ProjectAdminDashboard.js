@@ -52,7 +52,7 @@ const ProjectAdminDashboard = () => {
 
   return (
     <CContainer fluid className="">
-      <h3 className="text-center my-2 text-primary">Project Dashboard</h3>
+      <h3 className="text-center my-2 text-primary">Project Admin Dashboard</h3>
       <CRow className="g-4 my-3">
         {filteredNav[0].items.map((item, index) => (
           <CCol md={3} lg={3} key={index}>

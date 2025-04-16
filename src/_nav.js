@@ -1015,7 +1015,7 @@ const _nav = [
       {
         component: CNavItem,
         name: "Dashboard",
-        to: "/project-admin/dashboard",
+        to: "/service-admin/dashboard",
         icon: (
           <CIcon
             icon={cilSpeedometer}
