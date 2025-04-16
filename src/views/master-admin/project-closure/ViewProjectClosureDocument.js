@@ -5,9 +5,8 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "./projectDoc.css";
 import header from "../../../assets/brand/logoforwhitebg.png";
-// import html2pdf from "html2pdf.js";
+import html2pdf from "html2pdf.js";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-const html2pdf = require("html2pdf.js");
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -117,31 +116,6 @@ const ViewProjectClosureDocument = () => {
       );
     }
   };
-
-  // const exportToPDF = () => {
-  //   const element = contentRef.current;
-
-  //   const opt = {
-  //     margin: [0.5, 0.5],
-  //     filename: `${serviceItemData.project_name}_handover.pdf`,
-  //     image: { type: "jpeg", quality: 0.98 },
-  //     html2canvas: {
-  //       scale: 2,
-  //       useCORS: true,
-  //     },
-  //     jsPDF: {
-  //       unit: "in",
-  //       format: "a4",
-  //       orientation: "portrait",
-  //     },
-  //     pagebreak: {
-  //       mode: ["css", "legacy"],
-  //       before: [".page-break", ".end-page"],
-  //     },
-  //   };
-
-  //   html2pdf().set(opt).from(element).save();
-  // };
 
   const exportToPDF = () => {
     const element = contentRef.current;
