@@ -337,7 +337,7 @@ const routes = [
     path: "/",
     exact: true,
     name: "User Lnks",
-    element: UserBasedLinkDashboard,
+    element: <UserBasedLinkDashboard />,
   },
 
   { path: "/dashboard2", name: "Dashboard", element: Dashboard },

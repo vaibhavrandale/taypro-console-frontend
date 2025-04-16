@@ -172,7 +172,7 @@ const ClientSiteManagement = () => {
                   <Link
                     color="primary"
                     size="sm"
-                    className="btn btn-primary btn-sm m-1"
+                    className="btn btn-success btn-sm m-1"
                     to={`block-management/${site.site_id}`}
                   >
                     Manage
