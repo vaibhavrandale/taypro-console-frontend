@@ -51,6 +51,7 @@ import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddD
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
+
 // import ServiceAdminRoute from "./UserRoutes";
 import {
   ServiceAdminRoute,
@@ -179,6 +180,15 @@ const AddSiteCoordinates = React.lazy(() =>
   import("./views/master-admin/sites-coordinates/AddSitesCoordinates")
 );
 
+const ServiceTicketsFaultDashboard = React.lazy(() =>
+  import(
+    "./views/master-admin/serviceticket-fault/ServiceTicketsFaultDashboard"
+  )
+);
+
+const CreateNewServiceTicketFault = React.lazy(() =>
+  import("./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault")
+);
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
@@ -193,6 +203,7 @@ const ClientAdminDashboard = React.lazy(() =>
 const ProjectAdminDashboard = React.lazy(() =>
   import("./views/project-admin/ProjectAdminDashboard")
 );
+
 //--------------------------------------project admin---------------------------------
 
 //-------------------------------------service admin---------------------------
@@ -399,7 +410,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/site-management/robot-activity",
+    path: "/master-admin/robot-activity",
     name: "Robot Activity",
     element: (
       <MasterAdminRoute>
@@ -920,12 +931,38 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <MasterAdminRoute>
+        <ServiceTicketsFaultDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
+    name: "create serviceticketfault",
+    element: (
+      <MasterAdminRoute>
+        <CreateNewServiceTicketFault />
+      </MasterAdminRoute>
+    ),
+  },
 
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
   //------------------------project admin---------------------------------
-
+  {
+    path: "/project-admin/robot-activity",
+    name: "Robot Activity",
+    element: (
+      <ProjectAdminRoute>
+        <RobotActivity />
+      </ProjectAdminRoute>
+    ),
+  },
   {
     path: "/project-admin/all-site-data",
     name: "Taypro All Site Data",
@@ -1331,11 +1368,36 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
-
+  {
+    path: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <ServiceTicketsFaultDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
+    name: "create serviceticketfault",
+    element: (
+      <ProjectAdminRoute>
+        <CreateNewServiceTicketFault />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------service admin---------------------------------
-
+  {
+    path: "/service-admin/robot-activity",
+    name: "Robot Activity",
+    element: (
+      <ServiceAdminRoute>
+        <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
   {
     path: "/service-admin/all-site-data",
     name: "Taypro All Site Data",
@@ -1767,6 +1829,24 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <TechnicianAttendanceDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <ServiceAdminRoute>
+        <ServiceTicketsFaultDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
+    name: "create serviceticketfault",
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewServiceTicketFault />
       </ServiceAdminRoute>
     ),
   },

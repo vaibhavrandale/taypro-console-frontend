@@ -180,6 +180,16 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
   };
 
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
       <CContainer className="border-bottom px-4" fluid>
@@ -204,7 +214,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         <CHeaderNav className="ms-auto">
           {" "}
           <Link
-            to={`/master-admin/site-management/robot-activity`}
+            to={`/${adminroute}/robot-activity`}
             className="text-decoration-none text-body m-1"
           >
             🤖

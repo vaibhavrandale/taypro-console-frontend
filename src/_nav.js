@@ -294,6 +294,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "ServiceTickets Fault",
+        to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
       // {
       //   component: CNavTitle,
       //   name: "Theme",
@@ -982,10 +994,23 @@ const _nav = [
           />
         ),
       },
+
       {
         component: CNavItem,
         name: "Technician Attendance",
         to: "/project-admin/technician-attendance",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "ServiceTickets Fault",
+        to: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard",
         icon: (
           <CIcon
             icon={cilTask}
@@ -1212,6 +1237,18 @@ const _nav = [
         component: CNavItem,
         name: "Technician Attendance",
         to: "/service-admin/technician-attendance",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "ServiceTickets Fault",
+        to: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard",
         icon: (
           <CIcon
             icon={cilTask}
