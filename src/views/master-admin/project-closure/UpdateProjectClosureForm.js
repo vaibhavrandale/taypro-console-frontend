@@ -272,7 +272,6 @@ const UpdateProjectClosureForm = () => {
       toast.error("Update failed");
     }
   };
-
   return (
     <div className="container mt-4">
       <CCard>
