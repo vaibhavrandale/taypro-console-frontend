@@ -55,8 +55,9 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
               </h5>
             </CCardHeader>
             <CCardBody className="d-flex justify-content-center align-items-center">
-              <div style={{ width: "100%", minHeight: "300px" }}>
+              <div>
                 <CChartBar
+                  style={{ height: "350px", width: "900px" }}
                   data={{
                     labels: cleaningrobots.map((robot) => robot.robot_no),
                     datasets: [

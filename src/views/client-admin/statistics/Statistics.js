@@ -73,7 +73,6 @@ const Statistics = () => {
       try {
         dispatch({ type: "FETCH_ROBOTS_BATTERY_REQUEST" });
         const response = await axios.get(
-          //   "/api/v1/service-inventory/inventory-site-wise/all",
           `/api/v1/robots/sitewise-battery-status/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
@@ -116,7 +115,6 @@ const Statistics = () => {
       try {
         dispatch({ type: "FETCH_ROBOTS_CLEANING_REQUEST" });
         const response = await axios.get(
-          //   "/api/v1/service-inventory/inventory-site-wise/all",
           `/api/v1/cleaninglogs/calculated-distance/${startDate}/${endDate}/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },

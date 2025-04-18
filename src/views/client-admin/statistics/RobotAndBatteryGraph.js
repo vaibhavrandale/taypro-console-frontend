@@ -56,8 +56,9 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
               </h5>
             </CCardHeader>
             <CCardBody className="d-flex justify-content-center align-items-center">
-              <div style={{ width: "100%", minHeight: "300px" }}>
+              <div>
                 <CChartBar
+                  style={{ height: "350px", width: "900px" }}
                   data={{
                     labels: batteryrobots.map((robot) => robot.robot_no),
                     datasets: [
@@ -77,7 +78,10 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                   }}
                   options={{
                     responsive: true,
-
+                    maintainAspectRatio: false,
+                    layout: {
+                      padding: 0,
+                    },
                     plugins: {
                       legend: { display: false },
                       tooltip: {
@@ -94,12 +98,14 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                         title: {
                           display: true,
                           text: "Battery Voltage (V)",
+                          font: { size: 12 },
                         },
                       },
                       x: {
                         title: {
                           display: true,
                           text: "Robot Number",
+                          font: { size: 12 },
                         },
                       },
                     },
@@ -116,7 +122,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
               <h5 className="text-center">Battery Voltage per Robot</h5>
             </CCardHeader>
             <CCardBody className="d-flex justify-content-center align-items-center">
-              <CBadge color="primary">Not Robots Found</CBadge>
+              <CBadge color="primary">No Robots Found</CBadge>
             </CCardBody>
           </CCard>
         </CCol>

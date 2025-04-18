@@ -62,38 +62,16 @@ const Notifications = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
 
-  // const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [readUsers, setReadUsers] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  // Fetch notifications from API
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const response = await fetch('/api/v1/notifications');
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch notifications');
-  //       }
-  //       const data = await response.json();
-  //       setNotifications(data);
-  //     } catch (error) {
-  //       setError(error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchNotifications();
-  // }, []);
 
   useEffect(() => {
     // setLoading(true);
@@ -110,15 +88,12 @@ const Notifications = () => {
             Authorization: `Bearer ${authtoken}`, // Attach Authorization token
           },
         });
-        // setNotifications(response.data.data);
-        // console.log(response.data);
 
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -140,19 +115,6 @@ const Notifications = () => {
 
     fetchNotifications();
   }, [authtoken, limit, page]);
-
-  // 🔍 Filter Notifications Based on Search
-  // const filteredNotifications = notifications.filter(
-  //   (notification) =>
-  //     notification.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     notification.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     notification.performed_by.username
-  //       .toLowerCase()
-  //       .includes(searchTerm.toLowerCase()) ||
-  //     notification.performed_by.email
-  //       .toLowerCase()
-  //       .includes(searchTerm.toLowerCase())
-  // );
 
   const filteredNotifications = notifications.filter((notification) => {
     const action = notification.action ? notification.action.toLowerCase() : "";
@@ -299,16 +261,7 @@ const Notifications = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}
