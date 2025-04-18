@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import {
+  CBadge,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -116,7 +117,7 @@ const TechnicianAttendanceDashboard = () => {
       {" "}
       <CTable bordered hover responsive>
         <CTableHead color="secondary">
-          <CTableRow>
+          <CTableRow className="text-center">
             <CTableHeaderCell>Sr</CTableHeaderCell>{" "}
             <CTableHeaderCell>Profile</CTableHeaderCell>
             <CTableHeaderCell>username</CTableHeaderCell>
@@ -136,7 +137,7 @@ const TechnicianAttendanceDashboard = () => {
             </CTableRow>
           ) : technicians.length > 0 ? (
             technicians.map((site, index) => (
-              <CTableRow key={index}>
+              <CTableRow key={index} className="text-center">
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                 <CTableDataCell>
                   <img
@@ -168,18 +169,27 @@ const TechnicianAttendanceDashboard = () => {
                 </CTableDataCell>
 
                 <CTableDataCell>
-                  {" "}
-                  {new Date(site.punchout_time).toLocaleString("en-IN", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
+                  {site.punchout_time ? (
+                    new Date(site.punchout_time).toLocaleString("en-IN", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  ) : (
+                    <CBadge color="warning">N/A</CBadge>
+                  )}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {site.punchout_location?.lat},{site.punchout_location?.lng}
+                  {site.punchout_time ? (
+                    <>
+                      {site.punchout_location.lat},{site.punchout_location.lng}
+                    </>
+                  ) : (
+                    <CBadge color="warning">N/A</CBadge>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
