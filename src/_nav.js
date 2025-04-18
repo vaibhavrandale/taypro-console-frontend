@@ -2022,6 +2022,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Statisitcs",
+        to: "/client-admin/statisitcs",
+        icon: (
+          <CIcon
+            icon={cilListRich}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
 

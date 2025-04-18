@@ -62,6 +62,7 @@ import {
   ClientSiteTechnicianRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
+import Statistics from "./views/client-admin/statistics/Statistics";
 
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
@@ -2110,6 +2111,16 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <ClientCleaningLog />
+      </ClientAdminRoute>
+    ),
+  },
+
+  {
+    path: "/client-admin/statisitcs",
+    name: "General Statistics",
+    element: (
+      <ClientAdminRoute>
+        <Statistics />
       </ClientAdminRoute>
     ),
   },
