@@ -165,7 +165,13 @@ const TechnicianAttendanceDashboard = () => {
                 </CTableDataCell>
 
                 <CTableDataCell>
-                  {site.punchin_location.lat},{site.punchin_location.lng}
+                  <Link
+                    target="blank"
+                    className="text-decoration-none"
+                    to={`https://www.google.com/maps/search/?api=1&query=${site.punchin_location.lat},${site.punchin_location.lng}`}
+                  >
+                    View
+                  </Link>
                 </CTableDataCell>
 
                 <CTableDataCell>
@@ -185,7 +191,13 @@ const TechnicianAttendanceDashboard = () => {
                 <CTableDataCell>
                   {site.punchout_time ? (
                     <>
-                      {site.punchout_location.lat},{site.punchout_location.lng}
+                      <Link
+                        target="blank"
+                        className="text-decoration-none"
+                        to={`https://www.google.com/maps/search/?api=1&query=${site.punchout_location.lat},${site.punchout_location.lng}`}
+                      >
+                        View
+                      </Link>
                     </>
                   ) : (
                     <CBadge color="warning">N/A</CBadge>
