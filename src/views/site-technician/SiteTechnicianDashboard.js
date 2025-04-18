@@ -312,8 +312,12 @@ const SiteTechnicianDashboard = () => {
         "/api/v1/technician-attendance/punchin",
         {
           site_id,
-          lat: parseFloat(punchin_location.lat),
-          lng: parseFloat(punchin_location.lng),
+          // lat: parseFloat(punchin_location.lat),
+          // lng: parseFloat(punchin_location.lng),
+          punchin_location: {
+            lat: parseFloat(punchin_location.lat),
+            lng: parseFloat(punchin_location.lng),
+          },
         },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
