@@ -123,8 +123,8 @@ const RobotActivity = () => {
 
   return (
     <div>
-      <CTable bordered hover responsive>
-        <CTableHead color="dark">
+      <CTable bordered hover responsive className="text-center shadow-sm">
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
