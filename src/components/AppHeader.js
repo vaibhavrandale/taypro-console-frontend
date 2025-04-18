@@ -326,10 +326,13 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       }`}
                       onClick={() => readNotification(notification)}
                     >
-                      <CAvatar
-                        className="me-3"
-                        size="md"
+                      <img
                         src={notification.performed_by.profile_image}
+                        alt="Profile"
+                        className="rounded-circle"
+                        width="50"
+                        height="50"
+                        style={{ objectFit: "cover", cursor: "pointer" }}
                       />
                       <div>
                         <strong className="d-block">

@@ -32,6 +32,7 @@ import {
   cilLan,
   cilClock,
   cilLocationPin,
+  cilCheck,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -1393,6 +1394,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Site Attendance",
+        to: "/site-technician/user-site-attendance",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   //---------------------------------Taypro Site Techncian ---------------------------------------------
@@ -2001,6 +2014,18 @@ const _nav = [
         component: CNavItem,
         name: "Cleaning Log",
         to: "/client-admin/cleaning-log-sites",
+        icon: (
+          <CIcon
+            icon={cilListRich}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Statisitcs",
+        to: "/client-admin/statisitcs",
         icon: (
           <CIcon
             icon={cilListRich}
