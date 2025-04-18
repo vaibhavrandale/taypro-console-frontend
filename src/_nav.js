@@ -32,6 +32,7 @@ import {
   cilLan,
   cilClock,
   cilLocationPin,
+  cilCheck,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -1388,6 +1389,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Site Attendance",
+        to: "/site-technician/user-site-attendance",
+        icon: (
+          <CIcon
+            icon={cilCheck}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />

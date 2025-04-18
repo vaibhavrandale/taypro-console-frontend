@@ -61,6 +61,7 @@ import {
   ClientAdminRoute,
   ClientSiteTechnicianRoute,
 } from "./UserRoutes";
+import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
@@ -1996,6 +1997,15 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <InventoryTab />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/user-site-attendance",
+    name: "Technician Site Attendance",
+    element: (
+      <SiteTechnicianRoute>
+        <UserSiteAttendance />
       </SiteTechnicianRoute>
     ),
   },
