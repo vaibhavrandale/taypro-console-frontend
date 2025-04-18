@@ -765,13 +765,6 @@ const UsersDashboard = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          {/* <CFormLabel>Role</CFormLabel>
-          <CFormInput
-            type="text"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          /> */}
           <CFormLabel>Role </CFormLabel>
           <CFormSelect
             name="role"
@@ -848,14 +841,7 @@ const UsersDashboard = () => {
                 left="0"
                 shape="rounded-pill"
                 className="p-1"
-              >
-                {/* <CIcon
-                    icon={cilX}
-                    cursor="pointer"
-                    // onClick={removeLogo}
-                    title="Remove file"
-                  /> */}
-              </CBadge>
+              ></CBadge>
             </div>
           ) : null}
         </CModalBody>
