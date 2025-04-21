@@ -63,6 +63,7 @@ import {
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
+import ChatDashboard from "./views/master-admin/chat/ChatDashboard";
 
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
@@ -948,6 +949,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <CreateNewServiceTicketFault />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/chat",
+    name: "Chat with User",
+    element: (
+      <MasterAdminRoute>
+        <ChatDashboard />
       </MasterAdminRoute>
     ),
   },

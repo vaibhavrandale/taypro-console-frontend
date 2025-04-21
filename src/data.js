@@ -4221,3 +4221,462 @@ export const sitelocation = [
     radius: 5000,
   },
 ];
+
+export const chats = [
+  {
+    _id: "1",
+    send_user: {
+      name: "Sneha Araseed",
+      email: "sneha.a@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=1",
+      user_id: "1",
+    },
+    receiver_user: {
+      name: "Rathee Roy",
+      email: "rathee@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=2",
+      user_id: "2",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Sneha Araseed",
+          email: "sneha.a@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=1",
+        },
+        message:
+          "Hi there Rathee! sdiuvhfdsuigv suirgsiugfidsu fuidshfdsui gfhusdhfuiods hfisdfiusdfui !",
+        timestamp: "2025-04-21T09:08:38.750Z",
+      },
+      {
+        send_by: {
+          name: "Sneha Araseed",
+          email: "sneha.a@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=1",
+        },
+        message: "me hu don!!",
+        timestamp: "2025-04-21T09:16:45.427Z",
+      },
+      {
+        send_by: {
+          name: "Priya Shah",
+          email: "priya@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=4",
+        },
+        message:
+          "Morning Ajay  sdijfhseufi isu ufhuisdfh suifhesgfh sduigfvdsfhuvdvbkjdvh dfvhjdv hjdsbh",
+        timestamp: "2025-04-21T08:05:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Sneha Araseed",
+          email: "sneha.a@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=1",
+        },
+        message: "Hi there Rathee!!",
+        timestamp: "2025-04-21T09:08:38.750Z",
+      },
+      {
+        send_by: {
+          name: "Sneha Araseed",
+          email: "sneha.a@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=1",
+        },
+        message: "me hu don!!",
+        timestamp: "2025-04-21T09:16:45.427Z",
+      },
+      {
+        send_by: {
+          name: "Priya Shah",
+          email: "priya@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=4",
+        },
+        message: "Morning Ajay ☀️",
+        timestamp: "2025-04-21T08:05:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T09:08:38.772Z",
+    updatedAt: "2025-04-21T09:16:45.440Z",
+    __v: 1,
+  },
+  {
+    _id: "2",
+    send_user: {
+      name: "Ajay Kumar",
+      email: "ajay@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=3",
+      user_id: "3",
+    },
+    receiver_user: {
+      name: "Priya Shah",
+      email: "priya@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=4",
+      user_id: "4",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Ajay Kumar",
+          email: "ajay@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=3",
+        },
+        message: "Good morning Priya!",
+        timestamp: "2025-04-21T08:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Priya Shah",
+          email: "priya@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=4",
+        },
+        message: "Morning Ajay ☀️",
+        timestamp: "2025-04-21T08:05:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T08:00:00.000Z",
+    updatedAt: "2025-04-21T08:05:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "3",
+    send_user: {
+      name: "Ravi Mishra",
+      email: "ravi@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=5",
+      user_id: "5",
+    },
+    receiver_user: {
+      name: "Neha Desai",
+      email: "neha@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=6",
+      user_id: "6",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Neha Desai",
+          email: "neha@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=6",
+        },
+        message: "Did you push the code?",
+        timestamp: "2025-04-21T07:30:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Ravi Mishra",
+          email: "ravi@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=5",
+        },
+        message: "Yes, pushed it 5 mins ago.",
+        timestamp: "2025-04-21T07:32:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T07:30:00.000Z",
+    updatedAt: "2025-04-21T07:32:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "4",
+    send_user: {
+      name: "Aman Gupta",
+      email: "aman@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=7",
+      user_id: "7",
+    },
+    receiver_user: {
+      name: "Tina Dsouza",
+      email: "tina@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=8",
+      user_id: "8",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Aman Gupta",
+          email: "aman@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=7",
+        },
+        message: "Meeting at 2 PM?",
+        timestamp: "2025-04-21T06:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Tina Dsouza",
+          email: "tina@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=8",
+        },
+        message: "Yes confirmed.",
+        timestamp: "2025-04-21T06:02:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T06:00:00.000Z",
+    updatedAt: "2025-04-21T06:02:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "5",
+    send_user: {
+      name: "Vikas Sharma",
+      email: "vikas@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=9",
+      user_id: "9",
+    },
+    receiver_user: {
+      name: "Isha Mehta",
+      email: "isha@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=10",
+      user_id: "10",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Isha Mehta",
+          email: "isha@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=10",
+        },
+        message: "Lunch today?",
+        timestamp: "2025-04-21T05:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Vikas Sharma",
+          email: "vikas@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=9",
+        },
+        message: "Sure, same place?",
+        timestamp: "2025-04-21T05:01:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T05:00:00.000Z",
+    updatedAt: "2025-04-21T05:01:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "6",
+    send_user: {
+      name: "Ritika Jain",
+      email: "ritika@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=11",
+      user_id: "11",
+    },
+    receiver_user: {
+      name: "Raj Malhotra",
+      email: "raj@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=12",
+      user_id: "12",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Ritika Jain",
+          email: "ritika@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=11",
+        },
+        message: "Done with the deployment?",
+        timestamp: "2025-04-21T04:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Raj Malhotra",
+          email: "raj@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=12",
+        },
+        message: "Yes, it's live now!",
+        timestamp: "2025-04-21T04:05:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T04:00:00.000Z",
+    updatedAt: "2025-04-21T04:05:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "7",
+    send_user: {
+      name: "Simran Kaur",
+      email: "simran@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=13",
+      user_id: "13",
+    },
+    receiver_user: {
+      name: "Karan Patel",
+      email: "karan@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=14",
+      user_id: "14",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Simran Kaur",
+          email: "simran@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=13",
+        },
+        message: "Any update on designs?",
+        timestamp: "2025-04-21T03:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Karan Patel",
+          email: "karan@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=14",
+        },
+        message: "Almost done, sending shortly.",
+        timestamp: "2025-04-21T03:15:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T03:00:00.000Z",
+    updatedAt: "2025-04-21T03:15:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "8",
+    send_user: {
+      name: "Deepak Rao",
+      email: "deepak@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=15",
+      user_id: "15",
+    },
+    receiver_user: {
+      name: "Nikita Jain",
+      email: "nikita@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=16",
+      user_id: "16",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Deepak Rao",
+          email: "deepak@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=15",
+        },
+        message: "Client approved the proposal!",
+        timestamp: "2025-04-21T02:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Nikita Jain",
+          email: "nikita@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=16",
+        },
+        message: "Awesome 🔥🔥🔥",
+        timestamp: "2025-04-21T02:03:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T02:00:00.000Z",
+    updatedAt: "2025-04-21T02:03:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "9",
+    send_user: {
+      name: "Meena Kumari",
+      email: "meena@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=17",
+      user_id: "17",
+    },
+    receiver_user: {
+      name: "Rahul Verma",
+      email: "rahul@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=18",
+      user_id: "18",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Meena Kumari",
+          email: "meena@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=17",
+        },
+        message: "Did you send the report?",
+        timestamp: "2025-04-21T01:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Rahul Verma",
+          email: "rahul@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=18",
+        },
+        message: "Sent it this morning!",
+        timestamp: "2025-04-21T01:10:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T01:00:00.000Z",
+    updatedAt: "2025-04-21T01:10:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "10",
+    send_user: {
+      name: "Yash Thakur",
+      email: "yash@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=19",
+      user_id: "19",
+    },
+    receiver_user: {
+      name: "Ananya Singh",
+      email: "ananya@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=20",
+      user_id: "20",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Yash Thakur",
+          email: "yash@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=19",
+        },
+        message: "Let’s sync up post lunch.",
+        timestamp: "2025-04-21T12:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Ananya Singh",
+          email: "ananya@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=20",
+        },
+        message: "Sure thing!",
+        timestamp: "2025-04-21T12:05:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T12:00:00.000Z",
+    updatedAt: "2025-04-21T12:05:00.000Z",
+    __v: 1,
+  },
+  {
+    _id: "11",
+    send_user: {
+      name: "Yash Thakur",
+      email: "yash@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=19",
+      user_id: "20",
+    },
+    receiver_user: {
+      name: "Ananya Singh",
+      email: "ananya@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=20",
+      user_id: "21",
+    },
+    chat: [
+      {
+        send_by: {
+          name: "Yash Thakur",
+          email: "yash@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=19",
+        },
+        message: "Let’s sync up post lunch.",
+        timestamp: "2025-04-21T12:00:00.000Z",
+      },
+      {
+        send_by: {
+          name: "Ananya Singh",
+          email: "ananya@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=20",
+        },
+        message: "Sure thing!",
+        timestamp: "2025-04-21T12:05:00.000Z",
+      },
+    ],
+    createdAt: "2025-04-21T12:00:00.000Z",
+    updatedAt: "2025-04-21T12:05:00.000Z",
+    __v: 1,
+  },
+];
