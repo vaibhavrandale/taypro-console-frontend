@@ -307,6 +307,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Chat",
+        to: "/master-admin/chat",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
       // {
       //   component: CNavTitle,
       //   name: "Theme",
