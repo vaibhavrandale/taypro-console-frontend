@@ -97,7 +97,13 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
     if (userInfo && updateSuccess) {
       dispatch({ type: "UPDATE_RESET" });
-    } else {
+    } else if (
+      userInfo.role === "Master Admin" ||
+      userInfo.role === "Project Admin" ||
+      userInfo.role === "Service Admin" ||
+      userInfo.role === "Service User" ||
+      userInfo.role === "Project Engineer"
+    ) {
       fetchNotifications();
     }
   }, [authtoken, userInfo, updateSuccess, navigate]);
@@ -167,10 +173,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Notification read");
     } catch (error) {
-      // console.error(
-      //   "Error marking notification as read:",
-      //   error.response.data.error
-      // );
       console.log(error.response);
 
       toast.error(error.response.data.error);
@@ -212,19 +214,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         <CHeaderNav className="ms-auto"></CHeaderNav>
 
         <CHeaderNav className="ms-auto">
-          {" "}
-          <Link
-            to={`/${adminroute}/robot-activity`}
-            className="text-decoration-none text-body m-1"
-          >
-            🤖
-          </Link>{" "}
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
           {/* 🌗 Theme Toggle */}
           <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false}>
+            <CDropdownToggle caret={false} className="align-self-center mt-1">
               {colorMode === "dark" ? (
                 <CIcon icon={cilMoon} size="lg" />
               ) : colorMode === "auto" ? (
@@ -250,121 +242,143 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>
-        </CHeaderNav>
-
-        {/* 🔔 Notifications Dropdown */}
-        <CHeaderNav>
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
-          <CDropdown variant="nav-item" placement="top-end">
-            <CDropdownToggle caret={false}>
-              <div className="d-flex justify-content-center align-items-center">
-                {loadingUpdate || loading ? (
-                  <span className="text-center">
-                    <LoadingSpinner />
-                  </span>
-                ) : error ? (
-                  <span className="text-center text-danger">{error}</span>
-                ) : unreadNotifications.length > 0 ? (
-                  <span className="position-relative">
-                    <CIcon icon={cilBell} size="xl" />
-                    <CBadge
-                      className="badge bg-danger d-flex justify-content-center align-items-center"
-                      style={{
-                        height:
-                          unreadNotifications.length > 99 ? "36px" : "22px",
-                        width:
-                          unreadNotifications.length > 99 ? "35px" : "25px",
-                        borderRadius: "50%",
-                        fontSize: "12px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      position="top-end"
-                      shape="rounded-pill"
-                    >
-                      {/* {unreadNotifications.length} */}
-                      {count}
-                    </CBadge>
-                  </span>
-                ) : (
-                  <span className="position-relative">
-                    <CIcon icon={cilBell} size="xl" />
-                  </span>
-                )}
-              </div>
-            </CDropdownToggle>
 
-            <CDropdownMenu className="p-2" style={{ minWidth: "250px" }}>
-              <div className="d-flex justify-content-between align-items-center px-3 py-2">
-                <strong>Notifications</strong>
-                <Link to={notificationPage} className=" small">
-                  View All
-                </Link>
-              </div>
-              <CDropdownDivider />
+          {/* ✅ Role-based robot icon + notifications */}
+          {[
+            "Master Admin",
+            "Project Admin",
+            "Service Admin",
+            "Service User",
+            "Project Engineer",
+          ].includes(userInfo.role) && (
+            <>
+              <Link
+                to={`/${adminroute}/robot-activity`}
+                // className="text-decoration-none text-body m-1"
+                className="text-decoration-none text-body m-1 align-self-center mt-1"
+              >
+                🤖
+              </Link>
+              <li className="nav-item py-1">
+                <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+              </li>
 
-              {loading ? (
-                <span className="text-center">
-                  <LoadingSpinner />
-                </span>
-              ) : latestNotifications.length > 0 ? (
-                latestNotifications.map((notification, index) => {
-                  const isRead = notification.read_status.some(
-                    (status) => status.readbyId === userInfo._id && status.read
-                  );
+              <CDropdown variant="nav-item" placement="top-end">
+                <CDropdownToggle
+                  caret={false}
+                  className="align-self-center mt-1"
+                >
+                  <div className="d-flex justify-content-center align-items-center">
+                    {loadingUpdate || loading ? (
+                      <span className="text-center">
+                        <LoadingSpinner />
+                      </span>
+                    ) : error ? (
+                      <span className="text-center text-danger">{error}</span>
+                    ) : unreadNotifications.length > 0 ? (
+                      <span className="position-relative">
+                        <CIcon icon={cilBell} size="xl" />
+                        <CBadge
+                          className="badge bg-danger d-flex justify-content-center align-items-center"
+                          style={{
+                            height:
+                              unreadNotifications.length > 99 ? "36px" : "22px",
+                            width:
+                              unreadNotifications.length > 99 ? "35px" : "25px",
+                            borderRadius: "50%",
+                            fontSize: "12px",
+                          }}
+                          position="top-end"
+                          shape="rounded-pill"
+                        >
+                          {count}
+                        </CBadge>
+                      </span>
+                    ) : (
+                      <span className="position-relative">
+                        <CIcon icon={cilBell} size="xl" />
+                      </span>
+                    )}
+                  </div>
+                </CDropdownToggle>
 
-                  return (
-                    <CDropdownItem
-                      as="button"
-                      key={index}
-                      disabled={isRead}
-                      className={`d-flex align-items-center py-2 my-1 ${
-                        isRead ? "text-muted" : "fw-bold"
-                      }`}
-                      onClick={() => readNotification(notification)}
-                    >
-                      <img
-                        src={notification.performed_by.profile_image}
-                        alt="Profile"
-                        className="rounded-circle"
-                        width="50"
-                        height="50"
-                        style={{ objectFit: "cover", cursor: "pointer" }}
-                      />
-                      <div>
-                        <strong className="d-block">
-                          {notification.action}
-                        </strong>
-                        <small className="text-muted d-block">
-                          {notification.details.length > 30
-                            ? `${notification.details.substring(0, 30)}...`
-                            : notification.details}
-                        </small>
+                <CDropdownMenu className="p-2" style={{ minWidth: "250px" }}>
+                  <div className="d-flex justify-content-between align-items-center px-3 py-2">
+                    <strong>Notifications</strong>
+                    <Link to={notificationPage} className=" small">
+                      View All
+                    </Link>
+                  </div>
+                  <CDropdownDivider />
+                  {loading ? (
+                    <span className="text-center">
+                      <LoadingSpinner />
+                    </span>
+                  ) : latestNotifications.length > 0 ? (
+                    latestNotifications.map((notification, index) => {
+                      const isRead = notification.read_status.some(
+                        (status) =>
+                          status.readbyId === userInfo._id && status.read
+                      );
 
-                        <small className="d-block" style={{ fontSize: "12px" }}>
-                          {notification.performed_by.name} |{" "}
-                          {moment(notification.timestamp).format(
-                            "MMM DD, YYYY HH:mm"
-                          )}
-                        </small>
-                      </div>
+                      return (
+                        <CDropdownItem
+                          as="button"
+                          key={index}
+                          disabled={isRead}
+                          className={`d-flex align-items-center py-2 my-1 ${
+                            isRead ? "text-muted" : "fw-bold"
+                          }`}
+                          onClick={() => readNotification(notification)}
+                        >
+                          <img
+                            src={notification.performed_by.profile_image}
+                            alt="Profile"
+                            className="rounded-circle"
+                            width="50"
+                            height="50"
+                            style={{ objectFit: "cover", cursor: "pointer" }}
+                          />
+                          <div>
+                            <strong className="d-block">
+                              {notification.action}
+                            </strong>
+                            <small className="text-muted d-block">
+                              {notification.details.length > 30
+                                ? `${notification.details.substring(0, 30)}...`
+                                : notification.details}
+                            </small>
+                            <small
+                              className="d-block"
+                              style={{ fontSize: "12px" }}
+                            >
+                              {notification.performed_by.name} |{" "}
+                              {moment(notification.timestamp).format(
+                                "MMM DD, YYYY HH:mm"
+                              )}
+                            </small>
+                          </div>
+                        </CDropdownItem>
+                      );
+                    })
+                  ) : (
+                    <CDropdownItem disabled className="text-center py-3">
+                      No new notifications
                     </CDropdownItem>
-                  );
-                })
-              ) : (
-                <CDropdownItem disabled className="text-center py-3">
-                  No new notifications
-                </CDropdownItem>
-              )}
-            </CDropdownMenu>
-          </CDropdown>
+                  )}
+                </CDropdownMenu>
+              </CDropdown>
 
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
+              <li className="nav-item py-1">
+                <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+              </li>
+            </>
+          )}
+
+          {/* ✅ Always show user dropdown */}
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>
