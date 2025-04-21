@@ -443,78 +443,75 @@ const LoraConfiguration = () => {
               </CTableDataCell>
             </CTableRow>
           ) : (
-            filteredData
-              .slice()
-              .reverse()
-              .map((item, index) => (
-                <CTableRow key={index}>
-                  <CTableDataCell className="sticky-column">
-                    {item.serial}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    {item.robot_no}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    {item.deveui}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    {item.formatted_deveui}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "150px" }}>
-                    {item.site_id}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "170px" }}>
-                    {item.added_by}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "170px" }}>
-                    <CTooltip
-                      content={new Date(item.addedAt).toLocaleString()}
-                      placement="top"
-                    >
-                      <span>
-                        {formatDistanceToNow(new Date(item.addedAt), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    </CTooltip>
-                  </CTableDataCell>
+            filteredData.map((item, index) => (
+              <CTableRow key={index}>
+                <CTableDataCell className="sticky-column">
+                  {item.serial}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {item.robot_no}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {item.deveui}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {item.formatted_deveui}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {item.site_id}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "170px" }}>
+                  {item.added_by}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "170px" }}>
+                  <CTooltip
+                    content={new Date(item.addedAt).toLocaleString()}
+                    placement="top"
+                  >
+                    <span>
+                      {formatDistanceToNow(new Date(item.addedAt), {
+                        addSuffix: true,
+                      })}
+                    </span>
+                  </CTooltip>
+                </CTableDataCell>
 
-                  <CTableDataCell style={{ minWidth: "170px" }}>
-                    {item.lastUpdated_by === null ? (
-                      <span className="badge bg-danger">N/A</span>
-                    ) : (
-                      <span className="badge bg-success">
-                        {item.lastUpdated_by}
-                      </span>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "170px" }}>
-                    {item.lastUpdateAt === null ? (
-                      <span className="badge bg-danger">N/A</span>
-                    ) : (
-                      <span className="badge bg-success">
-                        {item.lastUpdateAt}
-                      </span>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CButton
-                      color="secondary"
-                      className="btn-sm m-1"
-                      onClick={() => openViewModal(item)}
-                    >
-                      View
-                    </CButton>
-                    <CButton
-                      color="success"
-                      className="btn-sm m-1"
-                      onClick={() => openModal(item)}
-                    >
-                      Update
-                    </CButton>
-                  </CTableDataCell>
-                </CTableRow>
-              ))
+                <CTableDataCell style={{ minWidth: "170px" }}>
+                  {item.lastUpdated_by === null ? (
+                    <span className="badge bg-danger">N/A</span>
+                  ) : (
+                    <span className="badge bg-success">
+                      {item.lastUpdated_by}
+                    </span>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "170px" }}>
+                  {item.lastUpdateAt === null ? (
+                    <span className="badge bg-danger">N/A</span>
+                  ) : (
+                    <span className="badge bg-success">
+                      {item.lastUpdateAt}
+                    </span>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="secondary"
+                    className="btn-sm m-1"
+                    onClick={() => openViewModal(item)}
+                  >
+                    View
+                  </CButton>
+                  <CButton
+                    color="success"
+                    className="btn-sm m-1"
+                    onClick={() => openModal(item)}
+                  >
+                    Update
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            ))
           )}
         </CTableBody>
       </CTable>
