@@ -180,7 +180,7 @@ const LoraConfiguration = () => {
     const fetchSites = async () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
-        const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
+        const result = await axios.get(`/api/v1/sites`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({
@@ -293,15 +293,14 @@ const LoraConfiguration = () => {
       toast.error(error.response?.data?.message);
     }
   };
-
+  //  [1,2,3,4]
   // Filter data based on search term
   const filteredData = lora_configuration.filter(
     (item) =>
-      item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   const uniqueSitenames = sites.filter(
     (value, index, self) =>
       index === self.findIndex((t) => t.site_id === value.site_id)
