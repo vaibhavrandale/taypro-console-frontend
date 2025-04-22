@@ -43,7 +43,10 @@ const InventoryOverview = () => {
           payload: response.data.data,
         });
       } catch (error) {
-        dispatch({ type: "FETCH_INVENTORY_FAIL", payload: error.message });
+        dispatch({
+          type: "FETCH_INVENTORY_FAIL",
+          payload: error.response.data.message || error.response.data.error,
+        });
       }
     };
 

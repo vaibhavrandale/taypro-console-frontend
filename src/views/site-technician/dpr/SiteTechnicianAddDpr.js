@@ -97,7 +97,7 @@ const SiteTechnicianAddDpr = () => {
   });
   //   const [image, setImage] = useState("");
   //   const [uploading, setUploading] = useState(false);
-  const [site_id, setSiteId] = useState("");
+  const [site_id, setSiteId] = useState("abc");
   const [filteredTechnicians, setFilteredTechnicians] = useState([]);
   const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
   const fetchSiteTechnicians = async (e) => {
@@ -127,9 +127,9 @@ const SiteTechnicianAddDpr = () => {
     } catch (error) {
       dispatch({
         type: "FETCH_TECHNICIAN_FAIL",
-        payload: error.response?.data?.error || "Error fetching Technicians!",
+        payload: error.response.data.error || error.response.data.message,
       });
-      toast.error(error.response?.data?.error || "Error fetching Technicians!");
+      toast.error(error.response.data.error || error.response.data.message);
     }
   };
 
@@ -147,9 +147,9 @@ const SiteTechnicianAddDpr = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.error || "Error fetching sites",
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error(error.response.data.error || "Error fetching sites");
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
 
@@ -203,7 +203,7 @@ const SiteTechnicianAddDpr = () => {
     <div className="container mt-6">
       <CCard>
         <CCardHeader>
-          <h2>Create Technician Daily Progress Report (DPR)</h2>
+          <h4>Create DPR</h4>
         </CCardHeader>
         <CCardBody>
           <form>
@@ -211,19 +211,24 @@ const SiteTechnicianAddDpr = () => {
               <CCol>
                 <div className="mb-3">
                   <label className="form-label">Site Id</label>
-                  <CFormSelect
-                    name="site_id"
-                    value={site_id}
-                    onChange={(e) => fetchSiteTechnicians(e)}
-                  >
-                    <option value="">Select Site Id</option>
-                    {state.sites?.length > 0 &&
-                      state.sites.map((item) => (
-                        <option key={item.site_id} value={item.site_id}>
-                          {item.site_id}
-                        </option>
-                      ))}
-                  </CFormSelect>
+                  <br />
+                  {state.loadingSiteIds ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <CFormSelect
+                      name="site_id"
+                      value={site_id}
+                      onChange={(e) => fetchSiteTechnicians(e)}
+                    >
+                      <option value="abc">Select Site Id</option>
+                      {state.sites?.length > 0 &&
+                        state.sites.map((item) => (
+                          <option key={item.site_id} value={item.site_id}>
+                            {item.site_id}
+                          </option>
+                        ))}
+                    </CFormSelect>
+                  )}
                 </div>
               </CCol>
 
@@ -355,8 +360,8 @@ const SiteTechnicianAddDpr = () => {
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>Image</CTableHeaderCell>
                     <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell style={{ width: "80px" }}>
-                      Actions
+                    <CTableHeaderCell style={{ minWidth: "90px" }}>
+                      Mark Present
                     </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
@@ -420,7 +425,15 @@ const SiteTechnicianAddDpr = () => {
               </CTable>
             </CRow>
 
-            <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
+            <CButton
+              disabled={
+                !state.dprData.total_running_robots ||
+                !state.dprData.total_failed_robots ||
+                !state.dprData.robots_run_by
+              }
+              onClick={handleSubmit}
+              className="btn btn-warning btn-sm"
+            >
               {state.loading ? (
                 <>
                   Adding..
@@ -429,7 +442,7 @@ const SiteTechnicianAddDpr = () => {
               ) : (
                 "Add"
               )}
-            </Link>
+            </CButton>
           </form>
         </CCardBody>
       </CCard>

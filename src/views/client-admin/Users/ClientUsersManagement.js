@@ -948,30 +948,27 @@ const ClientUsersManagement = () => {
           <CFormLabel>Role </CFormLabel>
           <CFormSelect
             name="role"
-            onChange={handleChange} // ✅ Calls the function correctly
+            onChange={handleChange}
             value={formData.role}
+            disabled
           >
             <option value="">Select Role</option>
-            {role_permissions?.length > 0 &&
-              role_permissions.map((role, index) => (
-                <option key={index} value={role.role}>
-                  {role.role}
-                </option>
-              ))}
+            <option value="Client Admin">Client Admin</option>
+            <option value="Site Incharge">Site Incharge</option>
+            <option value="Client Technitian">Technitian</option>
           </CFormSelect>
           <CFormLabel>Department </CFormLabel>
           <CFormSelect
             name="department"
             onChange={handleChange} // ✅ Calls the function correctly
             value={formData.department}
+            disabled
           >
             <option value="">Select Department</option>
-            {departments?.length > 0 &&
-              departments.map((dep, index) => (
-                <option key={index} value={dep.department}>
-                  {dep.department}
-                </option>
-              ))}
+
+            <option selected value="Service">
+              Service
+            </option>
           </CFormSelect>
           <CFormLabel>Phone</CFormLabel>
           <CFormInput

@@ -170,7 +170,7 @@ const SiteTechnicianCreateServiceTicket = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
-          payload: error.response ? error.response.data.message : error.message,
+          payload: error.response.data.message || error.response.data.error,
         });
       }
     };
@@ -371,7 +371,7 @@ const SiteTechnicianCreateServiceTicket = () => {
               {faultsloading ? (
                 <LoadingSpinner />
               ) : faulterror ? (
-                <span className="badge bg-danger p-2">{roboterror}</span>
+                <span className="badge bg-danger p-2">{faulterror}</span>
               ) : (
                 <CFormSelect
                   name="fault_type"
@@ -462,10 +462,12 @@ const SiteTechnicianCreateServiceTicket = () => {
               <div className="d-flex justify-content-end">
                 <CButton
                   type="submit"
-                  color="primary"
+                  color="success"
                   size="sm"
                   className=" m-2"
-                  disabled={loading}
+                  disabled={
+                    loading || !formData.fault_type || !formData.robot_no
+                  }
                 >
                   {loading ? (
                     <>

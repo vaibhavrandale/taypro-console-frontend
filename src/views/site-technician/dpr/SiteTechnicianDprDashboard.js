@@ -317,7 +317,7 @@ const SiteTechnicianDprDashboard = () => {
         >
           Add DPR
         </Link>
-        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+        <Link className="btn btn-sm btn-success m-1" onClick={exportToExcel}>
           Export
         </Link>
       </div>

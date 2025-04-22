@@ -9,12 +9,14 @@ import {
   CFormInput,
   CRow,
   CCol,
+  CBadge,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -214,26 +216,56 @@ const SitesCoordinates = () => {
                     hour12: true,
                   })}
                 </CTableDataCell>
-
+                {/* 
                 <CTableDataCell>
                   {attendances.punchin_location.lat},
                   {attendances.punchin_location.lng}
+                </CTableDataCell> */}
+                <CTableDataCell>
+                  <Link
+                    target="blank"
+                    className="text-decoration-none"
+                    to={`https://www.google.com/maps/search/?api=1&query=${attendances.punchin_location.lat},${attendances.punchin_location.lng}`}
+                  >
+                    View
+                  </Link>
                 </CTableDataCell>
 
                 <CTableDataCell>
-                  {" "}
-                  {new Date(attendances.punchout_time).toLocaleString("en-IN", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
+                  {attendances.punchout_time ? (
+                    new Date(attendances.punchout_time).toLocaleString(
+                      "en-IN",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      }
+                    )
+                  ) : (
+                    <CBadge color="warning">N/A</CBadge>
+                  )}
                 </CTableDataCell>
-                <CTableDataCell>
+                {/* <CTableDataCell>
                   {attendances.punchout_location?.lat},
                   {attendances.punchout_location?.lng}
+                </CTableDataCell> */}
+                <CTableDataCell>
+                  {attendances.punchout_time ? (
+                    <>
+                      <Link
+                        target="blank"
+                        className="text-decoration-none"
+                        to={`https://www.google.com/maps/search/?api=1&query=${attendances.punchout_location.lat},${attendances.punchout_location.lng}`}
+                      >
+                        View
+                      </Link>
+                    </>
+                  ) : (
+                    <CBadge color="warning">N/A</CBadge>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
