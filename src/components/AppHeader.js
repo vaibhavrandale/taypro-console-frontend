@@ -94,7 +94,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
-    if (!userInfo) return null;
     if (userInfo && updateSuccess) {
       dispatch({ type: "UPDATE_RESET" });
     } else if (
@@ -107,7 +106,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       fetchNotifications();
     }
   }, [authtoken, userInfo, updateSuccess, navigate]);
-
+  if (!userInfo) return null;
   const notificationPage =
     userInfo.role === "Master Admin"
       ? "/master-admin/notifications"
