@@ -169,17 +169,18 @@ const SiteManagement = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
+                    to={`commissioning/${site.site_id}`}
+                  >
+                    Commissioning
+                  </Link>
+                  <Link
+                    color="success"
+                    size="sm"
+                    className="btn btn-danger btn-sm m-1 text-white"
                     to={`block-management/${site.site_id}`}
                   >
                     Manage
                   </Link>
-                  {/* <Link
-                    color="primary"
-                    size="sm"
-                    className="btn btn-warning btn-sm mx-1 px-3"
-                  >
-                    Edit
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))

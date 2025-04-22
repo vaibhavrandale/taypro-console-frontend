@@ -64,6 +64,8 @@ import {
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
 import ChatDashboard from "./views/master-admin/chat/ChatDashboard";
+import RobotOperatingCommissioning from "./views/master-admin/site-management/ClientRobotOperatingCommissioning";
+import BlockManagementCommissioning from "./views/master-admin/site-management/BlockManagementCommissioning";
 
 // import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
 
@@ -404,11 +406,29 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/site-management/commissioning/:site_id",
+    name: "Block Management Commissioning",
+    element: (
+      <MasterAdminRoute>
+        <BlockManagementCommissioning />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
     element: (
       <MasterAdminRoute>
         <RobotOperating />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/site-management/block-management-commissioning/:site_id/:block/:robot_no",
+    name: "Robot Configuration",
+    element: (
+      <MasterAdminRoute>
+        <RobotOperatingCommissioning />
       </MasterAdminRoute>
     ),
   },
@@ -2081,6 +2101,7 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
+
   {
     path: "/client-admin/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
@@ -2090,6 +2111,7 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
+
   {
     path: "/client-admin/search-robot",
     name: "Search Robot",
