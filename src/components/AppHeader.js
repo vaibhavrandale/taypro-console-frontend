@@ -95,6 +95,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
+    if (!userInfo) return null;
     if (userInfo && updateSuccess) {
       dispatch({ type: "UPDATE_RESET" });
     } else if (
@@ -107,8 +108,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       fetchNotifications();
     }
   }, [authtoken, userInfo, updateSuccess, navigate]);
-
-  if (!userInfo) return null;
 
   const notificationPage =
     userInfo.role === "Master Admin"
@@ -246,7 +245,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
 
-          {/* ✅ Role-based robot icon + notifications */}
           {[
             "Master Admin",
             "Project Admin",
@@ -257,7 +255,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             <>
               <Link
                 to={`/${adminroute}/robot-activity`}
-                // className="text-decoration-none text-body m-1"
                 className="text-decoration-none text-body m-1 align-self-center mt-1"
               >
                 🤖
