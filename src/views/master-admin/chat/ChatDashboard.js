@@ -277,6 +277,7 @@ export default function ChatDashboard() {
     <div className="border">
       <CRow className="">
         <CCol md={4} className="border-end p-3 overflow-auto">
+
           <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
             <h5 className=" ">Chats</h5>
             <CButton className="" onClick={() => setShowUserModal(true)}>
@@ -395,6 +396,38 @@ export default function ChatDashboard() {
                       <small className="text-nowrap">
                         {formatTimeinUserlist(chat.updatedAt)}
                       </small>
+
+          <h5 className="mb-3 p-2 border-bottom">Chats</h5>
+          <div style={{ maxHeight: "360px" }}>
+            {chats
+              .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) // Sort chats by updatedAt (latest first)
+              .map((chat) => (
+                <div
+                  key={chat._id}
+                  id="chat"
+                  className={` p-2 d-flex align-items-center gap-3 cursor-pointer ${
+                    selectedChat?._id === chat._id
+                      ? "bg-body-secondary rounded text-body-emphasis"
+                      : ""
+                  }`}
+                  onClick={() => handleSelectChat(chat)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <img
+                    src={chat.send_user.profile_image}
+                    alt="Profile"
+                    className="rounded-circle"
+                    width="50"
+                    height="50"
+                    style={{ objectFit: "cover", cursor: "pointer" }}
+                  />
+                  <div className="flex-grow-1">
+                    <div className="fw-semibold text-truncate">
+                      {chat.send_user.name}
+                    </div>
+                    <div className="text-truncate small">
+                      {renderLastMessage(chat.chat)}
+
                     </div>
                   );
                 })
@@ -409,6 +442,7 @@ export default function ChatDashboard() {
             </div>
           ) : selectedChat ? (
             <>
+
               <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2">
                 {(() => {
                   const isSender =
@@ -432,6 +466,19 @@ export default function ChatDashboard() {
                     </>
                   );
                 })()}
+
+              <div className="border-bottom p-3 fw-semibold">
+                <img
+                  src={selectedChat.receiver_user.profile_image}
+                  alt="Profile"
+                  className="rounded-circle"
+                  width="50"
+                  height="50"
+                  style={{ objectFit: "cover", cursor: "pointer" }}
+                />
+                &nbsp; &nbsp;
+                {selectedChat.send_user.name}
+
               </div>
 
               <div
@@ -449,6 +496,7 @@ export default function ChatDashboard() {
                           : "justify-content-start align-items-start" // Other user's message to the left
                       }`}
                     >
+
                       {/* <CAvatar src={msg.send_by.profile_image} /> */}
                       <img
                         src={msg.send_by.profile_image}
@@ -458,6 +506,7 @@ export default function ChatDashboard() {
                         height="30"
                         style={{ objectFit: "cover", cursor: "pointer" }}
                       />
+
                       &nbsp;&nbsp;
                       <div
                         className="p-2 border rounded-2"

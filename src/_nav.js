@@ -33,6 +33,9 @@ import {
   cilClock,
   cilLocationPin,
   cilCheck,
+  cilScrubber,
+  cilChatBubble,
+  cilLibrary,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -70,7 +73,7 @@ const _nav = [
         to: "/master-admin/site-management/all-site-data",
         icon: (
           <CIcon
-            icon={cilFactory}
+            icon={cilLibrary}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -301,7 +304,7 @@ const _nav = [
         to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
         icon: (
           <CIcon
-            icon={cilTask}
+            icon={cilScrubber}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -313,7 +316,7 @@ const _nav = [
         to: "/master-admin/chat",
         icon: (
           <CIcon
-            icon={cilTask}
+            icon={cilChatBubble}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
