@@ -49,6 +49,7 @@ const AppHeaderDropdown = () => {
 
     dispatch({ type: "EMP_SIGNOUT" });
     localStorage.removeItem("userInfo");
+    localStorage.removeItem("selectedChatId");
     navigate("/login");
     toast.success("Sign out Successfully");
   };

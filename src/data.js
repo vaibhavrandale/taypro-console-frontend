@@ -4247,6 +4247,7 @@ export const chats = [
         message:
           "Hi there Rathee! sdiuvhfdsuigv suirgsiugfidsu fuidshfdsui gfhusdhfuiods hfisdfiusdfui !",
         timestamp: "2025-04-21T09:08:38.750Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4255,6 +4256,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=1",
         },
         message: "me hu don!!",
+        seen_status: true,
         timestamp: "2025-04-21T09:16:45.427Z",
       },
       {
@@ -4265,6 +4267,7 @@ export const chats = [
         },
         message:
           "Morning Ajay  sdijfhseufi isu ufhuisdfh suifhesgfh sduigfvdsfhuvdvbkjdvh dfvhjdv hjdsbh",
+        seen_status: true,
         timestamp: "2025-04-21T08:05:00.000Z",
       },
       {
@@ -4274,6 +4277,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=1",
         },
         message: "Hi there Rathee!!",
+        seen_status: true,
         timestamp: "2025-04-21T09:08:38.750Z",
       },
       {
@@ -4283,6 +4287,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=1",
         },
         message: "me hu don!!",
+        seen_status: true,
         timestamp: "2025-04-21T09:16:45.427Z",
       },
       {
@@ -4292,6 +4297,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=4",
         },
         message: "Morning Ajay ☀️",
+        seen_status: true,
         timestamp: "2025-04-21T08:05:00.000Z",
       },
     ],
@@ -4308,28 +4314,30 @@ export const chats = [
       user_id: "3",
     },
     receiver_user: {
-      name: "Priya Shah",
-      email: "priya@taypro.in",
-      profile_image: "https://i.pravatar.cc/150?img=4",
-      user_id: "4",
+      name: "Sneha Araseed",
+      email: "sneha.a@taypro.in",
+      profile_image: "https://i.pravatar.cc/150?img=1",
+      user_id: "1",
     },
     chat: [
+      {
+        send_by: {
+          name: "Sneha Araseed",
+          email: "sneha.a@taypro.in",
+          profile_image: "https://i.pravatar.cc/150?img=1",
+        },
+        message: "Good morning Ajay!",
+        seen_status: true,
+        timestamp: "2025-04-21T08:00:00.000Z",
+      },
       {
         send_by: {
           name: "Ajay Kumar",
           email: "ajay@taypro.in",
           profile_image: "https://i.pravatar.cc/150?img=3",
         },
-        message: "Good morning Priya!",
-        timestamp: "2025-04-21T08:00:00.000Z",
-      },
-      {
-        send_by: {
-          name: "Priya Shah",
-          email: "priya@taypro.in",
-          profile_image: "https://i.pravatar.cc/150?img=4",
-        },
-        message: "Morning Ajay ☀️",
+        message: "Morning Sneha ☀️",
+        seen_status: true,
         timestamp: "2025-04-21T08:05:00.000Z",
       },
     ],
@@ -4360,6 +4368,7 @@ export const chats = [
         },
         message: "Did you push the code?",
         timestamp: "2025-04-21T07:30:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4368,6 +4377,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=5",
         },
         message: "Yes, pushed it 5 mins ago.",
+        seen_status: true,
         timestamp: "2025-04-21T07:32:00.000Z",
       },
     ],
@@ -4398,6 +4408,7 @@ export const chats = [
         },
         message: "Meeting at 2 PM?",
         timestamp: "2025-04-21T06:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4406,6 +4417,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=8",
         },
         message: "Yes confirmed.",
+        seen_status: true,
         timestamp: "2025-04-21T06:02:00.000Z",
       },
     ],
@@ -4436,6 +4448,7 @@ export const chats = [
         },
         message: "Lunch today?",
         timestamp: "2025-04-21T05:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4445,6 +4458,7 @@ export const chats = [
         },
         message: "Sure, same place?",
         timestamp: "2025-04-21T05:01:00.000Z",
+        seen_status: true,
       },
     ],
     createdAt: "2025-04-21T05:00:00.000Z",
@@ -4474,6 +4488,7 @@ export const chats = [
         },
         message: "Done with the deployment?",
         timestamp: "2025-04-21T04:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4483,6 +4498,7 @@ export const chats = [
         },
         message: "Yes, it's live now!",
         timestamp: "2025-04-21T04:05:00.000Z",
+        seen_status: true,
       },
     ],
     createdAt: "2025-04-21T04:00:00.000Z",
@@ -4512,6 +4528,7 @@ export const chats = [
         },
         message: "Any update on designs?",
         timestamp: "2025-04-21T03:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4520,6 +4537,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=14",
         },
         message: "Almost done, sending shortly.",
+        seen_status: true,
         timestamp: "2025-04-21T03:15:00.000Z",
       },
     ],
@@ -4550,6 +4568,7 @@ export const chats = [
         },
         message: "Client approved the proposal!",
         timestamp: "2025-04-21T02:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4559,6 +4578,7 @@ export const chats = [
         },
         message: "Awesome 🔥🔥🔥",
         timestamp: "2025-04-21T02:03:00.000Z",
+        seen_status: true,
       },
     ],
     createdAt: "2025-04-21T02:00:00.000Z",
@@ -4587,6 +4607,7 @@ export const chats = [
           profile_image: "https://i.pravatar.cc/150?img=17",
         },
         message: "Did you send the report?",
+        seen_status: true,
         timestamp: "2025-04-21T01:00:00.000Z",
       },
       {
@@ -4597,50 +4618,14 @@ export const chats = [
         },
         message: "Sent it this morning!",
         timestamp: "2025-04-21T01:10:00.000Z",
+        seen_status: true,
       },
     ],
     createdAt: "2025-04-21T01:00:00.000Z",
     updatedAt: "2025-04-21T01:10:00.000Z",
     __v: 1,
   },
-  {
-    _id: "10",
-    send_user: {
-      name: "Yash Thakur",
-      email: "yash@taypro.in",
-      profile_image: "https://i.pravatar.cc/150?img=19",
-      user_id: "19",
-    },
-    receiver_user: {
-      name: "Ananya Singh",
-      email: "ananya@taypro.in",
-      profile_image: "https://i.pravatar.cc/150?img=20",
-      user_id: "20",
-    },
-    chat: [
-      {
-        send_by: {
-          name: "Yash Thakur",
-          email: "yash@taypro.in",
-          profile_image: "https://i.pravatar.cc/150?img=19",
-        },
-        message: "Let’s sync up post lunch.",
-        timestamp: "2025-04-21T12:00:00.000Z",
-      },
-      {
-        send_by: {
-          name: "Ananya Singh",
-          email: "ananya@taypro.in",
-          profile_image: "https://i.pravatar.cc/150?img=20",
-        },
-        message: "Sure thing!",
-        timestamp: "2025-04-21T12:05:00.000Z",
-      },
-    ],
-    createdAt: "2025-04-21T12:00:00.000Z",
-    updatedAt: "2025-04-21T12:05:00.000Z",
-    __v: 1,
-  },
+
   {
     _id: "11",
     send_user: {
@@ -4664,6 +4649,7 @@ export const chats = [
         },
         message: "Let’s sync up post lunch.",
         timestamp: "2025-04-21T12:00:00.000Z",
+        seen_status: true,
       },
       {
         send_by: {
@@ -4673,6 +4659,7 @@ export const chats = [
         },
         message: "Sure thing!",
         timestamp: "2025-04-21T12:05:00.000Z",
+        seen_status: false,
       },
     ],
     createdAt: "2025-04-21T12:00:00.000Z",

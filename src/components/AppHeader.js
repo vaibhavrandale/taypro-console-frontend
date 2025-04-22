@@ -98,11 +98,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     if (userInfo && updateSuccess) {
       dispatch({ type: "UPDATE_RESET" });
     } else if (
-      userInfo.role === "Master Admin" ||
-      userInfo.role === "Project Admin" ||
-      userInfo.role === "Service Admin" ||
-      userInfo.role === "Service User" ||
-      userInfo.role === "Project Engineer"
+      userInfo?.role === "Master Admin" ||
+      userInfo?.role === "Project Admin" ||
+      userInfo?.role === "Service Admin" ||
+      userInfo?.role === "Service User" ||
+      userInfo?.role === "Project Engineer"
     ) {
       fetchNotifications();
     }
