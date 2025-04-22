@@ -12,7 +12,6 @@ import {
   CNavItem,
   useColorModes,
   CDropdownDivider,
-  CAvatar,
   CBadge,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
