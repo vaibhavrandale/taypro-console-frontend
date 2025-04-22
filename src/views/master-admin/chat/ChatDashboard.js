@@ -253,7 +253,7 @@ export default function ChatDashboard() {
       setTextMessage("");
 
       // Option 1: Refetch chats and update selected chat
-      await fetchChats(); // This updates the whole chat list
+    //  await fetchChats(); // This updates the whole chat list
 
       const updatedChat = result.data.data; // Assuming this is the updated chat object
       setSelectedChat(updatedChat); // Update current chat
