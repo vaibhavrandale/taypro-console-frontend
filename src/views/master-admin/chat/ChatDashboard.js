@@ -79,7 +79,14 @@ export default function ChatDashboard() {
                   onClick={() => handleSelectChat(chat)}
                   style={{ cursor: "pointer" }}
                 >
-                  <CAvatar src={chat.send_user.profile_image} />
+                  <img
+                    src={chat.send_user.profile_image}
+                    alt="Profile"
+                    className="rounded-circle"
+                    width="50"
+                    height="50"
+                    style={{ objectFit: "cover", cursor: "pointer" }}
+                  />
                   <div className="flex-grow-1">
                     <div className="fw-semibold text-truncate">
                       {chat.send_user.name}
@@ -104,7 +111,14 @@ export default function ChatDashboard() {
           ) : selectedChat ? (
             <>
               <div className="border-bottom p-3 fw-semibold">
-                <CAvatar src={selectedChat.receiver_user.profile_image} />
+                <img
+                  src={selectedChat.receiver_user.profile_image}
+                  alt="Profile"
+                  className="rounded-circle"
+                  width="50"
+                  height="50"
+                  style={{ objectFit: "cover", cursor: "pointer" }}
+                />
                 &nbsp; &nbsp;
                 {selectedChat.send_user.name}
               </div>
@@ -123,7 +137,6 @@ export default function ChatDashboard() {
                           : "justify-content-end align-items-start"
                       }`}
                     >
-                      {/* <CAvatar src={msg.send_by.profile_image} /> */}
                       &nbsp;&nbsp;
                       <div
                         className="p-2 border"
