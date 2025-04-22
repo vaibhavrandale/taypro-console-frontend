@@ -309,6 +309,7 @@ const filteredData = lora_configuration.filter((item) => {
     item.robot_no?.toLowerCase().includes(term) ||
     item.deveui?.toLowerCase().includes(term) ||
     item.site_id?.toLowerCase().includes(term) ||
+    item.serial?.toLowerCase().includes(term) ||
     item.formatted_deveui?.toLowerCase().includes(term) 
   );
 });
