@@ -1398,6 +1398,16 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
+  {
+    path: "/project-admin/chat",
+    name: "Chat with User",
+    element: (
+      <ProjectAdminRoute>
+        <ChatDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------service admin---------------------------------
@@ -1863,6 +1873,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/service-admin/chat",
+    name: "Chat with User",
+    element: (
+      <ServiceAdminRoute>
+        <ChatDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+
   //------------------------service admin---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -2131,6 +2151,16 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <Statistics />
+      </ClientAdminRoute>
+    ),
+  },
+
+  {
+    path: "/client-admin/chat",
+    name: "Chat with User",
+    element: (
+      <ClientAdminRoute>
+        <ChatDashboard />
       </ClientAdminRoute>
     ),
   },

@@ -2049,6 +2049,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Chat with Users",
+        to: "/client-admin/chat",
+        icon: (
+          <CIcon
+            icon={cilListRich}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
 
