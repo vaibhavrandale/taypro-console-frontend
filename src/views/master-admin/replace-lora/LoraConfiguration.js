@@ -295,12 +295,24 @@ const LoraConfiguration = () => {
   };
   //  [1,2,3,4]
   // Filter data based on search term
-  const filteredData = lora_configuration.filter(
-    (item) =>
-      item.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  // const filteredData = lora_configuration.filter(
+  //   (item) =>
+  //     item.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+
+const filteredData = lora_configuration.filter((item) => {
+  const term = searchTerm.toLowerCase();
+  return (
+    item.robot_no?.toLowerCase().includes(term) ||
+    item.deveui?.toLowerCase().includes(term) ||
+    item.site_id?.toLowerCase().includes(term)
   );
+});
+
+  
   const uniqueSitenames = sites.filter(
     (value, index, self) =>
       index === self.findIndex((t) => t.site_id === value.site_id)
