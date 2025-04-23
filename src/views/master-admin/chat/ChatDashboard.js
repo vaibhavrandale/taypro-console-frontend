@@ -3,7 +3,6 @@ import {
   CInputGroup,
   CFormInput,
   CButton,
-  CAvatar,
   CRow,
   CCol,
   CModal,
@@ -17,7 +16,6 @@ import {
   CBadge,
 } from "@coreui/react";
 import "./chart.css";
-// import { chats } from "../../../data"; // Assume this is where your provided chat data is imported from
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilLoop, cilPlaylistAdd, cilSend } from "@coreui/icons";
@@ -58,14 +56,34 @@ const reducer = (state, action) => {
       };
     case "CREATE_CHAT_FAIL":
       return { ...state, newchatloading: false, error: action.payload };
-
+    case "NEW_CHAT_REQUEST":
+      return {
+        ...state,
+        sendMessageLoading: true,
+        error: "",
+      };
+    case "NEW_CHAT_SUCCESS":
+      return {
+        ...state,
+        sendMessageLoading: false,
+      };
+    case "NEW_CHAT_FAIL":
+      return { ...state, sendMessageLoading: false, error: "" };
     default:
       return state;
   }
 };
 export default function ChatDashboard() {
   const [
-    { error, usersloading, users, chats, chatsloading, newchatloading },
+    {
+      error,
+      usersloading,
+      users,
+      chats,
+      chatsloading,
+      newchatloading,
+      sendMessageLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     users: [],
@@ -83,32 +101,6 @@ export default function ChatDashboard() {
   const [showUserModal, setShowUserModal] = useState(false);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  // const fetchChats = async () => {
-  //   dispatch({ type: "FETCH_CHAT_REQUEST" });
-  //   try {
-  //     const result = await axios.get(
-  //       "/api/v1/chats/get-all-chats",
-
-  //       {
-  //         headers: { authorization: `Bearer ${authtoken}` },
-  //       }
-  //     ); // Replace with your API endpoint
-  //     console.log(result.data.data);
-
-  //     dispatch({
-  //       type: "FETCH_CHAT_SUCCESS",
-  //       payload: result.data.data,
-  //     });
-  //     // setUsers(data);
-  //     // setLoading(false);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //     dispatch({
-  //       type: "FETCH_CHAT_FAIL",
-  //       payload: "Failed to fetch users",
-  //     });
-  //   }
-  // };
 
   const fetchChats = async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
@@ -209,7 +201,7 @@ export default function ChatDashboard() {
         {
           headers: { authorization: `Bearer ${authtoken}` },
         }
-      ); // Replace with your API endpoint
+      );
       console.log(result);
 
       dispatch({
@@ -272,322 +264,6 @@ export default function ChatDashboard() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [selectedChat]);
-
-  //   return (
-  //     <div className="border">
-  //       <CRow className="">
-  //         <CCol md={4} className="border-end p-3 overflow-auto">
-
-  //           <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
-  //             <h5 className=" ">Chats</h5>
-  //             <CButton className="" onClick={() => setShowUserModal(true)}>
-  //               <CIcon
-  //                 icon={cilPlaylistAdd}
-  //                 className=" text-success fw-bold"
-  //                 size="xl"
-  //               />
-  //             </CButton>
-  //           </div>
-
-  //           <CModal
-  //             visible={showUserModal}
-  //             onClose={() => setShowUserModal(false)}
-  //           >
-  //             <CModalHeader>
-  //               <CModalTitle>Select a User</CModalTitle>
-  //             </CModalHeader>
-  //             <CModalBody>
-  //               <CListGroup>
-  //                 {usersloading ? (
-  //                   <LoadingSpinner />
-  //                 ) : (
-  //                   users.map((user) => (
-  //                     <CListGroupItem
-  //                       key={user._id}
-  //                       className="d-flex align-items-center gap-3"
-  //                     >
-  //                       <img
-  //                         src={user.profile_image}
-  //                         alt="Profile"
-  //                         className="rounded-circle"
-  //                         width="30"
-  //                         height="30"
-  //                         style={{ objectFit: "cover" }}
-  //                       />
-  //                       {/* <CAvatar src={user.profile_image} /> */}
-  //                       <span>{user.username}</span>
-  //                       <CBadge
-  //                         style={{ cursor: "pointer" }}
-  //                         color="success"
-  //                         onClick={() => {
-  //                           CreateChatRoom(user);
-  //                           console.log("Selected user:", user);
-  //                           setShowUserModal(false); // Close modal
-  //                         }}
-  //                       >
-  //                         Start Chat
-  //                       </CBadge>
-  //                     </CListGroupItem>
-  //                   ))
-  //                 )}
-  //               </CListGroup>
-  //             </CModalBody>
-  //             <CModalFooter>
-  //               <CButton
-  //                 color="secondary"
-  //                 onClick={() => setShowUserModal(false)}
-  //               >
-  //                 Close
-  //               </CButton>
-  //             </CModalFooter>
-  //           </CModal>
-
-  //           <div
-  //             className="my-2"
-  //             style={{ maxHeight: "300px", minHeight: "300px" }}
-  //           >
-  //             {chatsloading || newchatloading ? (
-  //               <span
-  //                 style={{ maxHeight: "200px", minHeight: "200px" }}
-  //                 className="d-flex justify-content-center align-items-center"
-  //               >
-  //                 {" "}
-  //                 <LoadingSpinner />
-  //               </span>
-  //             ) : (
-  //               chats
-  //                 .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-  //                 .map((chat) => {
-  //                   const isLoggedInUserSender =
-  //                     chat.send_user.user_id === userInfo._id;
-  //                   const otherUser = isLoggedInUserSender
-  //                     ? chat.receiver_user
-  //                     : chat.send_user;
-
-  //                   return (
-  //                     <div
-  //                       key={chat._id}
-  //                       id="chat"
-  //                       className={`p-2 d-flex align-items-center gap-3 cursor-pointer ${
-  //                         selectedChat?._id === chat._id
-  //                           ? "bg-body-secondary rounded text-body-emphasis"
-  //                           : ""
-  //                       }`}
-  //                       onClick={() => handleSelectChat(chat)}
-  //                       style={{ cursor: "pointer" }}
-  //                     >
-  //                       {/* <CAvatar src={otherUser.profile_image} /> */}
-  //                       <img
-  //                         src={otherUser.profile_image}
-  //                         alt="Profile"
-  //                         className="rounded-circle"
-  //                         width="30"
-  //                         height="30"
-  //                         style={{ objectFit: "cover", cursor: "pointer" }}
-  //                       />
-  //                       <div className="flex-grow-1">
-  //                         <div className="fw-semibold text-truncate">
-  //                           {otherUser.name}
-  //                         </div>
-  //                         <div className="text-truncate small">
-  //                           {renderLastMessage(chat.chat)}
-  //                         </div>
-  //                       </div>
-  //                       <small className="text-nowrap">
-  //                         {formatTimeinUserlist(chat.updatedAt)}
-  //                       </small>
-
-  //           <h5 className="mb-3 p-2 border-bottom">Chats</h5>
-  //           <div style={{ maxHeight: "360px" }}>
-  //             {chats
-  //               .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) // Sort chats by updatedAt (latest first)
-  //               .map((chat) => (
-  //                 <div
-  //                   key={chat._id}
-  //                   id="chat"
-  //                   className={` p-2 d-flex align-items-center gap-3 cursor-pointer ${
-  //                     selectedChat?._id === chat._id
-  //                       ? "bg-body-secondary rounded text-body-emphasis"
-  //                       : ""
-  //                   }`}
-  //                   onClick={() => handleSelectChat(chat)}
-  //                   style={{ cursor: "pointer" }}
-  //                 >
-  //                   <img
-  //                     src={chat.send_user.profile_image}
-  //                     alt="Profile"
-  //                     className="rounded-circle"
-  //                     width="50"
-  //                     height="50"
-  //                     style={{ objectFit: "cover", cursor: "pointer" }}
-  //                   />
-  //                   <div className="flex-grow-1">
-  //                     <div className="fw-semibold text-truncate">
-  //                       {chat.send_user.name}
-  //                     </div>
-  //                     <div className="text-truncate small">
-  //                       {renderLastMessage(chat.chat)}
-
-  //                     </div>
-  //                   );
-  //                 })
-  //             )}
-  //           </div>
-  //         </CCol>
-
-  //         <CCol md={8} className="d-flex flex-column">
-  //           {loading ? (
-  //             <div className="flex-grow-1 d-flex align-items-center justify-content-center">
-  //               <LoadingSpinner />
-  //             </div>
-  //           ) : selectedChat ? (
-  //             <>
-
-  //               <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2">
-  //                 {(() => {
-  //                   const isSender =
-  //                     selectedChat.send_user.user_id === userInfo._id;
-  //                   const otherUser = isSender
-  //                     ? selectedChat.receiver_user
-  //                     : selectedChat.send_user;
-
-  //                   return (
-  //                     <>
-  //                       {/* <CAvatar src={otherUser.profile_image} /> */}
-  //                       <img
-  //                         src={otherUser.profile_image}
-  //                         alt="Profile"
-  //                         className="rounded-circle"
-  //                         width="30"
-  //                         height="30"
-  //                         style={{ objectFit: "cover", cursor: "pointer" }}
-  //                       />
-  //                       <span>{otherUser.name}</span>
-  //                     </>
-  //                   );
-  //                 })()}
-
-  // <div className="border-bottom p-3 fw-semibold">
-  //   <img
-  //     src={selectedChat.receiver_user.profile_image}
-  //     alt="Profile"
-  //     className="rounded-circle"
-  //     width="50"
-  //     height="50"
-  //     style={{ objectFit: "cover", cursor: "pointer" }}
-  //   />
-  //   &nbsp; &nbsp;
-  //   {selectedChat.send_user.name}
-
-  // </div>
-
-  // <div
-  //   className="flex-grow-1 overflow-auto p-3"
-  //   style={{ maxHeight: "300px", minHeight: "300px" }}
-  // >
-  //   {selectedChat.chat
-  //     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-  //     .map((msg, idx) => (
-  //       <div
-  //         key={idx}
-  //         className={`d-flex mb-2 ${
-  //           msg.send_by.email === userInfo.email
-  //             ? "justify-content-end align-items-end" // Logged-in user's message to the right
-  //             : "justify-content-start align-items-start" // Other user's message to the left
-  //         }`}
-  //       >
-
-  //         {/* <CAvatar src={msg.send_by.profile_image} /> */}
-  //         <img
-  //           src={msg.send_by.profile_image}
-  //           alt="Profile"
-  //           className="rounded-circle"
-  //           width="30"
-  //           height="30"
-  //           style={{ objectFit: "cover", cursor: "pointer" }}
-  //         />
-
-  //         &nbsp;&nbsp;
-  //         <div
-  //           className="p-2 border rounded-2"
-  //           style={{
-  //             maxWidth: "55%",
-  //             backgroundColor:
-  //               msg.send_by.email === userInfo.email
-  //                 ? "var(--cui-primary-bg-subtle)" // Right-aligned messages (logged-in user)
-  //                 : "var(--cui-body-bg)", // Left-aligned messages (other user)
-  //             color:
-  //               msg.send_by.email === userInfo.email
-  //                 ? "var(--cui-primary-color)" // Right-aligned messages (logged-in user)
-  //                 : "var(--cui-body-color)", // Left-aligned messages (other user)
-  //           }}
-  //         >
-  //           <div>{msg.message}</div>
-  //           <small className="text-muted d-block text-end">
-  //             {formatTime(msg.timestamp)}
-  //           </small>
-  //         </div>
-  //         <div className="d-flex justify-content-end align-items-end">
-  //           {msg.read ? (
-  //             <span className="text-success">✔</span>
-  //           ) : null}
-  //         </div>
-  //       </div>
-  //     ))}
-
-  //   <div ref={messagesEndRef} />
-  // </div>
-
-  // <div className="border-top p-3">
-  //   <CForm>
-  //     <CInputGroup>
-  //       <CFormInput
-  //         placeholder="Type a message..."
-  //         value={textMessage}
-  //         onChange={(e) => setTextMessage(e.target.value)}
-  //         onKeyDown={(e) => {
-  //           if (e.key === "Enter") {
-  //             e.preventDefault(); // Prevents new line or form submit
-  //             sendMessage(selectedChat);
-  //           }
-  //         }}
-  //       />
-  //       <CButton color="success">
-  //         <CIcon
-  //           icon={cilSend}
-  //           onClick={() => sendMessage(selectedChat)}
-  //         ></CIcon>
-  //       </CButton>
-  //       &nbsp;{" "}
-  //       <CButton
-  //         color="info"
-  //         onClick={fetchChats}
-  //         disabled={chatsloading}
-  //       >
-  //         {chatsloading ? (
-  //           <span
-  //             className="spinner-border spinner-border-sm"
-  //             role="status"
-  //             aria-hidden="true"
-  //           ></span>
-  //         ) : (
-  //           <CIcon icon={cilLoop}></CIcon>
-  //         )}
-  //       </CButton>
-  //     </CInputGroup>
-  //   </CForm>
-  // </div>
-  //             </>
-  //           ) : (
-  //             <div className="flex-grow-1 d-flex align-items-center justify-content-center text-muted">
-  //               Select a chat to start messaging
-  //             </div>
-  //           )}
-  //         </CCol>
-  //       </CRow>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="border">
@@ -808,16 +484,26 @@ export default function ChatDashboard() {
                       onChange={(e) => setTextMessage(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          e.preventDefault(); // Prevents new line or form submit
+                          e.preventDefault();
+                          if (!textMessage.trim()) return; // block empty Enter sends
                           sendMessage(selectedChat);
                         }
                       }}
                     />
-                    <CButton color="success">
-                      <CIcon
-                        icon={cilSend}
-                        onClick={() => sendMessage(selectedChat)}
-                      ></CIcon>
+                    <CButton
+                      color="success"
+                      disabled={sendMessageLoading || !textMessage.trim()}
+                    >
+                      {sendMessageLoading ? (
+                        <>
+                          <LoadingSpinner />
+                        </>
+                      ) : (
+                        <CIcon
+                          icon={cilSend}
+                          onClick={() => sendMessage(selectedChat)}
+                        />
+                      )}
                     </CButton>
                     &nbsp;{" "}
                     <CButton
