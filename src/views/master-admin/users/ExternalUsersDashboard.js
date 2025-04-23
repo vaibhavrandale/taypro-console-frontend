@@ -679,16 +679,7 @@ const ExternalUsersDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -728,13 +719,6 @@ const ExternalUsersDashboard = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          {/* <CFormLabel>Role</CFormLabel>
-          <CFormInput
-            type="text"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          /> */}
           <CFormLabel>Role </CFormLabel>
           <CFormSelect
             name="role"
@@ -804,14 +788,7 @@ const ExternalUsersDashboard = () => {
                 left="0"
                 shape="rounded-pill"
                 className="p-1"
-              >
-                {/* <CIcon
-                    icon={cilX}
-                    cursor="pointer"
-                    // onClick={removeLogo}
-                    title="Remove file"
-                  /> */}
-              </CBadge>
+              ></CBadge>
             </div>
           ) : null}
         </CModalBody>
@@ -828,6 +805,13 @@ const ExternalUsersDashboard = () => {
             size="sm"
             className="text-white"
             onClick={handleAdd}
+            disabled={
+              userAddloading ||
+              !formData.username ||
+              !formData.email ||
+              !formData.role ||
+              !formData.department
+            }
           >
             {userAddloading ? (
               <>
@@ -868,20 +852,6 @@ const ExternalUsersDashboard = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          {/* <CFormLabel>Role</CFormLabel>
-          <CFormInput
-            type="text"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          />
-          <CFormLabel>Department</CFormLabel>
-          <CFormInput
-            type="text"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-          /> */}
           <CFormLabel>Role </CFormLabel>
           <CFormSelect
             name="role"
