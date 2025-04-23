@@ -858,6 +858,13 @@ const UsersDashboard = () => {
             size="sm"
             className="text-white"
             onClick={handleAdd}
+            disabled={
+              userAddloading ||
+              !formData.username ||
+              !formData.email ||
+              !formData.role ||
+              !formData.department
+            }
           >
             {userAddloading ? (
               <>

@@ -447,7 +447,9 @@ const CreateServiceTicket = () => {
                   color="primary"
                   size="sm"
                   className=" m-2"
-                  disabled={loading}
+                  disabled={
+                    loading || !formData.fault_type || !formData.robot_no
+                  }
                 >
                   {loading ? (
                     <>
