@@ -174,7 +174,10 @@ const ClientTicketsDashboardClient = () => {
     <div className="">
       <h2 className="text-center">Client Tickets</h2>
       <div className="d-flex justify-content-end my-2 align-items-center">
-        <Link to="create-new-client-ticket" className="btn btn-sm btn-primary">
+        <Link
+          to="/client-admin/clientadmin-client-ticket/create-client-ticket"
+          className="btn btn-sm btn-primary"
+        >
           NEW
         </Link>
       </div>
