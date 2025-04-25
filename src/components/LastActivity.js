@@ -42,13 +42,15 @@ const LastActivity = ({ lastactivity }) => {
                 key={index}
                 className="d-flex align-items-center border-bottom pb-3 mb-3"
               >
-                <CAvatar
+                <img
                   src={activity.profile_image}
-                  size="lg"
-                  className="me-3 flex-shrink-0"
-                  style={{ width: "50px", height: "50px" }} // Fixed size
+                  alt="Profile"
+                  className="rounded-circle"
+                  width="50"
+                  height="50"
+                  style={{ objectFit: "cover", cursor: "pointer" }}
                 />
-                <div className="flex-grow-1">
+                <div className="flex-grow-1 mx-2">
                   <p className="mb-1 fw-semibold d-flex justify-content-between">
                     <span className="fw-semibold">{activity.name}</span>
                     <span className="text-muted small">

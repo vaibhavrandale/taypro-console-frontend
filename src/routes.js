@@ -30,8 +30,6 @@ import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
 import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
 import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
-// import ProjectHandoverDashboard from "./views/project-admin/project-closure/ProjectHandoverDashboard";
-// import ViewProjectHandoverDocument from "./views/project-admin/project-closure/ViewProjectHandoverDocument";
 import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
 import SiteTechnicianDashboard from "./views/site-technician/SiteTechnicianDashboard";
 import AllSiteData from "./views/site-technician/AllSiteData";
@@ -52,7 +50,6 @@ import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInve
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
 
-// import ServiceAdminRoute from "./UserRoutes";
 import {
   ServiceAdminRoute,
   ProjectAdminRoute,
@@ -64,8 +61,12 @@ import {
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
 import ChatDashboard from "./views/master-admin/chat/ChatDashboard";
-
-// import AddProjectHandover from "./views/project-admin/project-closure/AddProjectHandover";
+import ClientTicketsDashboard from "./views/master-admin/client-tickets/ClientTicketsDashboard";
+import CreateNewClientTicket from "./views/master-admin/client-tickets/CreateNewClientTicket";
+import UpdateClientTicket from "./views/master-admin/client-tickets/UpdateClientTicket";
+import ClientTicketsDashboardClient from "./views/client-admin/client-ticket/ClientTicketsDashboardClient";
+import CreateNewClientTicketClient from "./views/client-admin/client-ticket/CreateNewClientTicketClient";
+import UpdateClientTicketClient from "./views/client-admin/client-ticket/UpdateClientTicketClient";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -742,6 +743,33 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateInternalTicket />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-tickets",
+    name: "Client Tickets",
+    element: (
+      <MasterAdminRoute>
+        <ClientTicketsDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-tickets/create-new-client-ticket",
+    name: "Create New client Tickets",
+    element: (
+      <MasterAdminRoute>
+        <CreateNewClientTicket />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-tickets/update-client-ticket/:id",
+    name: "Update client Tickets",
+    element: (
+      <MasterAdminRoute>
+        <UpdateClientTicket />
       </MasterAdminRoute>
     ),
   },
@@ -2161,6 +2189,34 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <ChatDashboard />
+      </ClientAdminRoute>
+    ),
+  },
+
+  {
+    path: "/client-admin/clientadmin-client-ticket",
+    name: "Client Tickets",
+    element: (
+      <ClientAdminRoute>
+        <ClientTicketsDashboardClient />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/clientadmin-client-ticket/create-client-ticket",
+    name: "Create New client Tickets",
+    element: (
+      <ClientAdminRoute>
+        <CreateNewClientTicketClient />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/clientadmin-client-ticket/update-ticket/:id",
+    name: "Update client Tickets",
+    element: (
+      <ClientAdminRoute>
+        <UpdateClientTicketClient />
       </ClientAdminRoute>
     ),
   },
