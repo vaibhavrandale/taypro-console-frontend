@@ -178,6 +178,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Client Tickets",
+        to: "/master-admin/client-tickets",
+        icon: (
+          <CIcon
+            icon={cilNoteAdd}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Service Inventory",
         to: "/master-admin/inventories",
         icon: (
@@ -1996,6 +2008,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilSearch}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Client Tickets",
+        to: "/client-admin/clientadmin-client-ticket",
+        icon: (
+          <CIcon
+            icon={cilNoteAdd}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />

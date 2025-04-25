@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
@@ -233,7 +234,7 @@ const NewInventory = () => {
         item_id: "",
         item_code: "",
       });
-      navigate(`${adminroute}/inventories`);
+      navigate(`/${adminroute}/inventories`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -255,14 +256,16 @@ const NewInventory = () => {
             <CRow className="mb-3">
               <CCol md="4">
                 <div className="mb-3">
-                  <label className="form-label">Item Name</label>
+                  <label className="form-label">
+                    Item Name {state.loadingSites && <LoadingSpinner />}{" "}
+                  </label>
 
                   <CFormSelect
                     name="item_name"
                     value={formData.item_name}
                     onChange={handleSiteChange}
                   >
-                    <option value="">Select Item Name</option>
+                    <option value="">Select Item Name </option>
                     {state.sites?.length > 0 &&
                       state.sites.map((item) => (
                         <option key={item.item_name} value={item.item_name}>
@@ -314,7 +317,10 @@ const NewInventory = () => {
             <CRow>
               <CCol>
                 <div className="mb-3">
-                  <label className="form-label">Site Id</label>
+                  <label className="form-label">
+                    Site Id
+                    {state.loadingSiteIds && <LoadingSpinner />}
+                  </label>
                   <CFormSelect
                     name="site_id"
                     value={siteName.site_id}
@@ -360,7 +366,11 @@ const NewInventory = () => {
 
             <CRow className="mb-3"></CRow>
 
-            <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
+            <CButton
+              onClick={handleSubmit}
+              className="btn btn-warning btn-sm"
+              disabled={state.loading}
+            >
               {state.loading ? (
                 <>
                   Adding..
@@ -369,7 +379,7 @@ const NewInventory = () => {
               ) : (
                 "Add Inventory"
               )}
-            </Link>
+            </CButton>
           </CForm>
         </CCardBody>
       </CCard>
