@@ -194,7 +194,9 @@ const CreateNewClientTicket = () => {
               <CRow>
                 <CCol md="6">
                   <div className="mb-3">
-                    <label className="form-label">Site Id</label>
+                    <label className="form-label">
+                      Site Id {loadingSiteIds && <LoadingSpinner />}
+                    </label>
                     <CFormSelect
                       name="site_id"
                       value={siteName.site_id}

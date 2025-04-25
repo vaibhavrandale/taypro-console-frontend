@@ -93,6 +93,8 @@ const CreateNewClientTicketClient = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo.role === "Client Admin") {
+    adminroute = "client-admin";
   }
 
   const navigate = useNavigate();
@@ -166,7 +168,7 @@ const CreateNewClientTicketClient = () => {
       });
 
       toast.success(response.data.message);
-      navigate(`/${adminroute}/client-tickets`); // Redirect after success
+      navigate(`/${adminroute}/clientadmin-client-ticket`); // Redirect after success
     } catch (error) {
       console.error(error);
       dispatch({
@@ -191,7 +193,9 @@ const CreateNewClientTicketClient = () => {
               <CRow>
                 <CCol md="6">
                   <div className="mb-3">
-                    <label className="form-label">Site Id</label>
+                    <label className="form-label">
+                      Site Id {loadingSiteIds && <LoadingSpinner />}
+                    </label>
                     <CFormSelect
                       name="site_id"
                       value={siteName.site_id}
