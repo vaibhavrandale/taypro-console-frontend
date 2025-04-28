@@ -11,7 +11,6 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-// import { sites } from "../../../data"; // Import sites from data.js
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -123,7 +122,6 @@ const AllSiteCleaningLog = () => {
   };
 
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -185,7 +183,6 @@ const AllSiteCleaningLog = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
-                    // to={`block-management/${site.site_id}`}
                     to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
                   >
                     Manage

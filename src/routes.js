@@ -1256,12 +1256,21 @@ const routes = [
     ),
   },
   {
-    path: "/project-admin/all-site-cleaning-log/:site_id",
+    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
       <ProjectAdminRoute>
         <SitewaiseLog />
       </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    name: "Master Admin Sitewise Cleaning Log",
+    element: (
+      <MasterAdminRoute>
+        <SitewaiseLog />
+      </MasterAdminRoute>
     ),
   },
   {
@@ -1319,11 +1328,29 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/all-site-gateways/create-new-gateway",
+    name: "Master Admin Create New Gateway",
+    element: (
+      <ProjectAdminRoute>
+        <CreateNewGateways />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-gateways/update-gateway/:id",
     name: "Update Gateway",
     element: (
       <ProjectAdminRoute>
         <UpdateGateway />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/all-site-gateways/assign-gateway/:id",
+    name: "Assign Gateway",
+    element: (
+      <ProjectAdminRoute>
+        <AssignGateway />
       </ProjectAdminRoute>
     ),
   },
