@@ -473,7 +473,7 @@ const RobotOperating = () => {
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
                   <CDropdownToggle size="sm" className="shadow-sm ">
-                    {Robotdata[0].robot_no}
+                    {robots[0].robot_no}
                   </CDropdownToggle>
                 ) : (
                   <CButton
@@ -528,15 +528,15 @@ const RobotOperating = () => {
                             className="text-secondary"
                             style={{ fontSize: "15px" }}
                           >
-                            {Robotdata[0].robot_no}
+                            {robots[0].robot_no}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          🔋: {Robotdata[0].battery_voltage}%
+                          🔋: {robots[0].battery_voltage}%
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="badge bg-success">
-                            {Robotdata[0].version}
+                            {robots[0].version}
                           </span>
                         </CTableDataCell>
                       </CTableRow>
@@ -547,7 +547,7 @@ const RobotOperating = () => {
                             style={{ fontSize: "13px" }}
                           >
                             {" "}
-                            {Robotdata[0].deveui}{" "}
+                            {robots[0].deveui}{" "}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
@@ -556,7 +556,7 @@ const RobotOperating = () => {
                             className="badge bg-danger"
                             shape="rounded-pill"
                           >
-                            {Robotdata[0].wheel_motor_speed}
+                            {robots[0].wheel_motor_speed}
                           </CBadge>
                         </CTableDataCell>
                       </CTableRow>
@@ -564,7 +564,7 @@ const RobotOperating = () => {
                         <CTableDataCell>
                           Lora:{" "}
                           <span className="text-success">
-                            {Robotdata[0].lora_no}
+                            {robots[0].lora_no}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>Brush Speed</CTableDataCell>
@@ -573,7 +573,7 @@ const RobotOperating = () => {
                             className="badge bg-danger"
                             shape="rounded-pill"
                           >
-                            {Robotdata[0].brush_motor_speed}
+                            {robots[0].brush_motor_speed}
                           </CBadge>
                         </CTableDataCell>
                       </CTableRow>
@@ -593,26 +593,26 @@ const RobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              Robotdata[0].lora_state === "1"
+                              robots[0].lora_state === "1"
                                 ? `success`
                                 : `danger`
                             }`}
                           >
-                            {Robotdata[0].lora_state === "1"
+                            {robots[0].lora_state === "1"
                               ? `online`
                               : `offline`}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="text-secondary">
-                            {Robotdata[0].last_status}
+                            {robots[0].last_status}
                           </span>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell>
                           <span className="text-danger">
-                            SC : {Robotdata[0].stuck_count}
+                            SC : {robots[0].stuck_count}
                           </span>
                         </CTableDataCell>
                         {/* <CTableDataCell>
@@ -644,10 +644,8 @@ const RobotOperating = () => {
                           )}
                         </CTableDataCell> */}
                         <CTableDataCell>
-                          {!Robotdata[0].last_uplink ||
-                          isNaN(
-                            new Date(Robotdata[0].last_uplink).getTime()
-                          ) ? (
+                          {!robots[0].last_uplink ||
+                          isNaN(new Date(robots[0].last_uplink).getTime()) ? (
                             <CBadge
                               className="badge bg-danger"
                               shape="rounded-pill"
@@ -658,13 +656,13 @@ const RobotOperating = () => {
                             <span>
                               <CTooltip
                                 content={new Date(
-                                  Robotdata[0].last_uplink
+                                  robots[0].last_uplink
                                 ).toLocaleString()}
                                 placement="top"
                               >
                                 <span>
                                   {formatDistanceToNow(
-                                    new Date(Robotdata[0].last_uplink),
+                                    new Date(robots[0].last_uplink),
                                     {
                                       addSuffix: true,
                                     }
