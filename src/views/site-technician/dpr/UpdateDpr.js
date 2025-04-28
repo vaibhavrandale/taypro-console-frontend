@@ -85,6 +85,16 @@ const UpdateDpr = () => {
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const [state, dispatch] = useReducer(reducer, {
     dprData: {
@@ -169,7 +179,7 @@ const UpdateDpr = () => {
       );
       toast.success(result.data.message);
       dispatch({ type: "UPDATE_SUCCESS" });
-      navigate(`/master-admin/all-site-dpr`);
+      navigate(`/${adminroute}/all-site-dpr`);
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
