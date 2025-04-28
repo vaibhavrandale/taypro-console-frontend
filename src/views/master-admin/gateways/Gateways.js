@@ -240,7 +240,7 @@ const Gateways = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gateways</h2>
         <Link
-          to="/master-admin/all-site-gateways/create-new-gateway"
+          to={`/${adminroute}/all-site-gateways/create-new-gateway`}
           className="btn btn-warning btn-sm"
         >
           Add
@@ -315,7 +315,7 @@ const Gateways = () => {
                     <Link
                       type="button"
                       className="btn btn-info btn-sm m-1"
-                      to={`/master-admin/all-site-gateways/assign-gateway/${gateway._id}`}
+                      to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
                     >
                       Assign Gateway
                     </Link>

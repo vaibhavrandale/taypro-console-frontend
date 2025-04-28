@@ -136,7 +136,7 @@ const AllSiteCleaningLog = () => {
 
   return (
     <div className="">
-      <h2 className="blinker-semibold">Site Management</h2>
+      <h2 className="blinker-semibold">All Sites Cleaning Log</h2>
 
       {/* Search Input */}
       <CRow className="justify-content-end">

@@ -1575,7 +1575,7 @@ const routes = [
 
   {
     path: "/service-admin/preventive-maintanance-dashboard",
-    name: "Project Admin Preventive maintanance Dashboard",
+    name: "Project Admin Preventive Maintenance Dashboard",
     element: (
       <ServiceAdminRoute>
         <PreventiveMaintanancrDashboard />
@@ -1714,17 +1714,26 @@ const routes = [
 
   {
     path: "/service-admin/all-site-cleaning-log",
-    name: "Project Admin All Site Cleaning Log",
+    name: "Service Admin All Site Cleaning Log",
     element: (
       <ServiceAdminRoute>
         <AllSiteCleaningLog />
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    name: "Service Admin Sitewise Cleaning Log",
+    element: (
+      <ServiceAdminRoute>
+        <SitewaiseLog />
+      </ServiceAdminRoute>
+    ),
+  },
 
   {
     path: "/service-admin/all-site-cleaning-log/:site_id",
-    name: "Project Admin Sitewise Cleaning Log",
+    name: "Service Admin Sitewise Cleaning Log",
     element: (
       <ServiceAdminRoute>
         <SitewaiseLog />
@@ -1752,7 +1761,7 @@ const routes = [
   },
   {
     path: "/service-admin/all-site-dpr",
-    name: "Project Admin All Site Dpr",
+    name: "Service Admin All Site Dpr",
     element: (
       <ServiceAdminRoute>
         <AllSiteDpr />
@@ -1785,6 +1794,24 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <Gateways />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/all-site-gateways/create-new-gateway",
+    name: "Service Admin Create New Gateway",
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewGateways />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/all-site-gateways/assign-gateway/:id",
+    name: "Assign Gateway",
+    element: (
+      <ServiceAdminRoute>
+        <AssignGateway />
       </ServiceAdminRoute>
     ),
   },

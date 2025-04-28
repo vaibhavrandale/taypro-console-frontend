@@ -213,6 +213,16 @@ const UsersDashboard = () => {
   } else {
     roles = service_role_permissions;
   }
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
+
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -599,15 +609,13 @@ const UsersDashboard = () => {
 
   return (
     <div className="">
-      {/* <img src={logo} alt="logo" className="border" /> */}
-      {/* Search & Add User Button */}
       <div>
         <h2 className="text-center ">Internal Users</h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <Link
-            to="/master-admin/external-users"
+            to={`/${adminroute}/external-users`}
             className="btn btn-sm btn-secondary m-1"
           >
             External Users

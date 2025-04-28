@@ -67,6 +67,17 @@ const CreateGateway = () => {
     error: "",
     sites: [],
   });
+  const userInfo = useSelector((state) => state.userInfo);
+  // console.log(Robotdata[0].last_uplink);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   const handleChange = (e) => {
     dispatch({
@@ -103,7 +114,7 @@ const CreateGateway = () => {
       });
       toast.success("Gateway Created Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
-      navigate("/master-admin/all-site-gateways");
+      navigate(`/${adminroute}/all-site-gateways`);
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",

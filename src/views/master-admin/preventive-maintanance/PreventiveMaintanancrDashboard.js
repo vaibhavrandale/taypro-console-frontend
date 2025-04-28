@@ -281,7 +281,7 @@ const PreventiveMaintanancrDashboard = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`${adminroute}/preventive-maintanance-dashboard/update/${pm._id}`}
+                    to={`/${adminroute}/preventive-maintanance-dashboard/update/${pm._id}`}
                   >
                     Update
                   </Link>

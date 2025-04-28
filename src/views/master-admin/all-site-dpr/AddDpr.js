@@ -6,14 +6,11 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CAvatar,
-  CBadge,
-  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CFormCheck,
-  CFormInput,
   CFormSelect,
   CRow,
   CTable,
@@ -23,8 +20,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload, cilX } from "@coreui/icons";
 import "../service-tickets/servicetickts.css";
 
 const reducer = (state, action) => {
@@ -95,14 +90,10 @@ const AddDpr = () => {
     error: "",
     success: false,
   });
-  //   const [image, setImage] = useState("");
-  //   const [uploading, setUploading] = useState(false);
+
   const [site_id, setSiteId] = useState("");
-  const [filteredTechnicians, setFilteredTechnicians] = useState([]);
-  const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
 
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -112,6 +103,7 @@ const AddDpr = () => {
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
   }
+
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -131,27 +123,8 @@ const AddDpr = () => {
         toast.error(error.response.data.error || "Error fetching sites");
       }
     };
-    const fetchSiteTechnicians = async () => {
-      dispatch({ type: "FETCH_TECHNICIAN_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/users/role/sitetechnician`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-        dispatch({
-          type: "FETCH_TECHNICIAN_SUCCESS",
-          payload: result.data.data,
-        });
-        console.log(result);
-      } catch (error) {
-        dispatch({
-          type: "FETCH_TECHNICIAN_FAIL",
-          payload: error.response?.data?.error || "Error fetching Technicians!",
-        });
-        toast.error(error.response.data.error || "Error fetching Technicians!");
-      }
-    };
-    fetchSiteIds();
-    fetchSiteTechnicians();
+
+    fetchSiteIds(); // Only fetch site ids here
   }, [authtoken]);
 
   const handleChange = (e) => {
@@ -161,15 +134,51 @@ const AddDpr = () => {
       value: e.target.value,
     });
   };
-  const handleSiteNameChange = (e) => {
+
+  const handleSiteNameChange = async (e) => {
     const selectedSiteId = e.target.value;
-    setSiteId(selectedSiteId); // Updates local state
+    setSiteId(selectedSiteId);
 
     dispatch({
       type: "SET_FIELD",
       name: "site_id",
-      value: selectedSiteId, // Ensures it's stored in dprData
+      value: selectedSiteId,
     });
+
+    dispatch({
+      type: "SET_FIELD",
+      name: "technician_present",
+      value: [],
+    });
+
+    if (selectedSiteId) {
+      dispatch({ type: "FETCH_TECHNICIAN_REQUEST" });
+      try {
+        const result = await axios.get(
+          `/api/v1/users/role/sitetechnician/${selectedSiteId}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        dispatch({
+          type: "FETCH_TECHNICIAN_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_TECHNICIAN_FAIL",
+          payload: error.response?.data?.error || "Error fetching Technicians!",
+        });
+        toast.error(
+          error.response?.data?.error || "Error fetching Technicians!"
+        );
+      }
+    } else {
+      dispatch({
+        type: "FETCH_TECHNICIAN_SUCCESS",
+        payload: [],
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -302,60 +311,7 @@ const AddDpr = () => {
                   />
                 </div>
               </CCol>
-              {/* <CTable striped bordered className="mt-2">
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Image</CTableHeaderCell>
-                    <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell style={{ width: "80px" }}>
-                      Actions
-                    </CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {state.technicians.map((tech, index) => (
-                    <CTableRow key={index}>
-                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                      <CTableDataCell>
-                        <CAvatar src={tech.profile_image} className="me-2" />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {tech.username} - {tech.email}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                      <CFormCheck
-            checked={state.dprData.technician_present.some(
-              (t) => t._id === tech._id
-            )}
-            onChange={(e) => {
-              const updatedList = e.target.checked
-                ? [
-                    ...state.dprData.technician_present,
-                    {
-                     name: tech.username,
-                      email: tech.email,
-                      technician_id: tech._id,
-                      role: tech.role,
-                      profile_image: tech.profile_image,
-                    },
-                  ]
-                : state.dprData.technician_present.filter(
-                    (t) => t._id !== tech._id
-                  );
 
-              dispatch({
-                type: "SET_FIELD",
-                name: "technician_present",
-                value: updatedList,
-              });
-            }}
-          />
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable> */}
               <CTable striped bordered className="mt-2">
                 <CTableHead color="secondary">
                   <CTableRow>

@@ -88,7 +88,17 @@ const UpdatePreventiveMaintenance = () => {
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
   const [formData, setFormData] = useState({});
+  const userInfo = useSelector((state) => state.userInfo);
 
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
   useEffect(() => {
     const fetchMaintenance = async () => {
       try {
@@ -133,7 +143,7 @@ const UpdatePreventiveMaintenance = () => {
       );
       dispatch({ type: "UPDATE_SUCCESS" }); // Show loading
       toast.success("Preventive Maintenance updated successfully!");
-      navigate("/master-admin/preventive-maintanance-dashboard");
+      navigate(`/${adminroute}/preventive-maintanance-dashboard`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", error: error.response?.data?.error });
       toast.error(

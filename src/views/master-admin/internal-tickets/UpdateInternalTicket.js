@@ -56,6 +56,16 @@ const UpdateInternalTicket = () => {
   });
 
   const [formData, setFormData] = useState({});
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -98,7 +108,7 @@ const UpdateInternalTicket = () => {
       });
       toast.success("Ticket updated successfully");
       dispatch({ type: "UPDATE_TICKET_SUCCESS" });
-      navigate("/master-admin/internal-tickets");
+      navigate(`/${adminroute}/internal-tickets`);
     } catch (error) {
       dispatch({
         type: "UPDATE_TICKET_FAIL",

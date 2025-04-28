@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const UpdateDpr = () => {
-//   return <div>UpdateDpr</div>;
-// };
-
-// export default UpdateDpr;
-
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

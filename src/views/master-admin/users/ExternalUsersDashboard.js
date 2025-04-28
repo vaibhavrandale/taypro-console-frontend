@@ -202,7 +202,6 @@ const ExternalUsersDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
@@ -213,7 +212,6 @@ const ExternalUsersDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [assgnedSites, setAssignedSites] = useState([]);
-  // const [users, setUsers] = useState([]); // State for users
   const [pageInput, setPageInput] = useState("");
   const [image, setImage] = useState("");
 
@@ -223,10 +221,17 @@ const ExternalUsersDashboard = () => {
   const [activeTab, setActiveTab] = useState("assigned");
 
   const [selectedSite, setSelectedSite] = useState("");
-  // const [loading, setLoading] = useState(false);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  }
 
   useEffect(() => {
-    // setLoading(true);
     const fetchUsers = async () => {
       let pagination = {
         pg: page,
@@ -246,7 +251,6 @@ const ExternalUsersDashboard = () => {
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -257,8 +261,6 @@ const ExternalUsersDashboard = () => {
             hasPrevPage: prev,
           },
         });
-        // setUsers(data);
-        // setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
         dispatch({
@@ -278,7 +280,6 @@ const ExternalUsersDashboard = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        // console.log("Sites:", result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -321,15 +322,6 @@ const ExternalUsersDashboard = () => {
     setAddModalVisible(true);
   };
 
-  // const handleChange = (e) => {
-  //   const { name, type, checked, value } = e.target;
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
-
   const handleChange = (e) => {
     console.log("Change detected:", e.target.name, e.target.value); // Debug log
     const { name, type, checked, value } = e.target;
@@ -339,12 +331,6 @@ const ExternalUsersDashboard = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
-  // Handle Update User
-  // const handleUpdate = () => {
-  //   console.log("Updated User:", formData);
-  //   setModalVisible(false);
-  // };
 
   const handleAdd = async () => {
     try {
@@ -417,7 +403,6 @@ const ExternalUsersDashboard = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-      //   console.log(data);
 
       setImage(data.url);
 
@@ -440,8 +425,6 @@ const ExternalUsersDashboard = () => {
 
         ...filteredFormData
       } = formData;
-
-      // const newdata = { ...filteredFormData, profile_image: image };
 
       const newdata = image
         ? { ...filteredFormData, profile_image: image }
@@ -545,7 +528,6 @@ const ExternalUsersDashboard = () => {
           payload: sitedata._id,
         });
 
-        // ✅ Update UI without refresh
         setAssignedSites((prevSites) =>
           prevSites.filter((site) => site._id !== sitedata._id)
         );
@@ -566,15 +548,13 @@ const ExternalUsersDashboard = () => {
 
   return (
     <div className="">
-      {/* <img src={logo} alt="logo" className="border" /> */}
-      {/* Search & Add User Button */}
       <div>
         <h2 className="text-center">External Users </h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <Link
-            to="/master-admin/users"
+            to={`/${adminroute}/users`}
             className="btn btn-sm btn-secondary m-1"
           >
             Internal Users
