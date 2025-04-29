@@ -134,7 +134,7 @@ const SiteTechnicianSearchRobot = () => {
                     <Link
                       key={index}
                       // ✅ Move the key to the <li> (not the <Link>)
-                      to={`/client-admin/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                      to={`/site-technician/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                       className="text-decoration-none w-100 "
                     >
                       <li

@@ -114,7 +114,7 @@ const SiteTechnicianUpdateTimer = () => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(result.data.message);
 
-      navigate(`/master-admin/timers`);
+      navigate(`/site-technician/timers`);
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
