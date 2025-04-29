@@ -337,7 +337,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             height="50"
                             style={{ objectFit: "cover", cursor: "pointer" }}
                           />
-                          <div>
+                          <div className="ms-2 flex-grow-1">
                             <strong className="d-block">
                               {notification.action}
                             </strong>
