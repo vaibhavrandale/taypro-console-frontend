@@ -158,27 +158,18 @@ const AddRobotUsingLoraNo = () => {
     const fetchloraconfigurations = async () => {
       dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
       try {
-        const result = await axios.post(
-          `/api/v1/loraconfigurations/get-loraconfigurations`,
-          pagination,
+        const result = await axios.get(
+          `/api/v1/loraconfigurations/fetch-all-loras`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
+
         // console.log(result.data.data);
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
-          // payload: result.data.data,
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
           },
         });
       } catch (error) {
