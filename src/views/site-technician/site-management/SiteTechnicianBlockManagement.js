@@ -104,6 +104,23 @@ const SiteTechnicianBlockManagement = () => {
       )
     : [];
 
+  const stopCommand = async () => {
+    try {
+      const response = await axios.post(
+        `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      toast.success(
+        response.data.message || "Stop Command sent to all Robots successfully"
+      );
+    } catch (error) {
+      toast.error(error.message || "Failed to send stop command");
+    }
+  };
+
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
       <h4 className="p-2 text-center text-primary">
@@ -118,13 +135,22 @@ const SiteTechnicianBlockManagement = () => {
         )}
       </h4>
       <div className="p-2 d-flex justify-content-center">
-        <CButton
-          className="btn btn-secondary btn-sm"
-          size="sm"
-          onClick={() => setVisible(!visible)}
-        >
-          All Robot Data
-        </CButton>
+        <div className="d-flex">
+          <CButton
+            className="btn btn-secondary btn-sm me-2"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            All Robot Data
+          </CButton>
+          <CButton
+            className="btn btn-secondary btn-sm"
+            size="sm"
+            onClick={() => stopCommand()}
+          >
+            Stop Cleaning
+          </CButton>
+        </div>
 
         <CModal
           backdrop="static"

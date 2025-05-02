@@ -243,7 +243,7 @@ const AddRobotUsingLoraNo = () => {
           type: "ADD_ROBOTS_SUCCESS",
           payload: [...robots, response.data.data], // Append new robot to state
         });
-        navigate("/master-admin/robots");
+        // navigate("/master-admin/robots");
         // Reset form fields
         setFormData({
           lora_no: "",

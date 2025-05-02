@@ -205,7 +205,7 @@ const Robots = () => {
         <CCol md={4}>
           <CFormInput
             type="text"
-            placeholder="Search by Robot No, Deveui,Lora No, or Site ID..."
+            placeholder="Search by Robot No, Deveui, or Site ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
