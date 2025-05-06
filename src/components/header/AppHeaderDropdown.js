@@ -36,7 +36,6 @@ const AppHeaderDropdown = () => {
   const dispatch = useDispatch(); // ✅ FIXED: Initialize dispatch
   const userInfo = useSelector((state) => state.userInfo);
 
-  // console.log(userInfo);
   const navigate = useNavigate();
   const [logoutModalOpen, setLogoutModalOpenn] = useState(false);
 

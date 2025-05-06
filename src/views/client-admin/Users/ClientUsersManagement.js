@@ -277,7 +277,6 @@ const ClientUsersManagement = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        // console.log("Sites:", result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -298,8 +297,6 @@ const ClientUsersManagement = () => {
   };
 
   const openAssignedSitesModal = (user) => {
-    console.log(user);
-
     setAssignedSites(user.assigned_sites);
     setSelectedUser(user);
     setassignedSitesModalVisible(true);
@@ -331,7 +328,6 @@ const ClientUsersManagement = () => {
   // };
 
   const handleChange = (e) => {
-    console.log("Change detected:", e.target.name, e.target.value); // Debug log
     const { name, type, checked, value } = e.target;
 
     setFormData((prevData) => ({
@@ -340,35 +336,6 @@ const ClientUsersManagement = () => {
     }));
   };
 
-  //   const handleAdd = async () => {
-  //     try {
-  //       dispatch({ type: "ADD_USER_REQUEST" });
-  //       const newdata = { ...formData, profile_image: image };
-  //       const response = await axios.post("/api/v1/users", newdata, {
-  //         headers: { authorization: `Bearer ${authtoken}` },
-  //       });
-
-  //       if (response.status === 201 || response.status === 200) {
-  //         console.log("User successfully added:", response.data);
-  //         dispatch({
-  //           type: "ADD_USER_SUCCESS",
-  //           payload: [...users, response.data.data], // Append new robot to state
-  //         });
-  //         setAddModalVisible(false);
-  //       }
-  //       toast.success(response.data.message);
-  //       setImage("");
-  //     } catch (error) {
-  //       console.error(error);
-  //       dispatch({
-  //         type: "ADD_USER_FAIL",
-  //         payload: error.response.data.error || error.response.data.message,
-  //       });
-  //       toast.error(error.response.data.error || error.response.data.message);
-  //     }
-  //   };
-
-  // Filter Users based on Search Term and ensure they are "Internal" type
   const handleAdd = async () => {
     try {
       dispatch({ type: "ADD_USER_REQUEST" });
@@ -395,8 +362,6 @@ const ClientUsersManagement = () => {
         assigned_sites: assignedSiteEntry ? [assignedSiteEntry] : [], // Ensure assigned_sites is an array
       };
 
-      console.log("Payload Sent:", newdata); // Debugging: Check what is being sent
-
       const response = await axios.post(
         "/api/v1/users/create-external-user",
         newdata,
@@ -406,7 +371,6 @@ const ClientUsersManagement = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        console.log("User successfully added:", response.data);
         dispatch({
           type: "ADD_USER_SUCCESS",
           payload: [...users, response.data.data],
@@ -439,7 +403,6 @@ const ClientUsersManagement = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -470,7 +433,6 @@ const ClientUsersManagement = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-      //   console.log(data);
 
       setImage(data.url);
 
@@ -482,8 +444,6 @@ const ClientUsersManagement = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log(formData);
-
       dispatch({ type: "UPDATE_REQUEST" });
       const {
         createdAt,
@@ -556,8 +516,6 @@ const ClientUsersManagement = () => {
         toast.success(response.data.message);
       }
     } catch (err) {
-      console.log(err);
-
       dispatch({
         type: "ASSIGN_SITE_FAIL",
         payload: err.response.data.error,
@@ -614,8 +572,6 @@ const ClientUsersManagement = () => {
       toast.error(error.response?.data?.error || "Failed to remove site");
     }
   };
-
-  console.log(role_permissions);
 
   return (
     <div className="">

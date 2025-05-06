@@ -79,8 +79,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         setCount(response.data.unread_count);
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        console.log(error);
-
         if (error.status === 401) {
           dispatch({
             type: "EMP_SIGNOUT",
@@ -170,8 +168,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Notification read");
     } catch (error) {
-      console.log(error.response);
-
       toast.error(error.response.data.error);
       dispatch({
         type: "UPDATE_FAIL",

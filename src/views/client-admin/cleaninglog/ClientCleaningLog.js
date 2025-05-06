@@ -96,25 +96,6 @@ const ClientCleaningLog = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   useEffect(() => {
-    // const fetchSites = async () => {
-    //   dispatch({ type: "FETCH_SITES_REQUEST" });
-    //   try {
-    //     const result = await axios.get(`/api/v1/sites`, {
-    //       headers: { Authorization: `Bearer ${authtoken}` },
-    //     });
-    //     dispatch({
-    //       type: "FETCH_SITES_SUCCESS",
-    //       payload: result.data.data,
-    //     });
-    //   } catch (error) {
-    //     dispatch({
-    //       type: "FETCH_SITES_FAIL",
-    //       payload: error.response.data.error,
-    //     });
-    //     toast.error("Failed to fetch sites");
-    //   }
-    // };
-
     const fetchCleaningLogs = async () => {
       let pagination = {
         pg: page,
@@ -132,15 +113,12 @@ const ClientCleaningLog = () => {
             },
           }
         );
-        // setNotifications(response.data.data);
-        // console.log(response.data);
-        console.log(result.data.data);
+
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -223,7 +201,6 @@ const ClientCleaningLog = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

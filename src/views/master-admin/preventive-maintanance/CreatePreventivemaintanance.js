@@ -118,7 +118,6 @@ const CreatePreventiveMaintenance = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  // const [robots, setRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
 

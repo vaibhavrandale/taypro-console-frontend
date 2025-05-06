@@ -115,7 +115,6 @@ const ClientRobotOperating = () => {
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
-        // console.log(robotsData);
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
@@ -161,7 +160,6 @@ const ClientRobotOperating = () => {
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: Robotdata[0].deveui,
@@ -175,7 +173,6 @@ const ClientRobotOperating = () => {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -192,12 +189,9 @@ const ClientRobotOperating = () => {
   };
 
   const sendMulticastDownlink = async (command, index) => {
-    // console.log(command);
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
-    console.log(alldeveuis, command);
 
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
@@ -214,7 +208,6 @@ const ClientRobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -229,8 +222,6 @@ const ClientRobotOperating = () => {
 
     setCommandButton(null);
   };
-
-  // console.log(Robotdata[0].last_uplink);
 
   return (
     <>

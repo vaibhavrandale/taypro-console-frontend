@@ -69,7 +69,6 @@ const ClientSearchRobot = () => {
           payload: result.data,
         });
       } catch (error) {
-        console.log(error.response.statusText);
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response.statusText,

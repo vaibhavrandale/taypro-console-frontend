@@ -120,7 +120,6 @@ const Statistics = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(response.data.data);
 
         dispatch({
           type: "FETCH_ROBOTS_CLEANING_SUCCESS",

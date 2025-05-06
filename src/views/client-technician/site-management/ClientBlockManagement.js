@@ -70,8 +70,6 @@ const ClientBlockManagement = () => {
           }
         );
 
-        // console.log(result.data.data); // Debugging step
-
         dispatch({
           type: "FETCH_BLOCKDATA_SUCCESS",
           payload: {
@@ -236,7 +234,6 @@ const ClientBlockManagement = () => {
         <CRow className="mt-4 justify-content-center">
           {blocks.map((block, index) => {
             const robot = block.blockrobots ? block.blockrobots : null; // Handle single robot object
-            console.log(robot);
 
             return (
               <CCol md={4} className="my-2" key={index}>

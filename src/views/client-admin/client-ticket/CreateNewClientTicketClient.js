@@ -161,7 +161,6 @@ const CreateNewClientTicketClient = () => {
         headers: { authorization: `Bearer ${authtoken}` },
       });
 
-      console.log("Ticket successfully created:", response.data);
       dispatch({
         type: "CREATE_TICKET_SUCCESS",
         payload: response.data.data, // Append new robot to state
