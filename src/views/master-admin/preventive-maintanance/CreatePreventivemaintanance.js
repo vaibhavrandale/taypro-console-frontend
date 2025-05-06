@@ -45,6 +45,8 @@ const initialState = {
   start_date: "",
   end_date: "",
   loadingUpload: false,
+  loadingRobots: true,
+  robots: [],
 };
 
 const reducer = (state, action) => {
@@ -75,17 +77,6 @@ const reducer = (state, action) => {
     case "SET_IMAGE":
       return { ...state, [action.field]: action.url };
 
-    // case "UPLOAD_REQUEST":
-    //   return { ...state, loadingUpload: true, errorUpload: "" };
-    // case "UPLOAD_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loadingUpload: false,
-    //     errorUpload: "",
-    //   };
-    // case "UPLOAD_FAIL":
-    //   return { ...state, loadingUpload: false, errorUpload: action.payload };
-
     case "UPLOAD_REQUEST":
       return {
         ...state,
@@ -104,6 +95,16 @@ const reducer = (state, action) => {
         loadingUpload: { ...state.loadingUpload, [action.field]: false },
         errorUpload: action.payload,
       };
+    case "FETCH_ROBOTS_REQUEST":
+      return { ...state, loadingRobots: true, error: "" };
+    case "FETCH_ROBOTS_SUCCESS":
+      return {
+        ...state,
+        loadingRobots: false,
+        robots: action.payload.data,
+      };
+    case "FETCH_ROBOTS_FAIL":
+      return { ...state, loadingRobots: false, error: action.payload };
 
     case "RESET":
       return initialState;
@@ -117,21 +118,33 @@ const CreatePreventiveMaintenance = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [robots, setRobots] = useState([]);
+  // const [robots, setRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
 
   useEffect(() => {
     const fetchRobots = async () => {
+      dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const { data } = await axios.get(
+        const result = await axios.get(
           "/api/v1/robots/get-robots/robots-without-pg",
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        setRobots(data.data);
+        // setRobots(data.data);
+        console.log(result.data.data);
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          payload: {
+            data: result.data.data,
+          },
+        });
       } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: "Failed to fetch Robots",
+        });
         toast.error("Failed to fetch robots");
       }
     };
@@ -143,11 +156,14 @@ const CreatePreventiveMaintenance = () => {
     setSearchTerm(value);
 
     if (value.length > 0) {
-      const filtered = robots.filter(
-        (robot) =>
-          robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = state.robots.filter((robot) => {
+        const robotNo = robot.robot_no?.toLowerCase() || "";
+        const siteId = robot.site_id?.toLowerCase() || "";
+        const searchValue = value.toLowerCase();
+
+        return robotNo.includes(searchValue) || siteId.includes(searchValue);
+      });
+
       setFilteredRobots(filtered);
     } else {
       setFilteredRobots([]);
@@ -298,7 +314,10 @@ const CreatePreventiveMaintenance = () => {
         <CForm onSubmit={handleSubmit}>
           <CRow className="gy-3">
             <CCol md={12}>
-              <CFormLabel>Search Robot</CFormLabel>
+              handleSearchChange
+              <CFormLabel>
+                Search Robot {state.loadingRobots && <LoadingSpinner />}{" "}
+              </CFormLabel>
               <CFormInput
                 type="text"
                 placeholder="Search Robot No or Site ID..."
