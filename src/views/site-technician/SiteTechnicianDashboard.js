@@ -11,6 +11,7 @@ import {
   CFormSelect,
   CButton,
   CAlert,
+  CBadge,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -107,6 +108,10 @@ const SiteTechnicianDashboard = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
+
+  const [inTime, setinTime] = useState("");
+  const [currentTime, setcurrentTime] = useState(new Date());
+
   const [liveLocation, setLiveLocation] = useState(null);
 
   const fetchPunchStatus = async () => {
@@ -115,6 +120,8 @@ const SiteTechnicianDashboard = () => {
         "/api/v1/technician-attendance/punchstatus",
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
+      setinTime(data.data.punchin_time);
+      // console.log(data.data.punchin_time);
 
       dispatch({
         type: "SET_STATUS",
@@ -135,7 +142,7 @@ const SiteTechnicianDashboard = () => {
         { site_id: selectedId },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-      console.log(res);
+      // console.log(res);
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
     } catch (error) {
       toast.error(error.response.data.message || error.response.data.error);
@@ -405,6 +412,14 @@ const SiteTechnicianDashboard = () => {
     }
   };
 
+  const isAfterFiveHours = () => {
+    const current = new Date(currentTime);
+    const punchIn = new Date(inTime);
+    const diffInMs = current - punchIn;
+    const diffInHours = diffInMs / (1000 * 60 * 60); // convert ms to hours
+    return diffInHours > 5;
+  };
+
   return (
     <CContainer className="mt-4">
       <CCard>
@@ -463,14 +478,50 @@ const SiteTechnicianDashboard = () => {
             </CForm>
           ) : (
             <CForm onSubmit={handlePunchOut}>
-              <CButton
+              <CRow>
+                <CCol md={6}>
+                  <CFormLabel>Select Site</CFormLabel>
+                  <CFormSelect
+                    value={site_id}
+                    onChange={(e) => {
+                      dispatch({
+                        type: "SET_FIELD",
+                        name: "site_id",
+                        value: e.target.value,
+                      });
+                      fetchCoordinates(e.target.value);
+                    }}
+                    required
+                  >
+                    <option value="">-- Select Site --</option>
+                    {sites.map((site, index) => (
+                      <option key={index} value={site.site_id}>
+                        {site.site_id}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                </CCol>
+              </CRow>{" "}
+              {isAfterFiveHours() ? (
+                <CButton
+                  type="submit"
+                  color="warning"
+                  className="mt-3"
+                  disabled={loading}
+                >
+                  {loading ? "Punching Out..." : "Punch Out"}
+                </CButton>
+              ) : (
+                <CBadge color="danger">Wait for Punch Out</CBadge>
+              )}
+              {/* <CButton
                 type="submit"
                 color="warning"
                 className="mt-3"
                 disabled={loading}
               >
                 {loading ? "Punching Out..." : "Punch Out"}
-              </CButton>
+              </CButton> */}
             </CForm>
           )}
 
