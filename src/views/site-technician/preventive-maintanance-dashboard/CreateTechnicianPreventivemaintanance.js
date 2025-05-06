@@ -113,12 +113,9 @@ const CreateTechnicianPreventivemaintanance = () => {
   useEffect(() => {
     const fetchRobots = async () => {
       try {
-        const { data } = await axios.get(
-          "/api/v1/robots/get-robots/robots-without-pg",
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
+        const { data } = await axios.get("/api/v1/robots/get-robots-no", {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
         setRobots(data.data);
       } catch (error) {
         toast.error("Failed to fetch robots");
