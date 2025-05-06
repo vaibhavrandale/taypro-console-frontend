@@ -67,6 +67,11 @@ import UpdateClientTicket from "./views/master-admin/client-tickets/UpdateClient
 import ClientTicketsDashboardClient from "./views/client-admin/client-ticket/ClientTicketsDashboardClient";
 import CreateNewClientTicketClient from "./views/client-admin/client-ticket/CreateNewClientTicketClient";
 import UpdateClientTicketClient from "./views/client-admin/client-ticket/UpdateClientTicketClient";
+import PreventiveMaintenanceTechnicianDashboard from "./views/site-technician/preventive-maintanance-dashboard/PreventiveMaintenanceTechnicianDashboard";
+import PreventiveMaintananceTechnicianNotifications from "./views/site-technician/preventive-maintanance-dashboard/PreventiveMaintananceTechnicianNotifications";
+import CreateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/CreateTechnicianPreventivemaintanance";
+import UpdateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/UpdateTechnicianPreventivemaintanance";
+import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician/preventive-maintanance-dashboard/ViewTechnicianPreventivemaintananceQuaterly";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2110,6 +2115,51 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <InventoryTab />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/preventive-maintanance-dashboard",
+    name: "Preventive Maintenance",
+    element: (
+      <SiteTechnicianRoute>
+        <PreventiveMaintenanceTechnicianDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/preventive-maintanance-dashboard/preventive-maintanance-notifications",
+    name: "Preventive Maintenance Notifications",
+    element: (
+      <SiteTechnicianRoute>
+        <PreventiveMaintananceTechnicianNotifications />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/preventive-maintanance-dashboard/create-pm",
+    name: "Create Preventive Maintenance",
+    element: (
+      <SiteTechnicianRoute>
+        <CreateTechnicianPreventivemaintanance />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/preventive-maintanance-dashboard/update/:id",
+    name: "Update Preventive Maintenance",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdateTechnicianPreventivemaintanance />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/preventive-maintanance-dashboard/view",
+    name: "View Preventive Maintenance",
+    element: (
+      <SiteTechnicianRoute>
+        <ViewTechnicianPreventivemaintananceQuaterly />
       </SiteTechnicianRoute>
     ),
   },

@@ -1423,6 +1423,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Preventive Maintenance",
+        to: "/site-technician/preventive-maintanance-dashboard",
+        icon: (
+          <CIcon
+            icon={cilCalendarCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Site Attendance",
         to: "/site-technician/user-site-attendance",
         icon: (
