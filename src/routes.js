@@ -72,6 +72,7 @@ import PreventiveMaintananceTechnicianNotifications from "./views/site-technicia
 import CreateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/CreateTechnicianPreventivemaintanance";
 import UpdateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/UpdateTechnicianPreventivemaintanance";
 import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician/preventive-maintanance-dashboard/ViewTechnicianPreventivemaintananceQuaterly";
+import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTemperature";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -995,6 +996,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/robot-battery-temperature",
+    name: "Robot Battery & Temperature",
+    element: (
+      <MasterAdminRoute>
+        <BatteryAndTemperature />
+      </MasterAdminRoute>
+    ),
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -1465,6 +1476,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <ChatDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/robot-battery-temperature",
+    name: "Robot Battery & Temperature",
+    element: (
+      <ProjectAdminRoute>
+        <BatteryAndTemperature />
       </ProjectAdminRoute>
     ),
   },
@@ -1966,6 +1986,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <ChatDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/robot-battery-temperature",
+    name: "Robot Battery & Temperature",
+    element: (
+      <ServiceAdminRoute>
+        <BatteryAndTemperature />
       </ServiceAdminRoute>
     ),
   },
