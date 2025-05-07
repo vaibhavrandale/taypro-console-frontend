@@ -36,6 +36,7 @@ import {
   cilScrubber,
   cilChatBubble,
   cilLibrary,
+  cilBattery3,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -329,6 +330,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilChatBubble}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Robot Battery Temperature",
+        to: "/master-admin/robot-battery-temperature",
+        icon: (
+          <CIcon
+            icon={cilBattery3}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -1047,6 +1060,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Robot Battery Temperature",
+        to: "/project-admin/robot-battery-temperature",
+        icon: (
+          <CIcon
+            icon={cilBattery3}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
 
@@ -1280,6 +1305,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Robot Battery Temperature",
+        to: "/service-admin/robot-battery-temperature",
+        icon: (
+          <CIcon
+            icon={cilBattery3}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
