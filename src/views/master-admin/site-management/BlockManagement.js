@@ -724,11 +724,16 @@ const BlockManagement = () => {
                           placement="top"
                         >
                           <span
-                            className={`tooltip-container m-1 badge p-2 rounded-1 ${
+                            className={`tooltip-container m-1 badge p-1 rounded-1 ${
                               item.lora_state === 1 ? "bg-success" : "bg-danger"
                             }`}
                           >
-                            {item.robot_no}
+                            <Link
+                              to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`}
+                              className="text-decoration-none text-white"
+                            >
+                              {item.robot_no.slice(-3)}
+                            </Link>
                           </span>
                         </CTooltip>
                       ))}

@@ -55,7 +55,7 @@ const PieChart = () => {
         });
 
         let result = response.data.data; // Expecting array of objects { count, fault_type }
-        console.log(result);
+        // console.log(result);
 
         const faultData = result.reduce((acc, item) => {
           acc[item.fault_type] = item.count;
@@ -64,7 +64,10 @@ const PieChart = () => {
 
         dispatch({ type: "FETCH_FAULT_SUCCESS", payload: faultData });
       } catch (error) {
-        dispatch({ type: "FETCH_FAULT_FAIL", payload: error.message });
+        dispatch({
+          type: "FETCH_FAULT_FAIL",
+          payload: error.response.data.message || error.response.data.error,
+        });
       }
     };
     fetchFaultCounts();
@@ -75,9 +78,6 @@ const PieChart = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
 
-        let result = response.data.data; // i have array of  {total_tickets,resolved_tickets,unresolved_tickets,site_id}
-        console.log(result);
-
         dispatch({
           type: "FETCH_SITEWISE_TICKET_SUCCESS",
           payload: response.data.data,
@@ -85,7 +85,7 @@ const PieChart = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITEWISE_TICKET_SUCCESS",
-          payload: error.message,
+          payload: error.response.data.message || error.response.data.error,
         });
       }
     };
@@ -155,13 +155,15 @@ const PieChart = () => {
     "#34495E",
     "#95A5A6",
   ];
+  // console.log(serviceticketsfaulycount);
 
   return (
     <CRow className="justify-content-center">
-      <CCol xs={12} md={6}>
+      <CCol xs={12}></CCol>
+      <CCol xs={6} md={6}>
         <CCard className="mb-4 shadow">
           <CCardHeader>
-            <h5 className="text-center">Sitewise Ticket Status</h5>
+            <h5 className="text-center">All Sitewise Ticket Status</h5>
           </CCardHeader>
           <CCardBody
             className="d-flex justify-content-center align-items-center"
@@ -176,6 +178,8 @@ const PieChart = () => {
               </div>
             ) : error ? (
               <p className="text-danger text-center">{error}</p>
+            ) : serviceticketssitewise?.length === 0 ? (
+              <p className="text-danger text-center">No data available</p>
             ) : (
               <div style={{ width: "100%", height: "100%" }} className="">
                 <CChartPie
@@ -218,7 +222,7 @@ const PieChart = () => {
       <CCol xs={12} md={6}>
         <CCard className="mb-4 shadow">
           <CCardHeader>
-            <h5 className="text-center">Fault Occurrences</h5>
+            <h5 className="text-center">All Site Fault Occurrences</h5>
           </CCardHeader>
           <CCardBody
             className="d-flex justify-content-center align-items-center"
@@ -233,6 +237,8 @@ const PieChart = () => {
               </div>
             ) : error ? (
               <p>{error}</p>
+            ) : Object.keys(serviceticketsfaulycount || {}).length === 0 ? (
+              <p className="text-danger text-center">No data available</p>
             ) : (
               <div style={{ width: "100%", height: "100%" }}>
                 <CChartPie

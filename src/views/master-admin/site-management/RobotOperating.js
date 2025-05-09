@@ -22,13 +22,12 @@ import {
   CDropdownToggle,
   CInputGroup,
   CFormInput,
-  CSpinner,
   CTooltip,
   CBadge,
 } from "@coreui/react";
 import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -76,6 +75,15 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
 
+    case "FETCH_ROBOT_REQUEST":
+      return { ...state, loadingRobot: true, error: "" };
+
+    case "FETCH_ROBOT_SUCCESS":
+      return { ...state, loadingRobot: false, robot: action.payload };
+
+    case "FETCH_ROBOT_FAIL":
+      return { ...state, loadingRobot: false, error: action.payload };
+
     case "SEND_DOWNLINK_REQUEST":
       return { ...state, sendingCommandloading: true, error: "" };
 
@@ -113,6 +121,8 @@ const RobotOperating = () => {
     {
       loading,
       error,
+      robot,
+      loadingRobot,
       downlinks,
       successDelete,
       loadingRobots,
@@ -126,6 +136,7 @@ const RobotOperating = () => {
   ] = useReducer(reducer, {
     downlinks: [],
     robots: [],
+    robot: {},
     loading: true,
     error: "",
     loadingRobots: true,
@@ -135,7 +146,7 @@ const RobotOperating = () => {
     hasPrevPage: false,
   });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -144,14 +155,14 @@ const RobotOperating = () => {
       try {
         dispatch({ type: "FETCH_ROBOTS_REQUEST" });
         const response = await axios.get(
-          `/api/v1/robots/site/${site_id}/${block}`,
+          `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
-        // console.log(robotsData);
+        console.log(robotsData);
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
@@ -160,13 +171,9 @@ const RobotOperating = () => {
           const extractNumber = (robotNo) =>
             parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
 
-          const filteredRobots = robotsData
-            .filter(
-              (robot) => robot.site_id === site_id && robot.block === block
-            )
-            .sort(
-              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
-            );
+          const filteredRobots = robotsData.sort(
+            (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
+          );
 
           setSiteRobots(filteredRobots);
         }
@@ -178,8 +185,30 @@ const RobotOperating = () => {
       }
     };
 
+    const getRobot = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOT_REQUEST" });
+        const response = await axios.get(
+          `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOT_FAIL",
+          payload: error.response
+            ? error.response.data.message
+            : error.response.data.error,
+        });
+      }
+    };
+
     getRobots();
-  }, [block, site_id, authtoken]);
+    getRobot();
+  }, [block, site_id, authtoken, robot_no]);
 
   useEffect(() => {
     let pagination = {
@@ -196,7 +225,7 @@ const RobotOperating = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(response);
+        // console.log(response);
 
         let total = Math.ceil(
           Number(response.data.total) / Number(response.data.limit)
@@ -270,18 +299,18 @@ const RobotOperating = () => {
     // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
-      deveui: Robotdata[0].deveui,
-      robot_no: Robotdata[0].robot_no,
+      deveui: robot.deveui,
+      robot_no: robot.robot_no,
       site_id: site_id,
       command: command,
-      lora_no: Robotdata[0].lora_no,
+      lora_no: robot.lora_no,
     };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data.data.message);
+      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -300,11 +329,11 @@ const RobotOperating = () => {
     // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
-      deveui: Robotdata[0].deveui,
-      robot_no: Robotdata[0].robot_no,
+      deveui: robot.deveui,
+      robot_no: robot.robot_no,
       site_id: site_id,
       command: command,
-      lora_no: Robotdata[0].lora_no,
+      lora_no: robot.lora_no,
     };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
@@ -315,7 +344,7 @@ const RobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data.data.message);
+      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -334,7 +363,7 @@ const RobotOperating = () => {
   const sendMulticastDownlink = async (command, index) => {
     // console.log(command);
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
-    console.log(alldeveuis, command);
+    // console.log(alldeveuis, command);
 
     setCommandButton(index);
     // console.log(command);
@@ -354,7 +383,7 @@ const RobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data.data.message);
+      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -388,7 +417,7 @@ const RobotOperating = () => {
     }
   };
 
-  // console.log(Robotdata[0].last_uplink);
+  // console.log(robot.last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -401,7 +430,7 @@ const RobotOperating = () => {
 
   const TextToBase64 = (text) => {
     const base64 = btoa(text);
-    console.log(base64);
+    // console.log(base64);
     setBase64Text(base64);
     setTimeout(() => {
       setBase64Text("");
@@ -473,19 +502,17 @@ const RobotOperating = () => {
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
                   <CDropdownToggle size="sm" className="shadow-sm ">
-                    {robots[0].robot_no}
+                    {robot.robot_no}
                   </CDropdownToggle>
                 ) : (
                   <CButton
                     className={`${
-                      Robotdata[0].lora_state === 1 ? `` : `text-white`
+                      robot.lora_state === 1 ? `` : `text-white`
                     } shadow-sm`}
-                    color={`${
-                      Robotdata[0].lora_state === 1 ? `danger` : `success`
-                    }`}
+                    color={`${robot.lora_state === 1 ? `danger` : `success`}`}
                     size="sm"
                   >
-                    {Robotdata[0].robot_no}
+                    {robot.robot_no}
                   </CButton>
                 )}
 
@@ -528,15 +555,15 @@ const RobotOperating = () => {
                             className="text-secondary"
                             style={{ fontSize: "15px" }}
                           >
-                            {robots[0].robot_no}
+                            {robot.robot_no}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          🔋: {robots[0].battery_voltage}%
+                          🔋: {robot.battery_voltage}%
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="badge bg-success">
-                            {robots[0].version}
+                            {robot.version}
                           </span>
                         </CTableDataCell>
                       </CTableRow>
@@ -547,7 +574,7 @@ const RobotOperating = () => {
                             style={{ fontSize: "13px" }}
                           >
                             {" "}
-                            {robots[0].deveui}{" "}
+                            {robot.deveui}{" "}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
@@ -556,16 +583,14 @@ const RobotOperating = () => {
                             className="badge bg-danger"
                             shape="rounded-pill"
                           >
-                            {robots[0].wheel_motor_speed}
+                            {robot.wheel_motor_speed}
                           </CBadge>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell>
                           Lora:{" "}
-                          <span className="text-success">
-                            {robots[0].lora_no}
-                          </span>
+                          <span className="text-success">{robot.lora_no}</span>
                         </CTableDataCell>
                         <CTableDataCell>Brush Speed</CTableDataCell>
                         <CTableDataCell>
@@ -573,7 +598,7 @@ const RobotOperating = () => {
                             className="badge bg-danger"
                             shape="rounded-pill"
                           >
-                            {robots[0].brush_motor_speed}
+                            {robot.brush_motor_speed}
                           </CBadge>
                         </CTableDataCell>
                       </CTableRow>
@@ -593,30 +618,26 @@ const RobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              robots[0].lora_state === "1"
-                                ? `success`
-                                : `danger`
+                              robot.lora_state === "1" ? `success` : `danger`
                             }`}
                           >
-                            {robots[0].lora_state === "1"
-                              ? `online`
-                              : `offline`}
+                            {robot.lora_state === "1" ? `online` : `offline`}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="text-secondary">
-                            {robots[0].last_status}
+                            {robot.last_status}
                           </span>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell>
                           <span className="text-danger">
-                            SC : {robots[0].stuck_count}
+                            SC : {robot.stuck_count}
                           </span>
                         </CTableDataCell>
                         {/* <CTableDataCell>
-                          {Robotdata[0].last_uplink === null ? (
+                          {robot.last_uplink === null ? (
                             <CBadge
                               className="badge bg-danger"
                               shape="rounded-pill"
@@ -627,13 +648,13 @@ const RobotOperating = () => {
                             <span className="">
                               <CTooltip
                                 content={new Date(
-                                  Robotdata[0].last_uplink
+                                  robot.last_uplink
                                 ).toLocaleString()}
                                 placement="top"
                               >
                                 <span>
                                   {formatDistanceToNow(
-                                    new Date(Robotdata[0].last_uplink),
+                                    new Date(robot.last_uplink),
                                     {
                                       addSuffix: true,
                                     }
@@ -644,8 +665,8 @@ const RobotOperating = () => {
                           )}
                         </CTableDataCell> */}
                         <CTableDataCell>
-                          {!robots[0].last_uplink ||
-                          isNaN(new Date(robots[0].last_uplink).getTime()) ? (
+                          {!robot.last_uplink ||
+                          isNaN(new Date(robot.last_uplink).getTime()) ? (
                             <CBadge
                               className="badge bg-danger"
                               shape="rounded-pill"
@@ -656,13 +677,13 @@ const RobotOperating = () => {
                             <span>
                               <CTooltip
                                 content={new Date(
-                                  robots[0].last_uplink
+                                  robot.last_uplink
                                 ).toLocaleString()}
                                 placement="top"
                               >
                                 <span>
                                   {formatDistanceToNow(
-                                    new Date(robots[0].last_uplink),
+                                    new Date(robot.last_uplink),
                                     {
                                       addSuffix: true,
                                     }

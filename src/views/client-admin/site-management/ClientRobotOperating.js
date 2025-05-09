@@ -71,6 +71,14 @@ const reducer = (state, action) => {
 
     case "SEND_DOWNLINK_FAIL":
       return { ...state, sendingCommandloading: false, error: action.payload };
+    case "FETCH_ROBOT_REQUEST":
+      return { ...state, loadingRobot: true, error: "" };
+
+    case "FETCH_ROBOT_SUCCESS":
+      return { ...state, loadingRobot: false, robot: action.payload };
+
+    case "FETCH_ROBOT_FAIL":
+      return { ...state, loadingRobot: false, error: action.payload };
 
     default:
       return state;
@@ -93,11 +101,22 @@ const ClientRobotOperating = () => {
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
   const [
-    { loading, error, downlinks, successDelete, loadingRobots, robots },
+    {
+      loading,
+      error,
+      downlinks,
+      successDelete,
+      loadingRobots,
+      robots,
+      robot,
+      loadingRobot,
+    },
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
+    robot: {},
     loading: true,
+    loadingRobot: true,
     error: "",
     loadingRobots: true,
     sendingCommandloading: false,
@@ -141,8 +160,32 @@ const ClientRobotOperating = () => {
       }
     };
 
+    const getRobot = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOT_REQUEST" });
+        const response = await axios.get(
+          `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        console.log(response.data.data);
+
+        dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOT_FAIL",
+          payload: error.response
+            ? error.response.data.message
+            : error.response.data.error,
+        });
+      }
+    };
+
     getRobots();
-  }, [block, site_id, authtoken]);
+    getRobot();
+  }, [block, site_id, authtoken, robot_no]);
 
   // ✅ Ensure robots exist before filtering
   const Robotdata =
@@ -285,7 +328,7 @@ const ClientRobotOperating = () => {
                   </CButton>
                 )}
 
-                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu border">
+                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
                   {siteRobots.length === 1
                     ? ""
                     : siteRobots.map((item, index) => (
@@ -296,7 +339,7 @@ const ClientRobotOperating = () => {
                               ? `#`
                               : `${item.robot_no}`
                           }`}
-                          className={`dopdown-item ${
+                          className={`m-1 dopdown-item ${
                             item.lora_state === 1 ? `online` : `offline`
                           }`}
                         >
