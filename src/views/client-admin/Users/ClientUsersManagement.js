@@ -581,16 +581,20 @@ const ClientUsersManagement = () => {
         <h2 className="text-center">External Users </h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
-        <div className="d-flex justify-content-between align-items-center">
-          <CButton
-            color="success"
-            size="sm"
-            className="text-whit m-1e"
-            onClick={openAddModal}
-          >
-            + Add User
-          </CButton>
-        </div>
+        {users.length === 2 ? (
+          ""
+        ) : (
+          <div className="d-flex justify-content-between align-items-center">
+            <CButton
+              color="success"
+              size="sm"
+              className="text-whit m-1e"
+              onClick={openAddModal}
+            >
+              + Add User
+            </CButton>
+          </div>
+        )}
       </div>
       <CRow className="mb-3 justify-content-end">
         {" "}

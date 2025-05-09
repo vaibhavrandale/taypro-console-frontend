@@ -32,6 +32,7 @@ import axios from "axios";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
+import BarGraph from "./BarGraph";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -68,6 +69,7 @@ const reducer = (state, action) => {
         fetchserviceticketloading: false,
         error: action.payload,
       };
+
     case "UPDATE_TICKET_REQUEST":
       return { ...state, updateserviceticketloading: true };
 
@@ -96,6 +98,7 @@ const ServiceTicketDashboard = () => {
       loading,
       error,
       servicetickets,
+
       serviceticket,
       fetchserviceticketloading,
       updateserviceticketloading,
@@ -106,6 +109,7 @@ const ServiceTicketDashboard = () => {
     dispatch,
   ] = useReducer(reducer, {
     servicetickets: [],
+
     serviceticket: [],
     loading: true,
     fetchserviceticketloading: true,
@@ -118,6 +122,7 @@ const ServiceTicketDashboard = () => {
   // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
+
   const [modalVisible, setModalVisible] = useState(false);
   // const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
@@ -165,14 +170,10 @@ const ServiceTicketDashboard = () => {
   const handleUpdate = async (id) => {
     try {
       dispatch({ type: "UPDATE_TICKET_REQUEST" });
-      const response = await axios.put(
-        `/api/v1/servicetickets/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-      console.log("Updated Ticket:", response.data);
+      await axios.put(`/api/v1/servicetickets/${id}`, formData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      // console.log("Updated Ticket:", response.data);
       setModalVisible(false);
 
       // Update local state with the modified ticket
@@ -272,7 +273,7 @@ const ServiceTicketDashboard = () => {
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
 
       <PieChart />
-
+      <BarGraph />
       {/* 📋 Service Tickets Table */}
       <CCard className="mt-4">
         <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -313,12 +314,14 @@ const ServiceTicketDashboard = () => {
             <CTableBody>
               {loading ? (
                 <CTableRow>
-                  <CTableDataCell colSpan="8" className="text-center">
+                  <CTableDataCell colSpan="8" className="text-start">
                     <LoadingSpinner />
                   </CTableDataCell>
                 </CTableRow>
               ) : error ? (
-                <CTableRow>{error}</CTableRow>
+                <CTableRow>
+                  <CTableDataCell colSpan={8}>{error}</CTableDataCell>
+                </CTableRow>
               ) : (
                 filteredData.map((ticket, index) => (
                   <CTableRow key={index}>

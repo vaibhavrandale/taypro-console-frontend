@@ -149,9 +149,9 @@ const Robots = () => {
   // Filter robots based on search term
   const filteredRobots = robots.filter(
     (robot) =>
-      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+      robot?.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      robot?.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      robot?.site_id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Open modal and load robot data
