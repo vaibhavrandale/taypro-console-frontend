@@ -290,8 +290,10 @@ const RobotOperating = () => {
             robot.robot_no === robot_no
         )
       : [];
+
   const blockwiserobots =
     robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
+  // console.log(robots);
 
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
@@ -364,6 +366,7 @@ const RobotOperating = () => {
     // console.log(command);
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
     // console.log(alldeveuis, command);
+    console.log(alldeveuis);
 
     setCommandButton(index);
     // console.log(command);

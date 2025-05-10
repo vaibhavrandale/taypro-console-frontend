@@ -180,6 +180,14 @@ const ActivateRobots = () => {
       handlePageChange(pageNumber);
     }
   };
+
+  const AllActivate = () => {
+    if (inactiverobots.length === 0) {
+      toast.error("No robots to activate.");
+      return;
+    }
+    setSelectedRobots(inactiverobots);
+  };
   return (
     <div className="p-2">
       <h4>Activate Robots</h4>
@@ -230,7 +238,9 @@ const ActivateRobots = () => {
         >
           <CTableHead color="secondary">
             <CTableRow>
-              <CTableHeaderCell>Select</CTableHeaderCell>
+              <CTableHeaderCell>
+                <CFormCheck onChange={() => AllActivate()} />
+              </CTableHeaderCell>
               <CTableHeaderCell>#</CTableHeaderCell>
               <CTableHeaderCell>Robot No</CTableHeaderCell>
               <CTableHeaderCell>Lora Serial No</CTableHeaderCell>
