@@ -50,29 +50,6 @@ const InventoryOverview = () => {
     fetchInventory();
   }, [authtoken]);
 
-  // const chartColors = [
-  //   "#FF5733",
-  //   "#28A745",
-  //   "#FFC107",
-  //   "#17A2B8",
-  //   "#DC3545",
-  //   "#6C757D",
-  //   "#8E44AD",
-  //   "#3498DB",
-  //   "#E74C3C",
-  //   "#2ECC71",
-  //   "#F39C12",
-  //   "#D35400",
-  //   "#C0392B",
-  //   "#27AE60",
-  //   "#16A085",
-  //   "#2980B9",
-  //   "#2C3E50",
-  //   "#1ABC9C",
-  //   "#34495E",
-  //   "#95A5A6",
-  // ];
-
   const chartColors = [
     "#FF5733",
     "#28A745",
