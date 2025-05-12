@@ -229,61 +229,6 @@ const SiteTechnicianDashboard = () => {
     return R * c <= radius;
   };
 
-  // const handlePunchIn = async (e) => {
-  //   e.preventDefault();
-  //   dispatch({ type: "PUNCH_REQUEST" });
-
-  //   navigator.geolocation.getCurrentPosition(
-  //     async (position) => {
-  //       const lat = position.coords.latitude;
-  //       const lng = position.coords.longitude;
-
-  // if (!selectedSiteData) {
-  //   toast.error("Site coordinates not available.");
-  //   dispatch({ type: "PUNCH_FAIL", payload: "Site data missing" });
-  //   return;
-  // }
-
-  // const within = isInsideRadius(
-  //   lat,
-  //   lng,
-  //   selectedSiteData.latitude,
-  //   selectedSiteData.longitude,
-  //   selectedSiteData.radius
-  // );
-
-  // if (!within) {
-  //   toast.error("You're outside the allowed site area!");
-  //   dispatch({ type: "PUNCH_FAIL", payload: "Outside site area" });
-  //   return;
-  // }
-
-  //       try {
-  //         await axios.post(
-  //           "/api/v1/technician-attendance/punchin",
-  //           {
-  //             site_id,
-  //             punchin_location: { lat, lng },
-  //           },
-  //           { headers: { Authorization: `Bearer ${authtoken}` } }
-  //         );
-  //         dispatch({ type: "PUNCH_SUCCESS", isPunchIn: true });
-  //       } catch (err) {
-  //         dispatch({
-  //           type: "PUNCH_FAIL",
-  //           payload: err.response?.data?.message || "Punch in failed",
-  //         });
-  //       }
-  //     },
-  //     () => {
-  //       dispatch({
-  //         type: "PUNCH_FAIL",
-  //         payload: "Location access denied. Please enable location services.",
-  //       });
-  //     }
-  //   );
-  // };
-
   const handlePunchIn = async (e) => {
     e.preventDefault();
 
@@ -339,30 +284,6 @@ const SiteTechnicianDashboard = () => {
       toast.error(error.response?.data?.message || "Punch in failed");
     }
   };
-
-  // const handlePunchOut = async (e) => {
-  //   e.preventDefault();
-  //   dispatch({ type: "PUNCH_REQUEST" });
-
-  //   try {
-  //     await axios.put(
-  //       "/api/v1/technician-attendance/punchout",
-  //       {
-  //         punchout_location: {
-  //           lat: parseFloat(punchout_location.lat),
-  //           lng: parseFloat(punchout_location.lng),
-  //         },
-  //       },
-  //       { headers: { Authorization: `Bearer ${authtoken}` } }
-  //     );
-  //     dispatch({ type: "PUNCH_SUCCESS", isPunchIn: false });
-  //   } catch (err) {
-  //     dispatch({
-  //       type: "PUNCH_FAIL",
-  //       payload: err.response?.data?.message || "Punch out failed",
-  //     });
-  //   }
-  // };
 
   const handlePunchOut = async (e) => {
     e.preventDefault();
@@ -514,14 +435,6 @@ const SiteTechnicianDashboard = () => {
               ) : (
                 <CBadge color="danger">Wait for Punch Out</CBadge>
               )}
-              {/* <CButton
-                type="submit"
-                color="warning"
-                className="mt-3"
-                disabled={loading}
-              >
-                {loading ? "Punching Out..." : "Punch Out"}
-              </CButton> */}
             </CForm>
           )}
 
