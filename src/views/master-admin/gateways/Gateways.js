@@ -269,7 +269,7 @@ const Gateways = () => {
             <CTableHeaderCell>Type</CTableHeaderCell>
             <CTableHeaderCell>Latitude</CTableHeaderCell>
             <CTableHeaderCell>Longitude</CTableHeaderCell>
-            <CTableHeaderCell>Last Online Update</CTableHeaderCell>
+            <CTableHeaderCell>Gateway Status</CTableHeaderCell>
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -289,6 +289,12 @@ const Gateways = () => {
                   <LoadingSpinner />
                 </CTableHeaderCell>
               </CTableRow>
+            ) : Gateways.length === 0 ? (
+              <CTableRow className="text-center">
+                <CTableHeaderCell colSpan={7}>
+                  No Gateways Found
+                </CTableHeaderCell>
+              </CTableRow>
             ) : (
               Gateways.map((gateway, index) => (
                 <CTableRow key={index}>
@@ -298,33 +304,39 @@ const Gateways = () => {
                   <CTableDataCell>
                     {gateway.gateway_type.toUpperCase()}
                   </CTableDataCell>
-                  <CTableDataCell>{gateway.gateway_lattitude}</CTableDataCell>
-                  <CTableDataCell>{gateway.gateway_longitude}</CTableDataCell>
+                  <CTableDataCell>
+                    {gateway.gateway_lattitude
+                      ? gateway.gateway_lattitude
+                      : "N/A"}
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    {gateway.gateway_longitude
+                      ? gateway.gateway_longitude
+                      : "N/A"}
+                  </CTableDataCell>
                   <CTableDataCell style={{ minWidth: "160px" }}>
-                    {gateway.last_uplink}
+                    {gateway.gateway_status ? (
+                      <CBadge color="success">Online</CBadge>
+                    ) : (
+                      <CBadge color="danger">Offline</CBadge>
+                    )}
                   </CTableDataCell>
                   <CTableDataCell style={{ minWidth: "180px" }}>
-                    <CButton
-                      color="warning"
-                      size="sm"
-                      className=" btn-sm m-1"
+                    <Link
+                      className="btn btn-sm btn-info text-decoration-none p-1 m-1"
                       onClick={() => openModal(gateway)}
                     >
                       View Details
-                    </CButton>
-                    <Link
-                      type="button"
-                      className="btn btn-info btn-sm m-1"
-                      to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
-                    >
-                      Assign Gateway
                     </Link>
                     <Link
-                      type="button"
-                      color="primary"
-                      size="sm"
+                      className="btn btn-sm btn-success text-decoration-none p-1 m-1"
+                      to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
+                    >
+                      Assign Lora
+                    </Link>
+                    <Link
                       to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
-                      className="btn btn-secondary  btn-sm m-1"
+                      className="btn btn-secondary p-1  text-decoration-none  btn-sm  m-1"
                     >
                       Update
                     </Link>
@@ -375,7 +387,7 @@ const Gateways = () => {
                   <CTable striped bordered responsive>
                     <CTableBody>
                       <CTableRow>
-                        <CTableHeaderCell>Gateway ID</CTableHeaderCell>
+                        <CTableHeaderCell>Gateway ID in Lns</CTableHeaderCell>
                         <CTableDataCell>
                           {selectedGateway.gateway_id_in_lns_server}
                         </CTableDataCell>
@@ -384,9 +396,15 @@ const Gateways = () => {
                       <CTableRow>
                         <CTableHeaderCell>Gateway Status</CTableHeaderCell>
                         <CTableDataCell>
-                          <LastOnlineStatus
-                            lastOnlineTime={selectedGateway.last_online_update}
-                          />
+                          {selectedGateway.gateway_status ? (
+                            <CBadge color="success" className="p-2">
+                              Online
+                            </CBadge>
+                          ) : (
+                            <CBadge color="danger" className="p-2">
+                              Offline
+                            </CBadge>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
@@ -400,39 +418,54 @@ const Gateways = () => {
                       <CTableRow>
                         <CTableHeaderCell>Longitude,Latitude</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
-                          {selectedGateway.gateway_lattitude}&nbsp;{" "}
-                          <Link
-                            target="blank"
-                            to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
-                          >
-                            view on map
-                          </Link>
+                          {selectedGateway.gateway_longitude === "" ||
+                          selectedGateway.gateway_lattitude === "" ? (
+                            "N/A"
+                          ) : (
+                            <>
+                              {selectedGateway.gateway_longitude}&nbsp;,&nbsp;
+                              {selectedGateway.gateway_lattitude}&nbsp;{" "}
+                              <Link
+                                target="blank"
+                                to={`https://www.google.com/maps/search/?api=1&query=${selectedGateway.gateway_longitude},${selectedGateway.gateway_lattitude}`}
+                              >
+                                view on map
+                              </Link>
+                            </>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
 
                       <CTableRow>
                         <CTableHeaderCell>SIM Number</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedGateway.gateway_simnumber}
+                          {selectedGateway.gateway_simnumber
+                            ? selectedGateway.gateway_simnumber
+                            : "N/A"}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableHeaderCell>Robot Number</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedGateway.gateway_robot_no}
+                          {selectedGateway.gateway_robot_no
+                            ? selectedGateway.gateway_robot_no
+                            : "N/A"}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableHeaderCell>LoRa Number</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedGateway.gateway_lora_no}
+                          {selectedGateway.gateway_lora_no
+                            ? selectedGateway.gateway_lora_no
+                            : "N/A"}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableHeaderCell>Last Online Update</CTableHeaderCell>
                         <CTableDataCell>
-                          {selectedGateway.last_online_update}
+                          {new Date(
+                            selectedGateway.last_uplink
+                          ).toLocaleString()}
                         </CTableDataCell>
                       </CTableRow>
                     </CTableBody>
@@ -472,10 +505,10 @@ const Gateways = () => {
                             {robot.battery_voltage}&nbsp;%
                           </CTableDataCell>
                           <CTableDataCell>
-                            {robot.last_update === "" || null ? (
+                            {robot.last_uplink === "" || null ? (
                               <CBadge>Lora is not Activaed Yet</CBadge>
                             ) : (
-                              robot.last_update
+                              new Date(robot.last_uplink).toLocaleString()
                             )}
                           </CTableDataCell>
                         </CTableRow>
