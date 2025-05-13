@@ -125,7 +125,7 @@ const AssignGateway = () => {
               />
             </CCol>
             <CCol md={6}>
-              <label>Robot Number</label>
+              <label>Enter Robot Number from Robots data</label>
               <CFormInput
                 type="text"
                 name="robot_no"
