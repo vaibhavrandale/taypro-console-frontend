@@ -512,7 +512,7 @@ const RobotOperating = () => {
                     className={`${
                       robot.lora_state === 1 ? `` : `text-white`
                     } shadow-sm`}
-                    color={`${robot.lora_state === 1 ? `danger` : `success`}`}
+                    color={`${robot.lora_state === 1 ? `success` : `danger`}`}
                     size="sm"
                   >
                     {robot.robot_no}
@@ -621,10 +621,10 @@ const RobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              robot.lora_state === "1" ? `success` : `danger`
+                              robot.lora_state === 1 ? `success` : `danger`
                             }`}
                           >
-                            {robot.lora_state === "1" ? `online` : `offline`}
+                            {robot.lora_state === 1 ? `online` : `offline`}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>

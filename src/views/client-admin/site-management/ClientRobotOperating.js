@@ -435,12 +435,12 @@ const ClientRobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              Robotdata[0].lora_state === "1"
+                              Robotdata[0].lora_state === 1
                                 ? `success`
                                 : `danger`
                             }`}
                           >
-                            {Robotdata[0].lora_state === "1"
+                            {Robotdata[0].lora_state === 1
                               ? `online`
                               : `offline`}
                           </span>
