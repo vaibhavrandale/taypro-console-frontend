@@ -96,6 +96,11 @@ const NewProjectClosure = () => {
       client_name: "",
       client_role: "",
       client_email: "",
+      router_type: "",
+      mount_type: "",
+      technician_name: "",
+      technician_hiring_type: "",
+      technician_daily_wages: "",
     },
     robotDetails: [{ block: "", automatic: "", semi_automatic: "" }],
     handoverChecklist: [{ task_name: "", status: "", remark: "" }],
@@ -170,35 +175,6 @@ const NewProjectClosure = () => {
       payload: state.handoverChecklist.filter((_, i) => i !== index),
     });
   };
-
-  // const handleImageUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.append("file", file);
-
-  //   try {
-  //     setUploading(true);
-  //     const { data } = await axios.post(
-  //       "/api/v1/image-upload/commissioning-document",
-  //       bodyFormData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authtoken}`,
-  //         },
-  //       }
-  //     );
-
-  //     setImage(data.url);
-  //     toast.success("Image uploaded successfully. Click Update to apply it.");
-  //   } catch (err) {
-  //     toast.error("Image upload failed. Please try again.");
-  //   } finally {
-  //     setUploading(false);
-  //   }
-  // };
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -422,6 +398,54 @@ const NewProjectClosure = () => {
               <CCol md="3">
                 <div className="mb-3">
                   <CFormLabel className="form-CFormLabel">
+                    Technician Name
+                  </CFormLabel>
+
+                  <CFormInput
+                    type="text"
+                    className="form-control"
+                    name="technician_name"
+                    value={state.projectDocData.technician_name}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
+
+              <CCol md="3">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Technician Hiring Type
+                  </CFormLabel>
+
+                  <CFormInput
+                    type="text"
+                    className="form-control"
+                    name="technician_hiring_type"
+                    value={state.projectDocData.technician_hiring_type}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
+
+              <CCol md="3">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Technician Daily Wages
+                  </CFormLabel>
+
+                  <CFormInput
+                    type="text"
+                    className="form-control"
+                    name="technician_daily_wages"
+                    value={state.projectDocData.technician_daily_wages}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
+
+              <CCol md="3">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
                     Total Systems Count
                   </CFormLabel>
 
@@ -542,6 +566,38 @@ const NewProjectClosure = () => {
                     className="form-control"
                     name="full_table_length"
                     value={state.projectDocData.full_table_length}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
+
+              <CCol md="3">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Router Type
+                  </CFormLabel>
+
+                  <CFormInput
+                    type="text"
+                    className="form-control"
+                    name="router_type"
+                    value={state.projectDocData.router_type}
+                    onChange={handleChange}
+                  />
+                </div>
+              </CCol>
+
+              <CCol md="3">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Mount Type
+                  </CFormLabel>
+
+                  <CFormInput
+                    type="text"
+                    className="form-control"
+                    name="mount_type"
+                    value={state.projectDocData.mount_type}
                     onChange={handleChange}
                   />
                 </div>
@@ -867,37 +923,6 @@ const NewProjectClosure = () => {
                 </div>
               </CCol>
 
-              {/* <CCol md="3">
-                {uploading ? (
-                  <div className=" d-flex justify-content-center">
-                    <LoadingSpinner />
-                  </div>
-                ) : image ? (
-                  <div className="position-relative d-inline-block">
-                    <img
-                      src={image}
-                      alt="Uploaded Item"
-                      width="100"
-                      height="100"
-                      style={{ objectFit: "cover", borderRadius: "5px" }}
-                    />
-                    <CBadge
-                      color="primary"
-                      className="p-1 position-absolute"
-                      style={{
-                        top: "-8px",
-                        right: "-8px",
-                        cursor: "pointer",
-                        borderRadius: "50%",
-                        backgroundColor: "red",
-                      }}
-                      onClick={deleteImageHandler}
-                    >
-                      <CIcon icon={cilX} size="sm" />
-                    </CBadge>
-                  </div>
-                ) : null}
-              </CCol> */}
               <CCol md="3">
                 {uploading ? (
                   <div className="d-flex justify-content-center">
