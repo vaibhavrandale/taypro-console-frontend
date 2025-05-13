@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { MapContainer, useMap } from "react-leaflet";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChart, CChartLine, CChartPie } from "@coreui/react-chartjs";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -60,6 +60,16 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAIL":
       return { ...state, loadingBatteryStatus: false, error: action.payload };
+    case "FETCH_GATEWAYS_REQUEST":
+      return { ...state, loadingGateways: true };
+    case "FETCH_GATEWAYS_SUCCESS":
+      return {
+        ...state,
+        gatewaysData: action.payload,
+        loadingGateways: false,
+      };
+    case "FETCH_GATEWAYS_FAIL":
+      return { ...state, loadingGateways: false, error: action.payload };
     default:
       return state;
   }
@@ -75,6 +85,8 @@ const ClientAdminDashboard = () => {
     selectedSiteData: null,
     loading: true,
     distanceSummaryData: [],
+    gatewaysData: [],
+    loadingGateways: false,
     robotData: null,
     loadingBatteryStatus: false,
     loadingDistance: false,
@@ -167,8 +179,30 @@ const ClientAdminDashboard = () => {
       }
     };
 
+    const fetchGateways = async () => {
+      dispatch({ type: "FETCH_GATEWAYS_REQUEST" });
+      try {
+        const response = await axios.get(
+          `/api/v1/gateways/site/${siteName.site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        dispatch({
+          type: "FETCH_GATEWAYS_SUCCESS",
+          payload: response.data.data,
+        });
+        console.log(`Gateways Response:`, response.data.data);
+      } catch (error) {
+        console.log(error.message);
+        toast.error(error.response?.data?.message || error.message);
+        dispatch({ type: "FETCH_GATEWAYS_FAIL", payload: error.message });
+      }
+    };
+
     fetchDebugData();
     fetchDistanceSummary();
+    fetchGateways();
   }, [siteName.site_id, authtoken]);
 
   const getLiveLocation = () => {
@@ -471,23 +505,23 @@ const ClientAdminDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-4" style={{ width: "100%", height: "70%" }}>
-        <CRow className="justify-content-center">
-          {state.loadingDistance ? (
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: "100px", width: "100px" }}
-            >
-              <LoadingSpinner />
-            </div>
-          ) : state.distanceSummaryData.blocks === 0 ? (
-            <CAlert color="warning">
-              No data available for the selected site.
-            </CAlert>
-          ) : state.error ? (
-            <p className="text-danger text-center">{state.error}</p>
-          ) : (
-            <CCol xs={12} md={6} className="mt-4">
+      <div className="mt-4">
+        <CRow className="">
+          <CCol xs={12} md={6} className="mt-4">
+            {state.loadingDistance ? (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "100px", width: "100px" }}
+              >
+                <LoadingSpinner />
+              </div>
+            ) : state.distanceSummaryData.blocks === 0 ? (
+              <CAlert color="warning">
+                No data available for the selected site.
+              </CAlert>
+            ) : state.error ? (
+              <p className="text-danger text-center">{state.error}</p>
+            ) : (
               <CCard className="mb-4 shadow">
                 <CCardHeader>
                   <h5 className="text-center">
@@ -498,13 +532,11 @@ const ClientAdminDashboard = () => {
                   </h5>
                 </CCardHeader>
                 <CCardBody className="d-flex justify-content-center align-items-center">
-                  <div
-                    style={{ width: "100%", height: "100%" }}
-                    className="mt-5"
-                  >
+                  <div>
                     {Array.isArray(state.distanceSummaryData?.blocks) &&
                     state.distanceSummaryData.blocks.length > 0 ? (
                       <CChartPie
+                        style={{ height: "300px" }}
                         data={{
                           labels: state.distanceSummaryData.blocks.map(
                             (block) => block.block
@@ -546,8 +578,60 @@ const ClientAdminDashboard = () => {
                   </div>
                 </CCardBody>
               </CCard>
-            </CCol>
-          )}
+            )}
+          </CCol>
+
+          <CCol xs={12} md={6} className="mt-4">
+            {state.loadingGateways ? (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "100px", width: "100px" }}
+              >
+                <LoadingSpinner />
+              </div>
+            ) : state.error ? (
+              <p className="text-danger text-center">{state.error}</p>
+            ) : state.gatewaysData.length === 0 ? (
+              <CAlert color="warning">
+                No data available for the selected site.
+              </CAlert>
+            ) : (
+              <CCard className="mb-4 shadow">
+                <CCardHeader>
+                  <h5 className="text-center">Gateways Brief</h5>
+                </CCardHeader>
+                <CCardBody className="d-flex justify-content-center align-items-center">
+                  <div>
+                    <CChart
+                      type="doughnut"
+                      style={{ height: "300px" }}
+                      data={{
+                        labels: state.gatewaysData.map(
+                          (gateway) => gateway.gateway_name
+                        ),
+                        datasets: [
+                          {
+                            data: state.gatewaysData.map(() => 1), // equal value so all segments appear
+                            backgroundColor: state.gatewaysData.map(
+                              (gateway) =>
+                                gateway.gateway_status ? "#28a745" : "#dc3545" // green for online, red for offline
+                            ),
+                          },
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          legend: {
+                            position: "right",
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </CCardBody>
+              </CCard>
+            )}
+          </CCol>
         </CRow>
       </div>
 
