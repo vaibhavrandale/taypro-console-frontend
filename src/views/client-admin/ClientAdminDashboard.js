@@ -110,7 +110,6 @@ const ClientAdminDashboard = () => {
     fetchSiteIds();
   }, [authtoken]);
 
-  // Once site list is loaded, auto-select first site
   useEffect(() => {
     if (state.siteIds.length > 0 && !siteName.site_id) {
       const firstSite = state.siteIds[0];
@@ -392,11 +391,11 @@ const ClientAdminDashboard = () => {
 
             <CCol md={4}>
               <div className="flex flex-col gap-3 ">
-                <h5 className="mx-3">
+                <h6 className="mx-3">
                   Hello{" "}
                   <span className="text-primary"> {userInfo.username}</span> ,
                   Good Morning!
-                </h5>
+                </h6>
                 <CCard
                   className="shadow-sm rounded border-0"
                   style={{
@@ -431,75 +430,37 @@ const ClientAdminDashboard = () => {
                 <div className="grid grid-cols-2 gap-3 mt-4">
                   <CRow className="my-1 text-center">
                     <CCol md={6} className=" ">
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           28℃
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Feels Like
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Temperature
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Feels Like</div>
+                        <div style={{ fontSize: "14px" }}>Temperature</div>
                       </div>
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           46%
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Outside
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Humidity
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Outside</div>
+                        <div style={{ fontSize: "14px" }}>Humidity</div>
                       </div>
                     </CCol>
                     <CCol md={6} className=" ">
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           4 m/s
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Max Wind Speed
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "12px" }}
-                        >
+                        <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
+                        <div style={{ fontSize: "12px" }}>
                           At 2025-05-07 16:00:03
                         </div>
                       </div>
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           98%
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Clouds
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Outside
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Clouds</div>
+                        <div style={{ fontSize: "14px" }}>Outside</div>
                       </div>
                     </CCol>
                   </CRow>
@@ -601,7 +562,9 @@ const ClientAdminDashboard = () => {
             <CCardBody>
               <CChartLine
                 data={{
-                  labels: batteryChartData.map((entry) => entry.robot),
+                  labels: batteryChartData.map((entry) =>
+                    entry.robot.slice(-3)
+                  ),
                   datasets: [
                     {
                       label: "Battery (%)",
@@ -610,6 +573,13 @@ const ClientAdminDashboard = () => {
                       tension: 0.4,
                     },
                   ],
+                }}
+                options={{
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                    },
+                  },
                 }}
               />
             </CCardBody>
