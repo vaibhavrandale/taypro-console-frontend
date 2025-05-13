@@ -351,6 +351,14 @@ const ViewProjectClosureDocument = () => {
                 </strong>{" "}
                 {serviceItemData.full_table_length}
               </li>
+              <li>
+                <strong>Router&nbsp;&nbsp;Type&nbsp;&nbsp;:</strong>{" "}
+                {serviceItemData.router_type}
+              </li>
+              <li>
+                <strong>Mount&nbsp;&nbsp;Type&nbsp;&nbsp;:</strong>{" "}
+                {serviceItemData.mount_type}
+              </li>
             </ul>
             <br /> <br />
             <br /> <br /> <br />
@@ -394,8 +402,27 @@ const ViewProjectClosureDocument = () => {
                 ))}
               </tbody>
             </table>
+            <div className="section-title mt-6">
+              6. Technician&nbsp;&nbsp;Details
+            </div>
+            <table className="site-details-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Hiring Type</th>
+                  <th>Daily Wages</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{serviceItemData.technician_name}</td>
+                  <td>{serviceItemData.technician_hiring_type}</td>
+                  <td>{serviceItemData.technician_daily_wages}</td>
+                </tr>
+              </tbody>
+            </table>
             <div className="section-title page-break">
-              6. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
+              7. Handover&nbsp;&nbsp;Documents&nbsp;&nbsp;&&nbsp;&nbsp;Details
             </div>
             <ul>
               <li>
@@ -421,7 +448,7 @@ const ViewProjectClosureDocument = () => {
               </li>
             </ul>
             <div className="section-title">
-              7. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
+              8. Points&nbsp;&nbsp;of&nbsp;&nbsp;Contact
             </div>
             <table className="site-details-table">
               <thead>

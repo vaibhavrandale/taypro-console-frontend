@@ -119,6 +119,11 @@ const UpdateProjectClosureForm = () => {
     client_name: "",
     client_role: "",
     client_email: "",
+    router_type: "",
+    mount_type: "",
+    technician_name: "",
+    technician_hiring_type: "",
+    technician_daily_wages: "",
   });
 
   useEffect(() => {
@@ -437,6 +442,54 @@ const UpdateProjectClosureForm = () => {
                 <CCol md="3">
                   <div className="mb-3">
                     <CFormLabel className="form-CFormLabel">
+                      Technician Name
+                    </CFormLabel>
+
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="technician_name"
+                      value={serviceItemData.technician_name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
+                      Technician Hiring Type
+                    </CFormLabel>
+
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="technician_hiring_type"
+                      value={serviceItemData.technician_hiring_type}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
+                      Technician Daily Wages
+                    </CFormLabel>
+
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="technician_daily_wages"
+                      value={serviceItemData.technician_daily_wages}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
                       Total Systems Count
                     </CFormLabel>
                     <CFormInput
@@ -549,6 +602,38 @@ const UpdateProjectClosureForm = () => {
                       className="form-control"
                       name="full_table_length"
                       value={serviceItemData.full_table_length || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
+                      Router Type
+                    </CFormLabel>
+
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="router_type"
+                      value={serviceItemData.router_type || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CCol>
+
+                <CCol md="3">
+                  <div className="mb-3">
+                    <CFormLabel className="form-CFormLabel">
+                      Mount Type
+                    </CFormLabel>
+
+                    <CFormInput
+                      type="text"
+                      className="form-control"
+                      name="mount_type"
+                      value={serviceItemData.mount_type || ""}
                       onChange={handleChange}
                     />
                   </div>
