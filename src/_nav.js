@@ -37,6 +37,7 @@ import {
   cilChatBubble,
   cilLibrary,
   cilBattery3,
+  cilBarChart,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 
@@ -2028,6 +2029,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Statistics",
+        to: "/client-admin/statistics",
+        icon: (
+          <CIcon
+            icon={cilBarChart}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "All Site Data",
         to: "/client-admin/site-management/all-site-data",
         icon: (
@@ -2110,25 +2123,14 @@ const _nav = [
           />
         ),
       },
-      {
-        component: CNavItem,
-        name: "Statisitcs",
-        to: "/client-admin/statisitcs",
-        icon: (
-          <CIcon
-            icon={cilListRich}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
+
       {
         component: CNavItem,
         name: "Chat with Users",
         to: "/client-admin/chat",
         icon: (
           <CIcon
-            icon={cilListRich}
+            icon={cilChatBubble}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />

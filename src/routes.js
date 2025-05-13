@@ -2307,7 +2307,7 @@ const routes = [
   },
 
   {
-    path: "/client-admin/statisitcs",
+    path: "/client-admin/statistics",
     name: "General Statistics",
     element: (
       <ClientAdminRoute>

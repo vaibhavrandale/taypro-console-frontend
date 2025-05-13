@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { MapContainer, useMap } from "react-leaflet";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChart, CChartLine, CChartPie } from "@coreui/react-chartjs";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -60,6 +60,16 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAIL":
       return { ...state, loadingBatteryStatus: false, error: action.payload };
+    case "FETCH_GATEWAYS_REQUEST":
+      return { ...state, loadingGateways: true };
+    case "FETCH_GATEWAYS_SUCCESS":
+      return {
+        ...state,
+        gatewaysData: action.payload,
+        loadingGateways: false,
+      };
+    case "FETCH_GATEWAYS_FAIL":
+      return { ...state, loadingGateways: false, error: action.payload };
     default:
       return state;
   }
@@ -75,6 +85,8 @@ const ClientAdminDashboard = () => {
     selectedSiteData: null,
     loading: true,
     distanceSummaryData: [],
+    gatewaysData: [],
+    loadingGateways: false,
     robotData: null,
     loadingBatteryStatus: false,
     loadingDistance: false,
@@ -110,7 +122,6 @@ const ClientAdminDashboard = () => {
     fetchSiteIds();
   }, [authtoken]);
 
-  // Once site list is loaded, auto-select first site
   useEffect(() => {
     if (state.siteIds.length > 0 && !siteName.site_id) {
       const firstSite = state.siteIds[0];
@@ -168,8 +179,30 @@ const ClientAdminDashboard = () => {
       }
     };
 
+    const fetchGateways = async () => {
+      dispatch({ type: "FETCH_GATEWAYS_REQUEST" });
+      try {
+        const response = await axios.get(
+          `/api/v1/gateways/site/${siteName.site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        dispatch({
+          type: "FETCH_GATEWAYS_SUCCESS",
+          payload: response.data.data,
+        });
+        console.log(`Gateways Response:`, response.data.data);
+      } catch (error) {
+        console.log(error.message);
+        toast.error(error.response?.data?.message || error.message);
+        dispatch({ type: "FETCH_GATEWAYS_FAIL", payload: error.message });
+      }
+    };
+
     fetchDebugData();
     fetchDistanceSummary();
+    fetchGateways();
   }, [siteName.site_id, authtoken]);
 
   const getLiveLocation = () => {
@@ -392,11 +425,11 @@ const ClientAdminDashboard = () => {
 
             <CCol md={4}>
               <div className="flex flex-col gap-3 ">
-                <h5 className="mx-3">
+                <h6 className="mx-3">
                   Hello{" "}
                   <span className="text-primary"> {userInfo.username}</span> ,
                   Good Morning!
-                </h5>
+                </h6>
                 <CCard
                   className="shadow-sm rounded border-0"
                   style={{
@@ -431,75 +464,37 @@ const ClientAdminDashboard = () => {
                 <div className="grid grid-cols-2 gap-3 mt-4">
                   <CRow className="my-1 text-center">
                     <CCol md={6} className=" ">
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           28℃
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Feels Like
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Temperature
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Feels Like</div>
+                        <div style={{ fontSize: "14px" }}>Temperature</div>
                       </div>
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           46%
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Outside
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Humidity
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Outside</div>
+                        <div style={{ fontSize: "14px" }}>Humidity</div>
                       </div>
                     </CCol>
                     <CCol md={6} className=" ">
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           4 m/s
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Max Wind Speed
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "12px" }}
-                        >
+                        <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
+                        <div style={{ fontSize: "12px" }}>
                           At 2025-05-07 16:00:03
                         </div>
                       </div>
-                      <div className="rounded-md bg-white p-2 shadow-sm text-center my-2">
+                      <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
                           98%
                         </div>
-                        <div
-                          className="text-gray-500 "
-                          style={{ fontSize: "14px" }}
-                        >
-                          Clouds
-                        </div>
-                        <div
-                          className=" text-gray-400"
-                          style={{ fontSize: "14px" }}
-                        >
-                          Outside
-                        </div>
+                        <div style={{ fontSize: "14px" }}>Clouds</div>
+                        <div style={{ fontSize: "14px" }}>Outside</div>
                       </div>
                     </CCol>
                   </CRow>
@@ -510,23 +505,23 @@ const ClientAdminDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-4" style={{ width: "100%", height: "70%" }}>
-        <CRow className="justify-content-center">
-          {state.loadingDistance ? (
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: "100px", width: "100px" }}
-            >
-              <LoadingSpinner />
-            </div>
-          ) : state.distanceSummaryData.blocks === 0 ? (
-            <CAlert color="warning">
-              No data available for the selected site.
-            </CAlert>
-          ) : state.error ? (
-            <p className="text-danger text-center">{state.error}</p>
-          ) : (
-            <CCol xs={12} md={6} className="mt-4">
+      <div className="mt-4">
+        <CRow className="">
+          <CCol xs={12} md={6} className="mt-4">
+            {state.loadingDistance ? (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "100px", width: "100px" }}
+              >
+                <LoadingSpinner />
+              </div>
+            ) : state.distanceSummaryData.blocks === 0 ? (
+              <CAlert color="warning">
+                No data available for the selected site.
+              </CAlert>
+            ) : state.error ? (
+              <p className="text-danger text-center">{state.error}</p>
+            ) : (
               <CCard className="mb-4 shadow">
                 <CCardHeader>
                   <h5 className="text-center">
@@ -537,13 +532,11 @@ const ClientAdminDashboard = () => {
                   </h5>
                 </CCardHeader>
                 <CCardBody className="d-flex justify-content-center align-items-center">
-                  <div
-                    style={{ width: "100%", height: "100%" }}
-                    className="mt-5"
-                  >
+                  <div>
                     {Array.isArray(state.distanceSummaryData?.blocks) &&
                     state.distanceSummaryData.blocks.length > 0 ? (
                       <CChartPie
+                        style={{ height: "300px" }}
                         data={{
                           labels: state.distanceSummaryData.blocks.map(
                             (block) => block.block
@@ -585,8 +578,60 @@ const ClientAdminDashboard = () => {
                   </div>
                 </CCardBody>
               </CCard>
-            </CCol>
-          )}
+            )}
+          </CCol>
+
+          <CCol xs={12} md={6} className="mt-4">
+            {state.loadingGateways ? (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "100px", width: "100px" }}
+              >
+                <LoadingSpinner />
+              </div>
+            ) : state.error ? (
+              <p className="text-danger text-center">{state.error}</p>
+            ) : state.gatewaysData.length === 0 ? (
+              <CAlert color="warning">
+                No data available for the selected site.
+              </CAlert>
+            ) : (
+              <CCard className="mb-4 shadow">
+                <CCardHeader>
+                  <h5 className="text-center">Gateways Brief</h5>
+                </CCardHeader>
+                <CCardBody className="d-flex justify-content-center align-items-center">
+                  <div>
+                    <CChart
+                      type="doughnut"
+                      style={{ height: "300px" }}
+                      data={{
+                        labels: state.gatewaysData.map(
+                          (gateway) => gateway.gateway_name
+                        ),
+                        datasets: [
+                          {
+                            data: state.gatewaysData.map(() => 1), // equal value so all segments appear
+                            backgroundColor: state.gatewaysData.map(
+                              (gateway) =>
+                                gateway.gateway_status ? "#28a745" : "#dc3545" // green for online, red for offline
+                            ),
+                          },
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          legend: {
+                            position: "right",
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </CCardBody>
+              </CCard>
+            )}
+          </CCol>
         </CRow>
       </div>
 
@@ -601,7 +646,9 @@ const ClientAdminDashboard = () => {
             <CCardBody>
               <CChartLine
                 data={{
-                  labels: batteryChartData.map((entry) => entry.robot),
+                  labels: batteryChartData.map((entry) =>
+                    entry.robot.slice(-3)
+                  ),
                   datasets: [
                     {
                       label: "Battery (%)",
@@ -610,6 +657,13 @@ const ClientAdminDashboard = () => {
                       tension: 0.4,
                     },
                   ],
+                }}
+                options={{
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                    },
+                  },
                 }}
               />
             </CCardBody>
