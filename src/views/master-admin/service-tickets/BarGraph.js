@@ -104,51 +104,6 @@ const BarGraph = () => {
   const chartLabels = monthNames.slice(1); // Jan to Dec
   let datasets = [];
 
-  // Prepare dataset for chart
-  //   if (siteId) {
-  //     const siteData = Array(12).fill(0);
-  //     serviceticketcount.forEach((item) => {
-  //       if (item.siteid === siteId && item.month >= 1 && item.month <= 12) {
-  //         siteData[item.month - 1] += item.count;
-  //       }
-  //     });
-
-  //     datasets = [
-  //       {
-  //         label: siteId
-  //           .replace(/_/g, " ")
-  //           .replace(/\b\w/g, (c) => c.toUpperCase()),
-  //         data: siteData,
-  //         backgroundColor: "#4e73df",
-  //         borderColor: "#4e73df",
-  //         fill: false,
-  //         tension: 0.4,
-  //       },
-  //     ];
-  //   } else {
-  //     const siteMonthlyData = {};
-  //     uniqueSites.forEach((site) => {
-  //       siteMonthlyData[site] = Array(12).fill(0);
-  //     });
-
-  //     serviceticketcount.forEach((item) => {
-  //       if (item.month >= 1 && item.month <= 12) {
-  //         siteMonthlyData[item.siteid][item.month - 1] += item.count;
-  //       }
-  //     });
-
-  //     datasets = Object.entries(siteMonthlyData).map(([site, data], i) => {
-  //       const color = `hsl(${(i * 40) % 360}, 70%, 50%)`; // unique color per site
-  //       return {
-  //         label: site.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-  //         data,
-  //         backgroundColor: color,
-  //         borderColor: color,
-  //         fill: false,
-  //         tension: 0.4,
-  //       };
-  //     });
-  //   }
   if (siteId) {
     // One site selected — display its data
     const siteData = Array(12).fill(0); // Initialize an array with 12 months of 0s
@@ -157,6 +112,7 @@ const BarGraph = () => {
         siteData[item.month - 1] += item.count; // Add the count to the correct month
       }
     });
+    console.log(siteData);
 
     datasets = [
       {
@@ -237,7 +193,7 @@ const BarGraph = () => {
           label: function (tooltipItem) {
             const siteName = tooltipItem.dataset.label; // Get the site name (dataset label)
             const count = tooltipItem.raw; // Get the count for this specific bar
-            // Display only the count for the specific site (dataset) at the selected month
+
             return `${siteName}: ${count}`;
           },
         },
@@ -251,8 +207,11 @@ const BarGraph = () => {
         stacked: false, // Ensure bars are side by side, not stacked
       },
       y: {
-        beginAtZero: true,
-        stacked: false, // Ensure bars are not stacked vertically
+        ticks: {
+          stepSize: 1, // This ensures y-axis increases by whole numbers
+          beginAtZero: true,
+          precision: 0, // Prevent decimal points
+        },
       },
     },
   };
@@ -325,6 +284,7 @@ const BarGraph = () => {
               <>
                 {chartType === "bar" ? (
                   <CChartBar
+                    style={{ maxHeight: "300px" }}
                     data={{
                       labels: chartLabels,
                       datasets: datasets,
