@@ -78,8 +78,12 @@ const TayproDashboard = () => {
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
   const [activeOfflineSite, setActiveOfflineSite] = useState(null);
+  const [MastersearchTerm, setMastersearchTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
+  /** 🔍 Search Function */
+  const filteredSites = allSites?.sites?.filter((site) =>
+    site.siteName.toLowerCase().includes(MastersearchTerm.toLowerCase())
+  );
   return loadingAllSites ? (
     <div className=" d-flex justify-content-center">
       <LoadingSpinner />
@@ -112,11 +116,20 @@ const TayproDashboard = () => {
           </CCard>
         </CCol>
       </CRow>
-
+      <CRow className="my-1 d-flex justify-content-end">
+        <CCol md={4} className="my-2">
+          <CFormInput
+            type="text"
+            placeholder="Search Site..."
+            value={MastersearchTerm}
+            onChange={(e) => setMastersearchTerm(e.target.value)}
+          />
+        </CCol>
+      </CRow>
       {/* 🔹 Site-wise Robot Stats */}
       <CRow className="mt-4">
-        {allSites.sites
-          ? allSites.sites.map((site, index) => (
+        {filteredSites
+          ? filteredSites.map((site, index) => (
               <CCol md={4} key={index} className="mb-3">
                 <CCard className="shadow-sm border-0">
                   <CCardBody>
@@ -222,6 +235,15 @@ const TayproDashboard = () => {
                               Robot No
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Lora No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Version
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
                               Deveui
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -232,9 +254,6 @@ const TayproDashboard = () => {
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "170px" }}>
                               Last updateAt
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
                             </CTableHeaderCell>
                           </CTableRow>
                         </CTableHead>
@@ -282,18 +301,6 @@ const TayproDashboard = () => {
                                     {robot.robot_no}
                                   </CTableDataCell>
                                   <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {new Date(robot.updatedAt)
-                                      .toLocaleDateString("en-GB")
-                                      .replace(/\//g, "-")}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
                                     <CBadge
                                       color={
                                         robot.lora_state === 1
@@ -305,6 +312,27 @@ const TayproDashboard = () => {
                                         ? "Online"
                                         : "Offline"}
                                     </CBadge>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.lora_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.version}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.deveui}
+                                  </CTableDataCell>
+                                  <CTableDataCell>{robot.block}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.last_status}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell style={{ minWidth: "250px" }}>
+                                    {robot.last_uplink === null
+                                      ? "Robot is not yet activated"
+                                      : new Date(
+                                          robot.last_uplink
+                                        ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>
                               ))
@@ -369,6 +397,15 @@ const TayproDashboard = () => {
                               Robot No
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Lora No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Version
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
                               Deveui
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -379,9 +416,6 @@ const TayproDashboard = () => {
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "170px" }}>
                               Last updateAt
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
                             </CTableHeaderCell>
                           </CTableRow>
                         </CTableHead>
@@ -429,18 +463,6 @@ const TayproDashboard = () => {
                                     {robot.robot_no}
                                   </CTableDataCell>
                                   <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {new Date(robot.updatedAt)
-                                      .toLocaleDateString("en-GB")
-                                      .replace(/\//g, "-")}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
                                     <CBadge
                                       color={
                                         robot.lora_state === 1
@@ -452,6 +474,27 @@ const TayproDashboard = () => {
                                         ? "Online"
                                         : "Offline"}
                                     </CBadge>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.lora_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.version}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.deveui}
+                                  </CTableDataCell>
+                                  <CTableDataCell>{robot.block}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.last_status}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell style={{ minWidth: "250px" }}>
+                                    {robot.last_uplink === null
+                                      ? "Robot is not yet activated"
+                                      : new Date(
+                                          robot.last_uplink
+                                        ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>
                               ))
