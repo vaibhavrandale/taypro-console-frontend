@@ -118,7 +118,9 @@ const CreateTechnicianPreventivemaintanance = () => {
         });
         setRobots(data.data);
       } catch (error) {
-        toast.error("Failed to fetch robots");
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error
+        );
       }
     };
     fetchRobots();
