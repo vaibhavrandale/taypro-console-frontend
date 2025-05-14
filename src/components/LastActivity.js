@@ -1,5 +1,5 @@
 import React from "react";
-import { CCard, CCardHeader, CCardBody, CButton, CAvatar } from "@coreui/react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilSpeech } from "@coreui/icons";
 import { formatDistanceToNow } from "date-fns";

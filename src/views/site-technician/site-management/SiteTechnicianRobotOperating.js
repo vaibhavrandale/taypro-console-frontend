@@ -374,14 +374,10 @@ const SiteTechnicianRobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              robots[0].lora_state === "1"
-                                ? `success`
-                                : `danger`
+                              robots[0].lora_state === 1 ? `success` : `danger`
                             }`}
                           >
-                            {robots[0].lora_state === "1"
-                              ? `online`
-                              : `offline`}
+                            {robots[0].lora_state === 1 ? `online` : `offline`}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
