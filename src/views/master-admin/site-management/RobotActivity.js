@@ -10,9 +10,12 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CFormInput,
+  CRow,
+  CCol,
+  CInputGroup,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -36,14 +39,7 @@ const reducer = (state, action) => {
 
 const RobotActivity = () => {
   const [
-    {
-      loading,
-      error,
-      robotNotifications,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-    },
+    { loading, robotNotifications, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     robotNotifications: [],
@@ -58,6 +54,7 @@ const RobotActivity = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     let pagination = {
@@ -121,8 +118,31 @@ const RobotActivity = () => {
     }
   };
 
+  const filteredData = robotNotifications.filter((item) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      item.robot_no?.toLowerCase().includes(term) ||
+      item.command?.toLowerCase().includes(term) ||
+      item.site_id?.toLowerCase().includes(term) ||
+      item.last_activity?.name?.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div>
+      <CRow className="justify-content-end mb-3">
+        <CCol xs={12} sm={8} md={6} lg={4}>
+          <CInputGroup>
+            <CFormInput
+              type="text"
+              placeholder="Search by Robot No, Command, Site ID, Sent By"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </CInputGroup>
+        </CCol>
+      </CRow>
+
       <CTable bordered hover responsive className="text-center shadow-sm">
         <CTableHead color="secondary">
           <CTableRow>
@@ -143,8 +163,8 @@ const RobotActivity = () => {
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ) : robotNotifications?.length > 0 ? (
-            robotNotifications.map((item, index) => (
+          ) : filteredData.length > 0 ? (
+            filteredData.map((item, index) => (
               <CTableRow key={item._id}>
                 <CTableDataCell>
                   {(page - 1) * limit + index + 1}
