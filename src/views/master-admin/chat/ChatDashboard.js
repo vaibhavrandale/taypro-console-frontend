@@ -191,8 +191,6 @@ export default function ChatDashboard() {
   };
 
   const CreateChatRoom = async (user) => {
-    console.log(user);
-
     dispatch({ type: "CREATE_CHAT_REQUEST" });
     try {
       const result = await axios.post(
@@ -202,7 +200,6 @@ export default function ChatDashboard() {
           headers: { authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(result);
 
       dispatch({
         type: "CREATE_CHAT_SUCCESS",

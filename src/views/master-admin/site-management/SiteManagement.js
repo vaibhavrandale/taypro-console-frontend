@@ -11,13 +11,13 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-// import { sites } from "../../../data"; // Import sites from data.js
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -25,7 +25,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // sites: action.payload,
         sites: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -39,17 +38,15 @@ const reducer = (state, action) => {
   }
 };
 const SiteManagement = () => {
-  const [
-    { loading, error, sites, totalPages, hasNextPage, hasPrevPage },
-    dispatch,
-  ] = useReducer(reducer, {
-    sites: [],
-    loading: true,
-    error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
-  });
+  const [{ loading, sites, totalPages, hasNextPage, hasPrevPage }, dispatch] =
+    useReducer(reducer, {
+      sites: [],
+      loading: true,
+      error: "",
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false,
+    });
   const [searchTerm, setSearchTerm] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -70,7 +67,6 @@ const SiteManagement = () => {
         const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log(result);
 
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
@@ -79,7 +75,6 @@ const SiteManagement = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -110,7 +105,6 @@ const SiteManagement = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

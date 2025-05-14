@@ -92,8 +92,6 @@ const SiteTechnicianDprDashboard = () => {
       hasNextPage,
       hasPrevPage,
       successDelete,
-      loadingSiteIds,
-      loadingFields,
       siteIds,
     },
     dispatch,
@@ -158,7 +156,6 @@ const SiteTechnicianDprDashboard = () => {
       dispatch({ type: "FETCH_DPRBYDATE_REQUEST" });
 
       try {
-        // Ensure the correct keys match the backend API
         const data = {
           startDate: new Date(fromDate).toISOString().split("T")[0], // Convert to proper format
           endDate: new Date(toDate).toISOString().split("T")[0],
@@ -178,7 +175,6 @@ const SiteTechnicianDprDashboard = () => {
         let total = Math.ceil(
           Number(result.data.data.total) / Number(result.data.data.limit)
         );
-        console.log(total);
 
         let next = result.data.data.hasNextPage;
         let prev = result.data.data.hasPrevPage;
@@ -227,7 +223,6 @@ const SiteTechnicianDprDashboard = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.item(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -421,14 +416,12 @@ const SiteTechnicianDprDashboard = () => {
                 <CTableDataCell>
                   {dpr.robots_run_by.toUpperCase()}
                 </CTableDataCell>
-                {/* <CTableDataCell>{dpr.comments}</CTableDataCell> */}
                 <CTableDataCell>
                   {dpr.comments.length > 30
                     ? `${dpr.comments.slice(0, 30)}...`
                     : dpr.comments}
                 </CTableDataCell>
 
-                {/* <CTableDataCell>{dpr.createdAt}</CTableDataCell> */}
                 <CTableDataCell>
                   {new Date(dpr.createdAt)
                     .toLocaleDateString("en-GB")
@@ -443,21 +436,6 @@ const SiteTechnicianDprDashboard = () => {
                   >
                     View
                   </Link>
-
-                  {/* <Link
-                    className="btn btn-sm btn-warning m-1"
-                    to={`/site-technician/update-dpr/${dpr._id}`}
-                  >
-                    Update
-                  </Link> */}
-                  {/* <Link
-                    color="danger"
-                    size="sm"
-                    className=" btn btn-sm btn-danger m-1 text-white"
-                    onClick={() => deleteDpr(dpr)}
-                  >
-                    Delete
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -534,9 +512,6 @@ const SiteTechnicianDprDashboard = () => {
                                         <CTableDataCell className="border-0">
                                           {tech.name}
                                         </CTableDataCell>
-                                        {/* <CTableDataCell className="border-0">
-                                      {tech.technitian_email}
-                                    </CTableDataCell> */}
                                       </CTableRow>
                                     );
                                   })}

@@ -48,33 +48,6 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
-  console.log(id);
-
-  // Handle form submission
-  // const handleResetPassword = (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   setTimeout(() => {
-  //     // Find user in `users` array
-  //     const userIndex = users.findIndex((user) => user.email === email);
-
-  //     if (userIndex === -1) {
-  //       toast.error("Username not found");
-  //     } else if (newPassword.length < 6) {
-  //       toast.error("Password must be at least 6 characters long");
-  //     } else if (newPassword !== confirmPassword) {
-  //       toast.error("Passwords do not match");
-  //     } else {
-  //       // Update password (temporary, should be stored in a database)
-  //       users[userIndex].password = newPassword;
-  //       toast.success("Password reset successful!");
-  //       navigate("/login");
-  //     }
-
-  //     setLoading(false);
-  //   }, 1000);
-  // };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
@@ -89,7 +62,6 @@ const ResetPassword = () => {
           password: newPassword,
           token: id,
         });
-        console.log(data);
 
         dispatch({ type: "RESET_SUCCESS" }); // Show loading
 

@@ -126,7 +126,6 @@ const InternalTicketsDashboard = () => {
           },
         });
       } catch (error) {
-        console.log(error);
         dispatch({
           type: "FETCH_INTERNAL_TICKET_FAIL",
           payload: error.response.data.error,
@@ -156,23 +155,10 @@ const InternalTicketsDashboard = () => {
     setModalVisible(true);
   };
 
-  /** 📝 Handle Input Change */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  /** ✅ Handle Update */
-  // const handleUpdate = () => {
-  //   console.log("Updated Ticket:", formData);
-  //   setModalVisible(false);
-  // };
-
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

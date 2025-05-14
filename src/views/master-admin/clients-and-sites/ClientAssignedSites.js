@@ -181,7 +181,6 @@ const ClientAssignedSites = () => {
     }
     try {
       const { id, ...filderedData } = state.formData;
-      console.log(id);
 
       dispatch({ type: "ADD_SITE_START" });
       const response = await axios.post(`${API_BASE_URL}/sites`, filderedData, {
@@ -191,40 +190,15 @@ const ClientAssignedSites = () => {
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
       dispatch({ type: "RESET_FORM" }); // 👈 add this here
 
-      console.log(response.data.data);
       // fetchClientSites();
       dispatch({ type: "SET_ADD_MODAL", payload: false });
       toast.success("Site added successfully!");
     } catch (error) {
       toast.error(error.response.data.error);
-      console.log(error);
 
       dispatch({ type: "ADD_SITE_ERROR", payload: error.response.data.error });
     }
   };
-
-  // Handle updating site
-  // const handleUpdate = async (site) => {
-  //   dispatch({ type: "SET_SELECTED_SITE", payload: site });
-  //   try {
-  //     dispatch({ type: "UPDATE_SITE_START" });
-  //     const response = await axios.put(
-  //       `${API_BASE_URL}/sites/${state.selectedSite._id}`,
-  //       state.formData,
-  //       {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
-  //       }
-  //     );
-  //     console.log(response);
-
-  //     dispatch({ type: "UPDATE_SITE_SUCCESS", payload: response.data.data });
-  //     dispatch({ type: "SET_MODAL", payload: false });
-  //     toast.success("Site updated successfully!");
-  //   } catch (error) {
-  //     dispatch({ type: "UPDATE_SITE_ERROR", error: error.response.data.error });
-  //     toast.error(error.response.data.error);
-  //   }
-  // };
 
   // Handle delete site
   const handleDelete = async (site) => {
@@ -262,7 +236,6 @@ const ClientAssignedSites = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= state.totalPages) {
       setPage(newPage);

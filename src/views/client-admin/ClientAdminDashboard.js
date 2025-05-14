@@ -171,9 +171,7 @@ const ClientAdminDashboard = () => {
           type: "FETCH_DISTANCE_SUCCESS",
           payload: response.data,
         });
-        console.log(`Distance Summary:`, response.data);
       } catch (error) {
-        console.log(error.message);
         toast.error(error.response?.data?.message || error.message);
         dispatch({ type: "FETCH_DISTANCE_FAIL", payload: error.message });
       }
@@ -192,9 +190,7 @@ const ClientAdminDashboard = () => {
           type: "FETCH_GATEWAYS_SUCCESS",
           payload: response.data.data,
         });
-        console.log(`Gateways Response:`, response.data.data);
       } catch (error) {
-        console.log(error.message);
         toast.error(error.response?.data?.message || error.message);
         dispatch({ type: "FETCH_GATEWAYS_FAIL", payload: error.message });
       }
@@ -244,7 +240,6 @@ const ClientAdminDashboard = () => {
         { site_id: selectedId },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-      // console.log(res);
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
     } catch (error) {
       toast.error(error.response.data.message || error.response.data.error);

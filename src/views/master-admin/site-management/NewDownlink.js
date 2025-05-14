@@ -60,10 +60,9 @@ const NewDownlink = () => {
       toast.error("downlink is required");
     }
     try {
-      const data = await axios.post("/api/v1/downlinks", state.downlinkData, {
+      await axios.post("/api/v1/downlinks", state.downlinkData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data);
 
       toast.success("Downlink added successfully");
       dispatch({ type: "SUBMIT_SUCCESS" });

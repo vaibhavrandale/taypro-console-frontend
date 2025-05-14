@@ -117,7 +117,6 @@ const Robots = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(result.data);
 
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
@@ -164,7 +163,6 @@ const Robots = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

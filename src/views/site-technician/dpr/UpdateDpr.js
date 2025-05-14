@@ -121,7 +121,6 @@ const UpdateDpr = () => {
         const result = await axios.get(`/api/v1/techniciandprs/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log(result.data);
 
         dispatch({ type: "FETCH_DPR_SUCCESS", payload: result.data.data });
       } catch (error) {

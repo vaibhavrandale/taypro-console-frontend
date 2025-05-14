@@ -55,7 +55,6 @@ const AssignGateway = () => {
         const { data } = await axios.get(`/api/v1/gateways/${id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log(data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
 
         setFormData({
@@ -82,8 +81,6 @@ const AssignGateway = () => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      console.log(formData);
-
       const { data } = await axios.post(
         `/api/v1/gateways/assign-to-gateway`,
         formData,
@@ -91,13 +88,10 @@ const AssignGateway = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data);
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(data.message);
       navigate(`/${adminroute}/all-site-gateways`);
     } catch (error) {
-      console.log(error);
-
       dispatch({
         type: "UPDATE_FAIL",
         payload: error.response.data.error || error.response.data.message,

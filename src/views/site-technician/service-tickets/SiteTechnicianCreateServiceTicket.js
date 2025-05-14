@@ -100,32 +100,6 @@ const SiteTechnicianCreateServiceTicket = () => {
   // 📌 Handle search input change
 
   useEffect(() => {
-    // const fetchAllRobots = async () => {
-    //   try {
-    //     dispatch({ type: "FETCH_ROBOTS_REQUEST" });
-
-    //     const response = await axios.get(
-    //       "/api/v1/robots/get-robots/robots-without-pg",
-    //       {
-    //         headers: { Authorization: `Bearer ${authtoken}` },
-    //       }
-    //     );
-
-    //     dispatch({
-    //       type: "FETCH_ROBOTS_SUCCESS",
-    //       payload: response.data.data,
-    //     });
-    //     console.log(response.data.data);
-    //   } catch (error) {
-    //     console.error("Error fetching notifications:", error);
-
-    //     dispatch({
-    //       type: "FETCH_ROBOTS_FAIL",
-    //       payload: error.response ? error.response.data.error : error.message,
-    //     });
-    //   }
-    // };
-
     const fetchRobots = async () => {
       try {
         dispatch({ type: "FETCH_ROBOTS_REQUEST" });
@@ -137,7 +111,6 @@ const SiteTechnicianCreateServiceTicket = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(result.data.data);
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -145,7 +118,6 @@ const SiteTechnicianCreateServiceTicket = () => {
           payload: result.data.data,
         });
       } catch (error) {
-        console.log(error.response.statusText);
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
           payload: error.response.statusText,
@@ -205,7 +177,6 @@ const SiteTechnicianCreateServiceTicket = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // console.log(formData);
 
     try {
       const response = await axios.post("/api/v1/servicetickets", formData, {
@@ -216,7 +187,6 @@ const SiteTechnicianCreateServiceTicket = () => {
       );
       setLoading(false);
       navigate(`/site-technician/service-tickets`);
-      // console.log("Created Ticket:", response.data);
     } catch (error) {
       console.error("Error creating ticket:", error);
     }

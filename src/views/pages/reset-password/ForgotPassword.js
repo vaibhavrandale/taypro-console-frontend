@@ -47,11 +47,9 @@ const ForgotPassword = () => {
       const data = await axios.post("/api/v1/auth/forgot-password", {
         email,
       });
-      console.log(data);
 
       dispatch({ type: "FORGOT_SUCCESS" }); // Show loading
 
-      // toast.success(`Login Successfull!`);
       toast.success(data.data.message);
       setEmail("");
     } catch (err) {

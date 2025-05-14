@@ -41,7 +41,6 @@ const reducer = (state, action) => {
 const ServiceTicketsFaultDashboard = () => {
   const [
     {
-      error,
       servicetickets_fault,
       loadingTickets,
       totalPages,
@@ -97,7 +96,6 @@ const ServiceTicketsFaultDashboard = () => {
           },
         });
       } catch (error) {
-        console.log(error);
         dispatch({
           type: "FETCH_SERVICE_TICKET_FAULT_FAIL",
           payload: error?.response?.data?.error,

@@ -46,7 +46,6 @@ const UpdateInventory = () => {
   const authtoken = useSelector((state) => state.authtoken);
 
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -78,7 +77,6 @@ const UpdateInventory = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(data.data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setInventoryData(data.data);
       } catch (error) {

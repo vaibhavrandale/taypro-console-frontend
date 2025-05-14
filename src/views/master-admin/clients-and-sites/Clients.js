@@ -173,14 +173,12 @@ const Clients = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(response);
         let total = Math.ceil(
           Number(response.data.total) / Number(response.data.limit)
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
         let result = response.data.data;
-        // console.log(result);
 
         dispatch({
           type: "FETCH_SUCCESS",
@@ -233,7 +231,6 @@ const Clients = () => {
   };
 
   const openUpdateModal = async (a) => {
-    // console.log(client);
     setModalVisible(true);
     setSelectedItem(a);
   };
@@ -263,21 +260,16 @@ const Clients = () => {
     dispatch({ type: "SUBMIT_REQUEST" });
     const newdata = { ...formData, logo: clientLogo };
     try {
-      const data = await axios.post("/api/v1/clients", newdata, {
+      await axios.post("/api/v1/clients", newdata, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      //   console.log(data);
 
       toast.success("Client Added Successfully");
       dispatch({ type: "SUBMIT_SUCCESS" });
       setAddModalVisible(false);
-      //   navigate(
-      //     `/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}`
-      //   );
+
       setClientLogo("");
     } catch (error) {
-      //   console.log(error.response.data.error);
-
       dispatch({
         type: "SUBMIT_FAIL",
         payload: error.response.data.error,
@@ -289,8 +281,6 @@ const Clients = () => {
 
   // Handle update client
   const handleUpdate = async (client) => {
-    console.log(client);
-
     try {
       dispatch({ type: "UPDATE_CLIENT_REQUEST" });
       const response = await axios.put(
@@ -300,7 +290,6 @@ const Clients = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      //   console.log(response);
 
       // Update local state with the modified ticket
       dispatch({
@@ -326,7 +315,6 @@ const Clients = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -390,7 +378,6 @@ const Clients = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-      //   console.log(data);
 
       setClientLogo(data.url);
 

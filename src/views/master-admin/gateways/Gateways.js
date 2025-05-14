@@ -97,7 +97,6 @@ const Gateways = () => {
   const [modalOpendloading, setModalOpendloadingg] = useState(false);
   const [filteredGateways, setFilteredGateways] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -130,7 +129,6 @@ const Gateways = () => {
         let total = Math.ceil(
           Number(result.data.data.total) / Number(result.data.data.limit)
         );
-        // console.log(total);
 
         let next = result.data.data.hasNextPage;
         let prev = result.data.data.hasPrevPage;
@@ -186,13 +184,10 @@ const Gateways = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data.data);
 
       dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: data.data });
       setModalOpendloadingg(false);
     } catch (error) {
-      console.log(error);
-
       dispatch({
         type: "FETCH_ROBOT_FAIL",
         payload: error.response.data.error,
@@ -220,7 +215,6 @@ const Gateways = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

@@ -65,7 +65,6 @@ const UpdateInventory = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(data.data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setInventoryData(data.data);
       } catch (error) {

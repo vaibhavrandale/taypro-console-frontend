@@ -74,7 +74,6 @@ const UpdateSitesCoordinates = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(data.data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setCoordinatesData(data.data);
       } catch (error) {

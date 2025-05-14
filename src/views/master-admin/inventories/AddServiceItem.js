@@ -102,7 +102,6 @@ const NewServiceItem = () => {
     toast.success("Image removed.");
   };
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -120,11 +119,9 @@ const NewServiceItem = () => {
     }
     const newdata = { ...state.serviceItemData, item_image: image };
     try {
-      console.log(state.serviceItemData);
-      const data = await axios.post("/api/v1/service-items", newdata, {
+      await axios.post("/api/v1/service-items", newdata, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data);
       toast.success("Service Item Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 

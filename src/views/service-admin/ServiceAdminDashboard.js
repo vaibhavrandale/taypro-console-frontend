@@ -162,8 +162,6 @@ const ServiceAdminDashboard = () => {
     return false;
   });
 
-  console.log(filteredNav[0].items);
-
   return (
     <CContainer fluid className="">
       <h3 className="text-center my-2 text-primary">Service Admin Dashboard</h3>
@@ -172,12 +170,6 @@ const ServiceAdminDashboard = () => {
           <CCol md={3} lg={3} key={index}>
             <CCard className="shadow-sm border-0 text-center">
               <CCardBody>
-                {/* <CIcon
-                       icon=
-                       size="xxl"
-                       className="text-primary mb-3"
-                     /> */}
-
                 {item.icon}
 
                 <CCardTitle className="my-2 fs-6">

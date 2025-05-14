@@ -109,7 +109,6 @@ const NewInventory = () => {
   });
 
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {

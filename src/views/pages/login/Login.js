@@ -63,7 +63,6 @@ const Login = () => {
         email,
         password,
       });
-      console.log(data);
       // ✅ Dispatch to Redux
       dispatch({
         type: "EMP_SIGNIN",

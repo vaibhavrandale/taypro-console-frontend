@@ -55,7 +55,6 @@ const PieChart = () => {
         });
 
         let result = response.data.data; // Expecting array of objects { count, fault_type }
-        // console.log(result);
 
         const faultData = result.reduce((acc, item) => {
           acc[item.fault_type] = item.count;
@@ -155,7 +154,6 @@ const PieChart = () => {
     "#34495E",
     "#95A5A6",
   ];
-  // console.log(serviceticketsfaulycount);
 
   return (
     <CRow className="justify-content-center">

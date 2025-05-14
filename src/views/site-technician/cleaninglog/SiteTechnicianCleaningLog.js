@@ -12,9 +12,7 @@ import {
   CSpinner,
   CButton,
 } from "@coreui/react";
-// import { cleaning_log } from "../../../data"; // Import cleaning logs data
 import { useParams } from "react-router-dom";
-// import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -43,31 +41,18 @@ const reducer = (state, action) => {
 
 const SiteTechnicianCleaningLog = () => {
   const [
-    {
-      loading,
-      cleaninglogs,
-      // sites,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      loadingSites,
-    },
+    { loading, cleaninglogs, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
-    // sites: [],
     loading: false,
-    // loadingSites: false,
     error: "",
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
-  const [selectedDate, setSelectedDate] = useState("");
-  // const [filteredLogs, setFilteredLogs] = useState([]);
 
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -75,31 +60,11 @@ const SiteTechnicianCleaningLog = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [selectedsite, setSelectedsiteid] = useState("all");
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   useEffect(() => {
-    // const fetchSites = async () => {
-    //   dispatch({ type: "FETCH_SITES_REQUEST" });
-    //   try {
-    //     const result = await axios.get(`/api/v1/sites`, {
-    //       headers: { Authorization: `Bearer ${authtoken}` },
-    //     });
-    //     dispatch({
-    //       type: "FETCH_SITES_SUCCESS",
-    //       payload: result.data.data,
-    //     });
-    //   } catch (error) {
-    //     dispatch({
-    //       type: "FETCH_SITES_FAIL",
-    //       payload: error.response.data.error,
-    //     });
-    //     toast.error("Failed to fetch sites");
-    //   }
-    // };
-
     const fetchCleaningLogs = async () => {
       let pagination = {
         pg: page,
@@ -117,15 +82,12 @@ const SiteTechnicianCleaningLog = () => {
             },
           }
         );
-        // setNotifications(response.data.data);
-        // console.log(response.data);
-        console.log(result.data.data);
+
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -146,10 +108,7 @@ const SiteTechnicianCleaningLog = () => {
     };
 
     fetchCleaningLogs();
-    // fetchSites();
   }, [authtoken, endDate, limit, page, site_id, startDate]);
-
-  // Function to export data to Excel
 
   // 🔽 Export to CSV Function
   const exportToCSV = () => {
@@ -208,7 +167,6 @@ const SiteTechnicianCleaningLog = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -249,7 +207,6 @@ const SiteTechnicianCleaningLog = () => {
             </CCol>
           </CCol>
 
-          {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
           <CCol
             md={5}
             xs={12}
@@ -261,8 +218,6 @@ const SiteTechnicianCleaningLog = () => {
           </CCol>
         </CRow>
       </form>
-
-      {/* 📝 Show Table Only if Date is Selected */}
 
       {/* 🔄 Loading Indicator */}
       {loading ? (
@@ -336,7 +291,6 @@ const SiteTechnicianCleaningLog = () => {
                     ) : (
                       <>
                         <CTableDataCell>
-                          {/* {log.finish_timestamp} */}
                           {new Date(log.finish_timestamp).toLocaleString()}
                         </CTableDataCell>
                         <CTableDataCell>

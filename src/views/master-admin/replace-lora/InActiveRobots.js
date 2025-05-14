@@ -105,8 +105,6 @@ const InActiveRobots = () => {
         const result = await axios.post(`/api/v1/robots/inactive`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log("Inactive");
-        console.log(result.data);
 
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
@@ -125,7 +123,6 @@ const InActiveRobots = () => {
             hasPrevPage: prev,
           },
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -165,15 +162,8 @@ const InActiveRobots = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  // Handle update (currently logs updated data)  activate-and-add-in-lns
-  // const handleUpdate = () => {
-  //   console.log("Updated Data:", formData);
-
-  //   setModalVisible(false);
-  // };
 
   const handleUpdate = async (e) => {
-    console.log("Updated Data:", formData);
     e.preventDefault();
     dispatch({ type: "UPDATE_REQUEST" });
     try {
@@ -198,7 +188,6 @@ const InActiveRobots = () => {
       toast.success(`${filteredFormData.robot_no}  updated successfully!`);
       navigate("/master-admin/replace-lora/active-robots"); // Redirect after update
     } catch (error) {
-      console.log(error.response);
       dispatch({
         type: "UPDATE_FAIL",
         payload: error.response?.data?.error || error.message,
@@ -213,7 +202,6 @@ const InActiveRobots = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

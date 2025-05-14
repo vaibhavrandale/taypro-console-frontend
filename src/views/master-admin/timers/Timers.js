@@ -81,7 +81,6 @@ const Timers = () => {
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo?.role === "Master Admin") {

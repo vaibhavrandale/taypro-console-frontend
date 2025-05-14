@@ -106,11 +106,7 @@ const CleaningLog = () => {
             hasPrevPage: prev,
           },
         });
-
-        // console.log(data.data);
       } catch (error) {
-        console.log(error.response.data.error);
-
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response.data.error || "Failed to fetch data",
@@ -174,7 +170,6 @@ const CleaningLog = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

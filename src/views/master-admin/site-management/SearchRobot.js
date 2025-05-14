@@ -7,12 +7,12 @@ import {
   CFormInput,
   CInputGroup,
 } from "@coreui/react";
-// import { robots } from "../../../data"; // Import robots data
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -20,7 +20,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        //  robots: action.payload,
         robots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -34,10 +33,7 @@ const reducer = (state, action) => {
   }
 };
 const SearchRobot = () => {
-  const [
-    { loading, error, robots, totalPages, hasNextPage, hasPrevPage },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ loading, error, robots }, dispatch] = useReducer(reducer, {
     robots: [],
     loading: true,
     error: "",
@@ -50,7 +46,6 @@ const SearchRobot = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
-  const [pageInput, setPageInput] = useState("");
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -67,11 +62,9 @@ const SearchRobot = () => {
 
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: result.data,
         });
       } catch (error) {
-        console.log(error.response.statusText);
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response.data.error || error.response.data.message,
@@ -145,7 +138,6 @@ const SearchRobot = () => {
                   filteredRobot.map((robot, index) => (
                     <Link
                       key={index}
-                      // ✅ Move the key to the <li> (not the <Link>)
                       to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                       className="text-decoration-none w-100 "
                     >

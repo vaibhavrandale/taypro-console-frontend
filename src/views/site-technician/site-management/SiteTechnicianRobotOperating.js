@@ -5,36 +5,25 @@ import {
   CCard,
   CCardBody,
   CButton,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
   CTable,
-  CTableHead,
   CTableRow,
-  CTableHeaderCell,
   CTableBody,
   CTableDataCell,
   CDropdownMenu,
   CDropdownItem,
   CDropdown,
   CDropdownToggle,
-  CInputGroup,
-  CFormInput,
   CTooltip,
   CBadge,
 } from "@coreui/react";
-import { FaArrowUp } from "react-icons/fa";
-import { FaCircleInfo } from "react-icons/fa6"; // Correct import
-import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { useParams } from "react-router-dom";
 import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
-import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -79,23 +68,16 @@ const reducer = (state, action) => {
 
 const SiteTechnicianRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
-  const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
-
-  const [pageInput, setPageInput] = useState("");
 
   let start = "C1";
   let stop = "CC";
   let returntodock = "D1";
-  const [loadingRow, setLoadingRow] = useState(null); // Track the row index
+  const [setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
-  const [
-    { loading, error, downlinks, successDelete, loadingRobots, robots },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ error, loadingRobots, robots }, dispatch] = useReducer(reducer, {
     robots: [],
     loading: true,
     error: "",
@@ -115,7 +97,6 @@ const SiteTechnicianRobotOperating = () => {
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
-        // console.log(robotsData);
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
@@ -161,7 +142,6 @@ const SiteTechnicianRobotOperating = () => {
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: Robotdata[0].deveui,
@@ -175,7 +155,6 @@ const SiteTechnicianRobotOperating = () => {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -192,12 +171,9 @@ const SiteTechnicianRobotOperating = () => {
   };
 
   const sendMulticastDownlink = async (command, index) => {
-    // console.log(command);
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
-    console.log(alldeveuis, command);
 
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
@@ -214,7 +190,6 @@ const SiteTechnicianRobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -229,8 +204,6 @@ const SiteTechnicianRobotOperating = () => {
 
     setCommandButton(null);
   };
-
-  // console.log(Robotdata[0].last_uplink);
 
   return (
     <>

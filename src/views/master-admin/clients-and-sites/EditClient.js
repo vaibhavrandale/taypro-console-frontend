@@ -69,8 +69,6 @@ const EditClient = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
 
-        console.log("Fetched site data:", data);
-
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
 
         setFormData({

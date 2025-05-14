@@ -121,7 +121,6 @@ const SiteTechnicianDashboard = () => {
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
       setinTime(data.data.punchin_time);
-      // console.log(data.data.punchin_time);
 
       dispatch({
         type: "SET_STATUS",
@@ -142,7 +141,6 @@ const SiteTechnicianDashboard = () => {
         { site_id: selectedId },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-      // console.log(res);
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
     } catch (error) {
       toast.error(error.response.data.message || error.response.data.error);

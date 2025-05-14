@@ -132,9 +132,6 @@ const SitewaiseLog = () => {
             },
           }
         );
-        // setNotifications(response.data.data);
-        // console.log(response.data);
-        console.log(result.data.data);
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -228,7 +225,6 @@ const SitewaiseLog = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

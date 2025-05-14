@@ -131,8 +131,6 @@ const CreatePreventiveMaintenance = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // setRobots(data.data);
-        console.log(result.data.data);
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
           payload: {

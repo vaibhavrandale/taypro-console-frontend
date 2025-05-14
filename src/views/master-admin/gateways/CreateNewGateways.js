@@ -68,7 +68,6 @@ const CreateGateway = () => {
     sites: [],
   });
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -93,7 +92,6 @@ const CreateGateway = () => {
         const { data } = await axios.get("/api/v1/sites", {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        console.log("Fetched sites:", data.data);
 
         dispatch({ type: "SET_SITES", payload: data.data });
       } catch (err) {
@@ -107,7 +105,6 @@ const CreateGateway = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "SUBMIT_REQUEST" });
-    console.log(state.gatewayData);
     try {
       await axios.post("/api/v1/gateways", state.gatewayData, {
         headers: { Authorization: `Bearer ${authtoken}` },

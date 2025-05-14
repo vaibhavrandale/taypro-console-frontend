@@ -170,8 +170,6 @@ const ClientRobotOperating = () => {
           }
         );
 
-        console.log(response.data.data);
-
         dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
       } catch (error) {
         dispatch({

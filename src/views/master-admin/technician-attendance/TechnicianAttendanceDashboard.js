@@ -94,12 +94,10 @@ const TechnicianAttendanceDashboard = () => {
 
     fetchAttendance();
   }, [authtoken, limit, page]);
-  console.log(technicians);
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

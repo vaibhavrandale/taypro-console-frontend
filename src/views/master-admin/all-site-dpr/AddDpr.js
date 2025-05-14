@@ -193,11 +193,9 @@ const AddDpr = () => {
     };
 
     try {
-      console.log(state.dprData);
-      const data = await axios.post("/api/v1/techniciandprs", newdata, {
+      await axios.post("/api/v1/techniciandprs", newdata, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data);
       toast.success("Daily Progress Report Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 

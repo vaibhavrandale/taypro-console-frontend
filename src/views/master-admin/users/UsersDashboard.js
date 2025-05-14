@@ -299,7 +299,6 @@ const UsersDashboard = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        // console.log("Sites:", result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -320,15 +319,12 @@ const UsersDashboard = () => {
   };
 
   const openAssignedSitesModal = (user) => {
-    console.log(user);
-
     setAssignedSites(user.assigned_sites);
     setSelectedUser(user);
     setassignedSitesModalVisible(true);
   };
   const openViewModal = (user) => {
     setSelectedItem(user);
-    console.log(user);
 
     setViewModalVisible(true);
   };
@@ -348,17 +344,7 @@ const UsersDashboard = () => {
     setAddModalVisible(true);
   };
 
-  // const handleChange = (e) => {
-  //   const { name, type, checked, value } = e.target;
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
-
   const handleChange = (e) => {
-    console.log("Change detected:", e.target.name, e.target.value); // Debug log
     const { name, type, checked, value } = e.target;
 
     setFormData((prevData) => ({
@@ -367,12 +353,6 @@ const UsersDashboard = () => {
     }));
   };
 
-  // Handle Update User
-  // const handleUpdate = () => {
-  //   console.log("Updated User:", formData);
-  //   setModalVisible(false);
-  // };
-
   const handleAdd = async () => {
     try {
       dispatch({ type: "ADD_USER_REQUEST" });
@@ -380,10 +360,8 @@ const UsersDashboard = () => {
       const response = await axios.post("/api/v1/users", newdata, {
         headers: { authorization: `Bearer ${authtoken}` },
       });
-      // console.log(response);
 
       if (response.status === 201 || response.status === 200) {
-        console.log("User successfully added:", response.data);
         dispatch({
           type: "ADD_USER_SUCCESS",
           payload: response.data.data.user,
@@ -399,17 +377,6 @@ const UsersDashboard = () => {
       alert(error.response.data.error);
     }
   };
-
-  // Filter Users based on Search Term and ensure they are "Internal" type
-  // const filteredUsers = users
-  //   ? users.filter(
-  //       (user) =>
-  //         user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         user.department.toLowerCase().includes(searchTerm.toLowerCase())
-  //     )
-  //   : [];
 
   const filteredUsers = users
     ? users.filter(
@@ -429,7 +396,6 @@ const UsersDashboard = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -460,7 +426,6 @@ const UsersDashboard = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-      //   console.log(data);
 
       setImage(data.url);
 
@@ -472,8 +437,6 @@ const UsersDashboard = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log(formData);
-
       dispatch({ type: "UPDATE_REQUEST" });
       const {
         createdAt,
@@ -546,8 +509,6 @@ const UsersDashboard = () => {
         toast.success(response.data.message);
       }
     } catch (err) {
-      console.log(err);
-
       dispatch({
         type: "ASSIGN_SITE_FAIL",
         payload: err.response.data.error,
@@ -604,8 +565,6 @@ const UsersDashboard = () => {
       toast.error(error.response?.data?.error || "Failed to remove site");
     }
   };
-
-  console.log(role_permissions);
 
   return (
     <div className="">

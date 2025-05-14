@@ -6,11 +6,9 @@ import {
   CButton,
   CCard,
   CCardBody,
-  //   CCardHeader,
   CRow,
   CCol,
 } from "@coreui/react";
-// import { lora_configuration, robots } from "../../../data"; // Import lora config
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -24,7 +22,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingloraconfig: false,
-        // lora_configuration: action.payload,
         lora_configuration: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -39,7 +36,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingRobots: false,
-        //  robots: action.payload
         robots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -75,16 +71,10 @@ const AddRobotUsingLoraNo = () => {
   const [
     {
       loadingRobots,
-      error,
       robots,
       lora_configuration,
-      loadingloraconfig,
       loadingaddRobots,
-      selectedLora,
       loadingFields,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -107,7 +97,6 @@ const AddRobotUsingLoraNo = () => {
     deveui: "",
     site_id: "",
   });
-  const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -146,7 +135,6 @@ const AddRobotUsingLoraNo = () => {
             hasPrevPage: prev,
           },
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -165,7 +153,6 @@ const AddRobotUsingLoraNo = () => {
           }
         );
 
-        // console.log(result.data.data);
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
           payload: {
@@ -186,7 +173,6 @@ const AddRobotUsingLoraNo = () => {
     fetchRobots();
   }, [authtoken, limit, page]);
 
-  const navigate = useNavigate();
   // Get only available lora_no (not already in robots array)
   const assignedLoraNos = robots.map((robot) => robot.lora_no);
   const availableLoraConfig = lora_configuration.filter(
@@ -262,8 +248,6 @@ const AddRobotUsingLoraNo = () => {
       });
     }
   };
-
-  // console.log(robots);
 
   return (
     <CCard className="p-4">

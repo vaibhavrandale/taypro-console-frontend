@@ -10,10 +10,9 @@ import {
   CCol,
   CCard,
   CCardBody,
-  CFormInput,
   CButton,
 } from "@coreui/react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -55,9 +54,6 @@ const DebugLog = () => {
   });
 
   const { robot_no } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
@@ -111,7 +107,6 @@ const DebugLog = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -168,8 +163,6 @@ const DebugLog = () => {
     // Trigger download
     XLSX.writeFile(workbook, `DebugLogs_${robot_no}.xlsx`);
   };
-
-  // console.log(totalPages);
 
   return (
     <CCard>
@@ -241,16 +234,7 @@ const DebugLog = () => {
             )}
           </CTableBody>
         </CTable>
-        {/* <PaginateInput
-          page={page}
-          totalPages={totalPages}
-          hasPrevPage={hasPrevPage}
-          hasNextPage={hasNextPage}
-          pageInput={pageInput}
-          handlePageChange={handlePageChange}
-          handlePageInputChange={handlePageInputChange}
-          handlePageInputSubmit={handlePageInputSubmit}
-        /> */}
+
         <PaginateInput
           page={page}
           totalPages={totalPages}

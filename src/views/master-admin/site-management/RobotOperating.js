@@ -122,7 +122,6 @@ const RobotOperating = () => {
       loading,
       error,
       robot,
-      loadingRobot,
       downlinks,
       successDelete,
       loadingRobots,
@@ -146,10 +145,10 @@ const RobotOperating = () => {
     hasPrevPage: false,
   });
 
-  // const navigate = useNavigate();
   const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+
   useEffect(() => {
     const getRobots = async () => {
       try {
@@ -162,11 +161,9 @@ const RobotOperating = () => {
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
-        console.log(robotsData);
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
-        // ✅ Filter robots assigned to this site
         if (site_id) {
           const extractNumber = (robotNo) =>
             parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
@@ -225,7 +222,6 @@ const RobotOperating = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(response);
 
         let total = Math.ceil(
           Number(response.data.total) / Number(response.data.limit)
@@ -293,12 +289,10 @@ const RobotOperating = () => {
 
   const blockwiserobots =
     robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
-  // console.log(robots);
 
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: robot.deveui,
@@ -312,7 +306,6 @@ const RobotOperating = () => {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -328,7 +321,6 @@ const RobotOperating = () => {
     setCommandButton(null);
   };
   const sendCustomDownlink = async (command) => {
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: robot.deveui,
@@ -346,7 +338,6 @@ const RobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -363,13 +354,9 @@ const RobotOperating = () => {
   };
 
   const sendMulticastDownlink = async (command, index) => {
-    // console.log(command);
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
-    // console.log(alldeveuis, command);
-    console.log(alldeveuis);
 
     setCommandButton(index);
-    // console.log(command);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
@@ -386,7 +373,6 @@ const RobotOperating = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      // console.log(data.data.message);
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -406,7 +392,6 @@ const RobotOperating = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -420,7 +405,6 @@ const RobotOperating = () => {
     }
   };
 
-  // console.log(robot.last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -433,7 +417,6 @@ const RobotOperating = () => {
 
   const TextToBase64 = (text) => {
     const base64 = btoa(text);
-    // console.log(base64);
     setBase64Text(base64);
     setTimeout(() => {
       setBase64Text("");

@@ -111,7 +111,6 @@ const NewProjectClosure = () => {
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
-  // const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
