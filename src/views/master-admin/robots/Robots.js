@@ -180,13 +180,13 @@ const Robots = () => {
       <h2 className="text-center">All Robots</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link
-          className="btn btn-sm btn-primary m-1"
+          className="btn btn-sm btn-success m-1"
           to="/master-admin/add-robot/add-robot-using-lorano"
         >
           Add Robots
         </Link>
         <Link
-          className="btn btn-sm btn-primary m-1"
+          className="btn btn-sm btn-success m-1"
           to="/master-admin/robots/shift-block-wise"
         >
           Shift Block Wise
@@ -217,6 +217,9 @@ const Robots = () => {
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Robot No
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Firmwaere Version
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Deveui
@@ -258,6 +261,11 @@ const Robots = () => {
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell>
+                  {robot.version === "V"
+                    ? "Robot is not yet operated"
+                    : robot.version}
+                </CTableDataCell>
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
                 <CTableDataCell>
