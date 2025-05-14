@@ -179,7 +179,7 @@ const PieChart = () => {
             ) : serviceticketssitewise?.length === 0 ? (
               <p className="text-danger text-center">No data available</p>
             ) : (
-              <div style={{ width: "100%", height: "100%" }} className="">
+              <div className="">
                 <CChartPie
                   data={{
                     labels: siteLabels.map(
@@ -198,7 +198,7 @@ const PieChart = () => {
                   }}
                   options={{
                     plugins: {
-                      legend: { position: "right" },
+                      legend: { position: "bottom" },
                       tooltip: {
                         callbacks: {
                           label: function (tooltipItem) {
@@ -238,7 +238,7 @@ const PieChart = () => {
             ) : Object.keys(serviceticketsfaulycount || {}).length === 0 ? (
               <p className="text-danger text-center">No data available</p>
             ) : (
-              <div style={{ width: "100%", height: "100%" }}>
+              <div>
                 <CChartPie
                   data={{
                     labels: faultLabels,
@@ -254,7 +254,7 @@ const PieChart = () => {
                   }}
                   options={{
                     plugins: {
-                      legend: { position: "right" },
+                      legend: { position: "bottom" },
                     },
                   }}
                 />
