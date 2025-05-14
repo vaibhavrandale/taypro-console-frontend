@@ -96,7 +96,6 @@ const ClientTicketsDashboard = () => {
           { headers: { Authorization: `Bearer ${authtoken}` } }
         );
 
-        console.log(result.data.data);
         // Handle totalPages, hasNextPage, and hasPrevPage logic
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
@@ -115,7 +114,6 @@ const ClientTicketsDashboard = () => {
           },
         });
       } catch (error) {
-        console.log(error);
         dispatch({
           type: "FETCH_CLIENT_TICKET_FAIL",
           payload: error.response.data.error,
@@ -156,7 +154,6 @@ const ClientTicketsDashboard = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

@@ -90,7 +90,6 @@ const UpdateServiceTicket = () => {
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -166,14 +165,11 @@ const UpdateServiceTicket = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // console.log(result.data.data);
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
           payload: result.data.data,
         });
       } catch (error) {
-        console.log(error);
-
         dispatch({
           type: "FETCH_INVENTORY_FAIL",
           payload: "Failed to fetch Inventories",
@@ -252,8 +248,6 @@ const UpdateServiceTicket = () => {
       console.error("File upload error:", error);
     }
   };
-
-  // console.log(state.inventories);
 
   return (
     <div>

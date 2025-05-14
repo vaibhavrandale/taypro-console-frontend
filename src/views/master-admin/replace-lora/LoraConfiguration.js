@@ -135,7 +135,6 @@ const LoraConfiguration = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  // console.log(formData);
   useEffect(() => {
     let pagination = {
       pg: page,
@@ -167,7 +166,6 @@ const LoraConfiguration = () => {
             hasPrevPage: prev,
           },
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_LORACONFIG_FAIL",
@@ -187,7 +185,6 @@ const LoraConfiguration = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -213,7 +210,6 @@ const LoraConfiguration = () => {
   };
   const openViewModal = (item) => {
     setSelectedItem(item);
-    console.log(item);
 
     setViewModalVisible(true);
   };
@@ -236,7 +232,6 @@ const LoraConfiguration = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      // console.log(response.data.message);
 
       toast.success(response.data.message);
       // Update robots state with new data
@@ -302,20 +297,17 @@ const LoraConfiguration = () => {
   //     item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
   // );
 
+  const filteredData = lora_configuration.filter((item) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      item.robot_no?.toLowerCase().includes(term) ||
+      item.deveui?.toLowerCase().includes(term) ||
+      item.site_id?.toLowerCase().includes(term) ||
+      item.serial?.toString().toLowerCase().includes(term) ||
+      item.formatted_deveui?.toLowerCase().includes(term)
+    );
+  });
 
-const filteredData = lora_configuration.filter((item) => {
-  const term = searchTerm.toLowerCase();
-  return (
-    item.robot_no?.toLowerCase().includes(term) ||
-    item.deveui?.toLowerCase().includes(term) ||
-    item.site_id?.toLowerCase().includes(term) ||
-    item.serial?.toString().toLowerCase().includes(term) ||
-    item.formatted_deveui?.toLowerCase().includes(term)
-  );
-});
-
-
-  
   const uniqueSitenames = sites.filter(
     (value, index, self) =>
       index === self.findIndex((t) => t.site_id === value.site_id)
@@ -325,7 +317,6 @@ const filteredData = lora_configuration.filter((item) => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

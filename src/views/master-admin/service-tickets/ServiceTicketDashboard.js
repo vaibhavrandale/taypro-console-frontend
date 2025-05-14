@@ -119,18 +119,14 @@ const ServiceTicketDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
-  // const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-  // const [loading, setLoading] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -150,12 +146,9 @@ const ServiceTicketDashboard = () => {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
 
-      // console.log(response);
-
       let result = response.data.data;
 
       dispatch({ type: "FETCH_TICKET_SUCCESS", payload: result });
-      // setSelectedTicket(result);
     } catch (error) {
       console.error("Error fetching ticket:", error);
       dispatch({ type: "FETCH_TICKET_FAIL", payload: error });
@@ -173,7 +166,6 @@ const ServiceTicketDashboard = () => {
       await axios.put(`/api/v1/servicetickets/${id}`, formData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      // console.log("Updated Ticket:", response.data);
       setModalVisible(false);
 
       // Update local state with the modified ticket
@@ -194,7 +186,6 @@ const ServiceTicketDashboard = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  // console.log(formData);
   useEffect(() => {
     let pagination = {
       pg: page,
@@ -217,7 +208,6 @@ const ServiceTicketDashboard = () => {
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
         let result = response.data.data;
-        // console.log(result);
 
         dispatch({
           type: "FETCH_SUCCESS",
@@ -254,7 +244,6 @@ const ServiceTicketDashboard = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

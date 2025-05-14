@@ -98,7 +98,6 @@ const UpdateRobot = () => {
       toast.success(`${filteredFormData.robot_no}  updated successfully!`);
       navigate("/master-admin/robots"); // Redirect after update
     } catch (error) {
-      console.log(error.response);
       dispatch({
         type: "UPDATE_FAIL",
         payload: error.response?.data?.message || error.message,

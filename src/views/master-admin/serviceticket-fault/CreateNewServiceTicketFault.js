@@ -91,8 +91,6 @@ const CreateNewServiceTicketFault = () => {
         `/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard`
       );
     } catch (error) {
-      console.log(error);
-
       dispatch({
         type: "SUBMIT_FAIL",
         payload: error.response?.data?.error || error.response?.data?.message,

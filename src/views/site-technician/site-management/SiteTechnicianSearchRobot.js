@@ -7,7 +7,6 @@ import {
   CFormInput,
   CInputGroup,
 } from "@coreui/react";
-// import { robots } from "../../../data"; // Import robots data
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -20,7 +19,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        //  robots: action.payload,
         robots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -34,10 +32,7 @@ const reducer = (state, action) => {
   }
 };
 const SiteTechnicianSearchRobot = () => {
-  const [
-    { loading, error, robots, totalPages, hasNextPage, hasPrevPage },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ loading, error, robots }, dispatch] = useReducer(reducer, {
     robots: [],
     loading: true,
     error: "",
@@ -65,11 +60,9 @@ const SiteTechnicianSearchRobot = () => {
 
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: result.data,
         });
       } catch (error) {
-        console.log(error.response.statusText);
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response.data.error || error.response.data.message,

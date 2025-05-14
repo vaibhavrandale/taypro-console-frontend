@@ -97,7 +97,6 @@ const CreateServiceTicket = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -125,7 +124,6 @@ const CreateServiceTicket = () => {
           type: "FETCH_ROBOTS_SUCCESS",
           payload: response.data.data,
         });
-        console.log(response.data.data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
 
@@ -187,7 +185,6 @@ const CreateServiceTicket = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(formData);
 
     try {
       const response = await axios.post("/api/v1/servicetickets", formData, {
@@ -198,7 +195,6 @@ const CreateServiceTicket = () => {
       );
       setLoading(false);
       navigate(`/${adminroute}/service-tickets`);
-      console.log("Created Ticket:", response.data);
     } catch (error) {
       console.error("Error creating ticket:", error);
     }

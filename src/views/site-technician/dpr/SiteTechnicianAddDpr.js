@@ -1,19 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CAvatar,
-  CBadge,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CFormCheck,
-  CFormInput,
   CFormSelect,
   CRow,
   CTable,
@@ -23,8 +21,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload, cilX } from "@coreui/icons";
 import "../service-tickets/servicetickts.css";
 
 const reducer = (state, action) => {
@@ -95,11 +91,8 @@ const SiteTechnicianAddDpr = () => {
     error: "",
     success: false,
   });
-  //   const [image, setImage] = useState("");
-  //   const [uploading, setUploading] = useState(false);
+
   const [site_id, setSiteId] = useState("abc");
-  const [filteredTechnicians, setFilteredTechnicians] = useState([]);
-  const [showSuggestionsIndex, setShowSuggestionsIndex] = useState(null);
   const fetchSiteTechnicians = async (e) => {
     const selectedSiteId = e.target.value;
     setSiteId(selectedSiteId); // Updates local state
@@ -123,7 +116,6 @@ const SiteTechnicianAddDpr = () => {
         type: "FETCH_TECHNICIAN_SUCCESS",
         payload: result.data.data,
       });
-      console.log(result);
     } catch (error) {
       dispatch({
         type: "FETCH_TECHNICIAN_FAIL",
@@ -163,7 +155,6 @@ const SiteTechnicianAddDpr = () => {
       value: e.target.value,
     });
   };
-  const handleSiteNameChange = (e) => {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,11 +168,9 @@ const SiteTechnicianAddDpr = () => {
     };
 
     try {
-      console.log(state.dprData);
-      const data = await axios.post("/api/v1/techniciandprs", newdata, {
+      await axios.post("/api/v1/techniciandprs", newdata, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      console.log(data);
       toast.success("Daily Progress Report Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
 

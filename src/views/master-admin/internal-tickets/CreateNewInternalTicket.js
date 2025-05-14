@@ -64,7 +64,6 @@ const CreateInternalTicket = () => {
   // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -102,7 +101,6 @@ const CreateInternalTicket = () => {
             headers: { authorization: `Bearer ${authtoken}` },
           }
         ); // Replace with your API endpoint
-        console.log(result.data.data);
 
         const data = result.data.data;
         dispatch({
@@ -210,7 +208,6 @@ const CreateInternalTicket = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
-    console.log(formData);
     try {
       dispatch({ type: "CREATE_TICKET_REQUEST" });
 
@@ -218,7 +215,6 @@ const CreateInternalTicket = () => {
         headers: { authorization: `Bearer ${authtoken}` },
       });
 
-      console.log("Ticket successfully created:", response.data);
       dispatch({
         type: "CREATE_TICKET_SUCCESS",
         payload: response.data.data, // Append new robot to state

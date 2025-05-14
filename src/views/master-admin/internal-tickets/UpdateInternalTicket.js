@@ -73,7 +73,6 @@ const UpdateInternalTicket = () => {
         const { data } = await axios.get(`/api/v1/internaltickets/${id}`, {
           headers: { authorization: `Bearer ${authtoken}` },
         });
-        console.log(data.data);
 
         dispatch({ type: "FETCH_TICKET_SUCCESS", payload: data.data });
         setFormData(data.data);

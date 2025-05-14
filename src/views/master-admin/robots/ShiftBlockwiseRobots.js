@@ -159,7 +159,6 @@ const ShiftBlockwiseRobots = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -245,7 +244,6 @@ const ShiftBlockwiseRobots = () => {
 
       dispatch({ type: "SHIFT_ROBOTS_SUCCESS", payload: selectedRobots });
       toast.success("Selected robots shifted to new block successfully.");
-      console.log(response.data);
       setSelectedRobots([]);
       setShowModal(false); // Close modal
       setTargetBlock(""); // Clear input
@@ -264,7 +262,6 @@ const ShiftBlockwiseRobots = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

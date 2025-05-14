@@ -178,7 +178,6 @@ const AllSiteDpr = () => {
         let total = Math.ceil(
           Number(result.data.data.total) / Number(result.data.data.limit)
         );
-        console.log(total);
 
         let next = result.data.data.hasNextPage;
         let prev = result.data.data.hasPrevPage;
@@ -308,7 +307,6 @@ const AllSiteDpr = () => {
   };
 
   const userInfo = useSelector((state) => state.userInfo);
-  // console.log(Robotdata[0].last_uplink);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {

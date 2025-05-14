@@ -121,7 +121,6 @@ const ClientData = () => {
 
   // Handle updating site
   const handleUpdate = () => {
-    console.log("Updated Site Data:", formData);
     setModalVisible(false);
   };
 
@@ -131,7 +130,6 @@ const ClientData = () => {
       alert("Please fill in all fields");
       return;
     }
-    console.log("New Site Added:", formData);
     setAddModalVisible(false);
   };
 

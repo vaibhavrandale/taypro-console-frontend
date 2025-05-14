@@ -104,9 +104,6 @@ const ActiveRobots = () => {
         const result = await axios.post(`/api/v1/robots/active`, pagination, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-        // console.log(result.data.data);
-        console.log("active");
-        console.log(result.data);
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -124,7 +121,6 @@ const ActiveRobots = () => {
             hasPrevPage: prev,
           },
         });
-        // console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
@@ -167,7 +163,6 @@ const ActiveRobots = () => {
 
   // Handle update (currently logs updated data)
   const handleUpdate = async (e) => {
-    console.log("Updated Data:", formData);
     e.preventDefault();
     dispatch({ type: "UPDATE_REQUEST" });
     try {
@@ -192,7 +187,6 @@ const ActiveRobots = () => {
       toast.success(`${filteredFormData.robot_no}  updated successfully!`);
       navigate("/master-admin/replace-lora/in-active-robots"); // Redirect after update
     } catch (error) {
-      console.log(error.response);
       dispatch({
         type: "UPDATE_FAIL",
         payload: error.response?.data?.message || error.message,
@@ -207,7 +201,6 @@ const ActiveRobots = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

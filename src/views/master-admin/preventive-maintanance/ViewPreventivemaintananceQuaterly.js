@@ -88,7 +88,6 @@ const ViewPreventivemaintananceQuaterly = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  console.log(new Date().toISOString().split("T")[0]);
 
   useEffect(() => {
     const fetchSites = async () => {
@@ -101,7 +100,6 @@ const ViewPreventivemaintananceQuaterly = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        console.log(result.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",

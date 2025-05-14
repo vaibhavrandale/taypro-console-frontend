@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const ExternalUsersDashboard = () => {
-//   return <div>ExternalUsersDashboard</div>;
-// };
-
-// export default ExternalUsersDashboard;
-
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -28,11 +20,7 @@ import {
   CFormSelect,
   CBadge,
   CFormCheck,
-  CTabPane,
   CTabContent,
-  CNav,
-  CNavItem,
-  CNavLink,
   CForm,
   CTabs,
   CTabList,
@@ -47,8 +35,6 @@ import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
 import { Link } from "react-router-dom";
-// import InventoryOverview from "../inventories/InventoryOverview";
-// import logo from '../../../assets/brand/logoforwhitebg.png';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -117,12 +103,6 @@ const reducer = (state, action) => {
     case "ASSIGN_SITE_REQUEST":
       return { ...state, assignsiteloading: true, assgnedSiteError: "" };
 
-    // case "ASSIGN_SITE_SUCCESS":
-    //   return {
-    //     ...state,
-    //     assignsiteloading: false,
-    //     assigned_sites: [...state.assigned_sites, action.payload], // Append new site
-    //   };
     case "ASSIGN_SITE_SUCCESS":
       return {
         ...state,
@@ -179,9 +159,6 @@ const ExternalUsersDashboard = () => {
       userAddloading,
       updatingUserLoading,
       assignsiteloading,
-      assgnedSiteError,
-      removesiteloading,
-      removeSiteError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -292,7 +269,6 @@ const ExternalUsersDashboard = () => {
     fetchUsers();
   }, [authtoken, limit, page, userInfo]); // Runs only once on mount
 
-  // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
     setSelectedUser(user);
     setFormData(user);
@@ -300,8 +276,6 @@ const ExternalUsersDashboard = () => {
   };
 
   const openAssignedSitesModal = (user) => {
-    console.log(user);
-
     setAssignedSites(user.assigned_sites);
     setSelectedUser(user);
     setassignedSitesModalVisible(true);
@@ -323,7 +297,6 @@ const ExternalUsersDashboard = () => {
   };
 
   const handleChange = (e) => {
-    console.log("Change detected:", e.target.name, e.target.value); // Debug log
     const { name, type, checked, value } = e.target;
 
     setFormData((prevData) => ({
@@ -341,7 +314,6 @@ const ExternalUsersDashboard = () => {
       });
 
       if (response.status === 201 || response.status === 200) {
-        console.log("User successfully added:", response.data);
         dispatch({
           type: "ADD_USER_SUCCESS",
           payload: [...users, response.data.data], // Append new robot to state
@@ -357,7 +329,6 @@ const ExternalUsersDashboard = () => {
     }
   };
 
-  // Filter Users based on Search Term and ensure they are "Internal" type
   const filteredUsers = users
     ? users.filter(
         (user) =>
@@ -372,7 +343,6 @@ const ExternalUsersDashboard = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.log(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -414,8 +384,6 @@ const ExternalUsersDashboard = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log(formData);
-
       dispatch({ type: "UPDATE_REQUEST" });
       const {
         createdAt,
@@ -473,21 +441,16 @@ const ExternalUsersDashboard = () => {
         }
       ); // Replace with your API endpoint
       if (response.data.success) {
-        // Update assigned sites in UI
-
         dispatch({
           type: "ASSIGN_SITE_SUCCESS",
           payload: response.data.data, // Let the reducer handle appending
         });
         setAssignedSites((prev) => [...prev, response.data.data]);
-        // Reset selection
         setSelectedSite("");
         setActiveTab("assigned"); // Switch back to Assigned Sites tab
         toast.success(response.data.message);
       }
     } catch (err) {
-      console.log(err);
-
       dispatch({
         type: "ASSIGN_SITE_FAIL",
         payload: err.response.data.error,
@@ -543,8 +506,6 @@ const ExternalUsersDashboard = () => {
       toast.error(error.response?.data?.error || "Failed to remove site");
     }
   };
-
-  console.log(role_permissions);
 
   return (
     <div className="">
@@ -909,12 +870,7 @@ const ExternalUsersDashboard = () => {
                 shape="rounded-pill"
                 className="p-1"
               >
-                <CIcon
-                  icon={cilX}
-                  cursor="pointer"
-                  // onClick={removeLogo}
-                  title="Remove file"
-                />
+                <CIcon icon={cilX} cursor="pointer" title="Remove file" />
               </CBadge>
             </div>
           ) : formData.profile_image ? (
@@ -934,12 +890,7 @@ const ExternalUsersDashboard = () => {
                 shape="rounded-pill"
                 className="p-1"
               >
-                <CIcon
-                  icon={cilX}
-                  cursor="pointer"
-                  // onClick={removeLogo}
-                  title="Remove file"
-                />
+                <CIcon icon={cilX} cursor="pointer" title="Remove file" />
               </CBadge>
             </div>
           ) : null}
@@ -952,9 +903,7 @@ const ExternalUsersDashboard = () => {
           >
             Cancel
           </CButton>
-          {/* <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes
-          </CButton> */}
+
           <CButton color="primary" className="btn-sm" onClick={handleUpdate}>
             {updatingUserLoading ? (
               <>
@@ -1060,7 +1009,6 @@ const ExternalUsersDashboard = () => {
                   <CButton
                     color="primary"
                     size="sm"
-                    // onClick={() => handleAssignSite(selectedSite)}
                     onClick={handleAssignSite}
                     disabled={!selectedSite}
                   >

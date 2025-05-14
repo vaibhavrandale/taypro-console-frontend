@@ -48,8 +48,6 @@ const ProjectAdminDashboard = () => {
     return false;
   });
 
-  console.log(filteredNav[0].items);
-
   return (
     <CContainer fluid className="">
       <h3 className="text-center my-2 text-primary">Project Admin Dashboard</h3>
