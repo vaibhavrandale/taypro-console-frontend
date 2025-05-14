@@ -193,7 +193,7 @@ const ViewProjectClosureDocument = () => {
                     <h5>Project to Service Handover Document</h5>
                   </td>
                   <td colSpan={1}>
-                    <b>TPL_PRH-R00</b>
+                    <b>TPL_PR-R00</b>
                   </td>
                 </tr>
               </thead>
