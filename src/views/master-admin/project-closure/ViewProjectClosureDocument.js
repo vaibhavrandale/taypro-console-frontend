@@ -438,6 +438,14 @@ const ViewProjectClosureDocument = () => {
                 {serviceItemData.is_client_training_conducted ? "Yes" : "No"}
               </li>
               <li>
+                <strong>
+                  Technician&nbsp;&nbsp;Training&nbsp;&nbsp;Conducted&nbsp;&nbsp;:
+                </strong>{" "}
+                {serviceItemData.is_technician_training_conducted
+                  ? "Yes"
+                  : "No"}
+              </li>
+              <li>
                 <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
                 <Link
                   target="blank"

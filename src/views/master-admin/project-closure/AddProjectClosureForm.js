@@ -93,6 +93,7 @@ const NewProjectClosure = () => {
       commissioning_document: "",
       is_portal_access_provided: false,
       is_client_training_conducted: false,
+      is_technician_training_conducted: false,
       client_name: "",
       client_role: "",
       client_email: "",
@@ -429,7 +430,7 @@ const NewProjectClosure = () => {
               <CCol md="3">
                 <div className="mb-3">
                   <CFormLabel className="form-CFormLabel">
-                    Technician Daily Wages
+                    Technician Monthly/Daily Salary
                   </CFormLabel>
 
                   <CFormInput
@@ -601,26 +602,6 @@ const NewProjectClosure = () => {
                   />
                 </div>
               </CCol>
-
-              {[
-                "is_portal_access_provided",
-                "is_client_training_conducted",
-              ].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div className="flex items-center space-x-2 my-2">
-                    <CFormCheck
-                      id={field}
-                      name={field}
-                      checked={state.projectDocData[field] || false}
-                      onChange={handleChange}
-                    />
-                    &nbsp;&nbsp;
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                  </div>
-                </CCol>
-              ))}
 
               <CCol md="6">
                 <div className="mb-3">
@@ -903,6 +884,27 @@ const NewProjectClosure = () => {
                   ))}
                 </CTableBody>
               </CTable>
+
+              {[
+                "is_portal_access_provided",
+                "is_client_training_conducted",
+                "is_technician_training_conducted",
+              ].map((field) => (
+                <CCol key={field} md={3} className="my-2">
+                  <div className="flex items-center space-x-2 my-2">
+                    <CFormCheck
+                      id={field}
+                      name={field}
+                      checked={state.projectDocData[field] || false}
+                      onChange={handleChange}
+                    />
+                    &nbsp;&nbsp;
+                    <CFormLabel htmlFor={field}>
+                      {field.replace(/_/g, " ").toUpperCase()}
+                    </CFormLabel>
+                  </div>
+                </CCol>
+              ))}
 
               <CCol md="3">
                 <div className="mb-3">
