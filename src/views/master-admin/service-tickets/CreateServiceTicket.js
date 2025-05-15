@@ -261,32 +261,45 @@ const CreateServiceTicket = () => {
               ) : roboterror ? (
                 <span className="badge bg-danger p-2">{roboterror}</span>
               ) : (
-                <CFormInput
-                  type="text"
-                  placeholder="Search Robot No or Site ID..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className="mb-3"
-                />
+                <>
+                  <CFormInput
+                    type="text"
+                    placeholder="Search Robot No or Site ID..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="mb-2"
+                  />
+
+                  {searchTerm && (
+                    <div
+                      className="dropdown-menu-robot z-3 border rounded shadow-sm"
+                      style={{
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                        width: "100%",
+                      }}
+                    >
+                      {filteredRobots.length === 0 ? (
+                        <div className="px-3 py-2 text-muted">
+                          No robots found
+                        </div>
+                      ) : (
+                        filteredRobots.map((robot, index) => (
+                          <div
+                            key={index}
+                            className="dropdown-item mb-2"
+                            style={{ cursor: "pointer", paddingLeft: "12px" }}
+                            onClick={() => selectRobotFromSearch(robot)}
+                          >
+                            {robot.robot_no} - {robot.site_id}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </>
               )}
 
-              <CListGroup className="mb-3">
-                {searchTerm && filteredRobots.length === 0 ? (
-                  <CListGroupItem>No robots found</CListGroupItem>
-                ) : (
-                  filteredRobots.map((robot, index) => (
-                    <CListGroupItem
-                      id="robot_no"
-                      style={{ cursor: "pointer" }}
-                      key={index}
-                      action
-                      onClick={() => selectRobotFromSearch(robot)}
-                    >
-                      {robot.robot_no} - {robot.site_id}
-                    </CListGroupItem>
-                  ))
-                )}
-              </CListGroup>
               <CRow>
                 <CCol md={6}>
                   <CFormInput
