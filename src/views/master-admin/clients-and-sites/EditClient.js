@@ -16,7 +16,6 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const initialState = {
   client: {},
@@ -45,7 +44,7 @@ const reducer = (state, action) => {
 };
 
 const EditClient = () => {
-  const [{ loading, error, client, updateLoading }, dispatch] = useReducer(
+  const [{ loading, error, updateLoading }, dispatch] = useReducer(
     reducer,
     initialState
   );

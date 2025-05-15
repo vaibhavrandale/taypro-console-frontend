@@ -5,11 +5,8 @@ import { useSelector } from "react-redux";
 import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 import {
-  CContainer,
   CRow,
   CCol,
   CTable,
@@ -34,7 +31,7 @@ const reducer = (state, action) => {
         pmloading: true,
         error: "",
         preventivemaintanance: [],
-      }; //
+      };
     case "FETCH_PM_SUCCESS":
       return {
         ...state,
@@ -59,25 +56,14 @@ const reducer = (state, action) => {
   }
 };
 const ViewPreventivemaintananceQuaterly = () => {
-  const [
-    {
-      error,
-      preventivemaintanance,
-      pmloading,
-      loadingSites,
-      sites,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
-    preventivemaintanance: [],
-    loadingSites: false,
-    sites: [],
-    pmloading: true,
-    error: "",
-  });
+  const [{ preventivemaintanance, pmloading, loadingSites, sites }, dispatch] =
+    useReducer(reducer, {
+      preventivemaintanance: [],
+      loadingSites: false,
+      sites: [],
+      pmloading: true,
+      error: "",
+    });
   const authtoken = useSelector((state) => state.authtoken);
 
   const [site_id, setSiteId] = useState("all");
@@ -176,16 +162,6 @@ const ViewPreventivemaintananceQuaterly = () => {
       `${site_id}_${startDate}_${endDate}_Site_Preventive_Maintenance.xlsx`
     );
   };
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF("landscape");
-  //   doc.text("Preventive Maintenance Report", 14, 10);
-
-  //   const table = document.querySelector("table");
-
-  //   autoTable(doc, { html: table, startY: 20 }); // Ensure autoTable is used this way
-
-  //   doc.save("Preventive_Maintenance.pdf");
-  // };
 
   return (
     <div>
@@ -237,7 +213,6 @@ const ViewPreventivemaintananceQuaterly = () => {
                     </CCol>
                   </CCol>
 
-                  {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
                   <CCol
                     md={5}
                     xs={12}
@@ -248,12 +223,6 @@ const ViewPreventivemaintananceQuaterly = () => {
                     </CButton>
                   </CCol>
                 </CRow>
-
-                {/* <CCol md={3} className="m-1">
-                    <CButton color="danger" onClick={exportToPDF}>
-                      Export to PDF
-                    </CButton>
-                  </CCol> */}
               </form>
               <div className="table-responsive">
                 <CTable bordered hover>
@@ -330,8 +299,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                       </CTableHeaderCell>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      {/* <CTableHeaderCell>Site Name</CTableHeaderCell> */}
-                      {/* <CTableHeaderCell>Site Location</CTableHeaderCell> */}
+
                       <CTableHeaderCell>
                         Physical Condition - TransPipe
                       </CTableHeaderCell>
@@ -348,8 +316,6 @@ const ViewPreventivemaintananceQuaterly = () => {
                       <CTableHeaderCell>Wheels Alignment</CTableHeaderCell>
                       <CTableHeaderCell>Are Wheels Loose?</CTableHeaderCell>
                       <CTableHeaderCell>Are Nut-Bolts Loose?</CTableHeaderCell>
-                      {/* <CTableHeaderCell>Start Date</CTableHeaderCell>
-                      <CTableHeaderCell>End Date</CTableHeaderCell> */}
                     </CTableRow>
                   </CTableHead>
 
@@ -363,10 +329,6 @@ const ViewPreventivemaintananceQuaterly = () => {
                             <CTableDataCell>{idx + 1}</CTableDataCell>
                             <CTableDataCell>{record.robot_no}</CTableDataCell>
                             <CTableDataCell>{record.robot_type}</CTableDataCell>
-                            {/* <CTableDataCell>{client.site_name}</CTableDataCell>
-                            <CTableDataCell>
-                              {record.site_location}
-                            </CTableDataCell> */}
                             <CTableDataCell>
                               {record.physical_condition_of_transPipe_condition}
                             </CTableDataCell>
@@ -391,12 +353,6 @@ const ViewPreventivemaintananceQuaterly = () => {
                             <CTableDataCell>
                               {record.is_nutbolt_loose ? "Yes" : "No"}
                             </CTableDataCell>
-                            {/* <CTableDataCell>
-                              {record.start_date.split("T")[0]}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.end_date.split("T")[0]}
-                            </CTableDataCell> */}
                           </CTableRow>
                         ))
                       )

@@ -323,113 +323,6 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                   </CTableRow>
                 </CTableHead>
 
-                {/* <CTableBody>
-                  {Object.entries(formData)
-                    .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
-                    ) //
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {typeof value === "boolean" ? (
-                            <CBadge
-                              color={value ? "success" : "danger"}
-                              shape="rounded-pill"
-                            >
-                              {value ? "Active" : "Inactive"}
-                            </CBadge>
-                          ) : (key.includes("date") || key.includes("at")) &&
-                            key !== "site_location" ? (
-                            <span className="">
-                              <CTooltip
-                                content={new Date(value).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(new Date(value), {
-                                    addSuffix: true,
-                                  })}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          ) : (
-                            <span className="text-dark fw-medium">
-                              {String(value)}
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody> */}
-
-                {/* <CTableBody>
-                  {Object.entries(formData)
-                    .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
-                    )
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {typeof value === "boolean" ? (
-                            <CBadge
-                              color={value ? "success" : "danger"}
-                              shape="rounded-pill"
-                            >
-                              {value ? "Active" : "Inactive"}
-                            </CBadge>
-                          ) : (key.includes("date") || key.includes("at")) &&
-                            key !== "site_location" ? (
-                            <span>
-                              <CTooltip
-                                content={new Date(value).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(new Date(value), {
-                                    addSuffix: true,
-                                  })}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          ) : typeof value === "object" && value !== null ? (
-                            // Handle Nested Object
-                            <div className="d-flex flex-column">
-                              {Object.entries(value).map(([subKey, subValue]) =>
-                                subKey === "image" ? (
-                                  <img
-                                    key={subKey}
-                                    src={subValue}
-                                    alt={key}
-                                    width="50"
-                                    height="50"
-                                  />
-                                ) : (
-                                  <span
-                                    key={subKey}
-                                    className="text-dark fw-medium"
-                                  >
-                                    {subKey.replace(/_/g, " ")}:{" "}
-                                    {String(subValue)}
-                                  </span>
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-dark fw-medium">
-                              {String(value)}
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody> */}
-
                 <CTableBody>
                   {Object.entries(formData)
                     .filter(
@@ -437,14 +330,11 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        {/* Label Column */}
                         <CTableDataCell className="fw-semibold text-uppercase text-secondary">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
 
-                        {/* Value Column */}
                         <CTableDataCell>
-                          {/* Boolean Fields (Active/Inactive) */}
                           {typeof value === "boolean" ? (
                             <CBadge
                               color={value ? "success" : "danger"}
@@ -468,7 +358,6 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                               </span>
                             </CTooltip>
                           ) : (
-                            /* Default Text Value */
                             <span className="text-dark fw-medium">
                               {String(value)}
                             </span>

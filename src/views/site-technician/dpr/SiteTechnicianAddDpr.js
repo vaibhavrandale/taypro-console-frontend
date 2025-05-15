@@ -289,60 +289,7 @@ const SiteTechnicianAddDpr = () => {
                   />
                 </div>
               </CCol>
-              {/* <CTable striped bordered className="mt-2">
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Image</CTableHeaderCell>
-                    <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell style={{ width: "80px" }}>
-                      Actions
-                    </CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {state.technicians.map((tech, index) => (
-                    <CTableRow key={index}>
-                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                      <CTableDataCell>
-                        <CAvatar src={tech.profile_image} className="me-2" />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {tech.username} - {tech.email}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                      <CFormCheck
-            checked={state.dprData.technician_present.some(
-              (t) => t._id === tech._id
-            )}
-            onChange={(e) => {
-              const updatedList = e.target.checked
-                ? [
-                    ...state.dprData.technician_present,
-                    {
-                     name: tech.username,
-                      email: tech.email,
-                      technician_id: tech._id,
-                      role: tech.role,
-                      profile_image: tech.profile_image,
-                    },
-                  ]
-                : state.dprData.technician_present.filter(
-                    (t) => t._id !== tech._id
-                  );
 
-              dispatch({
-                type: "SET_FIELD",
-                name: "technician_present",
-                value: updatedList,
-              });
-            }}
-          />
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable> */}
               <CTable striped bordered className="mt-2">
                 <CTableHead color="secondary">
                   <CTableRow>

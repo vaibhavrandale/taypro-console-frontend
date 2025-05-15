@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const ResolveServiceTicket = () => {
-//   return <div>ResolveServiceTicket</div>;
-// };
-
-// export default ResolveServiceTicket;
-
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useEffect, useReducer, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -186,7 +178,6 @@ const SiteTechnicianResolveServiceTicket = () => {
     e.preventDefault();
     dispatch({ type: "UPDATE_REQUEST" });
 
-    // Create a copy of formData excluding last_activity
     const { createdAt, _id, last_activity, ...filteredFormData } = formData;
 
     try {
@@ -236,7 +227,6 @@ const SiteTechnicianResolveServiceTicket = () => {
         }
       );
 
-      // ✅ Update uploaded image dynamically for the specific field
       setFormData((prevData) => ({
         ...prevData,
         [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }

@@ -10,7 +10,6 @@ import {
   CCardHeader,
   CCol,
   CForm,
-  CFormSelect,
   CRow,
 } from "@coreui/react";
 

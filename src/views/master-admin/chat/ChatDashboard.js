@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useReducer } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  useCallback,
+} from "react";
 import {
   CInputGroup,
   CFormInput,
@@ -76,7 +82,6 @@ const reducer = (state, action) => {
 export default function ChatDashboard() {
   const [
     {
-      error,
       usersloading,
       users,
       chats,
@@ -102,7 +107,7 @@ export default function ChatDashboard() {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
-  const fetchChats = async () => {
+  const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
     try {
       const result = await axios.get("/api/v1/chats/get-all-chats", {
@@ -128,10 +133,9 @@ export default function ChatDashboard() {
         payload: "Failed to fetch users",
       });
     }
-  };
+  }, [authtoken]);
 
   useEffect(() => {
-    // setLoading(true);
     const fetchUsers = async () => {
       dispatch({ type: "FETCH_USER_REQUEST" });
       try {
@@ -147,8 +151,6 @@ export default function ChatDashboard() {
           type: "FETCH_USER_SUCCESS",
           payload: result.data.data,
         });
-        // setUsers(data);
-        // setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
         dispatch({
@@ -160,7 +162,7 @@ export default function ChatDashboard() {
 
     fetchUsers();
     fetchChats();
-  }, [authtoken]); // Runs only once on mount
+  }, [authtoken, fetchChats]); // Runs only once on mount
 
   const renderLastMessage = (chatArray) => {
     const lastMsg = chatArray[chatArray.length - 1];
@@ -210,8 +212,6 @@ export default function ChatDashboard() {
       // 👇 Optionally select the newly created chat
       const newChat = result.data.data; // if your API returns the new chat
       setSelectedChat(newChat);
-      // setUsers(data);
-      // setLoading(false);
     } catch (error) {
       console.error(
         "Error fetching users:",

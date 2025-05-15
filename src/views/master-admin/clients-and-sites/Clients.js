@@ -24,7 +24,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import CIcon from "@coreui/icons-react";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -113,14 +112,8 @@ const Clients = () => {
       loading,
       error,
       clients,
-      client,
-      fetchClientloading,
-      updateClientLoading,
       submitLoading,
-      success,
-      clientData,
       loadingUpload,
-      errorUpload,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -147,7 +140,6 @@ const Clients = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [clientLogo, setClientLogo] = useState("");
-  //   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     client_name: "",
     client_id: "",
@@ -210,26 +202,6 @@ const Clients = () => {
   };
 
   // Open modal for fetching client
-  const openViewModal = async (id) => {
-    setModalVisible(true);
-    try {
-      dispatch({ type: "FETCH_CLIENT_REQUEST" });
-      const response = await axios.get(`/api/v1/clients/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-
-      let result = response.data.data;
-
-      dispatch({ type: "FETCH_CLIENT_SUCCESS", payload: result });
-    } catch (error) {
-      console.error("Error fetching Client Data:", error);
-      dispatch({
-        type: "FETCH_CLIENT_FAIL",
-        payload: error.response?.data?.message || error.message,
-      });
-    }
-  };
-
   const openUpdateModal = async (a) => {
     setModalVisible(true);
     setSelectedItem(a);
@@ -466,7 +438,6 @@ const Clients = () => {
                       color="primary"
                       size="sm"
                       to={`/${adminroute}/clients-dashboard/clients-data/${client.client_id}`}
-                      // onClick={() => openViewModal(client._id)}
                     >
                       View Assigned Sites
                     </Link>
@@ -485,16 +456,7 @@ const Clients = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -535,13 +497,7 @@ const Clients = () => {
               disabled
               className="mb-3"
             />
-            {/* <CFormInput
-              type="file"
-              name="logo"
-              label="Upload Logo"
-              onChange={handleChange}
-              className="mb-3"
-            /> */}
+
             <CFormInput
               type="file"
               name="logo"
@@ -570,14 +526,7 @@ const Clients = () => {
                   left="0"
                   shape="rounded-pill"
                   className="p-1"
-                >
-                  {/* <CIcon
-                    icon={cilX}
-                    cursor="pointer"
-                    // onClick={removeLogo}
-                    title="Remove file"
-                  /> */}
-                </CBadge>
+                ></CBadge>
               </div>
             ) : null}
           </CForm>
@@ -665,14 +614,7 @@ const Clients = () => {
                       left="0"
                       shape="rounded-pill"
                       className="p-1"
-                    >
-                      {/* <CIcon
-                    icon={cilX}
-                    cursor="pointer"
-                    // onClick={removeLogo}
-                    title="Remove file"
-                  /> */}
-                    </CBadge>
+                    ></CBadge>
                   </div>
                 ) : null}
                 <CFormInput

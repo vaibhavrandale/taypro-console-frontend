@@ -15,7 +15,6 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 
-// Reducer for state management
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SERVICE_TICKET_COUNT_REQUEST":
@@ -55,7 +54,6 @@ const BarGraph = () => {
   const [chartType, setChartType] = useState("bar");
   const [siteId, setSiteId] = useState("");
 
-  // Fetch service ticket count data
   useEffect(() => {
     const fetchServiceticketCount = async () => {
       try {
@@ -79,7 +77,6 @@ const BarGraph = () => {
     fetchServiceticketCount();
   }, [authtoken, year]);
 
-  // Month names for display
   const monthNames = [
     "",
     "January",
@@ -105,7 +102,6 @@ const BarGraph = () => {
   let datasets = [];
 
   if (siteId) {
-    // One site selected — display its data
     const siteData = Array(12).fill(0); // Initialize an array with 12 months of 0s
     serviceticketcount.forEach((item) => {
       if (item.siteid === siteId && item.month >= 1 && item.month <= 12) {
@@ -166,9 +162,6 @@ const BarGraph = () => {
     }
 
     const rows = monthNames.slice(1).map((month) => ({ Month: month }));
-    const sites = Array.from(
-      new Set(serviceticketcount.map((item) => item.siteid))
-    );
 
     serviceticketcount.forEach(({ siteid, month, count }) => {
       if (month >= 1 && month <= 12) {
@@ -182,7 +175,6 @@ const BarGraph = () => {
     XLSX.writeFile(workbook, `Service_Tickets_${year}.xlsx`);
   };
 
-  // Chart options
   const options = {
     responsive: true,
     plugins: {

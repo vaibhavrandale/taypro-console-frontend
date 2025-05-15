@@ -15,7 +15,6 @@ import {
   CModalBody,
   CBadge,
 } from "@coreui/react";
-// import { robots, sites } from "../../../data"; // Import robots data
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -51,15 +50,7 @@ const reducer = (state, action) => {
 };
 const Robots = () => {
   const [
-    {
-      error,
-      robots,
-      sites,
-      loadingRobots,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-    },
+    { error, robots, loadingRobots, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     sites: [],
@@ -82,7 +73,6 @@ const Robots = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
     robot_no: "",
     deveui: "",
@@ -323,16 +313,6 @@ const Robots = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
 
       <PaginateInput
         page={page}
@@ -369,18 +349,6 @@ const Robots = () => {
                     <CTableHeaderCell>Value</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
-                {/* <CTableBody>
-                  {Object.entries(formData)
-                    .filter(([key]) => key !== "last_activity") // Exclude lastActivity
-                    .map(([key, value]) => (
-                      <CTableRow key={key}>
-                        <CTableDataCell>
-                          {key.replace(/_/g, " ").toUpperCase()}
-                        </CTableDataCell>
-                        <CTableDataCell>{String(value)}</CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody> */}
 
                 <CTableBody>
                   {Object.entries(formData)

@@ -9,21 +9,15 @@ import {
   CFormInput,
   CRow,
   CCol,
-  CCard,
-  CCardBody,
-  CCardHeader,
   CSpinner,
   CButton,
-  CFormSelect, // Import Loading Spinner
 } from "@coreui/react";
-import { cleaning_log } from "../../../data"; // Import cleaning logs data
 import { useParams } from "react-router-dom";
-// import * as XLSX from 'xlsx'; // Import xlsx for Excel export
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -40,17 +34,6 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
-    // case "FETCH_SITES_REQUEST":
-    //   return { ...state, loadingSites: true, error: "" };
-    // case "FETCH_SITES_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loadingSites: false,
-    //     sites: action.payload,
-    //   };
-    // case "FETCH_SITES_FAIL":
-    //   return { ...state, loadingSites: false, error: action.payload };
-
     default:
       return state;
   }
@@ -58,31 +41,18 @@ const reducer = (state, action) => {
 
 const SitewaiseLog = () => {
   const [
-    {
-      loading,
-      cleaninglogs,
-      // sites,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      loadingSites,
-    },
+    { loading, cleaninglogs, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
-    // sites: [],
     loading: false,
-    // loadingSites: false,
     error: "",
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
-  const [selectedDate, setSelectedDate] = useState("");
-  // const [filteredLogs, setFilteredLogs] = useState([]);
 
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -90,31 +60,11 @@ const SitewaiseLog = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [selectedsite, setSelectedsiteid] = useState("all");
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   useEffect(() => {
-    // const fetchSites = async () => {
-    //   dispatch({ type: "FETCH_SITES_REQUEST" });
-    //   try {
-    //     const result = await axios.get(`/api/v1/sites`, {
-    //       headers: { Authorization: `Bearer ${authtoken}` },
-    //     });
-    //     dispatch({
-    //       type: "FETCH_SITES_SUCCESS",
-    //       payload: result.data.data,
-    //     });
-    //   } catch (error) {
-    //     dispatch({
-    //       type: "FETCH_SITES_FAIL",
-    //       payload: error.response.data.error,
-    //     });
-    //     toast.error("Failed to fetch sites");
-    //   }
-    // };
-
     const fetchCleaningLogs = async () => {
       let pagination = {
         pg: page,
@@ -137,7 +87,6 @@ const SitewaiseLog = () => {
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -158,15 +107,7 @@ const SitewaiseLog = () => {
     };
 
     fetchCleaningLogs();
-    // fetchSites();
   }, [authtoken, endDate, limit, page, site_id, startDate]);
-
-  // Function to export data to Excel
-
-  const handleSiteNameChange = (e) => {
-    const site = e.target.value;
-    setSelectedsiteid(site); // Updates local state
-  };
 
   // 🔽 Export to CSV Function
   const exportToCSV = () => {

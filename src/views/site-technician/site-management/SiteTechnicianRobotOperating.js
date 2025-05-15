@@ -95,7 +95,6 @@ const SiteTechnicianRobotOperating = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });

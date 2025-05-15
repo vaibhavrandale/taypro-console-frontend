@@ -15,6 +15,7 @@ import {
   CTableRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_PM_NOTIFICATION_REQUEST":
@@ -185,15 +186,7 @@ const PreventiveMaintananceNotifications = () => {
                 <CTableDataCell>{pm.message}</CTableDataCell>
                 <CTableDataCell>{pm.last_activity?.name}</CTableDataCell>
                 <CTableDataCell>
-                  {/* {pm.createdAt} */}
-                  <span>
-                    {new Date(pm.createdAt).toLocaleString()}
-                    {/* <span>
-                            {formatDistanceToNow(new Date(pm.createdAt), {
-                              addSuffix: true,
-                            })}
-                          </span> */}
-                  </span>
+                  <span>{new Date(pm.createdAt).toLocaleString()}</span>
                 </CTableDataCell>
               </CTableRow>
             ))

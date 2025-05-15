@@ -56,28 +56,18 @@ const reducer = (state, action) => {
   }
 };
 const CreateNewClientTicketClient = () => {
-  const [
-    {
-      error,
-      createTicketloading,
-      client_tickets,
-      users,
-      loadingSiteIds,
-      siteIds,
-      loadingFields,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
-    users: [],
-    error: "",
-    createTicketloading: false,
-    client_tickets: {},
-    loadingFields: false,
-    loadingSites: false,
-    loadingSiteIds: false,
-    siteIds: [],
-    fetchusersloading: false,
-  });
+  const [{ createTicketloading, loadingSiteIds, siteIds }, dispatch] =
+    useReducer(reducer, {
+      users: [],
+      error: "",
+      createTicketloading: false,
+      client_tickets: {},
+      loadingFields: false,
+      loadingSites: false,
+      loadingSiteIds: false,
+      siteIds: [],
+      fetchusersloading: false,
+    });
 
   const [siteName, setSiteName] = useState({
     site_id: "",

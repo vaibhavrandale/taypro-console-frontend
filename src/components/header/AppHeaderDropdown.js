@@ -1,35 +1,15 @@
 import React, { useState } from "react";
 import {
-  CAvatar,
-
-  // CBadge,
   CDropdown,
   CDropdownDivider,
-  // CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-  // CModal,
-  // CModalBody,
-  // CModalHeader,
-  // CModalTitle,
 } from "@coreui/react";
-import {
-  // cilBell,
-  // cilCreditCard,
-  // cilCommentSquare,
-  // cilEnvelopeOpen,
-  // cilFile,
-  cilLockLocked,
-  cilSettings,
-  // cilTask,
-  cilUser,
-} from "@coreui/icons";
+import { cilLockLocked, cilSettings, cilUser } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
-// import avatar8 from './../../assets/images/avatars/vaibhav.jpg';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-// import store from '../../store';
 import { useDispatch, useSelector } from "react-redux";
 
 const AppHeaderDropdown = () => {

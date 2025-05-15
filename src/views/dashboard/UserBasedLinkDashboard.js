@@ -9,7 +9,6 @@ import {
   faTools,
   faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
-// import NetworkStatus from '../NetworkStatus';
 
 const UserBasedLinkDashboard = () => {
   const navigate = useNavigate();

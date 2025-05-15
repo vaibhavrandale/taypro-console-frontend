@@ -40,8 +40,6 @@ import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
 import { Link } from "react-router-dom";
-// import InventoryOverview from "../inventories/InventoryOverview";
-// import logo from '../../../assets/brand/logoforwhitebg.png';
 import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
@@ -84,8 +82,7 @@ const reducer = (state, action) => {
 
     case "ADD_USER_REQUEST":
       return { ...state, userAddloading: true, error: "" };
-    // case "ADD_USER_SUCCESS":
-    //   return { ...state, userAddloading: false, users: action.payload };
+
     case "ADD_USER_SUCCESS":
       return {
         ...state,
@@ -118,12 +115,6 @@ const reducer = (state, action) => {
     case "ASSIGN_SITE_REQUEST":
       return { ...state, assignsiteloading: true, assgnedSiteError: "" };
 
-    // case "ASSIGN_SITE_SUCCESS":
-    //   return {
-    //     ...state,
-    //     assignsiteloading: false,
-    //     assigned_sites: [...state.assigned_sites, action.payload], // Append new site
-    //   };
     case "ASSIGN_SITE_SUCCESS":
       return {
         ...state,
@@ -180,9 +171,6 @@ const UsersDashboard = () => {
       userAddloading,
       updatingUserLoading,
       assignsiteloading,
-      assgnedSiteError,
-      removesiteloading,
-      removeSiteError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -203,7 +191,6 @@ const UsersDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
   let roles = [];
   if (userInfo?.role === "Master Admin") {
@@ -242,7 +229,6 @@ const UsersDashboard = () => {
   const [activeTab, setActiveTab] = useState("assigned");
 
   const [selectedSite, setSelectedSite] = useState("");
-  // const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
 
@@ -267,7 +253,6 @@ const UsersDashboard = () => {
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -278,8 +263,6 @@ const UsersDashboard = () => {
             hasPrevPage: prev,
           },
         });
-        // setUsers(data);
-        // setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
         dispatch({
@@ -447,8 +430,6 @@ const UsersDashboard = () => {
         ...filteredFormData
       } = formData;
 
-      // const newdata = { ...filteredFormData, profile_image: image };
-
       const newdata = image
         ? { ...filteredFormData, profile_image: image }
         : filteredFormData;
@@ -496,8 +477,6 @@ const UsersDashboard = () => {
         }
       ); // Replace with your API endpoint
       if (response.data.success) {
-        // Update assigned sites in UI
-
         dispatch({
           type: "ASSIGN_SITE_SUCCESS",
           payload: response.data.data, // Let the reducer handle appending

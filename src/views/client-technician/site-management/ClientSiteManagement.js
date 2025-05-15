@@ -11,7 +11,6 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-// import { sites } from "../../../data"; // Import sites from data.js
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -25,7 +24,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // sites: action.payload,
         sites: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -77,7 +75,6 @@ const ClientSiteManagement = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -195,16 +192,6 @@ const ClientSiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
       <PaginateInput
         page={page}
         totalPages={totalPages}

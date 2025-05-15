@@ -1,11 +1,3 @@
-// import React from 'react';
-
-// const CleaningLog = () => {
-//   return <div>CleaningLog</div>;
-// };
-
-// export default CleaningLog;
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -22,8 +14,7 @@ import {
   CInputGroup,
   CButton,
 } from "@coreui/react";
-// import { cleaning_log } from "../../../data"; // Import debug log data
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -36,7 +27,6 @@ const reducer = (state, action) => {
     case "FETCH_REQUEST":
       return { ...state, loading: true, error: "" };
     case "FETCH_SUCCESS":
-      // return { ...state, cleaninglogs: action.payload, loading: false };
       return {
         ...state,
         cleaninglogs: action.payload.data,
@@ -64,9 +54,6 @@ const CleaningLog = () => {
     hasPrevPage: false,
   });
   const { robot_no } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
@@ -308,16 +295,7 @@ const CleaningLog = () => {
                 )}
               </CTableBody>
             </CTable>
-            {/* <PaginateInput
-              page={page}
-              totalPages={totalPages}
-              hasPrevPage={hasPrevPage}
-              hasNextPage={hasNextPage}
-              pageInput={pageInput}
-              handlePageChange={handlePageChange}
-              handlePageInputChange={handlePageInputChange}
-              handlePageInputSubmit={handlePageInputSubmit}
-            /> */}
+
             <PaginateInput
               page={page}
               totalPages={totalPages}

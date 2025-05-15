@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CButton,
   CDropdown,
@@ -17,9 +17,8 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react';
-// '../../../components'
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const ButtonGroups = () => {
   return (
@@ -32,8 +31,8 @@ const ButtonGroups = () => {
           </CCardHeader>
           <CCardBody>
             <p>
-              Wrap a series of <code>&lt;CButton&gt;</code> components in{' '}
-              <code>&lt;CButtonGroup&gt;</code>.{' '}
+              Wrap a series of <code>&lt;CButton&gt;</code> components in{" "}
+              <code>&lt;CButtonGroup&gt;</code>.{" "}
             </p>
             <DocsExample href="components/button-group">
               <CButtonGroup role="group" aria-label="Basic example">
@@ -106,7 +105,7 @@ const ButtonGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Button Group</strong>{' '}
+            <strong>React Button Group</strong>{" "}
             <span>Checkbox and radio button groups</span>
           </CCardHeader>
           <CCardBody>
@@ -120,19 +119,19 @@ const ButtonGroups = () => {
                 aria-label="Basic checkbox toggle button group"
               >
                 <CFormCheck
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   id="btncheck1"
                   autoComplete="off"
                   label="Checkbox 1"
                 />
                 <CFormCheck
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   id="btncheck2"
                   autoComplete="off"
                   label="Checkbox 2"
                 />
                 <CFormCheck
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   id="btncheck3"
                   autoComplete="off"
                   label="Checkbox 3"
@@ -146,7 +145,7 @@ const ButtonGroups = () => {
               >
                 <CFormCheck
                   type="radio"
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   name="btnradio"
                   id="btnradio1"
                   autoComplete="off"
@@ -154,7 +153,7 @@ const ButtonGroups = () => {
                 />
                 <CFormCheck
                   type="radio"
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   name="btnradio"
                   id="btnradio2"
                   autoComplete="off"
@@ -162,7 +161,7 @@ const ButtonGroups = () => {
                 />
                 <CFormCheck
                   type="radio"
-                  button={{ variant: 'outline' }}
+                  button={{ variant: "outline" }}
                   name="btnradio"
                   id="btnradio3"
                   autoComplete="off"
@@ -299,7 +298,7 @@ const ButtonGroups = () => {
           <CCardBody>
             <p>
               Alternatively, of implementing button sizing classes to each
-              button in a group, set <code>size</code> property to all{' '}
+              button in a group, set <code>size</code> property to all{" "}
               <code>&lt;CButtonGroup&gt;</code>&#39;s, including each one when
               nesting multiple groups.
             </p>
@@ -358,7 +357,7 @@ const ButtonGroups = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Put a <code>&lt;CButtonGroup&gt;</code> inside another{' '}
+              Put a <code>&lt;CButtonGroup&gt;</code> inside another{" "}
               <code>&lt;CButtonGroup&gt;</code> when you need dropdown menus
               combined with a series of buttons.
             </p>
@@ -392,7 +391,7 @@ const ButtonGroups = () => {
           <CCardBody>
             <p className="text-body-secondary small">
               Create a set of buttons that appear vertically stacked rather than
-              horizontally.{' '}
+              horizontally.{" "}
               <strong>Split button dropdowns are not supported here.</strong>
             </p>
             <DocsExample href="components/button-group/#vertical-variation">
@@ -470,7 +469,7 @@ const ButtonGroups = () => {
               >
                 <CFormCheck
                   type="radio"
-                  button={{ color: 'danger', variant: 'outline' }}
+                  button={{ color: "danger", variant: "outline" }}
                   name="vbtnradio"
                   id="vbtnradio1"
                   autoComplete="off"
@@ -479,7 +478,7 @@ const ButtonGroups = () => {
                 />
                 <CFormCheck
                   type="radio"
-                  button={{ color: 'danger', variant: 'outline' }}
+                  button={{ color: "danger", variant: "outline" }}
                   name="vbtnradio"
                   id="vbtnradio2"
                   autoComplete="off"
@@ -487,7 +486,7 @@ const ButtonGroups = () => {
                 />
                 <CFormCheck
                   type="radio"
-                  button={{ color: 'danger', variant: 'outline' }}
+                  button={{ color: "danger", variant: "outline" }}
                   name="vbtnradio"
                   id="vbtnradio3"
                   autoComplete="off"

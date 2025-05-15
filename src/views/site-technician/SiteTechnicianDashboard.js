@@ -19,7 +19,6 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-// For marker icons fix in Leaflet
 import L from "leaflet";
 import toast from "react-hot-toast";
 delete L.Icon.Default.prototype._getIconUrl;
@@ -262,8 +261,7 @@ const SiteTechnicianDashboard = () => {
         "/api/v1/technician-attendance/punchin",
         {
           site_id,
-          // lat: parseFloat(punchin_location.lat),
-          // lng: parseFloat(punchin_location.lng),
+
           punchin_location: {
             lat: parseFloat(punchin_location.lat),
             lng: parseFloat(punchin_location.lng),

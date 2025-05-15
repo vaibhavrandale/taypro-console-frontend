@@ -145,7 +145,6 @@ const SiteTechnicianTimers = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.item(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= state.totalPages) {
       setPage(newPage);
@@ -247,18 +246,6 @@ const SiteTechnicianTimers = () => {
                       <CTableDataCell>
                         {block.total_robots_in_block}
                       </CTableDataCell>
-                      {/* <CTableDataCell>{block.robots[0]?.timer1}</CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer1_date}
-                      </CTableDataCell>
-                      <CTableDataCell>{block.robots[0]?.timer2}</CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer2_date}
-                      </CTableDataCell>
-                      <CTableDataCell>{block.robots[0]?.timer3}</CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer3_date}
-                      </CTableDataCell> */}
                       <CTableDataCell>
                         {block.robots[0]?.timer1 === "25:00:00" ? (
                           <CBadge color="danger">Disabled</CBadge>

@@ -14,9 +14,8 @@ import {
   CRow,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLockLocked, cilUser } from "@coreui/icons";
+import { cilLockLocked } from "@coreui/icons";
 import toast from "react-hot-toast";
-import { users } from "../../../data"; // Use correct data import
 import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -37,7 +36,7 @@ const reducer = (state, action) => {
   }
 };
 const ResetPassword = () => {
-  const [{ resetLoading, error }, dispatch] = useReducer(reducer, {
+  const [{ resetLoading }, dispatch] = useReducer(reducer, {
     resetLoading: false,
     error: "",
   });
@@ -54,8 +53,6 @@ const ResetPassword = () => {
     if (newPassword !== confirmPassword) {
       return toast.error("password are not match");
     } else {
-      // let password = newPassword; // Correct assignment
-
       try {
         dispatch({ type: "RESET_REQUEST" }); // Show loading
         const data = await axios.post("/api/v1/auth/reset-password", {
@@ -65,7 +62,6 @@ const ResetPassword = () => {
 
         dispatch({ type: "RESET_SUCCESS" }); // Show loading
 
-        // toast.success(`Login Successfull!`);
         toast.success(data.data.message);
         toast("Wait...we are redirecting you to login page.!", {
           icon: "👏",
@@ -135,7 +131,6 @@ const ResetPassword = () => {
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        // type="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm New Password"
                         autoComplete="new-password"
@@ -143,7 +138,6 @@ const ResetPassword = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                       />
-                      {/* Show/Hide Password Button (Inside Input) */}
                       <CInputGroupText
                         onClick={() => setShowPassword(!showPassword)}
                         className="border-0 bg-transparent position-absolute"

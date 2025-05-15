@@ -12,7 +12,6 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-  // useColorModes,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilLockLocked, cilUser } from "@coreui/icons";
@@ -21,34 +20,21 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
 import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
 import toast from "react-hot-toast";
-// import { users } from "../../../data";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 const Login = () => {
-  // const { colorMode } = useColorModes('theme'); // ✅ Fixed usage
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Get userInfo from Redux state
-  // const userInfo = useSelector((state) => state.userInfo);
-  // const authtoken = useSelector((state) => state.authtoken);
   const { userInfo, authtoken } = useSelector((state) => state);
-  // const storedTheme = useSelector((state) => state.theme) || "light"; // ✅ Ensure default theme
-  // const [username, setUsername] = useState('');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // const { search } = useLocation();
-  // const redirectInUrl = new URLSearchParams(search).get("redirect");
-  // const redirect = "/user-dashboard";
-
   const theme = localStorage.getItem("theme");
-  // ✅ Updated dependency list
-  //login
   useEffect(() => {
     if (!userInfo && !authtoken) {
       navigate("/login");
@@ -76,11 +62,6 @@ const Login = () => {
       toast.success(`Welcome Back!  ${data.data.user.username}`);
     } catch (error) {
       toast.error(error.response.data.error);
-      // dispatch({ type: "EMP_SIGNOUT" });
-      // navigate("/login");
-      // toast.error(
-      //   error.response?.data?.error || "Something went wrong. Please try again."
-      // );
     }
     setLoading(false);
   };

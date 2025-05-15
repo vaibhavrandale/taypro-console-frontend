@@ -4,22 +4,18 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import {
-  CAvatar,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CForm,
-  CFormCheck,
   CFormInput,
   CFormLabel,
   CFormSelect,
   CRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -39,16 +35,6 @@ const reducer = (state, action) => {
       return { ...state, updating: false };
     case "UPDATE_FAIL":
       return { ...state, updating: false, error: action.payload };
-    // case "UPLOAD_REQUEST":
-    //   return { ...state, loadingUpload: true, errorUpload: "" };
-    // case "UPLOAD_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loadingUpload: false,
-    //     errorUpload: "",
-    //   };
-    // case "UPLOAD_FAIL":
-    //   return { ...state, loadingUpload: false, errorUpload: action.payload };
 
     case "UPLOAD_REQUEST":
       return {
@@ -74,16 +60,13 @@ const reducer = (state, action) => {
   }
 };
 const UpdatePreventiveMaintenance = () => {
-  const [{ loading, error, updating, loadingUpload }, dispatch] = useReducer(
-    reducer,
-    {
-      preventivemaintanance: {},
-      loading: true,
-      error: "",
-      updating: false,
-      loadingUpload: false,
-    }
-  );
+  const [{ loading, loadingUpload }, dispatch] = useReducer(reducer, {
+    preventivemaintanance: {},
+    loading: true,
+    error: "",
+    updating: false,
+    loadingUpload: false,
+  });
   const { id } = useParams();
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
@@ -152,39 +135,6 @@ const UpdatePreventiveMaintenance = () => {
     }
   };
 
-  // const handleImageUpload = async (e, fieldName) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.append("file", file);
-
-  //   try {
-  //     const { data } = await axios.post(
-  //       "/api/v1/image-upload/preventive-maintanance",
-  //       bodyFormData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authtoken}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (data?.url) {
-  //       // Ensure the response contains the image URL
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         [fieldName]: data.url, // Update the specific field with the uploaded image URL
-  //       }));
-  //     }
-
-  //     toast.success("Image uploaded successfully.");
-  //   } catch (err) {
-  //     toast.error("Image upload failed.");
-  //   }
-  // };
-
   const handleImageUpload = async (e, fieldName) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -245,9 +195,6 @@ const UpdatePreventiveMaintenance = () => {
                 "site_name",
                 "site_id",
                 "site_location",
-                // "doc_no",
-                // "revision_no",
-                // "revised_by",
               ].map((field) => (
                 <CCol md={6} key={field}>
                   <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
@@ -285,7 +232,6 @@ const UpdatePreventiveMaintenance = () => {
                 "oiling_need_for_bearing_condition",
                 "oiling_need_for_coupling_condition",
                 "oiling_need_for_motors_condition",
-
                 "is_wheels_loose",
                 "is_nutbolt_loose",
               ].map((field) => (
@@ -302,36 +248,6 @@ const UpdatePreventiveMaintenance = () => {
                   </CFormSelect>
                 </CCol>
               ))}
-              {/* {[
-                "physical_condition_of_transPipe_image",
-                "physical_condition_of_channel_image",
-                "physical_condition_of_top_bottom_cover_image",
-                "oiling_need_for_bearing_condition_image",
-                "oiling_need_for_coupling_image",
-                "oiling_need_for_motors_image",
-              ].map((field) => (
-                <CCol md={6} key={field}>
-                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
-
-                  {loadingUpload[field] ? (
-                    <LoadingSpinner /> // Show loading spinner while uploading
-                  ) : formData[field] ? (
-                    <Link to={formData[field]} target="blank">
-                      {" "}
-                      View
-                    </Link>
-                  ) : (
-                    ""
-                  )}
-
-                  <CFormInput
-                    type="file"
-                    onChange={(e) => handleImageUpload(e, field)}
-                  />
-                </CCol>
-              ))}
-              
-              */}
 
               {[
                 "physical_condition_of_transPipe_image",

@@ -167,13 +167,6 @@ const SiteManagement = () => {
                   >
                     Manage
                   </Link>
-                  {/* <Link
-                    color="primary"
-                    size="sm"
-                    className="btn btn-warning btn-sm mx-1 px-3"
-                  >
-                    Edit
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -186,16 +179,6 @@ const SiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
       <PaginateInput
         page={page}
         totalPages={totalPages}

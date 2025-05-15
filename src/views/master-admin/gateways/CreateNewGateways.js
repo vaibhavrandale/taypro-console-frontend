@@ -2,7 +2,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-
 import React, { useReducer, useEffect } from "react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -121,7 +120,7 @@ const CreateGateway = () => {
     }
   };
 
-  const { gatewayData, loading } = state;
+  const { gatewayData } = state;
 
   return (
     <CRow className="justify-content-center mt-2">

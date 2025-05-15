@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const AllSiteData = () => {
-//   return <div>AllSiteData</div>;
-// };
-
-// export default AllSiteData;
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CContainer,

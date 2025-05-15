@@ -11,7 +11,6 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-// import { sites } from "../../../data"; // Import sites from data.js
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -25,7 +24,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // sites: action.payload,
         sites: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -77,7 +75,6 @@ const SiteTechnicianSiteManagement = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -97,7 +94,6 @@ const SiteTechnicianSiteManagement = () => {
     fetchDownlink();
   }, [authtoken, limit, page]);
 
-  // Filter table rows based on search term
   const filteredData = sites.filter(
     (site) =>
       site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -176,13 +172,6 @@ const SiteTechnicianSiteManagement = () => {
                   >
                     Manage
                   </Link>
-                  {/* <Link
-                    color="primary"
-                    size="sm"
-                    className="btn btn-warning btn-sm mx-1 px-3"
-                  >
-                    Edit
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -195,16 +184,7 @@ const SiteTechnicianSiteManagement = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}

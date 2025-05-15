@@ -20,7 +20,6 @@ import {
   CBadge,
   CTooltip,
 } from "@coreui/react";
-// import { sites, lora_configuration } from "../../../data"; // Ensure correct path
 import "../master-admin.css";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -95,9 +94,7 @@ const LoraConfiguration = () => {
   const [
     {
       error,
-      addloraerror,
       updatingLora,
-      updateError,
       sites,
       lora_configuration,
       loadingloraconfig,
@@ -288,14 +285,6 @@ const LoraConfiguration = () => {
       toast.error(error.response?.data?.message);
     }
   };
-  //  [1,2,3,4]
-  // Filter data based on search term
-  // const filteredData = lora_configuration.filter(
-  //   (item) =>
-  //     item.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
 
   const filteredData = lora_configuration.filter((item) => {
     const term = searchTerm.toLowerCase();
@@ -365,15 +354,6 @@ const LoraConfiguration = () => {
                 className="mb-3"
               />
             </CCol>
-            {/* <CCol md={12}>
-              <CFormLabel>Site ID (Default: taypro_office)</CFormLabel>
-              <CFormInput
-                type="text"
-                value="taypro_office"
-                disabled
-                className="mb-3"
-              />
-            </CCol> */}
           </CRow>
         </CModalBody>
         <CModalFooter>
@@ -521,16 +501,6 @@ const LoraConfiguration = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
 
       <PaginateInput
         page={page}
@@ -682,60 +652,6 @@ const LoraConfiguration = () => {
                   />
                 </CCol>
               </CRow>
-
-              {/* <CRow className="mb-3">
-                <CCol md={6}>
-                  <CFormLabel>Added By</CFormLabel>
-                  <CFormInput
-                    disabled
-                    type="text"
-                    name="added_by"
-                    value={formData.added_by}
-                    onChange={handleChange}
-                  />
-                </CCol>{" "}
-                <CCol md={6}>
-                  <CFormLabel>Added At</CFormLabel>
-                  <CFormInput
-                    disabled
-                    type="text"
-                    name="addedAt"
-                    value={formData.addedAt}
-                    onChange={handleChange}
-                  />
-                </CCol>
-              </CRow> */}
-
-              {/* <CRow className="mb-3">
-                <CCol md={6}>
-                  <CFormLabel>Last Updated by</CFormLabel>
-                  <CFormInput
-                    disabled
-                    type="text"
-                    name="lastUpdateBy"
-                    value={
-                      formData.lastUpdateBy === null
-                        ? "N/A"
-                        : formData.lastUpdateBy
-                    }
-                    onChange={handleChange}
-                  />
-                </CCol>
-                <CCol md={6}>
-                  <CFormLabel>Last Updated At</CFormLabel>
-                  <CFormInput
-                    disabled
-                    type="text"
-                    name="lastUpdateAt"
-                    value={
-                      formData.lastUpdateAt === null
-                        ? "N/A"
-                        : formData.lastUpdateAt
-                    }
-                    onChange={handleChange}
-                  />
-                </CCol>
-              </CRow> */}
             </div>
           )}
         </CModalBody>

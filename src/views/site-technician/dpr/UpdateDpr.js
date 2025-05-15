@@ -1,13 +1,5 @@
-// import React from "react";
-
-// const UpdateDpr = () => {
-//   return <div>UpdateDpr</div>;
-// };
-
-// export default UpdateDpr;
-
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";

@@ -257,15 +257,7 @@ const PreventiveMaintanancrDashboard = () => {
                 <CTableDataCell>{pm.robot_no}</CTableDataCell>
                 <CTableDataCell>{pm.site_id}</CTableDataCell>
                 <CTableDataCell>
-                  {/* {pm.createdAt} */}
-                  <span>
-                    {new Date(pm.createdAt).toLocaleString()}
-                    {/* <span>
-                        {formatDistanceToNow(new Date(pm.createdAt), {
-                          addSuffix: true,
-                        })}
-                      </span> */}
-                  </span>
+                  <span>{new Date(pm.createdAt).toLocaleString()}</span>
                 </CTableDataCell>
                 <CTableDataCell>
                   <Link
@@ -295,16 +287,7 @@ const PreventiveMaintanancrDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}

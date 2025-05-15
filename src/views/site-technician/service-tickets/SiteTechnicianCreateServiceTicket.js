@@ -97,8 +97,6 @@ const SiteTechnicianCreateServiceTicket = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 📌 Handle search input change
-
   useEffect(() => {
     const fetchRobots = async () => {
       try {
@@ -114,7 +112,6 @@ const SiteTechnicianCreateServiceTicket = () => {
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-          //  payload: data.data
           payload: result.data.data,
         });
       } catch (error) {
@@ -173,7 +170,6 @@ const SiteTechnicianCreateServiceTicket = () => {
     }));
   };
 
-  // 📌 Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -227,7 +223,6 @@ const SiteTechnicianCreateServiceTicket = () => {
         }
       );
 
-      // ✅ Update uploaded image dynamically for the specific field
       setFormData((prevData) => ({
         ...prevData,
         [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
@@ -261,8 +256,6 @@ const SiteTechnicianCreateServiceTicket = () => {
                   className="mb-3"
                 />
               )}
-              {/* 📌 Search for Robot */}
-              {/* 📌 Display Search Suggestions */}
               <CListGroup className="mb-3">
                 {searchTerm && filteredRobots.length === 0 ? (
                   <CListGroupItem>No robots found</CListGroupItem>
@@ -336,8 +329,6 @@ const SiteTechnicianCreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-              {/* {faultsloading ? <LoadingSpinner /> : ""}{" "} */}
-              {/* 📌 Select Fault Type */}
               {faultsloading ? (
                 <LoadingSpinner />
               ) : faulterror ? (

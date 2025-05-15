@@ -33,7 +33,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         fetchingRobots: false,
-        // shiftrobots: action.payload,
         shiftrobots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -73,14 +72,12 @@ const ShiftBlockwiseRobots = () => {
   const [
     {
       loadingShiftRobots,
-      shiftRobots,
       fetchingRobots,
       error,
       shiftrobots,
       totalPages,
       hasNextPage,
       hasPrevPage,
-      loadingSites,
       sites,
     },
     dispatch,
@@ -133,7 +130,6 @@ const ShiftBlockwiseRobots = () => {
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-          //  payload: result.data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -233,7 +229,7 @@ const ShiftBlockwiseRobots = () => {
     dispatch({ type: "SHIFT_ROBOTS_REQUEST" });
 
     try {
-      const response = await axios.put(
+      await axios.put(
         "/api/v1/robots/shift-robot-blockwise",
         {
           deveuiArray: selectedRobots.map((robot) => robot.deveui),

@@ -37,7 +37,6 @@ const Timers = () => {
     site_location: site.location, // Add the actual site name instead of ID
   }));
 
-  // Function to get Site Name from site_id
   const getSiteName = (site_id) => {
     const site = sites.find((s) => s.site_id === site_id);
     return site ? site.site_id : "Unknown";
@@ -98,7 +97,6 @@ const Timers = () => {
     }));
   };
 
-  // Handle Save Changes
   const handleSaveChanges = () => {
     setFilteredBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
@@ -161,12 +159,6 @@ const Timers = () => {
                     </CTableDataCell>
                     <CTableDataCell>{block.block}</CTableDataCell>
                     <CTableDataCell>{block.total_robots}</CTableDataCell>
-                    {/* <CTableDataCell>{block.timer1}</CTableDataCell>
-                    <CTableDataCell>{block.timer1_date}</CTableDataCell>
-                    <CTableDataCell>{block.timer2}</CTableDataCell>
-                    <CTableDataCell>{block.timer2_date}</CTableDataCell>
-                    <CTableDataCell>{block.timer3}</CTableDataCell>
-                    <CTableDataCell>{block.timer3_date}</CTableDataCell> */}
                     <CTableDataCell>
                       {block.robots[0]?.timer1 === "25:00:00" ? (
                         <CBadge color="danger">Disabled</CBadge>

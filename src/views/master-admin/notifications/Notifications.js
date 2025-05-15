@@ -10,7 +10,6 @@ import {
   CBadge,
   CRow,
   CCol,
-  CAvatar,
   CButton,
   CModal,
   CModalHeader,
@@ -74,7 +73,6 @@ const Notifications = () => {
   const [limit, setLimit] = useState(10);
 
   useEffect(() => {
-    // setLoading(true);
     const fetchNotifications = async () => {
       let pagination = {
         pg: page,

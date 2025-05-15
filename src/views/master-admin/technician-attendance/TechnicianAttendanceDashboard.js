@@ -35,7 +35,7 @@ const reducer = (state, action) => {
 };
 const TechnicianAttendanceDashboard = () => {
   const [
-    { loading, error, technicians, totalPages, hasNextPage, hasPrevPage },
+    { loading, technicians, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     technicians: [],
@@ -75,7 +75,6 @@ const TechnicianAttendanceDashboard = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -212,16 +211,6 @@ const TechnicianAttendanceDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-  page={page}
-  totalPages={totalPages}
-  hasPrevPage={hasPrevPage}
-  hasNextPage={hasNextPage}
-  pageInput={pageInput}
-  handlePageChange={handlePageChange}
-  handlePageInputChange={handlePageInputChange}
-  handlePageInputSubmit={handlePageInputSubmit}
-/> */}
       <PaginateInput
         page={page}
         totalPages={totalPages}

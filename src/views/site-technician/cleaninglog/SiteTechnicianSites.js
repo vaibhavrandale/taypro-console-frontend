@@ -11,7 +11,6 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
-// import { sites } from "../../../data"; // Import sites from data.js
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -25,7 +24,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // sites: action.payload,
         sites: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -77,7 +75,6 @@ const SiteTechnicianSites = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -172,19 +169,10 @@ const SiteTechnicianSites = () => {
                     color="primary"
                     size="sm"
                     className="btn btn-primary btn-sm m-1"
-                    // to={`block-management/${site.site_id}`}
-                    // to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
                     to={`/site-technician/cleaning-log-sites/${site.site_id}`}
                   >
                     Manage
                   </Link>
-                  {/* <Link
-                    color="primary"
-                    size="sm"
-                    className="btn btn-warning btn-sm mx-1 px-3"
-                  >
-                    Edit
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))

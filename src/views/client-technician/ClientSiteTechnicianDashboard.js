@@ -11,14 +11,12 @@ import {
 import { Link } from "react-router-dom";
 import CIcon from "@coreui/icons-react";
 import {
-  //   cilSpeedometer,
   cilUser,
   cilSettings,
   cilChartPie,
   cilList,
   cilFolderOpen,
   cilTask,
-  //   cilPeople,
   cilBell,
   cilEnvelopeOpen,
 } from "@coreui/icons";

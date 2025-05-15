@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "CREATE_TICKET_REQUEST":
@@ -49,10 +50,7 @@ const reducer = (state, action) => {
   }
 };
 const CreateInternalTicket = () => {
-  const [
-    { error, createTicketloading, internal_tickets, users, fetchusersloading },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ createTicketloading, users }, dispatch] = useReducer(reducer, {
     users: [],
     error: "",
     createTicketloading: false,
@@ -60,8 +58,7 @@ const CreateInternalTicket = () => {
 
     fetchusersloading: false,
   });
-  // const { userInfo, authtoken } = useSelector((state) => state);
-  // const userInfo = useSelector((state) => state.userInfo);
+
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -84,13 +81,9 @@ const CreateInternalTicket = () => {
     priority: "",
     status: "Open",
     assigned_to: null, // <-- now it's an object, not a string
-    // assigned_to: "",
-    // assigned_to_email: "",
-    // assigned_to_id: "",
   });
 
   useEffect(() => {
-    // setLoading(true);
     const fetchUsers = async () => {
       dispatch({ type: "FETCH_USERS_REQUEST" });
       try {
@@ -122,22 +115,6 @@ const CreateInternalTicket = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // const handleDepartmentChange = (e) => {
-  //   const selectedDepartment = e.target.value;
-  //   const departmentData = departments.find(
-  //     (dept) => dept.department === selectedDepartment
-  //   );
-
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     department: selectedDepartment,
-  //     department_email: departmentData ? departmentData.email : "", // Ensure correct department email
-  //     assigned_to_email: prev.assigned_to ? prev.assigned_to.email : "",
-  //     assigned_to_id: prev.assigned_to ? prev.assigned_to._id : "",
-
-  //   }));
-  // };
 
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
@@ -189,16 +166,10 @@ const CreateInternalTicket = () => {
   };
 
   const selectUser = (user) => {
-    // setFormData({
-    //   ...formData,
-    //   assigned_to: user, // Store the entire user object
-    // });
     setFormData({
       ...formData,
       assigned_to: user, // ✅ this is the full user object
     });
-
-    // setSearchTerm(user.email);
 
     setSearchTerm(user.email);
 
@@ -363,18 +334,6 @@ const CreateInternalTicket = () => {
                     <option value="Low">Low</option>
                   </CFormSelect>
                 </CCol>
-
-                {/* Created At (Auto-Filled) */}
-                {/* <CCol md={6}>
-                  <CFormInput
-                    type="datetime-local"
-                    name="created_at"
-                    value={formData.created_at}
-                    label="Created At"
-                    disabled
-                    className="mb-3"
-                  />
-                </CCol> */}
 
                 <CCol md={12}>
                   <CButton

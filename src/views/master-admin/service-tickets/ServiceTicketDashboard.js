@@ -42,7 +42,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // servicetickets: action.payload,
         servicetickets: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -98,7 +97,6 @@ const ServiceTicketDashboard = () => {
       loading,
       error,
       servicetickets,
-
       serviceticket,
       fetchserviceticketloading,
       updateserviceticketloading,
@@ -109,7 +107,6 @@ const ServiceTicketDashboard = () => {
     dispatch,
   ] = useReducer(reducer, {
     servicetickets: [],
-
     serviceticket: [],
     loading: true,
     fetchserviceticketloading: true,
@@ -134,6 +131,7 @@ const ServiceTicketDashboard = () => {
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
   }
 
@@ -294,7 +292,6 @@ const ServiceTicketDashboard = () => {
                 <CTableHeaderCell>Robot No</CTableHeaderCell>
                 <CTableHeaderCell>Site ID</CTableHeaderCell>
                 <CTableHeaderCell>Fault Type</CTableHeaderCell>
-
                 <CTableHeaderCell>Status</CTableHeaderCell>
                 <CTableHeaderCell>created At</CTableHeaderCell>
                 <CTableHeaderCell>Action</CTableHeaderCell>
@@ -368,7 +365,6 @@ const ServiceTicketDashboard = () => {
                           size="sm"
                           className="m-1 btn btn-sm btn-primary text-decoration-none"
                           to={`update-service-ticket/${ticket._id}`}
-                          // onClick={() => openUpdateModal(ticket._id)}
                         >
                           Update
                         </Link>
@@ -377,7 +373,6 @@ const ServiceTicketDashboard = () => {
                         size="sm"
                         className="m-1 btn btn-sm btn-secondary text-decoration-none"
                         to={`resolve-service-ticket/${ticket._id}`}
-                        // onClick={() => openUpdateModal(ticket._id)}
                       >
                         Resolve
                       </Link>
@@ -1092,25 +1087,6 @@ const ServiceTicketDashboard = () => {
                   ) : (
                     ""
                   )}
-
-                  {/* {serviceticket.ticket_images &&
-                    serviceticket.ticket_images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="p-2"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedImage(image.image)}
-                      >
-                        <img
-                          src={image.image}
-                          alt={`Ticket ${index + 1}`}
-                          className="img-thumbnail"
-                          width="100"
-                          height="80"
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    ))} */}
                 </div>
               </CCol>
 
@@ -1219,25 +1195,6 @@ const ServiceTicketDashboard = () => {
                   ) : (
                     ""
                   )}
-
-                  {/* {serviceticket.ticket_images &&
-                    serviceticket.ticket_images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="p-2"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedImage(image.image)}
-                      >
-                        <img
-                          src={image.image}
-                          alt={`Ticket ${index + 1}`}
-                          className="img-thumbnail"
-                          width="100"
-                          height="80"
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    ))} */}
                 </div>
               </CCol>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -9,9 +9,8 @@ import {
   CAccordionBody,
   CAccordionHeader,
   CAccordionItem,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
-// ../src/components
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Accordion = () => {
   return (
@@ -34,7 +33,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the first item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -50,7 +49,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -66,7 +65,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -87,7 +86,7 @@ const Accordion = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add <code>flush</code> to remove the default{' '}
+              Add <code>flush</code> to remove the default{" "}
               <code>background-color</code>, some borders, and some rounded
               corners to render accordions edge-to-edge with their parent
               container.
@@ -99,7 +98,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the first item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -115,7 +114,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -131,7 +130,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -162,7 +161,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the first item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -178,7 +177,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the
@@ -194,7 +193,7 @@ const Accordion = () => {
                   <CAccordionBody>
                     <strong>
                       This is the second item&#39;s accordion body.
-                    </strong>{' '}
+                    </strong>{" "}
                     It is hidden by default, until the collapse plugin adds the
                     appropriate classes that we use to style each element. These
                     classes control the overall appearance, as well as the

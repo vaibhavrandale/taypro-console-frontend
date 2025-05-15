@@ -1,9 +1,3 @@
-// function App() {
-//   return <>Vaibhav</>;
-// }
-
-// export default App;
-
 import React, { Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -88,19 +82,12 @@ const App = () => {
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route path="*" name="User Dashboard" element={<DefaultLayout />} />
-          {/* <Route
-            exact
-            path="/user-dashboard"
-            name="User Dashboard"
-            element={<UserBasedLinkDashboard />}
-          /> */}
         </Routes>
       </Suspense>
       <Toaster
         position="top-center"
         // ... other configurations
       />
-      {/* </HashRouter> */}
     </BrowserRouter>
   );
 };

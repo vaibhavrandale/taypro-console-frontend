@@ -112,11 +112,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       ? "/service-admin/notifications"
       : userInfo.role === "Project Admin"
       ? "/project-admin/notifications"
-      : // : userInfo.role === "Client Admin"
-        // ? "/client-admin/notifications"
-        // : userInfo.role === "Site Incharge"
-        // ? "/client-site-incharge/notifications"
-        "/notifications";
+      : "/notifications";
 
   const filteredNotifications = notifications
     ? notifications.filter((notification) => {

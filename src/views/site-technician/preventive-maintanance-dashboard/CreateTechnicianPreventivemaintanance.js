@@ -13,13 +13,10 @@ import {
   CRow,
   CCol,
   CButton,
-  CFormTextarea,
   CFormSelect,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload } from "@coreui/icons";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const initialState = {

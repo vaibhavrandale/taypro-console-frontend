@@ -1,13 +1,11 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
-  CContainer,
   CTable,
   CTableBody,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CButton,
   CModal,
   CModalBody,
   CModalHeader,
@@ -18,15 +16,14 @@ import {
   CFormInput,
   CBadge,
 } from "@coreui/react";
-// import { gateways, robots } from "../../../data"; // Import the gateways data
 import { Link } from "react-router-dom";
-import LastOnlineStatus from "../../../components/LastOnlineStatus";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PaginateInput from "../../../components/PaginateInput";
 import LastActivity from "../../../components/LastActivity";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_GATEWAY_REQUEST":
@@ -66,7 +63,6 @@ const reducer = (state, action) => {
 const Gateways = () => {
   const [
     {
-      error,
       gateways,
       robot,
       loadingGateways,
@@ -95,7 +91,6 @@ const Gateways = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [modalOpendloading, setModalOpendloadingg] = useState(false);
-  const [filteredGateways, setFilteredGateways] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -116,7 +111,6 @@ const Gateways = () => {
       dispatch({ type: "FETCH_GATEWAY_REQUEST" });
 
       try {
-        // Ensure the correct keys match the backend API
         const data = {
           pg: page,
           limit: limit,
@@ -154,8 +148,6 @@ const Gateways = () => {
     };
 
     fetchGateways();
-
-    // fetchRobots();
   }, [authtoken, limit, page]);
 
   const Gateways = gateways.filter(
@@ -167,13 +159,7 @@ const Gateways = () => {
       gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // setFilteredGateways(Gateways);
-  // Function to fetch robot details
   const fetchRobotByGateway = async (gateway) => {
-    // if (!gateway.gateway_robot_no) {
-    //   toast.error("No robot associated with this gateway.");
-    //   return;
-    // }
     setModalOpendloadingg(true);
     dispatch({ type: "FETCH_ROBOT_REQUEST" });
 
@@ -229,7 +215,6 @@ const Gateways = () => {
   };
 
   return (
-    // <>Gateways</>
     <div className="mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gateways</h2>

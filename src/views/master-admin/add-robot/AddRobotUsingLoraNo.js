@@ -10,7 +10,7 @@ import {
   CCol,
 } from "@coreui/react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -126,7 +126,6 @@ const AddRobotUsingLoraNo = () => {
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-          // payload: result.data.data
 
           payload: {
             data: result.data.data,
@@ -231,8 +230,7 @@ const AddRobotUsingLoraNo = () => {
           type: "ADD_ROBOTS_SUCCESS",
           payload: [...robots, response.data.data], // Append new robot to state
         });
-        // navigate("/master-admin/robots");
-        // Reset form fields
+
         setFormData({
           lora_no: "",
           robot_no: "",

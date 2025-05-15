@@ -19,7 +19,6 @@ import CIcon from "@coreui/icons-react";
 import { cilCloudUpload, cilX } from "@coreui/icons";
 import "../service-tickets/servicetickts.css";
 
-// Reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":

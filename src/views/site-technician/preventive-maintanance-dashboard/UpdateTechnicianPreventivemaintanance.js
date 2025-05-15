@@ -4,22 +4,18 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import {
-  CAvatar,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CForm,
-  CFormCheck,
   CFormInput,
   CFormLabel,
   CFormSelect,
   CRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -39,16 +35,6 @@ const reducer = (state, action) => {
       return { ...state, updating: false };
     case "UPDATE_FAIL":
       return { ...state, updating: false, error: action.payload };
-    // case "UPLOAD_REQUEST":
-    //   return { ...state, loadingUpload: true, errorUpload: "" };
-    // case "UPLOAD_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loadingUpload: false,
-    //     errorUpload: "",
-    //   };
-    // case "UPLOAD_FAIL":
-    //   return { ...state, loadingUpload: false, errorUpload: action.payload };
 
     case "UPLOAD_REQUEST":
       return {
@@ -74,16 +60,13 @@ const reducer = (state, action) => {
   }
 };
 const UpdateTechnicianPreventivemaintanance = () => {
-  const [{ loading, error, updating, loadingUpload }, dispatch] = useReducer(
-    reducer,
-    {
-      preventivemaintanance: {},
-      loading: true,
-      error: "",
-      updating: false,
-      loadingUpload: false,
-    }
-  );
+  const [{ loading, loadingUpload }, dispatch] = useReducer(reducer, {
+    preventivemaintanance: {},
+    loading: true,
+    error: "",
+    updating: false,
+    loadingUpload: false,
+  });
   const { id } = useParams();
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);

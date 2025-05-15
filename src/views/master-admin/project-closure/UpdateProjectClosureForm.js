@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CAlert,
-  CBadge,
   CButton,
   CCard,
   CCardBody,
@@ -24,7 +23,7 @@ import {
   CTableRow,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilCloudUpload, cilMinus, cilPlus, cilX } from "@coreui/icons";
+import { cilCloudUpload, cilMinus, cilPlus } from "@coreui/icons";
 import "../service-tickets/servicetickts.css";
 
 // Reducer function
