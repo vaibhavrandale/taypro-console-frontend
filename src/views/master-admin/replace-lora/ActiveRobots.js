@@ -113,9 +113,11 @@ const ActiveRobots = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
-          payload: "Failed to fetch robots",
+          payload: error.response?.data?.message || error.response?.data?.error,
         });
-        toast.error("Failed to fetch robots");
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error
+        );
       }
     };
 

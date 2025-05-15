@@ -54,9 +54,11 @@ const LastActivity = ({ lastactivity }) => {
                   <p className="mb-1 fw-semibold d-flex justify-content-between">
                     <span className="fw-semibold">{activity.name}</span>
                     <span className="text-muted small">
-                      {formatDistanceToNow(new Date(activity.timestamp), {
-                        addSuffix: true,
-                      })}
+                      {activity.timestamp
+                        ? formatDistanceToNow(new Date(activity.timestamp), {
+                            addSuffix: true,
+                          })
+                        : "NA"}
                     </span>
                   </p>
 
