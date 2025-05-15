@@ -276,17 +276,6 @@ const RobotOperating = () => {
     }
   };
 
-  // ✅ Ensure robots exist before filtering
-  const Robotdata =
-    robots?.length > 0
-      ? robots.filter(
-          (robot) =>
-            robot.site_id === site_id &&
-            robot.block === block &&
-            robot.robot_no === robot_no
-        )
-      : [];
-
   const blockwiserobots =
     robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
 
@@ -622,34 +611,7 @@ const RobotOperating = () => {
                             SC : {robot.stuck_count}
                           </span>
                         </CTableDataCell>
-                        {/* <CTableDataCell>
-                          {robot.last_uplink === null ? (
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
-                            >
-                              Robot is not activated
-                            </CBadge>
-                          ) : (
-                            <span className="">
-                              <CTooltip
-                                content={new Date(
-                                  robot.last_uplink
-                                ).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(
-                                    new Date(robot.last_uplink),
-                                    {
-                                      addSuffix: true,
-                                    }
-                                  )}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          )}
-                        </CTableDataCell> */}
+
                         <CTableDataCell>
                           {!robot.last_uplink ||
                           isNaN(new Date(robot.last_uplink).getTime()) ? (
@@ -878,16 +840,6 @@ const RobotOperating = () => {
                 </CTableBody>
               </CTable>
 
-              {/* <PaginateInput
-                page={page}
-                totalPages={totalPages}
-                hasPrevPage={hasPrevPage}
-                hasNextPage={hasNextPage}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-              /> */}
               <PaginateInput
                 page={page}
                 totalPages={totalPages}

@@ -24,7 +24,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // sites: action.payload,
         sites: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -76,7 +75,6 @@ const AllSiteCleaningLog = () => {
         let prev = result.data.hasPrevPage;
         dispatch({
           type: "FETCH_SUCCESS",
-          //  payload: data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -186,13 +184,6 @@ const AllSiteCleaningLog = () => {
                   >
                     Manage
                   </Link>
-                  {/* <Link
-                    color="primary"
-                    size="sm"
-                    className="btn btn-warning btn-sm mx-1 px-3"
-                  >
-                    Edit
-                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))

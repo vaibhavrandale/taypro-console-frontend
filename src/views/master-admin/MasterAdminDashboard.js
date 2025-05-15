@@ -10,9 +10,7 @@ import {
 } from "@coreui/react";
 import { Link, useNavigate } from "react-router-dom";
 
-import //   cilPeople,
-
-"@coreui/icons";
+import "@coreui/icons";
 import _nav from "../../_nav"; // Import Navigation Data
 import { useSelector } from "react-redux";
 
@@ -20,15 +18,12 @@ const MasterAdminDashboard = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const navigate = useNavigate();
   useEffect(() => {
-    // const user = JSON.parse(localStorage.getItem("userInfo"));
     if (!userInfo) {
       navigate("/login"); // Redirect to login if user is not found
     }
   }, [navigate, userInfo]);
-  // 🔍 Filter Navigation Links Based on User Role
   const filteredNav = _nav.filter((navItem) => {
     if (userInfo.role === "Master Admin") {
-      // return true; // Show all menu items
       return navItem.name === "Master Admin";
     } else if (userInfo.role === "Project Admin") {
       return navItem.name === "Project Admin"; // Show only Service Admin items
@@ -56,14 +51,7 @@ const MasterAdminDashboard = () => {
           <CCol md={3} lg={3} key={index}>
             <CCard className="shadow-sm border-0 text-center">
               <CCardBody>
-                {/* <CIcon
-                  icon=
-                  size="xxl"
-                  className="text-primary mb-3"
-                /> */}
-
                 {item.icon}
-
                 <CCardTitle className="my-2 fs-6">
                   {" "}
                   <Link

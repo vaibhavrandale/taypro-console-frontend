@@ -7,7 +7,6 @@ import {
   CTableBody,
   CTableDataCell,
   CBadge,
-  CButton,
   CFormInput,
   CRow,
   CCol,
@@ -15,12 +14,8 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CModalFooter,
-  CFormSelect,
-  CFormTextarea,
   CTooltip,
 } from "@coreui/react";
-// import { client_tickets } from "../../../data";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -142,12 +137,6 @@ const ClientTicketsDashboardClient = () => {
     setSelectedTicket(ticket);
     setFormData(ticket);
     setModalVisible(true);
-  };
-
-  /** 📝 Handle Input Change */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
   };
 
   const handlePageInputChange = (e) => {

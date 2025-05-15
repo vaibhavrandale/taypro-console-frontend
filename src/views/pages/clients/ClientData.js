@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
-  // CCard,
-  // CCardBody,
-  // CCardTitle,
-  // CCardText,
   CButton,
   CTable,
   CTableHead,
@@ -107,11 +103,9 @@ const ClientData = () => {
 
   // Handle input change
   const handleChange = (e) => {
-    // setFormData({ ...formData, [e.target.name]: e.target.value });
     const { name, value } = e.target;
     let newFormData = { ...formData, [name]: value };
 
-    // Generate `client_id` dynamically based on `client_name`
     if (name === "siteName") {
       newFormData.site_id = generateClientID(value);
     }

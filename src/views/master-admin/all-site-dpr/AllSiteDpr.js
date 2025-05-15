@@ -92,8 +92,7 @@ const AllSiteDpr = () => {
       hasNextPage,
       hasPrevPage,
       successDelete,
-      loadingSiteIds,
-      loadingFields,
+
       siteIds,
     },
     dispatch,

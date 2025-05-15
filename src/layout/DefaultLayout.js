@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   AppContent,
   AppSidebar,
   AppFooter,
   AppHeader,
-} from '../components/index';
-// import { useNavigate } from 'react-router-dom';
+} from "../components/index";
 
 const DefaultLayout = () => {
-  // const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   navigate('/user-dashboard');
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [sidebarShow, setSidebarShow] = useState(true); // Use local state
 
   return (

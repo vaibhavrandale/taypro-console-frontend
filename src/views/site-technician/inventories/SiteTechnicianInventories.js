@@ -18,7 +18,6 @@ import {
   CTabList,
   CTabPanel,
   CTabs,
-  CImage,
   CBadge,
 } from "@coreui/react";
 import { Link } from "react-router-dom";

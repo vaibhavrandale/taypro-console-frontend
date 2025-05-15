@@ -36,15 +36,17 @@ const reducer = (state, action) => {
 };
 
 const UpdateRobot = () => {
-  const [{ loading, error, robot, fetchloading, updateloading }, dispatch] =
-    useReducer(reducer, {
+  const [{ error, fetchloading, updateloading }, dispatch] = useReducer(
+    reducer,
+    {
       sites: [],
       robot: {},
       loading: true,
       fetchloading: true,
       updateloading: false,
       error: "",
-    });
+    }
+  );
   const { id } = useParams();
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);

@@ -14,7 +14,6 @@ import {
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
-import { users } from "../../../data"; // Import users from data.js
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 

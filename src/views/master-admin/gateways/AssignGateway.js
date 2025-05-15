@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { CButton, CCol, CForm, CFormInput, CRow } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
-// Reducer
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":

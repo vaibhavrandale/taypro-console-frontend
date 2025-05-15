@@ -34,7 +34,7 @@ const reducer = (state, action) => {
 };
 
 const AssignGateway = () => {
-  const [{ loading, error, updating }, dispatch] = useReducer(reducer, {
+  const [{ loading, updating }, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
     updating: false,
@@ -67,7 +67,6 @@ const AssignGateway = () => {
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
   }
-  // Fetch gateway data on component mount
   useEffect(() => {
     const fetchGateway = async () => {
       try {

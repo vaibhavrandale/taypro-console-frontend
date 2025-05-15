@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const UpdateInternalTicket = () => {
-//   return <div>UpdateInternalTicket</div>;
-// };
-
-// export default UpdateInternalTicket;
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,

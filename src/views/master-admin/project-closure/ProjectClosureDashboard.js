@@ -19,7 +19,6 @@ import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 
@@ -90,7 +89,6 @@ const ProjectClosureDashboard = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  // const [selectedProjectDoc, setSelectedInventory] = useState(null);
   const [selectedProjectDoc, setSelectedProjectDoc] = useState(null);
   const [pageInput, setPageInput] = useState("");
 
@@ -166,7 +164,6 @@ const ProjectClosureDashboard = () => {
       );
       setFormData(result.data.data);
       setModalVisible(false);
-      //  to={
       navigate(`/${adminroute}/project-handover/view/${data._id}`);
     } catch (error) {
       dispatch({
@@ -210,8 +207,6 @@ const ProjectClosureDashboard = () => {
       handlePageChange(pageNumber);
     }
   };
-
-  // const userInfo = useSelector((state) => state.userInfo);
 
   return (
     <div className="p-2">
@@ -393,35 +388,6 @@ const ProjectClosureDashboard = () => {
         <CModalBody>
           {selectedProjectDoc && (
             <>
-              {/* <CTable bordered responsive>
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>Field</CTableHeaderCell>
-                    <CTableHeaderCell>Value</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {Object.entries(formData)
-                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className="text-dark fw-medium">
-                            {String(value)}
-                          </span>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody>
-              </CTable>
-
-              {formData.last_activity && (
-                <LastActivity lastactivity={formData.last_activity} />
-              )} */}
-
               <CButton
                 color="secondary"
                 onClick={() => updateApprovalSentStatus(formData)}

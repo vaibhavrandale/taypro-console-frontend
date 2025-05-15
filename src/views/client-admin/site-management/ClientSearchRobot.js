@@ -7,7 +7,6 @@ import {
   CFormInput,
   CInputGroup,
 } from "@coreui/react";
-// import { robots } from "../../../data"; // Import robots data
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -20,7 +19,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        //  robots: action.payload,
         robots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -34,10 +32,7 @@ const reducer = (state, action) => {
   }
 };
 const ClientSearchRobot = () => {
-  const [
-    { loading, error, robots, totalPages, hasNextPage, hasPrevPage },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ loading, error, robots }, dispatch] = useReducer(reducer, {
     robots: [],
     loading: true,
     error: "",
@@ -132,7 +127,6 @@ const ClientSearchRobot = () => {
                   filteredRobot.map((robot, index) => (
                     <Link
                       key={index}
-                      // ✅ Move the key to the <li> (not the <Link>)
                       to={`/client-admin/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                       className="text-decoration-none w-100 "
                     >

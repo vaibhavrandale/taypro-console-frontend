@@ -23,7 +23,6 @@ import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-// import { robots } from "../../../data"; // Import your robots data
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,7 +32,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingRobots: false,
-        //  robots: action.payload
         robots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -55,15 +53,7 @@ const reducer = (state, action) => {
 
 const ActiveRobots = () => {
   const [
-    {
-      loadingRobots,
-      error,
-      robots,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      updateloading,
-    },
+    { robots, totalPages, hasNextPage, hasPrevPage, updateloading },
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
@@ -112,7 +102,6 @@ const ActiveRobots = () => {
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-          // payload: result.data.data
 
           payload: {
             data: result.data.data,
@@ -132,8 +121,6 @@ const ActiveRobots = () => {
 
     fetchRobots();
   }, [authtoken, limit, page]);
-
-  // Filter active robots
 
   // Filter robots based on search term
   const filteredRobots = robots.filter(
@@ -286,16 +273,7 @@ const ActiveRobots = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}

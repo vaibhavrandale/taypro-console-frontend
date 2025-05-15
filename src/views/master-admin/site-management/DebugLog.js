@@ -129,8 +129,6 @@ const DebugLog = () => {
       (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Function to export data to Excel
-  // Function to export data to Excel
   const exportToExcel = () => {
     if (filteredLogs.length === 0) {
       toast.error("No data available for export.");

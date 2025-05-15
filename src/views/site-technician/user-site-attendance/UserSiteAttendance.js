@@ -63,8 +63,6 @@ const SitesCoordinates = () => {
   const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState(null);
 
   const [pageInput, setPageInput] = useState("");
 
@@ -144,6 +142,7 @@ const SitesCoordinates = () => {
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
   }
 
@@ -216,11 +215,7 @@ const SitesCoordinates = () => {
                     hour12: true,
                   })}
                 </CTableDataCell>
-                {/* 
-                <CTableDataCell>
-                  {attendances.punchin_location.lat},
-                  {attendances.punchin_location.lng}
-                </CTableDataCell> */}
+
                 <CTableDataCell>
                   <Link
                     target="blank"
@@ -248,10 +243,7 @@ const SitesCoordinates = () => {
                     <CBadge color="warning">N/A</CBadge>
                   )}
                 </CTableDataCell>
-                {/* <CTableDataCell>
-                  {attendances.punchout_location?.lat},
-                  {attendances.punchout_location?.lng}
-                </CTableDataCell> */}
+
                 <CTableDataCell>
                   {attendances.punchout_time ? (
                     <>

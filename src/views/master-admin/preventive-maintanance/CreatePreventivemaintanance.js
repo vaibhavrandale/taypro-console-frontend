@@ -13,13 +13,10 @@ import {
   CRow,
   CCol,
   CButton,
-  CFormTextarea,
   CFormSelect,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import CIcon from "@coreui/icons-react";
-import { cilCloudUpload } from "@coreui/icons";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const initialState = {
@@ -180,62 +177,6 @@ const CreatePreventiveMaintenance = () => {
     setFilteredRobots([]);
   };
 
-  // const handleImageUpload = async (e, fieldName) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.append("file", file);
-
-  //   try {
-  //     const { data } = await axios.post(
-  //       "/api/v1/image-upload/preventive-maintanance",
-  //       bodyFormData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authtoken}`,
-  //         },
-  //       }
-  //     );
-  //     dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
-  //     toast.success("Image uploaded successfully.");
-  //   } catch (err) {
-  //     toast.error("Image upload failed.");
-  //   }
-  // };
-
-  // const handleImageUpload = async (e, fieldName) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   const bodyFormData = new FormData();
-  //   bodyFormData.append("file", file);
-
-  //   dispatch({ type: "UPLOAD_REQUEST" }); // Show loading
-
-  //   try {
-  //     const { data } = await axios.post(
-  //       "/api/v1/image-upload/preventive-maintanance",
-  //       bodyFormData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${authtoken}`,
-  //         },
-  //       }
-  //     );
-
-  //     dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
-
-  //     dispatch({ type: "UPLOAD_SUCCESS" }); // Hide loading
-  //     toast.success("Image uploaded successfully.");
-  //   } catch (err) {
-  //     dispatch({ type: "UPLOAD_FAIL", payload: "Image upload failed" });
-  //     toast.error("Image upload failed.");
-  //   }
-  // };
-
   const handleImageUpload = async (e, fieldName) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -392,39 +333,6 @@ const CreatePreventiveMaintenance = () => {
                 </CFormSelect>
               </CCol>
             ))}
-
-            {/* {[
-              "physical_condition_of_transPipe_image",
-              "physical_condition_of_channel_image",
-              "oiling_need_for_bearing_condition_image",
-              "oiling_need_for_motors_image",
-            ].map((field) => (
-              <CCol md={6} key={field}>
-                <CFormLabel>Upload {field.replace(/_/g, " ")}</CFormLabel>
-                {state.loadingUpload[field] ? (
-                  <LoadingSpinner /> // Show loading spinner while uploading
-                ) : [field] ? (
-                  <Link to={[field]} target="blank">
-                    {" "}
-                    View
-                  </Link>
-                ) : (
-                  ""
-                )}
-                <div className="container-btn-file p-2 m-2 w-20">
-                  <CIcon icon={cilCloudUpload} className="upload-icon" />
-                  {`Image`}
-                  <CFormInput
-                    className="file"
-                    type="file"
-                    onChange={(e) => handleImageUpload(e, field)}
-                  />
-                </div>
-                {state[field] && (
-                  <img src={state[field]} alt="Uploaded Preview" width="100" />
-                )}
-              </CCol>
-            ))} */}
 
             {[
               "physical_condition_of_transPipe_image",

@@ -37,7 +37,6 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return {
         ...state,
-        // servicetickets: action.payload,
         servicetickets: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
@@ -90,7 +89,6 @@ const SiteTechnicianServiceTicketDashboard = () => {
   const [
     {
       loading,
-      error,
       servicetickets,
       serviceticket,
       fetchserviceticketloading,
@@ -125,6 +123,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
   }
 
@@ -154,13 +153,9 @@ const SiteTechnicianServiceTicketDashboard = () => {
   const handleUpdate = async (id) => {
     try {
       dispatch({ type: "UPDATE_TICKET_REQUEST" });
-      const response = await axios.put(
-        `/api/v1/servicetickets/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
+      await axios.put(`/api/v1/servicetickets/${id}`, formData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
       setModalVisible(false);
 
       // Update local state with the modified ticket
@@ -1217,25 +1212,6 @@ const SiteTechnicianServiceTicketDashboard = () => {
                   ) : (
                     ""
                   )}
-
-                  {/* {serviceticket.ticket_images &&
-                    serviceticket.ticket_images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="p-2"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedImage(image.image)}
-                      >
-                        <img
-                          src={image.image}
-                          alt={`Ticket ${index + 1}`}
-                          className="img-thumbnail"
-                          width="100"
-                          height="80"
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    ))} */}
                 </div>
               </CCol>
 

@@ -106,7 +106,6 @@ const ActivateRobots = () => {
 
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-          //  payload: result.data.data
           payload: {
             data: result.data.data,
             totalPages: total,
@@ -145,7 +144,7 @@ const ActivateRobots = () => {
     dispatch({ type: "ACTIVATE_ROBOTS_REQUEST" });
 
     try {
-      const response = await axios.put(
+      await axios.put(
         "/api/v1/robots/activate",
         { deveuiArray: selectedRobots.map((robot) => robot.deveui) },
         { headers: { Authorization: `Bearer ${authtoken}` } }
@@ -292,17 +291,6 @@ const ActivateRobots = () => {
             )}
           </CTableBody>
         </CTable>
-        {/* <PaginateInput
-          page={page}
-          totalPages={totalPages}
-          hasPrevPage={hasPrevPage}
-          hasNextPage={hasNextPage}
-          pageInput={pageInput}
-          handlePageChange={handlePageChange}
-          handlePageInputChange={handlePageInputChange}
-          handlePageInputSubmit={handlePageInputSubmit}
-        /> */}
-
         <PaginateInput
           page={page}
           totalPages={totalPages}

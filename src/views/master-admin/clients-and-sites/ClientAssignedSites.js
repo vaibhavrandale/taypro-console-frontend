@@ -10,7 +10,6 @@ import {
   CTableDataCell,
   CRow,
   CCol,
-  CInputGroup,
   CFormInput,
   CModal,
   CModalHeader,
@@ -18,10 +17,6 @@ import {
   CModalBody,
   CModalFooter,
   CForm,
-  CSpinner,
-  CBadge,
-  CFormLabel,
-  CInputGroupText,
 } from "@coreui/react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -186,11 +181,9 @@ const ClientAssignedSites = () => {
       const response = await axios.post(`${API_BASE_URL}/sites`, filderedData, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      // dispatch({ type: "ADD_SITE", payload: response.data.data });
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
       dispatch({ type: "RESET_FORM" }); // 👈 add this here
 
-      // fetchClientSites();
       dispatch({ type: "SET_ADD_MODAL", payload: false });
       toast.success("Site added successfully!");
     } catch (error) {

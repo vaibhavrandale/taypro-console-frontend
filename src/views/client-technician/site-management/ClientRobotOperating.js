@@ -5,36 +5,24 @@ import {
   CCard,
   CCardBody,
   CButton,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
   CTable,
-  CTableHead,
   CTableRow,
-  CTableHeaderCell,
   CTableBody,
   CTableDataCell,
   CDropdownMenu,
   CDropdownItem,
   CDropdown,
   CDropdownToggle,
-  CInputGroup,
-  CFormInput,
   CTooltip,
   CBadge,
 } from "@coreui/react";
-import { FaArrowUp } from "react-icons/fa";
-import { FaCircleInfo } from "react-icons/fa6"; // Correct import
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
-import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -79,12 +67,8 @@ const reducer = (state, action) => {
 
 const ClientRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
-  const [modalVisible, setModalVisible] = useState(false);
   const [siteRobots, setSiteRobots] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
-
-  const [pageInput, setPageInput] = useState("");
 
   let start = "C1";
   let stop = "CC";
@@ -92,10 +76,7 @@ const ClientRobotOperating = () => {
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
-  const [
-    { loading, error, downlinks, successDelete, loadingRobots, robots },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ error, loadingRobots, robots }, dispatch] = useReducer(reducer, {
     robots: [],
     loading: true,
     error: "",
@@ -414,34 +395,6 @@ const ClientRobotOperating = () => {
                             SC : {Robotdata[0].stuck_count}
                           </span>
                         </CTableDataCell>
-                        {/* <CTableDataCell>
-                          {Robotdata[0].last_uplink === null ? (
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
-                            >
-                              Robot is not activated
-                            </CBadge>
-                          ) : (
-                            <span className="">
-                              <CTooltip
-                                content={new Date(
-                                  Robotdata[0].last_uplink
-                                ).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(
-                                    new Date(Robotdata[0].last_uplink),
-                                    {
-                                      addSuffix: true,
-                                    }
-                                  )}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          )}
-                        </CTableDataCell> */}
                         <CTableDataCell>
                           {!Robotdata[0].last_uplink ||
                           isNaN(

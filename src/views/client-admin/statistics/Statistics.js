@@ -1,15 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { CChartBar, CChartPie } from "@coreui/react-chartjs";
-import {
-  CRow,
-  CCol,
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CBadge,
-  CFormSelect,
-  CFormInput,
-} from "@coreui/react";
+import { CRow, CCol, CFormSelect, CFormInput } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";

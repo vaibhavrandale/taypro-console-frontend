@@ -7,7 +7,6 @@ import {
   CTableBody,
   CTableDataCell,
   CBadge,
-  CButton,
   CFormInput,
   CRow,
   CCol,
@@ -15,29 +14,13 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CModalFooter,
-  CFormSelect,
-  CFormTextarea,
   CTooltip,
 } from "@coreui/react";
-// import { internal_tickets } from "../../../data";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import // CModal,
-// CModalHeader,
-// CModalTitle,
-// CModalBody,
-// CTable,
-// CTableHead,
-// CTableRow,
-// CTableHeaderCell,
-// CTableBody,
-// CTableDataCell,
-// CBadge,
-// CTooltip,
-"@coreui/react";
+import "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
@@ -108,14 +91,12 @@ const InternalTicketsDashboard = () => {
           { headers: { Authorization: `Bearer ${authtoken}` } }
         );
 
-        // Handle totalPages, hasNextPage, and hasPrevPage logic
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
 
-        // Dispatch success action with the fetched data and pagination info
         dispatch({
           type: "FETCH_INTERNAL_TICKET_SUCCESS",
           payload: {
@@ -134,7 +115,6 @@ const InternalTicketsDashboard = () => {
       }
     };
 
-    // Reset the delete state if successDelete flag is true
     fetchInternalTickets();
   }, [authtoken, limit, page]);
 
@@ -318,16 +298,6 @@ const InternalTicketsDashboard = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
 
       <PaginateInput
         page={page}
@@ -389,7 +359,6 @@ const InternalTicketsDashboard = () => {
                     ),
                     "Created By": formData.created_by.name,
                     "Created By Email": formData.created_by.email,
-                    // "Created By ID": formData.created_by.user_id,
                     "Created At": new Date(formData.createdAt).toLocaleString(),
                     ...(formData.status === "Resolved" && {
                       "Resolved By": formData.resolved_by?.name || "",
@@ -411,8 +380,6 @@ const InternalTicketsDashboard = () => {
           )}
         </CModalBody>
       </CModal>
-
-      {/* 🛠 view Modal */}
     </div>
   );
 };

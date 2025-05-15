@@ -213,7 +213,6 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
                     </CCol>
                   </CCol>
 
-                  {/* Export Button - Right Aligned on Desktop, Centered on Mobile */}
                   <CCol
                     md={5}
                     xs={12}
@@ -228,7 +227,6 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
               <div className="table-responsive">
                 <CTable bordered hover>
                   <CTableHead>
-                    {/* Top Row - Branding & Title */}
                     <CTableRow className="bg-dark text-white">
                       <CTableHeaderCell colSpan={1} className="text-center">
                         <CAvatar

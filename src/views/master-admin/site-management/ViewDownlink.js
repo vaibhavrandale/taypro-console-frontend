@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";

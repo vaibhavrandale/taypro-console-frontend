@@ -269,8 +269,7 @@ const CreateServiceTicket = () => {
                   className="mb-3"
                 />
               )}
-              {/* 📌 Search for Robot */}
-              {/* 📌 Display Search Suggestions */}
+
               <CListGroup className="mb-3">
                 {searchTerm && filteredRobots.length === 0 ? (
                   <CListGroupItem>No robots found</CListGroupItem>
@@ -344,7 +343,7 @@ const CreateServiceTicket = () => {
                   />
                 </CCol>
               </CRow>
-              {/* {faultsloading ? <LoadingSpinner /> : ""}{" "} */}
+
               {/* 📌 Select Fault Type */}
               {faultsloading ? (
                 <LoadingSpinner />

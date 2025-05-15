@@ -74,7 +74,7 @@ const ServiceTicketsFaultDashboard = () => {
       try {
         const result = await axios.post(
           `/api/v1/serviceticketsfaults/get-serviceticketsfaults`,
-          pagination, // should be an object like { pg: 1, limit: 10 }
+          pagination,
           { headers: { Authorization: `Bearer ${authtoken}` } }
         );
 
@@ -103,7 +103,6 @@ const ServiceTicketsFaultDashboard = () => {
         toast.error(error?.response?.data?.error);
       }
     };
-    // Reset the delete state if successDelete flag is true
     fetchServiceTicketsFaults();
   }, [authtoken, limit, page]);
 
@@ -117,16 +116,6 @@ const ServiceTicketsFaultDashboard = () => {
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
   }
-
-  /** 🔍 Search Function */
-  //   const filteredFaults = servicetickets_fault.filter(
-  //     (ticket) =>
-  //       ticket.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       ticket.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       ticket.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
 
   const filteredFaults = servicetickets_fault.filter((fault) =>
     fault.fault_name?.toLowerCase().includes(searchTerm.toLowerCase())

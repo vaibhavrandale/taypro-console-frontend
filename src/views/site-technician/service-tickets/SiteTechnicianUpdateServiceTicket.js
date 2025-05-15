@@ -466,7 +466,6 @@ const SiteTechnicianUpdateServiceTicket = () => {
                       ) : formData[`ticket_generated_images${num}`] ? (
                         <div className="my-2 ">
                           <img
-                            // className="position-relative"
                             src={formData[`ticket_generated_images${num}`]}
                             alt={`Generated Image ${num}`}
                             width="80"
@@ -475,7 +474,6 @@ const SiteTechnicianUpdateServiceTicket = () => {
                           />
                           <CBadge
                             color="primary"
-                            // position="top-start"
                             top="0"
                             left="0"
                             shape="rounded-pill"
@@ -522,48 +520,6 @@ const SiteTechnicianUpdateServiceTicket = () => {
                     onChange={handleChange}
                   />
                 </CCol>
-
-                {/* <CCol md={6}>
-                  {state.loadingInventories ? (
-                    <LoadingSpinner />
-                  ) : state.inventoryerror ? (
-                    <span className="badge bg-danger p-2">
-                      {state.inventoryerror}
-                    </span>
-                  ) : (
-                    <CFormSelect
-                      label="Select a part If Replaced"
-                      name="part_replaced"
-                      value={formData.part_replaced}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          part_replaced: e.target.value,
-                        })
-                      }
-                      className="mb-3 "
-                    >
-                      <option value="">Select Part</option>
-                      {state.inventories
-                        ? state.inventories.map((inventory, index) => (
-                            <option key={index} value={inventory.item_id}>
-                              {inventory.item_name}- {inventory.item_code}
-                            </option>
-                          ))
-                        : []}
-                    </CFormSelect>
-                  )}
-                </CCol>
-
-                <CCol md={6}>
-                  <CFormInput
-                    label="Part Replaced Quantity"
-                    name="replaced_part_quantity"
-                    type="number"
-                    value={formData.replaced_part_quantity || 0}
-                    onChange={handleChange}
-                  />
-                </CCol> */}
 
                 <CCol md={6}>
                   {state.loadingInventories ? (
@@ -653,7 +609,6 @@ const SiteTechnicianUpdateServiceTicket = () => {
                           />
                           <CBadge
                             color="primary"
-                            // position="absolute"
                             top="0"
                             left="0"
                             shape="rounded-pill"

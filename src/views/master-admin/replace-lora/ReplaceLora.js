@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -6,12 +6,11 @@ import {
   CCardText,
   CRow,
   CCol,
-} from '@coreui/react';
-import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import icons
+} from "@coreui/react";
+import { Link } from "react-router-dom";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa"; // Import icons
 
 const ReplaceLora = () => {
-  // const navigate = useNavigate();
   return (
     <div className="p-4">
       <h2 className="text-center">Replace Lora</h2>

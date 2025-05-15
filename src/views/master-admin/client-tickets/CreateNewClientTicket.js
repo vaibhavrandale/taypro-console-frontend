@@ -10,11 +10,8 @@ import {
   CFormTextarea,
   CRow,
   CCol,
-  CListGroup,
-  CListGroupItem,
 } from "@coreui/react";
 
-import { departments } from "../../../data";
 import "../internal-tickets/internaltickts.css";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -59,28 +56,18 @@ const reducer = (state, action) => {
   }
 };
 const CreateNewClientTicket = () => {
-  const [
-    {
-      error,
-      createTicketloading,
-      client_tickets,
-      users,
-      loadingSiteIds,
-      siteIds,
-      loadingFields,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
-    users: [],
-    error: "",
-    createTicketloading: false,
-    client_tickets: {},
-    loadingFields: false,
-    loadingSites: false,
-    loadingSiteIds: false,
-    siteIds: [],
-    fetchusersloading: false,
-  });
+  const [{ createTicketloading, loadingSiteIds, siteIds }, dispatch] =
+    useReducer(reducer, {
+      users: [],
+      error: "",
+      createTicketloading: false,
+      client_tickets: {},
+      loadingFields: false,
+      loadingSites: false,
+      loadingSiteIds: false,
+      siteIds: [],
+      fetchusersloading: false,
+    });
 
   const [siteName, setSiteName] = useState({
     site_id: "",

@@ -1,19 +1,3 @@
-// import React from "react";
-
-// const ClientUsersManagement = () => {
-//   return <div>ClientUsersManagement</div>;
-// };
-
-// export default ClientUsersManagement;
-
-// import React from "react";
-
-// const ExternalUsersDashboard = () => {
-//   return <div>ExternalUsersDashboard</div>;
-// };
-
-// export default ExternalUsersDashboard;
-
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -43,14 +27,12 @@ import {
   CTab,
   CTabPanel,
 } from "@coreui/react";
-import { departments, role_permissions } from "../../../data"; // Ensure correct path
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
 import PaginateInput from "../../../components/PaginateInput";
 import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
-import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -119,12 +101,6 @@ const reducer = (state, action) => {
     case "ASSIGN_SITE_REQUEST":
       return { ...state, assignsiteloading: true, assgnedSiteError: "" };
 
-    // case "ASSIGN_SITE_SUCCESS":
-    //   return {
-    //     ...state,
-    //     assignsiteloading: false,
-    //     assigned_sites: [...state.assigned_sites, action.payload], // Append new site
-    //   };
     case "ASSIGN_SITE_SUCCESS":
       return {
         ...state,
@@ -201,7 +177,6 @@ const ClientUsersManagement = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const { userInfo, authtoken } = useSelector((state) => state);
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
@@ -212,7 +187,6 @@ const ClientUsersManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [assgnedSites, setAssignedSites] = useState([]);
-  // const [users, setUsers] = useState([]); // State for users
   const [pageInput, setPageInput] = useState("");
   const [image, setImage] = useState("");
 
@@ -222,10 +196,8 @@ const ClientUsersManagement = () => {
   const [activeTab, setActiveTab] = useState("assigned");
 
   const [selectedSite, setSelectedSite] = useState("");
-  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // setLoading(true);
     const fetchUsers = async () => {
       let pagination = {
         pg: page,
@@ -245,7 +217,6 @@ const ClientUsersManagement = () => {
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
-        // setUsers(filteredUsers)
         const data = result.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
@@ -256,8 +227,6 @@ const ClientUsersManagement = () => {
             hasPrevPage: prev,
           },
         });
-        // setUsers(data);
-        // setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
         dispatch({
@@ -317,15 +286,6 @@ const ClientUsersManagement = () => {
     });
     setAddModalVisible(true);
   };
-
-  // const handleChange = (e) => {
-  //   const { name, type, checked, value } = e.target;
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -454,8 +414,6 @@ const ClientUsersManagement = () => {
         ...filteredFormData
       } = formData;
 
-      // const newdata = { ...filteredFormData, profile_image: image };
-
       const newdata = image
         ? { ...filteredFormData, profile_image: image }
         : filteredFormData;
@@ -503,8 +461,6 @@ const ClientUsersManagement = () => {
         }
       ); // Replace with your API endpoint
       if (response.data.success) {
-        // Update assigned sites in UI
-
         dispatch({
           type: "ASSIGN_SITE_SUCCESS",
           payload: response.data.data, // Let the reducer handle appending
@@ -686,16 +642,7 @@ const ClientUsersManagement = () => {
           )}
         </CTableBody>
       </CTable>
-      {/* <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-      /> */}
+
       <PaginateInput
         page={page}
         totalPages={totalPages}
@@ -760,8 +707,6 @@ const ClientUsersManagement = () => {
 
             <option value="Service">Service</option>
           </CFormSelect>
-          {/* <CFormLabel>Department </CFormLabel>
-          <CFormInput type="hidden" name="department" value="Service" /> */}
           <CFormLabel>Phone</CFormLabel>
           <CFormInput
             required
@@ -1001,9 +946,7 @@ const ClientUsersManagement = () => {
           >
             Cancel
           </CButton>
-          {/* <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes
-          </CButton> */}
+
           <CButton color="primary" className="btn-sm" onClick={handleUpdate}>
             {updatingUserLoading ? (
               <>
@@ -1109,7 +1052,6 @@ const ClientUsersManagement = () => {
                   <CButton
                     color="primary"
                     size="sm"
-                    // onClick={() => handleAssignSite(selectedSite)}
                     onClick={handleAssignSite}
                     disabled={!selectedSite}
                   >

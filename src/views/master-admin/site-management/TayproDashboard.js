@@ -161,7 +161,6 @@ const TayproDashboard = () => {
                             </CBadge>
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
-                            {/* ✅ Clickable Badge to Open Online Modal */}
                             <CBadge
                               color="success"
                               onClick={() => setActiveOnlineSite(site.site_id)}
@@ -171,7 +170,6 @@ const TayproDashboard = () => {
                             </CBadge>
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
-                            {/* ✅ Clickable Badge to Open Offline Modal */}
                             <CBadge
                               color="danger"
                               onClick={() => setActiveOfflineSite(site.site_id)}
