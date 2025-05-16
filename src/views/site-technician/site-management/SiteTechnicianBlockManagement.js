@@ -282,7 +282,12 @@ const SiteTechnicianBlockManagement = () => {
                               item.lora_state === 1 ? "bg-success" : "bg-danger"
                             }`}
                           >
-                            {item.robot_no}
+                            <Link
+                              to={`/site-technician/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`}
+                              className="text-decoration-none text-white"
+                            >
+                              {item.robot_no.slice(-3)}
+                            </Link>
                           </span>
                         </CTooltip>
                       ))}
