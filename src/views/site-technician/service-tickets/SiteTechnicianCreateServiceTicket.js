@@ -256,23 +256,37 @@ const SiteTechnicianCreateServiceTicket = () => {
                   className="mb-3"
                 />
               )}
-              <CListGroup className="mb-3">
-                {searchTerm && filteredRobots.length === 0 ? (
-                  <CListGroupItem>No robots found</CListGroupItem>
-                ) : (
-                  filteredRobots.map((robot, index) => (
-                    <CListGroupItem
-                      id="robot_no"
-                      style={{ cursor: "pointer" }}
-                      key={index}
-                      action
-                      onClick={() => selectRobotFromSearch(robot)}
-                    >
-                      {robot.robot_no} - {robot.site_id}
-                    </CListGroupItem>
-                  ))
-                )}
-              </CListGroup>
+              {searchTerm && (
+                <CListGroup
+                  className="mb-3"
+                  style={{
+                    maxHeight: "250px",
+                    overflowY: "auto",
+                    width: "300px",
+                    padding: "8px",
+                    marginTop: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "0.375rem",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  {filteredRobots.length === 0 ? (
+                    <CListGroupItem>No robots found</CListGroupItem>
+                  ) : (
+                    filteredRobots.map((robot, index) => (
+                      <CListGroupItem
+                        id="robot_no"
+                        key={index}
+                        action
+                        style={{ cursor: "pointer", padding: "10px" }}
+                        onClick={() => selectRobotFromSearch(robot)}
+                      >
+                        {robot.robot_no} - {robot.site_id}
+                      </CListGroupItem>
+                    ))
+                  )}
+                </CListGroup>
+              )}
               <CRow>
                 <CCol md={6}>
                   <CFormInput
