@@ -15,6 +15,9 @@ import {
   CFormTextarea,
   CFormSelect,
   CBadge,
+  CFormLabel,
+  CListGroup,
+  CListGroupItem,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -249,6 +252,13 @@ const ResolveServiceTicket = () => {
       console.error("File upload error:", error);
     }
   };
+  const [searchInventoryTerm, setSearchInventoryTerm] = useState("");
+
+  const filteredInventories = state.inventories?.filter((inv) =>
+    `${inv.item_name} ${inv.item_code}`
+      .toLowerCase()
+      .includes(searchInventoryTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -449,40 +459,72 @@ const ResolveServiceTicket = () => {
                       {state.inventoryerror}
                     </span>
                   ) : (
-                    <CFormSelect
-                      label="Select a part If Replaced"
-                      name="part_replaced_id"
-                      value={formData.part_replaced_id}
-                      onChange={(e) => {
-                        const selectedPart = state.inventories.find(
-                          (inv) => inv.item_id === e.target.value
-                        );
+                    <>
+                      <CFormLabel htmlFor="inventorySearch">
+                        Select a part If Replaced
+                      </CFormLabel>
+                      <CFormInput
+                        type="text"
+                        id="inventorySearch"
+                        placeholder="Search item name or code..."
+                        value={
+                          searchInventoryTerm ||
+                          formData.part_replaced || // show selected part
+                          ""
+                        }
+                        onChange={(e) => {
+                          setSearchInventoryTerm(e.target.value);
 
-                        setFormData({
-                          ...formData,
-                          part_replaced_id: e.target.value,
-                          part_replaced: selectedPart
-                            ? `${selectedPart.item_name} - ${selectedPart.item_code}`
-                            : "",
-                        });
-                      }}
-                      className="mb-3 "
-                    >
-                      <option value="">Select Part</option>
-                      {state.inventories &&
-                        state.inventories.map((inventory, index) => (
-                          <option key={index} value={inventory.item_id}>
-                            {inventory.item_name} - {inventory.item_code}
-                          </option>
-                        ))}
-                    </CFormSelect>
+                          // clear selected value when typing new search
+                          setFormData({
+                            ...formData,
+                            part_replaced_id: "",
+                            part_replaced: "",
+                          });
+                        }}
+                        className="mb-2"
+                      />
+
+                      {searchInventoryTerm && (
+                        <CListGroup
+                          className="mb-3"
+                          style={{
+                            maxHeight: "250px",
+                            overflowY: "auto",
+                            width: "100%",
+                            padding: "8px",
+                            border: "1px solid #ccc",
+                            borderRadius: "0.375rem",
+                            backgroundColor: "#fff",
+                          }}
+                        >
+                          {filteredInventories.length === 0 ? (
+                            <CListGroupItem>
+                              No matching parts found
+                            </CListGroupItem>
+                          ) : (
+                            filteredInventories.map((inventory, index) => (
+                              <CListGroupItem
+                                key={index}
+                                action
+                                style={{ cursor: "pointer", padding: "10px" }}
+                                onClick={() => {
+                                  setSearchInventoryTerm(""); // hide dropdown after selection
+                                  setFormData({
+                                    ...formData,
+                                    part_replaced_id: inventory.item_id,
+                                    part_replaced: `${inventory.item_name} - ${inventory.item_code}`,
+                                  });
+                                }}
+                              >
+                                {inventory.item_name} - {inventory.item_code}
+                              </CListGroupItem>
+                            ))
+                          )}
+                        </CListGroup>
+                      )}
+                    </>
                   )}
-                  {/* Hidden Field to Store replaced_part */}
-                  <input
-                    type="hidden"
-                    name="part_replaced"
-                    value={formData.part_replaced}
-                  />
                 </CCol>
 
                 <CCol md={6}>
@@ -490,6 +532,7 @@ const ResolveServiceTicket = () => {
                     label="Part Replaced Quantity"
                     name="replaced_part_quantity"
                     type="number"
+                    className="form-control-lg"
                     value={formData.replaced_part_quantity}
                     onChange={handleChange}
                   />
