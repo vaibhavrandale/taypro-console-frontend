@@ -108,28 +108,30 @@ const SiteTechnicianDashboard = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
 
-  const [inTime, setinTime] = useState("");
+  const [inTime, setinTime] = useState(new Date());
   const [currentTime, setcurrentTime] = useState(new Date());
 
   const [liveLocation, setLiveLocation] = useState(null);
 
   const fetchPunchStatus = async () => {
     try {
-      const { data } = await axios.get(
+      const data = await axios.get(
         "/api/v1/technician-attendance/punchstatus",
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-      setinTime(data.data.punchin_time);
+      console.log(data.data);
+
+      setinTime(data?.data?.data?.punchin_time);
 
       dispatch({
         type: "SET_STATUS",
         payload: {
-          punchedIn: data.punchedIn,
-          punchedOut: data.punchedOut,
+          punchedIn: data.data.punchedIn,
+          punchedOut: data.data.punchedOut,
         },
       });
     } catch (err) {
-      console.error("Error fetching punch status:", err);
+      console.error(err.response.data.error || err.response.data.message);
     }
   };
 
@@ -331,9 +333,13 @@ const SiteTechnicianDashboard = () => {
 
   const isAfterFiveHours = () => {
     const current = new Date(currentTime);
+    console.log("current time " + current);
+
     const punchIn = new Date(inTime);
+    console.log("in time " + inTime);
     const diffInMs = current - punchIn;
     const diffInHours = diffInMs / (1000 * 60 * 60); // convert ms to hours
+
     return diffInHours > 5;
   };
 
@@ -423,6 +429,7 @@ const SiteTechnicianDashboard = () => {
                 <CButton
                   type="submit"
                   color="warning"
+                  size="sm"
                   className="mt-3"
                   disabled={loading}
                 >

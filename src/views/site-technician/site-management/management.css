@@ -73,9 +73,10 @@
 }
 
 .dropdown-menu-robot {
-  width: 200px;
+  display: none;
+  width: 200px !important;
   border: none;
-  max-height: 200px;
+  max-height: 200px !important;
   overflow-y: auto;
 }
 
