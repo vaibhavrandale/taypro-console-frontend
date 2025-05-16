@@ -12,9 +12,9 @@ import {
   CButton,
   CRow,
   CCol,
+  CBadge,
   CListGroup,
   CListGroupItem,
-  CBadge,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -261,43 +261,44 @@ const CreateServiceTicket = () => {
               ) : roboterror ? (
                 <span className="badge bg-danger p-2">{roboterror}</span>
               ) : (
-                <>
-                  <CFormInput
-                    type="text"
-                    placeholder="Search Robot No or Site ID..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="mb-2"
-                  />
-
-                  {searchTerm && (
-                    <div
-                      className="dropdown-menu-robot z-3 border rounded shadow-sm"
-                      style={{
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        width: "100%",
-                      }}
-                    >
-                      {filteredRobots.length === 0 ? (
-                        <div className="px-3 py-2 text-muted">
-                          No robots found
-                        </div>
-                      ) : (
-                        filteredRobots.map((robot, index) => (
-                          <div
-                            key={index}
-                            className="dropdown-item mb-2"
-                            style={{ cursor: "pointer", paddingLeft: "12px" }}
-                            onClick={() => selectRobotFromSearch(robot)}
-                          >
-                            {robot.robot_no} - {robot.site_id}
-                          </div>
-                        ))
-                      )}
-                    </div>
+                <CFormInput
+                  type="text"
+                  placeholder="Search Robot No or Site ID..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="mb-3"
+                />
+              )}
+              {searchTerm && (
+                <CListGroup
+                  className="mb-3"
+                  style={{
+                    maxHeight: "250px",
+                    overflowY: "auto",
+                    width: "300px",
+                    padding: "8px",
+                    marginTop: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "0.375rem",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  {filteredRobots.length === 0 ? (
+                    <CListGroupItem>No robots found</CListGroupItem>
+                  ) : (
+                    filteredRobots.map((robot, index) => (
+                      <CListGroupItem
+                        id="robot_no"
+                        key={index}
+                        action
+                        style={{ cursor: "pointer", padding: "10px" }}
+                        onClick={() => selectRobotFromSearch(robot)}
+                      >
+                        {robot.robot_no} - {robot.site_id}
+                      </CListGroupItem>
+                    ))
                   )}
-                </>
+                </CListGroup>
               )}
 
               <CRow>
