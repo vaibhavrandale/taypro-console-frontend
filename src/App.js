@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import ResetPassword from "./views/pages/reset-password/ResetPassword";
 import ForgotPassword from "./views/pages/reset-password/ForgotPassword";
 import NetworkStatus from "./views/NetworkStatus";
+import RobotData from "./RobotData";
 
 // import UserBasedLinkDashboard from './views/dashboard/UserBasedLinkDashboard';
 
@@ -59,6 +60,12 @@ const App = () => {
       >
         <NetworkStatus />
         <Routes>
+          <Route
+            exact
+            path="/robot-data/:robot_no"
+            name="Robot Data"
+            element={<RobotData />}
+          />
           <Route
             exact
             path="/reset-password/:id"
