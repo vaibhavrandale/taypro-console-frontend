@@ -81,7 +81,7 @@ const RobotData = () => {
   const chartValues = debugData.map((entry) => entry.data || 0); // adjust `entry.value` as per your schema
 
   const robotData = robot?.data?.robotdata || {};
-  const cleaningData = robot?.data?.cleaningdata || {};
+  const cleaningData = robot?.data?.cleaningdata || [];
   const lastUpdate = robotData.last_uplink
     ? formatDistanceToNow(new Date(robotData.last_uplink), {
         addSuffix: true,
@@ -141,76 +141,71 @@ const RobotData = () => {
                 <CCardHeader className="bg-primary text-white fw-bold">
                   Today's Cleaning Summary
                 </CCardHeader>
-                <CTable
-                  bordered
-                  responsive
-                  hover
-                  className="mb-0 text-center"
-                  //   style={{ maxWidth: "500px", margin: "auto" }}
-                >
-                  <CTableBody>
+                <CTable bordered responsive hover className="mb-0 text-center">
+                  <CTableHead>
                     <CTableRow>
-                      <CTableHeaderCell
-                        style={{ minWidth: "160px", textAlign: "left" }}
-                      >
+                      <CTableHeaderCell style={{ minWidth: "60px" }}>
+                        Sr
+                      </CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: "160px" }}>
                         Start Time
                       </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.start_timestamp
-                          ? new Date(
-                              cleaningData.start_timestamp
-                            ).toLocaleString()
-                          : "NA"}
-                      </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ textAlign: "left" }}>
+                      <CTableHeaderCell style={{ minWidth: "120px" }}>
                         Start Battery
                       </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.start_battery_percentage || "NA"}
-                      </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ textAlign: "left" }}>
+                      <CTableHeaderCell style={{ minWidth: "160px" }}>
                         Finish Time
                       </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.finish_timestamp
-                          ? new Date(
-                              cleaningData.finish_timestamp
-                            ).toLocaleString()
-                          : "NA"}
-                      </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ textAlign: "left" }}>
+                      <CTableHeaderCell style={{ minWidth: "120px" }}>
+                        {" "}
                         Finish Battery
                       </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.finish_battery_percentage || "NA"}
-                      </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ textAlign: "left" }}>
+                      <CTableHeaderCell style={{ minWidth: "120px" }}>
                         Distance Travel
                       </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.calculated_distance || "NA"}
-                      </CTableDataCell>
+                      <CTableHeaderCell>Status</CTableHeaderCell>
                     </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ textAlign: "left" }}>
-                        Status
-                      </CTableHeaderCell>
-                      <CTableDataCell>
-                        {cleaningData?.cleaning_status === "success" ? (
-                          <CBadge color="success">Success</CBadge>
-                        ) : (
-                          <CBadge color="danger">Error</CBadge>
-                        )}
-                      </CTableDataCell>
-                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {cleaningData?.length > 0 ? (
+                      cleaningData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell>{index + 1}</CTableDataCell>
+                          <CTableDataCell style={{ textAlign: "left" }}>
+                            {item.start_timestamp
+                              ? new Date(item.start_timestamp).toLocaleString()
+                              : "NA"}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {item.start_battery_percentage || "NA"}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {item.finish_timestamp
+                              ? new Date(item.finish_timestamp).toLocaleString()
+                              : "NA"}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {item.finish_battery_percentage || "NA"}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {item.calculated_distance || "NA"}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {item.cleaning_status === "success" ? (
+                              <CBadge color="success">Success</CBadge>
+                            ) : (
+                              <CBadge color="danger">Error</CBadge>
+                            )}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell colSpan={6}>
+                          No Data Available
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
                   </CTableBody>
                 </CTable>
               </CCard>

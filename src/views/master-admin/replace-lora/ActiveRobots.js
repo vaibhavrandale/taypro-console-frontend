@@ -53,7 +53,14 @@ const reducer = (state, action) => {
 
 const ActiveRobots = () => {
   const [
-    { robots, totalPages, hasNextPage, hasPrevPage, updateloading },
+    {
+      robots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      updateloading,
+      loadingRobots,
+    },
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
@@ -239,7 +246,13 @@ const ActiveRobots = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredRobots.length === 0 ? (
+          {loadingRobots ? (
+            <CTableRow>
+              <CTableDataCell colSpan={7}>
+                <LoadingSpinner />
+              </CTableDataCell>
+            </CTableRow>
+          ) : filteredRobots.length === 0 ? (
             <CTableRow>
               <CTableDataCell colSpan={7}>
                 No active Robots Found
