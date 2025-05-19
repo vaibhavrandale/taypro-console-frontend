@@ -97,6 +97,8 @@ const CreateServiceTicket = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
+  const [faultSearchTerm, setFaultSearchTerm] = useState("");
+  const [filteredFaults, setFilteredFaults] = useState([]);
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -173,7 +175,23 @@ const CreateServiceTicket = () => {
       setFilteredRobots([]);
     }
   };
-
+  const handleFaultSearchChange = (e) => {
+    const value = e.target.value;
+    setFaultSearchTerm(value);
+    if (value.length > 0) {
+      const filtered = serviceticketsfault.filter((fault) =>
+        fault.fault_name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredFaults(filtered);
+    } else {
+      setFilteredFaults([]);
+    }
+  };
+  const selectFaultFromSearch = (fault) => {
+    setFormData({ ...formData, fault_type: fault.fault_name });
+    setFaultSearchTerm("");
+    setFilteredFaults([]);
+  };
   const deleteFileHandler = async (fileName) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -364,23 +382,51 @@ const CreateServiceTicket = () => {
               ) : faulterror ? (
                 <span className="badge bg-danger p-2">{roboterror}</span>
               ) : (
-                <CFormSelect
-                  name="fault_type"
-                  value={formData.fault_type}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fault_type: e.target.value })
-                  }
-                  className="mb-3"
-                >
-                  <option value="">Select Fault Type</option>
-                  {serviceticketsfault
-                    ? serviceticketsfault.map((fault, index) => (
-                        <option key={index} value={fault.fault_name}>
-                          {fault.fault_name.replace(/-/g, " ")}
-                        </option>
-                      ))
-                    : []}
-                </CFormSelect>
+                <>
+                  <CFormInput
+                    type="text"
+                    placeholder="Search Fault Type..."
+                    value={faultSearchTerm}
+                    onChange={handleFaultSearchChange}
+                    className="mb-3"
+                  />
+                  {faultSearchTerm && (
+                    <CListGroup
+                      className="mb-3"
+                      style={{
+                        maxHeight: "250px",
+                        overflowY: "auto",
+                        width: "300px",
+                        padding: "8px",
+                        marginTop: "10px",
+                        border: "1px solid #ccc",
+                        borderRadius: "0.375rem",
+                        backgroundColor: "#fff",
+                      }}
+                    >
+                      {filteredFaults.length === 0 ? (
+                        <CListGroupItem>No fault types found</CListGroupItem>
+                      ) : (
+                        filteredFaults.map((fault, index) => (
+                          <CListGroupItem
+                            key={index}
+                            action
+                            style={{ cursor: "pointer", padding: "10px" }}
+                            onClick={() => selectFaultFromSearch(fault)}
+                          >
+                            {fault.fault_name.replace(/-/g, " ")}
+                          </CListGroupItem>
+                        ))
+                      )}
+                    </CListGroup>
+                  )}
+                  {formData.fault_type && !faultSearchTerm && (
+                    <div className="mb-3">
+                      <strong>Selected Fault:</strong>{" "}
+                      {formData.fault_type.replace(/-/g, " ")}
+                    </div>
+                  )}
+                </>
               )}
               {/* 📌 Notes */}
               <CFormTextarea
