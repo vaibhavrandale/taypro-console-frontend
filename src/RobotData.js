@@ -19,6 +19,7 @@ import {
 import { CChartLine } from "@coreui/react-chartjs";
 import { useParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -101,7 +102,13 @@ const RobotData = () => {
   return (
     <>
       {loadingRobot ? (
-        <p>Loading...</p>
+        <div
+          style={{ height: "80vh" }}
+          className="d-flex justify-content-center align-items-center"
+        >
+          Please wait....
+          <LoadingSpinner />
+        </div>
       ) : (
         <div className="m-2">
           <CRow className="">

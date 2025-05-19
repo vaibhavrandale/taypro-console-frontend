@@ -360,12 +360,28 @@ const ClientRobotOperating = () => {
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
                         <CTableDataCell>
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {Robotdata[0].wheel_motor_speed}
-                          </CBadge>
+                          {Robotdata[0].wheel_motor_speed === 255 ? (
+                            <CBadge
+                              className="badge bg-success"
+                              shape="rounded-pill"
+                            >
+                              High
+                            </CBadge>
+                          ) : Robotdata[0].wheel_motor_speed === 150 ? (
+                            <CBadge
+                              className="badge bg-info"
+                              shape="rounded-pill"
+                            >
+                              Medium
+                            </CBadge>
+                          ) : (
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
+                            >
+                              Low
+                            </CBadge>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
@@ -381,12 +397,34 @@ const ClientRobotOperating = () => {
                         </CTableDataCell>
                         <CTableDataCell>Brush Speed</CTableDataCell>
                         <CTableDataCell>
-                          <CBadge
+                          {/* <CBadge
                             className="badge bg-danger"
                             shape="rounded-pill"
                           >
                             {Robotdata[0].brush_motor_speed}
-                          </CBadge>
+                          </CBadge> */}
+                          {Robotdata[0].brush_motor_speed === 255 ? (
+                            <CBadge
+                              className="badge bg-success"
+                              shape="rounded-pill"
+                            >
+                              High
+                            </CBadge>
+                          ) : Robotdata[0].brush_motor_speed === 150 ? (
+                            <CBadge
+                              className="badge bg-info"
+                              shape="rounded-pill"
+                            >
+                              Medium
+                            </CBadge>
+                          ) : (
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
+                            >
+                              Low
+                            </CBadge>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                     </CTableBody>
