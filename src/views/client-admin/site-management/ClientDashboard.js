@@ -369,6 +369,15 @@ const ClientDashboard = () => {
                               Robot No
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Lora No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Version
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
                               Deveui
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -379,9 +388,6 @@ const ClientDashboard = () => {
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "170px" }}>
                               Last updateAt
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
                             </CTableHeaderCell>
                           </CTableRow>
                         </CTableHead>
@@ -429,18 +435,6 @@ const ClientDashboard = () => {
                                     {robot.robot_no}
                                   </CTableDataCell>
                                   <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {new Date(robot.updatedAt)
-                                      .toLocaleDateString("en-GB")
-                                      .replace(/\//g, "-")}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
                                     <CBadge
                                       color={
                                         robot.lora_state === 1
@@ -452,6 +446,27 @@ const ClientDashboard = () => {
                                         ? "Online"
                                         : "Offline"}
                                     </CBadge>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.lora_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.version}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.deveui}
+                                  </CTableDataCell>
+                                  <CTableDataCell>{robot.block}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.last_status}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell style={{ minWidth: "250px" }}>
+                                    {robot.last_uplink === null
+                                      ? "Robot is not yet activated"
+                                      : new Date(
+                                          robot.last_uplink
+                                        ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>
                               ))

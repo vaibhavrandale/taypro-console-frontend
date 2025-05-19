@@ -5,6 +5,9 @@ import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import {
   CBadge,
+  CCol,
+  CFormSelect,
+  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -50,6 +53,11 @@ const TechnicianAttendanceDashboard = () => {
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const currentDate = new Date();
+  const [month, setMonth] = useState(
+    String(currentDate.getMonth() + 1).padStart(2, "0")
+  ); // e.g. '04'
+  const [year, setYear] = useState(String(currentDate.getFullYear())); // e.g. '2025'
 
   useEffect(() => {
     let pagination = {
@@ -61,7 +69,7 @@ const TechnicianAttendanceDashboard = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const result = await axios.post(
-          `/api/v1/technician-attendance/04/2025`,
+          `/api/v1/technician-attendance/${month}/${year}`,
           pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
@@ -85,14 +93,20 @@ const TechnicianAttendanceDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data.error || error.response?.data.message,
+          payload: {
+            error: error.response?.data.error || error.response?.data.message,
+            data: [], // Clear the array
+            totalPages: 0,
+            hasNextPage: false,
+            hasPrevPage: false,
+          },
         });
         toast.error(error.response?.data.error || error.response?.data.message);
       }
     };
 
     fetchAttendance();
-  }, [authtoken, limit, page]);
+  }, [authtoken, limit, month, page, year]);
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
@@ -111,7 +125,33 @@ const TechnicianAttendanceDashboard = () => {
   };
   return (
     <div>
-      {" "}
+      <CRow className="mb-3">
+        <CCol xs="auto">
+          <CFormSelect value={month} onChange={(e) => setMonth(e.target.value)}>
+            {[...Array(12)].map((_, index) => {
+              const m = String(index + 1).padStart(2, "0");
+              return (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              );
+            })}
+          </CFormSelect>
+        </CCol>
+
+        <CCol xs="auto">
+          <CFormSelect value={year} onChange={(e) => setYear(e.target.value)}>
+            {Array.from({ length: 5 }).map((_, index) => {
+              const y = String(new Date().getFullYear() - 2 + index);
+              return (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              );
+            })}
+          </CFormSelect>
+        </CCol>
+      </CRow>
       <CTable bordered hover responsive>
         <CTableHead color="secondary">
           <CTableRow className="text-center">
@@ -128,7 +168,7 @@ const TechnicianAttendanceDashboard = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="4" className="text-center">
+              <CTableHeaderCell colSpan="8" className="text-start">
                 <LoadingSpinner />
               </CTableHeaderCell>
             </CTableRow>
@@ -204,8 +244,8 @@ const TechnicianAttendanceDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="4" className="text-center">
-                No Site found
+              <CTableDataCell colSpan="8" className="text-center">
+                No data found
               </CTableDataCell>
             </CTableRow>
           )}

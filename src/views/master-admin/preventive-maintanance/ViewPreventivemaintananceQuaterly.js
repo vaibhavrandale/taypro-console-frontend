@@ -261,7 +261,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                         {preventivemaintanance.start_date}
                       </CTableHeaderCell>
                       <CTableHeaderCell>End Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
+                      <CTableHeaderCell colSpan={2} className="fw-bold">
                         {preventivemaintanance.end_date}
                       </CTableHeaderCell>
                     </CTableRow>
@@ -287,7 +287,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                       </CTableHeaderCell>
 
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
+                      <CTableHeaderCell colSpan={2} className="fw-bold">
                         Automatic
                       </CTableHeaderCell>
                     </CTableRow>
@@ -299,6 +299,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                       </CTableHeaderCell>
                       <CTableHeaderCell>Robot No</CTableHeaderCell>
                       <CTableHeaderCell>Robot Type</CTableHeaderCell>
+                      <CTableHeaderCell>Created Date</CTableHeaderCell>
 
                       <CTableHeaderCell>
                         Physical Condition - TransPipe
@@ -329,6 +330,11 @@ const ViewPreventivemaintananceQuaterly = () => {
                             <CTableDataCell>{idx + 1}</CTableDataCell>
                             <CTableDataCell>{record.robot_no}</CTableDataCell>
                             <CTableDataCell>{record.robot_type}</CTableDataCell>
+                            <CTableDataCell>
+                              {record.createdAt
+                                ? record.createdAt.slice(0, 10)
+                                : "NA"}
+                            </CTableDataCell>
                             <CTableDataCell>
                               {record.physical_condition_of_transPipe_condition}
                             </CTableDataCell>
