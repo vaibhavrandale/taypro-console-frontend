@@ -276,7 +276,7 @@ const BarGraph = () => {
               <>
                 {chartType === "bar" ? (
                   <CChartBar
-                    style={{ maxHeight: "300px" }}
+                    style={{ maxHeight: "400px", width: "100%" }}
                     data={{
                       labels: chartLabels,
                       datasets: datasets,
@@ -285,6 +285,7 @@ const BarGraph = () => {
                   />
                 ) : (
                   <CChartLine
+                    style={{ maxHeight: "400px", width: "100%" }}
                     data={{
                       labels: chartLabels,
                       datasets: datasets,

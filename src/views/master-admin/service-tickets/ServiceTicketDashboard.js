@@ -232,6 +232,7 @@ const ServiceTicketDashboard = () => {
     ? servicetickets.filter(
         (item) =>
           item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -297,7 +298,7 @@ const ServiceTicketDashboard = () => {
                 <CTableHeaderCell>Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
-            <CTableBody>
+            {/* <CTableBody>
               {loading ? (
                 <CTableRow>
                   <CTableDataCell colSpan="8" className="text-start">
@@ -335,7 +336,7 @@ const ServiceTicketDashboard = () => {
                       )}
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
-                      {/* {ticket.createdAt} */}
+                    
                       <span className="">
                         <CTooltip
                           content={new Date(ticket.createdAt).toLocaleString()}
@@ -379,6 +380,100 @@ const ServiceTicketDashboard = () => {
                     </CTableDataCell>
                   </CTableRow>
                 ))
+              ): (
+                <CTableRow>
+                  <CTableDataCell colSpan={8}>
+                    No data available for this filter
+                  
+                </CTableDataCell>
+                </CTableRow>)}
+            </CTableBody> */}
+
+            <CTableBody>
+              {loading ? (
+                <CTableRow>
+                  <CTableDataCell colSpan="8" className="text-start">
+                    <LoadingSpinner />
+                  </CTableDataCell>
+                </CTableRow>
+              ) : error ? (
+                <CTableRow>
+                  <CTableDataCell colSpan={8}>{error}</CTableDataCell>
+                </CTableRow>
+              ) : filteredData.length > 0 ? (
+                filteredData.map((ticket, index) => (
+                  <CTableRow key={index}>
+                    <CTableDataCell>{index + 1}</CTableDataCell>
+                    <CTableDataCell
+                      style={{ minWidth: "240px" }}
+                      className="sticky-col"
+                    >
+                      {ticket.ticket_id}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      {ticket.robot_no}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      {ticket.site_id}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      {ticket.fault_type}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      {ticket.ticket_resolved ? (
+                        <CBadge color="success">Resolved</CBadge>
+                      ) : (
+                        <CBadge color="danger">Open</CBadge>
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      <CTooltip
+                        content={new Date(ticket.createdAt).toLocaleString()}
+                        placement="top"
+                      >
+                        <span>
+                          {formatDistanceToNow(new Date(ticket.createdAt), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                      </CTooltip>
+                    </CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "210px" }}>
+                      <CButton
+                        color="secondary"
+                        size="sm"
+                        className="m-1"
+                        onClick={() => openViewModal(ticket._id)}
+                      >
+                        View
+                      </CButton>
+
+                      {userInfo.role === "Master Admin" && (
+                        <Link
+                          color="primary"
+                          size="sm"
+                          className="m-1 btn btn-sm btn-primary text-decoration-none"
+                          to={`update-service-ticket/${ticket._id}`}
+                        >
+                          Update
+                        </Link>
+                      )}
+                      <Link
+                        size="sm"
+                        className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                        to={`resolve-service-ticket/${ticket._id}`}
+                      >
+                        Resolve
+                      </Link>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))
+              ) : (
+                <CTableRow>
+                  <CTableDataCell colSpan={8} className="text-start ">
+                    No data found
+                  </CTableDataCell>
+                </CTableRow>
               )}
             </CTableBody>
           </CTable>

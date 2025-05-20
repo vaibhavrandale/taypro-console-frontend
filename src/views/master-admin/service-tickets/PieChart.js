@@ -157,102 +157,97 @@ const PieChart = () => {
 
   return (
     <CRow className="justify-content-center">
-      <CCol xs={6} md={6}>
+      <CCol xs={12} md={6}>
         <CCard className="mb-4 shadow">
           <CCardHeader>
             <h5 className="text-center">All Sitewise Ticket Status</h5>
           </CCardHeader>
-          {/* <CCardBody
+          <div
             className="d-flex justify-content-center align-items-center"
-            // style={{ minHeight: "350px" }}
-          > */}
-          {loading ? (
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: "100px", width: "100px" }}
-            >
+            style={{ minHeight: "350px" }}
+          >
+            {loading ? (
               <LoadingSpinner />
-            </div>
-          ) : error ? (
-            <p className="text-danger text-center">{error}</p>
-          ) : serviceticketssitewise?.length === 0 ? (
-            <p className="text-danger text-center">No data available</p>
-          ) : (
-            <CChartPie
-              data={{
-                labels: siteLabels.map(
-                  (site) =>
-                    `${site.replace(/_/g, " ")} | Open: ${
-                      siteTicketData[site].open
-                    } | Resolved: ${siteTicketData[site].resolved}`
-                ),
-                datasets: [
-                  {
-                    data: siteData,
-                    backgroundColor: siteColors.slice(0, siteLabels.length),
-                    hoverOffset: 8,
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: { position: "bottom" },
-                  tooltip: {
-                    callbacks: {
-                      label: function (tooltipItem) {
-                        const site = siteLabels[tooltipItem.dataIndex];
-                        return `📍 ${site.replace(/_/g, " ")}
-                          | 🛠 Open: ${siteTicketData[site].open}
-                          | ✅ Resolved: ${siteTicketData[site].resolved}`;
+            ) : error ? (
+              <div className="text-center text-danger py-4">{error}</div>
+            ) : siteLabels?.length > 0 ? (
+              <CChartPie
+                data={{
+                  labels: siteLabels.map(
+                    (site) =>
+                      `${site.replace(/_/g, " ")} | Open: ${
+                        siteTicketData[site].open
+                      } | Resolved: ${siteTicketData[site].resolved}`
+                  ),
+                  datasets: [
+                    {
+                      data: siteData,
+                      backgroundColor: siteColors.slice(0, siteLabels.length),
+                      hoverOffset: 8,
+                    },
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false, // ✅ This hides the legend
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function (tooltipItem) {
+                          const site = siteLabels[tooltipItem.dataIndex];
+                          return `📍 ${site.replace(/_/g, " ")} | 🛠 Open: ${
+                            siteTicketData[site].open
+                          } | ✅ Resolved: ${siteTicketData[site].resolved}`;
+                        },
                       },
                     },
                   },
-                },
-              }}
-            />
-          )}
-          {/* </CCardBody> */}
+                }}
+              />
+            ) : (
+              <div className="text-center py-4">No data available</div>
+            )}
+          </div>
         </CCard>
       </CCol>
-      <CCol xs={6} md={6}>
+
+      <CCol xs={12} md={6}>
         <CCard className="mb-4 shadow">
           <CCardHeader>
             <h5 className="text-center">All Site Fault Occurrences</h5>
           </CCardHeader>
-          {/* <CCardBody
+          <div
             className="d-flex justify-content-center align-items-center"
-            // style={{ minHeight: "350px" }}
-          > */}
-          {loading ? (
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: "100px", width: "100px" }}
-            >
+            style={{ minHeight: "350px" }}
+          >
+            {loading ? (
               <LoadingSpinner />
-            </div>
-          ) : error ? (
-            <p>{error}</p>
-          ) : Object.keys(serviceticketsfaulycount || {}).length === 0 ? (
-            <p className="text-danger text-center">No data available</p>
-          ) : (
-            <CChartPie
-              data={{
-                labels: faultLabels,
-                datasets: [
-                  {
-                    data: faultValues,
-                    backgroundColor: faultColors.slice(0, faultLabels.length),
+            ) : error ? (
+              error
+            ) : Object.keys(serviceticketsfaulycount || {}).length === 0 ? (
+              "No data available"
+            ) : (
+              <CChartPie
+                data={{
+                  labels: faultLabels,
+                  datasets: [
+                    {
+                      data: faultValues,
+                      backgroundColor: faultColors.slice(0, faultLabels.length),
+                    },
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false, // ✅ This hides the legend
+                    },
                   },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: { position: "bottom" },
-                },
-              }}
-            />
-          )}
-          {/* </CCardBody> */}
+                }}
+              />
+            )}
+          </div>
         </CCard>
       </CCol>
     </CRow>
