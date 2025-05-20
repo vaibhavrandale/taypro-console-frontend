@@ -17,7 +17,6 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 
@@ -81,6 +80,7 @@ const KeyMaintenanceMatrix = () => {
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
   }
 
@@ -91,7 +91,7 @@ const KeyMaintenanceMatrix = () => {
   const [limit, setLimit] = useState(10);
   const [site_id, setSiteId] = useState("");
 
-  const [formData, setFormData] = useState({});
+  const [, setFormData] = useState({});
 
   useEffect(() => {
     const fetchParameters = async () => {
