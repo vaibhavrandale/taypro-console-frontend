@@ -113,8 +113,8 @@ const RobotData = () => {
         <div className="m-2">
           <CRow className="">
             {/* Robot Basic Info */}
-            <CCol xs={12} md={6}>
-              <CCard className="rounded-2 shadow-sm mb-2">
+            <CCol xs={12} md={5}>
+              <CCard className="rounded-2 shadow-sm my-2">
                 <CCardHeader className="bg-primary text-white fw-bold">
                   Robot Information
                 </CCardHeader>
@@ -136,8 +136,8 @@ const RobotData = () => {
             </CCol>
 
             {/* Cleaning Data */}
-            <CCol xs={12} md={6}>
-              <CCard className="rounded-2 shadow-sm mb-2 border-0">
+            <CCol xs={12} md={7}>
+              <CCard className="rounded-2 shadow-sm my-2 border-0">
                 <CCardHeader className="bg-primary text-white fw-bold">
                   Today's Cleaning Summary
                 </CCardHeader>
@@ -211,13 +211,13 @@ const RobotData = () => {
               </CCard>
             </CCol>
           </CRow>
-          <CCard className="mb-3 ">
+          <CCard className="m-2 ">
             <CCardHeader className="bg-primary text-white fw-bold">
               Todays Battery Status
             </CCardHeader>
             <CCardBody>
               <CChartLine
-                style={{ maxHeight: "300px", width: "100%" }}
+                style={{ maxHeight: "300px" }}
                 className="p-0"
                 data={{
                   labels: chartLabels,

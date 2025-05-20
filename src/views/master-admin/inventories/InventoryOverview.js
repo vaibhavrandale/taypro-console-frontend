@@ -148,7 +148,7 @@ const InventoryOverview = () => {
                       }}
                       options={{
                         plugins: {
-                          legend: { position: "right" },
+                          legend: { display: false },
                           tooltip: {
                             callbacks: {
                               label: function (tooltipItem) {
