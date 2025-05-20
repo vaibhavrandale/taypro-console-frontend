@@ -265,9 +265,20 @@ const ServiceTicketDashboard = () => {
       <CCard className="mt-4">
         <CCardHeader className="d-flex justify-content-between align-items-center">
           <h4>All Service Tickets</h4>
-          <Link to="create-new-ticket" className="btn btn-sm btn-primary">
-            NEW
-          </Link>
+          <div className="d-flex justify-content-end mb-3">
+            <Link
+              to="key-preventive-matrix"
+              className="btn btn-sm btn-primary m-1"
+            >
+              KEY MAINTENANCE MATRIX
+            </Link>
+            <Link
+              to="create-new-ticket"
+              className="btn btn-sm btn-secondary m-1"
+            >
+              NEW
+            </Link>
+          </div>
         </CCardHeader>
 
         <CCardBody>
