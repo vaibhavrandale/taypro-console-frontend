@@ -74,6 +74,7 @@ import UpdateTechnicianPreventivemaintanance from "./views/site-technician/preve
 import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician/preventive-maintanance-dashboard/ViewTechnicianPreventivemaintananceQuaterly";
 import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTemperature";
 import PreventiveMaintenanceList from "./views/client-admin/preventive-maintenance-dashboard/PreventiveMaintenanceList";
+import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMaintenanceMatrix";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -723,6 +724,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <CreateNewServiceTicket />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/service-tickets/key-preventive-matrix",
+    name: "Key Preventive Matrix",
+    element: (
+      <MasterAdminRoute>
+        <KeyMaintenanceMatrix />
       </MasterAdminRoute>
     ),
   },
