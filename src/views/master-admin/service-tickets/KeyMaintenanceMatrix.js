@@ -6,12 +6,17 @@ import {
   CFormInput,
   CFormSelect,
   CRow,
+  CTab,
+  CTabContent,
   CTable,
   CTableBody,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CTabList,
+  CTabPanel,
+  CTabs,
 } from "@coreui/react";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
@@ -19,6 +24,28 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import KeyMaintenanceMatrixOverview from "./KeyMaintenanceMatrixOverview";
+
+const KeyPMMatrix = () => {
+  return (
+    <div>
+      <CTabs activeItemKey="keyPMMatrix">
+        <CTabList variant="tabs">
+          <CTab itemKey="keyPMMatrix">Key Maintenance Matrix</CTab>
+          <CTab itemKey="keyPMMatrixOverview">Key PM Matrix Overview</CTab>
+        </CTabList>
+        <CTabContent>
+          <CTabPanel className="p-3" itemKey="keyPMMatrix">
+            <KeyMaintenanceMatrix />
+          </CTabPanel>
+          <CTabPanel className="p-3" itemKey="keyPMMatrixOverview">
+            <KeyMaintenanceMatrixOverview />
+          </CTabPanel>
+        </CTabContent>
+      </CTabs>
+    </div>
+  );
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -309,4 +336,4 @@ const KeyMaintenanceMatrix = () => {
   );
 };
 
-export default KeyMaintenanceMatrix;
+export default KeyPMMatrix;
