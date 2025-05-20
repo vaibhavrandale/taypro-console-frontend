@@ -68,18 +68,19 @@ const KeyMaintenanceMatrixOverview = () => {
             const robotLabels = faultItem.items.map((item) => item.robot_no);
 
             return (
-              <CCol md={6} className="mb-4" key={index}>
+              <CCol md={12} className="mb-4" key={index}>
                 <CCard>
                   <CCardHeader>{faultItem.fault_type}</CCardHeader>
                   <CCardBody>
                     <CChartBar
+                      style={{ maxHeight: "300px", width: "100%" }}
                       data={{
                         labels: robotLabels,
                         datasets: [
                           {
                             label: "Fault Count",
                             backgroundColor: "#42A5F5",
-                            barThickness: 20,
+                            barThickness: 15,
                             data: faultItem.items.map((item) => ({
                               x: item.robot_no,
                               y: parseInt(item.service_ticket_cnt, 10),
@@ -116,6 +117,11 @@ const KeyMaintenanceMatrixOverview = () => {
                         scales: {
                           y: {
                             beginAtZero: true,
+                            max: 2, // <-- Adjust this value based on your expected maximum fault count
+                            ticks: {
+                              stepSize: 1,
+                              precision: 0,
+                            },
                           },
                         },
                       }}
