@@ -1580,6 +1580,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Preventive Maintenance",
+        to: "/client-admin/preventive-maintenance-dashboard",
+        icon: (
+          <CIcon
+            icon={cilCalendarCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Search Robot",
         to: "/client-admin/search-robot",
         icon: (
