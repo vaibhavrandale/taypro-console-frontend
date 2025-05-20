@@ -309,7 +309,29 @@ const AddDpr = () => {
                   />
                 </div>
               </CCol>
-
+              <CCol md="6">
+                <div className="mb-3">
+                  <label className="form-label"> Date</label>
+                  {userInfo.role === "Master Admin" ? (
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="report_date"
+                      value={state.dprData.date}
+                      onChange={handleChange}
+                      max={new Date().toISOString().split("T")[0]} // Optional: restrict to past dates
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={state.dprData.date}
+                      readOnly
+                      disabled
+                    />
+                  )}
+                </div>
+              </CCol>
               <CTable striped bordered className="mt-2">
                 <CTableHead color="secondary">
                   <CTableRow>
