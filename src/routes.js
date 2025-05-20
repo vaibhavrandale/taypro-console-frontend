@@ -73,6 +73,7 @@ import CreateTechnicianPreventivemaintanance from "./views/site-technician/preve
 import UpdateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/UpdateTechnicianPreventivemaintanance";
 import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician/preventive-maintanance-dashboard/ViewTechnicianPreventivemaintananceQuaterly";
 import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTemperature";
+import PreventiveMaintenanceList from "./views/client-admin/preventive-maintenance-dashboard/PreventiveMaintenanceList";
 import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMaintenanceMatrix";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -2240,6 +2241,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <ClientSiteManagement />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/preventive-maintenance-dashboard",
+    name: "Client Admin Preventive Maintenance Dashboard",
+    element: (
+      <ClientAdminRoute>
+        <PreventiveMaintenanceList />
       </ClientAdminRoute>
     ),
   },
