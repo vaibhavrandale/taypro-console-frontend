@@ -501,33 +501,46 @@ const ClientAdminDashboard = () => {
       </div>
 
       <div className="mt-4">
-        <CRow className="">
+        <CRow className="justify-content-center">
           <CCol xs={12} md={6} className="mt-4">
-            {state.loadingDistance ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: "100px", width: "100px" }}
-              >
-                <LoadingSpinner />
-              </div>
-            ) : state.distanceSummaryData.blocks === 0 ? (
-              <CAlert color="warning">
-                No data available for the selected site.
-              </CAlert>
-            ) : state.error ? (
-              <p className="text-danger text-center">{state.error}</p>
-            ) : (
-              <CCard className="mb-4 shadow">
-                <CCardHeader>
-                  <h5 className="text-center">
-                    Total Area Cleaned:{" "}
-                    <span className="text-success fw-bold">
-                      {state.distanceSummaryData?.totalAreaCleaned} m
-                    </span>
-                  </h5>
-                </CCardHeader>
-                <CCardBody className="d-flex justify-content-center align-items-center">
-                  <div>
+            <CCard className="mb-4 shadow">
+              {state.loadingDistance ? (
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "350px" }}
+                >
+                  <LoadingSpinner />
+                </div>
+              ) : state.error ? (
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "350px" }}
+                >
+                  <p className="text-danger text-center">{state.error}</p>
+                </div>
+              ) : state.distanceSummaryData.blocks === 0 ? (
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "350px" }}
+                >
+                  <CAlert color="warning" className="text-center mb-0">
+                    No data available for the selected site.
+                  </CAlert>
+                </div>
+              ) : (
+                <>
+                  <CCardHeader>
+                    <h5 className="text-center">
+                      Total Area Cleaned:{" "}
+                      <span className="text-success fw-bold">
+                        {state.distanceSummaryData?.totalAreaCleaned} m
+                      </span>
+                    </h5>
+                  </CCardHeader>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "350px" }}
+                  >
                     {Array.isArray(state.distanceSummaryData?.blocks) &&
                     state.distanceSummaryData.blocks.length > 0 ? (
                       <CChartPie
@@ -571,61 +584,57 @@ const ClientAdminDashboard = () => {
                       </p>
                     )}
                   </div>
-                </CCardBody>
-              </CCard>
-            )}
+                </>
+              )}
+            </CCard>
           </CCol>
 
           <CCol xs={12} md={6} className="mt-4">
-            {state.loadingGateways ? (
-              <div
+            <CCard className="mb-4 shadow">
+              <CCardHeader>
+                <h5 className="text-center">Gateways Brief</h5>
+              </CCardHeader>
+
+              <CCardBody
                 className="d-flex justify-content-center align-items-center"
-                style={{ height: "100px", width: "100px" }}
+                style={{ minHeight: "350px" }}
               >
-                <LoadingSpinner />
-              </div>
-            ) : state.error ? (
-              <p className="text-danger text-center">{state.error}</p>
-            ) : state.gatewaysData.length === 0 ? (
-              <CAlert color="warning">
-                No data available for the selected site.
-              </CAlert>
-            ) : (
-              <CCard className="mb-4 shadow">
-                <CCardHeader>
-                  <h5 className="text-center">Gateways Brief</h5>
-                </CCardHeader>
-                <CCardBody className="d-flex justify-content-center align-items-center">
-                  <div>
-                    <CChart
-                      type="doughnut"
-                      style={{ height: "300px" }}
-                      data={{
-                        labels: state.gatewaysData.map(
-                          (gateway) => gateway.gateway_name
-                        ),
-                        datasets: [
-                          {
-                            data: state.gatewaysData.map(() => 1), // equal value so all segments appear
-                            backgroundColor: state.gatewaysData.map(
-                              (gateway) =>
-                                gateway.gateway_status ? "#28a745" : "#dc3545" // green for online, red for offline
-                            ),
-                          },
-                        ],
-                      }}
-                      options={{
-                        plugins: {
-                          legend: {
-                            position: "right",
-                          },
+                {state.loadingGateways ? (
+                  <LoadingSpinner />
+                ) : state.error ? (
+                  <p className="text-danger text-center">{state.error}</p>
+                ) : state.gatewaysData.length === 0 ? (
+                  <CAlert color="warning" className="text-center mb-0">
+                    No data available for the selected site.
+                  </CAlert>
+                ) : (
+                  <CChart
+                    type="doughnut"
+                    style={{ height: "300px" }}
+                    data={{
+                      labels: state.gatewaysData.map(
+                        (gateway) => gateway.gateway_name
+                      ),
+                      datasets: [
+                        {
+                          data: state.gatewaysData.map(() => 1),
+                          backgroundColor: state.gatewaysData.map((gateway) =>
+                            gateway.gateway_status ? "#28a745" : "#dc3545"
+                          ),
                         },
-                      }}
-                    />
-                  </div>
-                </CCardBody>
-              </CCard>
-            )}
+                      ],
+                    }}
+                    options={{
+                      plugins: {
+                        legend: {
+                          position: "right",
+                        },
+                      },
+                    }}
+                  />
+                )}
+              </CCardBody>
+            </CCard>
           </CCol>
         </CRow>
       </div>
