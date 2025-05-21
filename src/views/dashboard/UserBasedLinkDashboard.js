@@ -1,6 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
+
+import { BsStarFill, BsStar } from "react-icons/bs";
+
 import { Link, useNavigate } from "react-router-dom";
-import { CCard, CCardBody, CCol, CRow, CCardHeader } from "@coreui/react";
+import {
+  CCard,
+  CCardBody,
+  CCol,
+  CRow,
+  CCardHeader,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CFormLabel,
+  CForm,
+  CFormTextarea,
+  CButton,
+  CImage,
+} from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserShield,
@@ -9,19 +27,98 @@ import {
   faTools,
   faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+// import { customer_feedback } from "../../data";
+import toast from "react-hot-toast";
+import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import TayproLogo from "../../assets/brand/logoforwhitebg.png"; // Import the image
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_FEEDBACK_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "FETCH_FEEDBACK_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        latestfeedback: action.payload,
+      };
+    case "FETCH_FEEDBACK_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    case "SUBMIT_REQUEST":
+      return { ...state, submitLoading: true, submiterror: "" };
+
+    case "SUBMIT_SUCCESS":
+      return { ...state, submitLoading: false };
+
+    case "SUBMIT_FAIL":
+      return { ...state, submitLoading: false, submiterror: action.payload };
+    default:
+      return state;
+  }
+};
 
 const UserBasedLinkDashboard = () => {
-  const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
+  const [
+    { error, latestfeedback, loading, submitLoading, submiterror },
+    dispatch,
+  ] = useReducer(reducer, {
+    latestfeedback: null,
+    loading: false,
+    submitLoading: false,
+    submiterror: "",
+  });
 
+  const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // const [latestFeedback, setLatestFeedback] = useState(null);
+
+  const navigate = useNavigate();
+  // const [userInfo, setUserInfo] = useState(null);
+  const [visible, setVisible] = useState(true);
+  const [formData, setFormData] = useState({
+    comments: "",
+    rating: "",
+  });
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
-    if (!user) {
+    // const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (!userInfo) {
       navigate("/login"); // Redirect if user is not found
-    } else {
-      setUserInfo(user);
     }
-  }, [navigate]);
+
+    if (userInfo.role === "Client Admin") {
+      const fetchfeedback = async () => {
+        try {
+          dispatch({ type: "FETCH_FEEDBACK_REQUEST" });
+
+          const result = await axios.get(
+            `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
+            {
+              headers: { Authorization: `Bearer ${authtoken}` },
+            }
+          );
+          // console.log(result.data.data);
+          dispatch({
+            type: "FETCH_FEEDBACK_SUCCESS",
+            payload: result.data.data,
+          });
+          if (result.data.data.status === true) {
+            setVisible(false); // Hide the modal
+          } else {
+            setVisible(true); // Hide the modal
+          }
+        } catch (error) {
+          dispatch({
+            type: "FETCH_FEEDBACK_FAIL",
+            payload: error.response?.data.error || error.response?.data.message,
+          });
+        }
+      };
+      fetchfeedback();
+    }
+  }, [authtoken, navigate, userInfo]);
 
   if (!userInfo) {
     return null; // Prevent rendering if user isn't loaded
@@ -84,6 +181,93 @@ const UserBasedLinkDashboard = () => {
   // Get dashboard details for the logged-in user's role
   const userRoleData = roleRoutes[userInfo.role];
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    console.log(formData);
+
+    // Remove focus from the currently focused element
+    if (document.activeElement) {
+      document.activeElement.blur();
+    }
+    dispatch({ type: "SUBMIT_REQUEST" });
+    try {
+      const data = await axios.put(
+        `/api/v1/customer-feedback/${latestfeedback._id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "SUBMIT_SUCCESS" });
+      setVisible(false); // Hide the modal
+    } catch (error) {
+      dispatch({
+        type: "SUBMIT_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+    }
+  };
+
+  const StarRating = ({ rating, onChange }) => {
+    const currentRating = Number(rating) || 0;
+
+    return (
+      <div
+        className="d-flex gap-2"
+        style={{ cursor: "pointer", fontSize: "1.8rem" }}
+      >
+        {[1, 2, 3, 4, 5].map((star) => {
+          const FilledStar = star <= currentRating;
+          return FilledStar ? (
+            <BsStarFill
+              size={20}
+              key={star}
+              color="#ffc107"
+              onClick={() =>
+                onChange({ target: { name: "rating", value: star } })
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  onChange({
+                    target: { name: "rating", value: star },
+                  });
+              }}
+              role="radio"
+              tabIndex={0}
+              aria-checked={star === currentRating}
+              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+            />
+          ) : (
+            <BsStar
+              size={20}
+              key={star}
+              color="#e4e5e9"
+              onClick={() =>
+                onChange({ target: { name: "rating", value: star } })
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  onChange({
+                    target: { name: "rating", value: star },
+                  });
+              }}
+              role="radio"
+              tabIndex={0}
+              aria-checked={star === currentRating}
+              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="mt-3 mx-2">
       <h2 className="text-center mb-4">
@@ -117,6 +301,92 @@ const UserBasedLinkDashboard = () => {
           </p>
         )}
       </CRow>
+
+      {/* <CButton color="primary" onClick={() => setVisible(!visible)}>
+        Rate us
+      </CButton> */}
+
+      {latestfeedback && (
+        <CModal
+          // className={visible ? "fade-out" : "fade-in"}
+          // size="m"
+          backdrop="static"
+          scrollable
+          alignment="top"
+          visible={visible}
+        >
+          {loading ? (
+            <div
+              className="d-flex justify-content-center align-items-center flex-column"
+              style={{ height: "200px", width: "100%" }}
+            >
+              <CImage
+                src={TayproLogo}
+                alt="Logo"
+                width={200}
+                height={100}
+                style={{
+                  objectFit: "contain",
+                  marginBottom: "20px",
+                }}
+                className="mb-3"
+              />
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              <CModalHeader closeButton={false}>
+                <CModalTitle>Rate for our Service</CModalTitle>
+              </CModalHeader>
+
+              <CModalBody>
+                {submiterror && (
+                  <div className="alert alert-danger" role="alert">
+                    {submiterror}
+                  </div>
+                )}
+                <CForm>
+                  <div className="mb-3">
+                    <CFormLabel htmlFor="comments">Feedback</CFormLabel>
+                    <CFormTextarea
+                      id="comments"
+                      name="comments"
+                      rows={2}
+                      placeholder="Write your feedback..."
+                      value={formData.comments}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <CFormLabel>Rating</CFormLabel>
+                    <StarRating
+                      rating={formData.rating}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </CForm>
+                <hr />
+                <div className="d-flex justify-content-between">
+                  <CButton
+                    color="success"
+                    size="sm"
+                    onClick={handleSubmit}
+                    disabled={!formData.comments || !formData.rating}
+                  >
+                    {submitLoading ? (
+                      <>
+                        Please Wait <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
+                  </CButton>
+                </div>
+              </CModalBody>
+            </>
+          )}
+        </CModal>
+      )}
     </div>
   );
 };

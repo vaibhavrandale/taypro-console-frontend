@@ -75,13 +75,14 @@ import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician
 import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTemperature";
 import PreventiveMaintenanceList from "./views/client-admin/preventive-maintenance-dashboard/PreventiveMaintenanceList";
 import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMaintenanceMatrix";
+import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
-const UserBasedLinkDashboard = React.lazy(() =>
-  import("./views/dashboard/UserBasedLinkDashboard")
-);
+// const UserBasedLinkDashboard = React.lazy(() =>
+//   import("")
+// );
 
 //-----------------------master admin----------------------------------
 

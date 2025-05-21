@@ -4785,3 +4785,43 @@ export const debug_log = [
     ],
   },
 ];
+
+export const customer_feedback = [
+  {
+    _id: 1,
+    customer_feedback_no: "CF-2526-01",
+    user: {
+      _id: "68022b67058b587bed9f48c1",
+      username: "Vaibhav Randale",
+      email: "vaibhav@taypro.in",
+      designation: "O&M Head",
+      site_id: "taypro_office",
+    },
+    feedback_data: {
+      rating: 4,
+      comments: "Great service and support!",
+      attachment:
+        "https://plus.unsplash.com/premium_photo-1666345061961-c6709ac5da5f?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    },
+    status: true,
+    createdAt: "2025-05-01T11:38:00.000Z",
+  },
+  {
+    _id: 2,
+    customer_feedback_no: "CF-2526-02",
+    user: {
+      _id: "68022b67058b587bed9f48c1",
+      username: "Dhiren Bhatta",
+      email: "dhiren@taypro.in",
+      designation: "O&M Head",
+      site_id: "avaada_agar",
+    },
+    feedback_data: {
+      rating: 4,
+      comments: "",
+      attachment: "",
+    },
+    status: false,
+    createdAt: "2025-05-01T11:38:00.000Z",
+  },
+];
