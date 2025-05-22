@@ -388,7 +388,7 @@ const ClientAdminDashboard = () => {
                     <p className="text-danger text-center">{state.error}</p>
                   ) : (
                     <>
-                      {blockWiseCleaning.length > 0 ? (
+                      {blockWiseCleaning?.length > 0 ? (
                         <CChartPie
                           data={{
                             labels: blockWiseCleaning.map(
