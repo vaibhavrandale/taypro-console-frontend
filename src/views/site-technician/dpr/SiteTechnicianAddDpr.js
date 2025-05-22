@@ -81,6 +81,7 @@ const SiteTechnicianAddDpr = () => {
       robots_run_by: "",
       total_robots: "",
       comments: "",
+      report_date: new Date().toISOString().split("T")[0],
       technician_present: [],
     },
     sites: [],
@@ -290,25 +291,6 @@ const SiteTechnicianAddDpr = () => {
                 </div>
               </CCol>
 
-              <CCol md="6">
-                <div className="mb-3">
-                  <label className="form-label"> Date</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="comments"
-                    value={new Date().toLocaleDateString()} // More readable format
-                    readOnly
-                    disabled
-                  />
-                  {/* Hidden field to submit the actual value */}
-                  <input
-                    type="hidden"
-                    name="date"
-                    value={state.dprData.report_date}
-                  />
-                </div>
-              </CCol>
               <CTable striped bordered className="mt-2">
                 <CTableHead color="secondary">
                   <CTableRow>
