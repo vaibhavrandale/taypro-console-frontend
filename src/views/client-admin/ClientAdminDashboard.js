@@ -16,6 +16,15 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChart, CChartLine, CChartPie } from "@coreui/react-chartjs";
 
+const chartColors = [
+  "#FF6384",
+  "#36A2EB",
+  "#FFCE56",
+  "#4BC0C0",
+  "#9966FF",
+  "#FF9F40",
+];
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITEID_REQUEST":
@@ -38,38 +47,23 @@ const reducer = (state, action) => {
       };
     case "SELECT_SITENAME_FAIL":
       return { ...state, loadingFields: false };
-    case "SET_SITE_COORDINATES":
-      return { ...state, selectedSiteData: action.payload };
-    case "FETCH_DISTANCE_REQUEST":
-      return { ...state, loadingDistance: true };
-    case "FETCH_DISTANCE_SUCCESS":
+    case "FETCH_SITE_DETAILS_REQUEST":
       return {
         ...state,
-        distanceSummaryData: action.payload,
-        loadingDistance: false,
+        loadingSiteDetails: true,
       };
-    case "FETCH_DISTANCE_FAIL":
-      return { ...state, loadingDistance: false, error: action.payload };
-    case "FETCH_REQUEST":
-      return { ...state, loadingBatteryStatus: true, error: "" };
-    case "FETCH_SUCCESS":
+    case "FETCH_SITE_DETAILS_SUCCESS":
       return {
         ...state,
-        loadingBatteryStatus: false,
-        robotData: action.payload,
+        loadingSiteDetails: false,
+        siteDetails: action.payload,
       };
-    case "FETCH_FAIL":
-      return { ...state, loadingBatteryStatus: false, error: action.payload };
-    case "FETCH_GATEWAYS_REQUEST":
-      return { ...state, loadingGateways: true };
-    case "FETCH_GATEWAYS_SUCCESS":
+    case "FETCH_SITE_DETAILS_FAIL":
       return {
         ...state,
-        gatewaysData: action.payload,
-        loadingGateways: false,
+        loadingSiteDetails: false,
+        siteDetailsError: action.payload,
       };
-    case "FETCH_GATEWAYS_FAIL":
-      return { ...state, loadingGateways: false, error: action.payload };
     default:
       return state;
   }
@@ -81,24 +75,22 @@ const ClientAdminDashboard = () => {
   const [state, dispatch] = useReducer(reducer, {
     loadingSiteIds: false,
     siteIds: [],
+    siteDetailsError: "",
+    loadingSiteDetails: false,
+    siteDetails: [],
     error: "",
-    selectedSiteData: null,
-    loading: true,
-    distanceSummaryData: [],
-    gatewaysData: [],
-    loadingGateways: false,
-    robotData: null,
-    loadingBatteryStatus: false,
-    loadingDistance: false,
   });
 
   const [siteName, setSiteName] = useState({
     site_id: "",
   });
-
   const [liveLocation, setLiveLocation] = useState(null);
+  const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
+  const [gateways, setGateways] = useState([]);
+  const [robotsData, setRobotsData] = useState([]);
+  const [siteCoordinates, setSiteCoordinates] = useState({});
+  const [totalAreaCleaned, setTotalAreaCleaned] = useState(0);
 
-  // Fetch site IDs on first load
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -119,7 +111,26 @@ const ClientAdminDashboard = () => {
       }
     };
 
+    const getLiveLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLiveLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    };
+
     fetchSiteIds();
+    getLiveLocation();
   }, [authtoken]);
 
   useEffect(() => {
@@ -127,128 +138,40 @@ const ClientAdminDashboard = () => {
       const firstSite = state.siteIds[0];
       setSiteName({ site_id: firstSite.site_id });
       dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: firstSite });
-      fetchCoordinates(firstSite.site_id);
+      fetchSiteDetails(firstSite.site_id);
     }
   }, [state.siteIds, siteName.site_id]);
 
-  // Fetch robot and distance data when site_id is updated
-  useEffect(() => {
-    if (!siteName.site_id) return;
-
-    const fetchDebugData = async () => {
-      dispatch({ type: "FETCH_REQUEST" });
-      try {
-        const response = await axios.get(
-          `/api/v1/robots/sitewise-battery-status/${siteName.site_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
-        );
-        dispatch({ type: "FETCH_SUCCESS", payload: response.data.robots });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload:
-            error.response?.data?.message ||
-            error.response?.data?.error ||
-            "Unknown error",
-        });
-      }
-    };
-
-    const fetchDistanceSummary = async () => {
-      dispatch({ type: "FETCH_DISTANCE_REQUEST" });
-      try {
-        const response = await axios.get(
-          `/api/v1/cleaninglogs/distance-summary/${siteName.site_id}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-        dispatch({
-          type: "FETCH_DISTANCE_SUCCESS",
-          payload: response.data,
-        });
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message);
-        dispatch({ type: "FETCH_DISTANCE_FAIL", payload: error.message });
-      }
-    };
-
-    const fetchGateways = async () => {
-      dispatch({ type: "FETCH_GATEWAYS_REQUEST" });
-      try {
-        const response = await axios.get(
-          `/api/v1/gateways/site/${siteName.site_id}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-        dispatch({
-          type: "FETCH_GATEWAYS_SUCCESS",
-          payload: response.data.data,
-        });
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message);
-        dispatch({ type: "FETCH_GATEWAYS_FAIL", payload: error.message });
-      }
-    };
-
-    fetchDebugData();
-    fetchDistanceSummary();
-    fetchGateways();
-  }, [siteName.site_id, authtoken]);
-
-  const getLiveLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLiveLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
+  const fetchSiteDetails = async (siteId) => {
+    dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
+    try {
+      const response = await axios.get(
+        `/api/v1/sites-coordinates/site-details/${siteId}`,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  };
 
-  useEffect(() => {
-    getLiveLocation();
-  }, []);
+      console.log(response.data.data);
 
-  const RecenterMap = ({ lat, lng }) => {
-    const map = useMap();
-
-    useEffect(() => {
-      map.setView([lat, lng], map.getZoom(), { animate: true });
-    }, [lat, lng, map]);
-
-    return null;
-  };
-
-  const fetchCoordinates = async (selectedId) => {
-    try {
-      const res = await axios.post(
-        "/api/v1/sites-coordinates/get-by-siteId",
-        { site_id: selectedId },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
-      );
-      dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message || error.response.data.error);
       dispatch({
-        type: "PUNCH_FAIL",
-        payload: error.response.data.message || error.response.data.error,
+        type: "FETCH_SITE_DETAILS_SUCCESS",
+        payload: response.data.data,
       });
+      setSiteCoordinates(response.data.data.coordinates);
+      setTotalAreaCleaned(response.data.data.totalAreaCleaned);
+      setRobotsData(response.data.data.robots);
+      setGateways(response.data.data.gateways);
+      setBlockWiseCleaning(response.data.data.blockWiseCleaning);
+    } catch (error) {
+      dispatch({
+        type: "FETCH_SITE_DETAILS_FAIL",
+        payload: error.response?.data?.message || error.message,
+      });
+      toast.error(error.response?.data?.message || error.message);
     }
   };
+
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
@@ -263,77 +186,11 @@ const ClientAdminDashboard = () => {
       });
 
       dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
-
-      fetchCoordinates(selectedSite.site_id);
+      fetchSiteDetails(selectedSite.site_id);
     } else {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
     }
   };
-
-  useEffect(() => {
-    if (state.siteIds?.length > 0 && !siteName.site_id) {
-      const firstSite = state.siteIds[0];
-      setSiteName({ site_id: firstSite.site_id });
-
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: firstSite });
-
-      fetchCoordinates(firstSite.site_id);
-    }
-  }, [fetchCoordinates, siteName.site_id, state.siteIds]);
-
-  const chartColors = [
-    "#FF5733",
-    "#28A745",
-    "#FFC107",
-    "#17A2B8",
-    "#DC3545",
-    "#6C757D",
-    "#8E44AD",
-    "#3498DB",
-    "#E74C3C",
-    "#2ECC71",
-    "#F39C12",
-    "#D35400",
-    "#C0392B",
-    "#27AE60",
-    "#16A085",
-    "#2980B9",
-    "#2C3E50",
-    "#1ABC9C",
-    "#34495E",
-    "#95A5A6",
-
-    "#FF6B6B",
-    "#4ECDC4",
-    "#1A535C",
-    "#F7FFF7",
-    "#FF9F1C",
-    "#2B2D42",
-    "#8D99AE",
-    "#EDF2F4",
-    "#EF233C",
-    "#D90429",
-    "#FFB6B9",
-    "#FAE3D9",
-    "#BBDED6",
-    "#8AC6D1",
-    "#FFC3A0",
-    "#FF677D",
-    "#D4A5A5",
-    "#392F5A",
-    "#31A2AC",
-    "#61C0BF",
-    "#6B4226",
-    "#D9BF77",
-    "#ACD8AA",
-    "#FFE156",
-    "#6A0572",
-    "#AB83A1",
-    "#473E66",
-    "#F5B700",
-    "#1E3888",
-    "#00A878",
-  ];
 
   const SatelliteMap = ({ latitude, longitude }) => {
     if (!latitude || !longitude) return null;
@@ -353,8 +210,18 @@ const ClientAdminDashboard = () => {
     );
   };
 
+  const RecenterMap = ({ lat, lng }) => {
+    const map = useMap();
+
+    useEffect(() => {
+      map.setView([lat, lng], map.getZoom(), { animate: true });
+    }, [lat, lng, map]);
+
+    return null;
+  };
+
   const batteryChartData =
-    state.robotData?.map((entry) => ({
+    robotsData?.map((entry) => ({
       robot: entry.robot_no,
       value: parseInt(entry.battery_voltage),
     })) || [];
@@ -363,6 +230,9 @@ const ClientAdminDashboard = () => {
     <>
       <div className="p-4">
         <CCol md={3} className="mb-3">
+          <label className="form-label">
+            {state.loadingSiteIds && <LoadingSpinner />}
+          </label>
           <CFormSelect
             name="site_id"
             value={siteName.site_id}
@@ -391,11 +261,9 @@ const ClientAdminDashboard = () => {
               >
                 <MapContainer
                   center={
-                    state.selectedSiteData
-                      ? [
-                          state.selectedSiteData.latitude,
-                          state.selectedSiteData.longitude,
-                        ]
+                    siteCoordinates.latitude != null &&
+                    siteCoordinates.longitude != null
+                      ? [siteCoordinates.latitude, siteCoordinates.longitude]
                       : [18.6485, 73.8313]
                   }
                   zoom={12}
@@ -403,17 +271,16 @@ const ClientAdminDashboard = () => {
                   style={{ height: "100%", width: "100%", borderRadius: "8px" }}
                 >
                   <SatelliteMap
-                    latitude={state.selectedSiteData?.latitude}
-                    longitude={state.selectedSiteData?.longitude}
+                    latitude={siteCoordinates.latitude}
+                    longitude={siteCoordinates.longitude}
                   />
-                  {state.selectedSiteData && (
-                    <>
+                  {siteCoordinates.latitude != null &&
+                    siteCoordinates.longitude != null && (
                       <RecenterMap
-                        lat={state.selectedSiteData.latitude}
-                        lng={state.selectedSiteData.longitude}
+                        lat={siteCoordinates.latitude}
+                        lng={siteCoordinates.longitude}
                       />
-                    </>
-                  )}
+                    )}
                 </MapContainer>
               </div>
             </CCol>
@@ -498,181 +365,167 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-      </div>
 
-      <div className="mt-4">
-        <CRow className="justify-content-center">
-          <CCol xs={12} md={6} className="mt-4">
-            <CCard className="mb-4 shadow">
-              {state.loadingDistance ? (
+        <div className="mt-4">
+          <CRow className="justify-content-center">
+            <CCol xs={12} md={6} className="mt-4">
+              <CCard className="mb-4 shadow">
+                <CCardHeader>
+                  <h5 className="text-center">
+                    Total Area Cleaned:{" "}
+                    <span className="text-success fw-bold">
+                      {totalAreaCleaned} m²
+                    </span>
+                  </h5>
+                </CCardHeader>
                 <div
                   className="d-flex justify-content-center align-items-center"
                   style={{ minHeight: "350px" }}
                 >
-                  <LoadingSpinner />
-                </div>
-              ) : state.error ? (
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ minHeight: "350px" }}
-                >
-                  <p className="text-danger text-center">{state.error}</p>
-                </div>
-              ) : state.distanceSummaryData.blocks === 0 ? (
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ minHeight: "350px" }}
-                >
-                  <CAlert color="warning" className="text-center mb-0">
-                    No data available for the selected site.
-                  </CAlert>
-                </div>
-              ) : (
-                <>
-                  <CCardHeader>
-                    <h5 className="text-center">
-                      Total Area Cleaned:{" "}
-                      <span className="text-success fw-bold">
-                        {state.distanceSummaryData?.totalAreaCleaned} m
-                      </span>
-                    </h5>
-                  </CCardHeader>
-                  <div
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ minHeight: "350px" }}
-                  >
-                    {Array.isArray(state.distanceSummaryData?.blocks) &&
-                    state.distanceSummaryData.blocks.length > 0 ? (
-                      <CChartPie
-                        style={{ height: "300px" }}
-                        data={{
-                          labels: state.distanceSummaryData.blocks.map(
-                            (block) => block.block
-                          ),
-                          datasets: [
-                            {
-                              data: state.distanceSummaryData.blocks.map(
-                                (block) => block.areaCleaned
-                              ),
-                              backgroundColor: chartColors.slice(
-                                0,
-                                state.distanceSummaryData.blocks.length
-                              ),
-                            },
-                          ],
-                        }}
-                        options={{
-                          plugins: {
-                            legend: { position: "right" },
-                            tooltip: {
-                              callbacks: {
-                                label: function (tooltipItem) {
-                                  const block =
-                                    state.distanceSummaryData.blocks[
-                                      tooltipItem.dataIndex
-                                    ];
-                                  return `🧱 ${block.block} | 🧼 ${block.areaCleaned} m²`;
+                  {state.loadingSiteDetails ? (
+                    <LoadingSpinner />
+                  ) : state.error ? (
+                    <p className="text-danger text-center">{state.error}</p>
+                  ) : (
+                    <>
+                      {blockWiseCleaning.length > 0 ? (
+                        <CChartPie
+                          data={{
+                            labels: blockWiseCleaning.map(
+                              (block) => block.block
+                            ),
+                            datasets: [
+                              {
+                                data: blockWiseCleaning.map(
+                                  (block) => block.areaCleaned
+                                ),
+                                backgroundColor: chartColors.slice(
+                                  0,
+                                  blockWiseCleaning.length
+                                ),
+                              },
+                            ],
+                          }}
+                          options={{
+                            plugins: {
+                              legend: {
+                                display: false, // ✅ This hides the legend
+                              },
+                              tooltip: {
+                                callbacks: {
+                                  label: function (tooltipItem) {
+                                    const block =
+                                      blockWiseCleaning[tooltipItem.dataIndex];
+                                    return `🧱 ${
+                                      block.block || "Unassigned"
+                                    } | 🧼 ${block.areaCleaned} m²`;
+                                  },
                                 },
                               },
                             },
-                          },
-                        }}
-                      />
-                    ) : (
-                      <p className="text-center text-muted">
-                        No data available
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
-            </CCard>
-          </CCol>
+                          }}
+                        />
+                      ) : (
+                        <p className="text-center text-muted">
+                          No cleaning data available
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </CCard>
+            </CCol>
 
-          <CCol xs={12} md={6} className="mt-4">
-            <CCard className="mb-4 shadow">
-              <CCardHeader>
-                <h5 className="text-center">Gateways Brief</h5>
-              </CCardHeader>
+            <CCol xs={12} md={6} className="mt-4">
+              <CCard className="mb-4 shadow">
+                <CCardHeader>
+                  <h5 className="text-center">Gateways Brief</h5>
+                </CCardHeader>
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "350px" }}
+                >
+                  {state.loadingSiteDetails ? (
+                    <LoadingSpinner />
+                  ) : state.error ? (
+                    <p className="text-danger text-center">{state.error}</p>
+                  ) : (
+                    <>
+                      {gateways.length > 0 ? (
+                        <CChart
+                          type="doughnut"
+                          style={{ height: "300px" }}
+                          data={{
+                            labels: gateways.map(
+                              (gateway) => gateway.gateway_name
+                            ),
+                            datasets: [
+                              {
+                                data: gateways.map(() => 1),
+                                backgroundColor: gateways.map((gateway) =>
+                                  gateway.gateway_status ? "#28a745" : "#dc3545"
+                                ),
+                              },
+                            ],
+                          }}
+                          options={{
+                            plugins: {
+                              legend: {
+                                position: "right",
+                              },
+                            },
+                          }}
+                        />
+                      ) : (
+                        <p className="text-center text-muted">
+                          No Gateway details available
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </CCard>
+            </CCol>
+          </CRow>
+        </div>
 
-              <CCardBody
-                className="d-flex justify-content-center align-items-center"
-                style={{ minHeight: "350px" }}
-              >
-                {state.loadingGateways ? (
-                  <LoadingSpinner />
-                ) : state.error ? (
-                  <p className="text-danger text-center">{state.error}</p>
-                ) : state.gatewaysData.length === 0 ? (
-                  <CAlert color="warning" className="text-center mb-0">
-                    No data available for the selected site.
-                  </CAlert>
-                ) : (
-                  <CChart
-                    type="doughnut"
-                    style={{ height: "300px" }}
-                    data={{
-                      labels: state.gatewaysData.map(
-                        (gateway) => gateway.gateway_name
-                      ),
-                      datasets: [
-                        {
-                          data: state.gatewaysData.map(() => 1),
-                          backgroundColor: state.gatewaysData.map((gateway) =>
-                            gateway.gateway_status ? "#28a745" : "#dc3545"
-                          ),
-                        },
-                      ],
-                    }}
-                    options={{
-                      plugins: {
-                        legend: {
-                          position: "right",
-                        },
+        <div className="mt-4" style={{ width: "100%", height: "70%" }}>
+          {state.loadingSiteDetails ? (
+            <CSpinner color="primary" />
+          ) : state.robotData?.length === 0 ? (
+            <CAlert color="warning">
+              No battery logs found for the Robots
+            </CAlert>
+          ) : (
+            <CCard>
+              <CCardHeader>Battery Status</CCardHeader>
+              <CCardBody>
+                <CChartLine
+                  data={{
+                    labels: batteryChartData.map((entry) =>
+                      entry.robot.slice(-3)
+                    ),
+                    datasets: [
+                      {
+                        label: "Battery (%)",
+                        data: batteryChartData.map((entry) => entry.value),
+                        borderColor: "rgb(255, 99, 132)",
+                        tension: 0.4,
                       },
-                    }}
-                  />
-                )}
+                    ],
+                  }}
+                  options={{
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                      },
+                    },
+                  }}
+                />
               </CCardBody>
             </CCard>
-          </CCol>
-        </CRow>
-      </div>
-
-      <div className="mt-4" style={{ width: "100%", height: "70%" }}>
-        {state.loadingBatteryStatus ? (
-          <CSpinner color="primary" />
-        ) : state.robotData?.length === 0 ? (
-          <CAlert color="warning">No battery logs found for the Robots</CAlert>
-        ) : (
-          <CCard>
-            <CCardHeader>Battery Status</CCardHeader>
-            <CCardBody>
-              <CChartLine
-                data={{
-                  labels: batteryChartData.map((entry) =>
-                    entry.robot.slice(-3)
-                  ),
-                  datasets: [
-                    {
-                      label: "Battery (%)",
-                      data: batteryChartData.map((entry) => entry.value),
-                      borderColor: "rgb(255, 99, 132)",
-                      tension: 0.4,
-                    },
-                  ],
-                }}
-                options={{
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                    },
-                  },
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        )}
+          )}
+        </div>
       </div>
     </>
   );
