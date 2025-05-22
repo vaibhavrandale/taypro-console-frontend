@@ -410,7 +410,7 @@ const ViewProjectClosureDocument = () => {
                 <tr>
                   <th>Name</th>
                   <th>Hiring Type</th>
-                  <th>Daily Wages</th>
+                  <th>Monthly/Daily Salary</th>
                 </tr>
               </thead>
               <tbody>
