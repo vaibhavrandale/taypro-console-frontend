@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CContainer,
   CRow,
@@ -7,69 +7,94 @@ import {
   CCardBody,
   CCardTitle,
   CCardText,
+  CFormInput,
 } from "@coreui/react";
 import { Link, useNavigate } from "react-router-dom";
-
-import "@coreui/icons";
-import _nav from "../../_nav"; // Import Navigation Data
 import { useSelector } from "react-redux";
+import _nav from "../../_nav"; // Import Navigation Data
 
-const ProjectAdminDashboard = () => {
+const MasterAdminDashboard = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState("");
+
   useEffect(() => {
     if (!userInfo) {
-      navigate("/login"); // Redirect to login if user is not found
+      navigate("/login");
     }
   }, [navigate, userInfo]);
+
   const filteredNav = _nav.filter((navItem) => {
-    if (userInfo.role === "Master Admin") {
+    if (userInfo.role === "Master Admin")
       return navItem.name === "Master Admin";
-    } else if (userInfo.role === "Project Admin") {
-      return navItem.name === "Project Admin"; // Show only Service Admin items
-    } else if (userInfo.role === "Service Admin") {
-      return navItem.name === "Service Admin"; // Show only Service Admin items
-    } else if (userInfo.role === "Service User") {
-      return navItem.name === "Service User"; // Show only Service Admin items
-    } else if (userInfo.role === "Site Technician") {
-      return navItem.name === "Site Technician"; // Show only Service Admin items
-    } else if (userInfo.role === "Client Admin") {
-      return navItem.name === "Client Admin"; // Show only Client Admin items
-    } else if (userInfo.role === "Site Incharge") {
-      return navItem.name === "Site Incharge"; // Show only Client Admin items
-    } else if (userInfo.role === "Client Technician") {
-      return navItem.name === "Client Technician"; // Show only Client Admin items
-    }
+    if (userInfo.role === "Project Admin")
+      return navItem.name === "Project Admin";
+    if (userInfo.role === "Service Admin")
+      return navItem.name === "Service Admin";
+    if (userInfo.role === "Service User")
+      return navItem.name === "Service User";
+    if (userInfo.role === "Site Technician")
+      return navItem.name === "Site Technician";
+    if (userInfo.role === "Client Admin")
+      return navItem.name === "Client Admin";
+    if (userInfo.role === "Site Incharge")
+      return navItem.name === "Site Incharge";
+    if (userInfo.role === "Client Technician")
+      return navItem.name === "Client Technician";
     return false;
   });
 
+  const navItems = filteredNav[0]?.items || [];
+
+  const filteredItems = navItems.filter((item) =>
+    item.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
-    <CContainer fluid className="">
-      <h3 className="text-center my-2 text-primary">Project Admin Dashboard</h3>
+    <CContainer fluid>
+      <CRow className="align-items-center justify-content-between mt-2 mb-3">
+        <CCol>
+          <h3 className="text-primary text-center my-2">
+            Project Admin Dashboard
+          </h3>
+        </CCol>
+      </CRow>
+
+      <div className="d-flex justify-content-end mb-3">
+        <CCol xs="12" md="4" lg="3">
+          <CFormInput
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+        </CCol>
+      </div>
+
       <CRow className="g-4 my-3">
-        {filteredNav[0].items.map((item, index) => (
+        {filteredItems.map((item, index) => (
           <CCol md={3} lg={3} key={index}>
             <CCard className="shadow-sm border-0 text-center">
               <CCardBody>
                 {item.icon}
-
                 <CCardTitle className="my-2 fs-6">
-                  {" "}
                   <Link
                     to={item.to}
-                    className=" text-primary text-decoration-none"
+                    className="text-primary text-decoration-none"
                   >
                     {item.name}
                   </Link>
                 </CCardTitle>
-                <CCardText></CCardText>
+                <CCardText />
               </CCardBody>
             </CCard>
           </CCol>
         ))}
+        {filteredItems.length === 0 && (
+          <p className="text-center text-muted">No results found.</p>
+        )}
       </CRow>
     </CContainer>
   );
 };
 
-export default ProjectAdminDashboard;
+export default MasterAdminDashboard;
