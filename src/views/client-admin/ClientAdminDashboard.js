@@ -6,15 +6,14 @@ import {
   CCol,
   CFormSelect,
   CRow,
-  CSpinner,
 } from "@coreui/react";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
-import { MapContainer, useMap } from "react-leaflet";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChart, CChartLine, CChartPie } from "@coreui/react-chartjs";
+import "./GoogleMapEmbed.css";
 
 const chartColors = [
   "#FF6384",
@@ -28,7 +27,7 @@ const chartColors = [
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITEID_REQUEST":
-      return { ...state, loadingSiteIds: true, error: "" };
+      return { ...state, loadingSiteIds: true, errorSIteIds: "" };
     case "FETCH_SITEID_SUCCESS":
       return {
         ...state,
@@ -36,17 +35,8 @@ const reducer = (state, action) => {
         siteIds: action.payload,
       };
     case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSiteIds: false, error: action.payload };
-    case "SELECT_SITENAME_REQUEST":
-      return { ...state, loadingFields: true };
-    case "SELECT_SITENAME_SUCCESS":
-      return {
-        ...state,
-        loadingFields: false,
-        selectedSiteName: action.payload,
-      };
-    case "SELECT_SITENAME_FAIL":
-      return { ...state, loadingFields: false };
+      return { ...state, loadingSiteIds: false, errorSIteIds: action.payload };
+
     case "FETCH_SITE_DETAILS_REQUEST":
       return {
         ...state,
@@ -72,25 +62,26 @@ const reducer = (state, action) => {
 const ClientAdminDashboard = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  const [state, dispatch] = useReducer(reducer, {
-    loadingSiteIds: false,
-    siteIds: [],
+  const [
+    { siteDetailsError, loadingSiteDetails, loadingSiteIds, siteIds },
+    dispatch,
+  ] = useReducer(reducer, {
     siteDetailsError: "",
     loadingSiteDetails: false,
-    siteDetails: [],
-    error: "",
+    siteDetails: {},
+    siteIds: [],
+    loadingSiteIds: false,
+    errorSIteIds: "",
   });
 
-  const [siteName, setSiteName] = useState({
-    site_id: "",
-  });
-  const [liveLocation, setLiveLocation] = useState(null);
+  const [site_id, setSiteid] = useState(userInfo.assigned_sites[0].site_id);
+
   const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [robotsData, setRobotsData] = useState([]);
   const [siteCoordinates, setSiteCoordinates] = useState({});
   const [totalAreaCleaned, setTotalAreaCleaned] = useState(0);
-
+  const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -105,119 +96,100 @@ const ClientAdminDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.error || "Error fetching sites",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error(error.response?.data?.error || "Error fetching sites");
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
 
-    const getLiveLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLiveLocation({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
-          },
-          (error) => {
-            console.error("Error getting location:", error);
+    const fetchSiteDetails = async () => {
+      dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
+      try {
+        const response = await axios.get(
+          `/api/v1/sites-coordinates/site-details/${site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-      } else {
-        alert("Geolocation is not supported by this browser.");
+
+        console.log(response.data.data);
+
+        dispatch({
+          type: "FETCH_SITE_DETAILS_SUCCESS",
+          payload: response.data.data,
+        });
+        setSiteCoordinates(response.data.data.coordinates);
+        setTotalAreaCleaned(response.data.data.totalAreaCleaned);
+        setRobotsData(response.data.data.robots);
+        setGateways(response.data.data.gateways);
+        setBlockWiseCleaning(response.data.data.blockWiseCleaning);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITE_DETAILS_FAIL",
+          payload: error.response?.data?.message || error.message,
+        });
+        toast.error(error.response?.data?.message || error.message);
       }
     };
 
+    fetchSiteDetails();
     fetchSiteIds();
-    getLiveLocation();
-  }, [authtoken]);
-
-  useEffect(() => {
-    if (state.siteIds.length > 0 && !siteName.site_id) {
-      const firstSite = state.siteIds[0];
-      setSiteName({ site_id: firstSite.site_id });
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: firstSite });
-      fetchSiteDetails(firstSite.site_id);
-    }
-  }, [state.siteIds, siteName.site_id]);
-
-  const fetchSiteDetails = async (siteId) => {
-    dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
-    try {
-      const response = await axios.get(
-        `/api/v1/sites-coordinates/site-details/${siteId}`,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-
-      console.log(response.data.data);
-
-      dispatch({
-        type: "FETCH_SITE_DETAILS_SUCCESS",
-        payload: response.data.data,
-      });
-      setSiteCoordinates(response.data.data.coordinates);
-      setTotalAreaCleaned(response.data.data.totalAreaCleaned);
-      setRobotsData(response.data.data.robots);
-      setGateways(response.data.data.gateways);
-      setBlockWiseCleaning(response.data.data.blockWiseCleaning);
-    } catch (error) {
-      dispatch({
-        type: "FETCH_SITE_DETAILS_FAIL",
-        payload: error.response?.data?.message || error.message,
-      });
-      toast.error(error.response?.data?.message || error.message);
-    }
-  };
+  }, [authtoken, site_id]);
 
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
     const selectedSiteName = e.target.value;
-    const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+    console.log(selectedSiteName);
+
+    const selectedSite = siteIds.find(
+      (site) => site.site_id === selectedSiteName
     );
 
     if (selectedSite) {
-      setSiteName({
-        site_id: selectedSite.site_id,
-      });
+      setSiteid(selectedSite.site_id);
 
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
-      fetchSiteDetails(selectedSite.site_id);
+      dispatch({
+        type: "SELECT_SITENAME_SUCCESS",
+        payload: selectedSite.site_id,
+      });
     } else {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
     }
   };
 
-  const SatelliteMap = ({ latitude, longitude }) => {
-    if (!latitude || !longitude) return null;
-
-    const src = `https://maps.google.com/maps?hl=en&q=${latitude},${longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
+  const GoogleMapEmbed = (latitude, longitude) => {
+    const mapSrc = `https://maps.google.com/maps?hl=en&q=${latitude},${longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
 
     return (
-      <iframe
-        title="Google Satellite Map"
-        className="rounded map"
-        width="100%"
-        height="415"
-        src={src}
-        style={{ borderRadius: "8px", width: "100%" }}
-        allowFullScreen
-      />
+      <div
+        className="map-container"
+        style={{
+          position: "relative",
+          height: "415px",
+          width: "100%",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        {!isLoaded && (
+          <div className="map-loader">
+            <div className="spinner"></div>
+            <p>Loading Map...</p>
+          </div>
+        )}
+        <iframe
+          title="Google Satellite Map"
+          width="100%"
+          height="100%"
+          src={mapSrc}
+          onLoad={() => setIsLoaded(true)}
+          allowFullScreen
+        ></iframe>
+      </div>
     );
-  };
-
-  const RecenterMap = ({ lat, lng }) => {
-    const map = useMap();
-
-    useEffect(() => {
-      map.setView([lat, lng], map.getZoom(), { animate: true });
-    }, [lat, lng, map]);
-
-    return null;
   };
 
   const batteryChartData =
@@ -230,58 +202,39 @@ const ClientAdminDashboard = () => {
     <>
       <div className="p-4">
         <CCol md={3} className="mb-3">
-          <label className="form-label">
-            {state.loadingSiteIds && <LoadingSpinner />}
-          </label>
-          <CFormSelect
-            name="site_id"
-            value={siteName.site_id}
-            onChange={handleSiteNameChange}
-          >
-            {state.siteIds?.length > 0 ? (
-              state.siteIds.map((item) => (
+          {loadingSiteIds ? (
+            <LoadingSpinner />
+          ) : siteIds?.length > 0 ? (
+            <CFormSelect
+              name="site_id"
+              value={site_id}
+              onChange={handleSiteNameChange}
+            >
+              {siteIds.map((item) => (
                 <option key={item.site_id} value={item.site_id}>
                   {item.site_id}
                 </option>
-              ))
-            ) : (
-              <option value="">
-                <LoadingSpinner />
-              </option>
-            )}
-          </CFormSelect>
+              ))}
+            </CFormSelect>
+          ) : (
+            <p>No SItes Found</p>
+          )}
         </CCol>
 
         <div className="flex flex-wrap gap-4">
           <CRow>
             <CCol>
-              {/* Map Container */}
               <div
                 style={{ flex: "1 1 60%", minWidth: "350px", height: "400px" }}
               >
-                <MapContainer
-                  center={
-                    siteCoordinates.latitude != null &&
-                    siteCoordinates.longitude != null
-                      ? [siteCoordinates.latitude, siteCoordinates.longitude]
-                      : [18.6485, 73.8313]
-                  }
-                  zoom={12}
-                  scrollWheelZoom={false}
-                  style={{ height: "100%", width: "100%", borderRadius: "8px" }}
-                >
-                  <SatelliteMap
-                    latitude={siteCoordinates.latitude}
-                    longitude={siteCoordinates.longitude}
-                  />
-                  {siteCoordinates.latitude != null &&
-                    siteCoordinates.longitude != null && (
-                      <RecenterMap
-                        lat={siteCoordinates.latitude}
-                        lng={siteCoordinates.longitude}
-                      />
-                    )}
-                </MapContainer>
+                {loadingSiteDetails ? (
+                  <LoadingSpinner />
+                ) : (
+                  GoogleMapEmbed(
+                    siteCoordinates.latitude,
+                    siteCoordinates.longitude
+                  )
+                )}
               </div>
             </CCol>
 
@@ -382,10 +335,12 @@ const ClientAdminDashboard = () => {
                   className="d-flex justify-content-center align-items-center"
                   style={{ minHeight: "350px" }}
                 >
-                  {state.loadingSiteDetails ? (
+                  {loadingSiteDetails ? (
                     <LoadingSpinner />
-                  ) : state.error ? (
-                    <p className="text-danger text-center">{state.error}</p>
+                  ) : siteDetailsError ? (
+                    <p className="text-danger text-center">
+                      {siteDetailsError}
+                    </p>
                   ) : (
                     <>
                       {blockWiseCleaning?.length > 0 ? (
@@ -439,16 +394,18 @@ const ClientAdminDashboard = () => {
             <CCol xs={12} md={6} className="mt-4">
               <CCard className="mb-4 shadow">
                 <CCardHeader>
-                  <h5 className="text-center">Gateways Brief</h5>
+                  <h5 className="text-center">Gateways Detail</h5>
                 </CCardHeader>
                 <div
                   className="d-flex justify-content-center align-items-center"
                   style={{ minHeight: "350px" }}
                 >
-                  {state.loadingSiteDetails ? (
+                  {loadingSiteDetails ? (
                     <LoadingSpinner />
-                  ) : state.error ? (
-                    <p className="text-danger text-center">{state.error}</p>
+                  ) : siteDetailsError ? (
+                    <p className="text-danger text-center">
+                      {siteDetailsError}
+                    </p>
                   ) : (
                     <>
                       {gateways.length > 0 ? (
@@ -489,42 +446,54 @@ const ClientAdminDashboard = () => {
           </CRow>
         </div>
 
-        <div className="mt-4" style={{ width: "100%", height: "70%" }}>
-          {state.loadingSiteDetails ? (
-            <CSpinner color="primary" />
-          ) : state.robotData?.length === 0 ? (
-            <CAlert color="warning">
-              No battery logs found for the Robots
-            </CAlert>
-          ) : (
-            <CCard>
-              <CCardHeader>Battery Status</CCardHeader>
-              <CCardBody>
-                <CChartLine
-                  data={{
-                    labels: batteryChartData.map((entry) =>
-                      entry.robot.slice(-3)
-                    ),
-                    datasets: [
-                      {
-                        label: "Battery (%)",
-                        data: batteryChartData.map((entry) => entry.value),
-                        borderColor: "rgb(255, 99, 132)",
-                        tension: 0.4,
-                      },
-                    ],
-                  }}
-                  options={{
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                      },
-                    },
-                  }}
-                />
-              </CCardBody>
-            </CCard>
-          )}
+        <div className="mt-4">
+          <CCard className="mb-4 shadow">
+            <CCardHeader>
+              <h5>Battery Status</h5>{" "}
+            </CCardHeader>
+            <CCardBody
+              className="d-flex justify-content-center align-items-center"
+              style={{ minHeight: "350px" }}
+            >
+              {loadingSiteDetails ? (
+                <LoadingSpinner />
+              ) : siteDetailsError ? (
+                <p className="text-danger text-center">{siteDetailsError}</p>
+              ) : (
+                <>
+                  {robotsData?.length > 0 ? (
+                    <CChartLine
+                      style={{ maxHeight: "300px", width: "100%" }}
+                      data={{
+                        labels: batteryChartData.map((entry) =>
+                          entry.robot.slice(-3)
+                        ),
+                        datasets: [
+                          {
+                            label: "Battery (%)",
+                            data: batteryChartData.map((entry) => entry.value),
+                            borderColor: "rgb(255, 99, 132)",
+                            tension: 0.4,
+                          },
+                        ],
+                      }}
+                      options={{
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                          },
+                        },
+                      }}
+                    />
+                  ) : (
+                    <CAlert color="warning">
+                      No battery logs found for the Robots
+                    </CAlert>
+                  )}
+                </>
+              )}
+            </CCardBody>
+          </CCard>
         </div>
       </div>
     </>
