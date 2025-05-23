@@ -283,7 +283,11 @@ const SiteTechnicianRobotOperating = () => {
 
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
-                  <CDropdownToggle size="sm" className="shadow-sm ">
+                  <CDropdownToggle
+                    size="sm"
+                    className="shadow-sm "
+                    color={`${robot.lora_state === 1 ? `success` : `danger`}`}
+                  >
                     {robot.robot_no}
                   </CDropdownToggle>
                 ) : (
@@ -291,7 +295,7 @@ const SiteTechnicianRobotOperating = () => {
                     className={`${
                       robot.lora_state === 1 ? `` : `text-white`
                     } shadow-sm`}
-                    color={`${robot.lora_state === 1 ? `danger` : `success`}`}
+                    color={`${robot.lora_state === 1 ? `success` : `danger`}`}
                     size="sm"
                   >
                     {robot.robot_no}
