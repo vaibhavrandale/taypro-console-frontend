@@ -261,7 +261,7 @@ const Robots = () => {
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
                 <CTableDataCell>
-                  {robot.lora_state === "1" ? (
+                  {robot.lora_state === 1 ? (
                     <CBadge color="success" shape="rounded-pill">
                       Online
                     </CBadge>
