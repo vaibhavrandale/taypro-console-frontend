@@ -463,8 +463,7 @@ const ClientAdminDashboard = () => {
                 <>
                   {robotsData?.length > 0 ? (
                     <CChartLine
-                      height={400}
-                      width={1000}
+                      style={{ maxHeight: "300px", width: "100%" }}
                       data={{
                         labels: batteryChartData.map((entry) =>
                           entry.robot.slice(-3)
