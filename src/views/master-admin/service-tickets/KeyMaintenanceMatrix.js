@@ -136,7 +136,6 @@ const KeyMaintenanceMatrix = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(result);
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );

@@ -99,7 +99,6 @@ const UserBasedLinkDashboard = () => {
               headers: { Authorization: `Bearer ${authtoken}` },
             }
           );
-          // console.log(result.data.data);
           dispatch({
             type: "FETCH_FEEDBACK_SUCCESS",
             payload: result.data.data,
@@ -187,8 +186,6 @@ const UserBasedLinkDashboard = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(formData);
-
     // Remove focus from the currently focused element
     if (document.activeElement) {
       document.activeElement.blur();

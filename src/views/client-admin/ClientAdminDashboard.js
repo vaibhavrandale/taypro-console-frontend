@@ -114,8 +114,6 @@ const ClientAdminDashboard = () => {
           }
         );
 
-        console.log(response.data.data);
-
         dispatch({
           type: "FETCH_SITE_DETAILS_SUCCESS",
           payload: response.data.data,
@@ -142,7 +140,6 @@ const ClientAdminDashboard = () => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
     const selectedSiteName = e.target.value;
-    console.log(selectedSiteName);
 
     const selectedSite = siteIds.find(
       (site) => site.site_id === selectedSiteName

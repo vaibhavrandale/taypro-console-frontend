@@ -119,7 +119,6 @@ const SiteTechnicianDashboard = () => {
         "/api/v1/technician-attendance/punchstatus",
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-      console.log(data.data);
 
       setinTime(data?.data?.data?.punchin_time);
 
@@ -333,10 +332,8 @@ const SiteTechnicianDashboard = () => {
 
   const isAfterFiveHours = () => {
     const current = new Date(currentTime);
-    console.log("current time " + current);
 
     const punchIn = new Date(inTime);
-    console.log("in time " + inTime);
     const diffInMs = current - punchIn;
     const diffInHours = diffInMs / (1000 * 60 * 60); // convert ms to hours
 

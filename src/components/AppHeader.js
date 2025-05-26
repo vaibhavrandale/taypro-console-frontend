@@ -34,6 +34,13 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "FETCH_USER_REQUEST":
+      return { ...state, usersLoading: true };
+    case "FETCH_USER_SUCCESS":
+      return { ...state, users: action.payload, usersLoading: false };
+    case "FETCH_USER_FAIL":
+      return { ...state, usersLoading: false, userError: action.payload };
+
     case "UPDATE_REQUEST":
       return { ...state, loadingUpdate: true, updateSuccess: false };
     case "UPDATE_SUCCESS":
@@ -65,6 +72,32 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        dispatch({ type: "FETCH_USER_REQUEST" });
+        const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        let result = response.data.data;
+        dispatch({ type: "FETCH_USER_SUCCESS", payload: result });
+      } catch (error) {
+        if (error.response.data.message === "Session Expired") {
+          dispatch({
+            type: "EMP_SIGNOUT",
+            payload: null,
+            token: null,
+          });
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("authtoken");
+          navigate("/login");
+        }
+        dispatch({
+          type: "FETCH_USER_FAIL",
+          payload: error.response.message,
+        });
+      }
+    };
     const fetchNotifications = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
@@ -79,15 +112,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         setCount(response.data.unread_count);
         dispatch({ type: "FETCH_SUCCESS", payload: result });
       } catch (error) {
-        if (error.status === 401) {
-          dispatch({
-            type: "EMP_SIGNOUT",
-          });
-          navigate("/login");
-        }
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response.message,
+          payload: error.response.data.message || error.response.data.error,
         });
       }
     };
@@ -103,7 +130,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     ) {
       fetchNotifications();
     }
+    fetchUserDetails();
   }, [authtoken, userInfo, updateSuccess, navigate]);
+
   if (!userInfo) return null;
   const notificationPage =
     userInfo.role === "Master Admin"
