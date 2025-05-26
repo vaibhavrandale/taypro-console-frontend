@@ -108,7 +108,6 @@ const BarGraph = () => {
         siteData[item.month - 1] += item.count; // Add the count to the correct month
       }
     });
-    console.log(siteData);
 
     datasets = [
       {

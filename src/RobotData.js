@@ -52,7 +52,6 @@ const RobotData = () => {
         const result = await axios.get(
           `/api/v1/robots/get-robot-data/${robot_no}`
         );
-        // console.log(result.data);
 
         dispatch({
           type: "FETCH_ROBOT_SUCCESS",
@@ -70,7 +69,6 @@ const RobotData = () => {
     };
     fetchAllSites();
   }, [robot_no]);
-  //   console.log(robot);
 
   const debugData = robot?.data?.debugdata || [];
 
