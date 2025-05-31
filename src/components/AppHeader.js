@@ -64,8 +64,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     loading: true,
     error: "",
   });
-  const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
@@ -82,7 +82,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         let result = response.data.data;
         dispatch({ type: "FETCH_USER_SUCCESS", payload: result });
       } catch (error) {
-        if (error.response.data.message === "Session Expired") {
+        if (error.response?.data?.message === "Session Expired") {
           dispatch({
             type: "EMP_SIGNOUT",
             payload: null,
@@ -94,7 +94,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         }
         dispatch({
           type: "FETCH_USER_FAIL",
-          payload: error.response.message,
+          payload: error.response?.message,
         });
       }
     };

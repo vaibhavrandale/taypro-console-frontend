@@ -88,7 +88,7 @@ const UserBasedLinkDashboard = () => {
       navigate("/login"); // Redirect if user is not found
     }
 
-    if (userInfo.role === "Client Admin") {
+    if (userInfo?.role === "Client Admin") {
       const fetchfeedback = async () => {
         try {
           dispatch({ type: "FETCH_FEEDBACK_REQUEST" });
