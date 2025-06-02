@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   CButton,
   CCard,
@@ -156,13 +156,13 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs="6" className="text-end">
-                        <CButton
+                        <Link
+                          to="/forgot-password"
                           color="link"
                           className="px-0"
-                          href="forgot-password"
                         >
                           Forgot password?
-                        </CButton>
+                        </Link>
                       </CCol>
                     </CRow>
                   </CForm>

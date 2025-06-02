@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   CButton,
   CCard,
@@ -13,7 +13,8 @@ import {
   CRow,
 } from "@coreui/react";
 import toast from "react-hot-toast";
-import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
+import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
+import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -37,6 +38,7 @@ const ForgotPassword = () => {
   });
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const theme = localStorage.getItem("theme");
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -75,9 +77,9 @@ const ForgotPassword = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <div className="text-center mb-3">
+                  {/* <div className="text-center mb-3">
                     <img
-                      src={TayproLogo}
+                      src={Tayprofordarkbg}
                       alt="Taypro Logo"
                       className="sidebar-brand-full logo"
                       style={{
@@ -86,6 +88,23 @@ const ForgotPassword = () => {
                         objectFit: "contain",
                       }}
                     />
+                  </div> */}
+                  <div className="text-center mb-3">
+                    {theme === "light" ? (
+                      <img
+                        src={Tayproforwhitebg}
+                        alt="Taypro Logo"
+                        className=""
+                        style={{ height: "80px", width: "auto" }}
+                      />
+                    ) : (
+                      <img
+                        src={Tayprofordarkbg}
+                        alt="Taypro Logo"
+                        className=""
+                        style={{ height: "80px", width: "auto" }}
+                      />
+                    )}
                   </div>
                   <CForm onSubmit={handleForgotPassword} autoComplete="off">
                     <h2 className="text-center mb-4">Forgot Password</h2>
@@ -123,13 +142,9 @@ const ForgotPassword = () => {
                     </CRow>
                   </CForm>
                   <div className="text-center mt-3">
-                    <CButton
-                      color="link"
-                      className="px-0"
-                      onClick={() => navigate("/login")}
-                    >
+                    <Link color="link" className="px-0" to="/login">
                       Back to Login
-                    </CButton>
+                    </Link>
                   </div>
                 </CCardBody>
               </CCard>

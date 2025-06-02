@@ -232,7 +232,7 @@ const InternalTicketsDashboard = () => {
                         ? "danger"
                         : ticket.priority === "High"
                         ? "warning"
-                        : "primary"
+                        : "success"
                     }
                   >
                     {ticket.priority}

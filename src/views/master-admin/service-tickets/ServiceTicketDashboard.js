@@ -33,6 +33,8 @@ import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 import BarGraph from "./BarGraph";
+import { cilX } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -429,7 +431,7 @@ const ServiceTicketDashboard = () => {
           </CModalBody>
         ) : (
           <>
-            <CModalHeader closeButton>
+            <CModalHeader closeButton={false}>
               <CModalTitle>
                 {" "}
                 Details &nbsp;:&nbsp;{" "}
@@ -437,6 +439,14 @@ const ServiceTicketDashboard = () => {
                   {serviceticket.ticket_id}
                 </span>
               </CModalTitle>
+              <button
+                type="button"
+                className=" border-0 ms-auto py-0 px-1"
+                onClick={() => setViewModalVisible(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
             </CModalHeader>
             <CModalBody>
               <CTable striped hover bordered responsive>
