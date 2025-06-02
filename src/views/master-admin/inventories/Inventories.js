@@ -31,6 +31,8 @@ import PaginateInput from "../../../components/PaginateInput";
 import InventoryOverview from "./InventoryOverview";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import image from "./tool.png";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 const InventoryTab = () => {
   return (
     <div>
@@ -419,11 +421,19 @@ const Inventories = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Inventory Data :&nbsp;
             <span className="badge bg-success">{formData.site_id}</span>{" "}
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedInventory && (
@@ -803,11 +813,19 @@ const ServiceItems = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Service Item Data :&nbsp;
             <span className="badge bg-success">{formData.item_name}</span>{" "}
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedServiceItem && (
