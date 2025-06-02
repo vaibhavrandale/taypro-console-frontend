@@ -1,25 +1,33 @@
 @import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&display=swap");
 
-body {
-  overflow-y: scroll;
-  margin: 0; /* Fallback for old browsers */
-  scrollbar-gutter: stable; /* Modern behavior */
+:root {
+  --primary: #6c71fd;
+  --success: #05c16833;
+  --success-text: #14ca74;
+  --danger: #ff5a6533;
+  --danger-text: #ff5a65;
+  --primary-text: #fff;
+  --warning: #ffb01633;
+  --warning-text: #fdb52a;
 }
 
-:root {
-  --primary-green: #96db00;
-  --primary-text: #052638;
+/* Global styles */
+body {
+  margin: 0;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  font-family: "Blinker", serif;
 }
+
 h1,
 h2,
 h3,
 h4,
 h5,
-h6,
-h7 {
-  font-family: "Blinker", serif;
+h6 {
   font-weight: 500;
   font-style: normal;
+  color: #fff;
 }
 
 p,
@@ -31,84 +39,89 @@ select,
 input,
 button,
 .btn,
-breadcrumb,
+.breadcrumb,
 div {
-  font-family: "Blinker", serif;
   font-weight: 400;
   font-style: normal;
 }
 
-/* Override Bootstrap Button Styles */
+/* Links */
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* Button styles */
+.btn,
 .btn-primary,
-.btn-success {
-  background: var(--primary-green) !important;
+.btn-success,
+.btn-dark,
+.btn-secondary {
+  background: var(--primary) !important;
   color: var(--primary-text) !important;
   border: none !important;
-  font-weight: 600 !important;
-}
-
-.custom-btn-primary {
-  background: #96db00 !important;
-  color: #052638 !important;
-  font-weight: 600;
-  padding: 4px 8px !important;
-}
-
-.btn-primary,
-.btn-success:hover {
-  background: #96db00;
-}
-
-.btn-warning {
-  background: #96db00;
-  color: #052638;
-  border: none;
-  font-weight: 600;
+  font-weight: 400 !important;
 }
 
 .btn-dark,
 .btn-secondary {
-  background: #052638;
-  color: #ffffff;
-  border: none;
-  font-weight: 500;
+  font-weight: 500 !important;
 }
 
-.btn-dark,
+.btn-warning {
+  background: var(--primary) !important;
+  color: var(--primary-text) !important;
+  font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-dark:hover,
 .btn-secondary:hover {
-  background: #052638 !important;
-  color: #ffffff;
-}
-.btn-primary:hover {
-  background: #96db00 !important;
-  color: #052638;
+  background: var(--primary) !important;
+  color: var(--primary-text) !important;
 }
 
+/* Custom buttons */
+.custom-btn-primary {
+  background: var(--primary) !important;
+  color: var(--primary-text) !important;
+  font-weight: 600;
+  padding: 4px 8px !important;
+}
+
+/* Background styles */
 .bg-primary {
-  background: #052638 !important;
-  color: #ffffff;
+  background: var(--primary) !important;
+  color: var(--primary-text) !important;
   font-weight: 500;
 }
 
 .bg-success {
-  background: #96db00 !important;
-  color: #052638;
+  background: var(--success) !important;
+  color: var(--success-text) !important;
   font-weight: 600;
 }
+
 .bg-danger {
-  font-weight: 400;
-  color: #ffffff;
+  background: var(--danger) !important;
+  color: var(--danger-text) !important;
+  font-weight: 600;
+  border-color: #ff5a6533;
 }
 
-.bg-secondary {
+.bg-secondary,
+.bg-warning {
   font-weight: 600;
 }
 
 .bg-warning {
-  font-weight: 600;
-  color: #052638;
+  border-color: #ffb01633;
+  background: var(--warning) !important;
+  color: var(--warning-text) !important;
 }
 
+/* Text styles */
 .text-success {
   color: #96db00 !important;
   font-weight: 600;
@@ -119,38 +132,17 @@ div {
   font-weight: 600;
 }
 
-thead th {
-  /* background: #052638 !important; */
-  /* color: #ffffff !important; */
-}
-
-.text-secondary {
-  color: #052638 !important;
-  font-weight: 600;
-}
-
-input[type="text"]:focus,
-input:focus {
+/* Form elements */
+input[type="text"],
+input[type="number"],
+input {
+  border: 1px solid #dbdfe6;
+  border-radius: 0 !important;
+  font-size: 12px;
   outline: none !important;
   box-shadow: none !important;
-  border-radius: 0px !important;
-}
-input {
-  border-radius: 0px !important;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
-  height: 100%; /* Full viewport height */
-  width: 100%; /* Full viewport width (optional) */
-}
-
-input[type="number"] {
-  appearance: textfield; /* Standard */
-  -moz-appearance: textfield; /* Firefox */
-  -webkit-appearance: none; /* Webkit browsers */
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -158,21 +150,32 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-/* More specific selector */
-input[type="number"]:focus,
-input:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border: 1px solid #dbdfe6;
+
+/* Loading container */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
-input[type="number"] {
-  border: 1px solid #dbdfe6;
-  outline: none !important;
-  box-shadow: none !important;
-  border-radius: 0px !important;
-  font-size: 12px;
-  -webkit-border-radius: 0px !important;
-  -moz-border-radius: 0px !important;
-  -ms-border-radius: 0px !important;
-  -o-border-radius: 0px !important;
+
+/* Card styles */
+.card,
+.card-header,
+CTable,
+CTableHead,
+CTableRow,
+CTableBody,
+input {
+  background-color: #101936 !important;
+}
+
+.card-header {
+  color: #adb8d9;
+}
+
+/* Miscellaneous */
+icon {
+  background-color: var(--primary) !important;
 }

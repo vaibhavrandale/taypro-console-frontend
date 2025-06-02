@@ -440,13 +440,11 @@ const Inventories = () => {
                     .filter(([key]) => key !== "last_activity") // Exclude last_activity
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                        <CTableDataCell className="fw-semibold text-uppercase ">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="text-dark fw-medium">
-                            {String(value)}
-                          </span>
+                          <span className=" fw-medium">{String(value)}</span>
                         </CTableDataCell>
                       </CTableRow>
                     ))}
@@ -826,7 +824,7 @@ const ServiceItems = () => {
                     .filter(([key]) => key !== "last_activity") // Exclude last_activity
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                        <CTableDataCell className="fw-semibold text-uppercase ">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
                         <CTableDataCell>
@@ -842,9 +840,7 @@ const ServiceItems = () => {
                               }}
                             />
                           ) : (
-                            <span className="text-dark fw-medium">
-                              {String(value)}
-                            </span>
+                            <span className=" fw-medium">{String(value)}</span>
                           )}
                         </CTableDataCell>
                       </CTableRow>

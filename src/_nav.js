@@ -44,6 +44,313 @@ import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
 const _nav = [
   //master admin
 
+  // {
+  //   component: CNavGroup,
+  //   name: "Master Admin",
+  //   to: "/base",
+  //   icon: (
+  //     <CIcon
+  //       icon={cilSpeedometer}
+  //       customClassName="nav-icon"
+  //       style={{ height: "30px" }}
+  //     />
+  //   ),
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: "Dashboard",
+  //       to: "/master-admin/dashboard",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilFactory}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+
+  //     {
+  //       component: CNavItem,
+  //       name: "All Site Data",
+  //       to: "/master-admin/site-management/all-site-data",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilLibrary}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Site Management",
+  //       to: "/master-admin/site-management",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilBuilding}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+
+  //     {
+  //       component: CNavItem,
+  //       name: "Search Robot",
+  //       to: "/master-admin/search-robot",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilSearch}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Replace Lora",
+  //       to: "/master-admin/replace-lora/active-robots",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilSwapHorizontal}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Preventive Maintenance",
+  //       to: "/master-admin/preventive-maintanance-dashboard",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilCalendarCheck}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Client Dashboard",
+  //       to: "/master-admin/clients-dashboard",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilUser}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Robot Data",
+  //       to: "/master-admin/robots",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilMemory}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Service Tickets",
+  //       to: "/master-admin/service-tickets",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilTask}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Internal Tickets",
+  //       to: "/master-admin/internal-tickets",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilNoteAdd}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Client Tickets",
+  //       to: "/master-admin/client-tickets",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilNoteAdd}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Service Inventory",
+  //       to: "/master-admin/inventories",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilStorage}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Project Handover",
+  //       to: "/master-admin/project-handover",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilCheckCircle}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Lora Configuration",
+  //       to: "/master-admin/lora-configuration",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilCog}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Users",
+  //       to: "/master-admin/users",
+  //       //internal external
+  //       icon: (
+  //         <CIcon
+  //           icon={cilGroup}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Sites Coordinates",
+  //       to: "/master-admin/sites-coordinates",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilLocationPin}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "All Sites Cleaning Log",
+  //       to: "/master-admin/all-site-cleaning-log",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilListRich}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+
+  //     {
+  //       component: CNavItem,
+  //       name: "All Sites Timers",
+  //       to: "/master-admin/timers",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilClock}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "All Sites Gateways",
+  //       to: "/master-admin/all-site-gateways",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilLan}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "All Site DPR",
+  //       to: "/master-admin/all-site-dpr",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilSpreadsheet}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Technician Attendance",
+  //       to: "/master-admin/technician-attendance",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilTask}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "ServiceTickets Fault",
+  //       to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilScrubber}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Chat",
+  //       to: "/master-admin/chat",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilChatBubble}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Robot Battery Temperature",
+  //       to: "/master-admin/robot-battery-temperature",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilBattery3}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //   ],
+  // },
+
   {
     component: CNavGroup,
     name: "Master Admin",
@@ -69,22 +376,10 @@ const _nav = [
         ),
       },
 
+      // ✅ GROUP 1: Site Data
       {
-        component: CNavItem,
-        name: "All Site Data",
-        to: "/master-admin/site-management/all-site-data",
-        icon: (
-          <CIcon
-            icon={cilLibrary}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Site Management",
-        to: "/master-admin/site-management",
+        component: CNavGroup,
+        name: "Site Data",
         icon: (
           <CIcon
             icon={cilBuilding}
@@ -92,72 +387,54 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "All Clients",
+            to: "/master-admin/clients-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "All Site Data",
+            to: "/master-admin/site-management/all-site-data",
+          },
+          {
+            component: CNavItem,
+            name: "Site Management",
+            to: "/master-admin/site-management",
+          },
+          {
+            component: CNavItem,
+            name: "Sites Coordinates",
+            to: "/master-admin/sites-coordinates",
+          },
+          {
+            component: CNavItem,
+            name: "All Site Cleaning Log",
+            to: "/master-admin/all-site-cleaning-log",
+          },
+          {
+            component: CNavItem,
+            name: "All Sites Timers",
+            to: "/master-admin/timers",
+          },
+          {
+            component: CNavItem,
+            name: "All Sites Gateways",
+            to: "/master-admin/all-site-gateways",
+          },
+          {
+            component: CNavItem,
+            name: "All Site DPR",
+            to: "/master-admin/all-site-dpr",
+          },
+        ],
       },
 
+      // ✅ GROUP 2: Tickets
       {
-        component: CNavItem,
-        name: "Search Robot",
-        to: "/master-admin/search-robot",
-        icon: (
-          <CIcon
-            icon={cilSearch}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Replace Lora",
-        to: "/master-admin/replace-lora/active-robots",
-        icon: (
-          <CIcon
-            icon={cilSwapHorizontal}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Preventive Maintenance",
-        to: "/master-admin/preventive-maintanance-dashboard",
-        icon: (
-          <CIcon
-            icon={cilCalendarCheck}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Client Dashboard",
-        to: "/master-admin/clients-dashboard",
-        icon: (
-          <CIcon
-            icon={cilUser}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Robot Data",
-        to: "/master-admin/robots",
-        icon: (
-          <CIcon
-            icon={cilMemory}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Service Tickets",
-        to: "/master-admin/service-tickets",
+        component: CNavGroup,
+        name: "Tickets",
         icon: (
           <CIcon
             icon={cilTask}
@@ -165,72 +442,58 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Service Tickets",
+            to: "/master-admin/service-tickets",
+          },
+          {
+            component: CNavItem,
+            name: "Internal Tickets",
+            to: "/master-admin/internal-tickets",
+          },
+          {
+            component: CNavItem,
+            name: "Client Tickets",
+            to: "/master-admin/client-tickets",
+          },
+        ],
       },
+
+      // ✅ GROUP 3: Configuration & Users
       {
-        component: CNavItem,
-        name: "Internal Tickets",
-        to: "/master-admin/internal-tickets",
+        component: CNavGroup,
+        name: "Robots Management",
         icon: (
           <CIcon
-            icon={cilNoteAdd}
+            icon={cilSettings}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Robots",
+            to: "/master-admin/robots",
+          },
+          {
+            component: CNavItem,
+            name: "Lora Configuration",
+            to: "/master-admin/lora-configuration",
+          },
+          {
+            component: CNavItem,
+            name: "Replace Lora",
+            to: "/master-admin/replace-lora/active-robots",
+          },
+        ],
       },
+
       {
-        component: CNavItem,
-        name: "Client Tickets",
-        to: "/master-admin/client-tickets",
-        icon: (
-          <CIcon
-            icon={cilNoteAdd}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Service Inventory",
-        to: "/master-admin/inventories",
-        icon: (
-          <CIcon
-            icon={cilStorage}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Project Handover",
-        to: "/master-admin/project-handover",
-        icon: (
-          <CIcon
-            icon={cilCheckCircle}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Lora Configuration",
-        to: "/master-admin/lora-configuration",
-        icon: (
-          <CIcon
-            icon={cilCog}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Users",
-        to: "/master-admin/users",
-        //internal external
+        component: CNavGroup,
+        name: "Users Management",
         icon: (
           <CIcon
             icon={cilGroup}
@@ -238,23 +501,96 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Users",
+            to: "/master-admin/users",
+          },
+          {
+            component: CNavItem,
+            name: "Technician Attendance",
+            to: "/master-admin/technician-attendance",
+          },
+        ],
       },
+      // {
+      //         component: CNavItem,
+      //         name: "Robot Data",
+      //         to: "/master-admin/robots",
+      //         icon: (
+      //           <CIcon
+      //             icon={cilMemory}
+      //             customClassName="nav-icon"
+      //             style={{ height: "30px" }}
+      //           />
+      //         ),
+      //       },
+      // ✅ OTHERS
+      // {
+      //   component: CNavItem,
+      //   name: "Search Robot",
+      //   to: "/master-admin/search-robot",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilSearch}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: "Preventive Maintenance",
+      //   to: "/master-admin/preventive-maintanance-dashboard",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilCalendarCheck}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: "Client Dashboard",
+      //   to: "/master-admin/clients-dashboard",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilUser}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
+
+      // {
+      //   component: CNavItem,
+      //   name: "Service Inventory",
+      //   to: "/master-admin/inventories",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilStorage}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: "Project Handover",
+      //   to: "/master-admin/project-handover",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilCheckCircle}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
       {
-        component: CNavItem,
-        name: "Sites Coordinates",
-        to: "/master-admin/sites-coordinates",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "All Sites Cleaning Log",
-        to: "/master-admin/all-site-cleaning-log",
+        component: CNavGroup,
+        name: "Operations",
         icon: (
           <CIcon
             icon={cilListRich}
@@ -262,95 +598,26 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
-      },
-
-      {
-        component: CNavItem,
-        name: "All Sites Timers",
-        to: "/master-admin/timers",
-        icon: (
-          <CIcon
-            icon={cilClock}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "All Sites Gateways",
-        to: "/master-admin/all-site-gateways",
-        icon: (
-          <CIcon
-            icon={cilLan}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "All Site DPR",
-        to: "/master-admin/all-site-dpr",
-        icon: (
-          <CIcon
-            icon={cilSpreadsheet}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Technician Attendance",
-        to: "/master-admin/technician-attendance",
-        icon: (
-          <CIcon
-            icon={cilTask}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "ServiceTickets Fault",
-        to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
-        icon: (
-          <CIcon
-            icon={cilScrubber}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Chat",
-        to: "/master-admin/chat",
-        icon: (
-          <CIcon
-            icon={cilChatBubble}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
-      {
-        component: CNavItem,
-        name: "Robot Battery Temperature",
-        to: "/master-admin/robot-battery-temperature",
-        icon: (
-          <CIcon
-            icon={cilBattery3}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Preventive Maintenance",
+            to: "/master-admin/preventive-maintanance-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Service Inventory",
+            to: "/master-admin/inventories",
+          },
+          {
+            component: CNavItem,
+            name: "Project Handover",
+            to: "/master-admin/project-handover",
+          },
+        ],
       },
     ],
   },
-
   // -----------------------------------master admin----------------------------------------
 
   //-------------------------------Project admin------------------------------------

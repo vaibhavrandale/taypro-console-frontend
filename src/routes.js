@@ -76,6 +76,8 @@ import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTempera
 import PreventiveMaintenanceList from "./views/client-admin/preventive-maintenance-dashboard/PreventiveMaintenanceList";
 import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMaintenanceMatrix";
 import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
+import ViewGateway from "./views/master-admin/gateways/ViewGateway";
+import ViewRobot from "./views/master-admin/robots/ViewRobot";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -567,6 +569,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/robots/:id",
+    name: "View Robot",
+    element: (
+      <MasterAdminRoute>
+        <ViewRobot />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/activate-robots",
     name: "All Inactivate Robots",
     element: (
@@ -860,6 +871,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <CreateNewGateways />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-site-gateways/view-gateway/:id",
+    name: "View Gateway",
+    element: (
+      <MasterAdminRoute>
+        <ViewGateway />
       </MasterAdminRoute>
     ),
   },
@@ -1352,6 +1372,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <Gateways />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/all-site-gateways/view-gateway/:id",
+    name: "View Gateway",
+    element: (
+      <ProjectAdminRoute>
+        <ViewGateway />
       </ProjectAdminRoute>
     ),
   },
@@ -1858,6 +1887,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <Gateways />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/serivce-admin/all-site-gateways/view-gateway/:id",
+    name: "View Gateway",
+    element: (
+      <ServiceAdminRoute>
+        <ViewGateway />
       </ServiceAdminRoute>
     ),
   },

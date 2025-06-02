@@ -3,7 +3,7 @@ import { CFooter } from "@coreui/react";
 import logo from "../assets/brand/favicon.png";
 const AppFooter = () => {
   return (
-    <CFooter className="px-4">
+    <CFooter className="px-4" style={{ background: "#080f25" }}>
       <div className="ms-auto">
         <img
           src={logo}
@@ -11,7 +11,7 @@ const AppFooter = () => {
           style={{ width: "30px", height: "30px", marginRight: "8px" }}
         />
         <a
-          className="text-decoration-none  fw-bold"
+          className="text-decoration-none"
           href="https://taypro.in"
           target="_blank"
           rel="noopener noreferrer"

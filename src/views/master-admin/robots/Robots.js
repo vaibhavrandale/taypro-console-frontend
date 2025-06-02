@@ -63,6 +63,7 @@ const Robots = () => {
     hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -167,6 +168,24 @@ const Robots = () => {
       handlePageChange(pageNumber);
     }
   };
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
   return (
     <div className="p-2">
       <h2 className="text-center">All Robots</h2>
@@ -237,7 +256,7 @@ const Robots = () => {
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
+              <CTableDataCell colSpan="9" className="text-start fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -252,7 +271,15 @@ const Robots = () => {
             filteredRobots.map((robot, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell>
+                  <Link
+                    className="text-decoration-none m-1"
+                    to={`/${adminroute}/robots/${robot._id}`}
+                    // onClick={() => openModal(robot)}
+                  >
+                    {robot.robot_no}
+                  </Link>
+                </CTableDataCell>
                 <CTableDataCell>
                   {robot.version === "V"
                     ? "Robot is not yet operated"
@@ -290,7 +317,8 @@ const Robots = () => {
                     className="btn btn-sm btn-secondary m-1"
                     color="secondary"
                     size="sm"
-                    onClick={() => openModal(robot)}
+                    to={`/${adminroute}/robots/${robot._id}`}
+                    // onClick={() => openModal(robot)}
                   >
                     View
                   </Link>
@@ -355,7 +383,7 @@ const Robots = () => {
                     .filter(([key]) => key !== "last_activity") // Exclude last_activity
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                        <CTableDataCell className="fw-semibold text-uppercase ">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
                         <CTableDataCell>
@@ -368,9 +396,7 @@ const Robots = () => {
                               {value ? "Active" : "Inactive"}
                             </CBadge>
                           ) : (
-                            <span className="text-dark fw-medium">
-                              {String(value)}
-                            </span>
+                            <span className=" fw-medium">{String(value)}</span>
                           )}
                         </CTableDataCell>
                       </CTableRow>

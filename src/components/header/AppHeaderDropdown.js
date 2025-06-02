@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CDropdown,
   CDropdownDivider,
@@ -10,14 +10,71 @@ import { cilLockLocked, cilSettings, cilUser } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import LoadingSpinner from "../LoadingSpinner";
+import "./appHeaderDropdown.css";
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_USER_REQUEST":
+      return { ...state, usersLoading: true };
+    case "FETCH_USER_SUCCESS":
+      return { ...state, user: action.payload, usersLoading: false };
+    case "FETCH_USER_FAIL":
+      return { ...state, usersLoading: false, userError: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 const AppHeaderDropdown = () => {
-  const dispatch = useDispatch(); // ✅ FIXED: Initialize dispatch
+  const [{ user, usersLoading, userError }, dispatch] = useReducer(reducer, {
+    usersLoading: true,
+    userError: "",
+    user: {},
+  });
+
+  // const dispatch = useDispatch(); // ✅ FIXED: Initialize dispatch
   const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
+
+  const [logoutModalOpen, setLogoutModalOpenn] = useState(false);
 
   const navigate = useNavigate();
-  const [logoutModalOpen, setLogoutModalOpenn] = useState(false);
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        dispatch({ type: "FETCH_USER_REQUEST" });
+        const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        let result = response.data.data;
+        dispatch({ type: "FETCH_USER_SUCCESS", payload: result });
+      } catch (error) {
+        if (error?.response?.data?.message === "Session Expired") {
+          dispatch({
+            type: "EMP_SIGNOUT",
+            payload: null,
+            token: null,
+          });
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("authtoken");
+          navigate("/login");
+        }
+        dispatch({
+          type: "FETCH_USER_FAIL",
+          payload:
+            error?.response?.data?.message || error?.response?.data?.error,
+        });
+      }
+    };
+
+    if (!user?._id) {
+      fetchUserDetails();
+    }
+  }, [authtoken, userInfo, navigate, dispatch, user?._id]);
 
   const logoutModal = () => {
     setLogoutModalOpenn(!logoutModalOpen);
@@ -33,11 +90,19 @@ const AppHeaderDropdown = () => {
     toast.success("Sign out Successfully");
   };
 
-  const image = userInfo
-    ? userInfo.profile_image
-      ? userInfo.profile_image
+  const image = user
+    ? user?.profile_image
+      ? user?.profile_image
       : "https://www.pngitem.com/pimgs/m/146-1462217_profile-icon-png-image-free-download-searchpng-employee.png"
     : "";
+
+  // function getInitials(fullName) {
+  //   if (!fullName) return "";
+  //   return fullName
+  //     .split(" ")
+  //     .map((word) => word[0]?.toUpperCase())
+  //     .join("");
+  // }
 
   return (
     <>
@@ -47,20 +112,27 @@ const AppHeaderDropdown = () => {
           className="py-0 pe-0"
           caret={false}
         >
-          <img
-            src={image}
-            alt="Profile"
-            className="rounded-circle"
-            width="50"
-            height="50"
-            style={{ objectFit: "cover" }}
-          />
+          {usersLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <img
+              src={image}
+              alt="Profile"
+              className="rounded-circle fade-in"
+              width="50"
+              height="50"
+              style={{ objectFit: "cover" }}
+            />
+          )}
+          {/* <div className="profile">
+            {usersLoading ? <LoadingSpinner /> : getInitials(user?.username)}
+          </div> */}
         </CDropdownToggle>
 
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownItem href="#">
             <CIcon icon={cilUser} className="me-2" />
-            Profile
+            {userError ? userError : ""}
           </CDropdownItem>
           <CDropdownItem href="#">
             <CIcon icon={cilSettings} className="me-2" />

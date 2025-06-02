@@ -18,6 +18,7 @@ import {
   CFormTextarea,
   CButton,
   CImage,
+  CBadge,
 } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -47,6 +48,17 @@ const reducer = (state, action) => {
     case "FETCH_FEEDBACK_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "FETCH_TIMER_REQUEST":
+      return { ...state, timerLoading: true, timerError: "" };
+    case "FETCH_TIMER_SUCCESS":
+      return {
+        ...state,
+        timerLoading: false,
+        timernotification: action.payload,
+      };
+    case "FETCH_TIMER_FAIL":
+      return { ...state, timerLoading: false, timerError: action.payload };
+
     case "SUBMIT_REQUEST":
       return { ...state, submitLoading: true, submiterror: "" };
 
@@ -55,6 +67,15 @@ const reducer = (state, action) => {
 
     case "SUBMIT_FAIL":
       return { ...state, submitLoading: false, submiterror: action.payload };
+
+    case "UPDATE_TIMER_REQUEST":
+      return { ...state, updateLoading: true, updateError: "" };
+
+    case "UPDATE_TIMER_SUCCESS":
+      return { ...state, updateLoading: false };
+
+    case "UPDATE_TIMER_FAIL":
+      return { ...state, updateLoading: false, updateError: action.payload };
     default:
       return state;
   }
@@ -62,13 +83,29 @@ const reducer = (state, action) => {
 
 const UserBasedLinkDashboard = () => {
   const [
-    { error, latestfeedback, loading, submitLoading, submiterror },
+    {
+      error,
+      latestfeedback,
+      loading,
+      submitLoading,
+      submiterror,
+      timerError,
+      timernotification,
+      timerLoading,
+      updateError,
+      updateLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     latestfeedback: null,
     loading: false,
+    updateLoading: false,
+    timerLoading: false,
     submitLoading: false,
+    timernotification: {},
     submiterror: "",
+    updateError: "",
+    timerError: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -77,7 +114,8 @@ const UserBasedLinkDashboard = () => {
 
   const navigate = useNavigate();
   // const [userInfo, setUserInfo] = useState(null);
-  const [visible, setVisible] = useState(true);
+  const [feedbackModal, setFeedbackModal] = useState(true);
+  const [timerModal, setTimerModal] = useState(false);
   const [formData, setFormData] = useState({
     comments: "",
     rating: "",
@@ -87,6 +125,42 @@ const UserBasedLinkDashboard = () => {
     if (!userInfo) {
       navigate("/login"); // Redirect if user is not found
     }
+
+    const fetchTimerData = async () => {
+      try {
+        dispatch({ type: "FETCH_TIMER_REQUEST" });
+
+        const result = await axios.get(
+          `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // console.log(result.data.data);
+
+        dispatch({
+          type: "FETCH_TIMER_SUCCESS",
+          payload: result.data.data,
+        });
+        if (result.data.data.read_status === false) {
+          setTimerModal(true); // Hide the modal
+        } else {
+          setTimerModal(false); // Hide the modal
+        }
+      } catch (error) {
+        console.log(error.response?.data.error);
+        if (
+          error.response?.data.error ===
+          "Timer Execution Notifications Not Found"
+        ) {
+          setTimerModal(false); // Hide the modal if no notifications
+        }
+        dispatch({
+          type: "FETCH_TIMER_FAIL",
+          payload: error.response?.data.error || error.response?.data.message,
+        });
+      }
+    };
 
     if (userInfo?.role === "Client Admin") {
       const fetchfeedback = async () => {
@@ -104,9 +178,9 @@ const UserBasedLinkDashboard = () => {
             payload: result.data.data,
           });
           if (result.data.data.status === true) {
-            setVisible(false); // Hide the modal
+            setFeedbackModal(false); // Hide the modal
           } else {
-            setVisible(true); // Hide the modal
+            setFeedbackModal(true); // Hide the modal
           }
         } catch (error) {
           dispatch({
@@ -117,6 +191,8 @@ const UserBasedLinkDashboard = () => {
       };
       fetchfeedback();
     }
+
+    fetchTimerData();
   }, [authtoken, navigate, userInfo]);
 
   if (!userInfo) {
@@ -202,12 +278,39 @@ const UserBasedLinkDashboard = () => {
 
       toast.success(data.data.message);
       dispatch({ type: "SUBMIT_SUCCESS" });
-      setVisible(false); // Hide the modal
+      setFeedbackModal(false); // Hide the modal
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
         payload: error.response?.data?.message || error.response?.data?.error,
       });
+    }
+  };
+
+  const handleReadTimerNotification = async () => {
+    // Remove focus from the currently focused element
+    if (document.activeElement) {
+      document.activeElement.blur();
+    }
+    dispatch({ type: "UPDATE_TIMER_REQUEST" });
+    try {
+      const data = await axios.put(
+        `/api/v1/timerexecutionnotifications/${timernotification._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "UPDATE_TIMER_SUCCESS" });
+      setTimerModal(false); // Hide the modal
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_TIMER_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
     }
   };
 
@@ -265,6 +368,8 @@ const UserBasedLinkDashboard = () => {
     );
   };
 
+  // console.log(timernotification);
+
   return (
     <div className="mt-3 mx-2">
       <h2 className="text-center mb-4">
@@ -274,10 +379,13 @@ const UserBasedLinkDashboard = () => {
       <CRow className="justify-content-center">
         {userRoleData ? (
           <CCol md={4} className="mb-4">
-            <CCard className="shadow-lg text-center" style={{ height: "100%" }}>
+            <CCard
+              className=" card shadow-lg text-center"
+              style={{ height: "100%" }}
+            >
               <CCardHeader>
                 <h5>{userInfo.role}</h5>
-                <p className="text-muted">{userRoleData.dept}</p>
+                <p className="">{userRoleData.dept}</p>
               </CCardHeader>
               <CCardBody>
                 <FontAwesomeIcon
@@ -299,18 +407,18 @@ const UserBasedLinkDashboard = () => {
         )}
       </CRow>
 
-      {/* <CButton color="primary" onClick={() => setVisible(!visible)}>
+      {/* <CButton color="primary" onClick={() => setFeedbackModal(!feedbackModal)}>
         Rate us
       </CButton> */}
 
       {latestfeedback && (
         <CModal
-          // className={visible ? "fade-out" : "fade-in"}
+          // className={feedbackModal ? "fade-out" : "fade-in"}
           // size="m"
           backdrop="static"
           scrollable
           alignment="top"
-          visible={visible}
+          visible={feedbackModal}
         >
           {loading ? (
             <div
@@ -371,6 +479,86 @@ const UserBasedLinkDashboard = () => {
                     disabled={!formData.comments || !formData.rating}
                   >
                     {submitLoading ? (
+                      <>
+                        Please Wait <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
+                  </CButton>
+                </div>
+              </CModalBody>
+            </>
+          )}
+        </CModal>
+      )}
+
+      {timernotification && (
+        <CModal
+          // className={feedbackModal ? "fade-out" : "fade-in"}
+          // size="m"
+          backdrop="static"
+          scrollable
+          alignment="top"
+          visible={timerModal}
+        >
+          {timerLoading ? (
+            <div
+              className="d-flex justify-content-center align-items-center flex-column"
+              style={{ height: "200px", width: "100%" }}
+            >
+              <CImage
+                src={TayproLogo}
+                alt="Logo"
+                width={200}
+                height={100}
+                style={{
+                  objectFit: "contain",
+                  marginBottom: "20px",
+                }}
+                className="mb-3"
+              />
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              <CModalHeader closeButton={false}>
+                <CModalTitle>
+                  {" "}
+                  <CBadge color="success">
+                    {timernotification.site_id}
+                  </CBadge>{" "}
+                  Timer Executed At&nbsp;
+                  <b>
+                    {new Date(timernotification.createdAt).toLocaleString()}
+                  </b>
+                </CModalTitle>
+              </CModalHeader>
+
+              <CModalBody>
+                {timerError && (
+                  <div className="alert alert-danger" role="alert">
+                    {timerError}
+                  </div>
+                )}
+                <div>
+                  <ul>
+                    {timernotification.block &&
+                      timernotification.block.length > 0 &&
+                      timernotification.block.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                  </ul>
+                </div>
+                <hr />
+                <div className="d-flex justify-content-between">
+                  <CButton
+                    color="success"
+                    size="sm"
+                    onClick={handleReadTimerNotification}
+                    disabled={updateError || updateLoading}
+                  >
+                    {updateLoading ? (
                       <>
                         Please Wait <LoadingSpinner />
                       </>
