@@ -24,6 +24,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -476,8 +478,16 @@ const Clients = () => {
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>Add New Client</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setAddModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           <CForm>

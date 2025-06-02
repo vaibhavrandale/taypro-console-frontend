@@ -1,9 +1,9 @@
 .responsive-search {
-  width: 300px;
+  width: 200px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 300px) {
   .responsive-search {
-    width: 100px;
+    width: 40px;
   }
 }

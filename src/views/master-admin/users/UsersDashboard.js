@@ -693,8 +693,16 @@ const UsersDashboard = () => {
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>Add New User</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setAddModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           <CFormLabel>Username</CFormLabel>

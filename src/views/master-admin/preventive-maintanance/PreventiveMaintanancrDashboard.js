@@ -25,7 +25,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
 import CIcon from "@coreui/icons-react";
-import { cilBell } from "@coreui/icons";
+import { cilBell, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -307,11 +307,19 @@ const PreventiveMaintanancrDashboard = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             PM Data :&nbsp;
             <span className="badge bg-success">{formData.pm_id}</span>{" "}
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedPm && (

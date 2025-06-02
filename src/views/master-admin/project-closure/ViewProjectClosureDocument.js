@@ -7,6 +7,8 @@ import "./projectDoc.css";
 import header from "../../../assets/brand/logoforwhitebg.png";
 import html2pdf from "html2pdf.js";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
+import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -42,6 +44,7 @@ const ViewProjectClosureDocument = () => {
   const { id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
+  const theme = localStorage.getItem("theme");
 
   if (userInfo.role === "Master Admin") {
     adminroute = "master-admin";
@@ -178,16 +181,27 @@ const ViewProjectClosureDocument = () => {
               <thead>
                 <tr className="">
                   <td colSpan={1} className="text-center">
-                    <img
-                      src={header}
-                      alt="Taypro Logo"
-                      className="sidebar-brand-full logo"
-                      style={{
-                        height: "50px",
-                        width: "160px",
-                        objectFit: "contain",
-                      }}
-                    />
+                    <div className="text-center mb-3">
+                      {theme === "light" ? (
+                        <img
+                          src={Tayproforwhitebg}
+                          alt="Taypro Logo"
+                          className=""
+                          style={{ height: "80px", width: "auto" }}
+                        />
+                      ) : (
+                        <img
+                          src={Tayprofordarkbg}
+                          alt="Taypro Logo"
+                          className=""
+                          style={{
+                            height: "50px",
+                            width: "160px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      )}
+                    </div>
                   </td>
                   <td colSpan={2} className="text-center">
                     <h5>Project to Service Handover Document</h5>

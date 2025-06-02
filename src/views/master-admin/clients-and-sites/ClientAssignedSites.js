@@ -23,6 +23,8 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -357,8 +359,16 @@ const ClientAssignedSites = () => {
         onClose={() => dispatch({ type: "SET_ADD_MODAL", payload: false })}
         backdrop="static"
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>Add New Site : {id}</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => dispatch({ type: "SET_ADD_MODAL", payload: false })}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           <CForm>
