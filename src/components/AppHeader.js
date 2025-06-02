@@ -217,9 +217,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     ) {
       fetchNotifications();
       fetchUserDetails();
-      fetchRobotsAndGateways();
+
       notificationsFetched.current = true;
     }
+    fetchRobotsAndGateways();
   }, [authtoken, userInfo, navigate]);
 
   if (!userInfo) return null;
