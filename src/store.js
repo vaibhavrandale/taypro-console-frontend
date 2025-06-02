@@ -1,8 +1,11 @@
 import { legacy_createStore as createStore } from "redux";
 
+localStorage.removeItem("theme");
+localStorage.setItem("theme", "dark");
+
 // Get userInfo from localStorage
 const initialState = {
-  theme: "light",
+  theme: "dark",
   userInfo: localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null,

@@ -2,3 +2,10 @@ body {
   margin: 0; /* Always reserve scrollbar space to prevent layout shift on modal open */
   overflow-y: scroll;
 }
+
+.card {
+  background: "#080f25" !important;
+}
+CCard {
+  background: "#080f25" !important;
+}

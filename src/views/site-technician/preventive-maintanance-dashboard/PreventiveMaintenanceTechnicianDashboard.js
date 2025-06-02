@@ -330,7 +330,7 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase text-secondary">
+                        <CTableDataCell className="fw-semibold text-uppercase ">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
 
@@ -358,9 +358,7 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                               </span>
                             </CTooltip>
                           ) : (
-                            <span className="text-dark fw-medium">
-                              {String(value)}
-                            </span>
+                            <span className=" fw-medium">{String(value)}</span>
                           )}
                         </CTableDataCell>
                       </CTableRow>

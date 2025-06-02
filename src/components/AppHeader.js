@@ -13,6 +13,10 @@ import {
   useColorModes,
   CDropdownDivider,
   CBadge,
+  CRow,
+  CCol,
+  CInputGroup,
+  CFormInput,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilBell, cilContrast, cilMenu, cilMoon, cilSun } from "@coreui/icons";
@@ -24,6 +28,7 @@ import { AppBreadcrumb } from "./index";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "./LoadingSpinner";
 import toast from "react-hot-toast";
+import "./AppHeader.css"; // Assuming you have some custom styles
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,6 +38,22 @@ const reducer = (state, action) => {
       return { ...state, notifications: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "FETCH_ROBOTS_GATEWAYS_REQUEST":
+      return { ...state, robotsGatewayLoading: true };
+    case "FETCH_ROBOTS_GATEWAYS_SUCCESS":
+      return {
+        ...state,
+        robots: action.payload.robots,
+        gateways: action.payload.gateways,
+        robotsGatewayLoading: false,
+      };
+    case "FETCH_ROBOTS_GATEWAYS_FAIL":
+      return {
+        ...state,
+        robotsGatewayLoading: false,
+        robotsGatewayError: action.payload,
+      };
 
     case "FETCH_USER_REQUEST":
       return { ...state, usersLoading: true };
@@ -58,17 +79,38 @@ const reducer = (state, action) => {
 
 const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const [
-    { loading, error, notifications, loadingUpdate, updateSuccess },
+    {
+      loading,
+      error,
+      notifications,
+      loadingUpdate,
+      updateSuccess,
+      robots,
+      gateways,
+      robotsGatewayLoading,
+      robotsGatewayError,
+    },
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
     error: "",
+    notifications: [],
   });
+  const notificationsFetched = useRef(false); // ✅ track one-time fetch
+
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredData, setFilteredData] = useState({
+    robots: [],
+    gateways: [],
+  });
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -82,7 +124,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         let result = response.data.data;
         dispatch({ type: "FETCH_USER_SUCCESS", payload: result });
       } catch (error) {
-        if (error.response.data.message === "Session Expired") {
+        if (error?.response?.data?.message === "Session Expired") {
           dispatch({
             type: "EMP_SIGNOUT",
             payload: null,
@@ -94,10 +136,41 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         }
         dispatch({
           type: "FETCH_USER_FAIL",
-          payload: error.response.message,
+          payload:
+            error?.response?.data?.message || error?.response?.data?.error,
         });
       }
     };
+
+    const fetchRobotsAndGateways = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOTS_GATEWAYS_REQUEST" });
+        const response = await axios.get(
+          `/api/v1/robots/get-gateways-and-robots`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // console.log(response.data.robots);
+        // console.log(response.data.gateways);
+
+        // let result = response;
+        dispatch({
+          type: "FETCH_ROBOTS_GATEWAYS_SUCCESS",
+          payload: {
+            robots: response.data.robots,
+            gateways: response.data.gateways,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_GATEWAYS_FAIL",
+          payload:
+            error?.response?.data?.message || error?.response?.data?.error,
+        });
+      }
+    };
+
     const fetchNotifications = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
@@ -119,27 +192,43 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
-    if (userInfo && updateSuccess) {
-      dispatch({ type: "UPDATE_RESET" });
-    } else if (
-      userInfo?.role === "Master Admin" ||
-      userInfo?.role === "Project Admin" ||
-      userInfo?.role === "Service Admin" ||
-      userInfo?.role === "Service User" ||
-      userInfo?.role === "Project Engineer"
+    // if (userInfo && updateSuccess) {
+    //   dispatch({ type: "UPDATE_RESET" });
+    // } else if (
+    //   userInfo?.role === "Master Admin" ||
+    //   userInfo?.role === "Project Admin" ||
+    //   userInfo?.role === "Service Admin" ||
+    //   userInfo?.role === "Service User" ||
+    //   userInfo?.role === "Project Engineer"
+    // ) {
+    //   fetchNotifications();
+    // }
+
+    if (
+      !notificationsFetched.current &&
+      userInfo?.role &&
+      [
+        "Master Admin",
+        "Project Admin",
+        "Service Admin",
+        "Service User",
+        "Project Engineer",
+      ].includes(userInfo.role)
     ) {
       fetchNotifications();
+      fetchUserDetails();
+      fetchRobotsAndGateways();
+      notificationsFetched.current = true;
     }
-    fetchUserDetails();
-  }, [authtoken, userInfo, updateSuccess, navigate]);
+  }, [authtoken, userInfo, navigate]);
 
   if (!userInfo) return null;
   const notificationPage =
-    userInfo.role === "Master Admin"
+    userInfo?.role === "Master Admin"
       ? "/master-admin/notifications"
-      : userInfo.role === "Service Admin"
+      : userInfo?.role === "Service Admin"
       ? "/service-admin/notifications"
-      : userInfo.role === "Project Admin"
+      : userInfo?.role === "Project Admin"
       ? "/project-admin/notifications"
       : "/notifications";
 
@@ -202,17 +291,60 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
   let adminroute = "";
 
-  if (userInfo.role === "Master Admin") {
+  if (userInfo?.role === "Master Admin") {
     adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
+  } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
+  } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
   }
 
+  //  "Site Incharge",
+  //       "Site Technician",
+  //       "Client Technician",
+
+  const handleSearchChange = async (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setShowDropdown(true);
+
+    if (value.length > 0) {
+      // Filter robots
+      const filteredRobots = robots.filter((robot) =>
+        robot.robot_no?.toLowerCase().includes(value.toLowerCase())
+      );
+
+      // Filter gateways
+      const filteredGateways = gateways.filter((gateway) =>
+        gateway.gateway_name?.toLowerCase().includes(value.toLowerCase())
+      );
+
+      // Store them separately
+      setFilteredData({
+        robots: filteredRobots,
+        gateways: filteredGateways,
+      });
+    } else {
+      setFilteredData({ robots: [], gateways: [] });
+    }
+  };
+
   return (
-    <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
-      <CContainer className="border-bottom px-4" fluid>
+    <CHeader
+      position="sticky"
+      className="mb-4 p-0"
+      ref={headerRef}
+      style={{ background: "#080f25" }}
+    >
+      <CContainer className="border-bottom px-2" fluid>
         <CHeaderToggler
           onClick={() => setSidebarShow(!sidebarShow)}
           style={{ marginInlineStart: "-14px" }}
@@ -229,11 +361,95 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           </CNavItem>
         </CHeaderNav>
 
-        <CHeaderNav className="ms-auto"></CHeaderNav>
+        <CHeaderNav className="ms-auto"> </CHeaderNav>
 
-        <CHeaderNav className="ms-auto">
+        <CHeaderNav className="ms-auto  d-flex align-items-center justify-content-end flex-wrap my-2">
+          <CRow className="">
+            <CCol>
+              <div className="position-relative responsive-search">
+                <CInputGroup>
+                  <CFormInput
+                    type="text"
+                    placeholder="Search Robot/Gateway"
+                    value={searchTerm}
+                    className="form-control"
+                    onChange={handleSearchChange}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // delay to allow link click
+                  />
+                </CInputGroup>
+
+                {showDropdown && searchTerm && (
+                  <div
+                    className="position-absolute border rounded shadow-sm mt-1"
+                    style={{
+                      maxHeight: "200px",
+                      width: "300px",
+                      overflowY: "auto",
+                      zIndex: 10,
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {robotsGatewayLoading ? (
+                      <div className="text-center p-2">
+                        <LoadingSpinner />
+                      </div>
+                    ) : robotsGatewayError ? (
+                      <div className="text-center text-danger p-2">
+                        {robotsGatewayError}
+                      </div>
+                    ) : filteredData.robots.length === 0 &&
+                      filteredData.gateways.length === 0 ? (
+                      <div className="text-center p-2">
+                        No robots or gateways found
+                      </div>
+                    ) : (
+                      <>
+                        {filteredData.robots.length > 0 && (
+                          <>
+                            <div className="text-dark px-2  py-1">Robots</div>
+                            {filteredData.robots.map((robot, index) => (
+                              <Link
+                                key={`robot-${index}`}
+                                to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                                className="text-decoration-none "
+                              >
+                                <div className=" px-2 py-1 ">
+                                  {robot.robot_no}
+                                </div>
+                              </Link>
+                            ))}
+                          </>
+                        )}
+
+                        {filteredData.gateways.length > 0 && (
+                          <>
+                            <div className="text-dark px-2 pt-2">Gateways</div>
+                            {filteredData.gateways.map((gateway, index) => (
+                              <Link
+                                key={`gateway-${index}`}
+                                to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
+                                className="text-decoration-none "
+                              >
+                                <div className="px-2 py-1  border-bottom">
+                                  {gateway.gateway_name}
+                                </div>
+                              </Link>
+                            ))}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CCol>
+          </CRow>
+          <li className="nav-item py-1 mx-2">
+            {/* <div className="vr h-100 mx-2 text-body text-opacity-75"></div> */}
+          </li>
           {/* 🌗 Theme Toggle */}
-          <CDropdown variant="nav-item" placement="bottom-end">
+          {/* <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="align-self-center mt-1">
               {colorMode === "dark" ? (
                 <CIcon icon={cilMoon} size="lg" />
@@ -259,7 +475,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                 <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
               </CDropdownItem>
             </CDropdownMenu>
-          </CDropdown>
+          </CDropdown> */}
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
@@ -298,7 +514,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       <span className="position-relative">
                         <CIcon icon={cilBell} size="xl" />
                         <CBadge
-                          className="badge bg-danger d-flex justify-content-center align-items-center"
+                          className="badge bg-primary d-flex justify-content-center align-items-center"
                           style={{
                             height:
                               unreadNotifications.length > 99 ? "36px" : "22px",
@@ -354,8 +570,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             src={notification.performed_by.profile_image}
                             alt="Profile"
                             className="rounded-circle"
-                            width="50"
-                            height="50"
+                            width="45"
+                            height="45"
                             style={{ objectFit: "cover", cursor: "pointer" }}
                           />
                           <div className="ms-2 flex-grow-1">

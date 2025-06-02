@@ -1,0 +1,22 @@
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.profile {
+  height: 40px;
+  width: 40px;
+  background: #052638;
+
+  border-radius: 50%;
+  display: flex;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 4;
+  }
+}

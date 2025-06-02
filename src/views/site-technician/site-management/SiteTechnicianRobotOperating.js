@@ -252,7 +252,7 @@ const SiteTechnicianRobotOperating = () => {
           <CRow>
             <CCol>
               <h4 className="fw-bold text-center">
-                <span className="text-dark">{site_id} -&nbsp;</span>
+                <span className="">{site_id} -&nbsp;</span>
                 <span className="text-primary">{block}</span>
                 &nbsp;-&nbsp;Robot's Configuration
               </h4>
@@ -340,10 +340,7 @@ const SiteTechnicianRobotOperating = () => {
                     <CTableBody>
                       <CTableRow>
                         <CTableDataCell>
-                          <span
-                            className="text-secondary"
-                            style={{ fontSize: "15px" }}
-                          >
+                          <span className=" " style={{ fontSize: "15px" }}>
                             {robot.robot_no}
                           </span>
                         </CTableDataCell>
@@ -358,10 +355,7 @@ const SiteTechnicianRobotOperating = () => {
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell className="text-danger">
-                          <span
-                            className="text-secondary"
-                            style={{ fontSize: "13px" }}
-                          >
+                          <span className=" " style={{ fontSize: "13px" }}>
                             {" "}
                           </span>
                         </CTableDataCell>
@@ -414,9 +408,7 @@ const SiteTechnicianRobotOperating = () => {
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="text-secondary">
-                            {robot.last_status}
-                          </span>
+                          <span className=" ">{robot.last_status}</span>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
