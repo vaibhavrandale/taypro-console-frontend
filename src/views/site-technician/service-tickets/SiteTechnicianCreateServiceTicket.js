@@ -356,7 +356,7 @@ const SiteTechnicianCreateServiceTicket = () => {
                   <CFormInput
                     type="text"
                     name="lora_no"
-                    value={formData.lora_no}
+                    value={formData.lora_no ? formData.lora_no : "N/A"}
                     label="Lora No"
                     disabled
                     className="mb-3"
