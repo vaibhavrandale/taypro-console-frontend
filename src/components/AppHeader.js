@@ -98,8 +98,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   });
   const notificationsFetched = useRef(false); // ✅ track one-time fetch
 
-  const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
   const { colorMode, setColorMode } = useColorModes("theme");
