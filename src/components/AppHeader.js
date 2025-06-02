@@ -10,7 +10,6 @@ import {
   CHeaderToggler,
   CNavLink,
   CNavItem,
-  useColorModes,
   CDropdownDivider,
   CBadge,
   CRow,
@@ -19,7 +18,7 @@ import {
   CFormInput,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilBell, cilContrast, cilMenu, cilMoon, cilSun } from "@coreui/icons";
+import { cilBell, cilMenu } from "@coreui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
@@ -84,7 +83,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       error,
       notifications,
       loadingUpdate,
-      updateSuccess,
       robots,
       gateways,
       robotsGatewayLoading,
@@ -102,7 +100,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
-  const { colorMode, setColorMode } = useColorModes("theme");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState({
     robots: [],

@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   CButton,
   CCard,
@@ -36,7 +36,6 @@ const ForgotPassword = () => {
     forgotLoading: false,
     error: "",
   });
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const theme = localStorage.getItem("theme");
 
