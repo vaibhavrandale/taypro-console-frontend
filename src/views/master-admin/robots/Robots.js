@@ -146,12 +146,6 @@ const Robots = () => {
       robot?.site_id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Open modal and load robot data
-  const openModal = (robot) => {
-    setSelectedRobot(robot);
-    setFormData(robot);
-    setModalVisible(true);
-  };
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
