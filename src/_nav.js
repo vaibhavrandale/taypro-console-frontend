@@ -170,6 +170,11 @@ const _nav = [
             name: "Replace Lora",
             to: "/master-admin/replace-lora/active-robots",
           },
+          {
+            component: CNavItem,
+            name: "Robot Battery Temperature",
+            to: "/master-admin/robot-battery-temperature",
+          },
         ],
       },
 
