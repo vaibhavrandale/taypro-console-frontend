@@ -275,7 +275,6 @@ const Robots = () => {
                   <Link
                     className="text-decoration-none m-1"
                     to={`/${adminroute}/robots/${robot._id}`}
-                    // onClick={() => openModal(robot)}
                   >
                     {robot.robot_no}
                   </Link>
@@ -301,11 +300,11 @@ const Robots = () => {
 
                 <CTableDataCell>
                   {robot.activate === true ? (
-                    <CBadge color="success" shape="rounded-pill">
-                      Activate
+                    <CBadge color="warning" shape="rounded-pill">
+                      Active
                     </CBadge>
                   ) : (
-                    <CBadge className="bg-primary" shape="rounded-pill">
+                    <CBadge className="bg-blue" shape="rounded-pill">
                       In Active
                     </CBadge>
                   )}

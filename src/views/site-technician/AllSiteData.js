@@ -25,6 +25,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -193,10 +195,18 @@ const AllSiteData = () => {
                   visible={activeOnlineSite === site.site_id}
                   onClose={() => setActiveOnlineSite(null)}
                 >
-                  <CModalHeader>
+                  <CModalHeader closeButton={false}>
                     <CModalTitle>
                       {site.siteName} - Online Robots List
                     </CModalTitle>
+                    <button
+                      type="button"
+                      className=" border-0 ms-auto py-0 px-1"
+                      onClick={() => setActiveOnlineSite(false)}
+                      style={{ background: "none" }}
+                    >
+                      <CIcon icon={cilX} size="lg" />
+                    </button>
                   </CModalHeader>
                   <CModalBody>
                     <>

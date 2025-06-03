@@ -25,7 +25,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         fetchingRobots: false,
-        // inactiverobots: action.payload,
         inactiverobots: action.payload.data,
         totalPages: action.payload.totalPages, // Use API-provided totalPages
         hasNextPage: action.payload.hasNextPage,
