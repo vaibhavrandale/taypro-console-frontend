@@ -569,13 +569,21 @@ const Clients = () => {
       >
         {selectedItem && (
           <>
-            <CModalHeader>
+            <CModalHeader closeButton={false}>
               <CModalTitle>
                 Update Client :{" "}
                 <span className="badge bg-success">
                   {selectedItem.client_id}
                 </span>
               </CModalTitle>
+              <button
+                type="button"
+                className=" border-0 ms-auto py-0 px-1"
+                onClick={() => setModalVisible(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
             </CModalHeader>
             <CModalBody>
               <CForm>

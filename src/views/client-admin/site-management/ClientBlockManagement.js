@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   CButton,
   CModal,
@@ -26,6 +26,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -51,6 +53,7 @@ const ClientBlockManagement = () => {
     blocks: [],
     loading: false,
   });
+  const navigate = useNavigate();
 
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
@@ -156,13 +159,21 @@ const ClientBlockManagement = () => {
           visible={visible}
           onClose={() => setVisible(false)}
         >
-          <CModalHeader>
+          <CModalHeader closeButton={false}>
             <CModalTitle>
               <span className="text-primary">
                 {sitename}, {sitelocation}
               </span>{" "}
               - Robots Details
             </CModalTitle>
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
           </CModalHeader>
           <CModalBody>
             <CRow className="justify-content-end">
@@ -282,12 +293,15 @@ const ClientBlockManagement = () => {
                             }`}
                           >
                             {" "}
-                            <Link
-                              to={`/client-admin/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`}
-                              className="text-decoration-none text-white"
+                            <div
+                              onClick={() =>
+                                navigate(
+                                  `/client-admin/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
+                                )
+                              }
                             >
                               {item.robot_no.slice(-3)}
-                            </Link>
+                            </div>
                           </span>
                         </CTooltip>
                       ))}

@@ -21,6 +21,8 @@ import {
 } from "@coreui/react";
 import { clients, sites } from "../../../data"; // Import clients & sites data
 import toast from "react-hot-toast";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const ClientData = () => {
   const { client_id } = useParams(); // Get client_id from URL params
@@ -361,7 +363,7 @@ const ClientData = () => {
               visible={deleteModal}
               onClose={() => setDeleteModal(false)}
             >
-              <CModalHeader>
+              <CModalHeader closeButton={false}>
                 <CModalTitle>
                   Are you want to delete <br />
                   <b className="text-danger">
@@ -370,6 +372,14 @@ const ClientData = () => {
                   </b>
                   ?
                 </CModalTitle>
+                <button
+                  type="button"
+                  className=" border-0 ms-auto py-0 px-1"
+                  onClick={() => setDeleteModal(false)}
+                  style={{ background: "none" }}
+                >
+                  <CIcon icon={cilX} size="lg" />
+                </button>
               </CModalHeader>
 
               <CModalFooter>

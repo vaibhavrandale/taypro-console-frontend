@@ -783,8 +783,16 @@ const ExternalUsersDashboard = () => {
         onClose={() => setModalVisible(false)}
         backdrop="static"
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>Update User - {formData.username}</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           <CFormLabel>Username</CFormLabel>
@@ -934,13 +942,21 @@ const ExternalUsersDashboard = () => {
         onClose={() => setassignedSitesModalVisible(false)}
         backdrop="static"
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Assigned Sites of &nbsp;:&nbsp;
             <CBadge color="primary">
               {selectedUser ? selectedUser.username : ""}
             </CBadge>
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setassignedSitesModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
 
         <CModalBody>

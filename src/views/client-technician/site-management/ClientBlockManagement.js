@@ -26,6 +26,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -156,13 +158,21 @@ const ClientBlockManagement = () => {
           visible={visible}
           onClose={() => setVisible(false)}
         >
-          <CModalHeader>
+          <CModalHeader closeButton={false}>
             <CModalTitle>
               <span className="text-primary">
                 {sitename}, {sitelocation}
               </span>{" "}
               - Robots Details
             </CModalTitle>
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
           </CModalHeader>
           <CModalBody>
             <CRow className="justify-content-end">

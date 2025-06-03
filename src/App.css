@@ -2,6 +2,8 @@
 
 :root {
   --primary: #6c71fd;
+  --blue: #0b3955;
+  --blue-text: #6ce7fd;
   --success: #05c16833;
   --success-text: #14ca74;
   --danger: #ff5a6533;
@@ -108,6 +110,13 @@ a {
   color: var(--danger-text) !important;
   font-weight: 600;
   border-color: #ff5a6533;
+}
+
+.bg-blue {
+  background: var(--blue) !important;
+  color: var(--blue-text) !important;
+  font-weight: 600;
+  border-color: #0b3955;
 }
 
 .bg-secondary,

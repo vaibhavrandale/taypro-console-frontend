@@ -20,6 +20,8 @@ import {
 import { clients as initialClients } from "../../../data"; // Import clients data
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const Clients = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -230,11 +232,19 @@ const Clients = () => {
 
       {/* Update Modal */}
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Update Client :{" "}
             <span className="badge bg-success">{formData.client_id}</span>
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedClient && (

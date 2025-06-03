@@ -75,6 +75,7 @@ const AddRobotUsingLoraNo = () => {
       lora_configuration,
       loadingaddRobots,
       loadingFields,
+      loadingloraconfig,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -267,7 +268,9 @@ const AddRobotUsingLoraNo = () => {
           <CForm onSubmit={handleSubmit}>
             <CRow className="mb-3">
               <CCol md={4}>
-                <label>Lora No</label>
+                <label>
+                  Lora No {loadingloraconfig && <LoadingSpinner />}{" "}
+                </label>
                 <CFormSelect
                   name="serial"
                   value={formData.serial}

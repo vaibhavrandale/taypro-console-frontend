@@ -600,11 +600,19 @@ const LoraConfiguration = () => {
         backdrop="static"
         size="lg"
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Update Lora{" "}
             <b className="px-3 badge bg-danger">{formData.serial}</b>
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedItem && (

@@ -521,125 +521,135 @@ const RobotOperating = () => {
             <CCol></CCol>
           </CRow>
 
-          <CRow className="">
+          <CRow>
             {/* First Card */}
             <CCol md={5} className="mt-2">
-              <CCard className="shadow border-0" style={{ height: "100%" }}>
-                <CCardBody>
-                  <CTable borderless>
-                    <CTableBody>
-                      <CTableRow>
-                        <CTableDataCell>
-                          <span className=" " style={{ fontSize: "15px" }}>
-                            {robot.robot_no}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          🔋: {robot.battery_voltage}%
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className="badge bg-success">
-                            {robot.version}
-                          </span>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell className="text-danger">
-                          <span className=" " style={{ fontSize: "13px" }}>
-                            {" "}
-                            {robot.deveui}{" "}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>Wheel Speed</CTableDataCell>
-                        <CTableDataCell>
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {robot.wheel_motor_speed}
-                          </CBadge>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell>
-                          Lora:{" "}
-                          <span className="text-success">{robot.lora_no}</span>
-                        </CTableDataCell>
-                        <CTableDataCell>Brush Speed</CTableDataCell>
-                        <CTableDataCell>
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {robot.brush_motor_speed}
-                          </CBadge>
-                        </CTableDataCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
+              {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
+              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                <CCardBody className="d-flex flex-column flex-grow-1">
+                  <div className="d-flex flex-row justify-content-between p-1">
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span style={{ fontSize: "15px" }}>
+                          {robot.robot_no}
+                        </span>
+                      </CCol>
+                      <CCol>🔋: {robot.battery_voltage}%</CCol>
+                      <CCol>
+                        <span className="badge bg-success">
+                          {robot.version}
+                        </span>
+                      </CCol>
+                    </CRow>
+
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span style={{ fontSize: "13px" }}>{robot.deveui}</span>
+                      </CCol>
+                      <CCol>Wheel Speed</CCol>
+                      <CCol>
+                        <CBadge
+                          className="badge bg-danger"
+                          shape="rounded-pill"
+                        >
+                          {robot.wheel_motor_speed}
+                        </CBadge>
+                      </CCol>
+                    </CRow>
+
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        Lora:{" "}
+                        <span className="text-success">{robot.lora_no}</span>
+                      </CCol>
+                      <CCol>Brush Speed</CCol>
+                      <CCol>
+                        <CBadge
+                          className="badge bg-danger"
+                          shape="rounded-pill"
+                        >
+                          {robot.brush_motor_speed}
+                        </CBadge>
+                      </CCol>
+                    </CRow>
+                  </div>
                 </CCardBody>
               </CCard>
             </CCol>
 
             {/* Second Card */}
             <CCol md={4} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <CTable borderless>
-                    <CTableBody>
-                      <CTableRow>
-                        <CTableDataCell>
-                          <span
-                            className={`text-${
-                              robot.lora_state === 1 ? `success` : `danger`
-                            }`}
+              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                <CCardBody className="d-flex flex-column flex-grow-1">
+                  <div className="d-flex flex-row justify-content-between p-1">
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span
+                          className={`text-${
+                            robot.lora_state === 1 ? `success` : `danger`
+                          }`}
+                        >
+                          {robot.lora_state === 1 ? `online` : `offline`}
+                        </span>
+                      </CCol>
+                      <CCol>
+                        {" "}
+                        <span className=" ">{robot.last_status}</span>
+                      </CCol>
+                    </CRow>
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span className="text-danger">
+                          SC : {robot.stuck_count}
+                        </span>
+                      </CCol>
+                      <CCol>
+                        {" "}
+                        {!robot.last_uplink ||
+                        isNaN(new Date(robot.last_uplink).getTime()) ? (
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
                           >
-                            {robot.lora_state === 1 ? `online` : `offline`}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className=" ">{robot.last_status}</span>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell>
-                          <span className="text-danger">
-                            SC : {robot.stuck_count}
-                          </span>
-                        </CTableDataCell>
-
-                        <CTableDataCell>
-                          {!robot.last_uplink ||
-                          isNaN(new Date(robot.last_uplink).getTime()) ? (
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
+                            Robot is not activated
+                          </CBadge>
+                        ) : (
+                          <span>
+                            <CTooltip
+                              content={new Date(
+                                robot.last_uplink
+                              ).toLocaleString()}
+                              placement="top"
                             >
-                              Robot is not activated
-                            </CBadge>
-                          ) : (
-                            <span>
-                              <CTooltip
-                                content={new Date(
-                                  robot.last_uplink
-                                ).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(
-                                    new Date(robot.last_uplink),
-                                    {
-                                      addSuffix: true,
-                                    }
-                                  )}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
+                              <span>
+                                {formatDistanceToNow(
+                                  new Date(robot.last_uplink),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                            </CTooltip>
+                          </span>
+                        )}
+                      </CCol>
+                    </CRow>
+                  </div>
                 </CCardBody>
               </CCard>
             </CCol>
