@@ -1,5 +1,4 @@
 {
-  
   "name": "taypro-console-frontend",
   "proxy": "http://localhost:5000",
   "version": "0.1.0",
@@ -18,6 +17,7 @@
     "@popperjs/core": "^2.11.8",
     "@testing-library/react": "^16.2.0",
     "axios": "^1.7.9",
+    "browser-image-compression": "^2.0.2",
     "chart.js": "^4.4.6",
     "classnames": "^2.5.1",
     "core-js": "^3.39.0",

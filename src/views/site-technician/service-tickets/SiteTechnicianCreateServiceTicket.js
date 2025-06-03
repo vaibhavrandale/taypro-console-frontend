@@ -6,7 +6,6 @@ import {
   CCardBody,
   CCardHeader,
   CForm,
-  CFormSelect,
   CFormInput,
   CFormTextarea,
   CButton,
@@ -25,6 +24,7 @@ import CIcon from "@coreui/icons-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import "./servicetickts.css";
+import imageCompression from "browser-image-compression";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -221,16 +221,61 @@ const SiteTechnicianCreateServiceTicket = () => {
     setSearchTerm(""); // Clear search input
     setFilteredRobots([]); // Hide suggestions
   };
+
+  // const handleFileChange = async (event) => {
+  //   const { name, files } = event.target;
+  //   if (files.length === 0) return;
+
+  //   const file = files[0];
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   try {
+  //     setUploadingFields((prev) => ({ ...prev, [name]: true })); // ✅ Set only this field to loading
+
+  //     const response = await axios.post(
+  //       "/api/v1/image-upload/service-tickets",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
+  //     }));
+
+  //     setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading for this input
+  //   } catch (error) {
+  //     setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading on error
+  //     console.error("File upload error:", error);
+  //   }
+  // };
+
   const handleFileChange = async (event) => {
     const { name, files } = event.target;
     if (files.length === 0) return;
 
     const file = files[0];
-    const formData = new FormData();
-    formData.append("file", file);
 
     try {
-      setUploadingFields((prev) => ({ ...prev, [name]: true })); // ✅ Set only this field to loading
+      setUploadingFields((prev) => ({ ...prev, [name]: true }));
+
+      // Compress image
+      const options = {
+        maxSizeMB: 5, // Keep below 10MB Cloudinary limit
+        maxWidthOrHeight: 1920, // Resize large images
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+
+      const formData = new FormData();
+      formData.append("file", compressedFile);
 
       const response = await axios.post(
         "/api/v1/image-upload/service-tickets",
@@ -245,15 +290,16 @@ const SiteTechnicianCreateServiceTicket = () => {
 
       setFormData((prevData) => ({
         ...prevData,
-        [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
+        [name]: response.data.url,
       }));
 
-      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading for this input
+      setUploadingFields((prev) => ({ ...prev, [name]: false }));
     } catch (error) {
-      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading on error
+      setUploadingFields((prev) => ({ ...prev, [name]: false }));
       console.error("File upload error:", error);
     }
   };
+
   return (
     <CRow className="justify-content-center">
       <CCol>
