@@ -18,6 +18,7 @@ import {
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import imageCompression from "browser-image-compression";
 
 const initialState = {
   pm_id: "",
@@ -152,16 +153,62 @@ const CreateTechnicianPreventivemaintanance = () => {
     setFilteredRobots([]);
   };
 
+  // const handleImageUpload = async (e, fieldName) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   dispatch({ type: "UPLOAD_REQUEST", field: fieldName }); // Set loading for this specific field
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/preventive-maintanance",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (data?.url) {
+  //       dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
+  //     }
+
+  //     dispatch({ type: "UPLOAD_SUCCESS", field: fieldName }); // Stop loading for this field
+  //     toast.success("Image uploaded successfully.");
+  //   } catch (err) {
+  //     dispatch({
+  //       type: "UPLOAD_FAIL",
+  //       field: fieldName,
+  //       payload: "Upload failed",
+  //     });
+  //     toast.error("Image upload failed.");
+  //   }
+  // };
+
   const handleImageUpload = async (e, fieldName) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const bodyFormData = new FormData();
-    bodyFormData.append("file", file);
-
-    dispatch({ type: "UPLOAD_REQUEST", field: fieldName }); // Set loading for this specific field
+    dispatch({ type: "UPLOAD_REQUEST", field: fieldName });
 
     try {
+      // Compress image before upload
+      const options = {
+        maxSizeMB: 5, // keep size below 5MB to stay within Cloudinary limit
+        maxWidthOrHeight: 1920, // optional, resize dimensions if needed
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+
+      const bodyFormData = new FormData();
+      bodyFormData.append("file", compressedFile);
+
       const { data } = await axios.post(
         "/api/v1/image-upload/preventive-maintanance",
         bodyFormData,
@@ -177,7 +224,7 @@ const CreateTechnicianPreventivemaintanance = () => {
         dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
       }
 
-      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName }); // Stop loading for this field
+      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName });
       toast.success("Image uploaded successfully.");
     } catch (err) {
       dispatch({
@@ -185,7 +232,7 @@ const CreateTechnicianPreventivemaintanance = () => {
         field: fieldName,
         payload: "Upload failed",
       });
-      toast.error("Image upload failed.");
+      toast.error(err.response.data.error || err.response.data.message);
     }
   };
 
