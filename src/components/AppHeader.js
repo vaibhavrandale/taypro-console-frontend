@@ -338,7 +338,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const handleSelectRobotAndGateways = (value) => {
     setSearchTerm(value);
     setFilteredData({ robots: [], gateways: [] });
-    // setFilteredData();
   };
 
   return (
@@ -416,7 +415,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                               <Link
                                 key={`robot-${index}`}
                                 to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
-                                className="text-decoration-none "
+                                className="text-decoration-none"
                                 onClick={() =>
                                   handleSelectRobotAndGateways(robot.robot_no)
                                 }

@@ -167,13 +167,24 @@ const BatteryAndTemperature = () => {
             />
             {robot_no && filteredRobot.length > 0 && (
               <ul
-                className="position-absolute bg-white shadow-sm w-100 mt-1 px-2 py-2 rounded"
-                style={{ maxHeight: "200px", overflowY: "auto", zIndex: 1000 }}
+                className="position-absolute shadow-sm
+                w-100
+                mt-1
+                px-2
+                py-2
+                rounded"
+                style={{
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  zIndex: 1000,
+                  backgroundColor: "white",
+                }}
               >
                 {filteredRobot.map((robot, index) => (
                   <li
                     key={index}
-                    className="py-1 px-2 border-bottom hover:bg-light"
+                    // className="py-1 px-2 border-bottom hover:bg-light"
+                    className="text-dark px-2  py-1 border-bottom hover:bg-light"
                     style={{ cursor: "pointer", listStyle: "none" }}
                     onClick={() => handleSelectRobot(robot.robot_no)}
                   >
