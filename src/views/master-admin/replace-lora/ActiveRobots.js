@@ -66,7 +66,6 @@ const ActiveRobots = () => {
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
-
     loadingaddRobots: false,
     updateloading: false,
     error: "",
@@ -138,7 +137,7 @@ const ActiveRobots = () => {
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.lora_no.toLowerCase().includes(searchTerm.toLowerCase())
+      robot.lora_no?.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Open modal with selected robot data

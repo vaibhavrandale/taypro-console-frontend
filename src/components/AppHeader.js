@@ -335,6 +335,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
   };
 
+  const handleSelectRobotAndGateways = (value) => {
+    setSearchTerm(value);
+    setFilteredData({ robots: [], gateways: [] });
+    // setFilteredData();
+  };
+
   return (
     <CHeader
       position="sticky"
@@ -411,6 +417,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                                 key={`robot-${index}`}
                                 to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                                 className="text-decoration-none "
+                                onClick={() =>
+                                  handleSelectRobotAndGateways(robot.robot_no)
+                                }
                               >
                                 <div className=" px-2 py-1 ">
                                   {robot.robot_no}
@@ -428,6 +437,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                                 key={`gateway-${index}`}
                                 to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
                                 className="text-decoration-none "
+                                onClick={() =>
+                                  handleSelectRobotAndGateways(
+                                    gateway.gateway_name
+                                  )
+                                }
                               >
                                 <div className="px-2 py-1  border-bottom">
                                   {gateway.gateway_name}
