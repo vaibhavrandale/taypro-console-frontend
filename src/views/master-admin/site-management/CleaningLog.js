@@ -13,6 +13,7 @@ import {
   CFormInput,
   CInputGroup,
   CButton,
+  CFormCheck,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
@@ -53,25 +54,33 @@ const CleaningLog = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const { robot_no } = useParams();
+  const { robot_no, site_id } = useParams(); // Assuming both are present in route
+  const [fetchBySite, setFetchBySite] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
 
+  // Filter logs based on robot_no
   useEffect(() => {
     let pagination = {
       pg: page,
       limit: limit,
     };
+
     const fetchCleaningLogs = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
+        const data = fetchBySite
+          ? { site_id: site_id, ...pagination }
+          : { robot_no: robot_no, ...pagination };
+
         const response = await axios.post(
-          `/api/v1/rawcleaninglogs/robot/${robot_no}`,
-          pagination,
+          `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
+          data,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -96,21 +105,20 @@ const CleaningLog = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response.data.error || "Failed to fetch data",
+          payload: error.response?.data?.error || "Failed to fetch data",
         });
-        toast.error(error.response.data.error || "Failed to fetch data");
+        toast.error(error.response?.data?.error || "Failed to fetch data");
       }
     };
 
     fetchCleaningLogs();
-  }, [authtoken, limit, page, robot_no]);
+  }, [authtoken, limit, page, robot_no, site_id, fetchBySite]);
 
-  // Filter logs based on robot_no
-  const filteredRobotLogs = cleaninglogs.filter(
-    (log) => log.robot_no === robot_no
-  );
+  // Apply filtering only when not fetching by site
+  const filteredRobotLogs = fetchBySite
+    ? cleaninglogs
+    : cleaninglogs.filter((log) => log.robot_no === robot_no);
 
-  // Search by robot_no or topic
   const filteredLogs = filteredRobotLogs.filter(
     (log) =>
       (log.robot_no &&
@@ -193,7 +201,20 @@ const CleaningLog = () => {
           </CRow>
 
           {/* Search Bar */}
-          <CRow className="justify-content-end my-3">
+          <CRow className="justify-content-between my-3">
+            <CCol md={3}>
+              <CFormCheck
+                type="checkbox"
+                id="fetchBySite"
+                label="Fetch Site Logs"
+                checked={fetchBySite}
+                onChange={(e) => {
+                  setFetchBySite(e.target.checked);
+                  setPage(1); // reset to first page when toggling
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            </CCol>
             <CCol md={4}>
               <CInputGroup className="mb-3">
                 <CFormInput
