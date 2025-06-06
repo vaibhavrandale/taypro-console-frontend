@@ -318,7 +318,7 @@ const Robots = () => {
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
-                    to={`/master-admin/robots/${robot._id}`}
+                    to={`/master-admin/robots/update/${robot._id}`}
                   >
                     Update
                   </Link>
