@@ -587,7 +587,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/robots/:id",
+    path: "/master-admin/robots/update/:id",
     name: "Update Robot",
     element: (
       <MasterAdminRoute>
