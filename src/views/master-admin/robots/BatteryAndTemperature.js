@@ -62,8 +62,7 @@ const BatteryAndTemperature = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const [robot_no, setRobotNo] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
-  const [date, setDate] = useState("");
-
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   useEffect(() => {
     const fetchRobots = async () => {
       try {
