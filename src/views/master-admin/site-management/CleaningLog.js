@@ -63,8 +63,12 @@ const CleaningLog = () => {
   const [limit, setLimit] = useState(10);
 
   // ✅ New Date Filter States
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   const authtoken = useSelector((state) => state.authtoken);
 
