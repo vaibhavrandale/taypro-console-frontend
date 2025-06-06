@@ -11,12 +11,11 @@ import {
   CCard,
   CCardBody,
   CFormInput,
-  CInputGroup,
   CButton,
   CFormCheck,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
-import * as XLSX from "xlsx"; // Import xlsx for Excel export
+import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -31,7 +30,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         cleaninglogs: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
         loading: false,
@@ -42,6 +41,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
 const CleaningLog = () => {
   const [
     { loading, error, cleaninglogs, totalPages, hasNextPage, hasPrevPage },
@@ -54,33 +54,45 @@ const CleaningLog = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const { robot_no, site_id } = useParams(); // Assuming both are present in route
-  const [fetchBySite, setFetchBySite] = useState(false);
 
+  const { robot_no, site_id } = useParams();
+  const [fetchBySite, setFetchBySite] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+
+  // ✅ New Date Filter States
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const authtoken = useSelector((state) => state.authtoken);
 
-  // Filter logs based on robot_no
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
-
     const fetchCleaningLogs = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const data = fetchBySite
-          ? { site_id: site_id, ...pagination }
-          : { robot_no: robot_no, ...pagination };
+        let requestBody = {
+          pg: page,
+          limit: limit,
+        };
+
+        if (fetchBySite) {
+          requestBody.site_id = site_id;
+        } else {
+          requestBody.robot_no = robot_no;
+        }
+
+        // ✅ Add Dates to Request
+        if (startDate && endDate) {
+          requestBody.startDate = startDate;
+          requestBody.endDate = endDate;
+        }
 
         const response = await axios.post(
           `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
-          data,
+          requestBody,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -89,17 +101,14 @@ const CleaningLog = () => {
         let total = Math.ceil(
           Number(response.data.total) / Number(response.data.limit)
         );
-        let next = response.data.hasNextPage;
-        let prev = response.data.hasPrevPage;
-        let result = response.data.data;
 
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: result,
+            data: response.data.data,
             totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
+            hasNextPage: response.data.hasNextPage,
+            hasPrevPage: response.data.hasPrevPage,
           },
         });
       } catch (error) {
@@ -112,14 +121,22 @@ const CleaningLog = () => {
     };
 
     fetchCleaningLogs();
-  }, [authtoken, limit, page, robot_no, site_id, fetchBySite]);
+  }, [
+    authtoken,
+    limit,
+    page,
+    robot_no,
+    site_id,
+    fetchBySite,
+    startDate,
+    endDate,
+  ]);
 
-  // Apply filtering only when not fetching by site
-  const filteredRobotLogs = fetchBySite
-    ? cleaninglogs
-    : cleaninglogs.filter((log) => log.robot_no === robot_no);
-
-  const filteredLogs = filteredRobotLogs.filter(
+  const filteredLogs = (
+    fetchBySite
+      ? cleaninglogs
+      : cleaninglogs.filter((log) => log.robot_no === robot_no)
+  ).filter(
     (log) =>
       (log.robot_no &&
         log.robot_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -134,7 +151,6 @@ const CleaningLog = () => {
       return;
     }
 
-    // Convert JSON to sheet
     const worksheet = XLSX.utils.json_to_sheet(
       filteredLogs.map((log, index) => ({
         "#": index + 1,
@@ -156,8 +172,6 @@ const CleaningLog = () => {
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Cleaning Logs");
-
-    // Trigger download
     XLSX.writeFile(workbook, `CleaningLogs_${robot_no}.xlsx`);
   };
 
@@ -182,27 +196,24 @@ const CleaningLog = () => {
     <div>
       <CCard className="shadow-0 border-0">
         <CCardBody>
-          <CRow className="justify-content-between my-3">
-            <CCol md={4} className="text-end">
-              {" "}
-              <h5 className="text-primary text-center">
-                <span className="text-danger">{robot_no}</span> - Cleaning Logs
+          {/* Title row centered */}
+          <CRow className="my-2">
+            <CCol className="text-center">
+              <h5 className="text-primary mb-0">
+                <>
+                  <span className="text-danger">
+                    {" "}
+                    {fetchBySite ? site_id : robot_no}
+                  </span>{" "}
+                  - Cleaning Logs
+                </>
               </h5>
-            </CCol>
-            <CCol md={2} className="text-end">
-              <CButton
-                color="success"
-                className="btn-sm m-1 shadow-sm text-white"
-                onClick={exportToExcel}
-              >
-                Export to Excel
-              </CButton>
             </CCol>
           </CRow>
 
-          {/* Search Bar */}
-          <CRow className="justify-content-between my-3">
-            <CCol md={3}>
+          {/* Second line: Checkbox left, Export button right */}
+          <CRow className="align-items-center justify-content-between my-2">
+            <CCol md={6}>
               <CFormCheck
                 type="checkbox"
                 id="fetchBySite"
@@ -210,20 +221,63 @@ const CleaningLog = () => {
                 checked={fetchBySite}
                 onChange={(e) => {
                   setFetchBySite(e.target.checked);
-                  setPage(1); // reset to first page when toggling
+                  setPage(1);
                 }}
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  transform: "scale(1.1)",
+                  marginBottom: "0",
+                }}
               />
             </CCol>
-            <CCol md={4}>
-              <CInputGroup className="mb-3">
+            <CCol md={6} className="text-end">
+              <CButton
+                color="success"
+                className="btn-sm shadow-sm text-white"
+                onClick={exportToExcel}
+              >
+                Export to Excel
+              </CButton>
+            </CCol>
+          </CRow>
+
+          {/* Third line: Date filters left, search bar right */}
+          <CRow className="align-items-center justify-content-between my-2">
+            <CCol md={6} className="d-flex gap-3">
+              {/* Start Date */}
+              <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
+                <label htmlFor="startDate" className="mb-1 fw-semibold">
+                  Start Date
+                </label>
                 <CFormInput
-                  type="text"
-                  placeholder="Search by Robot No or Topic or data..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  id="startDate"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                 />
-              </CInputGroup>
+              </div>
+
+              {/* End Date */}
+              <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
+                <label htmlFor="endDate" className="mb-1 fw-semibold">
+                  End Date
+                </label>
+                <CFormInput
+                  id="endDate"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            </CCol>
+
+            <CCol md={6}>
+              <CFormInput
+                type="text"
+                placeholder="Search by Robot No or Topic or data..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </CCol>
           </CRow>
 
@@ -232,34 +286,19 @@ const CleaningLog = () => {
               <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell
-                    className="text-center"
-                    style={{ minWidth: "140px" }}
-                  >
+                  <CTableHeaderCell className="text-center">
                     Robot No
                   </CTableHeaderCell>
-                  <CTableHeaderCell
-                    className="text-center"
-                    style={{ minWidth: "140px" }}
-                  >
+                  <CTableHeaderCell className="text-center">
                     Deveui
                   </CTableHeaderCell>
-                  <CTableHeaderCell
-                    className="text-center"
-                    style={{ minWidth: "150px" }}
-                  >
+                  <CTableHeaderCell className="text-center">
                     Data
                   </CTableHeaderCell>
-                  <CTableHeaderCell
-                    className="text-center"
-                    style={{ minWidth: "170px" }}
-                  >
-                    Timestamp (D/M/Y)
+                  <CTableHeaderCell className="text-center">
+                    Timestamp
                   </CTableHeaderCell>
-                  <CTableHeaderCell
-                    className="text-center"
-                    style={{ minWidth: "140px" }}
-                  >
+                  <CTableHeaderCell className="text-center">
                     Topic
                   </CTableHeaderCell>
                 </CTableRow>
@@ -267,15 +306,15 @@ const CleaningLog = () => {
               <CTableBody>
                 {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell className="text-center" colSpan={6}>
+                    <CTableHeaderCell colSpan={6} className="text-center">
                       <LoadingSpinner />
-                    </CTableHeaderCell>{" "}
+                    </CTableHeaderCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableHeaderCell className="text-center" colSpan={6}>
+                    <CTableHeaderCell colSpan={6} className="text-center">
                       {error}
-                    </CTableHeaderCell>{" "}
+                    </CTableHeaderCell>
                   </CTableRow>
                 ) : filteredLogs.length === 0 ? (
                   <CTableRow>
@@ -286,7 +325,7 @@ const CleaningLog = () => {
                 ) : (
                   filteredLogs.map((log, index) => (
                     <CTableRow key={index}>
-                      <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                      <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {log.robot_no}
                       </CTableDataCell>
@@ -297,17 +336,8 @@ const CleaningLog = () => {
                         {log.data}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {new Date(log.createdAt).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}
+                        {new Date(log.createdAt).toLocaleString("en-GB")}
                       </CTableDataCell>
-
                       <CTableDataCell className="text-center">
                         {log.topic}
                       </CTableDataCell>
@@ -327,7 +357,7 @@ const CleaningLog = () => {
               handlePageInputChange={handlePageInputChange}
               handlePageInputSubmit={handlePageInputSubmit}
               limit={limit}
-              handleLimitChange={setLimit} // New prop
+              handleLimitChange={setLimit}
             />
           </div>
         </CCardBody>
