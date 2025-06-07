@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import toast from "react-hot-toast";
 import {
   CBadge,
@@ -14,8 +14,8 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CWidgetStatsB,
 } from "@coreui/react";
+import { getStyle } from "@coreui/utils";
 import { CChartLine } from "@coreui/react-chartjs";
 import { useParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
@@ -45,7 +45,31 @@ const RobotData = () => {
     error: "",
   });
   const { robot_no } = useParams();
+  const chartRef = useRef(null);
   useEffect(() => {
+    document.documentElement.addEventListener("ColorSchemeChange", () => {
+      if (chartRef.current) {
+        setTimeout(() => {
+          chartRef.current.options.scales.x.grid.borderColor = getStyle(
+            "--cui-border-color-translucent"
+          );
+          chartRef.current.options.scales.x.grid.color = getStyle(
+            "--cui-border-color-translucent"
+          );
+          chartRef.current.options.scales.x.ticks.color =
+            getStyle("--cui-body-color");
+          chartRef.current.options.scales.y.grid.borderColor = getStyle(
+            "--cui-border-color-translucent"
+          );
+          chartRef.current.options.scales.y.grid.color = getStyle(
+            "--cui-border-color-translucent"
+          );
+          chartRef.current.options.scales.y.ticks.color =
+            getStyle("--cui-body-color");
+          chartRef.current.update();
+        });
+      }
+    });
     const fetchAllSites = async () => {
       dispatch({ type: "FETCH_ROBOT_REQUEST" });
       try {
@@ -113,7 +137,7 @@ const RobotData = () => {
             {/* Robot Basic Info */}
             <CCol xs={12} md={5}>
               <CCard className="rounded-2 shadow-sm my-2">
-                <CCardHeader className="bg-primary text-white fw-bold">
+                <CCardHeader className="bg-primary text-white">
                   Robot Information
                 </CCardHeader>
                 <CCardBody>
@@ -136,10 +160,10 @@ const RobotData = () => {
             {/* Cleaning Data */}
             <CCol xs={12} md={7}>
               <CCard className="rounded-2 shadow-sm my-2 border-0">
-                <CCardHeader className="bg-primary text-white fw-bold">
+                <CCardHeader className="bg-primary text-white">
                   Today's Cleaning Summary
                 </CCardHeader>
-                <CTable bordered responsive hover className="mb-0 text-center">
+                <CTable bordered responsive hover className="my-2 text-center">
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell style={{ minWidth: "60px" }}>
@@ -199,7 +223,7 @@ const RobotData = () => {
                       ))
                     ) : (
                       <CTableRow>
-                        <CTableDataCell colSpan={6}>
+                        <CTableDataCell colSpan={7} className="text-start">
                           No Data Available
                         </CTableDataCell>
                       </CTableRow>
@@ -209,13 +233,14 @@ const RobotData = () => {
               </CCard>
             </CCol>
           </CRow>
-          <CCard className="m-2 ">
-            <CCardHeader className="bg-primary text-white fw-bold">
+          <CCard className="m-1 ">
+            <CCardHeader className="bg-primary text-white">
               Todays Battery Status
             </CCardHeader>
             <CCardBody>
               <CChartLine
-                style={{ maxHeight: "300px" }}
+                ref={chartRef}
+                style={{ maxHeight: "280px" }}
                 className="p-0"
                 data={{
                   labels: chartLabels,
@@ -223,12 +248,18 @@ const RobotData = () => {
                     {
                       label: "Battery Level",
                       // fill: true,
-                      backgroundColor: "#052638",
-                      borderColor: "#052638",
-                      pointBackgroundColor: "#052638",
-                      pointBorderColor: "#052638",
+                      // backgroundColor: "#052638",
+                      // borderColor: "#fff",
+                      // pointBackgroundColor: "#fff",
+                      // pointBorderColor: "#fff",
+                      backgroundColor: `rgba(${getStyle(
+                        "--cui-info-rgb"
+                      )}, .1)`,
+                      borderColor: getStyle("--cui-info"),
+                      pointHoverBackgroundColor: getStyle("--cui-info"),
+                      borderWidth: 2,
                       data: chartValues,
-                      tension: 0.6,
+                      tension: 0.5,
                     },
                   ],
                 }}
@@ -244,6 +275,7 @@ const RobotData = () => {
                       ticks: {
                         display: false, // ❌ Hides the X-axis labels
                       },
+
                       //   grid: {
                       //     display: false, // ❌ Hides the X-axis grid lines
                       //     drawTicks: false,
@@ -253,6 +285,7 @@ const RobotData = () => {
                       ticks: {
                         beginAtZero: true,
                       },
+                      step: 10,
                     },
                   },
                 }}

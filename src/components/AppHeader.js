@@ -387,14 +387,14 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     className="position-absolute border rounded shadow-sm mt-1"
                     style={{
                       maxHeight: "200px",
-                      width: "300px",
+                      width: "210px",
                       overflowY: "auto",
                       zIndex: 10,
                       backgroundColor: "white",
                     }}
                   >
                     {robotsGatewayLoading ? (
-                      <div className="text-center p-2">
+                      <div className="text-center text-dark p-2">
                         <LoadingSpinner />
                       </div>
                     ) : robotsGatewayError ? (
@@ -403,7 +403,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       </div>
                     ) : filteredData.robots.length === 0 &&
                       filteredData.gateways.length === 0 ? (
-                      <div className="text-center p-2">
+                      <div className="text-center text-dark p-2">
                         No robots or gateways found
                       </div>
                     ) : (
