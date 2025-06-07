@@ -1504,7 +1504,7 @@ const _nav = [
       {
         component: CNavItem,
         name: "Dashboard",
-        to: "/client-site-incharge/dashboard",
+        to: "/site-incharge/dashboard",
         icon: (
           <CIcon
             icon={cilSpeedometer}
@@ -1527,7 +1527,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "All Site Data",
-            to: "/client-site-incharge/site-management/all-site-data",
+            to: "/site-incharge/site-management/all-site-data",
             icon: (
               <CIcon
                 icon={cilFactory}
@@ -1539,7 +1539,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Site Management",
-            to: "/client-site-incharge/site-management",
+            to: "/site-incharge/site-management",
             icon: (
               <CIcon
                 icon={cilBuilding}
@@ -1551,7 +1551,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "All Sites Timers",
-            to: "/client-site-incharge/timers",
+            to: "/site-incharge/timers",
             icon: (
               <CIcon
                 icon={cilClock}
@@ -1576,7 +1576,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Cleaning Log",
-            to: "/client-site-incharge/cleaning-log-sites",
+            to: "/site-incharge/cleaning-log-sites",
             icon: (
               <CIcon
                 icon={cilListRich}
@@ -1590,7 +1590,7 @@ const _nav = [
       {
         component: CNavItem,
         name: "Search Robot",
-        to: "/client-site-incharge/search-robot",
+        to: "/site-incharge/search-robot",
         icon: (
           <CIcon
             icon={cilSearch}
@@ -1602,7 +1602,7 @@ const _nav = [
       // {
       //   component: CNavItem,
       //   name: "Users",
-      //   to: "/client-site-incharge/external-users",
+      //   to: "/site-incharge/external-users",
       //   icon: (
       //     <CIcon icon={cilSettings} customClassName="nav-icon" style={{ height: "30px" }} />
       //   ),
@@ -1619,7 +1619,7 @@ const _nav = [
   // ---------------------Client Technician----------------------------------
   {
     component: CNavGroup,
-    name: "Client Technician",
+    name: "Client Site Technician",
     to: "/base",
     icon: (
       <CIcon

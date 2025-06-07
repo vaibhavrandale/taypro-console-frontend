@@ -57,6 +57,7 @@ import {
   SiteTechnicianRoute,
   ClientAdminRoute,
   ClientSiteTechnicianRoute,
+  ClientSiteInchargeRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -2417,62 +2418,109 @@ const routes = [
 
   // ---------------------client Site Incharge--------------------------------
   {
-    path: "/client-site-incharge/dashboard",
-    name: "client-site-incharge Dashboard",
-    element: ClientSiteInchargeDashboard,
+    path: "/site-incharge/dashboard",
+    name: "site-incharge Dashboard",
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientAdminDashboard />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/site-management/all-site-data",
+    path: "/site-incharge/site-management/all-site-data",
     name: "Your Sites Data",
-    element: ClientDashboard,
+    // element: ClientDashboard,
+
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientDashboard />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/site-management",
+    path: "/site-incharge/site-management",
     name: "Site Management",
-    element: ClientSiteManagement,
+    // element: ClientSiteManagement,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientSiteManagement />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/site-management/block-management/:site_id",
+    path: "/site-incharge/site-management/block-management/:site_id",
     name: "Block Management",
-    element: ClientBlockManagement,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientBlockManagement />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/site-management/block-management/:site_id/:block/:robot_no",
+    path: "/site-incharge/site-management/block-management/:site_id/:block/:robot_no",
     name: "Robot Configuration",
-    element: ClientRobotOperating,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientRobotOperating />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/search-robot",
+    path: "/site-incharge/search-robot",
     name: "Search Robot",
-    element: ClientSearchRobot,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientSearchRobot />
+      </ClientSiteInchargeRoute>
+    ),
   },
 
   {
-    path: "/client-site-incharge/timers",
+    path: "/site-incharge/timers",
     name: "Timers",
-    element: ClientTimers,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientTimers />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/timers/:block/:site_id",
+    path: "/site-incharge/timers/:block/:site_id",
     name: "Update Block Timer",
-    element: ClientUpdateTimer,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientUpdateTimer />
+      </ClientSiteInchargeRoute>
+    ),
   },
 
   {
-    path: "/client-site-incharge/external-users",
+    path: "/site-incharge/external-users",
     name: "All  External Users",
-    element: ClientUsersManagement,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientUsersManagement />
+      </ClientSiteInchargeRoute>
+    ),
   },
 
   {
-    path: "/client-site-incharge/cleaning-log-sites",
+    path: "/site-incharge/cleaning-log-sites",
     name: "Your Assigned Sites",
-    element: Sites,
+    element: (
+      <ClientSiteInchargeRoute>
+        <Sites />
+      </ClientSiteInchargeRoute>
+    ),
   },
   {
-    path: "/client-site-incharge/cleaning-log-sites/:site_id",
+    path: "/site-incharge/cleaning-log-sites/:site_id",
     name: "Cleaning Log",
-    element: ClientCleaningLog,
+    element: (
+      <ClientSiteInchargeRoute>
+        <ClientCleaningLog />
+      </ClientSiteInchargeRoute>
+    ),
   },
   // ------------------------client Site Incharge---------------------------------
 
@@ -2484,7 +2532,7 @@ const routes = [
     name: "client-site-technician Dashboard",
     element: (
       <ClientSiteTechnicianRoute>
-        <ClientSiteTechnicianDashboard />
+        <ClientAdminDashboard />
       </ClientSiteTechnicianRoute>
     ),
   },

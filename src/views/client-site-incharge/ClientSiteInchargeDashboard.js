@@ -27,50 +27,50 @@ const dashboardItems = [
     id: 2,
     title: "Users",
     icon: cilUser,
-    link: "/client-site-incharge/users",
+    link: "/site-incharge/users",
   },
 
   {
     id: 3,
     title: "Reports",
     icon: cilChartPie,
-    link: "/client-site-incharge/reports",
+    link: "/site-incharge/reports",
   },
   {
     id: 4,
     title: "Service",
     icon: cilTask,
-    link: "/client-site-incharge/service",
+    link: "/site-incharge/service",
   },
   {
     id: 5,
     title: "Notifications",
     icon: cilBell,
-    link: "/client-site-incharge/notifications",
+    link: "/site-incharge/notifications",
   },
   {
     id: 6,
     title: "Live chat",
     icon: cilEnvelopeOpen,
-    link: "/client-site-incharge/messages",
+    link: "/site-incharge/messages",
   },
   {
     id: 7,
     title: "Projects",
     icon: cilFolderOpen,
-    link: "/client-site-incharge/projects",
+    link: "/site-incharge/projects",
   },
   {
     id: 8,
     title: "Roles & Permissions",
     icon: cilList,
-    link: "/client-site-incharge/roles",
+    link: "/site-incharge/roles",
   },
   {
     id: 9,
     title: "Settings",
     icon: cilSettings,
-    link: "/client-site-incharge/settings",
+    link: "/site-incharge/settings",
   },
 ];
 

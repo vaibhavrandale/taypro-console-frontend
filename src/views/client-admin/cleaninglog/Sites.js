@@ -51,6 +51,7 @@ const Sites = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -118,6 +119,24 @@ const Sites = () => {
     }
   };
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
+
   return (
     <div className="">
       <h2 className="blinker-semibold">Site Management</h2>
@@ -169,7 +188,7 @@ const Sites = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
-                    to={`/client-admin/cleaning-log-sites/${site.site_id}`}
+                    to={`/${adminroute}/cleaning-log-sites/${site.site_id}`}
                   >
                     Manage
                   </Link>
