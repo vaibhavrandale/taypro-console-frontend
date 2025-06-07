@@ -241,13 +241,13 @@ const UserBasedLinkDashboard = () => {
       dept: "Client Management",
       icon: faBuilding,
     },
-    "Client Technician": {
+    "Client Site Technician": {
       path: "/client-admin/dashboard",
       dept: "Client Management",
       icon: faBuilding,
     },
     "Site Incharge": {
-      path: "/client-site-incharge/dashboard",
+      path: "/site-incharge/dashboard",
       dept: "Client Management",
       icon: faBuilding,
     },

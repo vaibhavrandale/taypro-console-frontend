@@ -80,6 +80,7 @@ const ClientTimers = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
@@ -180,6 +181,23 @@ const ClientTimers = () => {
     }
   };
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
   return (
     <div className="p-4">
       <h2>⏳ Timers Management</h2>
@@ -281,7 +299,7 @@ const ClientTimers = () => {
                       <CTableDataCell>
                         <Link
                           className="btn btn-sm btn-warning m-1"
-                          to={`/client-admin/timers/${block.block}/${site.site_id}`}
+                          to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
                         >
                           Update
                         </Link>

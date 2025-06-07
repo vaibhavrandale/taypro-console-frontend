@@ -54,7 +54,7 @@ const ClientBlockManagement = () => {
     loading: false,
   });
   const navigate = useNavigate();
-
+  const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -120,6 +120,24 @@ const ClientBlockManagement = () => {
       toast.error(error.message || "Failed to send stop command");
     }
   };
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
@@ -296,7 +314,7 @@ const ClientBlockManagement = () => {
                             <div
                               onClick={() =>
                                 navigate(
-                                  `/client-admin/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
+                                  `/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
                                 )
                               }
                             >
@@ -310,7 +328,7 @@ const ClientBlockManagement = () => {
                   <div className="p-2 d-flex justify-content-center">
                     {robot ? (
                       <Link
-                        to={`/client-admin/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
+                        to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
                         className="btn btn-sm btn-secondary"
                       >
                         MANAGE

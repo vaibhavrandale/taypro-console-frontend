@@ -406,7 +406,7 @@ export const role_permissions = [
     ],
   },
   {
-    role: "Client Technician",
+    role: "Client Site Technician",
     permissions: [
       {
         id: "P022",

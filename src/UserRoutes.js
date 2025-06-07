@@ -37,11 +37,7 @@ export function ClientAdminRoute({ children }) {
 
 export function ClientSiteInchargeRoute({ children }) {
   const userInfo = useSelector((state) => state.userInfo);
-  return userInfo && userInfo.role === "Client Site Incharge" ? (
-    children
-  ) : (
-    <Page404 />
-  );
+  return userInfo && userInfo.role === "Site Incharge" ? children : <Page404 />;
 }
 
 export function ClientSiteTechnicianRoute({ children }) {
