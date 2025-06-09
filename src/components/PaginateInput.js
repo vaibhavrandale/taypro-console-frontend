@@ -133,9 +133,10 @@ const PaginateInput = ({
           <option value={1000}>1000</option>
           <option value={2000}>2000</option>
           <option value={3000}>3000</option>
-          <option value={3000}>6000</option>
-          <option value={3000}>9000</option>
-          <option value={3000}>10000</option>
+          <option value={6000}>6000</option>
+          <option value={9000}>9000</option>
+          <option value={10000}>10000</option>
+          <option value={100000}>100000</option>
         </CFormSelect>
       </CCol>
     </CRow>

@@ -79,6 +79,7 @@ import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMainte
 import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
+import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1035,6 +1036,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <BatteryAndTemperature />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-log-details",
+    name: "Robot Log Details",
+    element: (
+      <MasterAdminRoute>
+        <RobotLogDetials />
       </MasterAdminRoute>
     ),
   },
