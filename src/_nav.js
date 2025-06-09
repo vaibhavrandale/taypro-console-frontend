@@ -175,6 +175,11 @@ const _nav = [
             name: "Robot Battery Temperature",
             to: "/master-admin/robot-battery-temperature",
           },
+          {
+            component: CNavItem,
+            name: "Robot Log Details",
+            to: "/master-admin/robot-log-details",
+          },
         ],
       },
 
