@@ -2262,6 +2262,15 @@ const routes = [
       </SiteTechnicianRoute>
     ),
   },
+  {
+    path: "/site-technician/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
+    name: "Debug Log",
+    element: (
+      <SiteTechnicianRoute>
+        <DebugLog />
+      </SiteTechnicianRoute>
+    ),
+  },
 
   //------------------------service Site Technician---------------------------------
 

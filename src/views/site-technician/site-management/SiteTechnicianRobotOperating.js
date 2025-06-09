@@ -566,7 +566,7 @@ import {
   CBadge,
 } from "@coreui/react";
 import "./management.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -628,6 +628,7 @@ const SiteTechnicianRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [siteRobots, setSiteRobots] = useState([]);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
   let start = "C1";
   let stop = "CC";
@@ -646,6 +647,24 @@ const SiteTechnicianRobotOperating = () => {
       sendingCommandloading: false,
     }
   );
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
 
   useEffect(() => {
     const getRobots = async () => {
@@ -721,39 +740,7 @@ const SiteTechnicianRobotOperating = () => {
   const blockwiserobots =
     robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
 
-  // const sendsingleDownlink = async (command, index) => {
-  //   setLoadingRow(index);
-  //   setCommandButton(index);
-  //   //deveui,command,robot_no,site_id,lora_no
-  //   let robotdownlink = {
-  //     deveui: robot.deveui,
-  //     robot_no: robot.robot_no,
-  //     site_id: site_id,
-  //     command: command,
-  //     lora_no: robot.lora_no,
-  //   };
-  //   dispatch({ type: "SEND_DOWNLINK_REQUEST" });
-  //   try {
-  //     const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-  //       headers: { Authorization: `Bearer ${authtoken}` },
-  //     });
-
-  //     toast.success(data.data.message);
-  //     dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
-  //   } catch (error) {
-  //     dispatch({
-  //       type: "SEND_DOWNLINK_FAIL",
-  //       payload: error.response?.data?.message,
-  //     });
-
-  //     toast.error(error.response.data.message || "Error adding downlink");
-  //   }
-  //   setLoadingRow(null);
-  //   setCommandButton(null);
-  // };
-
   const sendsingleDownlink = async (command, index) => {
-    // setLoadingRow(index);
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
@@ -860,6 +847,12 @@ const SiteTechnicianRobotOperating = () => {
               >
                 RETURN TO DOCK ALL
               </CButton>
+              <Link
+                to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
+                className="btn btn-sm btn-secondary  btn-sm m-1 shadow-sm"
+              >
+                DEBUG LOG
+              </Link>
 
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
