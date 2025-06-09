@@ -13,8 +13,9 @@ import {
   CFormInput,
   CButton,
   CFormCheck,
+  CFormLabel,
 } from "@coreui/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -37,6 +38,19 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+    case "FETCH_ROBOT_REQUEST":
+      return { ...state, loadingRobots: true, errorRobot: "" };
+    case "FETCH_ROBOT_SUCCESS":
+      return {
+        ...state,
+        robots: action.payload.data,
+        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        hasNextPage: action.payload.hasNextPage,
+        hasPrevPage: action.payload.hasPrevPage,
+        loadingRobots: false,
+      };
+    case "FETCH_ROBOT_FAIL":
+      return { ...state, loadingRobots: false, errorRobot: action.payload };
     default:
       return state;
   }
@@ -44,19 +58,23 @@ const reducer = (state, action) => {
 
 const DebugLog = () => {
   const [
-    { loading, error, debuglogs, totalPages, hasNextPage, hasPrevPage },
+    { loading, error, debuglogs, totalPages, hasNextPage, hasPrevPage, robots },
     dispatch,
   ] = useReducer(reducer, {
     debuglogs: [],
     loading: true,
     error: "",
+    robots: [],
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
-
+  const userInfo = useSelector((state) => state.userInfo);
+  const navigate = useNavigate();
   const { robot_no, site_id } = useParams();
   const [fetchBySite, setFetchBySite] = useState(false);
+  const [filteredRobot, setFilteredRobot] = useState([]);
+  const [robot_number, setRobotNo] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
@@ -69,6 +87,23 @@ const DebugLog = () => {
   );
 
   const authtoken = useSelector((state) => state.authtoken);
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
 
   useEffect(() => {
     const fetchDebugLogs = async () => {
@@ -127,6 +162,29 @@ const DebugLog = () => {
       }
     };
 
+    const fetchRobots = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOT_REQUEST" });
+
+        const result = await axios.get(`/api/v1/robots/get-robots-no`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        dispatch({
+          type: "FETCH_ROBOT_SUCCESS",
+          payload: result.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOT_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
+      }
+    };
+    fetchRobots();
     fetchDebugLogs();
   }, [
     authtoken,
@@ -179,6 +237,27 @@ const DebugLog = () => {
     XLSX.writeFile(
       workbook,
       `DebugLogs_${fetchBySite ? site_id : robot_no}.xlsx`
+    );
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setRobotNo(value);
+    if (value.length > 0) {
+      const filtered = robots.filter((robot) =>
+        robot.robot_no?.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredRobot(filtered);
+    } else {
+      setFilteredRobot([]);
+    }
+  };
+
+  const handleSelectRobot = (robot) => {
+    setRobotNo(robot.robot_no);
+    setFilteredRobot([]);
+    navigate(
+      `/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}/debug_logs`
     );
   };
 
@@ -250,6 +329,45 @@ const DebugLog = () => {
           {/* Third line: Date filters left, search bar right */}
           <CRow className="align-items-center justify-content-between my-2">
             <CCol md={6} className="d-flex gap-3">
+              <div
+                className="d-flex flex-column position-relative"
+                style={{ minWidth: "150px", width: "100%" }}
+              >
+                <CFormLabel htmlFor="robotInput">Robot No</CFormLabel>
+                <CFormInput
+                  id="robotInput"
+                  type="text"
+                  placeholder="Search by Robot No..."
+                  value={robot_number}
+                  className="form-control"
+                  onChange={handleSearchChange}
+                />
+                {robot_number && filteredRobot.length > 0 && (
+                  <ul
+                    className="position-absolute shadow-sm mt-1 px-2 py-2 rounded"
+                    style={{
+                      top: "100%",
+                      left: 0,
+                      width: "100%",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 1000,
+                      backgroundColor: "white",
+                    }}
+                  >
+                    {filteredRobot.map((robot, index) => (
+                      <li
+                        key={index}
+                        className="text-dark px-2 py-1 border-bottom hover:bg-light"
+                        style={{ cursor: "pointer", listStyle: "none" }}
+                        onClick={() => handleSelectRobot(robot)}
+                      >
+                        {robot.robot_no}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               {/* Start Date */}
               <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
                 <label htmlFor="startDate" className="mb-1 fw-semibold">
@@ -277,10 +395,10 @@ const DebugLog = () => {
               </div>
             </CCol>
 
-            <CCol md={6}>
+            <CCol className="mt-4" md={4}>
               <CFormInput
                 type="text"
-                placeholder="Search by Robot No, Topic, Deveui or Data..."
+                placeholder="Search by Robot No or Topic or data..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
