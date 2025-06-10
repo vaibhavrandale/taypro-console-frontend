@@ -537,7 +537,7 @@ const ClientUsersManagement = () => {
         <h2 className="text-center">External Users </h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
-        {users.length === 2 ? (
+        {users.length === 3 ? (
           ""
         ) : (
           <div className="d-flex justify-content-between align-items-center">
@@ -702,7 +702,9 @@ const ClientUsersManagement = () => {
             <option value="">Select Role</option>
 
             <option value="Site Incharge">Site Incharge</option>
-            <option value="Client Technitian">Technitian</option>
+            <option value="Client Site Technician">
+              Client Site Technician
+            </option>
           </CFormSelect>
           <CFormLabel>Department </CFormLabel>
           <CFormSelect

@@ -12,7 +12,7 @@ import { CChartBar } from "@coreui/react-chartjs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
   const chartColors = [
-    "#052638",
+    "#4e73df",
     "#28A745",
     "#FFC107",
     "#17A2B8",
@@ -54,10 +54,10 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
                 <span className="text-primary">{site_id}</span>
               </h5>
             </CCardHeader>
-            <CCardBody className="d-flex justify-content-center align-items-center">
+            <CCardBody className="">
               <div>
                 <CChartBar
-                  style={{ height: "350px", width: "900px" }}
+                  style={{ height: "350px", width: "100%" }}
                   data={{
                     labels: cleaningrobots.map((robot) => robot.robot_no),
                     datasets: [
