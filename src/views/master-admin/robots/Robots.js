@@ -250,7 +250,7 @@ const Robots = () => {
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-start fw-bold">
+              <CTableDataCell colSpan="10" className="text-start fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -294,11 +294,11 @@ const Robots = () => {
 
                 <CTableDataCell>
                   {robot.activate === true ? (
-                    <CBadge color="warning" shape="rounded-pill">
+                    <CBadge color="success" shape="rounded-pill">
                       Active
                     </CBadge>
                   ) : (
-                    <CBadge className="bg-blue" shape="rounded-pill">
+                    <CBadge color="danger" shape="rounded-pill">
                       In Active
                     </CBadge>
                   )}

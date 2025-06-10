@@ -22,6 +22,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -51,17 +52,27 @@ const reducer = (state, action) => {
 };
 
 const InActiveRobots = () => {
-  const [{ robots, totalPages, hasNextPage, hasPrevPage }, dispatch] =
-    useReducer(reducer, {
-      robots: [],
+  const [
+    {
+      robots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      updateloading,
+      loadingRobots,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robots: [],
 
-      loadingaddRobots: false,
-      updateloading: false,
-      error: "",
-      totalPages: 1,
-      hasNextPage: false,
-      hasPrevPage: false,
-    });
+    loadingaddRobots: false,
+    updateloading: false,
+    loadingRobots: false,
+    error: "",
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
@@ -240,13 +251,13 @@ const InActiveRobots = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {filteredRobots.length === 0 ? (
+          {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan={7}>
-                No In active Robots Found
+              <CTableDataCell colSpan={7} className="text-start">
+                <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ) : (
+          ) : filteredRobots.length > 0 ? (
             filteredRobots.map((robot, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
@@ -273,6 +284,12 @@ const InActiveRobots = () => {
                 </CTableDataCell>
               </CTableRow>
             ))
+          ) : (
+            <CTableRow>
+              <CTableDataCell colSpan={7} className="text-center py-4">
+                No Inactive Robots Found
+              </CTableDataCell>
+            </CTableRow>
           )}
         </CTableBody>
       </CTable>
@@ -352,8 +369,13 @@ const InActiveRobots = () => {
           >
             Cancel
           </CButton>
-          <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes
+          <CButton
+            color="primary"
+            disabled={updateloading}
+            size="sm"
+            onClick={handleUpdate}
+          >
+            {updateloading ? "Loading..." : "Activate"}
           </CButton>
         </CModalFooter>
       </CModal>

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
+import TayproLogo from "../../../assets/brand/logofordarkbg.png";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -169,7 +169,7 @@ const PreventiveMaintenanceList = () => {
         <CCol>
           <h2>Preventive Maintenance Records</h2>
           {pmloading ? (
-            <CSpinner />
+            <LoadingSpinner />
           ) : (
             <>
               <form>
@@ -235,8 +235,8 @@ const PreventiveMaintenanceList = () => {
                           alt="Taypro Logo"
                           className="sidebar-brand-full logo"
                           style={{
-                            height: "70px",
-                            width: "200px",
+                            height: "60px",
+                            width: "180px",
                             objectFit: "contain",
                           }}
                         />
