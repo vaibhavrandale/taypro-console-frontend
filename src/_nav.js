@@ -140,6 +140,11 @@ const _nav = [
             name: "Client Tickets",
             to: "/master-admin/client-tickets",
           },
+          {
+            component: CNavItem,
+            name: "ServiceTickets Fault",
+            to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+          },
         ],
       },
 

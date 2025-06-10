@@ -47,6 +47,7 @@ const CreateNewServiceTicketFault = () => {
   const [state, dispatch] = useReducer(reducer, {
     faultData: {
       fault_name: "",
+      target_days: "",
     },
     loading: false,
     success: false,
@@ -79,6 +80,7 @@ const CreateNewServiceTicketFault = () => {
 
     const newData = {
       ...state.faultData,
+      target_days: Number(state.faultData.target_days), // ensure it's numeric
     };
     try {
       await axios.post("/api/v1/serviceticketsfaults", newData, {
@@ -119,6 +121,20 @@ const CreateNewServiceTicketFault = () => {
                     onChange={handleChange}
                     placeholder="Enter Fault Name"
                     required
+                  />
+                </div>
+              </CCol>
+              <CCol md="6">
+                <div className="mb-3">
+                  <label className="form-label">Target Days</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="target_days"
+                    value={state.faultData.target_days || ""}
+                    onChange={handleChange}
+                    placeholder="Enter Target Days"
+                    min="0"
                   />
                 </div>
               </CCol>
