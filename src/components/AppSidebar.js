@@ -12,6 +12,8 @@ import { AppSidebarNav } from "./AppSidebarNav";
 import TayproLogo from "../assets/brand/logofordarkbg.png"; // Import the image
 import navigation from "../_nav";
 import { Link } from "react-router-dom";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
   const [unfoldable, setUnfoldable] = useState(false);
@@ -45,11 +47,14 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
             />
           </Link>
         </CSidebarBrand>
-        <CCloseButton
-          className="d-lg-none"
-          dark
+        <button
+          type="button"
+          className=" border-0 ms-auto py-0 px-1"
           onClick={() => setSidebarShow(false)}
-        />
+          style={{ background: "none" }}
+        >
+          <CIcon icon={cilX} size="lg" />
+        </button>
       </CSidebarHeader>
       <AppSidebarNav items={navigation} />
       <CSidebarFooter className="border-top d-none d-lg-flex">
