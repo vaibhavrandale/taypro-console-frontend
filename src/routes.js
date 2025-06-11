@@ -80,6 +80,7 @@ import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
 import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
+import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1048,6 +1049,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <MasterAdminRoute>
+        <ClientFeedback />
+      </MasterAdminRoute>
+    ),
+  },
 
   //preveantive maintanance
   // ------------------------master admin---------------------------------
@@ -1059,6 +1069,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <RobotActivity />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <ProjectAdminRoute>
+        <ClientFeedback />
       </ProjectAdminRoute>
     ),
   },
@@ -1549,6 +1568,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <ServiceAdminRoute>
+        <ClientFeedback />
       </ServiceAdminRoute>
     ),
   },
