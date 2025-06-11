@@ -80,6 +80,9 @@ import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
 import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
+ serviceticket_dashboard
+import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault";
+import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault"
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -204,9 +207,6 @@ const ServiceTicketsFaultDashboard = React.lazy(() =>
   )
 );
 
-const CreateNewServiceTicketFault = React.lazy(() =>
-  import("./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault")
-);
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
@@ -806,6 +806,24 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <MasterAdminRoute>
+        <ServiceTicketsFaultDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <MasterAdminRoute>
+        <UpdateServiceTicketsFault />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/users",
     name: "All Internal Users",
     element: (
@@ -1003,15 +1021,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  {
-    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
-    name: "service-tickets-fault-dashboard",
-    element: (
-      <MasterAdminRoute>
-        <ServiceTicketsFaultDashboard />
-      </MasterAdminRoute>
-    ),
-  },
+  // {
+  //   path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+  //   name: "service-tickets-fault-dashboard",
+  //   element: (
+  //     <MasterAdminRoute>
+  //       <ServiceTicketsFaultDashboard />
+  //     </MasterAdminRoute>
+  //   ),
+  // },
   {
     path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
     name: "create serviceticketfault",
@@ -1540,7 +1558,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
-
+  {
+    path: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateServiceTicketsFault />
+      </ProjectAdminRoute>
+    ),
+  },
   {
     path: "/project-admin/chat",
     name: "Chat with User",
@@ -2065,6 +2091,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <CreateNewServiceTicketFault />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "update-serviceticket-fault",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateServiceTicketsFault />
       </ServiceAdminRoute>
     ),
   },
