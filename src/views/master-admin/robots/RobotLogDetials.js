@@ -455,35 +455,37 @@ const RobotLogDetails = () => {
               </div>
             ) : error ? (
               <div className="alert alert-danger text-center">{error}</div>
-            ) : !loading &&
-              !error &&
-              Object.keys(data).length > 0 &&
-              siteLabels.length === 0 ? (
+            ) : !loading && !error && Object.keys(data).length === 0 ? (
               <div className="alert alert-info text-center">
                 No data available for the selected filters
               </div>
             ) : (
               <>
-                {/* Site-level chart + table */}
-                <CRow>
-                  <CCol md={7}>
-                    {renderChart(
-                      siteLabels,
-                      siteLabels.map((key) => siteData[key] || 0),
-                      siteId === "all"
-                        ? "All Sites Combined"
-                        : `Site: ${siteId.replace(/_/g, " ")}`
-                    )}
-                  </CCol>
-                  <CCol
-                    md={5}
-                    style={{ overflowY: "auto", maxHeight: "400px" }}
-                  >
-                    {renderTable(siteLabels, siteData)}
-                  </CCol>
-                </CRow>
+                {/* only render charts/tables when siteLabels are valid */}
+                {siteLabels.length > 0 && (
+                  <>
+                    {/* Site-level chart + table */}
+                    <CRow>
+                      <CCol md={7}>
+                        {renderChart(
+                          siteLabels,
+                          siteLabels.map((key) => siteData[key] || 0),
+                          siteId === "all"
+                            ? "All Sites Combined"
+                            : `Site: ${siteId.replace(/_/g, " ")}`
+                        )}
+                      </CCol>
+                      <CCol
+                        md={5}
+                        style={{ overflowY: "auto", maxHeight: "400px" }}
+                      >
+                        {renderTable(siteLabels, siteData)}
+                      </CCol>
+                    </CRow>
+                  </>
+                )}
 
-                {/* Robot-level section (graph only) for specific site */}
+                {/* Robot-level section */}
                 {siteId !== "all" && data[siteId] && (
                   <>
                     <hr />

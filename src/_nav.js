@@ -140,6 +140,11 @@ const _nav = [
             name: "Client Tickets",
             to: "/master-admin/client-tickets",
           },
+          {
+            component: CNavItem,
+            name: "ServiceTickets Fault",
+            to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+          },
         ],
       },
 
@@ -203,6 +208,11 @@ const _nav = [
             component: CNavItem,
             name: "Technician Attendance",
             to: "/master-admin/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "Client Feedback",
+            to: "/master-admin/client-feedback",
           },
         ],
       },
@@ -422,6 +432,11 @@ const _nav = [
             name: "Technician Attendance",
             to: "/project-admin/technician-attendance",
           },
+          {
+            component: CNavItem,
+            name: "Client Feedback",
+            to: "/project-admin/client-feedback",
+          },
         ],
       },
     ],
@@ -615,9 +630,8 @@ const _nav = [
 
       // === Attendance Group ===
       {
-        component: CNavItem,
-        name: "Technician Attendance",
-        to: "/service-admin/technician-attendance",
+        component: CNavGroup,
+        name: "Users Management",
         icon: (
           <CIcon
             icon={cilTask}
@@ -625,6 +639,18 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Technician Attendance",
+            to: "/service-admin/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "Client Feedback",
+            to: "/service-admin/client-feedback",
+          },
+        ],
       },
     ],
   },

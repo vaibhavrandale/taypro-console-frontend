@@ -81,6 +81,11 @@ import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
 import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
 
+
+import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault";
+import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault";
+import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
+
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -203,9 +208,6 @@ const ServiceTicketsFaultDashboard = React.lazy(() =>
   )
 );
 
-const CreateNewServiceTicketFault = React.lazy(() =>
-  import("./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault")
-);
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
@@ -805,6 +807,24 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <MasterAdminRoute>
+        <ServiceTicketsFaultDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <MasterAdminRoute>
+        <UpdateServiceTicketsFault />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/users",
     name: "All Internal Users",
     element: (
@@ -1002,15 +1022,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  {
-    path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
-    name: "service-tickets-fault-dashboard",
-    element: (
-      <MasterAdminRoute>
-        <ServiceTicketsFaultDashboard />
-      </MasterAdminRoute>
-    ),
-  },
+  // {
+  //   path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+  //   name: "service-tickets-fault-dashboard",
+  //   element: (
+  //     <MasterAdminRoute>
+  //       <ServiceTicketsFaultDashboard />
+  //     </MasterAdminRoute>
+  //   ),
+  // },
   {
     path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
     name: "create serviceticketfault",
@@ -1048,6 +1068,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <MasterAdminRoute>
+        <ClientFeedback />
+      </MasterAdminRoute>
+    ),
+  },
 
   //preveantive maintanance
   // ------------------------master admin---------------------------------
@@ -1059,6 +1088,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <RobotActivity />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <ProjectAdminRoute>
+        <ClientFeedback />
       </ProjectAdminRoute>
     ),
   },
@@ -1521,7 +1559,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
-
+  {
+    path: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "service-tickets-fault-dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateServiceTicketsFault />
+      </ProjectAdminRoute>
+    ),
+  },
   {
     path: "/project-admin/chat",
     name: "Chat with User",
@@ -1549,6 +1595,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-feedback",
+    name: "Client Feedback",
+    element: (
+      <ServiceAdminRoute>
+        <ClientFeedback />
       </ServiceAdminRoute>
     ),
   },
@@ -2037,6 +2092,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <CreateNewServiceTicketFault />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard/update-serviceticket-fault/:id",
+    name: "update-serviceticket-fault",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateServiceTicketsFault />
       </ServiceAdminRoute>
     ),
   },

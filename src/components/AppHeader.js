@@ -189,18 +189,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
-    // if (userInfo && updateSuccess) {
-    //   dispatch({ type: "UPDATE_RESET" });
-    // } else if (
-    //   userInfo?.role === "Master Admin" ||
-    //   userInfo?.role === "Project Admin" ||
-    //   userInfo?.role === "Service Admin" ||
-    //   userInfo?.role === "Service User" ||
-    //   userInfo?.role === "Project Engineer"
-    // ) {
-    //   fetchNotifications();
-    // }
-
     // if (
     //   !notificationsFetched.current &&
     //   userInfo?.role &&
@@ -486,34 +474,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           <li className="nav-item py-1 mx-2">
             {/* <div className="vr h-100 mx-2 text-body text-opacity-75"></div> */}
           </li>
-          {/* 🌗 Theme Toggle */}
-          {/* <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false} className="align-self-center mt-1">
-              {colorMode === "dark" ? (
-                <CIcon icon={cilMoon} size="lg" />
-              ) : colorMode === "auto" ? (
-                <CIcon icon={cilContrast} size="lg" />
-              ) : (
-                <CIcon icon={cilSun} size="lg" />
-              )}
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem
-                active={colorMode === "light"}
-                onClick={() => setColorMode("light")}
-                as="button"
-              >
-                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
-              </CDropdownItem>
-              <CDropdownItem
-                as="button"
-                active={colorMode === "dark"}
-                onClick={() => setColorMode("dark")}
-              >
-                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
-              </CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown> */}
+
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
