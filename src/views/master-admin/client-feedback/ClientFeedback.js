@@ -12,6 +12,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import * as XLSX from "xlsx"; // Import xlsx for Excel export
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -103,14 +105,6 @@ const ClientFeedback = () => {
     fetchfeedbacks();
   }, [authtoken, limit, page]);
 
-  //   const filteredfeedbacks = feedbacks.filter(
-  //     (feedback) =>
-  //       feedback.user.designation
-  //         .toLowerCase()
-  //         .includes(searchTerm.toLowerCase()) ||
-  //       feedback.user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
   };
@@ -128,6 +122,31 @@ const ClientFeedback = () => {
     }
   };
 
+  const exportToExcel = () => {
+    if (feedbacks.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      feedbacks.map((item, index) => ({
+        "#": index + 1,
+        "Client Name": item.user.name,
+        "Client Email": item.user.email,
+        Designation: item.user.designation,
+        Comments: item.feedback_data.comments,
+        Rating: item.feedback_data.rating,
+        Date: new Date(item.createdAt).toISOString().split("T")[0],
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Client Feedback");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Client Feedback.xlsx");
+  };
+
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -142,18 +161,11 @@ const ClientFeedback = () => {
   return (
     <div className="p-2">
       <h2 className="text-center mt-4 mb-4">Client Feedback</h2>
-
-      {/* Search Input */}
-      {/* <CRow className="justify-content-end mb-3">
-        <CCol md={4}>
-          <CFormInput
-            type="text"
-            placeholder="Search by Client Name & Designation..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CCol>
-      </CRow> */}
+      <div className="d-flex justify-content-end mb-3">
+        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+          Export
+        </Link>
+      </div>
 
       {/* feedbacks Table */}
       <CTable bordered hover responsive className="text-center shadow-sm">
@@ -174,6 +186,9 @@ const ClientFeedback = () => {
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "140px" }}>
               Rating (out of 5)
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Date
             </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -205,6 +220,9 @@ const ClientFeedback = () => {
                   {feedback.feedback_data.comments}
                 </CTableDataCell>
                 <CTableDataCell>{feedback.feedback_data.rating}</CTableDataCell>
+                <CTableDataCell>
+                  {new Date(feedback.createdAt).toISOString().split("T")[0]}
+                </CTableDataCell>
               </CTableRow>
             ))
           ) : (
