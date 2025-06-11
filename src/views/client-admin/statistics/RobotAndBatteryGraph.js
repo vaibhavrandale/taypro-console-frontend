@@ -14,7 +14,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
   const chartColors = [
     "#052638",
-    "#28A745",
+    "#4e73df",
     "#FFC107",
     "#17A2B8",
     "#DC3545",
@@ -55,10 +55,10 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                 <span className="text-primary">{site_id}</span>
               </h5>
             </CCardHeader>
-            <CCardBody className="d-flex justify-content-center align-items-center">
+            <CCardBody className="">
               <div>
                 <CChartBar
-                  style={{ height: "350px", width: "900px" }}
+                  style={{ height: "350px", width: "100%" }}
                   data={{
                     labels: batteryrobots.map((robot) => robot.robot_no),
                     datasets: [

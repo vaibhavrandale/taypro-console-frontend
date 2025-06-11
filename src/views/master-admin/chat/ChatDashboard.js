@@ -15,16 +15,19 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CModalFooter,
-  CListGroup,
-  CListGroupItem,
   CForm,
   CBadge,
+  CTable,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CTableBody,
+  CTableDataCell,
 } from "@coreui/react";
 import "./chart.css";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
-import { cilLoop, cilPlaylistAdd, cilSend } from "@coreui/icons";
+import { cilChatBubble, cilLoop, cilSend, cilX } from "@coreui/icons";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -227,6 +230,12 @@ export default function ChatDashboard() {
 
   // Scroll to the bottom when the chat is loaded
 
+  const filteredUsers = users.filter(
+    (user) =>
+      (user.department === "Service" || user.department === "Project") &&
+      user.designation !== "Site Technician"
+  );
+
   const sendMessage = async (chat) => {
     dispatch({ type: "NEW_CHAT_REQUEST" });
     try {
@@ -268,64 +277,95 @@ export default function ChatDashboard() {
         <CCol md={4} className="border-end p-3 overflow-auto">
           <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
             <h5>Chats</h5>
-            <CButton onClick={() => setShowUserModal(true)}>
-              <CIcon
-                icon={cilPlaylistAdd}
-                className="text-success fw-bold"
-                size="xl"
-              />
+            <CButton
+              className="my-2"
+              size="sm"
+              color="primary"
+              onClick={() => setShowUserModal(true)}
+            >
+              New Chat{" "}
+              {/* <CIcon icon={cilPlaylistAdd} className="fw-bold" size="xl" /> */}
             </CButton>
           </div>
 
           <CModal
+            size="lg"
+            scrollable
             visible={showUserModal}
             onClose={() => setShowUserModal(false)}
           >
-            <CModalHeader>
+            <CModalHeader closeButton={false}>
               <CModalTitle>Select a User</CModalTitle>
+              <button
+                type="button"
+                className=" border-0 ms-auto py-0 px-1"
+                onClick={() => setShowUserModal(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
             </CModalHeader>
             <CModalBody>
-              <CListGroup>
-                {usersloading ? (
+              {usersloading ? (
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "100px" }}
+                >
                   <LoadingSpinner />
-                ) : (
-                  users.map((user) => (
-                    <CListGroupItem
-                      key={user._id}
-                      className="d-flex align-items-center gap-3"
-                    >
-                      <img
-                        src={user.profile_image}
-                        alt="Profile"
-                        className="rounded-circle"
-                        width="30"
-                        height="30"
-                        style={{ objectFit: "cover" }}
-                      />
-                      <span>{user.username}</span>
-                      <CBadge
-                        style={{ cursor: "pointer" }}
-                        color="success"
-                        onClick={() => {
-                          CreateChatRoom(user);
-                          setShowUserModal(false);
-                        }}
-                      >
-                        Start Chat
-                      </CBadge>
-                    </CListGroupItem>
-                  ))
-                )}
-              </CListGroup>
+                </div>
+              ) : (
+                <CTable bordered hover responsive className="text-center">
+                  <CTableHead>
+                    <CTableRow>
+                      <CTableHeaderCell>#</CTableHeaderCell>
+                      <CTableHeaderCell>Profile</CTableHeaderCell>
+                      <CTableHeaderCell>Username</CTableHeaderCell>
+                      <CTableHeaderCell>Department</CTableHeaderCell>
+                      <CTableHeaderCell>Designation</CTableHeaderCell>
+                      <CTableHeaderCell>Action</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {filteredUsers.map((user, index) => (
+                      <CTableRow key={user._id}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>
+                          <img
+                            src={user.profile_image}
+                            alt="Profile"
+                            className="rounded-circle"
+                            width="30"
+                            height="30"
+                            style={{ objectFit: "cover" }}
+                          />
+                        </CTableDataCell>
+                        <CTableDataCell>{user.username}</CTableDataCell>
+                        <CTableDataCell>{user.department}</CTableDataCell>
+                        <CTableDataCell>{user.designation}</CTableDataCell>
+                        <CTableDataCell>
+                          <CBadge
+                            style={{
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            color="primary"
+                            onClick={() => {
+                              CreateChatRoom(user);
+                              setShowUserModal(false);
+                            }}
+                          >
+                            Start Chat &nbsp;
+                            <CIcon icon={cilChatBubble} />
+                          </CBadge>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
+                  </CTableBody>
+                </CTable>
+              )}
             </CModalBody>
-            <CModalFooter>
-              <CButton
-                color="secondary"
-                onClick={() => setShowUserModal(false)}
-              >
-                Close
-              </CButton>
-            </CModalFooter>
           </CModal>
 
           <div className="my-2" style={{ maxHeight: "360px" }}>
@@ -448,7 +488,7 @@ export default function ChatDashboard() {
                           maxWidth: "55%",
                           backgroundColor:
                             msg.send_by.email === userInfo.email
-                              ? "var(--cui-primary-bg-subtle)" // Right-aligned messages (logged-in user)
+                              ? "var(--cui-primary-color)" // Right-aligned messages (logged-in user)
                               : "var(--cui-body-bg)", // Left-aligned messages (other user)
                           color:
                             msg.send_by.email === userInfo.email
@@ -457,7 +497,10 @@ export default function ChatDashboard() {
                         }}
                       >
                         <div>{msg.message}</div>
-                        <small className="text-muted d-block text-end">
+                        <small
+                          className="text-muted d-block text-end"
+                          style={{ fontSize: "12px" }}
+                        >
                           {formatTime(msg.timestamp)}
                         </small>
                       </div>

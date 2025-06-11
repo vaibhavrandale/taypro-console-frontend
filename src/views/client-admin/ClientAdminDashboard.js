@@ -12,17 +12,10 @@ import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChart, CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChartLine, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 
-const chartColors = [
-  "#FF6384",
-  "#36A2EB",
-  "#FFCE56",
-  "#4BC0C0",
-  "#9966FF",
-  "#FF9F40",
-];
+const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -54,6 +47,20 @@ const reducer = (state, action) => {
         loadingSiteDetails: false,
         siteDetailsError: action.payload,
       };
+    case "FETCH_WEATHER_REQUEST":
+      return { ...state, loadingWeatherData: true, errorWeatherData: "" };
+    case "FETCH_WEATHER_SUCCESS":
+      return {
+        ...state,
+        loadingWeatherData: false,
+        weatherData: action.payload,
+      };
+    case "FETCH_WEATHER_FAIL":
+      return {
+        ...state,
+        loadingWeatherData: false,
+        errorWeatherData: action.payload,
+      };
     default:
       return state;
   }
@@ -63,19 +70,25 @@ const ClientAdminDashboard = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [
-    { siteDetailsError, loadingSiteDetails, loadingSiteIds, siteIds },
+    {
+      siteDetailsError,
+      loadingSiteDetails,
+      loadingSiteIds,
+      siteIds,
+      weatherData,
+    },
     dispatch,
   ] = useReducer(reducer, {
     siteDetailsError: "",
     loadingSiteDetails: false,
     siteDetails: {},
+    weatherData: {},
     siteIds: [],
     loadingSiteIds: false,
     errorSIteIds: "",
   });
 
   const [site_id, setSiteid] = useState(userInfo.assigned_sites[0].site_id);
-
   const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [robotsData, setRobotsData] = useState([]);
@@ -132,7 +145,33 @@ const ClientAdminDashboard = () => {
       }
     };
 
+    const fetchWeatherData = async () => {
+      dispatch({ type: "FETCH_WEATHER_REQUEST" });
+      try {
+        const response = await axios.post(
+          `/api/v1/weatherdata/get-by-siteId`,
+          { siteId: site_id },
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        dispatch({
+          type: "FETCH_WEATHER_SUCCESS",
+          payload: response.data.data,
+        });
+
+        console.log("Weather Data:", response.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_WEATHER_FAIL",
+          payload: error.response?.data?.message || error.message,
+        });
+        toast.error(error.response?.data?.message || error.message);
+      }
+    };
+
     fetchSiteDetails();
+    fetchWeatherData();
     fetchSiteIds();
   }, [authtoken, site_id]);
 
@@ -154,6 +193,19 @@ const ClientAdminDashboard = () => {
       });
     } else {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
+    }
+  };
+
+  const greeting = weatherData.createdAt
+    ? new Date(weatherData.createdAt).getHours()
+    : 0;
+  const getGreeting = () => {
+    if (greeting < 12) {
+      return "Good Morning";
+    } else if (greeting < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
     }
   };
 
@@ -214,7 +266,7 @@ const ClientAdminDashboard = () => {
               ))}
             </CFormSelect>
           ) : (
-            <p>No SItes Found</p>
+            <p>No Sites Found</p>
           )}
         </CCol>
 
@@ -236,19 +288,20 @@ const ClientAdminDashboard = () => {
             </CCol>
 
             <CCol md={4}>
-              <div className="flex flex-col gap-3 ">
+              <div className="flex flex-col gap-3">
                 <h6 className="mx-3">
                   Hello{" "}
-                  <span className="text-primary"> {userInfo.username}</span> ,
-                  Good Morning!
+                  <span className="text-primary">{userInfo.username}</span>,
+                  {getGreeting()}
                 </h6>
+
                 <CCard
                   className="shadow-sm rounded border-0"
                   style={{
                     background: "linear-gradient(135deg, #C850C0, #4158D0)",
                   }}
                 >
-                  <CCardBody className="rounded-xl  text-white">
+                  <CCardBody className="rounded-xl text-white">
                     <div
                       style={{
                         fontSize: "0.875rem",
@@ -264,46 +317,51 @@ const ClientAdminDashboard = () => {
                         color: "rgba(255, 255, 255, 0.78)",
                       }}
                     >
-                      Last Fetched: 2025-05-07 16:00:03
+                      Last Fetched:{" "}
+                      {new Date(weatherData?.createdAt).toLocaleString()}
                     </div>
 
                     <div className="mt-2 text-lg font-semibold">
-                      Avaada Clean Projects Private Limited, Agar, MP - 28.46°C
+                      {weatherData?.siteName}, {weatherData?.location} -{" "}
+                      {weatherData?.temperature}°C
                     </div>
                   </CCardBody>
                 </CCard>
 
                 <div className="grid grid-cols-2 gap-3 mt-4">
                   <CRow className="my-1 text-center">
-                    <CCol md={6} className=" ">
+                    <CCol md={6}>
                       <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
-                          28℃
+                          {weatherData?.temperature}℃
                         </div>
                         <div style={{ fontSize: "14px" }}>Feels Like</div>
                         <div style={{ fontSize: "14px" }}>Temperature</div>
                       </div>
                       <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
-                          46%
+                          {weatherData?.humidity}%
                         </div>
                         <div style={{ fontSize: "14px" }}>Outside</div>
                         <div style={{ fontSize: "14px" }}>Humidity</div>
                       </div>
                     </CCol>
-                    <CCol md={6} className=" ">
+                    <CCol md={6}>
                       <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
-                          4 m/s
+                          {weatherData?.wind_speed} m/s
                         </div>
                         <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
                         <div style={{ fontSize: "12px" }}>
-                          At 2025-05-07 16:00:03
+                          At{" "}
+                          {new Date(
+                            weatherData?.createdAt
+                          ).toLocaleTimeString()}
                         </div>
                       </div>
                       <div className="rounded-md p-2 shadow-sm text-center my-2">
                         <div className="text-sm font-bold text-pink-600">
-                          98%
+                          {weatherData?.cloudiness}%
                         </div>
                         <div style={{ fontSize: "14px" }}>Clouds</div>
                         <div style={{ fontSize: "14px" }}>Outside</div>
@@ -391,7 +449,7 @@ const ClientAdminDashboard = () => {
             <CCol xs={12} md={6} className="mt-4">
               <CCard className="mb-4 shadow">
                 <CCardHeader>
-                  <h5 className="text-center">Gateways Detail</h5>
+                  <h5 className="text-center">Gateway Details</h5>
                 </CCardHeader>
                 <div
                   className="d-flex justify-content-center align-items-center"
@@ -406,8 +464,7 @@ const ClientAdminDashboard = () => {
                   ) : (
                     <>
                       {gateways.length > 0 ? (
-                        <CChart
-                          type="doughnut"
+                        <CChartPie
                           style={{ height: "300px" }}
                           data={{
                             labels: gateways.map(
@@ -469,7 +526,7 @@ const ClientAdminDashboard = () => {
                           {
                             label: "Battery (%)",
                             data: batteryChartData.map((entry) => entry.value),
-                            borderColor: "rgb(255, 99, 132)",
+                            borderColor: "#648DB3",
                             tension: 0.4,
                           },
                         ],
