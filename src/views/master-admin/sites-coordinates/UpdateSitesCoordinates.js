@@ -194,6 +194,18 @@ const UpdateSitesCoordinates = () => {
                     onChange={handleChange}
                   />{" "}
                 </CCol>
+                <CCol md="6">
+                  <CFormLabel>
+                    Fetch Site Weather :
+                    <span className="text-muted ms-2"></span>
+                  </CFormLabel>{" "}
+                  <CFormCheck
+                    id="is_weather_data_fetched"
+                    name="is_weather_data_fetched"
+                    checked={coordinatesData.is_weather_data_fetched || false}
+                    onChange={handleChange}
+                  />{" "}
+                </CCol>
               </CRow>
 
               <button
