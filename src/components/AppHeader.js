@@ -94,8 +94,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     error: "",
     notifications: [],
   });
-  const notificationsFetched = useRef(false); // ✅ track one-time fetch
-
+  const notificationsFetched = useRef(false);
+  const robotsGatewaysFetched = useRef(false); // New ref for robots/gateways
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
@@ -201,23 +201,50 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     //   fetchNotifications();
     // }
 
+    // if (
+    //   !notificationsFetched.current &&
+    //   userInfo?.role &&
+    //   [
+    //     "Master Admin",
+    //     "Project Admin",
+    //     "Service Admin",
+    //     "Service User",
+    //     "Project Engineer",
+    //   ].includes(userInfo.role)
+    // ) {
+    //   fetchNotifications();
+    //   fetchUserDetails();
+
+    //   notificationsFetched.current = true;
+    // }
+    // fetchRobotsAndGateways();
+
+    const allowedRoles = [
+      "Master Admin",
+      "Project Admin",
+      "Service Admin",
+      "Service User",
+      "Project Engineer",
+    ];
+
     if (
       !notificationsFetched.current &&
       userInfo?.role &&
-      [
-        "Master Admin",
-        "Project Admin",
-        "Service Admin",
-        "Service User",
-        "Project Engineer",
-      ].includes(userInfo.role)
+      allowedRoles.includes(userInfo.role)
     ) {
       fetchNotifications();
       fetchUserDetails();
-
       notificationsFetched.current = true;
     }
-    fetchRobotsAndGateways();
+
+    if (
+      !robotsGatewaysFetched.current &&
+      userInfo?.role &&
+      allowedRoles.includes(userInfo.role)
+    ) {
+      fetchRobotsAndGateways();
+      robotsGatewaysFetched.current = true;
+    }
   }, [authtoken, userInfo, navigate]);
 
   if (!userInfo) return null;
