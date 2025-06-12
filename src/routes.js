@@ -80,11 +80,9 @@ import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
 import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
-
-
 import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault";
 import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault";
-import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
+import WeatherTimerNotifications from "./views/master-admin/weather-notification/WeatherTimerNotifications";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1069,11 +1067,11 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/client-feedback",
-    name: "Client Feedback",
+    path: "/master-admin/weather-timer-notifications",
+    name: "Weather Timer Notifications",
     element: (
       <MasterAdminRoute>
-        <ClientFeedback />
+        <WeatherTimerNotifications />
       </MasterAdminRoute>
     ),
   },
@@ -1088,15 +1086,6 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <RobotActivity />
-      </ProjectAdminRoute>
-    ),
-  },
-  {
-    path: "/project-admin/client-feedback",
-    name: "Client Feedback",
-    element: (
-      <ProjectAdminRoute>
-        <ClientFeedback />
       </ProjectAdminRoute>
     ),
   },
@@ -1443,6 +1432,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/weather-timer-notifications",
+    name: "Weather Timer Notifications",
+    element: (
+      <ProjectAdminRoute>
+        <WeatherTimerNotifications />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-gateways/update-gateway/:id",
     name: "Update Gateway",
     element: (
@@ -1460,6 +1458,7 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
   {
     path: "/project-admin/users",
     name: "All Internal Users",
@@ -1599,15 +1598,6 @@ const routes = [
     ),
   },
   {
-    path: "/service-admin/client-feedback",
-    name: "Client Feedback",
-    element: (
-      <ServiceAdminRoute>
-        <ClientFeedback />
-      </ServiceAdminRoute>
-    ),
-  },
-  {
     path: "/service-admin/all-site-data",
     name: "Taypro All Site Data",
     element: (
@@ -1711,7 +1701,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
-
+  {
+    path: "/service-admin/weather-timer-notifications",
+    name: "Weather Timer Notifications",
+    element: (
+      <ServiceAdminRoute>
+        <WeatherTimerNotifications />
+      </ServiceAdminRoute>
+    ),
+  },
   {
     path: "/service-admin/site-management/block-management/:site_id/:block/:robot_no/cleaning_logs",
     name: "Cleaning Log",
