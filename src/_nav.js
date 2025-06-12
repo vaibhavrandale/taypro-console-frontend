@@ -419,6 +419,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Robot Commands",
+            to: "/project-admin/robot-commands",
+          },
+          {
+            component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/project-admin/weather-timer-notifications",
           },
@@ -566,6 +571,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Robot Commands",
+            to: "/service-admin/robot-commands",
+          },
+          {
+            component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/service-admin/weather-timer-notifications",
           },
@@ -681,6 +691,19 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+
+      {
+        component: CNavItem,
+        name: "Robot Commands",
+        to: "/site-technician/robot-commands",
+        icon: (
+          <CIcon
+            icon={cilCursor}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -1383,6 +1406,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Robot Commands",
+        to: "/client-admin/robot-commands",
+        icon: (
+          <CIcon
+            icon={cilCursor}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Client Tickets",
         to: "/client-admin/clientadmin-client-ticket",
         icon: (
@@ -1624,6 +1659,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Robot Commands",
+        to: "/site-incharge/robot-commands",
+        icon: (
+          <CIcon
+            icon={cilCursor}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Search Robot",
         to: "/site-incharge/search-robot",
         icon: (
@@ -1749,6 +1796,18 @@ const _nav = [
             ),
           },
         ],
+      },
+      {
+        component: CNavItem,
+        name: "Robot Commands",
+        to: "/client-site-technician/robot-commands",
+        icon: (
+          <CIcon
+            icon={cilCursor}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
       },
       {
         component: CNavItem,

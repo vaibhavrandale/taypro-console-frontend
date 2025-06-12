@@ -1100,6 +1100,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <ProjectAdminRoute>
+        <RobotCommands />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-data",
     name: "Taypro All Site Data",
     element: (
@@ -1604,6 +1613,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <ServiceAdminRoute>
+        <RobotCommands />
       </ServiceAdminRoute>
     ),
   },
@@ -2200,6 +2218,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-technician/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <SiteTechnicianRoute>
+        <RobotCommands />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
     path: "/site-technician/timers/:block/:site_id",
     name: "Update Block Timer",
     element: (
@@ -2354,6 +2381,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <ClientAdminDashboard />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <ClientAdminRoute>
+        <RobotCommands />
       </ClientAdminRoute>
     ),
   },
@@ -2518,6 +2554,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-incharge/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <ClientSiteInchargeRoute>
+        <RobotCommands />
+      </ClientSiteInchargeRoute>
+    ),
+  },
+  {
     path: "/site-incharge/site-management/all-site-data",
     name: "Your Sites Data",
     // element: ClientDashboard,
@@ -2624,6 +2669,15 @@ const routes = [
     element: (
       <ClientSiteTechnicianRoute>
         <ClientAdminDashboard />
+      </ClientSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/client-site-technician/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <ClientSiteTechnicianRoute>
+        <RobotCommands />
       </ClientSiteTechnicianRoute>
     ),
   },
