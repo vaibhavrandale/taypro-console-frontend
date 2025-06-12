@@ -190,6 +190,16 @@ const _nav = [
             name: "Robot Log Details",
             to: "/master-admin/robot-log-details",
           },
+          {
+            component: CNavItem,
+            name: "Robot Commands",
+            to: "/master-admin/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Timer Notifications",
+            to: "/master-admin/weather-timer-notifications",
+          },
         ],
       },
 
@@ -213,11 +223,6 @@ const _nav = [
             component: CNavItem,
             name: "Technician Attendance",
             to: "/master-admin/technician-attendance",
-          },
-          {
-            component: CNavItem,
-            name: "Client Feedback",
-            to: "/master-admin/client-feedback",
           },
         ],
       },
@@ -402,15 +407,20 @@ const _nav = [
           />
         ),
         items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Search Robot",
-          //   to: "/project-admin/search-robot",
-          // },
+          {
+            component: CNavItem,
+            name: "Search Robot",
+            to: "/project-admin/search-robot",
+          },
           {
             component: CNavItem,
             name: "Shift Robots",
             to: "/project-admin/robots/shift-block-wise",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Timer Notifications",
+            to: "/project-admin/weather-timer-notifications",
           },
         ],
       },
@@ -436,11 +446,6 @@ const _nav = [
             component: CNavItem,
             name: "Technician Attendance",
             to: "/project-admin/technician-attendance",
-          },
-          {
-            component: CNavItem,
-            name: "Client Feedback",
-            to: "/project-admin/client-feedback",
           },
         ],
       },
@@ -529,11 +534,11 @@ const _nav = [
           />
         ),
         items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Search Robot",
-          //   to: "/service-admin/search-robot",
-          // },
+          {
+            component: CNavItem,
+            name: "Search Robot",
+            to: "/service-admin/search-robot",
+          },
           {
             component: CNavItem,
             name: "Shift Robots",
@@ -558,6 +563,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/service-admin/robot-battery-temperature",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Timer Notifications",
+            to: "/service-admin/weather-timer-notifications",
           },
         ],
       },
@@ -635,8 +645,9 @@ const _nav = [
 
       // === Attendance Group ===
       {
-        component: CNavGroup,
-        name: "Users Management",
+        component: CNavItem,
+        name: "Technician Attendance",
+        to: "/service-admin/technician-attendance",
         icon: (
           <CIcon
             icon={cilTask}
@@ -644,18 +655,6 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Technician Attendance",
-            to: "/service-admin/technician-attendance",
-          },
-          {
-            component: CNavItem,
-            name: "Client Feedback",
-            to: "/service-admin/client-feedback",
-          },
-        ],
       },
     ],
   },
@@ -710,11 +709,11 @@ const _nav = [
             name: "Site Management",
             to: "/site-technician/site-management",
           },
-          // {
-          //   component: CNavItem,
-          //   name: "Search Robot",
-          //   to: "/site-technician/search-robot",
-          // },
+          {
+            component: CNavItem,
+            name: "Search Robot",
+            to: "/site-technician/search-robot",
+          },
           {
             component: CNavItem,
             name: "All Sites Timers",
@@ -1370,18 +1369,18 @@ const _nav = [
           />
         ),
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Search Robot",
-      //   to: "/client-admin/search-robot",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilSearch}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
-      //     />
-      //   ),
-      // },
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/client-admin/search-robot",
+        icon: (
+          <CIcon
+            icon={cilSearch}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
       {
         component: CNavItem,
         name: "Client Tickets",
@@ -1410,37 +1409,37 @@ const _nav = [
             component: CNavItem,
             name: "All Site Data",
             to: "/client-admin/site-management/all-site-data",
-            // icon: (
-            //   <CIcon
-            //     icon={cilFactory}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilFactory}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
           {
             component: CNavItem,
             name: "Site Management",
             to: "/client-admin/site-management",
-            // icon: (
-            //   <CIcon
-            //     icon={cilBuilding}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilBuilding}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
           {
             component: CNavItem,
             name: "All Sites Timers",
             to: "/client-admin/timers",
-            // icon: (
-            //   <CIcon
-            //     icon={cilClock}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilClock}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
         ],
       },
@@ -1459,25 +1458,25 @@ const _nav = [
             component: CNavItem,
             name: "Preventive Maintenance",
             to: "/client-admin/preventive-maintenance-dashboard",
-            // icon: (
-            //   <CIcon
-            //     icon={cilCalendarCheck}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilCalendarCheck}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
           {
             component: CNavItem,
             name: "Cleaning Log",
             to: "/client-admin/cleaning-log-sites",
-            // icon: (
-            //   <CIcon
-            //     icon={cilListRich}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilListRich}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
         ],
       },
@@ -1497,25 +1496,25 @@ const _nav = [
             component: CNavItem,
             name: "Users",
             to: "/client-admin/external-users",
-            // icon: (
-            //   <CIcon
-            //     icon={cilGroup}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilGroup}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
           {
             component: CNavItem,
             name: "Chat with Users",
             to: "/client-admin/chat",
-            // icon: (
-            //   <CIcon
-            //     icon={cilChatBubble}
-            //     customClassName="nav-icon"
-            //     style={{ height: "30px" }}
-            //   />
-            // ),
+            icon: (
+              <CIcon
+                icon={cilChatBubble}
+                customClassName="nav-icon"
+                style={{ height: "30px" }}
+              />
+            ),
           },
         ],
       },
@@ -1623,18 +1622,18 @@ const _nav = [
           },
         ],
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Search Robot",
-      //   to: "/site-incharge/search-robot",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilSearch}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
-      //     />
-      //   ),
-      // },
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/site-incharge/search-robot",
+        icon: (
+          <CIcon
+            icon={cilSearch}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
       // {
       //   component: CNavItem,
       //   name: "Users",
@@ -1751,18 +1750,18 @@ const _nav = [
           },
         ],
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Search Robot",
-      //   to: "/client-site-technician/search-robot",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilSearch}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
-      //     />
-      //   ),
-      // },
+      {
+        component: CNavItem,
+        name: "Search Robot",
+        to: "/client-site-technician/search-robot",
+        icon: (
+          <CIcon
+            icon={cilSearch}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
       // {
       //   component: CNavItem,
       //   name: "Users",
