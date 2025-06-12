@@ -83,6 +83,7 @@ import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
 import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault";
 import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault";
 import WeatherTimerNotifications from "./views/master-admin/weather-notification/WeatherTimerNotifications";
+import RobotCommands from "./views/master-admin/robot-commands/RobotCommands";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -441,6 +442,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <SearchRobot />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <MasterAdminRoute>
+        <RobotCommands />
       </MasterAdminRoute>
     ),
   },

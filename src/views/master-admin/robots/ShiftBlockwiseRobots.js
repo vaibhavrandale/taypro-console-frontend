@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
 import PaginateInput from "../../../components/PaginateInput";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -304,8 +306,19 @@ const ShiftBlockwiseRobots = () => {
               visible={showModal}
               onClose={() => setShowModal(false)}
             >
-              <CModalHeader onClose={() => setShowModal(false)}>
+              <CModalHeader
+                closeButton={false}
+                onClose={() => setShowModal(false)}
+              >
                 <CModalTitle>Shift Robots to Block</CModalTitle>
+                <button
+                  type="button"
+                  className=" border-0 ms-auto py-0 px-1"
+                  onClick={() => setShowModal(false)}
+                  style={{ background: "none" }}
+                >
+                  <CIcon icon={cilX} size="lg" />
+                </button>
               </CModalHeader>
               <CModalBody>
                 <CFormInput
