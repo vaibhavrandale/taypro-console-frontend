@@ -225,11 +225,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       notificationsFetched.current = true;
     }
 
-    if (
-      !robotsGatewaysFetched.current &&
-      userInfo?.role &&
-      allowedRoles.includes(userInfo.role)
-    ) {
+    if (!robotsGatewaysFetched.current) {
       fetchRobotsAndGateways();
       robotsGatewaysFetched.current = true;
     }
@@ -352,7 +348,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
   const handleSelectRobotAndGateways = (value) => {
     setSearchTerm(value);
-    setFilteredData({ robots: [], gateways: [] });
+    // setFilteredData({ robots: [], gateways: [] });
   };
 
   return (
