@@ -80,11 +80,10 @@ import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
 import ViewGateway from "./views/master-admin/gateways/ViewGateway";
 import ViewRobot from "./views/master-admin/robots/ViewRobot";
 import RobotLogDetials from "./views/master-admin/robots/RobotLogDetials";
-
-
 import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-fault/CreateNewServiceTicketFault";
 import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault";
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
+import RobotCommands from "./views/master-admin/robot-commands/RobotCommands";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -443,6 +442,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <SearchRobot />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-commands",
+    name: "Robot Commands",
+    element: (
+      <MasterAdminRoute>
+        <RobotCommands />
       </MasterAdminRoute>
     ),
   },

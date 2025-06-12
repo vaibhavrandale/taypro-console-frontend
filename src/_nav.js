@@ -182,6 +182,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Robot Commands",
+            to: "/master-admin/robot-commands",
+          },
+          {
+            component: CNavItem,
             name: "Robot Log Details",
             to: "/master-admin/robot-log-details",
           },
