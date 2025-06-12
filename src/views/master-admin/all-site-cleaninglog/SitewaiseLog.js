@@ -428,6 +428,15 @@ const SitewaiseLog = () => {
       handlePageChange(pageNumber);
     }
   };
+  // ✅ Place this at the top of your component function, before the `return`:
+  const cleaningSuccessMap = {};
+
+  dprLogs?.forEach((log) => {
+    const siteId = log.site_id;
+    const successCount =
+      log.cleaning_logs?.filter((entry) => entry.success === true).length || 0;
+    cleaningSuccessMap[siteId] = successCount;
+  });
 
   return (
     <div className="p-4">
@@ -671,65 +680,79 @@ const SitewaiseLog = () => {
               )}
             </CTableBody>
           </CTable>
-          {/* DPR Summary Table */}
-          {/* DPR Summary Table */}
-          <h5 className="mt-5 mb-3">
-            📋 Daily Progress Report -{" "}
-            <span className="text-danger">{site_id}</span>
-          </h5>
-          <CTable bordered hover responsive className="text-center">
-            <CTableHead color="success">
-              <CTableRow>
-                <CTableHeaderCell>Sr</CTableHeaderCell>
-                <CTableHeaderCell>Date</CTableHeaderCell>
-                <CTableHeaderCell>Site</CTableHeaderCell>
-                <CTableHeaderCell>Operational Robots</CTableHeaderCell>
-                <CTableHeaderCell>Failed Robots</CTableHeaderCell>
-                <CTableHeaderCell>Total Robots</CTableHeaderCell>
-                <CTableHeaderCell>FromLog (Success)</CTableHeaderCell>
-                <CTableHeaderCell>Remarks</CTableHeaderCell>
-                <CTableHeaderCell>Technician</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {dprLogs?.length > 0 ? (
-                dprLogs.map((log, index) => {
-                  // Get the first technician if available
-                  const technician = log.technician_present?.[0]?.name || "-";
-                  const reportDate = log.report_date
-                    ? new Date(log.report_date).toLocaleDateString()
-                    : "-";
 
-                  return (
-                    <CTableRow key={index}>
-                      <CTableDataCell>{index + 1}</CTableDataCell>
-                      <CTableDataCell>{reportDate}</CTableDataCell>
-                      <CTableDataCell>{log.site_id}</CTableDataCell>
-                      <CTableDataCell>
-                        {log.total_running_robots}
-                      </CTableDataCell>
-                      <CTableDataCell>{log.total_failed_robots}</CTableDataCell>
-                      <CTableDataCell>{log.total_robots}</CTableDataCell>
-                      <CTableDataCell>
-                        <span className="badge bg-success">Yes</span>
-                      </CTableDataCell>
-                      <CTableDataCell>{log.comments || "-"}</CTableDataCell>
-                      <CTableDataCell>{technician}</CTableDataCell>
-                    </CTableRow>
-                  );
-                })
-              ) : (
+          {/* DPR Summary Table */}
+          {/* DPR Summary Table */}
+          <>
+            <h5 className="mt-5 mb-3">
+              📋 Daily Progress Report -{" "}
+              <span className="text-danger">{site_id}</span>
+            </h5>
+
+            <CTable bordered hover responsive className="text-center">
+              <CTableHead color="success">
                 <CTableRow>
-                  <CTableDataCell
-                    colSpan={9}
-                    className="text-center text-danger"
-                  >
-                    No DPR logs found for the selected date.
-                  </CTableDataCell>
+                  <CTableHeaderCell>Sr</CTableHeaderCell>
+                  <CTableHeaderCell>Date</CTableHeaderCell>
+                  <CTableHeaderCell>Site</CTableHeaderCell>
+                  <CTableHeaderCell>Operational Robots</CTableHeaderCell>
+                  <CTableHeaderCell>Failed Robots</CTableHeaderCell>
+                  <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                  <CTableHeaderCell>FromLog (Success)</CTableHeaderCell>
+                  <CTableHeaderCell>Remarks</CTableHeaderCell>
+                  <CTableHeaderCell>Technician</CTableHeaderCell>
                 </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
+              </CTableHead>
+
+              <CTableBody>
+                {dprLogs?.length > 0 ? (
+                  dprLogs.map((log, index) => {
+                    const technician = log.technician_present?.[0]?.name || "-";
+                    const reportDate = log.report_date
+                      ? new Date(log.report_date).toLocaleDateString()
+                      : "-";
+
+                    return (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{reportDate}</CTableDataCell>
+                        <CTableDataCell>{log.site_id}</CTableDataCell>
+                        <CTableDataCell>
+                          {log.total_running_robots}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {log.total_failed_robots}
+                        </CTableDataCell>
+                        <CTableDataCell>{log.total_robots}</CTableDataCell>
+                        <CTableDataCell>
+                          <span
+                            className={`badge ${
+                              cleaningSuccessMap?.[log.site_id]
+                                ? "bg-success"
+                                : "bg-danger"
+                            }`}
+                          >
+                            {cleaningSuccessMap?.[log.site_id] || 0}
+                          </span>
+                        </CTableDataCell>
+                        <CTableDataCell>{log.comments || "-"}</CTableDataCell>
+                        <CTableDataCell>{technician}</CTableDataCell>
+                      </CTableRow>
+                    );
+                  })
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell
+                      colSpan={9}
+                      className="text-center text-danger"
+                    >
+                      No DPR logs found for the selected date.
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
+          </>
         </>
       )}
     </div>
