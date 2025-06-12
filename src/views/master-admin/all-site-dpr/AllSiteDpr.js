@@ -286,18 +286,34 @@ const AllSiteDpr = () => {
       return;
     }
 
-    // Convert JSON to sheet
-    const worksheet = XLSX.utils.json_to_sheet(
-      filteredInventories.map((item, index) => ({
-        "#": index + 1,
-        "Site Id": item.site_id,
-        "Running Robots": item.total_running_robots,
-        "Failed Robots": item.total_failed_robots,
-        "Total Robots": item.total_robots,
-        "Robots Run By": item.robots_run_by,
-        Comment: item.comments,
-      }))
+    // Main data
+    const excelData = filteredInventories.map((item, index) => ({
+      "#": index + 1,
+      "Site Id": item.site_id,
+      "Running Robots": item.total_running_robots,
+      "Failed Robots": item.total_failed_robots,
+      "Total Robots": item.total_robots,
+      "Robots Run By": item.robots_run_by,
+      Comment: item.comments,
+    }));
+
+    // Create worksheet from main data
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Calculate last row position
+    const lastRow = filteredInventories.length + 2; // +2 for header and an empty row
+
+    // Add metadata at the end
+    XLSX.utils.sheet_add_aoa(
+      worksheet,
+      [
+        [""], // Empty row for spacing
+        [`Report Period: From ${fromDate} To ${toDate}`],
+        [`Site ID: ${site_id === "all" ? "All Sites" : site_id}`],
+      ],
+      { origin: `A${lastRow}` } // Place at the end of the sheet
     );
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "DPR");
 
