@@ -87,7 +87,7 @@ const AppHeaderDropdown = () => {
     localStorage.removeItem("userInfo");
     localStorage.removeItem("selectedChatId");
     navigate("/login");
-    toast.success("Sign out Successfully");
+    toast.success("Logged out Successfully!");
   };
 
   const image = user
@@ -95,14 +95,6 @@ const AppHeaderDropdown = () => {
       ? user?.profile_image
       : "https://www.pngitem.com/pimgs/m/146-1462217_profile-icon-png-image-free-download-searchpng-employee.png"
     : "";
-
-  // function getInitials(fullName) {
-  //   if (!fullName) return "";
-  //   return fullName
-  //     .split(" ")
-  //     .map((word) => word[0]?.toUpperCase())
-  //     .join("");
-  // }
 
   return (
     <>
