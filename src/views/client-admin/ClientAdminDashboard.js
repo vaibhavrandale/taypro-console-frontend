@@ -76,6 +76,8 @@ const ClientAdminDashboard = () => {
       loadingSiteIds,
       siteIds,
       weatherData,
+      loadingWeatherData,
+      errorWeatherData,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -85,7 +87,9 @@ const ClientAdminDashboard = () => {
     weatherData: {},
     siteIds: [],
     loadingSiteIds: false,
+    loadingWeatherData: true,
     errorSIteIds: "",
+    errorWeatherData: "",
   });
 
   const [site_id, setSiteid] = useState(userInfo.assigned_sites[0].site_id);
@@ -164,9 +168,11 @@ const ClientAdminDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_WEATHER_FAIL",
-          payload: error.response?.data?.message || error.message,
+          payload: error.response?.data?.message || error.response?.data?.error,
         });
-        toast.error(error.response?.data?.message || error.message);
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error
+        );
       }
     };
 
@@ -289,89 +295,103 @@ const ClientAdminDashboard = () => {
               </div>
             </CCol>
 
-            <CCol md={4}>
-              <div className="flex flex-col gap-3">
-                <h6 className="mx-3">
-                  Hello{" "}
-                  <span className="text-primary">{userInfo.username}</span>,
-                  {getGreeting()}
-                </h6>
-
-                <CCard
-                  className="shadow-sm rounded border-0"
-                  style={{
-                    background: "linear-gradient(135deg, #C850C0, #4158D0)",
-                  }}
-                >
-                  <CCardBody className="rounded-xl text-white">
-                    <div
-                      style={{
-                        fontSize: "0.875rem",
-                        color: "rgba(255, 255, 255, 0.78)",
-                      }}
-                    >
-                      Weather Today
-                    </div>
-
-                    <div
-                      style={{
-                        fontSize: "0.87rem",
-                        color: "rgba(255, 255, 255, 0.78)",
-                      }}
-                    >
-                      Last Fetched:{" "}
-                      {new Date(weatherData?.createdAt).toLocaleString()}
-                    </div>
-
-                    <div className="mt-2 text-lg font-semibold">
-                      {weatherData?.siteName}, {weatherData?.location} -{" "}
-                      {weatherData?.temperature}°C
-                    </div>
-                  </CCardBody>
-                </CCard>
-
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  <CRow className="my-1 text-center">
-                    <CCol md={6}>
-                      <div className="rounded-md p-2 shadow-sm text-center my-2">
-                        <div className="text-sm font-bold text-pink-600">
-                          {weatherData?.temperature}℃
-                        </div>
-                        <div style={{ fontSize: "14px" }}>Feels Like</div>
-                        <div style={{ fontSize: "14px" }}>Temperature</div>
-                      </div>
-                      <div className="rounded-md p-2 shadow-sm text-center my-2">
-                        <div className="text-sm font-bold text-pink-600">
-                          {weatherData?.humidity}%
-                        </div>
-                        <div style={{ fontSize: "14px" }}>Outside</div>
-                        <div style={{ fontSize: "14px" }}>Humidity</div>
-                      </div>
-                    </CCol>
-                    <CCol md={6}>
-                      <div className="rounded-md p-2 shadow-sm text-center my-2">
-                        <div className="text-sm font-bold text-pink-600">
-                          {weatherData?.wind_speed} m/s
-                        </div>
-                        <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
-                        <div style={{ fontSize: "12px" }}>
-                          At{" "}
-                          {new Date(
-                            weatherData?.createdAt
-                          ).toLocaleTimeString()}
-                        </div>
-                      </div>
-                      <div className="rounded-md p-2 shadow-sm text-center my-2">
-                        <div className="text-sm font-bold text-pink-600">
-                          {weatherData?.cloudiness}%
-                        </div>
-                        <div style={{ fontSize: "14px" }}>Clouds</div>
-                        <div style={{ fontSize: "14px" }}>Outside</div>
-                      </div>
-                    </CCol>
-                  </CRow>
+            <CCol
+              md={4}
+              className="d-flex align-items-center justify-content-center"
+              style={{ minHeight: "300px" }}
+            >
+              {loadingWeatherData ? (
+                <div className="text-center">
+                  <LoadingSpinner />
                 </div>
-              </div>
+              ) : errorWeatherData ? (
+                <div className="text-center text-danger">
+                  {errorWeatherData}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 ">
+                  <h6 className="mx-3">
+                    Hello{" "}
+                    <span className="text-primary">{userInfo.username}</span>,
+                    {getGreeting()}
+                  </h6>
+
+                  <CCard
+                    className="shadow-sm rounded border-0"
+                    style={{
+                      background: "linear-gradient(135deg, #C850C0, #4158D0)",
+                    }}
+                  >
+                    <CCardBody className="rounded-xl text-white">
+                      <div
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "rgba(255, 255, 255, 0.78)",
+                        }}
+                      >
+                        Weather Today
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "0.87rem",
+                          color: "rgba(255, 255, 255, 0.78)",
+                        }}
+                      >
+                        Last Fetched:{" "}
+                        {new Date(weatherData?.createdAt).toLocaleString()}
+                      </div>
+
+                      <div className="mt-2 text-lg font-semibold">
+                        {weatherData?.siteName}, {weatherData?.location} -{" "}
+                        {weatherData?.temperature}°C
+                      </div>
+                    </CCardBody>
+                  </CCard>
+
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <CRow className="my-1 text-center">
+                      <CCol md={6}>
+                        <div className="rounded-md p-2 shadow-sm text-center my-2">
+                          <div className="text-sm font-bold text-pink-600">
+                            {weatherData?.temperature}℃
+                          </div>
+                          <div style={{ fontSize: "14px" }}>Feels Like</div>
+                          <div style={{ fontSize: "14px" }}>Temperature</div>
+                        </div>
+                        <div className="rounded-md p-2 shadow-sm text-center my-2">
+                          <div className="text-sm font-bold text-pink-600">
+                            {weatherData?.humidity}%
+                          </div>
+                          <div style={{ fontSize: "14px" }}>Outside</div>
+                          <div style={{ fontSize: "14px" }}>Humidity</div>
+                        </div>
+                      </CCol>
+                      <CCol md={6}>
+                        <div className="rounded-md p-2 shadow-sm text-center my-2">
+                          <div className="text-sm font-bold text-pink-600">
+                            {weatherData?.wind_speed} m/s
+                          </div>
+                          <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
+                          <div style={{ fontSize: "12px" }}>
+                            At{" "}
+                            {new Date(
+                              weatherData?.createdAt
+                            ).toLocaleTimeString()}
+                          </div>
+                        </div>
+                        <div className="rounded-md p-2 shadow-sm text-center my-2">
+                          <div className="text-sm font-bold text-pink-600">
+                            {weatherData?.cloudiness}%
+                          </div>
+                          <div style={{ fontSize: "14px" }}>Clouds</div>
+                          <div style={{ fontSize: "14px" }}>Outside</div>
+                        </div>
+                      </CCol>
+                    </CRow>
+                  </div>
+                </div>
+              )}
             </CCol>
           </CRow>
         </div>
@@ -428,9 +448,9 @@ const ClientAdminDashboard = () => {
                                   label: function (tooltipItem) {
                                     const block =
                                       blockWiseCleaning[tooltipItem.dataIndex];
-                                    return `🧱 ${
+                                    return ` ${
                                       block.block || "Unassigned"
-                                    } | 🧼 ${block.areaCleaned} m²`;
+                                    } |  ${block.areaCleaned} m²`;
                                   },
                                 },
                               },
@@ -467,7 +487,6 @@ const ClientAdminDashboard = () => {
                     <>
                       {gateways.length > 0 ? (
                         <CChartPie
-                          style={{ height: "300px" }}
                           data={{
                             labels: gateways.map(
                               (gateway) => gateway.gateway_name
@@ -484,7 +503,21 @@ const ClientAdminDashboard = () => {
                           options={{
                             plugins: {
                               legend: {
-                                position: "right",
+                                display: false, // ✅ This hides the legend
+                              },
+
+                              tooltip: {
+                                callbacks: {
+                                  label: function (tooltipItem) {
+                                    const gateway =
+                                      gateways[tooltipItem.dataIndex];
+                                    return `${
+                                      gateway.gateway_status
+                                        ? "Online"
+                                        : "Offline"
+                                    }`;
+                                  },
+                                },
                               },
                             },
                           }}
