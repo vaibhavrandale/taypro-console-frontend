@@ -11,6 +11,7 @@
   --primary-text: #fff;
   --warning: #ffb01633;
   --warning-text: #fdb52a;
+  --important: #101936;
 }
 
 /* Global styles */
@@ -118,6 +119,9 @@ a {
   font-weight: 600;
   border-color: #0b3955;
 }
+.bg-important {
+  background: var(--important) !important;
+}
 
 .bg-secondary,
 .bg-warning {
@@ -176,8 +180,9 @@ CTable,
 CTableHead,
 CTableRow,
 CTableBody,
+CListGroup,
 input {
-  background-color: #101936 !important;
+  background-color: var(--important) !important;
 }
 
 .card-header {
