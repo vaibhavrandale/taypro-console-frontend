@@ -305,9 +305,7 @@ const ClientAdminDashboard = () => {
                   <LoadingSpinner />
                 </div>
               ) : errorWeatherData ? (
-                <div className="text-center text-danger">
-                  {errorWeatherData}
-                </div>
+                <p className="text-center text-muted">{errorWeatherData}</p>
               ) : (
                 <div className="flex flex-col gap-3 ">
                   <h6 className="mx-3">
