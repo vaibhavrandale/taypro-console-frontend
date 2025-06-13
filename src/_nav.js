@@ -192,11 +192,6 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Robot Commands",
-            to: "/master-admin/robot-commands",
-          },
-          {
-            component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/master-admin/weather-timer-notifications",
           },
