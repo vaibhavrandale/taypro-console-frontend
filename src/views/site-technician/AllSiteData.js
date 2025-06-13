@@ -222,7 +222,7 @@ const AllSiteData = () => {
                           </CInputGroup>
                         </CCol>
                       </CRow>
-                      <CTable responsive hover bordered>
+                      {/* <CTable responsive hover bordered>
                         <CTableHead color="secondary">
                           <CTableRow>
                             <CTableHeaderCell style={{ minWidth: "20px" }}>
@@ -315,6 +315,129 @@ const AllSiteData = () => {
                                         ? "Online"
                                         : "Offline"}
                                     </CBadge>
+                                  </CTableDataCell>
+                                </CTableRow>
+                              ))
+                          ) : (
+                            <CTableRow>
+                              <CTableDataCell
+                                colSpan="7"
+                                className="text-center text-muted"
+                              >
+                                No online robots found.
+                              </CTableDataCell>
+                            </CTableRow>
+                          )}
+                        </CTableBody>
+                      </CTable> */}
+                      <CTable responsive hover bordered>
+                        <CTableHead color="secondary">
+                          <CTableRow>
+                            <CTableHeaderCell style={{ minWidth: "20px" }}>
+                              #
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Robot No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Lora No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Version
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Deveui
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Block
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Last Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "170px" }}>
+                              Last updateAt
+                            </CTableHeaderCell>
+                          </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                          {site.robots.filter(
+                            (robot) =>
+                              robot.robot_no
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase()) ||
+                              robot.deveui
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase()) ||
+                              robot.block
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase()) ||
+                              robot.last_status
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase())
+                          ).length > 0 ? (
+                            site.robots
+                              .filter(
+                                (robot) =>
+                                  robot.lora_state === 1 &&
+                                  (robot.robot_no
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()) ||
+                                    robot.deveui
+                                      .toLowerCase()
+                                      .includes(searchTerm.toLowerCase()) ||
+                                    robot.block
+                                      .toLowerCase()
+                                      .includes(searchTerm.toLowerCase()) ||
+                                    robot.last_status
+                                      .toLowerCase()
+                                      .includes(searchTerm.toLowerCase()))
+                              )
+                              .map((robot, index) => (
+                                <CTableRow key={robot.robot_no}>
+                                  <CTableHeaderCell
+                                    style={{ minWidth: "20px" }}
+                                  >
+                                    {index + 1}
+                                  </CTableHeaderCell>
+                                  <CTableDataCell>
+                                    {robot.robot_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    <CBadge
+                                      color={
+                                        robot.lora_state === 1
+                                          ? "success"
+                                          : "danger"
+                                      }
+                                    >
+                                      {robot.lora_state === 1
+                                        ? "Online"
+                                        : "Offline"}
+                                    </CBadge>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.lora_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.version}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.deveui}
+                                  </CTableDataCell>
+                                  <CTableDataCell>{robot.block}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.last_status}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell style={{ minWidth: "250px" }}>
+                                    {robot.last_uplink === null
+                                      ? "Robot is not yet activated"
+                                      : new Date(
+                                          robot.last_uplink
+                                        ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>
                               ))
@@ -446,9 +569,11 @@ const AllSiteData = () => {
                                     {robot.last_status}
                                   </CTableDataCell>
                                   <CTableDataCell>
-                                    {new Date(robot.updatedAt)
-                                      .toLocaleDateString("en-GB")
-                                      .replace(/\//g, "-")}
+                                    {robot.last_uplink === null
+                                      ? "Robot is not yet activated"
+                                      : new Date(
+                                          robot.last_uplink
+                                        ).toLocaleString()}
                                   </CTableDataCell>
                                   <CTableDataCell>
                                     <CBadge

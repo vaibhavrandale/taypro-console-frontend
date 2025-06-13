@@ -2,9 +2,10 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import PaginateInput from "../../../components/PaginateInput";
+
 import {
   CBadge,
+  CButton,
   CCol,
   CFormSelect,
   CRow,
@@ -16,7 +17,9 @@ import {
   CTableRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -26,7 +29,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         technicians: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
       };
@@ -36,6 +39,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
 const TechnicianAttendanceDashboard = () => {
   const [
     { loading, technicians, totalPages, hasNextPage, hasPrevPage },
@@ -48,83 +52,133 @@ const TechnicianAttendanceDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
   const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [searchText, setSearchText] = useState("");
+
   const currentDate = new Date();
   const [month, setMonth] = useState(
     String(currentDate.getMonth() + 1).padStart(2, "0")
-  ); // e.g. '04'
-  const [year, setYear] = useState(String(currentDate.getFullYear())); // e.g. '2025'
+  );
+  const [year, setYear] = useState(String(currentDate.getFullYear()));
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchAttendance = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
         const result = await axios.post(
           `/api/v1/technician-attendance/${month}/${year}`,
-          pagination,
+          { pg: page, limit: limit },
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
+        let total = Math.ceil(result.data.total / result.data.limit);
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
             data: result.data.data,
             totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
+            hasNextPage: result.data.hasNextPage,
+            hasPrevPage: result.data.hasPrevPage,
           },
         });
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: {
-            error: error.response?.data.error || error.response?.data.message,
-            data: [], // Clear the array
-            totalPages: 0,
-            hasNextPage: false,
-            hasPrevPage: false,
-          },
+          payload: error.response?.data.error || "Failed to fetch",
         });
-        toast.error(error.response?.data.error || error.response?.data.message);
+        toast.error(error.response?.data.error || "Failed to fetch");
       }
     };
 
     fetchAttendance();
   }, [authtoken, limit, month, page, year]);
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
+
+  // const handlePageInputChange = (e) => {
+  //   setPageInput(e.target.value);
+  // };
+
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
+
+  // const handlePageInputSubmit = () => {
+  //   const pageNumber = parseInt(pageInput);
+  //   if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+  //     handlePageChange(pageNumber);
+  //   }
+  // };
+
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month, 0).getDate();
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
+  const daysInMonth = getDaysInMonth(month, year);
+
+  // Grouping logic
+  const groupedData = {};
+  technicians.forEach((record) => {
+    const date = new Date(record.punchin_time).toISOString().split("T")[0];
+    if (!groupedData[record.username]) {
+      groupedData[record.username] = {
+        site_id: record.site_id,
+        profile_image: record.profile_image,
+        attendance: {},
+      };
     }
+    groupedData[record.username].attendance[date] = {
+      in: record.punchin_time,
+      out: record.punchout_time || null,
+    };
+  });
+
+  const exportToExcel = () => {
+    const table = document.querySelector("table");
+    if (!table) {
+      console.error("Attendance table not found!");
+      return;
+    }
+
+    if (!Object.keys(groupedData).length) {
+      toast.error("No data available to export");
+      return;
+    }
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.table_to_sheet(table, { raw: true });
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Technician Attendance");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+
+    saveAs(data, `Technician_Attendance_${month}_${year}.xlsx`);
   };
 
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
-  };
+  const filteredEntries = Object.entries(groupedData).filter(
+    ([username, data]) =>
+      username.toLowerCase().includes(searchText) ||
+      data.site_id.toLowerCase().includes(searchText)
+  );
+
   return (
     <div>
+      {" "}
+      <h3 className="text-center">All Site Technicians Timesheet</h3>
       <CRow className="mb-3">
         <CCol xs="auto">
           <CFormSelect value={month} onChange={(e) => setMonth(e.target.value)}>
@@ -138,7 +192,6 @@ const TechnicianAttendanceDashboard = () => {
             })}
           </CFormSelect>
         </CCol>
-
         <CCol xs="auto">
           <CFormSelect value={year} onChange={(e) => setYear(e.target.value)}>
             {Array.from({ length: 5 }).map((_, index) => {
@@ -151,118 +204,115 @@ const TechnicianAttendanceDashboard = () => {
             })}
           </CFormSelect>
         </CCol>
+
+        <CCol lg="2" xs="auto">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by username or site ID"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value.toLowerCase())}
+          />
+        </CCol>
+        <CCol xs="auto">
+          <CButton size="sm" color="success" onClick={exportToExcel}>
+            Export
+          </CButton>
+        </CCol>
       </CRow>
       <CTable bordered hover responsive>
-        <CTableHead color="secondary">
+        <CTableHead color="dark">
           <CTableRow className="text-center">
-            <CTableHeaderCell>Sr</CTableHeaderCell>{" "}
-            <CTableHeaderCell>Profile</CTableHeaderCell>
-            <CTableHeaderCell>username</CTableHeaderCell>
-            <CTableHeaderCell>site_id</CTableHeaderCell>
-            <CTableHeaderCell>In Time</CTableHeaderCell>
-            <CTableHeaderCell>In Location</CTableHeaderCell>
-            <CTableHeaderCell>out Time</CTableHeaderCell>
-            <CTableHeaderCell>Out Location</CTableHeaderCell>
+            <CTableHeaderCell>Sr</CTableHeaderCell>
+            <CTableHeaderCell>Name</CTableHeaderCell>
+            <CTableHeaderCell>Site</CTableHeaderCell>
+            {[...Array(daysInMonth)].map((_, i) => (
+              <CTableHeaderCell key={i}>{i + 1}</CTableHeaderCell>
+            ))}
+            <CTableHeaderCell>Total</CTableHeaderCell>{" "}
+            {/* 👈 Add Total column */}
           </CTableRow>
         </CTableHead>
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="8" className="text-start">
+              <CTableDataCell colSpan={daysInMonth + 4}>
                 <LoadingSpinner />
-              </CTableHeaderCell>
+              </CTableDataCell>
             </CTableRow>
-          ) : technicians.length > 0 ? (
-            technicians.map((site, index) => (
-              <CTableRow key={index} className="text-center">
-                <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                <CTableDataCell>
-                  <img
-                    src={site.profile_image}
-                    alt={site.site_id}
-                    style={{
-                      height: "50px",
-                      width: "50px",
-                      objectFit: "contain",
-                      borderRadius: "50%",
-                    }}
-                  />
-                </CTableDataCell>
-                <CTableDataCell>{site.username}</CTableDataCell>
-                <CTableDataCell>{site.site_id}</CTableDataCell>
-                <CTableDataCell>
-                  {new Date(site.punchin_time).toLocaleString("en-IN", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
+          ) : Object.keys(groupedData).length > 0 ? (
+            filteredEntries.map(([username, data], idx) => {
+              let presentCount = 0;
+
+              return (
+                <CTableRow key={idx} className="text-center">
+                  <CTableDataCell>{idx + 1}</CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "170px" }}>
+                    {username}
+                  </CTableDataCell>
+                  <CTableDataCell>{data.site_id}</CTableDataCell>
+
+                  {[...Array(daysInMonth)].map((_, dayIdx) => {
+                    const day = String(dayIdx + 1).padStart(2, "0");
+                    const formattedDate = `${year}-${month}-${day}`;
+                    const log = data.attendance[formattedDate];
+
+                    if (log?.in && log?.out) presentCount++; // Count only full Present
+
+                    return (
+                      <CTableDataCell key={dayIdx}>
+                        {log ? (
+                          log.in && log.out ? (
+                            <CBadge color="success">
+                              P
+                              <br />
+                              {new Date(log.in).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
+                              <br />
+                              {new Date(log.out).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
+                            </CBadge>
+                          ) : log.in && !log.out ? (
+                            <CBadge color="warning">
+                              P*
+                              <br />
+                              {new Date(log.in).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
+                            </CBadge>
+                          ) : (
+                            <CBadge color="danger">A</CBadge>
+                          )
+                        ) : (
+                          <CBadge color="danger">A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    );
                   })}
-                </CTableDataCell>
 
-                <CTableDataCell>
-                  <Link
-                    target="blank"
-                    className="text-decoration-none"
-                    to={`https://www.google.com/maps/search/?api=1&query=${site.punchin_location.lat},${site.punchin_location.lng}`}
-                  >
-                    View
-                  </Link>
-                </CTableDataCell>
-
-                <CTableDataCell>
-                  {site.punchout_time ? (
-                    new Date(site.punchout_time).toLocaleString("en-IN", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                      hour12: true,
-                    })
-                  ) : (
-                    <CBadge color="warning">N/A</CBadge>
-                  )}
-                </CTableDataCell>
-                <CTableDataCell>
-                  {site.punchout_time ? (
-                    <>
-                      <Link
-                        target="blank"
-                        className="text-decoration-none"
-                        to={`https://www.google.com/maps/search/?api=1&query=${site.punchout_location.lat},${site.punchout_location.lng}`}
-                      >
-                        View
-                      </Link>
-                    </>
-                  ) : (
-                    <CBadge color="warning">N/A</CBadge>
-                  )}
-                </CTableDataCell>
-              </CTableRow>
-            ))
+                  <CTableDataCell>
+                    <strong>{presentCount}</strong>
+                  </CTableDataCell>
+                </CTableRow>
+              );
+            })
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center">
+              <CTableDataCell colSpan={daysInMonth + 4} className="text-center">
                 No data found
               </CTableDataCell>
             </CTableRow>
           )}
         </CTableBody>
       </CTable>
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
     </div>
   );
 };
