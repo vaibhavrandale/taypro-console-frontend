@@ -196,9 +196,11 @@ const ClientAdminDashboard = () => {
     }
   };
 
-  const greeting = weatherData.createdAt
-    ? new Date(weatherData.createdAt).getHours()
-    : 0;
+  // const greeting = weatherData.createdAt
+  //   ? new Date(weatherData.createdAt).getHours()
+  //   : 0;
+  const greeting = new Date().getHours();
+
   const getGreeting = () => {
     if (greeting < 12) {
       return "Good Morning";
