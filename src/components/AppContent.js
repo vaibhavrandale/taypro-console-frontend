@@ -9,7 +9,7 @@ const AppContent = () => {
   const Page404 = React.lazy(() => import("../views/pages/page404/Page404"));
 
   return (
-    <div className="mx-3 my-2">
+    <div className="mx-3 ">
       {/* <Suspense fallback={<CSpinner color="primary" />}> */}
       <Routes>
         {routes.map((route, idx) => {

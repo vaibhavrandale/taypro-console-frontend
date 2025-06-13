@@ -84,6 +84,9 @@ import CreateNewServiceTicketFault from "./views/master-admin/serviceticket-faul
 import UpdateServiceTicketsFault from "./views/master-admin/serviceticket-fault/UpdateServiceTicketsFault";
 import WeatherTimerNotifications from "./views/master-admin/weather-notification/WeatherTimerNotifications";
 import RobotCommands from "./views/master-admin/robot-commands/RobotCommands";
+import UserPerformance from "./views/site-technician/userperformance/UserPerformance";
+import UserPerformanceDashboard from "./views/master-admin/user-performance/UserPerformanceDashboard";
+import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1082,6 +1085,26 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <WeatherTimerNotifications />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/user-performance-dashboard",
+    name: "User Performance",
+
+    element: (
+      <MasterAdminRoute>
+        <UserPerformanceDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/user-performance-dashboard/user-performance/:id",
+    name: "User Performance",
+
+    element: (
+      <MasterAdminRoute>
+        <ViewPerformance />
       </MasterAdminRoute>
     ),
   },
@@ -2286,6 +2309,16 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <SiteTechnicianDprDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/user-performance",
+    name: "User Performance",
+
+    element: (
+      <SiteTechnicianRoute>
+        <UserPerformance />
       </SiteTechnicianRoute>
     ),
   },
