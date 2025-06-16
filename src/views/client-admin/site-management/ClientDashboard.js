@@ -144,7 +144,7 @@ const ClientDashboard = () => {
                     <CTable striped responsive className="mt-2">
                       <CTableHead color="secondary">
                         <CTableRow>
-                          <CTableHeaderCell className="text-center">
+                          <CTableHeaderCell className="text-center ">
                             Total
                           </CTableHeaderCell>
                           <CTableHeaderCell className="text-center">
@@ -158,7 +158,7 @@ const ClientDashboard = () => {
                       <CTableBody>
                         <CTableRow>
                           <CTableDataCell className="text-center">
-                            <CBadge color="primary">
+                            <CBadge color="blue">
                               {site.site_total_robots}
                             </CBadge>
                           </CTableDataCell>
@@ -222,114 +222,6 @@ const ClientDashboard = () => {
                           </CInputGroup>
                         </CCol>
                       </CRow>
-                      {/* <CTable responsive hover bordered>
-                        <CTableHead color="secondary">
-                          <CTableRow>
-                            <CTableHeaderCell style={{ minWidth: "20px" }}>
-                              #
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Robot No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Deveui
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Block
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Last Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "170px" }}>
-                              Last updateAt
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
-                            </CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          {site.robots.filter(
-                            (robot) =>
-                              robot.robot_no
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.deveui
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.block
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.last_status
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
-                          ).length > 0 ? (
-                            site.robots
-                              .filter(
-                                (robot) =>
-                                  robot.lora_state === 1 &&
-                                  (robot.robot_no
-                                    .toLowerCase()
-                                    .includes(searchTerm.toLowerCase()) ||
-                                    robot.deveui
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.block
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.last_status
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
-                              )
-                              .map((robot, index) => (
-                                <CTableRow key={robot.robot_no}>
-                                  <CTableHeaderCell
-                                    style={{ minWidth: "20px" }}
-                                  >
-                                    {index + 1}
-                                  </CTableHeaderCell>
-                                  <CTableDataCell>
-                                    {robot.robot_no}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {new Date(robot.updatedAt)
-                                      .toLocaleDateString("en-GB")
-                                      .replace(/\//g, "-")}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    <CBadge
-                                      color={
-                                        robot.lora_state === 1
-                                          ? "success"
-                                          : "danger"
-                                      }
-                                    >
-                                      {robot.lora_state === 1
-                                        ? "Online"
-                                        : "Offline"}
-                                    </CBadge>
-                                  </CTableDataCell>
-                                </CTableRow>
-                              ))
-                          ) : (
-                            <CTableRow>
-                              <CTableDataCell
-                                colSpan="7"
-                                className="text-center text-muted"
-                              >
-                                No online robots found.
-                              </CTableDataCell>
-                            </CTableRow>
-                          )}
-                        </CTableBody>
-                      </CTable> */}
                       <CTable responsive hover bordered>
                         <CTableHead color="secondary">
                           <CTableRow>
