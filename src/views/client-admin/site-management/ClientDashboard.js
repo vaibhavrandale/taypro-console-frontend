@@ -144,7 +144,7 @@ const ClientDashboard = () => {
                     <CTable striped responsive className="mt-2">
                       <CTableHead color="secondary">
                         <CTableRow>
-                          <CTableHeaderCell className="text-center">
+                          <CTableHeaderCell className="text-center ">
                             Total
                           </CTableHeaderCell>
                           <CTableHeaderCell className="text-center">
@@ -158,7 +158,7 @@ const ClientDashboard = () => {
                       <CTableBody>
                         <CTableRow>
                           <CTableDataCell className="text-center">
-                            <CBadge color="primary">
+                            <CBadge color="blue">
                               {site.site_total_robots}
                             </CBadge>
                           </CTableDataCell>

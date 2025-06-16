@@ -81,7 +81,6 @@ const BlockManagement = () => {
             blocks: result.data.data.blocks || [],
           },
         });
-
         setSitename(result.data.data?.site_name || "Unknown");
         setSitLocation(result.data.data?.location || "Unknown");
       } catch (error) {
