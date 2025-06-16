@@ -179,7 +179,7 @@ const Notifications = () => {
       </CRow>
 
       {/* 🔔 Notifications Table */}
-      <CTable bordered hover responsive className="text-center">
+      <CTable bordered hover responsive className="text-center ">
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -195,7 +195,7 @@ const Notifications = () => {
             <CTableHeaderCell>Read By</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
-        <CTableBody>
+        <CTableBody style={{}}>
           {loading ? (
             <CTableRow>
               <CTableDataCell colSpan="9" className="text-center">

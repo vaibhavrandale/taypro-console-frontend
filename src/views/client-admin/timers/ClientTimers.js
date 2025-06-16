@@ -230,7 +230,7 @@ const ClientTimers = () => {
           </h5>
         </CCardHeader>
         <CCardBody>
-          <CTable bordered hover responsive>
+          <CTable bordered hover responsive className="bg-important">
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>

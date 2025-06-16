@@ -388,7 +388,12 @@ const AllSiteDpr = () => {
       </CRow>
 
       {/* Inventories Table */}
-      <CTable bordered hover responsive className="text-center shadow-sm">
+      <CTable
+        bordered
+        hover
+        responsive
+        className="text-center shadow-sm bg-important"
+      >
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -524,7 +529,7 @@ const AllSiteDpr = () => {
         <CModalBody>
           {selectedInventory && (
             <>
-              <CTable bordered responsive>
+              <CTable bordered responsive className="bg-important">
                 <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>Field</CTableHeaderCell>
@@ -542,7 +547,7 @@ const AllSiteDpr = () => {
                         <CTableDataCell>
                           {Array.isArray(value) ? (
                             key === "technician_present" ? (
-                              <CTable className=" border-0">
+                              <CTable className=" border-0 bg-important">
                                 <CTableBody>
                                   {value.map((tech, index) => {
                                     return (

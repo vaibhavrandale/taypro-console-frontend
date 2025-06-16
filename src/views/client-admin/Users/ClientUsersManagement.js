@@ -565,7 +565,7 @@ const ClientUsersManagement = () => {
       </CRow>
 
       {/* Users Table */}
-      <CTable bordered hover responsive className="text-center">
+      <CTable bordered hover responsive className="text-center bg-important">
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -1014,7 +1014,12 @@ const ClientUsersManagement = () => {
             <CTabContent>
               {/* Assigned Sites Tab */}
               <CTabPanel className="p-3" itemKey="assigned">
-                <CTable bordered hover responsive className="text-center mt-3">
+                <CTable
+                  bordered
+                  hover
+                  responsive
+                  className="text-center mt-3 bg-important"
+                >
                   <CTableHead color="secondary">
                     <CTableRow>
                       <CTableHeaderCell>#</CTableHeaderCell>

@@ -241,7 +241,7 @@ const Gateways = () => {
         </CCol>
       </CRow>
       {/* Table displaying all gateways */}
-      <CTable bordered hover responsive>
+      <CTable bordered hover responsive className="bg-important">
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -373,7 +373,7 @@ const Gateways = () => {
                 <div>
                   {/* Gateway Information Table */}
                   <h5 className="mb-3">Gateway Information</h5>
-                  <CTable striped bordered responsive>
+                  <CTable striped bordered responsive className="bg-important">
                     <CTableBody>
                       <CTableRow>
                         <CTableHeaderCell>Gateway ID in Lns</CTableHeaderCell>
@@ -465,7 +465,13 @@ const Gateways = () => {
                   {loadingRobot ? (
                     <LoadingSpinner />
                   ) : robot.robot_no === selectedGateway.gateway_robot_no ? (
-                    <CTable striped bordered hover responsive>
+                    <CTable
+                      striped
+                      bordered
+                      hover
+                      responsive
+                      className="bg-important"
+                    >
                       <CTableHead color="secondary">
                         <CTableRow>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>

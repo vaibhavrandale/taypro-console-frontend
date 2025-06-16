@@ -300,7 +300,7 @@ const UpdateDpr = () => {
                     )}
                   </div>
                 </CCol>
-                <CTable striped bordered className="mt-2">
+                <CTable striped bordered className="mt-2 bg-important">
                   <CTableHead color="secondary">
                     <CTableRow>
                       <CTableHeaderCell>#</CTableHeaderCell>

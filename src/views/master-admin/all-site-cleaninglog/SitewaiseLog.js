@@ -480,7 +480,12 @@ const SitewaiseLog = () => {
             ⏱ Timer Update Notifications -{" "}
             <span className="text-danger">{site_id}</span>
           </h5>
-          <CTable bordered hover responsive className="text-center">
+          <CTable
+            bordered
+            hover
+            responsive
+            className="text-center bg-important"
+          >
             <CTableHead color="info">
               <CTableRow>
                 <CTableHeaderCell>#</CTableHeaderCell>
@@ -538,7 +543,12 @@ const SitewaiseLog = () => {
           <h5 className="mt-5 mb-3">
             🤖 Cleaning Logs - <span className="text-danger">{site_id}</span>
           </h5>
-          <CTable bordered hover responsive className="text-center">
+          <CTable
+            bordered
+            hover
+            responsive
+            className="text-center bg-important"
+          >
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
@@ -645,7 +655,12 @@ const SitewaiseLog = () => {
           <h5 className="mt-5 mb-3">
             🚨 Error Logs for - <span className="text-danger">{site_id}</span>
           </h5>
-          <CTable bordered hover responsive className="text-center">
+          <CTable
+            bordered
+            hover
+            responsive
+            className="text-center bg-important"
+          >
             <CTableHead color="dark">
               <CTableRow>
                 <CTableHeaderCell>#</CTableHeaderCell>
@@ -689,7 +704,12 @@ const SitewaiseLog = () => {
               <span className="text-danger">{site_id}</span>
             </h5>
 
-            <CTable bordered hover responsive className="text-center">
+            <CTable
+              bordered
+              hover
+              responsive
+              className="text-center bg-important"
+            >
               <CTableHead color="success">
                 <CTableRow>
                   <CTableHeaderCell>Sr</CTableHeaderCell>

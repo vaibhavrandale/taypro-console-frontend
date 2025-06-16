@@ -141,7 +141,7 @@ const ClientDashboard = () => {
                     </h6>
 
                     {/* Robot Status Table */}
-                    <CTable striped responsive className="mt-2">
+                    <CTable striped responsive className="mt-2 bg-important">
                       <CTableHead color="secondary">
                         <CTableRow>
                           <CTableHeaderCell className="text-center">
@@ -330,7 +330,12 @@ const ClientDashboard = () => {
                           )}
                         </CTableBody>
                       </CTable> */}
-                      <CTable responsive hover bordered>
+                      <CTable
+                        responsive
+                        hover
+                        bordered
+                        className="bg-important"
+                      >
                         <CTableHead color="secondary">
                           <CTableRow>
                             <CTableHeaderCell style={{ minWidth: "20px" }}>
@@ -500,7 +505,12 @@ const ClientDashboard = () => {
                           </CInputGroup>
                         </CCol>
                       </CRow>
-                      <CTable responsive hover bordered>
+                      <CTable
+                        responsive
+                        hover
+                        bordered
+                        className="bg-important"
+                      >
                         <CTableHead color="secondary">
                           <CTableRow>
                             <CTableHeaderCell style={{ minWidth: "20px" }}>

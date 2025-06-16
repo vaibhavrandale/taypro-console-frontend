@@ -186,7 +186,7 @@ const ClientBlockManagement = () => {
                 </CInputGroup>
               </CCol>
             </CRow>
-            <CTable responsive hover bordered>
+            <CTable responsive hover bordered className="bg-important">
               <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell className="text-center">
