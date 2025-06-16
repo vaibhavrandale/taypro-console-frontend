@@ -119,7 +119,7 @@ const ViewGateway = () => {
       {loadingGateway ? (
         <LoadingSpinner />
       ) : (
-        <CTable striped bordered responsive>
+        <CTable striped bordered responsive className="bg-important">
           <CTableBody>
             <CTableRow>
               <CTableHeaderCell>Gateway ID</CTableHeaderCell>
@@ -206,7 +206,7 @@ const ViewGateway = () => {
             No connected robot found.
           </CBadge>
         ) : (
-          <CTable striped bordered hover responsive>
+          <CTable striped bordered hover responsive className="bg-important">
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Robot No</CTableHeaderCell>

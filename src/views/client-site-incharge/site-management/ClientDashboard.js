@@ -141,7 +141,7 @@ const ClientDashboard = () => {
                     </h6>
 
                     {/* Robot Status Table */}
-                    <CTable striped responsive className="mt-2">
+                    <CTable striped responsive className="mt-2 bg-important">
                       <CTableHead color="secondary">
                         <CTableRow>
                           <CTableHeaderCell className="text-center">

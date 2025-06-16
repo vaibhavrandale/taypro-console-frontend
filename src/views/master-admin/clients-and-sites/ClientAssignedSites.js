@@ -267,7 +267,7 @@ const ClientAssignedSites = () => {
               </CButton>
             </div>
 
-            <CTable striped hover responsive className="mt-3">
+            <CTable striped hover responsive className="mt-3 bg-important">
               <CTableHead color="dark">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>

@@ -181,7 +181,7 @@ const ClientTicketsDashboard = () => {
       </CRow>
 
       {/* 📋 Ticket Table */}
-      <CTable bordered hover responsive className="text-center">
+      <CTable bordered hover responsive className="text-center bg-important">
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
@@ -321,7 +321,7 @@ const ClientTicketsDashboard = () => {
         <CModalBody>
           {selectedTicket && (
             <>
-              <CTable bordered hover responsive>
+              <CTable bordered hover responsive className="bg-important">
                 <CTableHead>
                   <CTableRow>
                     <CTableHeaderCell>Field</CTableHeaderCell>

@@ -314,7 +314,12 @@ export default function ChatDashboard() {
                   <LoadingSpinner />
                 </div>
               ) : (
-                <CTable bordered hover responsive className="text-center">
+                <CTable
+                  bordered
+                  hover
+                  responsive
+                  className="text-center bg-important"
+                >
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell>#</CTableHeaderCell>

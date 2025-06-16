@@ -393,7 +393,7 @@ const Clients = () => {
       </CRow>
 
       {/* Clients Table */}
-      <CTable bordered responsive className="text-center">
+      <CTable bordered responsive className="text-center bg-important">
         <CTableHead>
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>

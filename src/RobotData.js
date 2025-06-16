@@ -163,7 +163,12 @@ const RobotData = () => {
                 <CCardHeader className="bg-primary text-white">
                   Today's Cleaning Summary
                 </CCardHeader>
-                <CTable bordered responsive hover className="my-2 text-center">
+                <CTable
+                  bordered
+                  responsive
+                  hover
+                  className="my-2 text-center bg-important"
+                >
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell style={{ minWidth: "60px" }}>

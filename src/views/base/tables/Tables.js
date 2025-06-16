@@ -30,7 +30,7 @@ const Tables = () => {
               <code>&lt;CTable&gt;</code>-based tables look in CoreUI.
             </p>
             <DocsExample href="components/table">
-              <CTable>
+              <CTable className="bg-important">
                 <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>

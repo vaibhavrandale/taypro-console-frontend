@@ -532,7 +532,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   </div>
                 </CDropdownToggle>
 
-                <CDropdownMenu className="p-2" style={{ minWidth: "250px" }}>
+                <CDropdownMenu
+                  className="p-2 bg-important"
+                  style={{ minWidth: "250px" }}
+                >
                   <div className="d-flex justify-content-between align-items-center px-3 py-2">
                     <strong>Notifications</strong>
                     <Link to={notificationPage} className=" small">

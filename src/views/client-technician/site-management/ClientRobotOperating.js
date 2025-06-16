@@ -297,7 +297,7 @@ const ClientRobotOperating = () => {
             <CCol md={7} className="mt-2">
               <CCard className="shadow border-0" style={{ height: "100%" }}>
                 <CCardBody>
-                  <CTable borderless>
+                  <CTable borderless responsive className="bg-important">
                     <CTableBody>
                       <CTableRow>
                         <CTableDataCell>
@@ -361,7 +361,7 @@ const ClientRobotOperating = () => {
             <CCol md={5} className="mt-2">
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
-                  <CTable borderless>
+                  <CTable borderless responsive className="bg-important">
                     <CTableBody>
                       <CTableRow>
                         <CTableDataCell>

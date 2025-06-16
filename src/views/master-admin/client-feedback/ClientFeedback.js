@@ -168,7 +168,12 @@ const ClientFeedback = () => {
       </div>
 
       {/* feedbacks Table */}
-      <CTable bordered hover responsive className="text-center shadow-sm">
+      <CTable
+        bordered
+        hover
+        responsive
+        className="text-center shadow-sm bg-important"
+      >
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>

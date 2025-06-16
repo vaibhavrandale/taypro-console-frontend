@@ -225,7 +225,7 @@ const PreventiveMaintenanceList = () => {
                 </CRow>
               </form>
               <div className="table-responsive">
-                <CTable bordered hover>
+                <CTable bordered hover className="bg-important">
                   <CTableHead>
                     {/* Top Row - Branding & Title */}
                     <CTableRow className="bg-dark text-white">
