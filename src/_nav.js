@@ -254,6 +254,18 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavItem,
+        name: "Monthly Sites Report",
+        to: "/master-admin/monthlyreport",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -453,6 +465,18 @@ const _nav = [
             to: "/project-admin/technician-attendance",
           },
         ],
+      },
+      {
+        component: CNavItem,
+        name: "Monthly Sites Report",
+        to: "/project-admin/monthlyreport",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
       },
     ],
   },
@@ -661,6 +685,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Monthly Sites Report",
+        to: "/service-admin/monthlyreport",
+        icon: (
+          <CIcon
+            icon={cilFactory}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -1558,6 +1594,18 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavItem,
+        name: "Monthly Sites Report",
+        to: "/client-admin/monthlyreport",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
 
@@ -1686,18 +1734,6 @@ const _nav = [
           />
         ),
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Users",
-      //   to: "/site-incharge/external-users",
-      //   icon: (
-      //     <CIcon icon={cilSettings} customClassName="nav-icon" style={{ height: "30px" }} />
-      //   ),
-      //   badge: {
-      //     color: "success",
-      //     text: "DONE",
-      //   },
-      // },
     ],
   },
 

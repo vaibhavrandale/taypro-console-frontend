@@ -88,6 +88,7 @@ import UserPerformance from "./views/site-technician/userperformance/UserPerform
 import UserPerformanceDashboard from "./views/master-admin/user-performance/UserPerformanceDashboard";
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
 import RobotPosition from "./views/robot-position/RobotPosition";
+import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteReport";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1119,6 +1120,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <MasterAdminRoute>
+        <MonthlySiteReport />
+      </MasterAdminRoute>
+    ),
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -1147,6 +1158,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <TayproDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ProjectAdminRoute>
+        <MonthlySiteReport />
       </ProjectAdminRoute>
     ),
   },
@@ -1655,6 +1675,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotCommands />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ServiceAdminRoute>
+        <MonthlySiteReport />
       </ServiceAdminRoute>
     ),
   },
@@ -2424,6 +2453,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <ClientAdminDashboard />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ClientAdminRoute>
+        <MonthlySiteReport />
       </ClientAdminRoute>
     ),
   },
