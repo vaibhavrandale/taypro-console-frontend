@@ -1734,18 +1734,6 @@ const _nav = [
           />
         ),
       },
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/site-incharge/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px" }}
-          />
-        ),
-      },
     ],
   },
 
