@@ -2625,15 +2625,6 @@ const routes = [
     ),
   },
   {
-    path: "/site-incharge/monthlyreport",
-    name: "Monthly Site Report",
-    element: (
-      <ClientSiteInchargeRoute>
-        <MonthlySiteReport />
-      </ClientSiteInchargeRoute>
-    ),
-  },
-  {
     path: "/site-incharge/robot-commands",
     name: "Robot Commands",
     element: (
