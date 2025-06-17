@@ -87,6 +87,7 @@ import RobotCommands from "./views/master-admin/robot-commands/RobotCommands";
 import UserPerformance from "./views/site-technician/userperformance/UserPerformance";
 import UserPerformanceDashboard from "./views/master-admin/user-performance/UserPerformanceDashboard";
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
+import RobotPosition from "./views/robot-position/RobotPosition";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -391,6 +392,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MasterAdminDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robots-position",
+    name: "Master Admin Robots Position",
+    element: (
+      <MasterAdminRoute>
+        <RobotPosition />
       </MasterAdminRoute>
     ),
   },
