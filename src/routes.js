@@ -87,6 +87,7 @@ import RobotCommands from "./views/master-admin/robot-commands/RobotCommands";
 import UserPerformance from "./views/site-technician/userperformance/UserPerformance";
 import UserPerformanceDashboard from "./views/master-admin/user-performance/UserPerformanceDashboard";
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
+import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteReport";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1109,6 +1110,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <MasterAdminRoute>
+        <MonthlySiteReport />
+      </MasterAdminRoute>
+    ),
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -1137,6 +1148,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <TayproDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ProjectAdminRoute>
+        <MonthlySiteReport />
       </ProjectAdminRoute>
     ),
   },
@@ -1645,6 +1665,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotCommands />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ServiceAdminRoute>
+        <MonthlySiteReport />
       </ServiceAdminRoute>
     ),
   },
@@ -2418,6 +2447,15 @@ const routes = [
     ),
   },
   {
+    path: "/client-admin/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ClientAdminRoute>
+        <MonthlySiteReport />
+      </ClientAdminRoute>
+    ),
+  },
+  {
     path: "/client-admin/robot-commands",
     name: "Robot Commands",
     element: (
@@ -2583,6 +2621,15 @@ const routes = [
     element: (
       <ClientSiteInchargeRoute>
         <ClientAdminDashboard />
+      </ClientSiteInchargeRoute>
+    ),
+  },
+  {
+    path: "/site-incharge/monthlyreport",
+    name: "Monthly Site Report",
+    element: (
+      <ClientSiteInchargeRoute>
+        <MonthlySiteReport />
       </ClientSiteInchargeRoute>
     ),
   },
