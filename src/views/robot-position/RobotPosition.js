@@ -349,13 +349,45 @@ const RobotPosition = () => {
     error: "",
   });
   const authtoken = useSelector((state) => state.authtoken);
+  // useEffect(() => {
+  //   const fetchRobots = async () => {
+  //     dispatch({ type: "FETCH_REQUEST" });
+  //     try {
+  //       const result = await axios.get(
+  //         `/api/v1/robotpositiontracker/${site_id}`,
+
+  //         {
+  //           headers: { Authorization: `Bearer ${authtoken}` },
+  //         }
+  //       );
+  //       console.log(result.data);
+
+  //       dispatch({
+  //         type: "FETCH_SUCCESS",
+  //         payload: result.data,
+  //       });
+  //     } catch (error) {
+  //       dispatch({
+  //         type: "FETCH_FAIL",
+  //         payload: error.response?.data?.message || error.response?.data?.error,
+  //       });
+  //       toast.error(
+  //         error.response?.data?.message || error.response?.data?.error
+  //       );
+  //     }
+  //   };
+
+  //   fetchRobots();
+  // }, [authtoken]);
+
   useEffect(() => {
+    let intervalId;
+
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.get(
           `/api/v1/robotpositiontracker/${site_id}`,
-
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -377,8 +409,17 @@ const RobotPosition = () => {
       }
     };
 
+    // Immediately call once
     fetchRobots();
-  }, [authtoken]);
+
+    // Then set interval
+    intervalId = setInterval(fetchRobots, 7000); // every 5 seconds
+
+    return () => {
+      clearInterval(intervalId); // cleanup on unmount
+    };
+  }, [authtoken, site_id]); // 🔁 include `site_id` if it can change
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ marginBottom: "30px", textAlign: "center" }}>
