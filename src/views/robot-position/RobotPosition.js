@@ -124,7 +124,7 @@ const RobotRow = ({ robot }) => {
   // }, [robot]);
 
   useEffect(() => {
-    const oneWayDistance = robot.row_length;
+    const oneWayDistance = robot.row_length || 0;
     const totalTripTime =
       (new Date(robot.calculated_finish_timestamp) -
         new Date(robot.start_timestamp)) /
@@ -132,35 +132,40 @@ const RobotRow = ({ robot }) => {
 
     const update = () => {
       const now = new Date();
-      const elapsedTime = (now - new Date(robot.start_timestamp)) / 1000;
+      const startTime = new Date(robot.start_timestamp);
+      const elapsedTime = (now - startTime) / 1000;
 
+      // Sanity check
+      if (!isFinite(totalTripTime) || totalTripTime <= 0) {
+        setDistance(0);
+        setTotalCovered(0);
+        return;
+      }
+
+      // ✅ CASE 1: Robot is stuck
       if (
         robot.isStuck &&
         (robot.stuck_reason === "Battery Dead" ||
           robot.stuck_reason === "Stuck in bridge/Module") &&
         now >= new Date(robot.stuck_at)
       ) {
-        const stuckElapsedTime =
-          (new Date(robot.stuck_at) - new Date(robot.start_timestamp)) / 1000;
-        const clampedStuckTime = Math.max(
-          0,
-          Math.min(stuckElapsedTime, totalTripTime)
-        );
-        const stuckProgress = clampedStuckTime / totalTripTime;
+        const stuckTime = (new Date(robot.stuck_at) - startTime) / 1000;
+        const clampedTime = Math.max(0, Math.min(stuckTime, totalTripTime));
+        const progress = clampedTime / totalTripTime;
 
         let stuckDistance;
         let stuckCovered;
         let location;
 
-        if (stuckProgress <= 0.5) {
-          stuckDistance = oneWayDistance * (stuckProgress * 2);
+        if (progress <= 0.5) {
+          stuckDistance = oneWayDistance * (progress * 2);
           stuckCovered = stuckDistance;
           location =
             stuckDistance >= oneWayDistance
               ? "at RS"
               : `at ${Math.round(stuckDistance)}m from DS`;
         } else {
-          stuckDistance = oneWayDistance * ((1 - stuckProgress) * 2);
+          stuckDistance = oneWayDistance * ((1 - progress) * 2);
           stuckCovered = oneWayDistance + (oneWayDistance - stuckDistance);
           location =
             stuckDistance <= 0
@@ -173,20 +178,27 @@ const RobotRow = ({ robot }) => {
         setDistance(Math.round(stuckDistance));
         setTotalCovered(Math.round(stuckCovered));
         setIsStuckNow(true);
-        setAtDS(false);
         setStuckLocation(location);
+        setAtDS(false);
         return;
       }
 
-      if (now >= new Date(robot.calculated_finish_timestamp)) {
-        setAtDS(true);
-        setDistance(0);
-        setTotalCovered(oneWayDistance * 2);
-        setIsStuckNow(false);
-        setStuckLocation("");
-        return;
+      // ✅ CASE 2: Cleaning finished
+      if (robot.isCleaningFinishedReceived) {
+        const finishTime = new Date(robot.calculated_finish_timestamp);
+        if (now >= finishTime) {
+          setAtDS(true);
+          setDistance(0);
+          setTotalCovered(
+            Math.round(robot.calculated_distance || oneWayDistance * 2)
+          );
+          setIsStuckNow(false);
+          setStuckLocation("");
+          return;
+        }
       }
 
+      // ✅ CASE 3: Still moving (live approx)
       const clampedTime = Math.max(0, Math.min(elapsedTime, totalTripTime));
       const progress = clampedTime / totalTripTime;
 
@@ -209,12 +221,15 @@ const RobotRow = ({ robot }) => {
       setStuckLocation("");
     };
 
-    setFinishTime(
-      new Date(robot.calculated_finish_timestamp).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
+    // 🕒 Format finish time
+    if (robot.calculated_finish_timestamp) {
+      setFinishTime(
+        new Date(robot.calculated_finish_timestamp).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    }
 
     let animationFrameId;
     const loop = () => {
@@ -225,6 +240,13 @@ const RobotRow = ({ robot }) => {
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [robot]);
+
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const percent = Math.min(
     100,
@@ -312,7 +334,7 @@ const RobotRow = ({ robot }) => {
         </div>
       </div>
 
-      <div
+      {/* <div
         style={{
           color: "#fff",
           textAlign: "start",
@@ -324,6 +346,48 @@ const RobotRow = ({ robot }) => {
           : atDS
           ? `Robot No: ${robot.robot_no} | At Dock | Total distance covered: ${totalCovered}m`
           : `Robot No: ${robot.robot_no} | Distance covered: ${totalCovered}m | Finish Time: ${calculated_finish_timestamp}`}
+      </div> */}
+
+      <div
+        style={{
+          color: "#fff",
+          textAlign: "start",
+          fontSize: "13px",
+        }}
+      >
+        <div>Robot No: {robot.robot_no}</div>
+
+        {isStuckNow ? (
+          <>
+            <div>
+              🚫 <strong>Stuck</strong> on row {stuckLocation} (Reason:{" "}
+              {robot.stuck_reason})
+            </div>
+            <div>
+              ⏱️ Started: {formatTime(robot.start_timestamp)} | Stuck at:{" "}
+              {formatTime(robot.stuck_at)}
+            </div>
+            <div>📏 Distance covered: {totalCovered}m</div>
+          </>
+        ) : atDS ? (
+          <>
+            <div>✅ Cleaning Completed</div>
+            <div>
+              ⏱️ Started: {formatTime(robot.start_timestamp)} | Finished:{" "}
+              {formatTime(robot.calculated_finish_timestamp)}
+            </div>
+            <div>📏 Total distance: {totalCovered}m</div>
+          </>
+        ) : (
+          <>
+            <div>🔄 Cleaning In Progress</div>
+            <div>
+              ⏱️ Started: {formatTime(robot.start_timestamp)} | Approx Finish:{" "}
+              {formatTime(robot.calculated_finish_timestamp)}
+            </div>
+            <div>📏 Distance covered: {totalCovered}m</div>
+          </>
+        )}
       </div>
     </div>
   );
