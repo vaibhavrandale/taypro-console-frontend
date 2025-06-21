@@ -5,123 +5,16 @@ import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { CBadge, CCol, CFormSelect, CRow } from "@coreui/react";
 
-const RobotRow = ({ robot }) => {
+const RobotRow = ({ robot, index }) => {
   const [distance, setDistance] = useState(0);
   const [atDS, setAtDS] = useState(false);
   const [calculated_finish_timestamp, setFinishTime] = useState("");
   const [totalCovered, setTotalCovered] = useState(0);
   const [isStuckNow, setIsStuckNow] = useState(false);
   const [stuckLocation, setStuckLocation] = useState(""); // NEW: Track stuck location for status
-
-  // useEffect(() => {
-  //   const oneWayDistance = robot.row_length;
-  //   const totalTripTime =
-  //     (new Date(robot.calculated_finish_timestamp) -
-  //       new Date(robot.start_timestamp)) /
-  //     1000; // in seconds
-
-  //   const update = () => {
-  //     const now = new Date();
-  //     const elapsedTime = (now - new Date(robot.start_timestamp)) / 1000; // in seconds
-
-  //     // Handle stuck robots with "Battery Dead" or "Stuck in bridge/Module"
-  //     if (
-  //       robot.isStuck &&
-  //       (robot.stuck_reason === "Battery Dead" ||
-  //         robot.stuck_reason === "Stuck in bridge/Module") &&
-  //       now >= new Date(robot.stuck_at)
-  //     ) {
-  //       const stuckElapsedTime =
-  //         (new Date(robot.stuck_at) - new Date(robot.start_timestamp)) / 1000; // Time when robot got stuck
-  //       const clampedStuckTime = Math.max(
-  //         0,
-  //         Math.min(stuckElapsedTime, totalTripTime)
-  //       );
-  //       const stuckProgress = clampedStuckTime / totalTripTime;
-
-  //       let stuckDistance;
-  //       let stuckCovered;
-  //       let location;
-
-  //       if (stuckProgress <= 0.5) {
-  //         stuckDistance = oneWayDistance * (stuckProgress * 2);
-  //         stuckCovered = stuckDistance;
-  //         location =
-  //           stuckDistance >= oneWayDistance
-  //             ? "at RS"
-  //             : `at ${Math.round(stuckDistance)}m from DS`;
-  //       } else {
-  //         stuckDistance = oneWayDistance * ((1 - stuckProgress) * 2);
-  //         stuckCovered = oneWayDistance + (oneWayDistance - stuckDistance);
-  //         location =
-  //           stuckDistance <= 0
-  //             ? "at DS"
-  //             : `at ${Math.round(stuckDistance)}m from DS`;
-  //       }
-
-  //       // Cap totalCovered at one round trip
-  //       stuckCovered = Math.min(stuckCovered, oneWayDistance * 2);
-
-  //       setDistance(Math.round(stuckDistance)); // Robot stays at stuck position
-  //       setTotalCovered(Math.round(stuckCovered)); // Distance covered until stuck
-  //       setIsStuckNow(true);
-  //       setAtDS(false); // Not at DS
-  //       setStuckLocation(location);
-  //       return;
-  //     }
-
-  //     // Logic for non-stuck robots or before stuck_at
-  //     if (now >= new Date(robot.calculated_finish_timestamp)) {
-  //       setAtDS(true);
-  //       setDistance(0); // Robot visually at DS
-  //       setTotalCovered(oneWayDistance * 2); // Total path robot completed
-  //       setIsStuckNow(false);
-  //       setStuckLocation("");
-  //       return;
-  //     }
-
-  //     const clampedTime = Math.max(0, Math.min(elapsedTime, totalTripTime));
-  //     const progress = clampedTime / totalTripTime;
-
-  //     let currentDistance;
-  //     let covered;
-
-  //     if (progress <= 0.5) {
-  //       currentDistance = oneWayDistance * (progress * 2);
-  //       covered = currentDistance;
-  //     } else {
-  //       currentDistance = oneWayDistance * ((1 - progress) * 2);
-  //       covered = oneWayDistance + (oneWayDistance - currentDistance);
-  //     }
-
-  //     // Cap totalCovered at one round trip
-  //     covered = Math.min(covered, oneWayDistance * 2);
-
-  //     setDistance(Math.round(currentDistance));
-  //     setTotalCovered(Math.round(covered));
-  //     setIsStuckNow(false);
-  //     setStuckLocation("");
-  //   };
-
-  //   // setFinishTime(
-  //   //   robot.calculated_finish_timestamp.toLocaleTimeString([], {
-  //   //     hour: "2-digit",
-  //   //     minute: "2-digit",
-  //   //   })
-  //   // );
-
-  //   setFinishTime(
-  //     new Date(robot.calculated_finish_timestamp).toLocaleTimeString([], {
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //     })
-  //   );
-
-  //   update();
-  //   const interval = setInterval(update, 10);
-  //   return () => clearInterval(interval);
-  // }, [robot]);
+  console.log(calculated_finish_timestamp);
 
   useEffect(() => {
     const oneWayDistance = robot.row_length || 0;
@@ -308,7 +201,6 @@ const RobotRow = ({ robot }) => {
         >
           RS
         </span>
-
         <div
           style={{
             position: "absolute",
@@ -348,20 +240,6 @@ const RobotRow = ({ robot }) => {
         </div>
       </div>
 
-      {/* <div
-        style={{
-          color: "#fff",
-          textAlign: "start",
-          fontSize: "13px",
-        }}
-      >
-        {isStuckNow
-          ? `Robot No: ${robot.robot_no} | Stuck on Row ${stuckLocation} (Reason: ${robot.stuck_reason}) | Distance covered: ${totalCovered}m`
-          : atDS
-          ? `Robot No: ${robot.robot_no} | At Dock | Total distance covered: ${totalCovered}m`
-          : `Robot No: ${robot.robot_no} | Distance covered: ${totalCovered}m | Finish Time: ${calculated_finish_timestamp}`}
-      </div> */}
-
       <div
         style={{
           color: "#fff",
@@ -369,8 +247,9 @@ const RobotRow = ({ robot }) => {
           fontSize: "13px",
         }}
       >
-        <div>Robot No: {robot.robot_no}</div>
-
+        <div>
+          {index + 1}) Robot No: {robot.robot_no}
+        </div>
         {isStuckNow ? (
           <>
             <div>
@@ -414,49 +293,33 @@ const reducer = (state, action) => {
       return { ...state, loadingRobots: false, robotsData: action.payload };
     case "FETCH_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
-
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, siteserror: "" };
+    case "FETCH_SITES_SUCCESS":
+      return {
+        ...state,
+        loadingSites: false,
+        sites: action.payload,
+      };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, siteserror: action.payload };
     default:
       return state;
   }
 };
 const RobotPosition = () => {
-  const site_id = "taypro_office";
-  const [{ error, robotsData, loadingRobots }, dispatch] = useReducer(reducer, {
-    robotsData: [],
-    loadingRobots: true,
-    error: "",
-  });
+  // const site_id = "taypro_office";
+  const [{ error, robotsData, loadingRobots, sites, loadingSites }, dispatch] =
+    useReducer(reducer, {
+      robotsData: [],
+      loadingRobots: true,
+      loadingSites: false,
+      siteserror: false,
+      sites: [],
+      error: "",
+    });
   const authtoken = useSelector((state) => state.authtoken);
-  // useEffect(() => {
-  //   const fetchRobots = async () => {
-  //     dispatch({ type: "FETCH_REQUEST" });
-  //     try {
-  //       const result = await axios.get(
-  //         `/api/v1/robotpositiontracker/${site_id}`,
-
-  //         {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
-  //         }
-  //       );
-  //       console.log(result.data);
-
-  //       dispatch({
-  //         type: "FETCH_SUCCESS",
-  //         payload: result.data,
-  //       });
-  //     } catch (error) {
-  //       dispatch({
-  //         type: "FETCH_FAIL",
-  //         payload: error.response?.data?.message || error.response?.data?.error,
-  //       });
-  //       toast.error(
-  //         error.response?.data?.message || error.response?.data?.error
-  //       );
-  //     }
-  //   };
-
-  //   fetchRobots();
-  // }, [authtoken]);
+  const [site_id, setSiteId] = useState("");
 
   useEffect(() => {
     let intervalId;
@@ -470,7 +333,6 @@ const RobotPosition = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(result.data);
 
         dispatch({
           type: "FETCH_SUCCESS",
@@ -491,26 +353,94 @@ const RobotPosition = () => {
     fetchRobots();
 
     // Then set interval
- intervalId = setInterval(fetchRobots, 60000); // every 1 minute
+    intervalId = setInterval(fetchRobots, 60000); // every 1 minute
 
     return () => {
       clearInterval(intervalId); // cleanup on unmount
     };
   }, [authtoken, site_id]); // 🔁 include `site_id` if it can change
 
+  useEffect(() => {
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response.data.error,
+        });
+        toast.error("Failed to fetch sites");
+      }
+    };
+
+    fetchSites();
+  }, [authtoken]); // 🔁 include `site_id` if it can change
+  const handleSiteNameChange = (e) => {
+    const selectedSiteId = e.target.value;
+    setSiteId(selectedSiteId); // Updates local state
+  };
+
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: "20px" }}>
       <h2 style={{ marginBottom: "30px", textAlign: "center" }}>
         <CIcon icon={cilLocationPin} color="primary" size="xl" /> Live Robot
-        Position Tracking
+        Position Tracking -{" "}
+        {new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
       </h2>
+      <CRow className="mb-5">
+        <CCol md={2} xs={12}>
+          <div className="m-1">
+            {loadingSites ? (
+              <LoadingSpinner />
+            ) : (
+              sites?.length > 0 && (
+                <CFormSelect
+                  name="site_id"
+                  value={site_id}
+                  onChange={handleSiteNameChange}
+                >
+                  <option value="all">All Data</option>
+
+                  {sites.map((item, index) => (
+                    <option key={item.site_id} value={item.site_id}>
+                      {item.site_id}
+                    </option>
+                  ))}
+                </CFormSelect>
+              )
+            )}
+          </div>
+        </CCol>
+      </CRow>
 
       {loadingRobots ? (
         <LoadingSpinner />
       ) : error ? (
-        { error }
+        <div>{error}</div>
+      ) : robotsData.length > 0 ? (
+        robotsData.map((robot, index) => (
+          <RobotRow key={robot._id} robot={robot} index={index} />
+        ))
       ) : (
-        robotsData.map((robot) => <RobotRow key={robot._id} robot={robot} />)
+        <CBadge className="px-5 py-2" color="danger">
+          No robots found for{" "}
+          {new Date().toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </CBadge>
       )}
     </div>
   );
