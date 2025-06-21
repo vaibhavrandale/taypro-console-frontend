@@ -179,13 +179,10 @@ const SiteTechnicianAddDpr = () => {
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
-        payload:
-          error.response?.data?.error || "Error Adding Daily Progress Report",
+        payload: error.response?.data?.error || error.response?.data?.message,
       });
 
-      toast.error(
-        error.response.data.error || "Error Adding Daily Progress Report"
-      );
+      toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
 

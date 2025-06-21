@@ -15,6 +15,9 @@ import {
   CInputGroup,
   CFormInput,
   CBadge,
+  CModalFooter,
+  CButton,
+  CFormLabel,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -25,6 +28,10 @@ import PaginateInput from "../../../components/PaginateInput";
 import LastActivity from "../../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import {
+  deleteGatewayFromDatabase,
+  deleteGatewayFromLns,
+} from "./GatewayDeletion";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -93,6 +100,12 @@ const Gateways = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [modalOpendloading, setModalOpendloadingg] = useState(false);
+  // Add these states with your other state declarations
+  const [showGatewayDeleteModal, setShowGatewayDeleteModal] = useState(false);
+  const [gatewayDeleteType, setGatewayDeleteType] = useState(""); // 'lns' or 'db'
+  const [gatewayDeleteReason, setGatewayDeleteReason] = useState("");
+  const [isGatewayDeleting, setIsGatewayDeleting] = useState(false);
+
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -227,7 +240,6 @@ const Gateways = () => {
           Add
         </Link>
       </div>
-
       <CRow className="justify-content-end">
         <CCol xs={12} sm={10} md={8} lg={5}>
           <CInputGroup className="mb-3">
@@ -302,12 +314,14 @@ const Gateways = () => {
                       <CBadge color="danger">Offline</CBadge>
                     )}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "180px" }}>
+                  <CTableDataCell style={{ minWidth: "380px" }}>
+                    {" "}
+                    {/* Increased min-width to accommodate more buttons */}
                     <Link
                       className="btn btn-sm btn-info text-decoration-none p-1 m-1"
                       onClick={() => openModal(gateway)}
                     >
-                      View Details
+                      View
                     </Link>
                     <Link
                       className="btn btn-sm btn-success text-decoration-none p-1 m-1"
@@ -317,10 +331,31 @@ const Gateways = () => {
                     </Link>
                     <Link
                       to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
-                      className="btn btn-secondary p-1  text-decoration-none  btn-sm  m-1"
+                      className="btn btn-secondary p-1 text-decoration-none btn-sm m-1"
                     >
                       Update
                     </Link>
+                    {/* Add delete buttons */}
+                    <button
+                      className="btn btn-sm btn-danger p-1 m-1"
+                      onClick={() => {
+                        setSelectedGateway(gateway);
+                        setGatewayDeleteType("lns");
+                        setShowGatewayDeleteModal(true);
+                      }}
+                    >
+                      Del from LNS
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-warning p-1 m-1"
+                      onClick={() => {
+                        setSelectedGateway(gateway);
+                        setGatewayDeleteType("db");
+                        setShowGatewayDeleteModal(true);
+                      }}
+                    >
+                      Del from DB
+                    </button>
                   </CTableDataCell>
                 </CTableRow>
               ))
@@ -519,6 +554,113 @@ const Gateways = () => {
             </CModalBody>
           </>
         )}
+      </CModal>
+      {/* delete gateway */}
+
+      <CModal
+        size="md"
+        visible={showGatewayDeleteModal}
+        onClose={() => !isGatewayDeleting && setShowGatewayDeleteModal(false)}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>
+            Delete Gateway - {selectedGateway?.gateway_id}
+          </CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() =>
+              !isGatewayDeleting && setShowGatewayDeleteModal(false)
+            }
+            style={{ background: "none" }}
+            disabled={isGatewayDeleting}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          {isGatewayDeleting ? (
+            <div className="text-center">
+              <LoadingSpinner />
+              <p>Deleting gateway, please wait...</p>
+            </div>
+          ) : (
+            <>
+              <p>
+                Are you sure you want to delete this gateway from{" "}
+                <strong>
+                  {gatewayDeleteType === "lns" ? "LNS" : "Database"}
+                </strong>
+                ?
+              </p>
+              <CFormLabel>Reason for Deletion</CFormLabel>
+              <CFormInput
+                type="text"
+                placeholder="Enter reason..."
+                value={gatewayDeleteReason}
+                onChange={(e) => setGatewayDeleteReason(e.target.value)}
+                disabled={isGatewayDeleting}
+              />
+            </>
+          )}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setShowGatewayDeleteModal(false);
+              setGatewayDeleteReason("");
+            }}
+            disabled={isGatewayDeleting}
+          >
+            Cancel
+          </CButton>
+
+          <CButton
+            color="danger"
+            size="sm"
+            onClick={async () => {
+              if (!gatewayDeleteReason.trim()) {
+                toast.error("Reason is required.");
+                return;
+              }
+
+              setIsGatewayDeleting(true);
+              try {
+                if (gatewayDeleteType === "lns") {
+                  await deleteGatewayFromLns(
+                    selectedGateway.gateway_id,
+                    authtoken,
+                    gatewayDeleteReason
+                  );
+                } else {
+                  await deleteGatewayFromDatabase(
+                    selectedGateway.gateway_id,
+                    authtoken,
+                    gatewayDeleteReason
+                  );
+                }
+              } catch (error) {
+                toast.error("Delete operation failed");
+              } finally {
+                setIsGatewayDeleting(false);
+                setShowGatewayDeleteModal(false);
+                setGatewayDeleteReason("");
+              }
+            }}
+            disabled={isGatewayDeleting}
+          >
+            {isGatewayDeleting ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              "Confirm Delete"
+            )}
+          </CButton>
+        </CModalFooter>
       </CModal>
     </div>
   );
