@@ -14,6 +14,9 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
+  CButton,
+  CModalFooter,
+  CFormLabel,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -22,6 +25,9 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
+import { deleteRobotFromDatabase, deleteRobotFromLns } from "./DeleteRobots";
+import { cilX } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITES_REQUEST":
@@ -67,12 +73,16 @@ const Robots = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedRobot, setSelectedRobot] = useState(null);
 
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteType, setDeleteType] = useState(""); // 'lns' or 'db'
+  const [selectedRobot, setSelectedRobot] = useState(null);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     robot_no: "",
@@ -242,8 +252,8 @@ const Robots = () => {
               Block
             </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "180px" }}>
-              Action
+            <CTableHeaderCell style={{ minWidth: "340px" }}>
+              Actions
             </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -308,20 +318,37 @@ const Robots = () => {
                 <CTableDataCell>
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
                     to={`/${adminroute}/robots/${robot._id}`}
-                    // onClick={() => openModal(robot)}
                   >
                     View
                   </Link>
-
                   <Link
                     className="btn btn-sm btn-warning m-1"
                     to={`/master-admin/robots/update/${robot._id}`}
                   >
                     Update
                   </Link>
+                  <button
+                    className="btn btn-sm btn-danger m-1"
+                    onClick={() => {
+                      setSelectedRobot(robot);
+                      setDeleteType("lns");
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    Del from LNS
+                  </button>
+
+                  <button
+                    className="btn btn-sm btn-outline-warning m-1"
+                    onClick={() => {
+                      setSelectedRobot(robot);
+                      setDeleteType("db");
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    Del from DB
+                  </button>
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -334,6 +361,93 @@ const Robots = () => {
           )}
         </CTableBody>
       </CTable>
+
+      {/* delete Modal */}
+      <CModal
+        size="md"
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Delete Robot - {selectedRobot?.robot_no}</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setDeleteReason("");
+            }}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <p>
+            Are you sure you want to delete this robot from{" "}
+            <strong>{deleteType === "lns" ? "LNS" : "Database"}</strong>?
+          </p>
+
+          <CFormLabel>Reason for Deletion</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Enter reason..."
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+          />
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setDeleteReason("");
+            }}
+          >
+            Cancel
+          </CButton>
+
+          <CButton
+            color="danger"
+            size="sm"
+            onClick={async () => {
+              if (!deleteReason.trim()) {
+                toast.error("Reason is required.");
+                return;
+              }
+
+              setIsDeleting(true);
+
+              try {
+                if (deleteType === "lns") {
+                  await deleteRobotFromLns(
+                    selectedRobot.robot_no,
+                    selectedRobot.deveui,
+                    authtoken,
+                    deleteReason
+                  );
+                } else {
+                  await deleteRobotFromDatabase(
+                    selectedRobot.robot_no,
+                    authtoken,
+                    deleteReason
+                  );
+                }
+              } finally {
+                setIsDeleting(false);
+                setShowDeleteModal(false);
+                setDeleteReason("");
+              }
+            }}
+          >
+            {isDeleting ? <LoadingSpinner size="sm" /> : "Confirm Delete"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
       <PaginateInput
         page={page}

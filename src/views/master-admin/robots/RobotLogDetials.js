@@ -385,6 +385,19 @@ const RobotLogDetails = () => {
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3">
+              <CCol className="d-flex justify-content-end">
+                <CButton
+                  color="primary"
+                  className="btn-sm"
+                  onClick={exportEntirePayloadToExcel}
+                  disabled={loading}
+                >
+                  Export
+                </CButton>
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
               <CCol md={2}>
                 <CFormSelect
                   label="Chart Type"
@@ -414,37 +427,26 @@ const RobotLogDetails = () => {
                 </CFormSelect>
               </CCol>
 
-              <CCol md={3}>
+              <CCol md={2}>
                 <CFormLabel>Start Date</CFormLabel>
                 <CFormInput
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   disabled={loading}
+                  style={{ width: "100%" }}
                 />
               </CCol>
 
-              <CCol md={3}>
+              <CCol md={2}>
                 <CFormLabel>End Date</CFormLabel>
                 <CFormInput
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   disabled={loading}
+                  style={{ width: "100%" }}
                 />
-              </CCol>
-            </CRow>
-
-            <CRow className="mb-3">
-              <CCol md={2} className="d-flex align-items-end">
-                <CButton
-                  color="primary"
-                  className="btn-sm"
-                  onClick={exportEntirePayloadToExcel}
-                  disabled={loading}
-                >
-                  Export All Data
-                </CButton>
               </CCol>
             </CRow>
 
