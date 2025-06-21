@@ -12,6 +12,7 @@ import {
   CCol,
   CListGroup,
   CListGroupItem,
+  CBadge,
 } from "@coreui/react";
 
 import { departments } from "../../../data";
@@ -21,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -55,7 +58,6 @@ const CreateInternalTicket = () => {
     error: "",
     createTicketloading: false,
     internal_tickets: {},
-
     fetchusersloading: false,
   });
 
@@ -74,6 +76,7 @@ const CreateInternalTicket = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const navigate = useNavigate();
+  const [uploadingFields, setUploadingFields] = useState({});
   const [formData, setFormData] = useState({
     department: "",
     subject: "",
@@ -81,6 +84,11 @@ const CreateInternalTicket = () => {
     priority: "",
     status: "Open",
     assigned_to: null, // <-- now it's an object, not a string
+    ticket_generated_images1: "",
+    ticket_generated_images2: "",
+    ticket_generated_images3: "",
+    ticket_generated_images4: "",
+    ticket_generated_images5: "",
   });
 
   useEffect(() => {
@@ -176,6 +184,13 @@ const CreateInternalTicket = () => {
     setFilteredUsers([]);
   };
 
+  const deleteFileHandler = async (fileName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [`ticket_generated_images${fileName}`]: "",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
@@ -202,6 +217,41 @@ const CreateInternalTicket = () => {
           : "An error occurred",
       });
       alert(error.response ? error.response.data.error : "An error occurred");
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const { name, files } = event.target;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploadingFields((prev) => ({ ...prev, [name]: true })); // ✅ Set only this field to loading
+
+      const response = await axios.post(
+        "/api/v1/image-upload/internal-tickets",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      // ✅ Update uploaded image dynamically for the specific field
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
+      }));
+
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading for this input
+    } catch (error) {
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading on error
+      console.error("File upload error:", error);
     }
   };
 
@@ -334,6 +384,60 @@ const CreateInternalTicket = () => {
                     <option value="Low">Low</option>
                   </CFormSelect>
                 </CCol>
+
+                {[1, 2, 3, 4, 5].map((num, index) => (
+                  <CRow>
+                    <CCol md={2} key={`resolved-${index}`}>
+                      <div className="container-btn-file p-2 m-2 w-80">
+                        <CIcon icon={cilCloudUpload} className="upload-icon" />
+                        {`Image ${num}`}
+                        <input
+                          className="file"
+                          name={`ticket_generated_images${num}`}
+                          type="file"
+                          onChange={handleFileChange}
+                          disabled={
+                            uploadingFields[`ticket_generated_images${num}`]
+                          }
+                        />
+                      </div>
+                    </CCol>
+
+                    <CCol md={3}>
+                      {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                        <div className="mt-2 d-flex justify-content-center">
+                          <LoadingSpinner />
+                        </div>
+                      ) : formData[`ticket_generated_images${num}`] ? (
+                        <div className="my-2">
+                          <img
+                            className="position-relative "
+                            src={formData[`ticket_generated_images${num}`]}
+                            alt={`Generated Image ${num}`}
+                            width="80"
+                            height="80"
+                            style={{ objectFit: "cover", borderRadius: "5px" }}
+                          />
+                          <CBadge
+                            color="primary"
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            shape="rounded-pill"
+                            className=" p-1"
+                          >
+                            <CIcon
+                              icon={cilX}
+                              cursor="pointer"
+                              onClick={() => deleteFileHandler(num)}
+                              title="Download file"
+                            />
+                          </CBadge>
+                        </div>
+                      ) : null}
+                    </CCol>
+                  </CRow>
+                ))}
 
                 <CCol md={12}>
                   <CButton

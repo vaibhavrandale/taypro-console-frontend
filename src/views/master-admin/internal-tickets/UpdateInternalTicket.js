@@ -17,6 +17,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -48,6 +50,7 @@ const UpdateInternalTicket = () => {
   });
 
   const [formData, setFormData] = useState({});
+  const [uploadingFields, setUploadingFields] = useState({});
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -82,6 +85,13 @@ const UpdateInternalTicket = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const deleteFileHandler = async (fileName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [`ticket_generated_images${fileName}`]: "",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "UPDATE_TICKET_REQUEST" });
@@ -106,6 +116,41 @@ const UpdateInternalTicket = () => {
         payload: error.reponse.data.message,
       });
       toast.error(error.reponse.data.message);
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const { name, files } = event.target;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploadingFields((prev) => ({ ...prev, [name]: true })); // ✅ Set only this field to loading
+
+      const response = await axios.post(
+        "/api/v1/image-upload/service-tickets",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      // ✅ Update uploaded image dynamically for the specific field
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: response.data.url, // Assuming backend returns { url: "uploaded_image_url" }
+      }));
+
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading for this input
+    } catch (error) {
+      setUploadingFields((prev) => ({ ...prev, [name]: false })); // ✅ Stop loading on error
+      console.error("File upload error:", error);
     }
   };
 
@@ -219,36 +264,8 @@ const UpdateInternalTicket = () => {
                   disabled
                 />
               </CCol>
-              {formData.status === "Resolved" && (
-                <>
-                  <CCol md={6}>
-                    <CFormInput
-                      name="resolved_by.name"
-                      value={formData.resolved_by?.name || ""}
-                      label="Resolved By"
-                      onChange={handleChange}
-                      hidden
-                    />
-                  </CCol>
-                  <CCol md={6}>
-                    <CFormInput
-                      name="resolved_at"
-                      type="datetime-local"
-                      hidden
-                      value={
-                        formData.resolved_at
-                          ? new Date(formData.resolved_at)
-                              .toISOString()
-                              .slice(0, 16)
-                          : ""
-                      }
-                      label="Resolved At"
-                      onChange={handleChange}
-                    />
-                  </CCol>
-                </>
-              )}
-              <CCol md={12}>
+
+              <CCol className="mb-2" md={12}>
                 <CFormTextarea
                   name="resolution_notes"
                   value={formData.resolution_notes || ""}
@@ -256,6 +273,58 @@ const UpdateInternalTicket = () => {
                   onChange={handleChange}
                 />
               </CCol>
+              {[1, 2, 3, 4, 5].map((num, index) => (
+                <CRow key={index}>
+                  <CCol md={2} xs={5}>
+                    <div className="container-btn-file p-2 m-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      {`Image ${num}`}
+                      <input
+                        className="file"
+                        name={`ticket_generated_images${num}`}
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={
+                          uploadingFields[`ticket_generated_images${num}`]
+                        }
+                      />
+                    </div>
+                  </CCol>
+                  <CCol md={3} sm={2}>
+                    {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                      <div className="mt-2 d-flex justify-content-center">
+                        <LoadingSpinner />
+                      </div>
+                    ) : formData[`ticket_generated_images${num}`] ? (
+                      <div className="my-2 ">
+                        <img
+                          // className="position-relative"
+                          src={formData[`ticket_generated_images${num}`]}
+                          alt={`Ticket attachment ${num}`}
+                          width="80"
+                          height="80"
+                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                        />
+                        <CBadge
+                          color="primary"
+                          position="absolute"
+                          top="0"
+                          left="0"
+                          shape="rounded-pill"
+                          className=" p-1"
+                        >
+                          <CIcon
+                            icon={cilX}
+                            cursor="pointer"
+                            onClick={() => deleteFileHandler(num)}
+                            title="Remove file"
+                          />
+                        </CBadge>
+                      </div>
+                    ) : null}
+                  </CCol>
+                </CRow>
+              ))}
             </CRow>
             <CButton
               size="sm"
