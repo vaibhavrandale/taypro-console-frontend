@@ -381,6 +381,7 @@ const InternalTicketsDashboard = () => {
                     "Created By Email": formData.created_by.email,
                     "Created At": new Date(formData.createdAt).toLocaleString(),
                     ...(formData.status === "Resolved" && {
+                      "Resolution Notes": formData.resolution_notes || "",
                       "Resolved By": formData.resolved_by?.name || "",
                       "Resolved By Email": formData.resolved_by?.email || "",
                       "Resolved By ID": formData.resolved_by?.id || "",
@@ -400,9 +401,7 @@ const InternalTicketsDashboard = () => {
                     formData.ticket_generated_images4 ||
                     formData.ticket_generated_images5) && (
                     <CTableRow>
-                      <CTableDataCell>
-                        Ticket Generating Time Images
-                      </CTableDataCell>
+                      <CTableDataCell>Internal Ticket Images</CTableDataCell>
                       <CTableDataCell>
                         <div className="d-flex flex-wrap">
                           {[1, 2, 3, 4, 5].map((num) => {
