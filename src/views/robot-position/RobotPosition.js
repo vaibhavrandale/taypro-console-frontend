@@ -491,7 +491,7 @@ const RobotPosition = () => {
     fetchRobots();
 
     // Then set interval
-    intervalId = setInterval(fetchRobots, 7000); // every 5 seconds
+ intervalId = setInterval(fetchRobots, 60000); // every 1 minute
 
     return () => {
       clearInterval(intervalId); // cleanup on unmount
