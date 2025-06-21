@@ -475,7 +475,7 @@ const UpdateServiceTicket = () => {
                           />
                           <CBadge
                             color="primary"
-                            // position="top-start"
+                            position="absolute"
                             top="0"
                             left="0"
                             shape="rounded-pill"

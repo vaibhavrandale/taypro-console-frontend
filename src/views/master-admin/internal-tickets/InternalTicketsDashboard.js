@@ -15,6 +15,7 @@ import {
   CModalTitle,
   CModalBody,
   CTooltip,
+  CImage,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -270,7 +271,9 @@ const InternalTicketsDashboard = () => {
                     </CTooltip>
                   </span>
                 </CTableDataCell>
-                <CTableDataCell>
+                <CTableDataCell
+                // style={{ minWidth: "210px" }}
+                >
                   <Link
                     className="btn btn-sm btn-secondary m-1"
                     color="primary"
@@ -284,10 +287,16 @@ const InternalTicketsDashboard = () => {
                     to={`update-internal-ticket/${ticket._id}`}
                     color="primary"
                     size="sm"
-                    // onClick={() => openUpdateModal(ticket)}
                   >
                     Update
                   </Link>
+                  {/* <Link
+                    size="sm"
+                    className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                    to={`resolve-internal-ticket/${ticket._id}`}
+                  >
+                    Resolve
+                  </Link> */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -323,7 +332,7 @@ const InternalTicketsDashboard = () => {
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>
-            Update Ticket:{" "}
+            Details:{" "}
             <span className="badge bg-success">{formData.ticket_id}</span>
           </CModalTitle>
           <button
@@ -345,6 +354,7 @@ const InternalTicketsDashboard = () => {
                     <CTableHeaderCell>Value</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
                   {Object.entries({
                     "Ticket ID": formData.ticket_id,
@@ -382,6 +392,44 @@ const InternalTicketsDashboard = () => {
                       <CTableDataCell>{value}</CTableDataCell>
                     </CTableRow>
                   ))}
+
+                  {/* Ticket Images Row */}
+                  {(formData.ticket_generated_images1 ||
+                    formData.ticket_generated_images2 ||
+                    formData.ticket_generated_images3 ||
+                    formData.ticket_generated_images4 ||
+                    formData.ticket_generated_images5) && (
+                    <CTableRow>
+                      <CTableDataCell>
+                        Ticket Generating Time Images
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex flex-wrap">
+                          {[1, 2, 3, 4, 5].map((num) => {
+                            const img =
+                              formData[`ticket_generated_images${num}`];
+                            return (
+                              img && (
+                                <Link to={img} target="blank" key={num}>
+                                  <CImage
+                                    fluid
+                                    src={img}
+                                    className="m-2"
+                                    alt={`Ticket Image ${num}`}
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </Link>
+                              )
+                            );
+                          })}
+                        </div>
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
                 </CTableBody>
               </CTable>
 

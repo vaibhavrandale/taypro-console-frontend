@@ -265,6 +265,7 @@ const CreateServiceTicket = () => {
       console.error("File upload error:", error);
     }
   };
+
   return (
     <CRow className="justify-content-center">
       <CCol>
