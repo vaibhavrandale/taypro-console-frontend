@@ -197,6 +197,20 @@ const RobotRow = ({ robot }) => {
           return;
         }
       }
+      // ✅ CASE 3: if cleaning finish is not receivd and calculated finish time is less than current time
+      if (robot.isOerationCompleted) {
+        const finishTime = new Date(robot.calculated_finish_timestamp);
+        if (now >= finishTime) {
+          setAtDS(true);
+          setDistance(0);
+          setTotalCovered(
+            Math.round(robot.calculated_distance || oneWayDistance * 2)
+          );
+          setIsStuckNow(false);
+          setStuckLocation("");
+          return;
+        }
+      }
 
       // ✅ CASE 3: Still moving (live approx)
       const clampedTime = Math.max(0, Math.min(elapsedTime, totalTripTime));
