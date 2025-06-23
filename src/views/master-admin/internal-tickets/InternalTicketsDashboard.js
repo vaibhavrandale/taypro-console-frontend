@@ -401,7 +401,7 @@ const InternalTicketsDashboard = () => {
                     formData.ticket_generated_images4 ||
                     formData.ticket_generated_images5) && (
                     <CTableRow>
-                      <CTableDataCell>Internal Ticket Images</CTableDataCell>
+                      <CTableDataCell>Ticket Generated Images</CTableDataCell>
                       <CTableDataCell>
                         <div className="d-flex flex-wrap">
                           {[1, 2, 3, 4, 5].map((num) => {

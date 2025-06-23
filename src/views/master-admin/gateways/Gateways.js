@@ -344,7 +344,7 @@ const Gateways = () => {
                         setShowGatewayDeleteModal(true);
                       }}
                     >
-                      Del from LNS
+                      Delete- LNS
                     </button>
                     <button
                       className="btn btn-sm btn-outline-warning p-1 m-1"
@@ -354,7 +354,7 @@ const Gateways = () => {
                         setShowGatewayDeleteModal(true);
                       }}
                     >
-                      Del from DB
+                      Delete- DB
                     </button>
                   </CTableDataCell>
                 </CTableRow>

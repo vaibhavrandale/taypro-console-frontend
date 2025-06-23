@@ -89,6 +89,7 @@ const UpdateInternalTicket = () => {
     setFormData((prevData) => ({
       ...prevData,
       [`ticket_generated_images${fileName}`]: "",
+      [`ticket_resolved_images${fileName}`]: "",
     }));
   };
 
@@ -216,6 +217,58 @@ const UpdateInternalTicket = () => {
                   onChange={handleChange}
                 />
               </CCol>
+              {[1, 2, 3, 4, 5].map((num, index) => (
+                <CRow key={index}>
+                  <CCol md={2} xs={5}>
+                    <div className="container-btn-file p-2 m-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      {`Image ${num}`}
+                      <input
+                        className="file"
+                        name={`ticket_generated_images${num}`}
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={
+                          uploadingFields[`ticket_generated_images${num}`]
+                        }
+                      />
+                    </div>
+                  </CCol>
+                  <CCol md={3} sm={2}>
+                    {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                      <div className="mt-2 d-flex justify-content-center">
+                        <LoadingSpinner />
+                      </div>
+                    ) : formData[`ticket_generated_images${num}`] ? (
+                      <div className="my-2 ">
+                        <img
+                          // className="position-relative"
+                          src={formData[`ticket_generated_images${num}`]}
+                          alt={`Ticket attachment ${num}`}
+                          width="80"
+                          height="80"
+                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                        />
+                        <CBadge
+                          color="primary"
+                          position="absolute"
+                          top="0"
+                          left="0"
+                          shape="rounded-pill"
+                          className=" p-1"
+                        >
+                          <CIcon
+                            icon={cilX}
+                            cursor="pointer"
+                            onClick={() => deleteFileHandler(num)}
+                            title="Remove file"
+                          />
+                        </CBadge>
+                      </div>
+                    ) : null}
+                  </CCol>
+                </CRow>
+              ))}
               <CCol md={6}>
                 <CFormSelect
                   name="priority"
@@ -281,25 +334,25 @@ const UpdateInternalTicket = () => {
                       {`Image ${num}`}
                       <input
                         className="file"
-                        name={`ticket_generated_images${num}`}
+                        name={`ticket_resolved_images${num}`}
                         type="file"
                         onChange={handleFileChange}
                         disabled={
-                          uploadingFields[`ticket_generated_images${num}`]
+                          uploadingFields[`ticket_resolved_images${num}`]
                         }
                       />
                     </div>
                   </CCol>
                   <CCol md={3} sm={2}>
-                    {uploadingFields[`ticket_generated_images${num}`] ? ( // ✅ Show loader only for the uploading input
+                    {uploadingFields[`ticket_resolved_images${num}`] ? ( // ✅ Show loader only for the uploading input
                       <div className="mt-2 d-flex justify-content-center">
                         <LoadingSpinner />
                       </div>
-                    ) : formData[`ticket_generated_images${num}`] ? (
+                    ) : formData[`ticket_resolved_images${num}`] ? (
                       <div className="my-2 ">
                         <img
                           // className="position-relative"
-                          src={formData[`ticket_generated_images${num}`]}
+                          src={formData[`ticket_resolved_images${num}`]}
                           alt={`Ticket attachment ${num}`}
                           width="80"
                           height="80"
