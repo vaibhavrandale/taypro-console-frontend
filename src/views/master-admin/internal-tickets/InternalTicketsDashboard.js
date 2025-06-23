@@ -429,6 +429,42 @@ const InternalTicketsDashboard = () => {
                       </CTableDataCell>
                     </CTableRow>
                   )}
+
+                  {formData.status === "Resolved" &&
+                    (formData.ticket_resolved_images1 ||
+                      formData.ticket_resolved_images3 ||
+                      formData.ticket_resolved_images4 ||
+                      formData.ticket_resolved_images2 ||
+                      formData.ticket_resolved_images5) && (
+                      <CTableRow>
+                        <CTableDataCell>Ticket Resolved Images</CTableDataCell>
+                        <CTableDataCell>
+                          <div className="d-flex flex-wrap">
+                            {[1, 2, 3, 4, 5].map((num) => {
+                              const img =
+                                formData[`ticket_resolved_images${num}`];
+                              return (
+                                img && (
+                                  <Link to={img} target="blank" key={num}>
+                                    <CImage
+                                      fluid
+                                      src={img}
+                                      className="m-2"
+                                      alt={`Ticket Image ${num}`}
+                                      style={{
+                                        width: "200px",
+                                        height: "200px",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </Link>
+                                )
+                              );
+                            })}
+                          </div>
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
                 </CTableBody>
               </CTable>
 
