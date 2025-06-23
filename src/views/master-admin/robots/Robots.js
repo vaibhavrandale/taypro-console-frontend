@@ -336,7 +336,7 @@ const Robots = () => {
                       setShowDeleteModal(true);
                     }}
                   >
-                    Del from LNS
+                    Delete- LNS
                   </button>
 
                   <button
@@ -347,7 +347,7 @@ const Robots = () => {
                       setShowDeleteModal(true);
                     }}
                   >
-                    Del from DB
+                    Delete- DB
                   </button>
                 </CTableDataCell>
               </CTableRow>
