@@ -135,6 +135,12 @@ const Sites = () => {
     adminroute = "site-technician";
   } else if (userInfo?.role === "Client Technician") {
     adminroute = "client-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   return (

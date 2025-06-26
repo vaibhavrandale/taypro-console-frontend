@@ -183,7 +183,14 @@ const PreventiveMaintanancrDashboard = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
+
   return (
     <div className="p-2">
       <h2 className="text-center">All Preventive Maintenances</h2>
@@ -194,12 +201,16 @@ const PreventiveMaintanancrDashboard = () => {
         >
           View Sitewise
         </Link>
-        <Link
-          className="btn btn-sm btn-primary m-1"
-          to={`/${adminroute}/preventive-maintanance-dashboard/create-pm`}
-        >
-          Create New
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            className="btn btn-sm btn-primary m-1"
+            to={`/${adminroute}/preventive-maintanance-dashboard/create-pm`}
+          >
+            Create New
+          </Link>
+        )}
         <Link
           className="btn btn-sm btn-secondary m-1 d-flex justify-content-center align-items-center"
           to={`/${adminroute}/preventive-maintanance-dashboard/preventive-maintanance-notifications`}

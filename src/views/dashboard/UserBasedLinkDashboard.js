@@ -216,8 +216,8 @@ const UserBasedLinkDashboard = () => {
       dept: "Project Management",
       icon: faCogs,
     },
-    "Project Engineer": {
-      path: "/project-admin/dashboard",
+    "Project User": {
+      path: "/project-user/dashboard",
       dept: "Project Management",
       icon: faCogs,
     },

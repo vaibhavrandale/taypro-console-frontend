@@ -59,7 +59,14 @@ const UpdateServiceItem = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
+
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);

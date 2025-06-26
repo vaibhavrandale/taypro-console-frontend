@@ -83,13 +83,21 @@ const Timers = () => {
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
-  if (userInfo?.role === "Master Admin") {
+  if (userInfo.role === "Master Admin") {
     adminroute = "master-admin";
-  } else if (userInfo?.role === "Service Admin") {
+  } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
-  } else if (userInfo?.role === "Project Admin") {
+  } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
+
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -161,16 +169,16 @@ const Timers = () => {
     }
   };
 
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (
-      !isNaN(pageNumber) &&
-      pageNumber >= 1 &&
-      pageNumber <= state.totalPages
-    ) {
-      handlePageChange(pageNumber);
-    }
-  };
+  // const handlePageInputSubmit = () => {
+  //   const pageNumber = parseInt(pageInput);
+  //   if (
+  //     !isNaN(pageNumber) &&
+  //     pageNumber >= 1 &&
+  //     pageNumber <= state.totalPages
+  //   ) {
+  //     handlePageChange(pageNumber);
+  //   }
+  // };
 
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
@@ -287,12 +295,18 @@ const Timers = () => {
                         {block.robots[0]?.timer3_date}
                       </CTableDataCell>
                       <CTableDataCell>
+                        {/* {![
+                          "Master User",
+                          "Project User",
+                          "Service User",
+                        ].includes(userInfo?.role) && ( */}
                         <Link
                           className="btn btn-sm btn-warning m-1"
                           to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
                         >
                           Update
                         </Link>
+                        {/* )} */}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -309,7 +323,7 @@ const Timers = () => {
               )}
             </CTableBody>
           </CTable>
-          <PaginateInput
+          {/* <PaginateInput
             page={page}
             totalPages={state.totalPages}
             hasPrevPage={state.hasPrevPage}
@@ -317,10 +331,10 @@ const Timers = () => {
             pageInput={pageInput}
             handlePageChange={handlePageChange}
             handlePageInputChange={handlePageInputChange}
-            handlePageInputSubmit={handlePageInputSubmit}
+            // handlePageInputSubmit={handlePageInputSubmit}
             limit={limit}
             handleLimitChange={setLimit}
-          />
+          /> */}
         </CCardBody>
       </CCard>
     </div>

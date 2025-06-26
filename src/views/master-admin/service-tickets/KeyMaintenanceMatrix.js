@@ -109,6 +109,12 @@ const KeyMaintenanceMatrix = () => {
   } else if (userInfo.role === "Project Admin") {
     // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   const [searchTerm, setSearchTerm] = useState("");

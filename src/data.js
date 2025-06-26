@@ -215,7 +215,7 @@ export const role_permissions = [
     ],
   },
   {
-    role: "Project Engineer",
+    role: "Project User",
     permissions: [
       {
         id: "P08",
@@ -441,7 +441,7 @@ export const projects_role_permissions = [
     role: "Project Admin",
   },
   {
-    role: "Project Engineer",
+    role: "Project User",
   },
   {
     role: "Service Admin",
@@ -3943,7 +3943,7 @@ export const notifications = [
       user_id: "U002",
       username: "Jitesh Kute",
       email: "jitesh.kute@taypro.in",
-      role: "Project Engineer",
+      role: "Project User",
       profile_image: "https://randomuser.me/api/portraits/men/4.jpg",
     },
     timestamp: "2025-02-08 10:00:05",

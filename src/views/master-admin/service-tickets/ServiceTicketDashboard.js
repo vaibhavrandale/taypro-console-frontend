@@ -135,6 +135,12 @@ const ServiceTicketDashboard = () => {
   } else if (userInfo.role === "Project Admin") {
     // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   const openViewModal = async (id) => {
@@ -275,12 +281,16 @@ const ServiceTicketDashboard = () => {
             >
               KEY MAINTENANCE MATRIX
             </Link>
-            <Link
-              to="create-new-ticket"
-              className="btn btn-sm btn-secondary m-1"
-            >
-              NEW
-            </Link>
+            {!["Master User", "Project User", "Service User"].includes(
+              userInfo?.role
+            ) && (
+              <Link
+                to="create-new-ticket"
+                className="btn btn-sm btn-secondary m-1"
+              >
+                NEW
+              </Link>
+            )}
           </div>
         </CCardHeader>
 
@@ -381,13 +391,19 @@ const ServiceTicketDashboard = () => {
                           Update
                         </Link>
                       )}
-                      <Link
-                        size="sm"
-                        className="m-1 btn btn-sm btn-secondary text-decoration-none"
-                        to={`resolve-service-ticket/${ticket._id}`}
-                      >
-                        Resolve
-                      </Link>
+                      {![
+                        "Master User",
+                        "Project User",
+                        "Service User",
+                      ].includes(userInfo?.role) && (
+                        <Link
+                          size="sm"
+                          className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                          to={`resolve-service-ticket/${ticket._id}`}
+                        >
+                          Resolve
+                        </Link>
+                      )}
                     </CTableDataCell>
                   </CTableRow>
                 ))
