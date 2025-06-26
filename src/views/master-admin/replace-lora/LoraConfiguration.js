@@ -320,19 +320,41 @@ const LoraConfiguration = () => {
       handlePageChange(pageNumber);
     }
   };
+  const userInfo = useSelector((state) => state.userInfo);
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
   return (
     <div className="">
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="text-center">Lora Configuration</h2>
-        <CButton
-          color="success"
-          size="sm"
-          className="text-white"
-          onClick={openAddModal}
-        >
-          + Add New
-        </CButton>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white"
+            onClick={openAddModal}
+          >
+            + Add New
+          </CButton>
+        )}
       </div>
       {/* Add Modal */}
       <CModal
@@ -498,13 +520,17 @@ const LoraConfiguration = () => {
                   >
                     View
                   </CButton>
-                  <CButton
-                    color="success"
-                    className="btn-sm m-1"
-                    onClick={() => openModal(item)}
-                  >
-                    Update
-                  </CButton>
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <CButton
+                      color="success"
+                      className="btn-sm m-1"
+                      onClick={() => openModal(item)}
+                    >
+                      Update
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

@@ -278,6 +278,12 @@ const Inventories = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   return (
@@ -386,14 +392,19 @@ const Inventories = () => {
                   >
                     Update
                   </Link>
-                  <Link
-                    color="danger"
-                    size="sm"
-                    className=" btn btn-sm btn-danger m-1 text-white"
-                    onClick={() => deleteInventory(inventory)}
-                  >
-                    Delete
-                  </Link>
+
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <Link
+                      color="danger"
+                      size="sm"
+                      className="btn btn-sm btn-danger m-1 text-white"
+                      onClick={() => deleteInventory(inventory)}
+                    >
+                      Delete
+                    </Link>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -660,13 +671,18 @@ const ServiceItems = () => {
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
-
   if (userInfo.role === "Master Admin") {
     adminroute = "master-admin";
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   return (
@@ -777,20 +793,31 @@ const ServiceItems = () => {
                     View
                   </Link>
 
-                  <Link
-                    className="btn btn-sm btn-warning m-1"
-                    to={`/${adminroute}/inventories/update-service-item/${serviceItem._id}`}
-                  >
-                    Update
-                  </Link>
-                  <Link
-                    color="danger"
-                    size="sm"
-                    className=" btn btn-sm btn-danger m-1 text-white"
-                    onClick={() => deleteServiceItem(serviceItem)}
-                  >
-                    Delete
-                  </Link>
+                  {/* Hide Update button for Master User, Project User, Service User */}
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <Link
+                      className="btn btn-sm btn-warning m-1"
+                      to={`/${adminroute}/inventories/update-service-item/${serviceItem._id}`}
+                    >
+                      Update
+                    </Link>
+                  )}
+
+                  {/* Hide Delete button for Master User, Project User, Service User */}
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <Link
+                      color="danger"
+                      size="sm"
+                      className="btn btn-sm btn-danger m-1 text-white"
+                      onClick={() => deleteServiceItem(serviceItem)}
+                    >
+                      Delete
+                    </Link>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

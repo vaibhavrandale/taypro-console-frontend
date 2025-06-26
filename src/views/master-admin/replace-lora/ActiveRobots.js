@@ -211,16 +211,40 @@ const ActiveRobots = () => {
     }
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  }
+
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Active Robots</h2>
-        <Link
-          className="btn btn-sm btn-danger text-white"
-          to="/master-admin/replace-lora/in-active-robots"
-        >
-          In Active Robots
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            className="btn btn-sm btn-danger text-white"
+            to="/master-admin/replace-lora/in-active-robots"
+          >
+            In Active Robots
+          </Link>
+        )}
       </div>
       <CRow className="justify-content-end">
         <CCol md={4} lg={4}>
@@ -275,14 +299,18 @@ const ActiveRobots = () => {
                   )}
                 </CTableDataCell>
                 <CTableDataCell>
-                  <CButton
-                    color="primary"
-                    className="text-white"
-                    size="sm"
-                    onClick={() => openModal(robot)}
-                  >
-                    Deactivate
-                  </CButton>
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <CButton
+                      color="primary"
+                      className="text-white"
+                      size="sm"
+                      onClick={() => openModal(robot)}
+                    >
+                      Deactivate
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

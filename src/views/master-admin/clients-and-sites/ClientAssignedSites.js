@@ -127,6 +127,23 @@ const ClientAssignedSites = () => {
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
 
   useEffect(() => {
     const fetchClientSites = async () => {
@@ -256,15 +273,22 @@ const ClientAssignedSites = () => {
               <h4>
                 Assigned Sites for - <b>{id}</b>
               </h4>
-              <CButton
-                color="primary"
-                size="sm"
-                onClick={() =>
-                  dispatch({ type: "SET_ADD_MODAL", payload: true })
-                }
-              >
-                Add New Site
-              </CButton>
+              {![
+                "Master User",
+                "Project User",
+                "Service User",
+                "Service Admin",
+              ].includes(userInfo?.role) && (
+                <CButton
+                  color="primary"
+                  size="sm"
+                  onClick={() =>
+                    dispatch({ type: "SET_ADD_MODAL", payload: true })
+                  }
+                >
+                  Add New Site
+                </CButton>
+              )}
             </div>
 
             <CTable striped hover responsive className="mt-3 bg-important">
@@ -275,7 +299,15 @@ const ClientAssignedSites = () => {
                   <CTableHeaderCell>Site Name</CTableHeaderCell>
                   <CTableHeaderCell>Location</CTableHeaderCell>
                   <CTableHeaderCell>Type</CTableHeaderCell>
-                  <CTableHeaderCell>Actions</CTableHeaderCell>
+                  {/* Conditionally render Actions column header */}
+                  {![
+                    "Master User",
+                    "Project User",
+                    "Service User",
+                    "Service Admin",
+                  ].includes(userInfo?.role) && (
+                    <CTableHeaderCell>Actions</CTableHeaderCell>
+                  )}{" "}
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -303,33 +335,47 @@ const ClientAssignedSites = () => {
                       <CTableDataCell>{site.location}</CTableDataCell>
                       <CTableDataCell>{site.site_type}</CTableDataCell>
                       <CTableDataCell>
-                        <CButton
-                          color="warning"
-                          className="m-1"
-                          size="sm"
-                          onClick={() => {
-                            dispatch({
-                              type: "SET_SELECTED_SITE",
-                              payload: site,
-                            });
-                            navigate(
-                              `/master-admin/clients-data-dashboard/edit-client/${site._id}`
-                            );
-                          }}
-                        >
-                          Edit
-                        </CButton>
-                        <CButton
-                          color="danger"
-                          size="sm"
-                          onClick={() => handleDelete(site)}
-                          disabled={site.is_delete}
-                          {...(site.is_delete && {
-                            title: "This site is already deleted",
-                          })}
-                        >
-                          Delete
-                        </CButton>
+                        {![
+                          "Master User",
+                          "Project User",
+                          "Service User",
+                          "Service Admin",
+                        ].includes(userInfo?.role) && (
+                          <CButton
+                            color="warning"
+                            className="m-1"
+                            size="sm"
+                            onClick={() => {
+                              dispatch({
+                                type: "SET_SELECTED_SITE",
+                                payload: site,
+                              });
+                              navigate(
+                                `/master-admin/clients-data-dashboard/edit-client/${site._id}`
+                              );
+                            }}
+                          >
+                            Edit
+                          </CButton>
+                        )}
+                        {![
+                          "Master User",
+                          "Project User",
+                          "Service User",
+                          "Service Admin",
+                        ].includes(userInfo?.role) && (
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            onClick={() => handleDelete(site)}
+                            disabled={site.is_delete}
+                            {...(site.is_delete && {
+                              title: "This site is already deleted",
+                            })}
+                          >
+                            Delete
+                          </CButton>
+                        )}
                       </CTableDataCell>
                     </CTableRow>
                   ))

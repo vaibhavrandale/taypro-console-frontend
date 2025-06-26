@@ -49,6 +49,12 @@ export const AppSidebarNav = () => {
       return navItem.name === "Site Incharge"; // Show only Client Admin items
     } else if (userInfo.role === "Client Site Technician") {
       return navItem.name === "Client Site Technician"; // Show only Client Admin items
+    } else if (userInfo.role === "Master User") {
+      return navItem.name === "Master User"; // Show only Service Admin items
+    } else if (userInfo.role === "Project User") {
+      return navItem.name === "Project User"; // Show only Service Admin items
+    } else if (userInfo.role === "Service User") {
+      return navItem.name === "Service User"; // Show only Service Admin items
     }
     return false;
   });

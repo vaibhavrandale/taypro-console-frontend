@@ -81,6 +81,12 @@ const ServiceTicketsFaultDashboard = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   useEffect(() => {
@@ -136,12 +142,16 @@ const ServiceTicketsFaultDashboard = () => {
       <h2 className="text-center mb-4">Service Tickets Faults</h2>
 
       <div className="d-flex justify-content-end my-2 align-items-center">
-        <Link
-          to={`/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault`}
-          className="btn btn-sm btn-primary"
-        >
-          NEW
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            to={`/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault`}
+            className="btn btn-sm btn-primary"
+          >
+            NEW
+          </Link>
+        )}
       </div>
 
       <CRow className="justify-content-end mb-3">
@@ -200,12 +210,16 @@ const ServiceTicketsFaultDashboard = () => {
                     View
                   </CButton>
 
-                  <Link
-                    className="m-1 btn btn-sm btn-primary text-decoration-none"
-                    to={`update-serviceticket-fault/${fault._id}`}
-                  >
-                    Update
-                  </Link>
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <Link
+                      className="m-1 btn btn-sm btn-primary text-decoration-none"
+                      to={`update-serviceticket-fault/${fault._id}`}
+                    >
+                      Update
+                    </Link>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

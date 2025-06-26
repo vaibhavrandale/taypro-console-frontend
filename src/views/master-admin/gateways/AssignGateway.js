@@ -46,6 +46,13 @@ const AssignGateway = () => {
   if (userInfo.role === "Master Admin") adminroute = "master-admin";
   else if (userInfo.role === "Service Admin") adminroute = "service-admin";
   else if (userInfo.role === "Project Admin") adminroute = "project-admin";
+  else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
 
   useEffect(() => {
     const fetchGateway = async () => {

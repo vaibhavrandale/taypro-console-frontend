@@ -48,3 +48,20 @@ export function ClientSiteTechnicianRoute({ children }) {
     <Page404 />
   );
 }
+// Master USer
+export function MasterUserRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Master User" ? children : <Page404 />;
+}
+
+// Project User
+export function ProjectUserRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Project User" ? children : <Page404 />;
+}
+
+// Service User
+export function ServiceUserRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Service User" ? children : <Page404 />;
+}
