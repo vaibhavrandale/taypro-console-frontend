@@ -207,7 +207,7 @@ const UserBasedLinkDashboard = () => {
       icon: faUserShield,
     },
     "Master User": {
-      path: "/master-admin/dashboard",
+      path: "/master-user/dashboard",
       dept: "Administration",
       icon: faUserTie,
     },
@@ -227,7 +227,7 @@ const UserBasedLinkDashboard = () => {
       icon: faTools,
     },
     "Service User": {
-      path: "/service-admin/dashboard",
+      path: "/service-user/dashboard",
       dept: "Service Department",
       icon: faTools,
     },
