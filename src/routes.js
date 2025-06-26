@@ -2807,6 +2807,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-user/service-tickets/key-preventive-matrix",
+    name: "Key Preventive Matrix",
+    element: (
+      <ProjectUserRoute>
+        <KeyMaintenanceMatrix />
+      </ProjectUserRoute>
+    ),
+  },
+  {
     path: "/project-user/internal-tickets/update-internal-ticket/:id",
     name: "Update Internal Ticket",
     element: (
@@ -3902,6 +3911,15 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <CreateNewServiceTicket />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/service-tickets/key-preventive-matrix",
+    name: "Key Preventive Matrix",
+    element: (
+      <ServiceUserRoute>
+        <KeyMaintenanceMatrix />
       </ServiceUserRoute>
     ),
   },
