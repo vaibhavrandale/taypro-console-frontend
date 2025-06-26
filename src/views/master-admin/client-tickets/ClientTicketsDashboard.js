@@ -77,6 +77,23 @@ const ClientTicketsDashboard = () => {
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
   useEffect(() => {
     let pagination = {
       pg: page,
@@ -162,9 +179,16 @@ const ClientTicketsDashboard = () => {
     <div className="">
       <h2 className="text-center">Client Tickets</h2>
       <div className="d-flex justify-content-end my-2 align-items-center">
-        <Link to="create-new-client-ticket" className="btn btn-sm btn-primary">
-          NEW
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            to="create-new-client-ticket"
+            className="btn btn-sm btn-primary"
+          >
+            NEW
+          </Link>
+        )}
       </div>
 
       {/* 🔍 Search Input */}

@@ -32,7 +32,7 @@ import {
   projects_role_permissions,
   role_permissions,
   service_role_permissions,
-} from "../../../data"; // Ensure correct path
+} from "../../../data";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
 import PaginateInput from "../../../components/PaginateInput";
@@ -51,7 +51,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         users: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
       };
@@ -87,7 +87,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         userAddloading: false,
-        users: [...state.users, action.payload], // ✅ add new user
+        users: [...state.users, action.payload],
       };
 
     case "ADD_USER_FAIL":
@@ -121,7 +121,7 @@ const reducer = (state, action) => {
         assignsiteloading: false,
         assigned_sites: state.assigned_sites
           ? [...state.assigned_sites, action.payload]
-          : [action.payload], // ✅ Ensure it's always an array
+          : [action.payload],
       };
 
     case "ASSIGN_SITE_FAIL":
@@ -143,13 +143,13 @@ const reducer = (state, action) => {
         removesiteloading: false,
         assigned_sites: state.assigned_sites.filter(
           (site) => site._id !== action.payload
-        ), // ✅ Remove site
+        ),
       };
     case "REMOVE_SITE_FAIL":
       return {
         ...state,
         removesiteloading: false,
-        removeSiteError: action.payload, // ✅ Store error message
+        removeSiteError: action.payload,
       };
 
     default:
@@ -191,6 +191,7 @@ const UsersDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
   const userInfo = useSelector((state) => state.userInfo);
   let roles = [];
   if (userInfo?.role === "Master Admin") {
@@ -200,14 +201,20 @@ const UsersDashboard = () => {
   } else {
     roles = service_role_permissions;
   }
-  let adminroute = "";
 
+  let adminroute = "";
   if (userInfo.role === "Master Admin") {
     adminroute = "master-admin";
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo.role === "Service User") {
+    adminroute = "service-user";
   }
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -219,21 +226,16 @@ const UsersDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const [assgnedSites, setAssignedSites] = useState([]);
-
   const [pageInput, setPageInput] = useState("");
   const [image, setImage] = useState("");
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-
   const [activeTab, setActiveTab] = useState("assigned");
-
   const [selectedSite, setSelectedSite] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
 
   useEffect(() => {
-    // setLoading(true);
     const fetchUsers = async () => {
       let pagination = {
         pg: page,
@@ -247,7 +249,7 @@ const UsersDashboard = () => {
           {
             headers: { authorization: `Bearer ${authtoken}` },
           }
-        ); // Replace with your API endpoint
+        );
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -292,13 +294,13 @@ const UsersDashboard = () => {
     };
     fetchSites();
     fetchUsers();
-  }, [authtoken, limit, page, userInfo]); // Runs only once on mount
+  }, [authtoken, limit, page, userInfo]);
 
-  // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
     setSelectedUser(user);
     setFormData(user);
     setModalVisible(true);
+    setImage(""); // Reset image state when opening modal
   };
 
   const openAssignedSitesModal = (user) => {
@@ -306,15 +308,16 @@ const UsersDashboard = () => {
     setSelectedUser(user);
     setassignedSitesModalVisible(true);
   };
+
   const openViewModal = (user) => {
     setSelectedItem(user);
-
     setViewModalVisible(true);
   };
   // Open Add User Modal
+
   const openAddModal = () => {
     setFormData({
-      id: `U00${users.length + 1}`, // Generate unique user ID
+      id: `U00${users.length + 1}`,
       username: "",
       email: "",
       role: "",
@@ -325,11 +328,11 @@ const UsersDashboard = () => {
       designation: "",
     });
     setAddModalVisible(true);
+    setImage(""); // Reset image state when opening modal
   };
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: type === "checkbox" ? checked : value,
@@ -348,16 +351,15 @@ const UsersDashboard = () => {
         dispatch({
           type: "ADD_USER_SUCCESS",
           payload: response.data.data.user,
-          // Append new robot to state
         });
         setAddModalVisible(false);
+        setImage("");
       }
       toast.success(response.data.message);
-      setImage("");
     } catch (error) {
       console.error(error);
       dispatch({ type: "ADD_USER_FAIL", payload: error.response.data.error });
-      alert(error.response.data.error);
+      toast.error(error.response.data.error);
     }
   };
 
@@ -394,6 +396,7 @@ const UsersDashboard = () => {
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
     try {
@@ -409,26 +412,17 @@ const UsersDashboard = () => {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-
       setImage(data.url);
-
       toast.success("Image uploaded successfully");
     } catch (err) {
       console.error(error);
     }
   };
-
   const handleUpdate = async () => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      const {
-        createdAt,
-        _id,
-        last_activity,
-        addedAt,
-
-        ...filteredFormData
-      } = formData;
+      const { createdAt, _id, last_activity, addedAt, ...filteredFormData } =
+        formData;
 
       const newdata = image
         ? { ...filteredFormData, profile_image: image }
@@ -449,6 +443,7 @@ const UsersDashboard = () => {
 
       toast.success(`${filteredFormData.username} user updated successfully!`);
       setModalVisible(false);
+      setImage("");
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
@@ -475,16 +470,15 @@ const UsersDashboard = () => {
         {
           headers: { authorization: `Bearer ${authtoken}` },
         }
-      ); // Replace with your API endpoint
+      );
       if (response.data.success) {
         dispatch({
           type: "ASSIGN_SITE_SUCCESS",
-          payload: response.data.data, // Let the reducer handle appending
+          payload: response.data.data,
         });
         setAssignedSites((prev) => [...prev, response.data.data]);
-        // Reset selection
         setSelectedSite("");
-        setActiveTab("assigned"); // Switch back to Assigned Sites tab
+        setActiveTab("assigned");
         toast.success(response.data.message);
       }
     } catch (err) {
@@ -507,9 +501,8 @@ const UsersDashboard = () => {
 
     try {
       dispatch({ type: "REMOVE_SITE_REQUEST" });
-
       const response = await axios.post(
-        "/api/v1/users/remove-assign-site", // ✅ Ensure correct API endpoint
+        "/api/v1/users/remove-assign-site",
         {
           userId: selectedUser._id,
           siteId: sitedata._id,
@@ -521,26 +514,20 @@ const UsersDashboard = () => {
 
       if (response.data.success) {
         toast.success(response.data.message);
-
-        // ✅ Update Redux state
         dispatch({
           type: "REMOVE_SITE_SUCCESS",
           payload: sitedata._id,
         });
-
-        // ✅ Update UI without refresh
         setAssignedSites((prevSites) =>
           prevSites.filter((site) => site._id !== sitedata._id)
         );
       }
     } catch (error) {
       console.error("Error removing site:", error);
-
       dispatch({
         type: "REMOVE_SITE_FAIL",
         payload: error.response?.data?.error || "Failed to remove site",
       });
-
       toast.error(error.response?.data?.error || "Failed to remove site");
     }
   };
@@ -552,35 +539,46 @@ const UsersDashboard = () => {
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
         <div className="d-flex justify-content-between align-items-center">
+          {/* External Users link - hidden for restricted roles */}
+
           <Link
             to={`/${adminroute}/external-users`}
             className="btn btn-sm btn-secondary m-1"
+            aria-label="View external users"
           >
             External Users
           </Link>
-          <CButton
-            color="success"
-            size="sm"
-            className="text-white m-1"
-            onClick={openAddModal}
-          >
-            + Add User
-          </CButton>
+
+          {/* Add User button - hidden for restricted roles */}
+          {!["Master User", "Project User", "Service User"].includes(
+            userInfo?.role
+          ) && (
+            <CButton
+              color="success"
+              size="sm"
+              className="text-white m-1"
+              onClick={openAddModal}
+              aria-label="Add new user"
+            >
+              + Add User
+            </CButton>
+          )}
         </div>
       </div>
       <CRow className="mb-3 justify-content-end">
-        {" "}
         <CCol md={4} className="my-2">
           <CFormInput
             type="text"
             placeholder="Search by Name, Email, Role, or Department"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search users"
           />
         </CCol>
       </CRow>
 
-      {/* Users Table */}
+      {error && <div className="alert alert-danger text-center">{error}</div>}
+
       <CTable bordered hover responsive className="text-center">
         <CTableHead color="secondary">
           <CTableRow>
@@ -591,7 +589,6 @@ const UsersDashboard = () => {
             <CTableHeaderCell>Role</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
             <CTableHeaderCell>Phone</CTableHeaderCell>
-
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -613,17 +610,16 @@ const UsersDashboard = () => {
                 <CTableDataCell>
                   <div className="d-flex align-items-center">
                     <img
-                      src={user.profile_image}
-                      alt="Profile"
+                      src={user.profile_image || "/default-profile.png"}
+                      alt={`Profile of ${user.username}`}
                       className="rounded-circle"
                       width="50"
                       height="50"
                       style={{ objectFit: "cover", cursor: "pointer" }}
-                      onClick={() => openViewModal(user)} // Open modal when image is clicked
+                      onClick={() => openViewModal(user)}
                     />
                   </div>
                 </CTableDataCell>
-
                 <CTableDataCell>{user.username}</CTableDataCell>
                 <CTableDataCell>{user.email}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "120px" }}>
@@ -631,34 +627,32 @@ const UsersDashboard = () => {
                 </CTableDataCell>
                 <CTableDataCell>{user.department}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "120px" }}>
-                  {user.phone}
+                  {user.phone || "N/A"}
                 </CTableDataCell>
-
                 <CTableDataCell style={{ minWidth: "260px" }}>
                   <CButton
                     color="secondary"
                     size="sm"
-                    className=" m-1"
+                    className="m-1"
                     onClick={() => openAssignedSitesModal(user)}
+                    aria-label={`View assigned sites for ${user.username}`}
                   >
                     View Assigned Sites
                   </CButton>
-                  <CButton
-                    color="success"
-                    size="sm"
-                    className=" m-1"
-                    onClick={() => openModal(user)}
-                  >
-                    Update
-                  </CButton>
-                  {/* <CButton
-                    color="primary"
-                    size="sm"
-                    className="btn-sm m-1"
-                    onClick={() => openViewModal(user)}
-                  >
-                    View
-                  </CButton> */}
+                  {/* Update button - hidden for restricted roles */}
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <CButton
+                      color="success"
+                      size="sm"
+                      className="m-1"
+                      onClick={() => openModal(user)}
+                      aria-label={`Edit user ${user.username}`}
+                    >
+                      Update
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -682,48 +676,56 @@ const UsersDashboard = () => {
         handlePageInputChange={handlePageInputChange}
         handlePageInputSubmit={handlePageInputSubmit}
         limit={limit}
-        handleLimitChange={setLimit} // New prop
+        handleLimitChange={setLimit}
       />
 
-      {/*------------- Add User Modal  start---------------------*/}
+      {/* Add User Modal */}
       <CModal
         size="lg"
         scrollable
         backdrop="static"
         visible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
+        aria-labelledby="addUserModalTitle"
       >
         <CModalHeader closeButton={false}>
-          <CModalTitle>Add New User</CModalTitle>
+          <CModalTitle id="addUserModalTitle">Add New User</CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setAddModalVisible(false)}
             style={{ background: "none" }}
+            aria-label="Close"
           >
             <CIcon icon={cilX} size="lg" />
           </button>
         </CModalHeader>
         <CModalBody>
-          <CFormLabel>Username</CFormLabel>
+          <CFormLabel htmlFor="username">Username</CFormLabel>
           <CFormInput
+            id="username"
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
+            required
           />
-          <CFormLabel>Email</CFormLabel>
+          <CFormLabel htmlFor="email">Email</CFormLabel>
           <CFormInput
+            id="email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            required
           />
-          <CFormLabel>Role </CFormLabel>
+          <CFormLabel htmlFor="role">Role</CFormLabel>
           <CFormSelect
+            id="role"
             name="role"
-            onChange={handleChange} // ✅ Calls the function correctly
+            onChange={handleChange}
             value={formData.role}
+            required
           >
             <option value="">Select Role</option>
             {roles?.length > 0 &&
@@ -733,11 +735,13 @@ const UsersDashboard = () => {
                 </option>
               ))}
           </CFormSelect>
-          <CFormLabel>Department </CFormLabel>
+          <CFormLabel htmlFor="department">Department</CFormLabel>
           <CFormSelect
+            id="department"
             name="department"
-            onChange={handleChange} // ✅ Calls the function correctly
+            onChange={handleChange}
             value={formData.department}
+            required
           >
             <option value="">Select Department</option>
             {departments?.length > 0 &&
@@ -747,55 +751,59 @@ const UsersDashboard = () => {
                 </option>
               ))}
           </CFormSelect>
-          <CFormLabel>Phone</CFormLabel>
+          <CFormLabel htmlFor="phone">Phone</CFormLabel>
           <CFormInput
+            id="phone"
             type="text"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
           />
-          <CFormLabel>Designation</CFormLabel>
+          <CFormLabel htmlFor="designation">Designation</CFormLabel>
           <CFormInput
+            id="designation"
             type="text"
             name="designation"
             value={formData.designation}
             onChange={handleChange}
           />
-          <CFormLabel>Password</CFormLabel>
+          <CFormLabel htmlFor="password">Password</CFormLabel>
           <CFormInput
-            type="text"
+            id="password"
+            type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
+            required
           />
-          <CFormLabel>Profile Image </CFormLabel>
+          <CFormLabel htmlFor="profile_image">Profile Image</CFormLabel>
           <CFormInput
+            id="profile_image"
             type="file"
             name="profile_image"
-            value={formData.profile_image}
+            accept="image/*"
             onChange={handleFileChange}
-          />{" "}
+          />
           {loadingUpload ? (
             <div className="mt-2 d-flex justify-content-center">
               <LoadingSpinner />
             </div>
           ) : image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
                 src={image}
-                alt="Uploaded Logo"
+                alt="Profile preview"
                 width="100"
                 height="100"
                 style={{ objectFit: "cover", borderRadius: "5px" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
-              ></CBadge>
+              <button
+                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
+                onClick={() => setImage("")}
+                aria-label="Remove image"
+              >
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : null}
         </CModalBody>
@@ -803,7 +811,10 @@ const UsersDashboard = () => {
           <CButton
             color="secondary"
             size="sm"
-            onClick={() => setAddModalVisible(false)}
+            onClick={() => {
+              setAddModalVisible(false);
+              setImage("");
+            }}
           >
             Cancel
           </CButton>
@@ -817,7 +828,8 @@ const UsersDashboard = () => {
               !formData.username ||
               !formData.email ||
               !formData.role ||
-              !formData.department
+              !formData.department ||
+              !formData.password
             }
           >
             {userAddloading ? (
@@ -831,46 +843,52 @@ const UsersDashboard = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-      {/*---------------------- Add User Modal  end-----------------------------*/}
 
-      {/* ---------------------Update User Modal  start ----------------------*/}
+      {/* Update User Modal */}
       <CModal
         size="lg"
         scrollable
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         backdrop="static"
+        aria-labelledby="updateUserModalTitle"
       >
         <CModalHeader closeButton={false}>
-          <CModalTitle>Update User - {formData.username}</CModalTitle>
+          <CModalTitle id="updateUserModalTitle">
+            Update User - {formData.username}
+          </CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setModalVisible(false)}
             style={{ background: "none" }}
+            aria-label="Close"
           >
             <CIcon icon={cilX} size="lg" />
           </button>
         </CModalHeader>
         <CModalBody>
-          <CFormLabel>Username</CFormLabel>
+          <CFormLabel htmlFor="update-username">Username</CFormLabel>
           <CFormInput
+            id="update-username"
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
           />
-          <CFormLabel>Email</CFormLabel>
+          <CFormLabel htmlFor="update-email">Email</CFormLabel>
           <CFormInput
+            id="update-email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
           />
-          <CFormLabel>Role </CFormLabel>
+          <CFormLabel htmlFor="update-role">Role</CFormLabel>
           <CFormSelect
+            id="update-role"
             name="role"
-            onChange={handleChange} // ✅ Calls the function correctly
+            onChange={handleChange}
             value={formData.role}
           >
             <option value="">Select Role</option>
@@ -881,10 +899,11 @@ const UsersDashboard = () => {
                 </option>
               ))}
           </CFormSelect>
-          <CFormLabel>Department </CFormLabel>
+          <CFormLabel htmlFor="update-department">Department</CFormLabel>
           <CFormSelect
+            id="update-department"
             name="department"
-            onChange={handleChange} // ✅ Calls the function correctly
+            onChange={handleChange}
             value={formData.department}
           >
             <option value="">Select Department</option>
@@ -895,15 +914,17 @@ const UsersDashboard = () => {
                 </option>
               ))}
           </CFormSelect>
-          <CFormLabel>Phone</CFormLabel>
+          <CFormLabel htmlFor="update-phone">Phone</CFormLabel>
           <CFormInput
+            id="update-phone"
             type="text"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
           />
-          <CFormLabel>Designation</CFormLabel>
+          <CFormLabel htmlFor="update-designation">Designation</CFormLabel>
           <CFormInput
+            id="update-designation"
             type="text"
             name="designation"
             value={formData.designation}
@@ -915,19 +936,21 @@ const UsersDashboard = () => {
             <span className="text-muted ms-2">
               (If it is checked then user can't Login.)
             </span>
-          </CFormLabel>{" "}
+          </CFormLabel>
           <br />
           <CFormCheck
             id="is_delete"
             name="is_delete"
             checked={formData.is_delete || false}
             onChange={handleChange}
-          />{" "}
+          />
           <br />
-          <CFormLabel>Image</CFormLabel>
+          <CFormLabel htmlFor="update-profile-image">Image</CFormLabel>
           <CFormInput
+            id="update-profile-image"
             type="file"
             name="profile_image"
+            accept="image/*"
             onChange={handleFileChange}
           />
           {loadingUpload ? (
@@ -935,54 +958,38 @@ const UsersDashboard = () => {
               <LoadingSpinner />
             </div>
           ) : image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
                 src={image}
-                alt="Uploaded Logo"
+                alt="Profile preview"
                 width="100"
                 height="100"
                 style={{ objectFit: "cover", borderRadius: "5px" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
+              <button
+                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
+                onClick={() => setImage("")}
+                aria-label="Remove image"
               >
-                <CIcon
-                  icon={cilX}
-                  cursor="pointer"
-                  // onClick={removeLogo}
-                  title="Remove file"
-                />
-              </CBadge>
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : formData.profile_image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
                 src={formData.profile_image}
-                alt="Uploaded Logo"
+                alt="Current profile"
                 width="100"
                 height="100"
                 style={{ objectFit: "cover", borderRadius: "5px" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
+              <button
+                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
+                onClick={() => setFormData({ ...formData, profile_image: "" })}
+                aria-label="Remove image"
               >
-                <CIcon
-                  icon={cilX}
-                  cursor="pointer"
-                  // onClick={removeLogo}
-                  title="Remove file"
-                />
-              </CBadge>
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : null}
         </CModalBody>
@@ -990,14 +997,19 @@ const UsersDashboard = () => {
           <CButton
             color="secondary"
             size="sm"
-            onClick={() => setModalVisible(false)}
+            onClick={() => {
+              setModalVisible(false);
+              setImage("");
+            }}
           >
             Cancel
           </CButton>
-          {/* <CButton color="primary" size="sm" onClick={handleUpdate}>
-            Save Changes
-          </CButton> */}
-          <CButton color="primary" className="btn-sm" onClick={handleUpdate}>
+          <CButton
+            color="primary"
+            className="btn-sm"
+            onClick={handleUpdate}
+            disabled={updatingUserLoading}
+          >
             {updatingUserLoading ? (
               <>
                 Updating..
@@ -1009,25 +1021,32 @@ const UsersDashboard = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-      {/*---------------------- -Update User Modal  end-----------------------------*/}
 
-      {/*---------------------- -View User Modal  end-----------------------------*/}
-
+      {/* View User Modal */}
       <CModal
         scrollable
         visible={viewModalVisible}
         size="xl"
         onClose={() => setViewModalVisible(false)}
+        aria-labelledby="viewUserModalTitle"
       >
         {selectedItem && (
           <>
-            <CModalHeader>
-              <CModalTitle>
+            <CModalHeader closeButton={false}>
+              <CModalTitle id="viewUserModalTitle">
                 View User Details:{" "}
                 <CBadge className="badge bg-primary">
                   {selectedItem.username}
                 </CBadge>
               </CModalTitle>
+              <button
+                type="button"
+                className=" border-0 ms-auto py-0 px-1"
+                onClick={() => setViewModalVisible(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
             </CModalHeader>
             <CModalBody>
               <CTable bordered hover responsive>
@@ -1042,7 +1061,9 @@ const UsersDashboard = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Phone</CTableHeaderCell>
-                    <CTableDataCell>{selectedItem.phone}</CTableDataCell>
+                    <CTableDataCell>
+                      {selectedItem.phone || "N/A"}
+                    </CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Role</CTableHeaderCell>
@@ -1078,8 +1099,10 @@ const UsersDashboard = () => {
                     <CTableHeaderCell>Profile Image</CTableHeaderCell>
                     <CTableDataCell>
                       <img
-                        src={selectedItem.profile_image}
-                        alt="Profile"
+                        src={
+                          selectedItem.profile_image || "/default-profile.png"
+                        }
+                        alt={`Profile of ${selectedItem.username}`}
                         width="100"
                         height="100"
                         style={{ objectFit: "cover", borderRadius: "8px" }}
@@ -1088,7 +1111,6 @@ const UsersDashboard = () => {
                   </CTableRow>
                 </CTableBody>
               </CTable>
-
               <LastActivity lastactivity={selectedItem.last_activity} />
             </CModalBody>
             <CModalFooter>
@@ -1103,16 +1125,17 @@ const UsersDashboard = () => {
         )}
       </CModal>
 
-      {/*---------------- Assigned Sites modal Modal start ------------------*/}
+      {/* Assigned Sites Modal */}
       <CModal
         size="lg"
         scrollable
         visible={assignedSitesModalVisible}
         onClose={() => setassignedSitesModalVisible(false)}
         backdrop="static"
+        aria-labelledby="assignedSitesModalTitle"
       >
         <CModalHeader closeButton={false}>
-          <CModalTitle>
+          <CModalTitle id="assignedSitesModalTitle">
             Assigned Sites of &nbsp;:&nbsp;
             <CBadge color="primary">
               {selectedUser ? selectedUser.username : ""}
@@ -1120,9 +1143,10 @@ const UsersDashboard = () => {
           </CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setassignedSitesModalVisible(false)}
             style={{ background: "none" }}
+            aria-label="Close"
           >
             <CIcon icon={cilX} size="lg" />
           </button>
@@ -1136,7 +1160,6 @@ const UsersDashboard = () => {
             </CTabList>
 
             <CTabContent>
-              {/* Assigned Sites Tab */}
               <CTabPanel className="p-3" itemKey="assigned">
                 <CTable bordered hover responsive className="text-center mt-3">
                   <CTableHead color="secondary">
@@ -1162,8 +1185,10 @@ const UsersDashboard = () => {
                               className="text-white"
                               size="sm"
                               onClick={() => handleRemoveSite(site)}
+                              disabled={assignsiteloading}
+                              aria-label={`Remove site ${site.site_id}`}
                             >
-                              <CIcon className=" fw-bolder" icon={cilTrash} />
+                              <CIcon className="fw-bolder" icon={cilTrash} />
                             </CButton>
                           </CTableDataCell>
                         </CTableRow>
@@ -1182,12 +1207,12 @@ const UsersDashboard = () => {
                 </CTable>
               </CTabPanel>
 
-              {/* Assign New Site Tab */}
               <CTabPanel className="p-3" itemKey="assign">
                 <CForm className="mt-3">
                   <div className="mb-3">
-                    <CFormLabel>Select Site</CFormLabel>
+                    <CFormLabel htmlFor="site-select">Select Site</CFormLabel>
                     <CFormSelect
+                      id="site-select"
                       name="item_name"
                       value={selectedSite}
                       onChange={(e) => setSelectedSite(e.target.value)}
@@ -1204,9 +1229,8 @@ const UsersDashboard = () => {
                   <CButton
                     color="primary"
                     size="sm"
-                    // onClick={() => handleAssignSite(selectedSite)}
                     onClick={handleAssignSite}
-                    disabled={!selectedSite}
+                    disabled={!selectedSite || assignsiteloading}
                   >
                     {assignsiteloading ? (
                       <>
@@ -1223,7 +1247,6 @@ const UsersDashboard = () => {
           </CTabs>
         </CModalBody>
       </CModal>
-      {/*----------------- Assigned Sites modal Modal end -------------------*/}
     </div>
   );
 };
