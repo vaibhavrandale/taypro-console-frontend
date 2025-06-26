@@ -115,7 +115,14 @@ const Gateways = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
+
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -233,12 +240,16 @@ const Gateways = () => {
     <div className="mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gateways</h2>
-        <Link
-          to={`/${adminroute}/all-site-gateways/create-new-gateway`}
-          className="btn btn-warning btn-sm"
-        >
-          Add
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            to={`/${adminroute}/all-site-gateways/create-new-gateway`}
+            className="btn btn-warning btn-sm"
+          >
+            Add
+          </Link>
+        )}
       </div>
       <CRow className="justify-content-end">
         <CCol xs={12} sm={10} md={8} lg={5}>
@@ -323,39 +334,51 @@ const Gateways = () => {
                     >
                       View
                     </Link>
-                    <Link
-                      className="btn btn-sm btn-success text-decoration-none p-1 m-1"
-                      to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
-                    >
-                      Assign Lora
-                    </Link>
-                    <Link
-                      to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
-                      className="btn btn-secondary p-1 text-decoration-none btn-sm m-1"
-                    >
-                      Update
-                    </Link>
-                    {/* Add delete buttons */}
-                    <button
-                      className="btn btn-sm btn-danger p-1 m-1"
-                      onClick={() => {
-                        setSelectedGateway(gateway);
-                        setGatewayDeleteType("lns");
-                        setShowGatewayDeleteModal(true);
-                      }}
-                    >
-                      Delete- LNS
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-warning p-1 m-1"
-                      onClick={() => {
-                        setSelectedGateway(gateway);
-                        setGatewayDeleteType("db");
-                        setShowGatewayDeleteModal(true);
-                      }}
-                    >
-                      Delete- DB
-                    </button>
+                    {!["Master User", "Project User", "Service User"].includes(
+                      userInfo?.role
+                    ) && (
+                      <>
+                        {/* Assign Lora Button */}
+                        <Link
+                          className="btn btn-sm btn-success text-decoration-none p-1 m-1"
+                          to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
+                        >
+                          Assign Lora
+                        </Link>
+
+                        {/* Update Button */}
+                        <Link
+                          to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
+                          className="btn btn-secondary p-1 text-decoration-none btn-sm m-1"
+                        >
+                          Update
+                        </Link>
+
+                        {/* Delete from LNS Button */}
+                        <button
+                          className="btn btn-sm btn-danger p-1 m-1"
+                          onClick={() => {
+                            setSelectedGateway(gateway);
+                            setGatewayDeleteType("lns");
+                            setShowGatewayDeleteModal(true);
+                          }}
+                        >
+                          Delete- LNS
+                        </button>
+
+                        {/* Delete from DB Button */}
+                        <button
+                          className="btn btn-sm btn-outline-warning p-1 m-1"
+                          onClick={() => {
+                            setSelectedGateway(gateway);
+                            setGatewayDeleteType("db");
+                            setShowGatewayDeleteModal(true);
+                          }}
+                        >
+                          Delete- DB
+                        </button>
+                      </>
+                    )}
                   </CTableDataCell>
                 </CTableRow>
               ))

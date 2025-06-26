@@ -197,7 +197,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     //     "Project Admin",
     //     "Service Admin",
     //     "Service User",
-    //     "Project Engineer",
+    //     "Project User",
     //   ].includes(userInfo.role)
     // ) {
     //   fetchNotifications();
@@ -209,10 +209,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
     const allowedRoles = [
       "Master Admin",
+      "Master User",
       "Project Admin",
       "Service Admin",
       "Service User",
-      "Project Engineer",
+      "Project User",
     ];
 
     if (
@@ -252,6 +253,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             return notification.projectadmin;
           case "Service Admin":
             return notification.serviceadmin;
+          case "Master User":
+            return notification.masteruser;
+          case "Project User":
+            return notification.projectuser;
+          case "Service User":
+            return notification.serviceuser;
           default:
             return false;
         }
@@ -314,6 +321,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     adminroute = "site-technician";
   } else if (userInfo?.role === "Client Technician") {
     adminroute = "client-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   //  "Site Incharge",
@@ -480,7 +493,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             "Project Admin",
             "Service Admin",
             "Service User",
-            "Project Engineer",
+            "Project User",
+            "Master User",
           ].includes(userInfo.role) && (
             <>
               <Link

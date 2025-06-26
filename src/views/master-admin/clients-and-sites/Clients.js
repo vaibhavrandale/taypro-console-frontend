@@ -369,15 +369,28 @@ const Clients = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>All Clients</h2>
-        <CButton color="primary" size="sm" onClick={openAddClientModal}>
-          Add New
-        </CButton>
+        {![
+          "Master User",
+          "Service Admin",
+          "Project User",
+          "Service User",
+        ].includes(userInfo?.role) && (
+          <CButton color="primary" size="sm" onClick={openAddClientModal}>
+            Add New
+          </CButton>
+        )}
       </div>
 
       <CRow className="justify-content-end">
@@ -443,14 +456,21 @@ const Clients = () => {
                     >
                       View Assigned Sites
                     </Link>
-                    <CButton
-                      className="m-1"
-                      color="warning"
-                      size="sm"
-                      onClick={() => openUpdateModal(client)}
-                    >
-                      Update
-                    </CButton>
+                    {![
+                      "Master User",
+                      "Project User",
+                      "Service User",
+                      "Service Admin",
+                    ].includes(userInfo?.role) && (
+                      <CButton
+                        className="m-1"
+                        color="warning"
+                        size="sm"
+                        onClick={() => openUpdateModal(client)}
+                      >
+                        Update
+                      </CButton>
+                    )}
                   </div>
                 </CTableDataCell>
               </CTableRow>

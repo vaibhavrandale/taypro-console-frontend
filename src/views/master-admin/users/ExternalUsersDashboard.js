@@ -206,6 +206,12 @@ const ExternalUsersDashboard = () => {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo.role === "Service User") {
+    adminroute = "service-user";
   }
 
   useEffect(() => {
@@ -524,14 +530,19 @@ const ExternalUsersDashboard = () => {
           >
             Internal Users
           </Link>
-          <CButton
-            color="success"
-            size="sm"
-            className="text-whit m-1e"
-            onClick={openAddModal}
-          >
-            + Add User
-          </CButton>
+          {/* Add User button - hidden for restricted roles */}
+          {!["Master User", "Project User", "Service User"].includes(
+            userInfo?.role
+          ) && (
+            <CButton
+              color="success"
+              size="sm"
+              className="text-white m-1"
+              onClick={openAddModal}
+            >
+              + Add User
+            </CButton>
+          )}
         </div>
       </div>
       <CRow className="mb-3 justify-content-end">
@@ -604,14 +615,19 @@ const ExternalUsersDashboard = () => {
                   >
                     view Assigned Sites
                   </CButton>
-                  <CButton
-                    color="primary"
-                    size="sm"
-                    className="m-1"
-                    onClick={() => openModal(user)}
-                  >
-                    Update
-                  </CButton>
+                  {/* Update button - hidden for restricted roles */}
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <CButton
+                      color="primary"
+                      size="sm"
+                      className="m-1"
+                      onClick={() => openModal(user)}
+                    >
+                      Update
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))

@@ -223,7 +223,6 @@ const SitesCoordinates = () => {
     // Trigger download
     XLSX.writeFile(workbook, "Sites Coordinates.xlsx");
   };
-
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -232,19 +231,30 @@ const SitesCoordinates = () => {
   } else if (userInfo.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   return (
     <div className="p-2">
       <h2 className="text-center mt-4">Site Coordinates List</h2>
       <div className="d-flex justify-content-end mb-3">
-        <Link
-          className="btn btn-sm btn-secondary m-1"
-          to={`/${adminroute}/sites-coordinates/add-sitescoordinates`}
-        >
-          Add
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to={`/${adminroute}/sites-coordinates/add-sitescoordinates`}
+          >
+            Add
+          </Link>
+        )}
         <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
           Export
         </Link>
@@ -318,20 +328,26 @@ const SitesCoordinates = () => {
                     View
                   </Link>
 
-                  <Link
-                    className="btn btn-sm btn-warning m-1"
-                    to={`/${adminroute}/sites-coordinates/update-sitescoordinates/${coordinates._id}`}
-                  >
-                    Update
-                  </Link>
-                  <Link
-                    color="danger"
-                    size="sm"
-                    className=" btn btn-sm btn-danger m-1 text-white"
-                    onClick={() => deleteInventory(coordinates)}
-                  >
-                    Delete
-                  </Link>
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <>
+                      <Link
+                        className="btn btn-sm btn-warning m-1"
+                        to={`/${adminroute}/sites-coordinates/update-sitescoordinates/${coordinates._id}`}
+                      >
+                        Update
+                      </Link>
+                      <Link
+                        color="danger"
+                        size="sm"
+                        className="btn btn-sm btn-danger m-1 text-white"
+                        onClick={() => deleteInventory(coordinates)}
+                      >
+                        Delete
+                      </Link>
+                    </>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
