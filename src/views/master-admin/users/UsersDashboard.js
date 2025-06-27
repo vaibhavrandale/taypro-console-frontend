@@ -589,6 +589,7 @@ const UsersDashboard = () => {
             <CTableHeaderCell>Role</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
             <CTableHeaderCell>Phone</CTableHeaderCell>
+            <CTableHeaderCell>Last Login</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -628,6 +629,25 @@ const UsersDashboard = () => {
                 <CTableDataCell>{user.department}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "120px" }}>
                   {user.phone || "N/A"}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "160px" }}>
+                  {user.last_login
+                    ? new Date(user.last_login)
+                        .toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
+                        .replace(
+                          /(\d{2}:\d{2}\s[apAP][mM]) (\d{2})\/(\d{2})\/(\d{4})/,
+                          (_, time, day, month, year) =>
+                            `${time}, ${year}-${month}-${day}`
+                        )
+                    : ""}
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "260px" }}>
                   <CButton
