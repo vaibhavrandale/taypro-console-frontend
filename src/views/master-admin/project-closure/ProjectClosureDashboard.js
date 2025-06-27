@@ -21,6 +21,8 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -383,13 +385,21 @@ const ProjectClosureDashboard = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Project Handover Document Approval Request:&nbsp;
             <span className="badge bg-success">
               {formData.project_name}
             </span>{" "}
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedProjectDoc && (

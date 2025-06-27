@@ -23,6 +23,8 @@ import { useSelector } from "react-redux";
 import PaginateInput from "../../../components/PaginateInput";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { cilX } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -313,11 +315,19 @@ const InActiveRobots = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
-        <CModalHeader>
+        <CModalHeader closeButton={false}>
           <CModalTitle>
             Activate Robot -
             <span className="badge bg-success">{formData.robot_no}</span>
           </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {selectedRobot && (

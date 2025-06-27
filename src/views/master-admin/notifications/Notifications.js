@@ -18,7 +18,7 @@ import {
   CModalFooter,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilPeople } from "@coreui/icons";
+import { cilPeople, cilX } from "@coreui/icons";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -281,8 +281,16 @@ const Notifications = () => {
         visible={showModal}
         onClose={() => setShowModal(false)}
       >
-        <CModalHeader closeButton>
+        <CModalHeader closeButton={false}>
           <CModalTitle>📖 Read Users</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setShowModal(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
         </CModalHeader>
         <CModalBody>
           {readUsers.length > 0 ? (
