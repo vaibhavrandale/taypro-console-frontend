@@ -158,7 +158,7 @@ const AllSiteData = () => {
                       <CTableBody>
                         <CTableRow>
                           <CTableDataCell className="text-center">
-                            <CBadge color="primary">
+                            <CBadge color="blue">
                               {site.site_total_robots}
                             </CBadge>
                           </CTableDataCell>
@@ -473,10 +473,18 @@ const AllSiteData = () => {
                   visible={activeOfflineSite === site.site_id}
                   onClose={() => setActiveOfflineSite(null)}
                 >
-                  <CModalHeader>
+                  <CModalHeader closeButton={false}>
                     <CModalTitle>
                       {site.siteName} - Offline Robots List
                     </CModalTitle>
+                    <button
+                      type="button"
+                      className=" border-0 ms-auto py-0 px-1"
+                      onClick={() => setActiveOfflineSite(false)}
+                      style={{ background: "none" }}
+                    >
+                      <CIcon icon={cilX} size="lg" />
+                    </button>
                   </CModalHeader>
                   <CModalBody>
                     <>
