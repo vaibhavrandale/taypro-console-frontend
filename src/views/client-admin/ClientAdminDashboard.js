@@ -456,7 +456,7 @@ const ClientAdminDashboard = () => {
                           }}
                         />
                       ) : (
-                        <p className="text-center text-muted">
+                        <p className="text-center">
                           No cleaning data available
                         </p>
                       )}
