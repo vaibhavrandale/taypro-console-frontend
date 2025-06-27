@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer } from "react";
 
-import { BsStarFill, BsStar } from "react-icons/bs";
+// import { BsStarFill, BsStar } from "react-icons/bs";
 
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -9,16 +9,16 @@ import {
   CCol,
   CRow,
   CCardHeader,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CFormLabel,
-  CForm,
-  CFormTextarea,
-  CButton,
-  CImage,
-  CBadge,
+  // CModal,
+  // CModalHeader,
+  // CModalTitle,
+  // CModalBody,
+  // CFormLabel,
+  // CForm,
+  // CFormTextarea,
+  // CButton,
+  // CImage,
+  // CBadge,
 } from "@coreui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,10 +30,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 // import { customer_feedback } from "../../data";
-import toast from "react-hot-toast";
-import axios from "axios";
-import LoadingSpinner from "../../components/LoadingSpinner";
-import TayproLogo from "../../assets/brand/logoforwhitebg.png"; // Import the image
+// import toast from "react-hot-toast";
+// import axios from "axios";
+// import LoadingSpinner from "../../components/LoadingSpinner";
+// import TayproLogo from "../../assets/brand/logoforwhitebg.png"; // Import the image
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -108,92 +108,92 @@ const UserBasedLinkDashboard = () => {
     timerError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   // const [latestFeedback, setLatestFeedback] = useState(null);
 
   const navigate = useNavigate();
   // const [userInfo, setUserInfo] = useState(null);
-  const [feedbackModal, setFeedbackModal] = useState(true);
-  const [timerModal, setTimerModal] = useState(false);
-  const [formData, setFormData] = useState({
-    comments: "",
-    rating: "",
-  });
-  useEffect(() => {
-    // const user = JSON.parse(localStorage.getItem("userInfo"));
-    if (!userInfo) {
-      navigate("/login"); // Redirect if user is not found
-    }
+  // const [feedbackModal, setFeedbackModal] = useState(true);
+  // const [timerModal, setTimerModal] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   comments: "",
+  //   rating: "",
+  // });
+  // useEffect(() => {
+  //   // const user = JSON.parse(localStorage.getItem("userInfo"));
+  //   if (!userInfo) {
+  //     navigate("/login"); // Redirect if user is not found
+  //   }
 
-    const fetchTimerData = async () => {
-      try {
-        dispatch({ type: "FETCH_TIMER_REQUEST" });
+  //   const fetchTimerData = async () => {
+  //     try {
+  //       dispatch({ type: "FETCH_TIMER_REQUEST" });
 
-        const result = await axios.get(
-          `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-        // console.log(result.data.data);
+  //       const result = await axios.get(
+  //         `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
+  //         {
+  //           headers: { Authorization: `Bearer ${authtoken}` },
+  //         }
+  //       );
+  //       // console.log(result.data.data);
 
-        dispatch({
-          type: "FETCH_TIMER_SUCCESS",
-          payload: result.data.data,
-        });
-        if (result.data.data.read_status === false) {
-          setTimerModal(true); // Hide the modal
-        } else {
-          setTimerModal(false); // Hide the modal
-        }
-      } catch (error) {
-        console.log(error.response?.data.error);
-        if (
-          error.response?.data.error ===
-          "Timer Execution Notifications Not Found"
-        ) {
-          setTimerModal(false); // Hide the modal if no notifications
-        }
-        dispatch({
-          type: "FETCH_TIMER_FAIL",
-          payload: error.response?.data.error || error.response?.data.message,
-        });
-      }
-    };
+  //       dispatch({
+  //         type: "FETCH_TIMER_SUCCESS",
+  //         payload: result.data.data,
+  //       });
+  //       if (result.data.data.read_status === false) {
+  //         setTimerModal(true); // Hide the modal
+  //       } else {
+  //         setTimerModal(false); // Hide the modal
+  //       }
+  //     } catch (error) {
+  //       console.log(error.response?.data.error);
+  //       if (
+  //         error.response?.data.error ===
+  //         "Timer Execution Notifications Not Found"
+  //       ) {
+  //         setTimerModal(false); // Hide the modal if no notifications
+  //       }
+  //       dispatch({
+  //         type: "FETCH_TIMER_FAIL",
+  //         payload: error.response?.data.error || error.response?.data.message,
+  //       });
+  //     }
+  //   };
 
-    if (userInfo?.role === "Client Admin") {
-      const fetchfeedback = async () => {
-        try {
-          dispatch({ type: "FETCH_FEEDBACK_REQUEST" });
+  //   if (userInfo?.role === "Client Admin") {
+  //     const fetchfeedback = async () => {
+  //       try {
+  //         dispatch({ type: "FETCH_FEEDBACK_REQUEST" });
 
-          const result = await axios.get(
-            `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
-            {
-              headers: { Authorization: `Bearer ${authtoken}` },
-            }
-          );
-          dispatch({
-            type: "FETCH_FEEDBACK_SUCCESS",
-            payload: result.data.data,
-          });
-          if (result.data.data.status === true) {
-            setFeedbackModal(false); // Hide the modal
-          } else {
-            setFeedbackModal(true); // Hide the modal
-          }
-        } catch (error) {
-          dispatch({
-            type: "FETCH_FEEDBACK_FAIL",
-            payload: error.response?.data.error || error.response?.data.message,
-          });
-        }
-      };
-      fetchfeedback();
-    }
+  //         const result = await axios.get(
+  //           `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
+  //           {
+  //             headers: { Authorization: `Bearer ${authtoken}` },
+  //           }
+  //         );
+  //         dispatch({
+  //           type: "FETCH_FEEDBACK_SUCCESS",
+  //           payload: result.data.data,
+  //         });
+  //         if (result.data.data.status === true) {
+  //           setFeedbackModal(false); // Hide the modal
+  //         } else {
+  //           setFeedbackModal(true); // Hide the modal
+  //         }
+  //       } catch (error) {
+  //         dispatch({
+  //           type: "FETCH_FEEDBACK_FAIL",
+  //           payload: error.response?.data.error || error.response?.data.message,
+  //         });
+  //       }
+  //     };
+  //     fetchfeedback();
+  //   }
 
-    fetchTimerData();
-  }, [authtoken, navigate, userInfo]);
+  //   fetchTimerData();
+  // }, [authtoken, navigate, userInfo]);
 
   if (!userInfo) {
     return null; // Prevent rendering if user isn't loaded
@@ -256,117 +256,117 @@ const UserBasedLinkDashboard = () => {
   // Get dashboard details for the logged-in user's role
   const userRoleData = roleRoutes[userInfo.role];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
-  const handleSubmit = async () => {
-    // Remove focus from the currently focused element
-    if (document.activeElement) {
-      document.activeElement.blur();
-    }
-    dispatch({ type: "SUBMIT_REQUEST" });
-    try {
-      const data = await axios.put(
-        `/api/v1/customer-feedback/${latestfeedback._id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
+  // const handleSubmit = async () => {
+  //   // Remove focus from the currently focused element
+  //   if (document.activeElement) {
+  //     document.activeElement.blur();
+  //   }
+  //   dispatch({ type: "SUBMIT_REQUEST" });
+  //   try {
+  //     const data = await axios.put(
+  //       `/api/v1/customer-feedback/${latestfeedback._id}`,
+  //       formData,
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
 
-      toast.success(data.data.message);
-      dispatch({ type: "SUBMIT_SUCCESS" });
-      setFeedbackModal(false); // Hide the modal
-    } catch (error) {
-      dispatch({
-        type: "SUBMIT_FAIL",
-        payload: error.response?.data?.message || error.response?.data?.error,
-      });
-    }
-  };
+  //     toast.success(data.data.message);
+  //     dispatch({ type: "SUBMIT_SUCCESS" });
+  //     setFeedbackModal(false); // Hide the modal
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "SUBMIT_FAIL",
+  //       payload: error.response?.data?.message || error.response?.data?.error,
+  //     });
+  //   }
+  // };
 
-  const handleReadTimerNotification = async () => {
-    // Remove focus from the currently focused element
-    if (document.activeElement) {
-      document.activeElement.blur();
-    }
-    dispatch({ type: "UPDATE_TIMER_REQUEST" });
-    try {
-      const data = await axios.put(
-        `/api/v1/timerexecutionnotifications/${timernotification._id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
+  // const handleReadTimerNotification = async () => {
+  //   // Remove focus from the currently focused element
+  //   if (document.activeElement) {
+  //     document.activeElement.blur();
+  //   }
+  //   dispatch({ type: "UPDATE_TIMER_REQUEST" });
+  //   try {
+  //     const data = await axios.put(
+  //       `/api/v1/timerexecutionnotifications/${timernotification._id}`,
+  //       {},
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
 
-      toast.success(data.data.message);
-      dispatch({ type: "UPDATE_TIMER_SUCCESS" });
-      setTimerModal(false); // Hide the modal
-    } catch (error) {
-      dispatch({
-        type: "UPDATE_TIMER_FAIL",
-        payload: error.response?.data?.message || error.response?.data?.error,
-      });
-      toast.error(error.response?.data?.message || error.response?.data?.error);
-    }
-  };
+  //     toast.success(data.data.message);
+  //     dispatch({ type: "UPDATE_TIMER_SUCCESS" });
+  //     setTimerModal(false); // Hide the modal
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "UPDATE_TIMER_FAIL",
+  //       payload: error.response?.data?.message || error.response?.data?.error,
+  //     });
+  //     toast.error(error.response?.data?.message || error.response?.data?.error);
+  //   }
+  // };
 
-  const StarRating = ({ rating, onChange }) => {
-    const currentRating = Number(rating) || 0;
+  // const StarRating = ({ rating, onChange }) => {
+  //   const currentRating = Number(rating) || 0;
 
-    return (
-      <div
-        className="d-flex gap-2"
-        style={{ cursor: "pointer", fontSize: "1.8rem" }}
-      >
-        {[1, 2, 3, 4, 5].map((star) => {
-          const FilledStar = star <= currentRating;
-          return FilledStar ? (
-            <BsStarFill
-              size={20}
-              key={star}
-              color="#ffc107"
-              onClick={() =>
-                onChange({ target: { name: "rating", value: star } })
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter")
-                  onChange({
-                    target: { name: "rating", value: star },
-                  });
-              }}
-              role="radio"
-              tabIndex={0}
-              aria-checked={star === currentRating}
-              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
-            />
-          ) : (
-            <BsStar
-              size={20}
-              key={star}
-              color="#e4e5e9"
-              onClick={() =>
-                onChange({ target: { name: "rating", value: star } })
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter")
-                  onChange({
-                    target: { name: "rating", value: star },
-                  });
-              }}
-              role="radio"
-              tabIndex={0}
-              aria-checked={star === currentRating}
-              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
-            />
-          );
-        })}
-      </div>
-    );
-  };
+  //   return (
+  //     <div
+  //       className="d-flex gap-2"
+  //       style={{ cursor: "pointer", fontSize: "1.8rem" }}
+  //     >
+  //       {[1, 2, 3, 4, 5].map((star) => {
+  //         const FilledStar = star <= currentRating;
+  //         return FilledStar ? (
+  //           <BsStarFill
+  //             size={20}
+  //             key={star}
+  //             color="#ffc107"
+  //             onClick={() =>
+  //               onChange({ target: { name: "rating", value: star } })
+  //             }
+  //             onKeyDown={(e) => {
+  //               if (e.key === "Enter")
+  //                 onChange({
+  //                   target: { name: "rating", value: star },
+  //                 });
+  //             }}
+  //             role="radio"
+  //             tabIndex={0}
+  //             aria-checked={star === currentRating}
+  //             aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+  //           />
+  //         ) : (
+  //           <BsStar
+  //             size={20}
+  //             key={star}
+  //             color="#e4e5e9"
+  //             onClick={() =>
+  //               onChange({ target: { name: "rating", value: star } })
+  //             }
+  //             onKeyDown={(e) => {
+  //               if (e.key === "Enter")
+  //                 onChange({
+  //                   target: { name: "rating", value: star },
+  //                 });
+  //             }}
+  //             role="radio"
+  //             tabIndex={0}
+  //             aria-checked={star === currentRating}
+  //             aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+  //           />
+  //         );
+  //       })}
+  //     </div>
+  //   );
+  // };
 
   // console.log(timernotification);
 
@@ -410,7 +410,7 @@ const UserBasedLinkDashboard = () => {
       {/* <CButton color="primary" onClick={() => setFeedbackModal(!feedbackModal)}>
         Rate us
       </CButton> */}
-
+      {/* 
       {latestfeedback && (
         <CModal
           // className={feedbackModal ? "fade-out" : "fade-in"}
@@ -571,7 +571,7 @@ const UserBasedLinkDashboard = () => {
             </>
           )}
         </CModal>
-      )}
+      )} */}
     </div>
   );
 };
