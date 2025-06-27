@@ -24,6 +24,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -136,7 +137,6 @@ const ServiceTicketsFaultDashboard = () => {
       setViewModalVisible(false);
     }
   };
-
   return (
     <div>
       <h2 className="text-center mb-4">Service Tickets Faults</h2>
@@ -245,7 +245,6 @@ const ServiceTicketsFaultDashboard = () => {
         setPageInput={setPageInput}
       />
 
-      {/* View Modal */}
       <CModal
         scrollable
         size="xl"
@@ -311,6 +310,19 @@ const ServiceTicketsFaultDashboard = () => {
                   </CTableRow>
                 </CTableBody>
               </CTable>
+
+              {Array.isArray(viewFault.last_activity) &&
+                viewFault.last_activity.length > 0 && (
+                  <>
+                    <h6 className="mt-3">Last Activity:</h6>
+                    <LastActivity
+                      lastactivity={viewFault.last_activity.map((activity) => ({
+                        ...activity,
+                        details: activity.activity || "No details available", // Use activity field as details
+                      }))}
+                    />
+                  </>
+                )}
             </CModalBody>
 
             <CModalFooter>
