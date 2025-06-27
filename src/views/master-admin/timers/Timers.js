@@ -13,6 +13,12 @@ import {
   CCardBody,
   CCardHeader,
   CBadge,
+  CButton,
+  CModalFooter,
+  CModalHeader,
+  CModal,
+  CModalTitle,
+  CModalBody,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -20,6 +26,9 @@ import toast from "react-hot-toast";
 import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+import LastActivity from "../../../components/LastActivity";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -80,6 +89,10 @@ const Timers = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
+
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [selectedRobot, setSelectedRobot] = useState(null);
+
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -169,6 +182,11 @@ const Timers = () => {
     }
   };
 
+  const handleViewClick = (robot) => {
+    setSelectedRobot(robot);
+    setViewModalVisible(true);
+  };
+
   // const handlePageInputSubmit = () => {
   //   const pageNumber = parseInt(pageInput);
   //   if (
@@ -200,7 +218,6 @@ const Timers = () => {
   return (
     <div className="p-4">
       <h2>⏳ Timers Management</h2>
-
       {/* 📌 Site Filter */}
       <CRow className="justify-content-start mb-3">
         <CCol md={4}>
@@ -219,7 +236,6 @@ const Timers = () => {
           </CFormSelect>
         </CCol>
       </CRow>
-
       {/* 📝 Timers Table */}
       <CCard className="shadow-sm">
         <CCardHeader>
@@ -294,19 +310,22 @@ const Timers = () => {
                       <CTableDataCell>
                         {block.robots[0]?.timer3_date}
                       </CTableDataCell>
-                      <CTableDataCell>
-                        {/* {![
-                          "Master User",
-                          "Project User",
-                          "Service User",
-                        ].includes(userInfo?.role) && ( */}
+                      <CTableDataCell style={{ minWidth: "150px" }}>
+                        <CButton
+                          color="info"
+                          size="sm"
+                          onClick={() => handleViewClick(block.robots[0])} // Open modal with this robot
+                          className="m-1"
+                        >
+                          View
+                        </CButton>
+
                         <Link
                           className="btn btn-sm btn-warning m-1"
                           to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
                         >
                           Update
                         </Link>
-                        {/* )} */}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -337,6 +356,65 @@ const Timers = () => {
           /> */}
         </CCardBody>
       </CCard>
+      {/* View */}
+      <CModal
+        size="lg"
+        scrollable
+        visible={viewModalVisible}
+        onClose={() => setViewModalVisible(false)}
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Robot Timer Details</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setViewModalVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          {selectedRobot && (
+            <>
+              <CTable bordered responsive>
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>Field</CTableHeaderCell>
+                    <CTableHeaderCell>Value</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {Object.entries(selectedRobot)
+                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
+                    .map(([key, value]) => (
+                      <CTableRow key={key} className="align-middle">
+                        <CTableDataCell className="fw-semibold text-uppercase">
+                          {key.replace(/_/g, " ")}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <span className="fw-medium">
+                            {Array.isArray(value)
+                              ? JSON.stringify(value)
+                              : String(value)}
+                          </span>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
+                </CTableBody>
+              </CTable>
+
+              {selectedRobot.last_activity && (
+                <>
+                  <h6 className="mt-3">Last Activity:</h6>
+                  <LastActivity lastactivity={selectedRobot.last_activity} />
+                </>
+              )}
+            </>
+          )}
+        </CModalBody>
+      </CModal>
     </div>
   );
 };
