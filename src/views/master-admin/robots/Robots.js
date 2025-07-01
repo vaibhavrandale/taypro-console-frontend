@@ -177,6 +177,8 @@ const Robots = () => {
 
   if (userInfo?.role === "Master Admin") {
     adminroute = "master-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
   } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo?.role === "Project Admin") {
@@ -189,47 +191,51 @@ const Robots = () => {
     adminroute = "site-technician";
   } else if (userInfo?.role === "Client Technician") {
     adminroute = "client-technician";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
   }
+
   return (
     <div className="p-2">
       <h2 className="text-center">All Robots</h2>
       <div className="d-flex justify-content-end mb-3">
-        {/* Hide Add Robots button for Master User, Project User, Service User
-        {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && ( */}
-        <Link
-          className="btn btn-sm btn-success m-1"
-          to="/master-admin/add-robot/add-robot-using-lorano"
-        >
-          Add Robots
-        </Link>
-        {/* // )} */}
+        {/* Add Robot - Only Master Admin */}
+        {userInfo?.role === "Master Admin" && (
+          <Link
+            className="btn btn-sm btn-success m-1"
+            to={`/${adminroute}/add-robot/add-robot-using-lorano`}
+          >
+            Add Robots
+          </Link>
+        )}
+        {/* Shift Block Wise - For Master Admin, Master User, Project User, Service User */}
+        {[
+          "Master Admin",
+          "Master User",
+          "Project User",
+          "Service User",
+        ].includes(userInfo?.role) && (
+          <Link
+            className="btn btn-sm btn-success m-1"
+            to={`/${adminroute}/robots/shift-block-wise`}
+          >
+            Shift Block Wise
+          </Link>
+        )}
 
-        {/* Hide Shift Block Wise button for Master User, Project User, Service User */}
-        {/* {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && ( */}
-        <Link
-          className="btn btn-sm btn-success m-1"
-          to="/master-admin/robots/shift-block-wise"
-        >
-          Shift Block Wise
-        </Link>
-        {/* )} */}
-
-        {/* Hide Activate Robots button for Master User, Project User, Service User */}
-        {/* {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && ( */}
-        <Link
-          className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/activate-robots"
-        >
-          Activate Robots
-        </Link>
-        {/* )} */}
+        {/* Activate Robots - Only Master Admin */}
+        {userInfo?.role === "Master Admin" && (
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to={`/${adminroute}/activate-robots`}
+          >
+            Activate Robots
+          </Link>
+        )}
       </div>
+
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
         <CCol md={4}>
@@ -333,45 +339,50 @@ const Robots = () => {
                 <CTableDataCell>{robot.block}</CTableDataCell>
                 <CTableDataCell>{robot.site_id}</CTableDataCell>
                 <CTableDataCell>
-                  {/* View button - visible to all roles */}
+                  {/* View - All Roles */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
                     to={`/${adminroute}/robots/${robot._id}`}
                   >
                     View
                   </Link>
-                  <button
-                    className="btn btn-sm btn-danger m-1"
-                    onClick={() => {
-                      setSelectedRobot(robot);
-                      setDeleteType("lns");
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    Delete- LNS
-                  </button>
-                  <button
-                    className="btn btn-sm btn-outline-warning m-1"
-                    onClick={() => {
-                      setSelectedRobot(robot);
-                      setDeleteType("db");
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    Delete- DB
-                  </button>
-                  {/* Conditional buttons - only for admin roles */}
-                  {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
-                  ) && (
-                    <>
-                      <Link
-                        className="btn btn-sm btn-warning m-1"
-                        to={`/master-admin/robots/update/${robot._id}`}
-                      >
-                        Update
-                      </Link>
-                    </>
+
+                  {/* Delete-LNS - Only Master Admin */}
+                  {userInfo?.role === "Master Admin" && (
+                    <button
+                      className="btn btn-sm btn-danger m-1"
+                      onClick={() => {
+                        setSelectedRobot(robot);
+                        setDeleteType("lns");
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      Delete- LNS
+                    </button>
+                  )}
+
+                  {/* Delete-DB - Only Master Admin */}
+                  {userInfo?.role === "Master Admin" && (
+                    <button
+                      className="btn btn-sm btn-outline-warning m-1"
+                      onClick={() => {
+                        setSelectedRobot(robot);
+                        setDeleteType("db");
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      Delete- DB
+                    </button>
+                  )}
+
+                  {/* Update - Only Master Admin */}
+                  {userInfo?.role === "Master Admin" && (
+                    <Link
+                      className="btn btn-sm btn-warning m-1"
+                      to={`/${adminroute}/robots/update/${robot._id}`}
+                    >
+                      Update
+                    </Link>
                   )}
                 </CTableDataCell>
               </CTableRow>

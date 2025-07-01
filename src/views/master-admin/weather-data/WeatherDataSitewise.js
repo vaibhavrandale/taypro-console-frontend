@@ -203,7 +203,7 @@ const WeatherDashboard = () => {
       {/* Site Id and Site Name Centered */}
       {selectedSiteDetails && weatherData.length > 0 && (
         <div className="text-center fw-bold fs-5 mb-4">
-          Weather Data for Site: {selectedSiteDetails.site_id} -{" "}
+          Weather Data for Site: {selectedSiteDetails.site_id}
           {selectedSiteDetails.site_name}
         </div>
       )}
