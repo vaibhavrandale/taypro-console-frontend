@@ -195,6 +195,16 @@ const _nav = [
             name: "Weather Timer Notifications",
             to: "/master-admin/weather-timer-notifications",
           },
+          {
+            component: CNavItem,
+            name: "Timer Execution Notification View",
+            to: "/master-admin/timer-execution-notification-view",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Data ",
+            to: "/master-admin/weather-data-sitewise",
+          },
         ],
       },
 
@@ -677,6 +687,11 @@ const _nav = [
             name: "Weather Timer Notifications",
             to: "/project-admin/weather-timer-notifications",
           },
+          {
+            component: CNavItem,
+            name: "Weather Data ",
+            to: "/service-admin/weather-data-sitewise",
+          },
         ],
       },
 
@@ -1051,6 +1066,11 @@ const _nav = [
             component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/service-admin/weather-timer-notifications",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Data ",
+            to: "/service-admin/weather-data-sitewise",
           },
         ],
       },

@@ -194,41 +194,41 @@ const Robots = () => {
     <div className="p-2">
       <h2 className="text-center">All Robots</h2>
       <div className="d-flex justify-content-end mb-3">
-        {/* Hide Add Robots button for Master User, Project User, Service User */}
+        {/* Hide Add Robots button for Master User, Project User, Service User
         {!["Master User", "Project User", "Service User"].includes(
           userInfo?.role
-        ) && (
-          <Link
-            className="btn btn-sm btn-success m-1"
-            to="/master-admin/add-robot/add-robot-using-lorano"
-          >
-            Add Robots
-          </Link>
-        )}
+        ) && ( */}
+        <Link
+          className="btn btn-sm btn-success m-1"
+          to="/master-admin/add-robot/add-robot-using-lorano"
+        >
+          Add Robots
+        </Link>
+        {/* // )} */}
 
         {/* Hide Shift Block Wise button for Master User, Project User, Service User */}
-        {!["Master User", "Project User", "Service User"].includes(
+        {/* {!["Master User", "Project User", "Service User"].includes(
           userInfo?.role
-        ) && (
-          <Link
-            className="btn btn-sm btn-success m-1"
-            to="/master-admin/robots/shift-block-wise"
-          >
-            Shift Block Wise
-          </Link>
-        )}
+        ) && ( */}
+        <Link
+          className="btn btn-sm btn-success m-1"
+          to="/master-admin/robots/shift-block-wise"
+        >
+          Shift Block Wise
+        </Link>
+        {/* )} */}
 
         {/* Hide Activate Robots button for Master User, Project User, Service User */}
-        {!["Master User", "Project User", "Service User"].includes(
+        {/* {!["Master User", "Project User", "Service User"].includes(
           userInfo?.role
-        ) && (
-          <Link
-            className="btn btn-sm btn-secondary m-1"
-            to="/master-admin/activate-robots"
-          >
-            Activate Robots
-          </Link>
-        )}
+        ) && ( */}
+        <Link
+          className="btn btn-sm btn-secondary m-1"
+          to="/master-admin/activate-robots"
+        >
+          Activate Robots
+        </Link>
+        {/* )} */}
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
@@ -340,7 +340,26 @@ const Robots = () => {
                   >
                     View
                   </Link>
-
+                  <button
+                    className="btn btn-sm btn-danger m-1"
+                    onClick={() => {
+                      setSelectedRobot(robot);
+                      setDeleteType("lns");
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    Delete- LNS
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline-warning m-1"
+                    onClick={() => {
+                      setSelectedRobot(robot);
+                      setDeleteType("db");
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    Delete- DB
+                  </button>
                   {/* Conditional buttons - only for admin roles */}
                   {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role
@@ -352,26 +371,6 @@ const Robots = () => {
                       >
                         Update
                       </Link>
-                      <button
-                        className="btn btn-sm btn-danger m-1"
-                        onClick={() => {
-                          setSelectedRobot(robot);
-                          setDeleteType("lns");
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete- LNS
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-warning m-1"
-                        onClick={() => {
-                          setSelectedRobot(robot);
-                          setDeleteType("db");
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete- DB
-                      </button>
                     </>
                   )}
                 </CTableDataCell>
