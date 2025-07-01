@@ -1534,6 +1534,15 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  // {
+  //   path: "/master-user/replace-lora/in-active-robots",
+  //   name: "In Active Robots",
+  //   element: (
+  //     <MasterUserRoute>
+  //       <InActiveRobots />
+  //     </MasterUserRoute>
+  //   ),
+  // },
   {
     path: "/master-user/inventories",
     name: "Inventories",

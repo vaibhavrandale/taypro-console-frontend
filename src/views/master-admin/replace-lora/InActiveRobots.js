@@ -216,17 +216,46 @@ const InActiveRobots = () => {
       handlePageChange(pageNumber);
     }
   };
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  }
 
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>All InActive Robots</h2>
-        <Link
-          className="btn btn-sm btn-danger text-white"
-          to="/master-admin/replace-lora/active-robots"
-        >
-          Active Robots
-        </Link>
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            className="btn btn-sm btn-danger text-white"
+            to="/master-admin/replace-lora/active-robots"
+          >
+            Active Robots
+          </Link>
+        )}
       </div>
       <CRow className="justify-content-end">
         <CCol md={4} lg={4}>
@@ -249,9 +278,14 @@ const InActiveRobots = () => {
             <CTableHeaderCell>Current Lora No</CTableHeaderCell>
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Action</CTableHeaderCell>
+
+            {/* Hide Action column for restricted users */}
+            {!["Master User", "Project User", "Service User"].includes(
+              userInfo?.role
+            ) && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
+
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
@@ -274,16 +308,20 @@ const InActiveRobots = () => {
                     <CBadge color="danger">In Active</CBadge>
                   )}
                 </CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="secondary"
-                    className="text-white"
-                    size="sm"
-                    onClick={() => openModal(robot)}
-                  >
-                    activate
-                  </CButton>
-                </CTableDataCell>
+                {!["Master User", "Project User", "Service User"].includes(
+                  userInfo?.role
+                ) && (
+                  <CTableDataCell>
+                    <CButton
+                      color="secondary"
+                      className="text-white"
+                      size="sm"
+                      onClick={() => openModal(robot)}
+                    >
+                      activate
+                    </CButton>
+                  </CTableDataCell>
+                )}
               </CTableRow>
             ))
           ) : (

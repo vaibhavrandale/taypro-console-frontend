@@ -217,6 +217,8 @@ const ActiveRobots = () => {
 
   if (userInfo?.role === "Master Admin") {
     adminroute = "master-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
   } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
   } else if (userInfo?.role === "Project Admin") {
@@ -229,22 +231,22 @@ const ActiveRobots = () => {
     adminroute = "site-technician";
   } else if (userInfo?.role === "Client Technician") {
     adminroute = "client-technician";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
   }
 
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Active Robots</h2>
-        {/* {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && ( */}
         <Link
           className="btn btn-sm btn-danger text-white"
-          to="/master-admin/replace-lora/in-active-robots"
+          to={`/${adminroute}/replace-lora/in-active-robots`}
         >
           In Active Robots
         </Link>
-        {/* )} */}
       </div>
       <CRow className="justify-content-end">
         <CCol md={4} lg={4}>
