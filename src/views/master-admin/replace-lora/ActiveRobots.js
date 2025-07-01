@@ -235,16 +235,16 @@ const ActiveRobots = () => {
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Active Robots</h2>
-        {!["Master User", "Project User", "Service User"].includes(
+        {/* {!["Master User", "Project User", "Service User"].includes(
           userInfo?.role
-        ) && (
-          <Link
-            className="btn btn-sm btn-danger text-white"
-            to="/master-admin/replace-lora/in-active-robots"
-          >
-            In Active Robots
-          </Link>
-        )}
+        ) && ( */}
+        <Link
+          className="btn btn-sm btn-danger text-white"
+          to="/master-admin/replace-lora/in-active-robots"
+        >
+          In Active Robots
+        </Link>
+        {/* )} */}
       </div>
       <CRow className="justify-content-end">
         <CCol md={4} lg={4}>
@@ -299,18 +299,18 @@ const ActiveRobots = () => {
                   )}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {!["Master User", "Project User", "Service User"].includes(
+                  {/* {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role
-                  ) && (
-                    <CButton
-                      color="primary"
-                      className="text-white"
-                      size="sm"
-                      onClick={() => openModal(robot)}
-                    >
-                      Deactivate
-                    </CButton>
-                  )}
+                  ) && ( */}
+                  <CButton
+                    color="primary"
+                    className="text-white"
+                    size="sm"
+                    onClick={() => openModal(robot)}
+                  >
+                    Deactivate
+                  </CButton>
+                  {/* )} */}
                 </CTableDataCell>
               </CTableRow>
             ))

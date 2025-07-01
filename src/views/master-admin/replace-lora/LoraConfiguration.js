@@ -343,18 +343,18 @@ const LoraConfiguration = () => {
     <div className="">
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="text-center">Lora Configuration</h2>
-        {!["Master User", "Project User", "Service User"].includes(
+        {/* {!["Master User", "Project User", "Service User"].includes(
           userInfo?.role
-        ) && (
-          <CButton
-            color="success"
-            size="sm"
-            className="text-white"
-            onClick={openAddModal}
-          >
-            + Add New
-          </CButton>
-        )}
+        ) && ( */}
+        <CButton
+          color="success"
+          size="sm"
+          className="text-white"
+          onClick={openAddModal}
+        >
+          + Add New
+        </CButton>
+        {/* )} */}
       </div>
       {/* Add Modal */}
       <CModal
@@ -520,17 +520,17 @@ const LoraConfiguration = () => {
                   >
                     View
                   </CButton>
-                  {!["Master User", "Project User", "Service User"].includes(
+                  {/* {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role
-                  ) && (
-                    <CButton
-                      color="success"
-                      className="btn-sm m-1"
-                      onClick={() => openModal(item)}
-                    >
-                      Update
-                    </CButton>
-                  )}
+                  ) && ( */}
+                  <CButton
+                    color="success"
+                    className="btn-sm m-1"
+                    onClick={() => openModal(item)}
+                  >
+                    Update
+                  </CButton>
+                  {/* )} */}
                 </CTableDataCell>
               </CTableRow>
             ))

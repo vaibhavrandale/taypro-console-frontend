@@ -93,6 +93,9 @@ import UserPerformanceDashboard from "./views/master-admin/user-performance/User
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
 import RobotPosition from "./views/robot-position/RobotPosition";
 import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteReport";
+import { element } from "prop-types";
+import TimerExecutionNotificationView from "./views/master-admin/timer-execution/GetTimerExecutionNotifications";
+import WeatherDataSitewise from "./views/master-admin/weather-data/WeatherDataSitewise";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -763,6 +766,26 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+
+  {
+    path: "/master-admin/timer-execution-notification-view",
+    name: "Timer Execution Notification View",
+    element: (
+      <MasterAdminRoute>
+        <TimerExecutionNotificationView />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <MasterAdminRoute>
+        <WeatherDataSitewise />
+      </MasterAdminRoute>
+    ),
+  },
+
   {
     path: "/master-admin/inventories",
     name: "Inventories",
@@ -2019,6 +2042,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <ProjectAdminRoute>
+        <WeatherDataSitewise />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-data",
     name: "Taypro All Site Data",
     element: (
@@ -3217,6 +3249,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <WeatherTimerNotifications />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <ServiceAdminRoute>
+        <WeatherDataSitewise />
       </ServiceAdminRoute>
     ),
   },
