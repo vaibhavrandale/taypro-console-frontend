@@ -96,6 +96,10 @@ import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteRep
 import { element } from "prop-types";
 import TimerExecutionNotificationView from "./views/master-admin/timer-execution/GetTimerExecutionNotifications";
 import WeatherDataSitewise from "./views/master-admin/weather-data/WeatherDataSitewise";
+import Microfiberdata from "./views/site-technician/micro-fiber-data/Microfiberdata";
+import AddMicrofiberdata from "./views/site-technician/micro-fiber-data/AddMicrofiberdata";
+import MicrofiberdataAdminWise from "./views/master-admin/micro-fiber-data/MicrofiberdataAdminWise";
+import UpdateMicrofiberdata from "./views/site-technician/micro-fiber-data/UpdateMicrofiberdata";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -586,15 +590,6 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  // {
-  //   path: "/master-admin/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <MasterAdminRoute>
-  //       <SearchRobot />
-  //     </MasterAdminRoute>
-  //   ),
-  // },
   {
     path: "/master-admin/robot-commands",
     name: "Robot Commands",
@@ -1282,6 +1277,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MonthlySiteReport />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <MasterAdminRoute>
+        <MicrofiberdataAdminWise />
       </MasterAdminRoute>
     ),
   },
@@ -2038,6 +2042,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <RobotActivity />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <ProjectAdminRoute>
+        <MicrofiberdataAdminWise />
       </ProjectAdminRoute>
     ),
   },
@@ -3127,6 +3140,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <ServiceAdminRoute>
+        <MicrofiberdataAdminWise />
       </ServiceAdminRoute>
     ),
   },
@@ -4481,6 +4503,33 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <DebugLog />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <SiteTechnicianRoute>
+        <Microfiberdata />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/micro-fiber-data/update-micro-fiber-data/:id",
+    name: "Update Micro Fiber Data",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdateMicrofiberdata />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/micro-fiber-data/add-micro-fiber-data",
+    name: "Add Micro Fiber Data",
+    element: (
+      <SiteTechnicianRoute>
+        <AddMicrofiberdata />
       </SiteTechnicianRoute>
     ),
   },

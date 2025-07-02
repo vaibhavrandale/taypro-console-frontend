@@ -262,6 +262,11 @@ const _nav = [
             name: "Project Handover",
             to: "/master-admin/project-handover",
           },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/master-admin/micro-fiber-data",
+          },
         ],
       },
       {
@@ -651,6 +656,11 @@ const _nav = [
             component: CNavItem,
             name: "Project Handover",
             to: "/project-admin/project-handover",
+          },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/project-admin/micro-fiber-data",
           },
         ],
       },
@@ -1098,6 +1108,11 @@ const _nav = [
             name: "Preventive Maintenance",
             to: "/service-admin/preventive-maintanance-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/service-admin/micro-fiber-data",
+          },
         ],
       },
 
@@ -1266,6 +1281,11 @@ const _nav = [
             component: CNavItem,
             name: "Cleaning Log",
             to: "/site-technician/cleaning-log-sites",
+          },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/site-technician/micro-fiber-data",
           },
         ],
       },
