@@ -269,19 +269,37 @@ const ActiveRobots = () => {
             <CTableHeaderCell>Current Lora No</CTableHeaderCell>
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Action</CTableHeaderCell>
+            {!["Master User", "Project User", "Service User"].includes(
+              userInfo?.role
+            ) && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan={7}>
+              <CTableDataCell
+                colSpan={
+                  ["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  )
+                    ? 6
+                    : 7
+                }
+              >
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : filteredRobots.length === 0 ? (
             <CTableRow>
-              <CTableDataCell colSpan={7}>
+              <CTableDataCell
+                colSpan={
+                  ["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  )
+                    ? 6
+                    : 7
+                }
+              >
                 No active Robots Found
               </CTableDataCell>
             </CTableRow>
@@ -300,20 +318,20 @@ const ActiveRobots = () => {
                     <CBadge color="danger">In Active</CBadge>
                   )}
                 </CTableDataCell>
-                <CTableDataCell>
-                  {/* {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
-                  ) && ( */}
-                  <CButton
-                    color="primary"
-                    className="text-white"
-                    size="sm"
-                    onClick={() => openModal(robot)}
-                  >
-                    Deactivate
-                  </CButton>
-                  {/* )} */}
-                </CTableDataCell>
+                {!["Master User", "Project User", "Service User"].includes(
+                  userInfo?.role
+                ) && (
+                  <CTableDataCell>
+                    <CButton
+                      color="primary"
+                      className="text-white"
+                      size="sm"
+                      onClick={() => openModal(robot)}
+                    >
+                      Deactivate
+                    </CButton>
+                  </CTableDataCell>
+                )}
               </CTableRow>
             ))
           )}

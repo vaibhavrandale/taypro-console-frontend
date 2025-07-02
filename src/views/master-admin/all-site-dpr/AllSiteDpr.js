@@ -426,7 +426,7 @@ const AllSiteDpr = () => {
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Date
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
               Action
             </CTableHeaderCell>
           </CTableRow>
