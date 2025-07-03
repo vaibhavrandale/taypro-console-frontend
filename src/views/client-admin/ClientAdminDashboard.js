@@ -92,13 +92,16 @@ const ClientAdminDashboard = () => {
     errorWeatherData: "",
   });
 
-  const [site_id, setSiteid] = useState(userInfo.assigned_sites[0].site_id);
+  const [site_id, setSiteid] = useState(
+    userInfo.assigned_sites[0]?.site_id || ""
+  );
   const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [robotsData, setRobotsData] = useState([]);
   const [siteCoordinates, setSiteCoordinates] = useState({});
   const [totalAreaCleaned, setTotalAreaCleaned] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
@@ -152,9 +155,8 @@ const ClientAdminDashboard = () => {
     const fetchWeatherData = async () => {
       dispatch({ type: "FETCH_WEATHER_REQUEST" });
       try {
-        const response = await axios.post(
-          `/api/v1/weatherdata/get-by-siteId`,
-          { siteId: site_id },
+        const response = await axios.get(
+          `/api/v1/weatherdata/client/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -164,7 +166,7 @@ const ClientAdminDashboard = () => {
           payload: response.data.data,
         });
 
-        console.log("Weather Data:", response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_WEATHER_FAIL",

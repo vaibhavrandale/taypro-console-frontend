@@ -448,16 +448,20 @@ const PreventiveMaintanancrDashboard = () => {
                               overflow: "hidden",
                             }}
                           >
-                            <CImage
-                              className="d-block"
-                              src={item.image}
-                              alt={item.title}
-                              style={{
-                                maxHeight: "100%",
-                                maxWidth: "100%",
-                                objectFit: "contain",
-                              }}
-                            />
+                            <Link to={item.image} target="_blank">
+                              <CImage
+                                className="d-block mx-auto"
+                                src={item.image}
+                                alt={item.title}
+                                style={{
+                                  maxHeight: "100%",
+                                  maxWidth: "70%",
+                                  objectFit: "contain",
+                                  display: "block",
+                                  margin: "0 auto",
+                                }}
+                              />
+                            </Link>
                           </div>
                           <div className="carousel-caption d-md-block bg-dark bg-opacity-50 p-2 rounded">
                             <h5>{item.title}</h5>
