@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CBadge,
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
@@ -132,6 +133,13 @@ const AddMicrofiberdata = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!site_id || !image || !state.microfiberdata.category) {
+      toast.error(
+        "All fields are required.Please fill out the form completely."
+      );
+      return;
+    }
+
     dispatch({ type: "SUBMIT_REQUEST" });
 
     const newdata = {
@@ -257,7 +265,11 @@ const AddMicrofiberdata = () => {
               </CCol>
             </CRow>
 
-            <Link onClick={handleSubmit} className="btn btn-warning btn-sm">
+            <CButton
+              onClick={handleSubmit}
+              className="btn btn-warning btn-sm"
+              disabled={state.loading}
+            >
               {state.loading ? (
                 <>
                   Adding..
@@ -266,7 +278,7 @@ const AddMicrofiberdata = () => {
               ) : (
                 "Add"
               )}
-            </Link>
+            </CButton>
           </form>
         </CCardBody>
       </CCard>
