@@ -259,7 +259,7 @@ const ClientAdminDashboard = () => {
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-2">
         <CCol md={3} className="mb-3">
           {loadingSiteIds ? (
             <LoadingSpinner />
@@ -339,7 +339,7 @@ const ClientAdminDashboard = () => {
                         }}
                       >
                         Last Fetched:{" "}
-                        {new Date(weatherData?.createdAt).toLocaleString()}
+                        {new Date(weatherData?.time).toLocaleString()}
                       </div>
 
                       <div className="mt-2 text-lg font-semibold">
