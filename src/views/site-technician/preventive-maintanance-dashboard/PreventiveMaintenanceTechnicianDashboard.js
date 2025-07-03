@@ -1,7 +1,10 @@
 import {
   CBadge,
+  CCarousel,
+  CCarouselItem,
   CCol,
   CFormInput,
+  CImage,
   CModal,
   CModalBody,
   CModalHeader,
@@ -313,16 +316,18 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
           </CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setModalVisible(false)}
             style={{ background: "none" }}
           >
             <CIcon icon={cilX} size="lg" />
           </button>
         </CModalHeader>
+
         <CModalBody>
           {selectedPm && (
             <>
+              {/* ✅ Data Table */}
               <CTable bordered responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -334,11 +339,19 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                 <CTableBody>
                   {Object.entries(formData)
                     .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
+                      ([key]) =>
+                        key !== "last_activity" &&
+                        key !== "is_delete" &&
+                        ![
+                          "oiling_need_for_motors_image",
+                          "oiling_need_for_bearing_condition_image",
+                          "physical_condition_of_channel_image",
+                          "physical_condition_of_transPipe_image",
+                        ].includes(key)
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase ">
+                        <CTableDataCell className="fw-semibold text-uppercase">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
 
@@ -350,11 +363,8 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                             >
                               {value ? "Active" : "Inactive"}
                             </CBadge>
-                          ) : /* Image Fields */
-                          key.includes("_image") && value ? (
-                            <img src={value} alt={key} width="50" height="50" />
-                          ) : /* Date Fields */
-                          key.includes("atedAt") && key !== "site_location" ? (
+                          ) : key.includes("atedAt") &&
+                            key !== "site_location" ? (
                             <CTooltip
                               content={new Date(value).toLocaleString()}
                               placement="top"
@@ -366,7 +376,7 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                               </span>
                             </CTooltip>
                           ) : (
-                            <span className=" fw-medium">{String(value)}</span>
+                            <span className="fw-medium">{String(value)}</span>
                           )}
                         </CTableDataCell>
                       </CTableRow>
@@ -374,6 +384,80 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                 </CTableBody>
               </CTable>
 
+              {/* ✅ Image Carousel with Length Check */}
+              <div className="my-4">
+                {(() => {
+                  const images = [
+                    {
+                      image: formData.oiling_need_for_motors_image,
+                      title: "Oiling Need for Motors Image",
+                    },
+                    {
+                      image: formData.oiling_need_for_bearing_condition_image,
+                      title: "Oiling Need for Bearing Condition Image",
+                    },
+                    {
+                      image: formData.physical_condition_of_channel_image,
+                      title: "Physical Condition of Channel Image",
+                    },
+                    {
+                      image: formData.physical_condition_of_transPipe_image,
+                      title: "Physical Condition of TransPipe Image",
+                    },
+                  ].filter((item) => item.image);
+
+                  if (images.length === 0) {
+                    return (
+                      <div className="text-center text-muted py-3">
+                        No Preventive Maintenance Images Available
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <>
+                      <h5 className="text-center text-light my-4">
+                        🔵 PM Images
+                      </h5>
+                      <CCarousel controls={images.length > 1} indicators>
+                        {images.map((item, index) => (
+                          <CCarouselItem key={index}>
+                            <div
+                              style={{
+                                height: "500px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <Link to={item.image} target="_blank">
+                                <CImage
+                                  className="d-block mx-auto"
+                                  src={item.image}
+                                  alt={item.title}
+                                  style={{
+                                    maxHeight: "100%",
+                                    maxWidth: "70%",
+                                    objectFit: "contain",
+                                    display: "block",
+                                    margin: "0 auto",
+                                  }}
+                                />
+                              </Link>
+                            </div>
+                            <div className="carousel-caption d-md-block bg-dark bg-opacity-50 p-2 rounded">
+                              <h6>{item.title}</h6>
+                            </div>
+                          </CCarouselItem>
+                        ))}
+                      </CCarousel>
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* ✅ Last Activity */}
               {formData.last_activity && (
                 <LastActivity lastactivity={formData.last_activity} />
               )}

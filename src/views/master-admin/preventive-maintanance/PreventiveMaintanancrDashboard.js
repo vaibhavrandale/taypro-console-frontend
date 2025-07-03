@@ -1,7 +1,10 @@
 import {
   CBadge,
+  CCarousel,
+  CCarouselItem,
   CCol,
   CFormInput,
+  CImage,
   CModal,
   CModalBody,
   CModalHeader,
@@ -311,8 +314,8 @@ const PreventiveMaintanancrDashboard = () => {
         limit={limit}
         handleLimitChange={setLimit} // New prop
       />
-
       <CModal
+        backdrop="static"
         size="xl"
         scrollable
         visible={modalVisible}
@@ -325,13 +328,14 @@ const PreventiveMaintanancrDashboard = () => {
           </CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setModalVisible(false)}
             style={{ background: "none" }}
           >
             <CIcon icon={cilX} size="lg" />
           </button>
         </CModalHeader>
+
         <CModalBody>
           {selectedPm && (
             <>
@@ -343,128 +347,28 @@ const PreventiveMaintanancrDashboard = () => {
                   </CTableRow>
                 </CTableHead>
 
-                {/* <CTableBody>
-                  {Object.entries(formData)
-                    .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
-                    ) //
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase ">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {typeof value === "boolean" ? (
-                            <CBadge
-                              color={value ? "success" : "danger"}
-                              shape="rounded-pill"
-                            >
-                              {value ? "Active" : "Inactive"}
-                            </CBadge>
-                          ) : (key.includes("date") || key.includes("at")) &&
-                            key !== "site_location" ? (
-                            <span className="">
-                              <CTooltip
-                                content={new Date(value).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(new Date(value), {
-                                    addSuffix: true,
-                                  })}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          ) : (
-                            <span className=" fw-medium">
-                              {String(value)}
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody> */}
-
-                {/* <CTableBody>
-                  {Object.entries(formData)
-                    .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
-                    )
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase ">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {typeof value === "boolean" ? (
-                            <CBadge
-                              color={value ? "success" : "danger"}
-                              shape="rounded-pill"
-                            >
-                              {value ? "Active" : "Inactive"}
-                            </CBadge>
-                          ) : (key.includes("date") || key.includes("at")) &&
-                            key !== "site_location" ? (
-                            <span>
-                              <CTooltip
-                                content={new Date(value).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(new Date(value), {
-                                    addSuffix: true,
-                                  })}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          ) : typeof value === "object" && value !== null ? (
-                            // Handle Nested Object
-                            <div className="d-flex flex-column">
-                              {Object.entries(value).map(([subKey, subValue]) =>
-                                subKey === "image" ? (
-                                  <img
-                                    key={subKey}
-                                    src={subValue}
-                                    alt={key}
-                                    width="50"
-                                    height="50"
-                                  />
-                                ) : (
-                                  <span
-                                    key={subKey}
-                                    className=" fw-medium"
-                                  >
-                                    {subKey.replace(/_/g, " ")}:{" "}
-                                    {String(subValue)}
-                                  </span>
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <span className=" fw-medium">
-                              {String(value)}
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody> */}
-
                 <CTableBody>
                   {Object.entries(formData)
                     .filter(
-                      ([key]) => key !== "last_activity" && key !== "is_delete"
+                      ([key]) =>
+                        key !== "last_activity" &&
+                        key !== "is_delete" &&
+                        ![
+                          "oiling_need_for_motors_image",
+                          "physical_condition_of_transPipe_image",
+                          "physical_condition_of_channel_image",
+                          "physical_condition_of_top_bottom_cover_image",
+                          "oiling_need_for_bearing_condition_image",
+                          "oiling_need_for_coupling_image",
+                        ].includes(key)
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">
-                        {/* Label Column */}
-                        <CTableDataCell className="fw-semibold text-uppercase ">
+                        <CTableDataCell className="fw-semibold text-uppercase">
                           {key.replace(/_/g, " ")}
                         </CTableDataCell>
 
-                        {/* Value Column */}
                         <CTableDataCell>
-                          {/* Boolean Fields (Active/Inactive) */}
                           {typeof value === "boolean" ? (
                             <CBadge
                               color={value ? "success" : "danger"}
@@ -472,11 +376,8 @@ const PreventiveMaintanancrDashboard = () => {
                             >
                               {value ? "Active" : "Inactive"}
                             </CBadge>
-                          ) : /* Image Fields */
-                          key.includes("_image") && value ? (
-                            <img src={value} alt={key} width="50" height="50" />
-                          ) : /* Date Fields */
-                          key.includes("atedAt") && key !== "site_location" ? (
+                          ) : key.includes("atedAt") &&
+                            key !== "site_location" ? (
                             <CTooltip
                               content={new Date(value).toLocaleString()}
                               placement="top"
@@ -488,14 +389,85 @@ const PreventiveMaintanancrDashboard = () => {
                               </span>
                             </CTooltip>
                           ) : (
-                            /* Default Text Value */
-                            <span className=" fw-medium">{String(value)}</span>
+                            <span className="fw-medium">{String(value)}</span>
                           )}
                         </CTableDataCell>
                       </CTableRow>
                     ))}
                 </CTableBody>
               </CTable>
+
+              <div className="my-4">
+                {(() => {
+                  const images = [
+                    {
+                      image: formData.oiling_need_for_motors_image,
+                      title: "Motors Oiling Image",
+                    },
+                    {
+                      image: formData.physical_condition_of_transPipe_image,
+                      title: "Trans Pipe Image",
+                    },
+                    {
+                      image: formData.physical_condition_of_channel_image,
+                      title: "Channel Image",
+                    },
+                    {
+                      image:
+                        formData.physical_condition_of_top_bottom_cover_image,
+                      title: "Top Bottom Cover Image",
+                    },
+                    {
+                      image: formData.oiling_need_for_bearing_condition_image,
+                      title: "Bearing Oiling Image",
+                    },
+                    {
+                      image: formData.oiling_need_for_coupling_image,
+                      title: "Coupling Oiling Image",
+                    },
+                  ].filter((item) => item.image);
+
+                  if (images.length === 0) {
+                    return (
+                      <div className="text-center text-muted py-3">
+                        No Preventive Maintenance Images Available
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <CCarousel controls={images.length > 1} indicators>
+                      {images.map((item, index) => (
+                        <CCarouselItem key={index}>
+                          <div
+                            style={{
+                              height: "400px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <CImage
+                              className="d-block"
+                              src={item.image}
+                              alt={item.title}
+                              style={{
+                                maxHeight: "100%",
+                                maxWidth: "100%",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+                          <div className="carousel-caption d-md-block bg-dark bg-opacity-50 p-2 rounded">
+                            <h5>{item.title}</h5>
+                          </div>
+                        </CCarouselItem>
+                      ))}
+                    </CCarousel>
+                  );
+                })()}
+              </div>
 
               {formData.last_activity && (
                 <LastActivity lastactivity={formData.last_activity} />

@@ -7,6 +7,7 @@ import {
   CCardBody,
   CRow,
   CCol,
+  CFormSelect,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -44,23 +45,33 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_FAIL":
       return { ...state, loadingRobots: false, error: action.payload };
 
-    case "ADD_ROBOTS_REQUEST":
-      return { ...state, loadingaddRobots: true, error: "" };
-    case "ADD_ROBOTS_SUCCESS":
-      return { ...state, loadingaddRobots: false, robots: action.payload };
-    case "ADD_ROBOTS_FAIL":
-      return { ...state, loadingaddRobots: false, error: action.payload };
+    case "ADD_ROBOT_AUTO_REQUEST":
+      return { ...state, loadingAddRobotAuto: true, error: "" };
+    case "ADD_ROBOT_AUTO_SUCCESS":
+      return { ...state, loadingAddRobotAuto: false, robots: action.payload };
+    case "ADD_ROBOT_AUTO_FAIL":
+      return { ...state, loadingAddRobotAuto: false, error: action.payload };
+
+    case "ADD_ROBOT_MANUAL_REQUEST":
+      return { ...state, loadingAddRobotManual: true, error: "" };
+    case "ADD_ROBOT_MANUAL_SUCCESS":
+      return { ...state, loadingAddRobotManual: false, robots: action.payload };
+    case "ADD_ROBOT_MANUAL_FAIL":
+      return { ...state, loadingAddRobotManual: false, error: action.payload };
 
     case "SELECT_LORA_REQUEST":
       return { ...state, loadingFields: true };
     case "SELECT_LORA_SUCCESS":
-      return {
-        ...state,
-        loadingFields: false,
-        selectedLora: action.payload,
-      };
+      return { ...state, loadingFields: false, selectedLora: action.payload };
     case "SELECT_LORA_FAIL":
       return { ...state, loadingFields: false };
+
+    case "FETCH_SITEID_REQUEST":
+      return { ...state, loadingSites: true, error: "" };
+    case "FETCH_SITEID_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITEID_FAIL":
+      return { ...state, loadingSites: false, error: action.payload };
 
     default:
       return state;
@@ -68,21 +79,12 @@ const reducer = (state, action) => {
 };
 
 const AddRobotUsingLoraNo = () => {
-  const [
-    {
-      loadingRobots,
-      robots,
-      lora_configuration,
-      loadingaddRobots,
-      loadingFields,
-      loadingloraconfig,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(reducer, {
     robots: [],
     lora_configuration: [],
     loadingRobots: false,
-    loadingaddRobots: false,
+    loadingAddRobotAuto: false,
+    loadingAddRobotManual: false,
     loadingloraconfig: false,
     loadingFields: false,
     selectedLora: null,
@@ -90,12 +92,33 @@ const AddRobotUsingLoraNo = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    sites: [],
+    loadingSites: false,
   });
+
+  const {
+    robots,
+    lora_configuration,
+    loadingRobots,
+    loadingAddRobotAuto,
+    loadingAddRobotManual,
+    loadingloraconfig,
+    loadingFields,
+    sites,
+  } = state;
 
   const [formData, setFormData] = useState({
     lora_no: "",
     robot_no: "",
     deveui: "",
+    site_id: "",
+  });
+
+  const [manualRRobotData, setManualRobotData] = useState({
+    robot_no: "",
+    block: "Block-1",
+    deveui: "",
+    robot_type: "Automatic",
     site_id: "",
   });
 
@@ -107,33 +130,37 @@ const AddRobotUsingLoraNo = () => {
   const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
+    const fetchSiteIds = async () => {
+      dispatch({ type: "FETCH_SITEID_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITEID_FAIL",
+          payload: error.response?.data?.error || "Error fetching sites",
+        });
+        toast.error(error.response?.data?.error || "Error fetching sites");
+      }
     };
+
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/robots/get-robots`,
-          pagination,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          { pg: page, limit },
+          { headers: { Authorization: `Bearer ${authtoken}` } }
         );
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
+            totalPages: Math.ceil(result.data.total / result.data.limit),
+            hasNextPage: result.data.hasNextPage,
+            hasPrevPage: result.data.hasPrevPage,
           },
         });
       } catch (error) {
@@ -146,6 +173,7 @@ const AddRobotUsingLoraNo = () => {
         );
       }
     };
+
     const fetchloraconfigurations = async () => {
       dispatch({ type: "FETCH_LORACONFIG_REQUEST" });
       try {
@@ -155,12 +183,9 @@ const AddRobotUsingLoraNo = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
-          payload: {
-            data: result.data.data,
-          },
+          payload: { data: result.data.data },
         });
       } catch (error) {
         dispatch({
@@ -171,17 +196,79 @@ const AddRobotUsingLoraNo = () => {
       }
     };
 
+    fetchSiteIds();
     fetchloraconfigurations();
     fetchRobots();
   }, [authtoken, limit, page]);
 
-  // Get only available lora_no (not already in robots array)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.lora_no) return toast.error("Please select a valid LoRa No.");
+    dispatch({ type: "ADD_ROBOT_AUTO_REQUEST" });
+    try {
+      const response = await axios.post(
+        "/api/v1/robots",
+        { ...formData, robot_type: "Automatic", block: "Block-1" },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      toast.success(`Robot ${formData.robot_no} added successfully!`);
+      dispatch({
+        type: "ADD_ROBOT_AUTO_SUCCESS",
+        payload: [...robots, response.data.data],
+      });
+      setFormData({ lora_no: "", robot_no: "", deveui: "", site_id: "" });
+      setSearchTerm("");
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to Add robot");
+      dispatch({ type: "ADD_ROBOT_AUTO_FAIL", payload: "Failed to Add robot" });
+    }
+  };
+
+  const addRobotUsingManualData = async (e) => {
+    e.preventDefault();
+    if (
+      !manualRRobotData.robot_no ||
+      !manualRRobotData.deveui ||
+      !manualRRobotData.site_id
+    ) {
+      return toast.error(
+        "Please fill all required fields (Robot No, Deveui, Site)"
+      );
+    }
+    dispatch({ type: "ADD_ROBOT_MANUAL_REQUEST" });
+    try {
+      const response = await axios.post(
+        "/api/v1/robots/create-robot-using-manual-data",
+        manualRRobotData,
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);
+      dispatch({
+        type: "ADD_ROBOT_MANUAL_SUCCESS",
+        payload: [...robots, response.data.data],
+      });
+      setManualRobotData({
+        robot_no: "",
+        block: "Block-1",
+        deveui: "",
+        robot_type: "Automatic",
+        site_id: "",
+      });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.error || "Failed to add robot manually"
+      );
+      dispatch({
+        type: "ADD_ROBOT_MANUAL_FAIL",
+        payload: error.response?.data?.error,
+      });
+    }
+  };
+
   const assignedLoraNos = robots.map((robot) => robot.lora_no);
   const availableLoraConfig = lora_configuration.filter(
     (lora) => !assignedLoraNos.includes(lora.serial)
   );
-
-  // Filter available lora config based on search term
   const filteredLoraConfig = availableLoraConfig.filter((lora) =>
     lora.serial.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -193,195 +280,225 @@ const AddRobotUsingLoraNo = () => {
 
   const handleLoraSelect = (lora) => {
     dispatch({ type: "SELECT_LORA_REQUEST" });
-
     setFormData({
       lora_no: lora.serial,
       robot_no: lora.robot_no,
       deveui: lora.formatted_deveui,
       site_id: lora.site_id,
     });
-
     setSearchTerm(lora.serial.toString());
     setShowDropdown(false);
-
     dispatch({ type: "SELECT_LORA_SUCCESS", payload: lora });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.lora_no) {
-      toast.error("Please select a valid LoRa No.");
-      return;
-    }
-
-    const newRobot = {
-      ...formData,
-      robot_type: "Automatic",
-      block: "Block-1",
-    };
-
-    try {
-      dispatch({ type: "ADD_ROBOTS_REQUEST" });
-      const response = await axios.post("/api/v1/robots", newRobot, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-
-      if (response.status === 201) {
-        toast.success(`Robot ${formData.robot_no} added successfully!`);
-
-        dispatch({
-          type: "ADD_ROBOTS_SUCCESS",
-          payload: [...robots, response.data.data],
-        });
-
-        setFormData({
-          lora_no: "",
-          robot_no: "",
-          formatted_deveui: "",
-          site_id: "",
-        });
-        setSearchTerm("");
-      } else {
-        throw new Error("Unexpected response from the server");
-      }
-    } catch (error) {
-      toast.error(error.response.data.error);
-      dispatch({
-        type: "ADD_ROBOTS_FAIL",
-        payload: "Failed to Add robot",
-      });
-    }
-  };
-
   return (
-    <CCard className="p-4">
-      <div className="d-flex justify-content-between align-items-center">
-        <h4>Add Robot</h4>
-        <Link
-          className="btn btn-sm btn-secondary m-1"
-          to="/master-admin/activate-robots"
-        >
-          Activate Robots
-        </Link>
-      </div>
-      <CCardBody className="">
-        {loadingRobots && loadingRobots ? (
-          <LoadingSpinner />
-        ) : (
-          <CForm onSubmit={handleSubmit}>
-            <CRow className="mb-3">
-              <CCol md={4}>
-                <label>Lora No {loadingloraconfig && <LoadingSpinner />}</label>
-                <div style={{ position: "relative" }}>
+    <>
+      <CCard className="p-4">
+        <div className="d-flex justify-content-between align-items-center">
+          <h4>Add Robot</h4>
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to="/master-admin/activate-robots"
+          >
+            Activate Robots
+          </Link>
+        </div>
+        <CCardBody className="p-4 mb-4">
+          {loadingRobots ? (
+            <LoadingSpinner />
+          ) : (
+            <CForm onSubmit={handleSubmit}>
+              <CRow className="mb-3">
+                <CCol md={4}>
+                  <label>
+                    Lora No {loadingloraconfig && <LoadingSpinner />}
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    <CFormInput
+                      type="text"
+                      placeholder="Search Lora No..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      onFocus={() => setShowDropdown(true)}
+                    />
+                    {showDropdown && searchTerm && (
+                      <div
+                        className="bg-important"
+                        style={{
+                          position: "absolute",
+                          width: "100%",
+                          maxHeight: "200px",
+                          overflowY: "auto",
+                          zIndex: 1000,
+                          border: "1px solid #fff",
+                          borderRadius: "4px",
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        {filteredLoraConfig.length === 0 ? (
+                          <div className="p-2 text-muted">
+                            No matching Lora found
+                          </div>
+                        ) : (
+                          filteredLoraConfig.map((lora) => (
+                            <div
+                              key={lora.serial}
+                              className=" p-2 hover-highlight"
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleLoraSelect(lora)}
+                            >
+                              {lora.serial}- {lora.robot_no}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </CCol>
+              </CRow>
+              {loadingFields ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  <CRow>
+                    {formData.robot_no && (
+                      <CCol md={3}>
+                        <label>Robot No</label>
+                        <CFormInput
+                          type="text"
+                          disabled
+                          value={formData.robot_no}
+                          readOnly
+                        />
+                      </CCol>
+                    )}
+                    {formData.deveui && (
+                      <CCol md={3}>
+                        <label>Deveui</label>
+                        <CFormInput
+                          type="text"
+                          disabled
+                          value={formData.deveui}
+                          readOnly
+                        />
+                      </CCol>
+                    )}
+                    {formData.site_id && (
+                      <CCol md={3}>
+                        <label>Site ID</label>
+                        <CFormInput
+                          type="text"
+                          disabled
+                          value={formData.site_id}
+                          readOnly
+                        />
+                      </CCol>
+                    )}
+                  </CRow>
+
+                  <CRow className="mb-3"></CRow>
+
+                  <CButton type="submit" size="sm" color="primary">
+                    {loadingAddRobotAuto ? (
+                      <>
+                        Adding..
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Add Robot"
+                    )}
+                  </CButton>
+                </>
+              )}
+            </CForm>
+          )}
+        </CCardBody>
+      </CCard>
+
+      <CCard className="p-3 mt-3">
+        <div className="d-flex justify-content-between align-items-center">
+          <h4>Add Robot Using Manual Data</h4>
+        </div>
+        <CCardBody>
+          {loadingRobots ? (
+            <LoadingSpinner />
+          ) : (
+            <CForm onSubmit={addRobotUsingManualData}>
+              <CRow>
+                <CCol md={3}>
+                  <label>Robot No</label>
                   <CFormInput
                     type="text"
-                    placeholder="Search Lora No..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onFocus={() => setShowDropdown(true)}
+                    value={manualRRobotData.robot_no}
+                    onChange={(e) =>
+                      setManualRobotData({
+                        ...manualRRobotData,
+                        robot_no: e.target.value,
+                      })
+                    }
                   />
-                  {showDropdown && searchTerm && (
-                    <div
-                      className="bg-important"
-                      style={{
-                        position: "absolute",
-                        width: "100%",
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        zIndex: 1000,
-
-                        border: "1px solid #fff",
-                        borderRadius: "4px",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      {filteredLoraConfig.length === 0 ? (
-                        <div className="p-2 text-muted">
-                          No matching Lora found
-                        </div>
-                      ) : (
-                        filteredLoraConfig.map((lora) => (
-                          <div
-                            key={lora.serial}
-                            className=" p-2 hover-highlight"
-                            style={{
-                              cursor: "pointer",
-                            }}
-                            onClick={() => handleLoraSelect(lora)}
-                          >
-                            {lora.serial}- {lora.robot_no}
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
-                </div>
-              </CCol>
-            </CRow>
-            {loadingFields ? (
-              <LoadingSpinner />
-            ) : (
-              <>
-                <CRow>
-                  {formData.robot_no && (
-                    <CCol md={3}>
-                      <label>Robot No</label>
-                      <CFormInput
-                        type="text"
-                        name="robot_no"
-                        disabled
-                        value={formData.robot_no}
-                        readOnly
-                      />
-                    </CCol>
-                  )}
-
-                  {formData.deveui && (
-                    <CCol md={3}>
-                      <label>Deveui</label>
-                      <CFormInput
-                        type="text"
-                        name="deveui"
-                        disabled
-                        value={formData.deveui}
-                        readOnly
-                      />
-                    </CCol>
-                  )}
-
-                  {formData.site_id && (
-                    <CCol md={3}>
-                      <label>Site ID</label>
-                      <CFormInput
-                        type="text"
-                        name="site_id"
-                        disabled
-                        value={formData.site_id}
-                        readOnly
-                      />
-                    </CCol>
-                  )}
-                </CRow>
-
-                <CRow className="mb-3"></CRow>
-
-                <CButton type="submit" size="sm" color="primary">
-                  {loadingaddRobots ? (
-                    <>
-                      Adding..
-                      <LoadingSpinner />
-                    </>
-                  ) : (
-                    "Add Robot"
-                  )}
-                </CButton>
-              </>
-            )}
-          </CForm>
-        )}
-      </CCardBody>
-    </CCard>
+                </CCol>
+                <CCol md={3}>
+                  <label>Block</label>
+                  <CFormInput
+                    type="text"
+                    value={manualRRobotData.block}
+                    onChange={(e) =>
+                      setManualRobotData({
+                        ...manualRRobotData,
+                        block: e.target.value,
+                      })
+                    }
+                  />
+                </CCol>
+                <CCol md={3}>
+                  <label>deveui</label>
+                  <CFormInput
+                    type="text"
+                    value={manualRRobotData.deveui}
+                    onChange={(e) =>
+                      setManualRobotData({
+                        ...manualRRobotData,
+                        deveui: e.target.value,
+                      })
+                    }
+                  />
+                </CCol>
+                <CCol md={3}>
+                  <label>Site ID</label>
+                  <CFormSelect
+                    value={manualRRobotData.site_id}
+                    onChange={(e) =>
+                      setManualRobotData({
+                        ...manualRRobotData,
+                        site_id: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Site</option>
+                    {sites.map((item) => (
+                      <option key={item.site_id} value={item.site_id}>
+                        {item.site_id}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                </CCol>
+              </CRow>
+              <CButton type="submit" size="sm" color="primary" className="mt-3">
+                {loadingAddRobotManual ? (
+                  <>
+                    Adding..
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "Add Robot Manually"
+                )}
+              </CButton>
+            </CForm>
+          )}
+        </CCardBody>
+      </CCard>
+    </>
   );
 };
 

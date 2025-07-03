@@ -193,3 +193,17 @@ input {
 icon {
   background-color: var(--primary) !important;
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: brightness(0) invert(1) !important;
+}
+.carousel-control-prev,
+.carousel-control-next {
+  background-color: rgba(88, 80, 80, 0.3) !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
