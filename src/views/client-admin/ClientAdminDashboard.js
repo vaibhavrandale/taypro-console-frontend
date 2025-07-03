@@ -281,11 +281,9 @@ const ClientAdminDashboard = () => {
         </CCol>
 
         <div className="flex flex-wrap gap-4">
-          <CRow>
-            <CCol>
-              <div
-                style={{ flex: "1 1 60%", minWidth: "350px", height: "400px" }}
-              >
+          <CRow className="gap-3">
+            <CCol xs={12} md={7}>
+              <div style={{ width: "100%", height: "400px" }}>
                 {loadingSiteDetails ? (
                   <LoadingSpinner />
                 ) : (
@@ -298,9 +296,10 @@ const ClientAdminDashboard = () => {
             </CCol>
 
             <CCol
+              xs={12}
               md={4}
               className="d-flex align-items-center justify-content-center"
-              style={{ minHeight: "300px" }}
+              style={{ minHeight: "400px" }}
             >
               {loadingWeatherData ? (
                 <div className="text-center">
@@ -309,7 +308,7 @@ const ClientAdminDashboard = () => {
               ) : errorWeatherData ? (
                 <p className="text-center text-muted">{errorWeatherData}</p>
               ) : (
-                <div className="flex flex-col gap-3 ">
+                <div className="flex flex-col gap-3 w-100">
                   <h6 className="mx-3">
                     Hello{" "}
                     <span className="text-primary">{userInfo.username}</span>,
