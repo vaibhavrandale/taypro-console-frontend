@@ -72,6 +72,23 @@ const Notifications = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    // eslint-disable-next-line no-unused-vars
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
   useEffect(() => {
     const fetchNotifications = async () => {
       let pagination = {

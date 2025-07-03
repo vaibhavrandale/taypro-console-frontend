@@ -439,7 +439,24 @@ const RobotOperating = () => {
               </h4>
             </CCol>
           </CRow>
+          {userInfo?.role === "Master Admin" && robot?._id && (
+            <div className="d-flex justify-content-end gap-2 mb-3">
+              <Link
+                className="btn btn-sm btn-outline-primary"
+                to={`/${adminroute}/robots/${robot._id}`}
+              >
+                View Robot
+              </Link>
 
+              <Link
+                to={`/${adminroute}/robots/update/${robot._id}`}
+                className="btn btn-sm btn-outline-warning"
+              >
+                Update Robot
+              </Link>
+            </div>
+          )}
+          )}
           {/* Action Buttons */}
           <CRow className="my-2">
             <CCol>
@@ -526,7 +543,6 @@ const RobotOperating = () => {
           <CRow className="my-2">
             <CCol></CCol>
           </CRow>
-
           <CRow>
             {/* First Card */}
             <CCol md={5} className="mt-2">
@@ -702,7 +718,6 @@ const RobotOperating = () => {
               </CCol>
             )}
           </CRow>
-
           {/* Modal for Commands */}
           <CModal
             scrollable
@@ -876,7 +891,6 @@ const RobotOperating = () => {
               </CButton>
             </CModalFooter>
           </CModal>
-
           <CRow className="my-2">
             {/* First Card - Cleaning Cycle */}
             <CCol md={3} className="mt-2">

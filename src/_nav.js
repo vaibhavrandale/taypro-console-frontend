@@ -234,6 +234,11 @@ const _nav = [
             name: "User Performance",
             to: "/master-admin/user-performance-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "Chat",
+            to: "/master-admin/chat",
+          },
         ],
       },
       {

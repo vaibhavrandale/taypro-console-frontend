@@ -2033,6 +2033,15 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  {
+    path: "/master-user/notifications",
+    name: "Master User Notifications",
+    element: (
+      <MasterUserRoute>
+        <Notifications />
+      </MasterUserRoute>
+    ),
+  },
 
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
@@ -3128,6 +3137,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <BatteryAndTemperature />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/notifications",
+    name: "Project User Notifications",
+    element: (
+      <ProjectUserRoute>
+        <Notifications />
       </ProjectUserRoute>
     ),
   },
