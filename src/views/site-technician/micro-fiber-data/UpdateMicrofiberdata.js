@@ -141,6 +141,16 @@ const UpdateMicrofiberdata = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !state.microfiberdata.site_id ||
+      !state.microfiberdata.category ||
+      !state.microfiberdata.image
+    ) {
+      toast.error(
+        "All fields are required. Please fill out the form completely."
+      );
+      return;
+    }
     dispatch({ type: "SUBMIT_REQUEST" });
 
     try {
