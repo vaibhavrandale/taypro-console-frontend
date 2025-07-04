@@ -10,10 +10,18 @@ import {
   CCardBody,
   CCardHeader,
   CBadge,
+  CTableBody,
+  CTableRow,
+  CTableDataCell,
+  CTableHeaderCell,
+  CTable,
+  CTableHead,
+  CButton,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+import * as XLSX from "xlsx";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -72,7 +80,12 @@ const MonthlySiteReport = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -105,6 +118,8 @@ const MonthlySiteReport = () => {
       site_id: site_id,
       pg: page,
       limit: limit,
+      startDate: startDate,
+      endDate: endDate,
     };
     const fetchMonthlyReport = async () => {
       dispatch({ type: "FETCH_MONTHLYREPORT_REQUEST" });
@@ -136,18 +151,91 @@ const MonthlySiteReport = () => {
 
     fetchSites();
     fetchMonthlyReport();
-  }, [authtoken, limit, page, site_id]);
+  }, [authtoken, endDate, limit, page, site_id, startDate]);
 
-  const filteredReports = monthlyreports
-    // Convert search filter to string from the actual Date object
-    .filter((report) =>
-      new Date(report.report_month)
-        .toLocaleString("default", { month: "long", year: "numeric" })
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    )
-    // Sort by latest month first
-    .sort((a, b) => new Date(b.report_month) - new Date(a.report_month));
+  const exportMonthlyReportToExcel = () => {
+    if (!monthlyreports || monthlyreports.length === 0) {
+      toast.error("No monthly report data available to export.");
+      return;
+    }
+
+    const mergedData = [];
+
+    monthlyreports.forEach((report, reportIndex) => {
+      // Header for each site/month section
+      mergedData.push([
+        `${report.site_name} - ${new Date(report.report_month).toLocaleString(
+          "default",
+          {
+            month: "long",
+            year: "numeric",
+          }
+        )}`,
+      ]);
+      mergedData.push([]);
+
+      // Uptime Summary
+      mergedData.push(["Uptime Summary"]);
+      mergedData.push(["Uptime (%)", "Total Robots"]);
+      mergedData.push([
+        report.uptimeData?.uptime ?? "N/A",
+        report.uptimeData?.totalRobots ?? "N/A",
+      ]);
+      mergedData.push([]);
+
+      // Inventory Data
+      mergedData.push(["Inventory"]);
+      if (report.inventoryData?.length > 0) {
+        mergedData.push(["Sr No.", "Item Name", "Quantity"]);
+        report.inventoryData.forEach((item, idx) => {
+          mergedData.push([idx + 1, item.item_name, item.quantity]);
+        });
+      } else {
+        mergedData.push(["No inventory data available"]);
+      }
+      mergedData.push([]);
+
+      // PM Data
+      mergedData.push(["PM Data"]);
+      if (report.pmData?.robotsServiced?.length > 0) {
+        mergedData.push(["Sr No.", "Robot No", "PM ID", "Date"]);
+        report.pmData.robotsServiced.forEach((robot, idx) => {
+          mergedData.push([
+            idx + 1,
+            robot.robot_no || "N/A",
+            robot.pm_id || "N/A",
+            robot.createdAt
+              ? new Date(robot.createdAt).toLocaleString()
+              : "N/A",
+          ]);
+        });
+      } else {
+        mergedData.push(["No PM data available"]);
+      }
+
+      // Spacing between each site report
+      mergedData.push([]);
+      mergedData.push([]);
+    });
+
+    // Create and export the Excel file
+    const ws = XLSX.utils.aoa_to_sheet(mergedData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Monthly Site Report");
+
+    try {
+      XLSX.writeFile(
+        wb,
+        `Monthly_Report_${site_id || "All"}_${startDate || "Start"}_to_${
+          endDate || "End"
+        }.xlsx`
+      );
+      toast.success("Monthly report Excel downloaded successfully!");
+    } catch (error) {
+      console.error("Excel export error:", error);
+      toast.error("Failed to export Excel file.");
+    }
+  };
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -173,6 +261,22 @@ const MonthlySiteReport = () => {
         <h3>Monthly Site Report </h3>
       </div>
 
+      <CRow className="mt-auto justify-content-end">
+        <CCol
+          md={5}
+          xs={12}
+          className="d-flex justify-content-end align-items-end mb-3"
+        >
+          <CButton
+            color="primary"
+            size="sm"
+            onClick={exportMonthlyReportToExcel}
+          >
+            Export to Excel
+          </CButton>
+        </CCol>
+      </CRow>
+
       {/* Site Selection & Search */}
       <CRow className="mb-4 justify-content-between align-items-center">
         <CCol md={4}>
@@ -193,13 +297,26 @@ const MonthlySiteReport = () => {
             )}
           </CFormSelect>
         </CCol>
-        <CCol md={4}>
-          <CFormInput
-            type="text"
-            placeholder="Search by Month..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+        <CCol
+          md={7}
+          xs={12}
+          className="d-flex flex-wrap gap-2 justify-content-end"
+        >
+          <CCol md={3} xs={12} className="m-1">
+            <CFormInput
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </CCol>
+          <CCol md={3} xs={12} className="m-1">
+            <CFormInput
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </CCol>
         </CCol>
       </CRow>
 
@@ -211,10 +328,10 @@ const MonthlySiteReport = () => {
         </CCol>
       ) : reportError ? (
         <CCol className="text-center text-danger py-5">{reportError}</CCol>
-      ) : filteredReports?.length === 0 ? (
+      ) : monthlyreports?.length === 0 ? (
         <CCol className="text-center py-5">No Monthly Report found</CCol>
       ) : (
-        filteredReports.map((report, index) => (
+        monthlyreports.map((report, index) => (
           <div key={index} className="mb-4">
             <CCard className="mb-3">
               <CCardHeader className="bg-light text-center">
@@ -254,17 +371,30 @@ const MonthlySiteReport = () => {
                       Inventory
                     </CCardHeader>
                     <CCardBody>
-                      <CRow>
-                        {report.inventoryData.map((item, idx) => (
-                          <CCol md={4} key={idx}>
-                            <ul className="mb-0">
-                              <li>
-                                {item.item_name} (Count: {item.quantity})
-                              </li>
-                            </ul>
-                          </CCol>
-                        ))}
-                      </CRow>
+                      <CTable striped responsive bordered>
+                        <CTableHead>
+                          <CTableRow>
+                            <CTableHeaderCell scope="col">
+                              Sr No.
+                            </CTableHeaderCell>
+                            <CTableHeaderCell scope="col">
+                              Item Name
+                            </CTableHeaderCell>
+                            <CTableHeaderCell scope="col">
+                              Quantity
+                            </CTableHeaderCell>
+                          </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                          {report.inventoryData.map((item, idx) => (
+                            <CTableRow key={idx}>
+                              <CTableDataCell>{idx + 1}</CTableDataCell>
+                              <CTableDataCell>{item.item_name}</CTableDataCell>
+                              <CTableDataCell>{item.quantity}</CTableDataCell>
+                            </CTableRow>
+                          ))}
+                        </CTableBody>
+                      </CTable>
                     </CCardBody>
                   </CCard>
                 )}
