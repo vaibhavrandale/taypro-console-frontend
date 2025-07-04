@@ -215,7 +215,10 @@ const InternalTicketsDashboard = () => {
             <CTableRow>{error}</CTableRow>
           ) : filteredTickets.length > 0 ? (
             filteredTickets.map((ticket, index) => (
-              <CTableRow key={index}>
+              <CTableRow
+                key={index}
+                className={ticket.is_delete ? "table-danger" : ""}
+              >
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
                   {ticket.ticket_id}

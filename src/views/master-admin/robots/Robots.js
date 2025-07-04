@@ -301,7 +301,7 @@ const Robots = () => {
                 <CTableDataCell>
                   <Link
                     className="text-decoration-none m-1"
-                    to={`/${adminroute}/robots/${robot._id}`}
+                    to={`/${adminroute}/robots/view/${robot._id}`}
                   >
                     {robot.robot_no}
                   </Link>

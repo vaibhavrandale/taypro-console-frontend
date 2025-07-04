@@ -16,6 +16,7 @@ import {
   CFormSelect,
   CBadge,
   CImage,
+  CFormCheck,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -188,8 +189,17 @@ const UpdateServiceTicket = () => {
     fetchInventories();
   }, [id, authtoken]);
 
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -635,6 +645,17 @@ const UpdateServiceTicket = () => {
                     </CCol>
                   </CRow>
                 ))}
+              </CRow>
+              <CRow className="mt-3">
+                <CCol md={6}>
+                  <CFormCheck
+                    id="is_delete"
+                    name="is_delete"
+                    label="Mark as Deleted"
+                    checked={formData.is_delete || false}
+                    onChange={handleChange}
+                  />
+                </CCol>
               </CRow>
 
               <div className="d-flex justify-content-end">

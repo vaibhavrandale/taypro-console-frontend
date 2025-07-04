@@ -11,6 +11,7 @@ import {
   CRow,
   CCol,
   CBadge,
+  CFormCheck,
 } from "@coreui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -87,8 +88,16 @@ const UpdateInternalTicket = () => {
     fetchTicket();
   }, [id, authtoken]);
 
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const deleteFileHandler = async (fileName) => {
@@ -110,6 +119,8 @@ const UpdateInternalTicket = () => {
       created_by,
       ...updatedTicket
     } = formData;
+    console.log(updatedTicket);
+
     try {
       await axios.put(`/api/v1/internaltickets/${id}`, updatedTicket, {
         headers: { authorization: `Bearer ${authtoken}` },
@@ -385,6 +396,18 @@ const UpdateInternalTicket = () => {
                 </CRow>
               ))}
             </CRow>
+            <CRow className="mt-3">
+              <CCol md={6}>
+                <CFormCheck
+                  id="is_delete"
+                  name="is_delete"
+                  label="Mark as Deleted"
+                  checked={formData.is_delete || false}
+                  onChange={handleChange}
+                />
+              </CCol>
+            </CRow>
+
             <CButton
               size="sm"
               className="mt-4"
