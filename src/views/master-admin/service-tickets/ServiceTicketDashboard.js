@@ -335,7 +335,10 @@ const ServiceTicketDashboard = () => {
                 </CTableRow>
               ) : filteredData.length > 0 ? (
                 filteredData.map((ticket, index) => (
-                  <CTableRow key={index}>
+                  <CTableRow
+                    key={index}
+                    className={ticket.is_delete ? "table-danger" : ""}
+                  >
                     <CTableDataCell>{index + 1}</CTableDataCell>
                     <CTableDataCell
                       style={{ minWidth: "240px" }}
@@ -716,7 +719,7 @@ const ServiceTicketDashboard = () => {
       </CModal>
 
       {/* 📌 Update Modal */}
-      <CModal
+      {/* <CModal
         scrollable
         backdrop="static"
         size="xl"
@@ -738,7 +741,7 @@ const ServiceTicketDashboard = () => {
         ) : (
           <CModalBody>
             <CRow>
-              {/* Ticket ID & Robot No () */}
+          
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -760,7 +763,7 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Device & Site Information */}
+             
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -782,7 +785,7 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Fault Type & Lora No */}
+      
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -804,7 +807,7 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Ticket Generated Info */}
+             
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -826,7 +829,7 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Ticket Generated At & Notes */}
+   
               <CCol md={6}>
                 <CFormInput
                   type="datetime-local"
@@ -845,7 +848,7 @@ const ServiceTicketDashboard = () => {
                   className="mb-3"
                 />
               </CCol>
-              {/* Ticket Status & Resolved Timestamp */}
+         
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -865,7 +868,7 @@ const ServiceTicketDashboard = () => {
                   className="mb-3"
                 />
               </CCol>
-              {/* Ticket Resolution Info */}
+         
               <CCol md={6}>
                 <CFormInput
                   type="text"
@@ -885,7 +888,7 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Resolution Notes */}
+           
               <CCol md={12}>
                 <CFormInput
                   type="textarea"
@@ -897,13 +900,13 @@ const ServiceTicketDashboard = () => {
                 />
               </CCol>
 
-              {/* Image Upload */}
+          
               <CCol md={12}>
                 <label className="form-label">Upload Images</label>
                 <CFormInput type="file" multiple className="mb-3" />
               </CCol>
 
-              {/* Image Gallery */}
+   
               <CCol md={12}>
                 <h6 className="mt-3">Service Ticket Generating Time Images</h6>
                 <div className="d-flex flex-wrap">
@@ -1120,7 +1123,7 @@ const ServiceTicketDashboard = () => {
                 </div>
               </CCol>
 
-              {/* Enlarged Image Modal */}
+             
               {selectedImage && (
                 <CModal
                   className=""
@@ -1172,7 +1175,7 @@ const ServiceTicketDashboard = () => {
             )}
           </CButton>
         </CModalFooter>
-      </CModal>
+      </CModal> */}
     </div>
   );
 };

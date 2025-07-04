@@ -29,7 +29,7 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
       onVisibleChange={(visible) => setSidebarShow(visible)}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand to="/">
+        <CSidebarBrand>
           <Link to="/">
             <img
               src={TayproLogo}

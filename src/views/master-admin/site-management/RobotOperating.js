@@ -443,7 +443,7 @@ const RobotOperating = () => {
             <div className="d-flex justify-content-end gap-2 mb-3">
               <Link
                 className="btn btn-sm btn-outline-primary"
-                to={`/${adminroute}/robots/${robot._id}`}
+                to={`/${adminroute}/robots/view/${robot._id}`}
               >
                 View Robot
               </Link>
@@ -456,7 +456,7 @@ const RobotOperating = () => {
               </Link>
             </div>
           )}
-          )}
+
           {/* Action Buttons */}
           <CRow className="my-2">
             <CCol>

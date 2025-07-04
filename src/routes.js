@@ -12,7 +12,7 @@ import TayproDashboard from "./views/master-admin/site-management/TayproDashboar
 import SiteManagement from "./views/master-admin/site-management/SiteManagement";
 import BlockManagement from "./views/master-admin/site-management/BlockManagement";
 import RobotOperating from "./views/master-admin/site-management/RobotOperating";
-import SearchRobot from "./views/master-admin/site-management/SearchRobot";
+// import SearchRobot from "./views/master-admin/site-management/SearchRobot";
 import DebugLog from "./views/master-admin/site-management/DebugLog";
 import CleaningLog from "./views/master-admin/site-management/CleaningLog";
 import NewDownlink from "./views/master-admin/site-management/NewDownlink";
@@ -22,21 +22,21 @@ import ClientDashboard from "./views/client-admin/site-management/ClientDashboar
 import ClientSiteManagement from "./views/client-admin/site-management/ClientSiteManagement";
 import ClientBlockManagement from "./views/client-admin/site-management/ClientBlockManagement";
 import ClientRobotOperating from "./views/client-admin/site-management/ClientRobotOperating";
-import ClientSearchRobot from "./views/client-admin/site-management/ClientSearchRobot";
+// import ClientSearchRobot from "./views/client-admin/site-management/ClientSearchRobot";
 import ClientTimers from "./views/client-admin/timers/ClientTimers";
 import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
-import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
-import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
+// import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
+// import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
 import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
 import SiteTechnicianDashboard from "./views/site-technician/SiteTechnicianDashboard";
 import AllSiteData from "./views/site-technician/AllSiteData";
 import SiteTechnicianSiteManagement from "./views/site-technician/site-management/SiteTechnicianSiteManagement";
 import SiteTechnicianBlockManagement from "./views/site-technician/site-management/SiteTechnicianBlockManagement";
 import SiteTechnicianRobotOperating from "./views/site-technician/site-management/SiteTechnicianRobotOperating";
-import SiteTechnicianSearchRobot from "./views/site-technician/site-management/SiteTechnicianSearchRobot";
+// import SiteTechnicianSearchRobot from "./views/site-technician/site-management/SiteTechnicianSearchRobot";
 import SiteTechnicianTimers from "./views/site-technician/timers/SiteTechnicianTimers";
 import SiteTechnicianUpdateTimer from "./views/site-technician/timers/SiteTechnicianUpdateTimer";
 import SiteTechnicianSites from "./views/site-technician/cleaninglog/SiteTechnicianSites";
@@ -93,7 +93,7 @@ import UserPerformanceDashboard from "./views/master-admin/user-performance/User
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
 import RobotPosition from "./views/robot-position/RobotPosition";
 import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteReport";
-import { element } from "prop-types";
+// import { element } from "prop-types";
 import TimerExecutionNotificationView from "./views/master-admin/timer-execution/GetTimerExecutionNotifications";
 import WeatherDataSitewise from "./views/master-admin/weather-data/WeatherDataSitewise";
 import Microfiberdata from "./views/site-technician/micro-fiber-data/Microfiberdata";
@@ -726,7 +726,16 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/robots/:id",
+    path: "/master-admin/robots/update/:id",
+    name: "Update Robot",
+    element: (
+      <MasterAdminRoute>
+        <UpdateRobots />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robots/view/:id",
     name: "View Robot",
     element: (
       <MasterAdminRoute>
@@ -743,15 +752,7 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  {
-    path: "/master-admin/robots/update/:id",
-    name: "Update Robot",
-    element: (
-      <MasterAdminRoute>
-        <UpdateRobots />
-      </MasterAdminRoute>
-    ),
-  },
+
   {
     path: "/master-admin/robots/shift-block-wise",
     name: "Shift Block Wise Robot",
