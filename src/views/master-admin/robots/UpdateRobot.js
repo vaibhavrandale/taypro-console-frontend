@@ -13,6 +13,11 @@ import {
   CFormInput,
   CFormLabel,
   CRow,
+  CTab,
+  CTabContent,
+  CTabList,
+  CTabPanel,
+  CTabs,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -113,149 +118,173 @@ const UpdateRobot = () => {
   if (error) return <p className="error">{error}</p>;
 
   return (
-    <div className="update-robot-container">
-      <CCard className="max-w-3xl mx-auto p-6 shadow-lg rounded-lg">
+    <div className="update-robot-container px-3">
+      <CCard className="w-100 shadow-sm rounded-lg">
         <CCardHeader>
-          {" "}
-          <h2>Update Robot : {formData.robot_no}</h2>
+          <h4 className="mb-0">Update Robot : {formData.robot_no}</h4>
         </CCardHeader>
         <CCardBody>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <CRow>
-              {/* Text Inputs */}
-              {[
-                "robot_no",
-                "site_robot_sr_no",
-                "block",
-                "deveui",
-                "robot_type",
+          <form onSubmit={handleSubmit}>
+            <CTabs
+              // defaultActiveItemKey="basic-info"
+              activeItemKey="basic-info"
+            >
+              <CTabList variant="tabs">
+                <CTab itemKey="basic-info">Basic Info</CTab>
+                <CTab itemKey="timers">Timers</CTab>
+                <CTab itemKey="sensors">Sensor & Motor Data</CTab>
+                <CTab itemKey="flags">Configuration Flags</CTab>
+              </CTabList>
 
-                "version",
-                "last_status",
-                "battery_status",
-                "dock",
-                "weather_lock_state",
-                "manufactured_date",
-                "last_motor_update",
-                "site_id",
-                "company",
-                "timer1",
-                "timer2",
-                "timer3",
-                "last_gateway",
-                "update_debug_log",
-                "soiling_loss",
-                "last_command",
-                "certificate_no",
-                "breakdown_status",
-                "last_uplink",
-              ].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div>
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                    <CFormInput
-                      type="text"
-                      name={field}
-                      value={formData[field] || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CCol>
-              ))}
+              <CTabContent>
+                {/* BASIC INFO TAB */}
+                <CTabPanel className="p-3" itemKey="basic-info">
+                  <CRow>
+                    {[
+                      "robot_no",
+                      "site_robot_sr_no",
+                      "block",
+                      "deveui",
+                      "robot_type",
+                      "version",
+                      "last_status",
+                      "battery_status",
+                      "dock",
+                      "weather_lock_state",
+                      "manufactured_date",
+                      "last_motor_update",
+                      "site_id",
+                      "company",
+                      "last_gateway",
+                      "update_debug_log",
+                      "soiling_loss",
+                      "last_command",
+                      "certificate_no",
+                      "breakdown_status",
+                      "last_uplink",
+                    ].map((field) => (
+                      <CCol key={field} md={4} className="mb-3">
+                        <CFormLabel htmlFor={field}>
+                          {field.replace(/_/g, " ").toUpperCase()}
+                        </CFormLabel>
+                        <CFormInput
+                          type="text"
+                          name={field}
+                          value={formData[field] || ""}
+                          onChange={handleChange}
+                        />
+                      </CCol>
+                    ))}
+                  </CRow>
+                </CTabPanel>
 
-              {/* Number Inputs */}
-              {[
-                "wheel_motor_speed",
-                "brush_motor_speed",
-                "battery_percentage",
-                "battery_voltage",
-                "temperature",
-                "rssi",
-                "lora_no",
-                "old_lora_no",
-                "snr",
-                "row_length",
-                "row_number",
-                "last_battery_diff",
-                "brush_current",
-                "wheel_current",
-                "stuck_count",
-              ].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div>
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                    <CFormInput
-                      type="number"
-                      name={field}
-                      value={formData[field] || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CCol>
-              ))}
+                {/* TIMERS TAB */}
+                <CTabPanel className="p-3" itemKey="timers">
+                  <CRow>
+                    {["1", "2", "3"].map((num) => (
+                      <React.Fragment key={num}>
+                        <CCol md={6} className="mb-3">
+                          <CFormLabel
+                            htmlFor={`timer${num}`}
+                          >{`TIMER ${num}`}</CFormLabel>
+                          <CFormInput
+                            type="text"
+                            name={`timer${num}`}
+                            value={formData[`timer${num}`] || ""}
+                            onChange={handleChange}
+                          />
+                        </CCol>
+                        <CCol md={6} className="mb-3">
+                          <CFormLabel
+                            htmlFor={`timer${num}_date`}
+                          >{`TIMER ${num} DATE`}</CFormLabel>
+                          <CFormInput
+                            type="date"
+                            name={`timer${num}_date`}
+                            value={formData[`timer${num}_date`] || ""}
+                            onChange={handleChange}
+                          />
+                        </CCol>
+                      </React.Fragment>
+                    ))}
+                  </CRow>
+                </CTabPanel>
 
-              {/* Date Inputs */}
-              {["timer1_date", "timer2_date", "timer3_date"].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div>
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                    <CFormInput
-                      type="date"
-                      name={field}
-                      value={formData[field] || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CCol>
-              ))}
+                {/* SENSOR & MOTOR TAB */}
+                <CTabPanel className="p-3" itemKey="sensors">
+                  <CRow>
+                    {[
+                      "wheel_motor_speed",
+                      "brush_motor_speed",
+                      "battery_percentage",
+                      "battery_voltage",
+                      "temperature",
+                      "rssi",
+                      "lora_no",
+                      "old_lora_no",
+                      "snr",
+                      "row_length",
+                      "row_number",
+                      "last_battery_diff",
+                      "brush_current",
+                      "wheel_current",
+                      "stuck_count",
+                    ].map((field) => (
+                      <CCol key={field} md={4} className="mb-3">
+                        <CFormLabel htmlFor={field}>
+                          {field.replace(/_/g, " ").toUpperCase()}
+                        </CFormLabel>
+                        <CFormInput
+                          type="number"
+                          name={field}
+                          value={formData[field] || ""}
+                          onChange={handleChange}
+                        />
+                      </CCol>
+                    ))}
+                  </CRow>
+                </CTabPanel>
 
-              {/* Checkbox Inputs */}
-              {[
-                "lora_state",
-                "auto_clean",
-                "rescheduled_cycle",
-                "activate",
-                "weather_lock_1",
-                "weather_lock_2",
-                "test_mode",
-                "is_current_limit",
-                "manual_mode",
-                "actuator",
-                "tracker",
-                "cleaning_flag",
-                "stop_command",
-              ].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div className="flex items-center space-x-2 my-2">
-                    <CFormCheck
-                      id={field}
-                      name={field}
-                      checked={formData[field] || false}
-                      onChange={handleChange}
-                    />
-                    &nbsp;&nbsp;
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                  </div>
-                </CCol>
-              ))}
-            </CRow>
+                {/* FLAGS TAB */}
+                <CTabPanel className="p-3" itemKey="flags">
+                  <CRow>
+                    {[
+                      "lora_state",
+                      "auto_clean",
+                      "rescheduled_cycle",
+                      "activate",
+                      "weather_lock_1",
+                      "weather_lock_2",
+                      "test_mode",
+                      "is_current_limit",
+                      "manual_mode",
+                      "actuator",
+                      "tracker",
+                      "cleaning_flag",
+                      "stop_command",
+                    ].map((field) => (
+                      <CCol key={field} md={4} className="mb-3">
+                        <div className="d-flex align-items-center">
+                          <CFormCheck
+                            id={field}
+                            name={field}
+                            checked={formData[field] || false}
+                            onChange={handleChange}
+                          />
+                          <CFormLabel htmlFor={field} className="ms-2 mb-0">
+                            {field.replace(/_/g, " ").toUpperCase()}
+                          </CFormLabel>
+                        </div>
+                      </CCol>
+                    ))}
+                  </CRow>
+                </CTabPanel>
+              </CTabContent>
+            </CTabs>
 
             {/* Submit Button */}
-            <div className="d-flex justify-content-end">
-              <CButton
-                type="submit"
-                color="warning"
-                size="sm"
-                className="w-full"
-              >
+            <div className="d-flex justify-content-end mt-4">
+              <CButton type="submit" color="warning" size="sm" className="w-25">
                 {updateloading ? (
                   <>
                     Updating...
