@@ -149,11 +149,13 @@ const Robots = () => {
   }, [authtoken, limit, page]);
 
   // Filter robots based on search term
-  const filteredRobots = robots.filter(
-    (robot) =>
-      robot?.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot?.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot?.site_id?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRobots = robots.filter((robot) =>
+    ["robot_no", "deveui", "site_id", "version", "lora_no"].some((field) =>
+      (robot?.[field] ?? "")
+        .toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
   );
 
   const handlePageInputChange = (e) => {
@@ -241,7 +243,7 @@ const Robots = () => {
         <CCol md={4}>
           <CFormInput
             type="text"
-            placeholder="Search by Robot No, Deveui, or Site ID..."
+            placeholder="Search: Robot No, Version, Lora No, Deveui, Site ID"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -264,6 +266,9 @@ const Robots = () => {
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Lora No
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Version
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "140px" }}>
               Connection Status
@@ -313,6 +318,7 @@ const Robots = () => {
                 </CTableDataCell>
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
+                <CTableDataCell>{robot.version}</CTableDataCell>
                 <CTableDataCell>
                   {robot.lora_state === 1 ? (
                     <CBadge color="success" shape="rounded-pill">
@@ -342,7 +348,7 @@ const Robots = () => {
                   {/* View - All Roles */}
                   <Link
                     className="btn btn-sm btn-secondary m-1"
-                    to={`/${adminroute}/robots/${robot._id}`}
+                    to={`/${adminroute}/robots/view/${robot._id}`}
                   >
                     View
                   </Link>
