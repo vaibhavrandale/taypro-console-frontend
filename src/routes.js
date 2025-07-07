@@ -2470,24 +2470,24 @@ const routes = [
     ),
   },
 
-  {
-    path: "/project-admin/users",
-    name: "All Internal Users",
-    element: (
-      <ProjectAdminRoute>
-        <UsersDashboard />
-      </ProjectAdminRoute>
-    ),
-  },
-  {
-    path: "/project-admin/external-users",
-    name: "All External Users",
-    element: (
-      <ProjectAdminRoute>
-        <ExternalUsersDashboard />
-      </ProjectAdminRoute>
-    ),
-  },
+  // {
+  //   path: "/project-admin/users",
+  //   name: "All Internal Users",
+  //   element: (
+  //     <ProjectAdminRoute>
+  //       <UsersDashboard />
+  //     </ProjectAdminRoute>
+  //   ),
+  // },
+  // {
+  //   path: "/project-admin/external-users",
+  //   name: "All External Users",
+  //   element: (
+  //     <ProjectAdminRoute>
+  //       <ExternalUsersDashboard />
+  //     </ProjectAdminRoute>
+  //   ),
+  // },
   {
     path: "/project-admin/notifications",
     name: "Project Admin Notifications",

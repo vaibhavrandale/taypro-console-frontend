@@ -682,11 +682,11 @@ const _nav = [
           />
         ),
         items: [
-          {
-            component: CNavItem,
-            name: "Search Robot",
-            to: "/project-admin/search-robot",
-          },
+          // {
+          //   component: CNavItem,
+          //   name: "Search Robot",
+          //   to: "/project-admin/search-robot",
+          // },
           {
             component: CNavItem,
             name: "Shift Robots",
@@ -722,11 +722,11 @@ const _nav = [
           />
         ),
         items: [
-          {
-            component: CNavItem,
-            name: "Users",
-            to: "/project-admin/users",
-          },
+          // {
+          //   component: CNavItem,
+          //   name: "Users",
+          //   to: "/project-admin/users",
+          // },
           {
             component: CNavItem,
             name: "Technician Attendance",
