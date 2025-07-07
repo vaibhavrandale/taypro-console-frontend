@@ -325,20 +325,37 @@ const Gateways = () => {
                       <CBadge color="danger">Offline</CBadge>
                     )}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "380px" }}>
-                    {" "}
-                    {/* Increased min-width to accommodate more buttons */}
+                  <CTableDataCell
+                    style={{
+                      minWidth: [
+                        "Master User",
+                        "Project User",
+                        "Service User",
+                      ].includes(userInfo?.role)
+                        ? "120px"
+                        : "380px",
+                    }}
+                    className={
+                      ["Master User", "Project User", "Service User"].includes(
+                        userInfo?.role
+                      )
+                        ? "d-flex justify-content-center"
+                        : ""
+                    }
+                  >
+                    {/* View Button */}
                     <Link
                       className="btn btn-sm btn-info text-decoration-none p-1 m-1"
                       onClick={() => openModal(gateway)}
                     >
                       View
                     </Link>
+
+                    {/* Show other buttons only if user is not in restricted roles */}
                     {!["Master User", "Project User", "Service User"].includes(
                       userInfo?.role
                     ) && (
                       <>
-                        {/* Assign Lora Button */}
                         <Link
                           className="btn btn-sm btn-success text-decoration-none p-1 m-1"
                           to={`/${adminroute}/all-site-gateways/assign-gateway/${gateway._id}`}
@@ -346,7 +363,6 @@ const Gateways = () => {
                           Assign Lora
                         </Link>
 
-                        {/* Update Button */}
                         <Link
                           to={`/${adminroute}/all-site-gateways/update-gateway/${gateway._id}`}
                           className="btn btn-secondary p-1 text-decoration-none btn-sm m-1"
@@ -354,7 +370,6 @@ const Gateways = () => {
                           Update
                         </Link>
 
-                        {/* Delete from LNS Button */}
                         <button
                           className="btn btn-sm btn-danger p-1 m-1"
                           onClick={() => {
@@ -366,7 +381,6 @@ const Gateways = () => {
                           Delete- LNS
                         </button>
 
-                        {/* Delete from DB Button */}
                         <button
                           className="btn btn-sm btn-outline-warning p-1 m-1"
                           onClick={() => {

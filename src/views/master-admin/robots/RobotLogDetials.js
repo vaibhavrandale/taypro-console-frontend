@@ -41,10 +41,6 @@ const CHART_COLORS = {
   gray: "#858796",
 };
 
-const generateRandomColor = () => {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-};
-
 const RobotLogDetails = () => {
   const [{ loading, data, error }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -282,28 +278,88 @@ const RobotLogDetails = () => {
   };
 
   // Generate distinct colors for each bar
-  const getBarColors = (labels) => {
-    const colors = [
-      CHART_COLORS.blue,
-      CHART_COLORS.green,
-      CHART_COLORS.orange,
-      CHART_COLORS.red,
-      CHART_COLORS.purple,
-      CHART_COLORS.teal,
-      CHART_COLORS.gray,
-      CHART_COLORS.lightBlue,
-    ];
+  const CUSTOM_CHART_COLORS = [
+    "#0b3955",
+    "#00627b",
+    "#008c8f",
+    "#24b68c",
+    "#91db7b",
+    "#f9f871",
+    "#394f75",
+    "#666593",
+    "#967aac",
+    "#c890c0",
+    "#f9a7cf",
+    "#446887",
+    "#d3f4ff",
+    "#e49d23",
+    "#007d50",
+    "#6bebb6",
+    "#27b281",
+    "#009cf9",
+    "#3b4856",
+    "#9eadbd",
+    "#463216",
+    "#786042",
+    "#0b3955",
+    "#7b392d",
+    "#005a47",
+    "#3b4856",
+    "#9eadbd",
+    "#00c6b4",
+    "#ea60da",
+    "#ff68a5",
+    "#ff9375",
+    "#ffc85b",
+    "#f9f871",
+    "#6c71fd",
+    "#00845c",
+    "#008a91",
+    "#0084ff",
+    "#3f8f94",
+    "#6bbaa3",
+    "#508072",
+    "#6bbaa3",
+    "#c8fceb",
+    "#474554",
+    "#aca9bb",
+    "#3a7679",
+    "#00168b",
+    "#4bbea0",
+    "#00c19d",
+    "#bc7000",
+    "#474554",
+    "#357175",
+  ];
 
-    // If we have more labels than predefined colors, generate random ones
-    if (labels.length > colors.length) {
-      const additionalColors = Array.from(
-        { length: labels.length - colors.length },
-        () => generateRandomColor()
-      );
-      return [...colors, ...additionalColors];
+  //   // If we have more labels than predefined colors, generate random ones
+  //   if (labels.length > colors.length) {
+  //     const additionalColors = Array.from(
+  //       { length: labels.length - colors.length },
+  //       () => generateRandomColor()
+  //     );
+  //     return [...colors, ...additionalColors];
+  //   }
+
+  //   return colors.slice(0, labels.length);
+  // };
+
+  const getBarColors = (labels) => {
+    const colors = CUSTOM_CHART_COLORS;
+
+    if (labels.length <= colors.length) {
+      return colors.slice(0, labels.length);
     }
 
-    return colors.slice(0, labels.length);
+    // Repeat colors if not enough
+    const extendedColors = [];
+    let i = 0;
+    while (extendedColors.length < labels.length) {
+      extendedColors.push(colors[i % colors.length]);
+      i++;
+    }
+
+    return extendedColors;
   };
 
   const renderChart = (labels, dataValues, title, isRobotChart = false) => {

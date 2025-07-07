@@ -130,7 +130,7 @@ const ViewProjectClosureDocument = () => {
     const element = contentRef.current;
 
     const opt = {
-      margin: [0.5, 0.5],
+      margin: [0, -0.01], //top-bottom, left-right
       filename: `${serviceItemData.project_name}_handover.pdf`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: {
@@ -155,14 +155,14 @@ const ViewProjectClosureDocument = () => {
       .get("pdf")
       .then((pdf) => {
         const totalPages = pdf.internal.getNumberOfPages();
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+        // const pageWidth = pdf.internal.pageSize.getWidth();
+        // const pageHeight = pdf.internal.pageSize.getHeight();
 
         for (let i = 1; i <= totalPages; i++) {
           pdf.setPage(i);
-          pdf.setDrawColor(0); // Black border
-          pdf.setLineWidth(0.01); // Adjust border thickness here
-          pdf.rect(0.25, 0.25, pageWidth - 0.5, pageHeight - 0.5); // Border inside margin
+          // pdf.setDrawColor(0); // Black border
+          // pdf.setLineWidth(0.01); // Adjust border thickness here
+          // pdf.rect(0.25, 0.25, pageWidth - 0.5, pageHeight - 0.5); // Border inside margin
         }
       })
       .save();
@@ -175,14 +175,20 @@ const ViewProjectClosureDocument = () => {
       ) : (
         <>
           <Link
-            className="btn btn-sm btn-secondary mt-2"
+            className="btn btn-sm btn-secondary my-2"
             size="sm"
             onClick={exportToPDF}
           >
             Export
           </Link>
 
-          <div className="second-container" ref={contentRef}>
+          <div
+            className="second-container"
+            ref={contentRef}
+            style={{
+              backgroundColor: "#080f25",
+            }}
+          >
             <table className="site-details-table ">
               <thead>
                 <tr className="">
@@ -382,7 +388,12 @@ const ViewProjectClosureDocument = () => {
             </ul>
             <br /> <br />
             <br /> <br /> <br />
-            <div className="section-title mt-6">4. Site&nbsp;&nbsp;Details</div>
+            <div
+              className="section-title site-details
+            "
+            >
+              4. Site&nbsp;&nbsp;Details
+            </div>
             <table className="site-details-table">
               <thead>
                 <tr>

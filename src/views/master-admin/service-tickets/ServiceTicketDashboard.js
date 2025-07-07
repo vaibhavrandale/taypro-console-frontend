@@ -607,21 +607,22 @@ const ServiceTicketDashboard = () => {
                         {generatedImages.map((img, index) => (
                           <CCarouselItem key={index}>
                             <div
-                              style={{
-                                height: "500px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                overflow: "hidden",
-                              }}
+                            // style={{
+                            //   height: "500px",
+                            //   display: "flex",
+                            //   justifyContent: "center",
+                            //   alignItems: "center",
+                            //   overflow: "hidden",
+                            // }}
                             >
                               <Link to={img} target="_blank">
                                 <CImage
                                   src={img}
+                                  className="border border-2 border-secondary"
                                   alt={`Generated Image ${index + 1}`}
                                   style={{
-                                    maxHeight: "100%",
-                                    maxWidth: "70%",
+                                    height: "300px",
+                                    width: "500px",
                                     objectFit: "contain",
                                     display: "block",
                                     margin: "0 auto",
@@ -669,21 +670,21 @@ const ServiceTicketDashboard = () => {
                         {resolvedImages.map((img, index) => (
                           <CCarouselItem key={index}>
                             <div
-                              style={{
-                                height: "500px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                overflow: "hidden",
-                              }}
+                            // style={{
+                            //   height: "500px",
+                            //   display: "flex",
+                            //   justifyContent: "center",
+                            //   alignItems: "center",
+                            //   overflow: "hidden",
+                            // }}
                             >
                               <Link to={img} target="_blank">
                                 <CImage
                                   src={img}
                                   alt={`Resolved Image ${index + 1}`}
                                   style={{
-                                    maxHeight: "100%",
-                                    maxWidth: "70%",
+                                    maxHeight: "400px",
+                                    maxWidth: "400px",
                                     objectFit: "contain",
                                     display: "block",
                                     margin: "0 auto",

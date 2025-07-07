@@ -282,7 +282,7 @@ const RobotOperating = () => {
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
     setCommandButton(index);
-    //deveui,command,robot_no,site_id,lora_no
+    //deveui,command,robot_no,site_id,lora_no......
     let robotdownlink = {
       deveui: robot.deveui,
       robot_no: robot.robot_no,
@@ -439,107 +439,110 @@ const RobotOperating = () => {
               </h4>
             </CCol>
           </CRow>
-          {userInfo?.role === "Master Admin" && robot?._id && (
-            <div className="d-flex justify-content-end gap-2 mb-3">
-              <Link
-                className="btn btn-sm btn-outline-primary"
-                to={`/${adminroute}/robots/view/${robot._id}`}
-              >
-                View Robot
-              </Link>
-
-              <Link
-                to={`/${adminroute}/robots/update/${robot._id}`}
-                className="btn btn-sm btn-outline-warning"
-              >
-                Update Robot
-              </Link>
-            </div>
-          )}
 
           {/* Action Buttons */}
           <CRow className="my-2">
             <CCol>
-              <CButton
-                className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(start, 1)}
-              >
-                START ALL
-              </CButton>
-              <CButton
-                className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(stop, 2)}
-              >
-                STOP ALL
-              </CButton>
-              <CButton
-                className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(returntodock, 3)}
-              >
-                RETURN TO DOCK ALL
-              </CButton>
-              <Link
-                to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
-                className="btn btn-sm btn-secondary  btn-sm m-1 shadow-sm"
-              >
-                DEBUG LOG
-              </Link>
-              <Link
-                to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
-                className="btn btn-sm btn-secondary m-1 shadow-sm"
-              >
-                CLEANING LOG
-              </Link>
-              <Link
-                to={`/${adminroute}/site-management/robot-activity`}
-                className="btn btn-sm btn-secondary m-1 shadow-sm"
-              >
-                Robot Activity
-              </Link>
+              <div className="d-flex flex-wrap align-items-center">
+                <CButton
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                  onClick={() => sendMulticastDownlink(start, 1)}
+                >
+                  START ALL
+                </CButton>
+                <CButton
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                  onClick={() => sendMulticastDownlink(stop, 2)}
+                >
+                  STOP ALL
+                </CButton>
+                <CButton
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                  onClick={() => sendMulticastDownlink(returntodock, 3)}
+                >
+                  RETURN TO DOCK ALL
+                </CButton>
+                <Link
+                  to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                >
+                  DEBUG LOG
+                </Link>
+                <Link
+                  to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/cleaning_logs`}
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                >
+                  CLEANING LOG
+                </Link>
+                <Link
+                  to={`/${adminroute}/site-management/robot-activity`}
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                >
+                  Robot Activity
+                </Link>
 
-              <CDropdown className="dropdown">
-                {siteRobots.length > 1 ? (
-                  <CDropdownToggle
-                    size="sm"
-                    className="shadow-sm "
-                    color={`${robot.lora_state === 1 ? `success` : `danger`}`}
-                  >
-                    {robot.robot_no}
-                  </CDropdownToggle>
-                ) : (
-                  <CButton
-                    className={`${
-                      robot.lora_state === 1 ? `` : `text-white`
-                    } shadow-sm`}
-                    color={`${robot.lora_state === 1 ? `success` : `danger`}`}
-                    size="sm"
-                  >
-                    {robot.robot_no}
-                  </CButton>
+                <CDropdown className="dropdown me-2 mb-2">
+                  {siteRobots.length > 1 ? (
+                    <CDropdownToggle
+                      size="sm"
+                      className="shadow-sm"
+                      color={`${robot.lora_state === 1 ? `success` : `danger`}`}
+                    >
+                      {robot.robot_no}
+                    </CDropdownToggle>
+                  ) : (
+                    <CButton
+                      className={`${
+                        robot.lora_state === 1 ? `` : `text-white`
+                      } shadow-sm`}
+                      color={`${robot.lora_state === 1 ? `success` : `danger`}`}
+                      size="sm"
+                    >
+                      {robot.robot_no}
+                    </CButton>
+                  )}
+
+                  <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
+                    {siteRobots.length === 1
+                      ? ""
+                      : siteRobots.map((item, index) => (
+                          <CDropdownItem
+                            key={index}
+                            href={`${
+                              item.robot_no === robot_no
+                                ? `#`
+                                : `${item.robot_no}`
+                            }`}
+                            className={`dopdown-item ${
+                              item.lora_state === 1 ? `online` : `offline`
+                            }`}
+                          >
+                            {item.robot_no}
+                          </CDropdownItem>
+                        ))}
+                  </CDropdownMenu>
+                </CDropdown>
+
+                {userInfo?.role === "Master Admin" && robot?._id && (
+                  <>
+                    <Link
+                      className="btn btn-sm btn-outline-primary me-2 mb-2"
+                      to={`/${adminroute}/robots/view/${robot._id}`}
+                    >
+                      View Robot
+                    </Link>
+                    <Link
+                      to={`/${adminroute}/robots/update/${robot._id}`}
+                      className="btn btn-sm btn-outline-warning me-2 mb-2"
+                    >
+                      Update Robot
+                    </Link>
+                  </>
                 )}
-
-                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
-                  {siteRobots.length === 1
-                    ? ""
-                    : siteRobots.map((item, index) => (
-                        <CDropdownItem
-                          key={index}
-                          href={`${
-                            item.robot_no === robot_no
-                              ? `#`
-                              : `${item.robot_no}`
-                          }`}
-                          className={`dopdown-item ${
-                            item.lora_state === 1 ? `online` : `offline`
-                          }`}
-                        >
-                          {item.robot_no}
-                        </CDropdownItem>
-                      ))}
-                </CDropdownMenu>
-              </CDropdown>
+              </div>
             </CCol>
           </CRow>
+
           <CRow className="my-2">
             <CCol></CCol>
           </CRow>
