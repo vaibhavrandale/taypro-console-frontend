@@ -495,20 +495,30 @@ const LoraConfiguration = () => {
                 </CTableDataCell>
 
                 <CTableDataCell style={{ minWidth: "170px" }}>
-                  {item.lastUpdated_by === null ? (
+                  {item.last_activity[item.last_activity.length - 1] ===
+                  null ? (
                     <span className="badge bg-danger">N/A</span>
                   ) : (
                     <span className="badge bg-success">
-                      {item.lastUpdated_by}
+                      {item.last_activity[item.last_activity.length - 1].name}
                     </span>
                   )}
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "170px" }}>
-                  {item.lastUpdateAt === null ? (
+                  {item.last_activity[item.last_activity.length - 1] ===
+                  null ? (
                     <span className="badge bg-danger">N/A</span>
                   ) : (
                     <span className="badge bg-success">
-                      {item.lastUpdateAt}
+                      {new Date(
+                        item.last_activity[
+                          item.last_activity.length - 1
+                        ].timestamp
+                      ).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </span>
                   )}
                 </CTableDataCell>
