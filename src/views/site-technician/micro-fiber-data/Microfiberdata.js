@@ -227,7 +227,13 @@
 
 // export default Microfiberdata;
 
-import React, { useReducer, useEffect, useCallback, useRef } from "react";
+import React, {
+  useReducer,
+  useEffect,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import {
   CRow,
   CCol,
@@ -302,6 +308,7 @@ const Microfiberdata = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
+  const [loadedImages, setLoadedImages] = useState({});
 
   const observer = useRef();
 
@@ -400,6 +407,7 @@ const Microfiberdata = () => {
         ) : (
           filteredData.map((item, index) => {
             const isLast = index === filteredData.length - 1;
+            const isImageLoaded = loadedImages[item._id];
             return (
               <CCol
                 key={item._id}
@@ -416,7 +424,15 @@ const Microfiberdata = () => {
                       height: "200px",
                       objectFit: "cover",
                       cursor: "pointer",
+                      filter: isImageLoaded ? "none" : "blur(10px)",
+                      transition: "filter 0.5s ease-out",
                     }}
+                    onLoad={() =>
+                      setLoadedImages((prev) => ({
+                        ...prev,
+                        [item._id]: true,
+                      }))
+                    }
                     onClick={() =>
                       dispatch({
                         type: "OPEN_MODAL",
