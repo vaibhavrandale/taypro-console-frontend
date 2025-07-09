@@ -107,7 +107,7 @@ const AddMicrofiberdata = () => {
     try {
       setUploading(true);
       const { data } = await axios.post(
-        "/api/v1/image-upload/service-item",
+        "/api/v1/image-upload/microfiber-cloth",
         bodyFormData,
         {
           headers: {
