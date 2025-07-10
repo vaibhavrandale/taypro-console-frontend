@@ -101,6 +101,7 @@ import AddMicrofiberdata from "./views/site-technician/micro-fiber-data/AddMicro
 import MicrofiberdataAdminWise from "./views/master-admin/micro-fiber-data/MicrofiberdataAdminWise";
 import UpdateMicrofiberdata from "./views/site-technician/micro-fiber-data/UpdateMicrofiberdata";
 import ThermalImageData from "./views/master-admin/thermal-image/ThermalImage";
+import Profile from "./views/master-admin/profile-tab/Profile";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1300,6 +1301,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/profile-tab",
+    name: "Profile Details",
+    element: (
+      <MasterAdminRoute>
+        <Profile />
+      </MasterAdminRoute>
+    ),
+  },
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -1311,6 +1321,15 @@ const routes = [
     element: (
       <MasterUserRoute>
         <MasterUserDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/profile-tab",
+    name: "Profile Details",
+    element: (
+      <MasterUserRoute>
+        <Profile />
       </MasterUserRoute>
     ),
   },
@@ -2065,6 +2084,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ProjectAdminRoute>
+        <Profile />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/micro-fiber-data",
     name: "Micro Fiber Data",
     element: (
@@ -2181,15 +2209,6 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
-  // {
-  //   path: "/project-admin/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ProjectAdminRoute>
-  //       <SearchRobot />
-  //     </ProjectAdminRoute>
-  //   ),
-  // },
   {
     path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
@@ -2478,25 +2497,6 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
-
-  // {
-  //   path: "/project-admin/users",
-  //   name: "All Internal Users",
-  //   element: (
-  //     <ProjectAdminRoute>
-  //       <UsersDashboard />
-  //     </ProjectAdminRoute>
-  //   ),
-  // },
-  // {
-  //   path: "/project-admin/external-users",
-  //   name: "All External Users",
-  //   element: (
-  //     <ProjectAdminRoute>
-  //       <ExternalUsersDashboard />
-  //     </ProjectAdminRoute>
-  //   ),
-  // },
   {
     path: "/project-admin/notifications",
     name: "Project Admin Notifications",
@@ -2615,6 +2615,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <ProjectUserDashboard />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ProjectUserRoute>
+        <Profile />
       </ProjectUserRoute>
     ),
   },
@@ -3168,6 +3177,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <RobotActivity />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ServiceAdminRoute>
+        <Profile />
       </ServiceAdminRoute>
     ),
   },
@@ -3771,6 +3789,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-user/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ServiceUserRoute>
+        <Profile />
+      </ServiceUserRoute>
+    ),
+  },
+  {
     path: "/service-user/all-site-data",
     name: "Taypro All Site Data",
     element: (
@@ -4318,6 +4345,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-technician/profile-tab",
+    name: "Profile Details",
+    element: (
+      <SiteTechnicianRoute>
+        <Profile />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
     path: "/site-technician/all-site-data",
     name: "Dashboard",
     element: (
@@ -4576,6 +4612,15 @@ const routes = [
     ),
   },
   {
+    path: "/client-admin/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ClientAdminRoute>
+        <Profile />
+      </ClientAdminRoute>
+    ),
+  },
+  {
     path: "/client-admin/monthlyreport",
     name: "Monthly Site Report",
     element: (
@@ -4754,6 +4799,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-incharge/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ClientSiteInchargeRoute>
+        <Profile />
+      </ClientSiteInchargeRoute>
+    ),
+  },
+  {
     path: "/site-incharge/robot-commands",
     name: "Robot Commands",
     element: (
@@ -4869,6 +4923,15 @@ const routes = [
     element: (
       <ClientSiteTechnicianRoute>
         <ClientAdminDashboard />
+      </ClientSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/client-site-technician/profile-tab",
+    name: "Profile Details",
+    element: (
+      <ClientSiteTechnicianRoute>
+        <Profile />
       </ClientSiteTechnicianRoute>
     ),
   },
