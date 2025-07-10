@@ -272,6 +272,11 @@ const _nav = [
             name: "Micro Fiber Data",
             to: "/master-admin/micro-fiber-data",
           },
+          {
+            component: CNavItem,
+            name: "Thermal Image Data",
+            to: "/master-admin/thermal-image-data",
+          },
         ],
       },
       {

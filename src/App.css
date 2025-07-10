@@ -149,13 +149,18 @@ a {
 input[type="text"],
 input[type="number"],
 input {
-  border: 1px solid #dbdfe6;
-  border-radius: 0 !important;
-  font-size: 12px;
+  /* border: 0.1px solid rgba(255, 255, 255, 0.6); */
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 13px;
   outline: none !important;
   box-shadow: none !important;
   -webkit-appearance: none;
   -moz-appearance: textfield;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

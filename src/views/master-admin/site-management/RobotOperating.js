@@ -546,6 +546,7 @@ const RobotOperating = () => {
           <CRow className="my-2">
             <CCol></CCol>
           </CRow>
+
           <CRow>
             {/* First Card */}
             <CCol md={5} className="mt-2">
@@ -721,6 +722,7 @@ const RobotOperating = () => {
               </CCol>
             )}
           </CRow>
+
           {/* Modal for Commands */}
           <CModal
             scrollable
@@ -894,6 +896,7 @@ const RobotOperating = () => {
               </CButton>
             </CModalFooter>
           </CModal>
+
           <CRow className="my-2">
             {/* First Card - Cleaning Cycle */}
             <CCol md={3} className="mt-2">
@@ -1009,6 +1012,340 @@ const RobotOperating = () => {
                   </CCardBody>
                 </CCard>
               </CCol>
+            )}
+          </CRow>
+
+          {/* Fourth Row */}
+          <CRow className="my-2">
+            {userInfo.role === "Master Admin" && (
+              <>
+                {/* Card 1 - Custom Current */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <p className="mb-0">Custom Current</p>
+                        <CButton className="btn btn-sm btn-secondary me-2 mb-2">
+                          Remove Current Limit
+                        </CButton>
+                      </div>
+
+                      {/* Wheel Current */}
+                      <div className="position-relative mb-3">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter Wheel Current"
+                        />
+                        <CButton
+                          type="button"
+                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </div>
+
+                      {/* Brush Current */}
+                      <div className="position-relative">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter Brush Current"
+                        />
+                        <CButton
+                          type="button"
+                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 2 - Speed */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <p className="mb-0">Custom Speed</p>
+                        <small className="text-danger">(0-255)</small>
+                      </div>
+
+                      {/* Enter Speed */}
+                      <div className="position-relative mb-3">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter Speed"
+                        />
+                        <CButton
+                          type="button"
+                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </div>
+
+                      {/* Brush Speed */}
+                      <div className="position-relative">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Brush Speed"
+                        />
+                        <CButton
+                          type="button"
+                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 3 - Direction */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Direction</p>
+                      <div className="d-flex flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Move Left
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Move Right
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Clean Left
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Clean Right
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 4 - Test Mode */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Test Mode ☀️</p>
+                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                        Enable
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+              </>
+            )}
+          </CRow>
+
+          {/* Seventh Row */}
+          <CRow className="my-2">
+            {userInfo.role === "Master Admin" && (
+              <>
+                {/* Card 1 - Weather Lock */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Weather Lock ☀️</p>
+                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                        Enable
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 2 - Reset */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Reset</p>
+                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                        Reset
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 3 - Set Dock Station */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Set Dock Station</p>
+                      <div className="d-flex flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Left
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Right
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Check EEPROM Dock
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Check Sensor State
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 4 - Motor Modes */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Motor Modes</p>
+                      <div className="d-flex flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          40W
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          60W
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+              </>
+            )}
+          </CRow>
+
+          {/* Fifth Row */}
+          <CRow className="my-2">
+            {userInfo.role === "Master Admin" && (
+              <>
+                {/* Card 1 - Get Values */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Get Values</p>
+                      <div className="d-flex flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Battery Voltage
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Temperature
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 2 - Get EEPROM Values */}
+                <CCol md={6} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Get EEPROM Values</p>
+                      <div className="d-flex justify-content-start flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Check Manual
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Check Actuator
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Brush Current
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Wheel Current
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Wheel Speed
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Burush Speed
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Check Tracker
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Brush Speed
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 3 - Set EEPROM Values */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Set EEPROM Values</p>
+                      <div className="d-flex flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Manual Disable
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Actuator Enable
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Tracker Enable
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+              </>
+            )}
+          </CRow>
+
+          {/* Sixth Row */}
+          <CRow className="my-2">
+            {userInfo.role === "Master Admin" && (
+              <>
+                {/* Card 1 - Custom Temperature Limit */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <p className="mb-0">Running Current</p>
+                        <span className="text-danger fst-italic small"></span>
+                      </div>
+                      <div className="position-relative">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter Temp"
+                          value={text}
+                        />
+                        <CButton
+                          type="button"
+                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Card 2 - Direction */}
+                <CCol md={3} className="mt-2">
+                  <CCard className="shadow border-0" style={{ height: "100%" }}>
+                    <CCardBody>
+                      <p>Direction</p>
+                      <div className="d-flex justify-content-start flex-wrap gap-2">
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Move Left
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Move Right
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Clean Left
+                        </CButton>
+                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                          Clean Right
+                        </CButton>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+              </>
             )}
           </CRow>
         </div>
