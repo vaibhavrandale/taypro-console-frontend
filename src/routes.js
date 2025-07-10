@@ -100,6 +100,7 @@ import Microfiberdata from "./views/site-technician/micro-fiber-data/Microfiberd
 import AddMicrofiberdata from "./views/site-technician/micro-fiber-data/AddMicrofiberdata";
 import MicrofiberdataAdminWise from "./views/master-admin/micro-fiber-data/MicrofiberdataAdminWise";
 import UpdateMicrofiberdata from "./views/site-technician/micro-fiber-data/UpdateMicrofiberdata";
+import ThermalImageData from "./views/master-admin/thermal-image/ThermalImage";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1290,7 +1291,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-
+  {
+    path: "/master-admin/thermal-image-data",
+    name: "Thermal Image Data",
+    element: (
+      <MasterAdminRoute>
+        <ThermalImageData />
+      </MasterAdminRoute>
+    ),
+  },
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
