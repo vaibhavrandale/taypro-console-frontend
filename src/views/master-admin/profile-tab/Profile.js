@@ -7,6 +7,7 @@ import {
   CCol,
   CFormInput,
   CFormLabel,
+  CFormTextarea,
   CRow,
   CTable,
   CTableBody,
@@ -22,9 +23,7 @@ const Profile = () => {
   return (
     <div className="container mt-4">
       <CCard>
-        <CCardHeader>
-          Profile Details - <b className="badge bg-success">{authtoken}</b>
-        </CCardHeader>
+        <CCardHeader>Profile Details</CCardHeader>
 
         <CCardBody>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -132,6 +131,21 @@ const Profile = () => {
                       }) || ""
                     }
                   />
+                </div>
+              </CCol>
+
+              <CCol md="6" xs="12">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Auth Token
+                  </CFormLabel>
+                  <CFormTextarea
+                    type="text"
+                    className="form-control bg-important"
+                    rows={3}
+                    name="ds_setup"
+                    value={authtoken}
+                  ></CFormTextarea>
                 </div>
               </CCol>
 
