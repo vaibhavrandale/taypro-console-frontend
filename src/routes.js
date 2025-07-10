@@ -4980,15 +4980,6 @@ const routes = [
       </ClientSiteTechnicianRoute>
     ),
   },
-  // {
-  //   path: "/client-site-technician/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ClientSiteTechnicianRoute>
-  //       <ClientSearchRobot />
-  //     </ClientSiteTechnicianRoute>
-  //   ),
-  // },
   {
     path: "/client-site-technician/timers",
     name: "Timers",
