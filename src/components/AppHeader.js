@@ -1025,7 +1025,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                         Please Wait <LoadingSpinner />
                       </>
                     ) : (
-                      "Masrk as Read"
+                      "Mark as Read"
                     )}
                   </CButton>
                 </div>

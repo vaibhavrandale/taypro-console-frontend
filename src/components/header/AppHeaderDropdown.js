@@ -40,6 +40,29 @@ const AppHeaderDropdown = () => {
   const authtoken = useSelector((state) => state.authtoken);
 
   const [logoutModalOpen, setLogoutModalOpenn] = useState(false);
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Technician") {
+    adminroute = "client-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -116,14 +139,12 @@ const AppHeaderDropdown = () => {
               style={{ objectFit: "cover" }}
             />
           )}
-          {/* <div className="profile">
-            {usersLoading ? <LoadingSpinner /> : getInitials(user?.username)}
-          </div> */}
         </CDropdownToggle>
 
         <CDropdownMenu className="pt-0" placement="bottom-end">
-          <CDropdownItem href="#">
+          <CDropdownItem onClick={() => navigate(`/${adminroute}/profile-tab`)}>
             <CIcon icon={cilUser} className="me-2" />
+            Profile
             {userError ? userError : ""}
           </CDropdownItem>
           <CDropdownItem href="#">
@@ -133,11 +154,7 @@ const AppHeaderDropdown = () => {
 
           <CDropdownDivider />
 
-          <CDropdownItem
-            // onClick={handleLogout}
-            onClick={LogoutHandler}
-            as="button"
-          >
+          <CDropdownItem onClick={LogoutHandler} as="button">
             <CIcon icon={cilLockLocked} className="me-2" />
             Logout
           </CDropdownItem>
