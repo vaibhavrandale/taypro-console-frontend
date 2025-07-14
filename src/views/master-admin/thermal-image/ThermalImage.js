@@ -1,5 +1,3 @@
-// ThermalImageData.js
-
 import {
   CCard,
   CCardImage,
@@ -207,7 +205,7 @@ const ThermalImageData = () => {
       <CModal
         visible={state.modalVisible}
         onClose={() => dispatch({ type: "CLOSE_MODAL" })}
-        size="xl"
+        size="lg"
         centered
       >
         {state.selectedItem && (
@@ -230,7 +228,11 @@ const ThermalImageData = () => {
               <CImage
                 src={state.selectedImage}
                 fluid
-                style={{ maxHeight: "600px", objectFit: "contain" }}
+                style={{
+                  maxHeight: "500px",
+                  width: "100%",
+                  objectFit: "contain",
+                }}
               />
               <p className="mt-3">
                 <strong>Device ID:</strong> {state.selectedItem.device_id}{" "}

@@ -338,7 +338,7 @@ const ClientAdminDashboard = () => {
                         }}
                       >
                         Last Fetched:{" "}
-                        {new Date(weatherData?.time).toLocaleString()}
+                        {new Date(weatherData?.createdAt).toLocaleString()}
                       </div>
 
                       <div className="mt-2 text-lg font-semibold">
