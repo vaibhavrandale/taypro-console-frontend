@@ -18,12 +18,19 @@ import {
   CFormLabel,
   CListGroup,
   CListGroupItem,
+  CInputGroup,
+  CModalFooter,
+  CModalBody,
+  CModalHeader,
+  CModalTitle,
+  CModal,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilCloudUpload, cilX } from "@coreui/icons";
 import "./servicetickts.css";
+import { FaArrowUp } from "react-icons/fa";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -107,6 +114,10 @@ const ResolveServiceTicket = () => {
   });
   const [formData, setFormData] = useState({});
   const [uploadingFields, setUploadingFields] = useState({});
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [checklistFields, setChecklistFields] = useState([]);
+  const [checklistResponses, setChecklistResponses] = useState([]);
+  const [partChecklist, setPartChecklist] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -193,12 +204,44 @@ const ResolveServiceTicket = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleOpenChecklistModal = async () => {
+    try {
+      const result = await axios.get(
+        `/api/v1/faultanalysis/${formData.part_replaced_id}`,
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      const fields = result.data.data?.[0]?.checklist_fields || [];
+      setChecklistFields(fields);
+      setChecklistResponses([]);
+      setShowChecklistModal(true);
+    } catch (err) {
+      toast.error("Checklist not found or error loading checklist");
+    }
+  };
+
+  const updateChecklistResponse = (fieldName, value) => {
+    setChecklistResponses((prev) => {
+      const updated = [...prev];
+      const index = updated.findIndex(
+        (item) => Object.keys(item)[0] === fieldName
+      );
+
+      if (index !== -1) {
+        updated[index] = { [fieldName]: value };
+      } else {
+        updated.push({ [fieldName]: value });
+      }
+      return updated;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "UPDATE_REQUEST" });
 
     // Create a copy of formData excluding last_activity
     const { createdAt, _id, last_activity, ...filteredFormData } = formData;
+    filteredFormData.part_checklist = partChecklist;
 
     try {
       await axios.put(
@@ -470,27 +513,32 @@ const ResolveServiceTicket = () => {
                       <CFormLabel htmlFor="inventorySearch">
                         Select a part If Replaced
                       </CFormLabel>
-                      <CFormInput
-                        type="text"
-                        id="inventorySearch"
-                        placeholder="Search item name or code..."
-                        value={
-                          searchInventoryTerm ||
-                          formData.part_replaced || // show selected part
-                          ""
-                        }
-                        onChange={(e) => {
-                          setSearchInventoryTerm(e.target.value);
-
-                          // clear selected value when typing new search
-                          setFormData({
-                            ...formData,
-                            part_replaced_id: "",
-                            part_replaced: "",
-                          });
-                        }}
-                        className="mb-2"
-                      />
+                      <CInputGroup className="mb-2">
+                        <CFormInput
+                          type="text"
+                          placeholder="Search item name or code..."
+                          value={
+                            searchInventoryTerm || formData.part_replaced || ""
+                          }
+                          onChange={(e) => {
+                            setSearchInventoryTerm(e.target.value);
+                            setFormData({
+                              ...formData,
+                              part_replaced_id: "",
+                              part_replaced: "",
+                            });
+                          }}
+                        />
+                        <CButton
+                          type="button"
+                          color="primary"
+                          className="btn-sm"
+                          disabled={!formData.part_replaced_id}
+                          onClick={handleOpenChecklistModal}
+                        >
+                          <FaArrowUp />
+                        </CButton>
+                      </CInputGroup>
 
                       {searchInventoryTerm && (
                         <CListGroup
@@ -619,6 +667,120 @@ const ResolveServiceTicket = () => {
           )}
         </CCardBody>
       </CCard>
+      <CModal
+        scrollable
+        visible={showChecklistModal}
+        onClose={() => setShowChecklistModal(false)}
+        size="lg"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>
+            Part Replacement Checklist for: {formData.part_replaced || "N/A"}
+          </CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setShowChecklistModal(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          {checklistFields.length === 0 ? (
+            <p className="text-muted">
+              No checklist items found for this part.
+            </p>
+          ) : (
+            checklistFields.map((field, index) => (
+              <div className="mb-3" key={index}>
+                {field.input_type !== "checkbox" && (
+                  <CFormLabel className="fw-semibold">
+                    {field.field_name
+                      .replace(/_/g, " ")
+                      .split(" ")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                    :
+                  </CFormLabel>
+                )}
+
+                {field.input_type === "text" && (
+                  <CFormInput
+                    type="text"
+                    value={partChecklist.field_name}
+                    onChange={(e) =>
+                      updateChecklistResponse(field.field_name, e.target.value)
+                    }
+                  />
+                )}
+
+                {field.input_type === "checkbox" && (
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={partChecklist.field_name}
+                      id={`check-${index}`}
+                      onChange={(e) =>
+                        updateChecklistResponse(
+                          field.field_name,
+                          e.target.checked ? "Yes" : "No"
+                        )
+                      }
+                    />
+                    <CFormLabel htmlFor={`check-${index}`} className="ms-2">
+                      {field.field_name
+                        .replace(/_/g, " ")
+                        .split(" ")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                    </CFormLabel>
+                  </div>
+                )}
+
+                {field.input_type === "select" && (
+                  <CFormSelect
+                    value={partChecklist.field_name}
+                    onChange={(e) =>
+                      updateChecklistResponse(field.field_name, e.target.value)
+                    }
+                  >
+                    <option value="">-- Select --</option>
+                    {field.input_options.map((opt, i) => (
+                      <option key={i} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                )}
+              </div>
+            ))
+          )}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            onClick={() => setShowChecklistModal(false)}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="primary"
+            onClick={() => {
+              setPartChecklist(checklistResponses);
+              setShowChecklistModal(false);
+            }}
+          >
+            Save Checklist
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };
