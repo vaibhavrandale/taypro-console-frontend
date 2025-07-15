@@ -291,6 +291,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "AI Model",
+        to: "/master-admin/ai-model",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
