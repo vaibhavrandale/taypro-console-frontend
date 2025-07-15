@@ -822,8 +822,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             src={notification.performed_by.profile_image}
                             alt="Profile"
                             className="rounded-circle"
-                            width="45"
-                            height="45"
+                            width="40"
+                            height="40"
                             style={{ objectFit: "cover", cursor: "pointer" }}
                           />
                           <div className="ms-2 flex-grow-1">

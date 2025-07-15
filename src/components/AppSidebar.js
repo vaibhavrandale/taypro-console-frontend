@@ -49,7 +49,7 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
         </CSidebarBrand>
         <button
           type="button"
-          className=" border-0 ms-auto py-0 px-1"
+          className=" border-0 ms-auto py-0 px-1 d-lg-none"
           onClick={() => setSidebarShow(false)}
           style={{ background: "none" }}
         >

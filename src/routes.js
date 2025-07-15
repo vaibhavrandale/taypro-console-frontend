@@ -102,6 +102,9 @@ import MicrofiberdataAdminWise from "./views/master-admin/micro-fiber-data/Micro
 import UpdateMicrofiberdata from "./views/site-technician/micro-fiber-data/UpdateMicrofiberdata";
 import ThermalImageData from "./views/master-admin/thermal-image/ThermalImage";
 import Profile from "./views/master-admin/profile-tab/Profile";
+import CheckMicroFiber from "./views/ai-model/CheckMicroFiber";
+import Home from "./views/ai-model/Home";
+import ViewMicrofiber from "./views/ai-model/ViewMicrofiber";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -544,6 +547,33 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotPosition />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/ai-model",
+    name: "Master Admin AI Model",
+    element: (
+      <MasterAdminRoute>
+        <Home />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/ai-model/check-micro-fiber",
+    name: "Master Admin AI Model Check Micro Fiber",
+    element: (
+      <MasterAdminRoute>
+        <CheckMicroFiber />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/ai-model/view/:id",
+    name: "Master Admin AI Model View Micro Fiber",
+    element: (
+      <MasterAdminRoute>
+        <ViewMicrofiber />
       </MasterAdminRoute>
     ),
   },
