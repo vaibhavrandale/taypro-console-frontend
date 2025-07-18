@@ -105,7 +105,9 @@ import Profile from "./views/master-admin/profile-tab/Profile";
 import CheckMicroFiber from "./views/ai-model/CheckMicroFiber";
 import Home from "./views/ai-model/Home";
 import ViewMicrofiber from "./views/ai-model/ViewMicrofiber";
-
+import AddFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/AddFaultAnalysisChecklist";
+import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/FaultAnalysisChecklist";
+import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1340,6 +1342,34 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/fault-analysis-checklist",
+    name: "Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <FaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/fault-analysis-checklist/add-checklist/:id",
+    name: "Add Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <AddFaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/fault-analysis-checklist/update-checklist/:id",
+    name: "Update Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <UpdateFaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -4713,15 +4743,6 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
-  // {
-  //   path: "/client-admin/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ClientAdminRoute>
-  //       <ClientSearchRobot />
-  //     </ClientAdminRoute>
-  //   ),
-  // },
   {
     path: "/client-admin/timers",
     name: "Timers",

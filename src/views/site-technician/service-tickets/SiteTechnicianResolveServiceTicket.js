@@ -114,6 +114,7 @@ const SiteTechnicianResolveServiceTicket = () => {
   const [formData, setFormData] = useState({});
   const [uploadingFields, setUploadingFields] = useState({});
   const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [checklistFieldLoading, setChecklistFieldLoading] = useState(false);
   const [checklistFields, setChecklistFields] = useState([]);
   const [checklistResponses, setChecklistResponses] = useState([]);
   const [partChecklist, setPartChecklist] = useState([]);
@@ -189,16 +190,21 @@ const SiteTechnicianResolveServiceTicket = () => {
 
   const handleOpenChecklistModal = async () => {
     try {
+      setChecklistFieldLoading(true);
+
       const result = await axios.get(
         `/api/v1/faultanalysis/${formData.part_replaced_id}`,
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
+
       const fields = result.data.data?.[0]?.checklist_fields || [];
       setChecklistFields(fields);
       setChecklistResponses([]);
       setShowChecklistModal(true);
     } catch (err) {
       toast.error("Checklist not found or error loading checklist");
+    } finally {
+      setChecklistFieldLoading(false);
     }
   };
 
@@ -291,6 +297,24 @@ const SiteTechnicianResolveServiceTicket = () => {
       .toLowerCase()
       .includes(searchInventoryTerm.toLowerCase())
   );
+
+  const isTicketResolved = formData.ticket_resolved === true;
+
+  const isPartSelected = !!formData.part_replaced_id;
+  const isQuantityValid =
+    formData.replaced_part_quantity &&
+    Number(formData.replaced_part_quantity) > 0;
+
+  // Checklist is considered saved if partChecklist has been set at all
+  const isChecklistSaved = partChecklist.some(
+    (entry) => entry.part_id === formData.part_replaced_id
+  );
+
+  // Final condition
+  const enableUpdateTicket =
+    isTicketResolved &&
+    (!isPartSelected || // Case 1
+      (isPartSelected && isQuantityValid && isChecklistSaved)); // Case 2
 
   return (
     <div>
@@ -631,11 +655,15 @@ const SiteTechnicianResolveServiceTicket = () => {
               <div className="d-flex justify-content-end">
                 {formData.ticket_resolved && (
                   <CButton
-                    className="my-2  "
+                    className="my-2"
                     type="submit"
                     size="sm"
                     color="secondary"
-                    disabled={state.updating || state.loadingUpload}
+                    disabled={
+                      !enableUpdateTicket ||
+                      state.updating ||
+                      state.loadingUpload
+                    }
                   >
                     {state.updating || state.loadingUpload ? (
                       <>
@@ -671,7 +699,9 @@ const SiteTechnicianResolveServiceTicket = () => {
           </button>
         </CModalHeader>
         <CModalBody>
-          {checklistFields.length === 0 ? (
+          {checklistFieldLoading ? (
+            <LoadingSpinner />
+          ) : checklistFields.length === 0 ? (
             <p className="text-muted">
               No checklist items found for this part.
             </p>
@@ -757,7 +787,20 @@ const SiteTechnicianResolveServiceTicket = () => {
           <CButton
             color="primary"
             onClick={() => {
-              setPartChecklist(checklistResponses);
+              const checklistObject = {};
+              checklistResponses.forEach((entry) => {
+                const key = Object.keys(entry)[0];
+                const value = entry[key];
+                checklistObject[key] = value;
+              });
+
+              setPartChecklist([
+                {
+                  part_id: formData.part_replaced_id,
+                  checklist: checklistObject,
+                },
+              ]);
+
               setShowChecklistModal(false);
             }}
           >

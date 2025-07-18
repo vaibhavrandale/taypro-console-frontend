@@ -145,6 +145,11 @@ const _nav = [
             name: "ServiceTickets Fault",
             to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "Fault Analysis Checklist",
+            to: "/master-admin/fault-analysis-checklist",
+          },
         ],
       },
 
