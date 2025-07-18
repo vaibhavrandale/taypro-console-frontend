@@ -495,31 +495,39 @@ const LoraConfiguration = () => {
                 </CTableDataCell>
 
                 <CTableDataCell style={{ minWidth: "170px" }}>
-                  {item.last_activity[item.last_activity.length - 1] ===
-                  null ? (
-                    <span className="badge bg-danger">N/A</span>
+                  {item.last_activity.length > 0 ? (
+                    item.last_activity[item.last_activity.length - 1] ===
+                    null ? (
+                      <span className="badge bg-danger">N/A</span>
+                    ) : (
+                      <span className="badge bg-success">
+                        {item.last_activity[item.last_activity.length - 1].name}
+                      </span>
+                    )
                   ) : (
-                    <span className="badge bg-success">
-                      {item.last_activity[item.last_activity.length - 1].name}
-                    </span>
+                    <span className="badge bg-danger">N/A</span>
                   )}
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "170px" }}>
-                  {item.last_activity[item.last_activity.length - 1] ===
-                  null ? (
-                    <span className="badge bg-danger">N/A</span>
+                  {item.last_activity.length > 0 ? (
+                    item.last_activity[item.last_activity.length - 1] ===
+                    null ? (
+                      <span className="badge bg-danger">N/A</span>
+                    ) : (
+                      <span className="badge bg-success">
+                        {new Date(
+                          item.last_activity[
+                            item.last_activity.length - 1
+                          ].timestamp
+                        ).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </span>
+                    )
                   ) : (
-                    <span className="badge bg-success">
-                      {new Date(
-                        item.last_activity[
-                          item.last_activity.length - 1
-                        ].timestamp
-                      ).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </span>
+                    <span className="badge bg-danger">N/A</span>
                   )}
                 </CTableDataCell>
                 <CTableDataCell>
