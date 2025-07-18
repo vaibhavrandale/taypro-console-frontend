@@ -524,6 +524,65 @@ const SiteTechnicianServiceTicketDashboard = () => {
                           {serviceticket.ticket_resolving_notes}
                         </CTableDataCell>
                       </CTableRow>
+                      {serviceticket.part_checklist.some(
+                        (item) => item.checklist
+                      ) && (
+                        <CTableRow>
+                          <CTableHeaderCell>
+                            Fault Analysis Checklist
+                          </CTableHeaderCell>
+                          <CTableDataCell>
+                            {serviceticket.part_checklist.map((item, index) =>
+                              item.checklist ? (
+                                <div key={index} className="mb-2">
+                                  <span className="mb-0">
+                                    {Object.entries(item.checklist).map(
+                                      ([key, value], idx) => (
+                                        <li key={idx}>
+                                          <strong>
+                                            {key.replace(/_/g, " ")}:
+                                          </strong>{" "}
+                                          {value}
+                                        </li>
+                                      )
+                                    )}
+                                  </span>
+                                </div>
+                              ) : null
+                            )}
+                          </CTableDataCell>
+                        </CTableRow>
+                      )}
+
+                      {/* <CTableRow>
+                        <CTableHeaderCell>
+                          Fault Analysis Checklist
+                        </CTableHeaderCell>
+                        <CTableDataCell>
+                          {serviceticket.part_checklist.map((item, index) => (
+                            <div key={index} className="mb-2">
+                              {item.checklist ? (
+                                <span className="mb-0">
+                                  {Object.entries(item.checklist).map(
+                                    ([key, value], idx) => (
+                                      <li key={idx}>
+                                        <strong>
+                                          {key.replace(/_/g, " ")}:
+                                        </strong>{" "}
+                                        {value}
+                                      </li>
+                                    )
+                                  )}
+                                </span>
+                              ) : (
+                                <div className="text-muted">
+                                  No checklist available
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </CTableDataCell>
+                      </CTableRow> */}
                     </>
                   )}
                 </CTableBody>
