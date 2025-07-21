@@ -220,12 +220,22 @@ const AddFaultAnalysisChecklist = () => {
             </CRow>
           ))}
 
-          <CButton color="info" onClick={handleAddField} className="mb-3">
+          <CButton
+            color="primary"
+            onClick={handleAddField}
+            className="mb-3"
+            size="sm"
+          >
             + Add Checklist Field
           </CButton>
 
           <div className="d-flex justify-content-end">
-            <CButton type="submit" color="primary" disabled={state.submitting}>
+            <CButton
+              type="submit"
+              color="primary"
+              disabled={state.submitting}
+              size="sm"
+            >
               {state.submitting ? <CSpinner size="sm" /> : "Create Checklist"}
             </CButton>
           </div>
