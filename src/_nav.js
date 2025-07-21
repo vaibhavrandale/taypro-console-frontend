@@ -140,16 +140,6 @@ const _nav = [
             name: "Client Tickets",
             to: "/master-admin/client-tickets",
           },
-          {
-            component: CNavItem,
-            name: "ServiceTickets Fault",
-            to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
-          },
-          {
-            component: CNavItem,
-            name: "Fault Analysis Checklist",
-            to: "/master-admin/fault-analysis-checklist",
-          },
         ],
       },
 
@@ -264,11 +254,6 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Service Inventory",
-            to: "/master-admin/inventories",
-          },
-          {
-            component: CNavItem,
             name: "Project Handover",
             to: "/master-admin/project-handover",
           },
@@ -281,6 +266,39 @@ const _nav = [
             component: CNavItem,
             name: "Thermal Image Data",
             to: "/master-admin/thermal-image-data",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Inventory Data",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Service Inventory",
+            to: "/master-admin/inventories",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Inventory",
+            to: "/master-admin/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "ServiceTickets Fault",
+            to: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Fault Analysis Checklist",
+            to: "/master-admin/fault-analysis-checklist",
           },
         ],
       },
