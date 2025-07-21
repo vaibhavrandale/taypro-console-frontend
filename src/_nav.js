@@ -18,6 +18,7 @@ import {
   cilCheck,
   cilChatBubble,
   cilBarChart,
+  cilDollar,
   cilLan,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
@@ -332,7 +333,7 @@ const _nav = [
         name: "Feedback",
         icon: (
           <CIcon
-            icon={cilListRich}
+            icon={cilFactory}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
@@ -344,6 +345,18 @@ const _nav = [
             to: "/master-admin/customer-feedback",
           },
         ],
+      },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/master-admin/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
       },
     ],
   },
@@ -583,6 +596,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/master-user/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   //------------------------------------master-user--------------------------------------------
@@ -805,6 +830,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/project-admin/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
 
@@ -1017,6 +1054,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/project-user/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   //-------------------------------Project User-----------------------------------------
@@ -1147,6 +1196,18 @@ const _nav = [
             to: "/service-admin/weather-data-sitewise",
           },
         ],
+      },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/service-admin/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
       },
 
       // === Project & Maintenance Group ===
@@ -1450,6 +1511,18 @@ const _nav = [
             to: "/site-technician/user-site-attendance",
           },
         ],
+      },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/site-technician/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
       },
     ],
   },
@@ -2179,6 +2252,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Expense Management",
+        to: "/service-user/expenses",
+        icon: (
+          <CIcon
+            icon={cilDollar}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />

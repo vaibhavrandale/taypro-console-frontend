@@ -326,6 +326,7 @@ const UsersDashboard = () => {
       type: "Internal",
       profile_image: "",
       designation: "",
+      employee_id: "",
     });
     setAddModalVisible(true);
     setImage(""); // Reset image state when opening modal
@@ -739,6 +740,15 @@ const UsersDashboard = () => {
             onChange={handleChange}
             required
           />
+          <CFormLabel htmlFor="email">employee ID</CFormLabel>
+          <CFormInput
+            id="employee_id"
+            type="text"
+            name="employee_id"
+            value={formData.employee_id}
+            onChange={handleChange}
+            required
+          />
           <CFormLabel htmlFor="role">Role</CFormLabel>
           <CFormSelect
             id="role"
@@ -902,6 +912,14 @@ const UsersDashboard = () => {
             type="email"
             name="email"
             value={formData.email}
+            onChange={handleChange}
+          />
+          <CFormLabel htmlFor="update-employee-id">Employee ID</CFormLabel>
+          <CFormInput
+            id="update-employee-id"
+            type="text"
+            name="employee_id"
+            value={formData.employee_id}
             onChange={handleChange}
           />
           <CFormLabel htmlFor="update-role">Role</CFormLabel>
@@ -1078,6 +1096,10 @@ const UsersDashboard = () => {
                   <CTableRow>
                     <CTableHeaderCell>Email</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.email}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
+                    <CTableHeaderCell>Employee ID</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.employee_id}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Phone</CTableHeaderCell>
