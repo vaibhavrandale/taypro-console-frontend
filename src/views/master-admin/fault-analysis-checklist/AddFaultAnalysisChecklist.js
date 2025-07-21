@@ -159,7 +159,7 @@ const AddFaultAnalysisChecklist = () => {
                     <div className="mt-4">
                       <CButton
                         className="ms-2"
-                        color="danger"
+                        color="primary"
                         size="sm"
                         onClick={() => deleteRow(index)}
                         style={{
