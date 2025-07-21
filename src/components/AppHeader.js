@@ -662,11 +662,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       width: "210px",
                       overflowY: "auto",
                       zIndex: 10,
-                      backgroundColor: "white",
+                      backgroundColor: "#101936",
                     }}
                   >
                     {robotsGatewayLoading ? (
-                      <div className="text-center text-dark p-2">
+                      <div className="text-center p-2">
                         <LoadingSpinner />
                       </div>
                     ) : robotsGatewayError ? (
@@ -675,14 +675,14 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                       </div>
                     ) : filteredData.robots.length === 0 &&
                       filteredData.gateways.length === 0 ? (
-                      <div className="text-center text-dark p-2">
+                      <div className="text-center  p-2">
                         No robots or gateways found
                       </div>
                     ) : (
                       <>
                         {filteredData.robots.length > 0 && (
                           <>
-                            <div className="text-dark px-2  py-1">Robots</div>
+                            <div className=" px-2  py-1">Robots</div>
                             {filteredData.robots.map((robot, index) => (
                               <Link
                                 key={`robot-${index}`}
@@ -699,14 +699,14 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
                         {filteredData.gateways.length > 0 && (
                           <>
-                            <div className="text-dark px-2 pt-2">Gateways</div>
+                            <div className=" px-2 pt-2">Gateways</div>
                             {filteredData.gateways.map((gateway, index) => (
                               <Link
                                 key={`gateway-${index}`}
                                 to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
                                 className="text-decoration-none "
                               >
-                                <div className="px-2 py-1  border-bottom">
+                                <div className="px-2 py-1 ">
                                   {gateway.gateway_name}
                                 </div>
                               </Link>

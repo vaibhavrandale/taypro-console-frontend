@@ -14,6 +14,9 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChartLine, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
+import CIcon from "@coreui/icons-react";
+import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
+import moment from "moment";
 
 const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
 
@@ -101,29 +104,26 @@ const ClientAdminDashboard = () => {
   const [siteCoordinates, setSiteCoordinates] = useState({});
   const [totalAreaCleaned, setTotalAreaCleaned] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const fetchSiteIds = async () => {
+    dispatch({ type: "FETCH_SITEID_REQUEST" });
+    try {
+      const result = await axios.get(`/api/v1/sites`, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      dispatch({
+        type: "FETCH_SITEID_SUCCESS",
+        payload: result.data.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: "FETCH_SITEID_FAIL",
+        payload: error.response?.data?.error || error.response?.data?.message,
+      });
+      toast.error(error.response?.data?.error || error.response?.data?.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchSiteIds = async () => {
-      dispatch({ type: "FETCH_SITEID_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-        dispatch({
-          type: "FETCH_SITEID_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.error || error.response?.data?.message,
-        });
-        toast.error(
-          error.response?.data?.error || error.response?.data?.message
-        );
-      }
-    };
-
     const fetchSiteDetails = async () => {
       dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
       try {
@@ -229,7 +229,7 @@ const ClientAdminDashboard = () => {
           position: "relative",
           height: "415px",
           width: "100%",
-          borderRadius: "10px",
+          // borderRadius: "5px",
           overflow: "hidden",
         }}
       >
@@ -260,27 +260,7 @@ const ClientAdminDashboard = () => {
   return (
     <>
       <div className="p-2">
-        <CCol md={3} className="mb-3">
-          {loadingSiteIds ? (
-            <LoadingSpinner />
-          ) : siteIds?.length > 0 ? (
-            <CFormSelect
-              name="site_id"
-              value={site_id}
-              onChange={handleSiteNameChange}
-            >
-              {siteIds.map((item) => (
-                <option key={item.site_id} value={item.site_id}>
-                  {item.site_id}
-                </option>
-              ))}
-            </CFormSelect>
-          ) : (
-            <p>No Sites Found</p>
-          )}
-        </CCol>
-
-        <div className="flex flex-wrap gap-4">
+        {/* <div className="flex flex-wrap justify-content-between gap-4">
           <CRow className="gap-3">
             <CCol xs={12} md={7}>
               <div style={{ width: "100%", height: "400px" }}>
@@ -298,7 +278,7 @@ const ClientAdminDashboard = () => {
             <CCol
               xs={12}
               md={4}
-              className="d-flex align-items-center justify-content-center"
+              className="d-flex align-items-center justify-content-center border"
               style={{ minHeight: "400px" }}
             >
               {loadingWeatherData ? (
@@ -393,8 +373,163 @@ const ClientAdminDashboard = () => {
               )}
             </CCol>
           </CRow>
-        </div>
+        </div> */}
 
+        <div className="">
+          <CRow className="g-4">
+            {/* Map Section */}
+            <CCol xs={12} md={7}>
+              <CCard className="h-100 border-0 shadow-sm">
+                <CCardHeader className="">
+                  Hello {userInfo.username},
+                  <span className="text-success"> {getGreeting()}</span>
+                </CCardHeader>
+                <CCardBody className="p-0">
+                  <div
+                  //  style={{ width: "100%", height: "400px" }}
+                  >
+                    {loadingSiteDetails ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ minHeight: "350px" }}
+                      >
+                        <LoadingSpinner />
+                      </div>
+                    ) : (
+                      GoogleMapEmbed(
+                        siteCoordinates.latitude,
+                        siteCoordinates.longitude
+                      )
+                    )}
+                  </div>
+                </CCardBody>
+              </CCard>
+            </CCol>
+
+            {/* Weather Section */}
+            <CCol xs={12} md={5}>
+              <CCard className="h-100 shadow-sm border-0">
+                <CCardHeader className="fw-bold">
+                  <CRow className="d-flex justify-content-between align-items-center">
+                    <CCol md={5} className="mb-3">
+                      Weather Today{" "}
+                    </CCol>
+
+                    <CCol md={7} className="m-0">
+                      {loadingSiteIds ? (
+                        "fetching"
+                      ) : siteIds?.length > 0 ? (
+                        <CFormSelect
+                          name="site_id"
+                          value={site_id}
+                          onChange={handleSiteNameChange}
+                        >
+                          {siteIds.map((item) => (
+                            <option key={item.site_id} value={item.site_id}>
+                              {item.site_id}
+                            </option>
+                          ))}
+                        </CFormSelect>
+                      ) : (
+                        <p>No Sites Found</p>
+                      )}
+                    </CCol>
+                  </CRow>
+                </CCardHeader>
+                <CCardBody className="d-flex flex-column">
+                  {loadingWeatherData ? (
+                    // <div className="d-flex justify-content-between align-items-center">
+                    //
+                    // </div>
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ minHeight: "350px" }}
+                    >
+                      <LoadingSpinner />
+                    </div>
+                  ) : errorWeatherData ? (
+                    <div className="text-center text-danger">
+                      {errorWeatherData}
+                    </div>
+                  ) : (
+                    <>
+                      {/* Welcome */}
+                      <p className="">
+                        Last Updated:{" "}
+                        {/* {new Date(weatherData?.createdAt).toLocaleString()} */}
+                        {moment(weatherData?.createdAt).format(
+                          "DD/MM/YYYY hh:mm A"
+                        )}
+                      </p>
+                      <p className="">{weatherData?.siteName}</p>
+
+                      {/* Weather Grid */}
+                      <CRow className="s">
+                        <CCol xs={6}>
+                          <CCard className="text-center border-0 shadow-sm">
+                            <CCardBody>
+                              <CIcon
+                                icon={cilSpeedometer}
+                                className="mb-2 text-danger"
+                                size="lg"
+                              />
+                              <h5>{weatherData?.temperature}°C</h5>
+                              <div className="text-muted small">Feels Like</div>
+                            </CCardBody>
+                          </CCard>
+                        </CCol>
+                        <CCol xs={6}>
+                          <CCard className="text-center border-0 shadow-sm">
+                            <CCardBody>
+                              <CIcon
+                                icon={cilCloud}
+                                className="mb-2 text-primary"
+                                size="lg"
+                              />
+                              <h5>{weatherData?.cloudiness}%</h5>
+                              <div className="text-muted small">Cloudiness</div>
+                            </CCardBody>
+                          </CCard>
+                        </CCol>
+                        <CCol xs={6}>
+                          <CCard className="text-center border-0 shadow-sm">
+                            <CCardBody>
+                              <CIcon
+                                icon={cilSpeedometer}
+                                className="mb-2 text-warning"
+                                size="lg"
+                              />
+                              <h5>{weatherData?.wind_speed} m/s</h5>
+                              <div className="text-muted small">
+                                Wind @{" "}
+                                {new Date(
+                                  weatherData?.createdAt
+                                ).toLocaleTimeString()}
+                              </div>
+                            </CCardBody>
+                          </CCard>
+                        </CCol>
+                        <CCol xs={6}>
+                          <CCard className="text-center border-0 shadow-sm">
+                            <CCardBody>
+                              <CIcon
+                                icon={cilBolt}
+                                className="mb-2 text-success"
+                                size="lg"
+                              />
+                              <h5>{weatherData?.humidity}%</h5>
+                              <div className="text-muted small">Humidity</div>
+                            </CCardBody>
+                          </CCard>
+                        </CCol>
+                      </CRow>
+                    </>
+                  )}
+                </CCardBody>
+              </CCard>
+            </CCol>
+          </CRow>
+        </div>
         <div className="mt-4">
           <CRow className="justify-content-center">
             <CCol xs={12} md={6} className="mt-4">
@@ -533,7 +668,6 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-
         <div className="mt-4">
           <CCard className="mb-4 shadow">
             <CCardHeader>
