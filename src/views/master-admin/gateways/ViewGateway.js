@@ -102,7 +102,7 @@ const ViewGateway = () => {
         } catch (error) {
           dispatch({
             type: "FETCH_ROBOT_FAIL",
-            payload: error.response.data.error,
+            payload: error.response.data.error || error.response?.data?.message,
           });
           toast.error(
             error.response?.data?.error || error.response?.data?.message

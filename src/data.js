@@ -758,16 +758,16 @@ export const departments = [
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
   },
-  {
-    id: "D004",
-    department: "Operations",
-    email: "operations@taypro.in",
-    added_by: "vaibhav.randale.in",
-    added_at: "2025-01-30 11:38:00",
-  },
+  // {
+  //   id: "D004",
+  //   department: "Operations",
+  //   email: "operations@taypro.in",
+  //   added_by: "vaibhav.randale.in",
+  //   added_at: "2025-01-30 11:38:00",
+  // },
   {
     id: "D005",
-    department: "Hardware Devlopment",
+    department: "Hardware Development",
     email: "hardwaredev@taypro.in",
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
@@ -780,27 +780,27 @@ export const departments = [
     added_at: "2025-01-30 11:38:00",
   },
 
-  {
-    id: "D009",
-    department: "Accounts",
-    email: "accounts@taypro.in",
-    added_by: "vaibhav.randale.in",
-    added_at: "2025-01-30 11:38:00",
-  },
-  {
-    id: "D010",
-    department: "HR",
-    email: "hr@taypro.in",
-    added_by: "vaibhav.randale.in",
-    added_at: "2025-01-30 11:38:00",
-  },
-  {
-    id: "D011",
-    department: "Procurement",
-    email: "procurement@taypro.in",
-    added_by: "vaibhav.randale.in",
-    added_at: "2025-01-30 11:38:00",
-  },
+  // {
+  //   id: "D009",
+  //   department: "Accounts",
+  //   email: "accounts@taypro.in",
+  //   added_by: "vaibhav.randale.in",
+  //   added_at: "2025-01-30 11:38:00",
+  // },
+  // {
+  //   id: "D010",
+  //   department: "HR",
+  //   email: "hr@taypro.in",
+  //   added_by: "vaibhav.randale.in",
+  //   added_at: "2025-01-30 11:38:00",
+  // },
+  // {
+  //   id: "D011",
+  //   department: "Procurement",
+  //   email: "procurement@taypro.in",
+  //   added_by: "vaibhav.randale.in",
+  //   added_at: "2025-01-30 11:38:00",
+  // },
 ];
 
 export const clients = [

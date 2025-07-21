@@ -105,6 +105,10 @@ import Profile from "./views/master-admin/profile-tab/Profile";
 import CheckMicroFiber from "./views/ai-model/CheckMicroFiber";
 import Home from "./views/ai-model/Home";
 import ViewMicrofiber from "./views/ai-model/ViewMicrofiber";
+import ExpenseDashboard from "./views/expense/ExpenseDashboard";
+import CreateExpense from "./views/expense/CreateExpense";
+import ViewExpense from "./views/expense/ViewExpense";
+import UpdateExpense from "./views/expense/UpdateExpense";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1340,6 +1344,43 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/expenses",
+    name: "Expense Management",
+    element: (
+      <MasterAdminRoute>
+        <ExpenseDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <MasterAdminRoute>
+        <CreateExpense />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <MasterAdminRoute>
+        <ViewExpense />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <MasterAdminRoute>
+        <UpdateExpense />
+      </MasterAdminRoute>
+    ),
+  },
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 
@@ -2101,6 +2142,43 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  {
+    path: "/master-user/expenses",
+    name: "Expense Management",
+    element: (
+      <MasterUserRoute>
+        <ExpenseDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <MasterUserRoute>
+        <CreateExpense />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <MasterUserRoute>
+        <ViewExpense />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <MasterUserRoute>
+        <UpdateExpense />
+      </MasterUserRoute>
+    ),
+  },
 
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
@@ -2632,6 +2710,43 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <BatteryAndTemperature />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/expenses",
+    name: "Expense Management",
+    element: (
+      <ProjectAdminRoute>
+        <ExpenseDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <ProjectAdminRoute>
+        <CreateExpense />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <ProjectAdminRoute>
+        <ViewExpense />
+      </ProjectAdminRoute>
+    ),
+  },
+
+  {
+    path: "/project-admin/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateExpense />
       </ProjectAdminRoute>
     ),
   },
@@ -3195,6 +3310,43 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <Notifications />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/expenses",
+    name: "Expense Management",
+    element: (
+      <ProjectUserRoute>
+        <ExpenseDashboard />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <ProjectUserRoute>
+        <CreateExpense />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <ProjectUserRoute>
+        <ViewExpense />
+      </ProjectUserRoute>
+    ),
+  },
+
+  {
+    path: "/project-user/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <ProjectUserRoute>
+        <UpdateExpense />
       </ProjectUserRoute>
     ),
   },
@@ -3788,6 +3940,43 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/expenses",
+    name: "Expense Management",
+    element: (
+      <ServiceAdminRoute>
+        <ExpenseDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <ServiceAdminRoute>
+        <CreateExpense />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <ServiceAdminRoute>
+        <ViewExpense />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateExpense />
+      </ServiceAdminRoute>
+    ),
+  },
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
@@ -4360,7 +4549,43 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  {
+    path: "/service-user/expenses",
+    name: "Expense Management",
+    element: (
+      <ServiceUserRoute>
+        <ExpenseDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <ServiceUserRoute>
+        <CreateExpense />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <ServiceUserRoute>
+        <ViewExpense />
+      </ServiceUserRoute>
+    ),
+  },
 
+  {
+    path: "/service-user/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <ServiceUserRoute>
+        <UpdateExpense />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -4628,6 +4853,43 @@ const routes = [
     ),
   },
 
+  {
+    path: "/site-technician/expenses",
+    name: "Expense Management",
+    element: (
+      <SiteTechnicianRoute>
+        <ExpenseDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/expenses/create-expense",
+    name: "Create Expense",
+    element: (
+      <SiteTechnicianRoute>
+        <CreateExpense />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/expenses/view/:id",
+    name: "View Expense",
+    element: (
+      <SiteTechnicianRoute>
+        <ViewExpense />
+      </SiteTechnicianRoute>
+    ),
+  },
+
+  {
+    path: "/site-technician/expenses/update/:id",
+    name: "Update Expense",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdateExpense />
+      </SiteTechnicianRoute>
+    ),
+  },
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
