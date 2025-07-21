@@ -184,7 +184,7 @@ const FaultAnalysisChecklist = () => {
 
   return (
     <div className="p-2">
-      <h2 className="text-center mt-4">Service Item List</h2>
+      <h2 className="text-center mt-4">Fault Analysis Checklist</h2>
 
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
