@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React from "react";
 
 // import { BsStarFill, BsStar } from "react-icons/bs";
 
@@ -29,86 +29,88 @@ import {
   faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 // import { customer_feedback } from "../../data";
 // import toast from "react-hot-toast";
 // import axios from "axios";
 // import LoadingSpinner from "../../components/LoadingSpinner";
 // import TayproLogo from "../../assets/brand/logoforwhitebg.png"; // Import the image
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_FEEDBACK_REQUEST":
-      return { ...state, loading: true, error: "" };
-    case "FETCH_FEEDBACK_SUCCESS":
-      return {
-        ...state,
-        loading: false,
-        latestfeedback: action.payload,
-      };
-    case "FETCH_FEEDBACK_FAIL":
-      return { ...state, loading: false, error: action.payload };
+// const reducer = (state, action) => {
+//   switch (action.type) {
+//     case "FETCH_FEEDBACK_REQUEST":
+//       return { ...state, loading: true, error: "" };
+//     case "FETCH_FEEDBACK_SUCCESS":
+//       return {
+//         ...state,
+//         loading: false,
+//         latestfeedback: action.payload,
+//       };
+//     case "FETCH_FEEDBACK_FAIL":
+//       return { ...state, loading: false, error: action.payload };
 
-    case "FETCH_TIMER_REQUEST":
-      return { ...state, timerLoading: true, timerError: "" };
-    case "FETCH_TIMER_SUCCESS":
-      return {
-        ...state,
-        timerLoading: false,
-        timernotification: action.payload,
-      };
-    case "FETCH_TIMER_FAIL":
-      return { ...state, timerLoading: false, timerError: action.payload };
+//     case "FETCH_TIMER_REQUEST":
+//       return { ...state, timerLoading: true, timerError: "" };
+//     case "FETCH_TIMER_SUCCESS":
+//       return {
+//         ...state,
+//         timerLoading: false,
+//         timernotification: action.payload,
+//       };
+//     case "FETCH_TIMER_FAIL":
+//       return { ...state, timerLoading: false, timerError: action.payload };
 
-    case "SUBMIT_REQUEST":
-      return { ...state, submitLoading: true, submiterror: "" };
+//     case "SUBMIT_REQUEST":
+//       return { ...state, submitLoading: true, submiterror: "" };
 
-    case "SUBMIT_SUCCESS":
-      return { ...state, submitLoading: false };
+//     case "SUBMIT_SUCCESS":
+//       return { ...state, submitLoading: false };
 
-    case "SUBMIT_FAIL":
-      return { ...state, submitLoading: false, submiterror: action.payload };
+//     case "SUBMIT_FAIL":
+//       return { ...state, submitLoading: false, submiterror: action.payload };
 
-    case "UPDATE_TIMER_REQUEST":
-      return { ...state, updateLoading: true, updateError: "" };
+//     case "UPDATE_TIMER_REQUEST":
+//       return { ...state, updateLoading: true, updateError: "" };
 
-    case "UPDATE_TIMER_SUCCESS":
-      return { ...state, updateLoading: false };
+//     case "UPDATE_TIMER_SUCCESS":
+//       return { ...state, updateLoading: false };
 
-    case "UPDATE_TIMER_FAIL":
-      return { ...state, updateLoading: false, updateError: action.payload };
-    default:
-      return state;
-  }
-};
+//     case "UPDATE_TIMER_FAIL":
+//       return { ...state, updateLoading: false, updateError: action.payload };
+//     default:
+//       return state;
+//   }
+// };
 
 const UserBasedLinkDashboard = () => {
-  const [
-    {
-      error,
-      latestfeedback,
-      loading,
-      submitLoading,
-      submiterror,
-      timerError,
-      timernotification,
-      timerLoading,
-      updateError,
-      updateLoading,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
-    latestfeedback: null,
-    loading: false,
-    updateLoading: false,
-    timerLoading: false,
-    submitLoading: false,
-    timernotification: {},
-    submiterror: "",
-    updateError: "",
-    timerError: "",
-  });
+  // const [
+  //   {
+  //     // error,
+  //     // latestfeedback,
+  //     // loading,
+  //     // submitLoading,
+  //     // submiterror,
+  //     // timerError,
+  //     // timernotification,
+  //     // timerLoading,
+  //     // updateError,
+  //     // updateLoading,
+  //   },
+  //   dispatch,
+  // ] = useReducer(reducer, {
+  //   latestfeedback: null,
+  //   loading: false,
+  //   updateLoading: false,
+  //   timerLoading: false,
+  //   submitLoading: false,
+  //   timernotification: {},
+  //   submiterror: "",
+  //   updateError: "",
+  //   timerError: "",
+  // });
 
   // const authtoken = useSelector((state) => state.authtoken);
+
   const userInfo = useSelector((state) => state.userInfo);
   // const [latestFeedback, setLatestFeedback] = useState(null);
 
@@ -369,6 +371,18 @@ const UserBasedLinkDashboard = () => {
   // };
 
   // console.log(timernotification);
+
+  if (userInfo.role === "Client Admin") {
+    setTimeout(() => {
+      toast.success(
+        `Welcome ${userInfo.username}! Please check your latest feedback and timer notifications.`,
+        {
+          duration: 6000,
+        }
+      );
+      navigate("/client-admin/dashboard");
+    }, 1000);
+  }
 
   return (
     <div className="mt-3 mx-2">

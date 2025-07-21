@@ -6,6 +6,10 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
+  CRow,
+  CCol,
+  CInputGroup,
+  CFormInput,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -14,6 +18,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -60,7 +65,7 @@ const ClientFeedback = () => {
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-
+  const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     let pagination = {
       pg: page,
@@ -134,10 +139,14 @@ const ClientFeedback = () => {
         "#": index + 1,
         "Client Name": item.user.name,
         "Client Email": item.user.email,
-        Designation: item.user.designation,
-        Comments: item.feedback_data.comments,
-        Rating: item.feedback_data.rating,
-        Date: new Date(item.createdAt).toISOString().split("T")[0],
+        Designation: item.user.designation
+          ? item.user.designation
+          : "No designation",
+        Comments: item.feedback_data
+          ? item.feedback_data.comments
+          : "No comments",
+        Rating: item.feedback_data ? item.feedback_data.rating : "No rating",
+        Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
       }))
     );
     const workbook = XLSX.utils.book_new();
@@ -147,22 +156,29 @@ const ClientFeedback = () => {
     XLSX.writeFile(workbook, "Client Feedback.xlsx");
   };
 
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
+  // const userInfo = useSelector((state) => state.userInfo);
+  // let adminroute = "";
 
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  }
+  // if (userInfo.role === "Master Admin") {
+  //   adminroute = "master-admin";
+  // } else if (userInfo.role === "Service Admin") {
+  //   adminroute = "service-admin";
+  // } else if (userInfo.role === "Project Admin") {
+  //   adminroute = "project-admin";
+  // } else if (userInfo?.role === "Master User") {
+  //   adminroute = "master-user";
+  // } else if (userInfo?.role === "Service User") {
+  //   adminroute = "service-user";
+  // } else if (userInfo?.role === "Project User") {
+  //   adminroute = "project-user";
+  // }
+
+  const Feedbacks = feedbacks.filter(
+    (feedback) =>
+      feedback.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      feedback.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      feedback.user.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="p-2">
@@ -172,7 +188,18 @@ const ClientFeedback = () => {
           Export
         </Link>
       </div>
-
+      <CRow className="justify-content-end">
+        <CCol xs={12} sm={10} md={8} lg={5}>
+          <CInputGroup className="mb-3">
+            <CFormInput
+              type="text"
+              placeholder="Search by username,site_id ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </CInputGroup>
+        </CCol>
+      </CRow>
       {/* feedbacks Table */}
       <CTable
         bordered
@@ -193,6 +220,9 @@ const ClientFeedback = () => {
               Designation
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Site ID
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
               Comments
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "140px" }}>
@@ -206,7 +236,7 @@ const ClientFeedback = () => {
         <CTableBody>
           {loadingFeedbacks ? (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
+              <CTableDataCell colSpan="9" className="text-start fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -217,28 +247,42 @@ const ClientFeedback = () => {
                 {error}
               </CTableDataCell>
             </CTableRow>
-          ) : feedbacks.length > 0 ? (
-            feedbacks.map((feedback, index) => (
+          ) : Feedbacks.length > 0 ? (
+            Feedbacks.map((feedback, index) => (
               <CTableRow
                 key={index}
                 className={feedback.is_delete ? "table-danger" : ""}
               >
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{feedback.user.name}</CTableDataCell>
+                <CTableDataCell>{feedback.user.username}</CTableDataCell>
                 <CTableDataCell>{feedback.user.email}</CTableDataCell>
-                <CTableDataCell>{feedback.user.designation}</CTableDataCell>
                 <CTableDataCell>
-                  {feedback.feedback_data.comments}
+                  {feedback.user.designation
+                    ? feedback.user.designation
+                    : "No designation"}
                 </CTableDataCell>
-                <CTableDataCell>{feedback.feedback_data.rating}</CTableDataCell>
+                <CTableDataCell>{feedback.user.site_id}</CTableDataCell>
                 <CTableDataCell>
-                  {new Date(feedback.createdAt).toISOString().split("T")[0]}
+                  {feedback.feedback_data
+                    ? feedback.feedback_data.comments
+                    : "No comments"}
+                </CTableDataCell>
+                <CTableDataCell>
+                  {feedback.feedback_data
+                    ? feedback.feedback_data.rating
+                    : "No rating"}
+                </CTableDataCell>
+                <CTableDataCell>
+                  {/* {feedback.feedback_data
+                        ? new Date(feedback.createdAt).toLocaleString("")
+                        : "No data"} */}
+                  {moment(feedback.createdAt).format("DD/MM/YYYY hh:mm A")}
                 </CTableDataCell>
               </CTableRow>
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
+              <CTableDataCell colSpan="8" className="text-center fw-bold">
                 No matching feedbacks found.
               </CTableDataCell>
             </CTableRow>

@@ -109,7 +109,11 @@ import ExpenseDashboard from "./views/expense/ExpenseDashboard";
 import CreateExpense from "./views/expense/CreateExpense";
 import ViewExpense from "./views/expense/ViewExpense";
 import UpdateExpense from "./views/expense/UpdateExpense";
-
+import AddFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/AddFaultAnalysisChecklist";
+import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/FaultAnalysisChecklist";
+import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
+import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
+import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1300,7 +1304,6 @@ const routes = [
   {
     path: "/master-admin/user-performance-dashboard/user-performance/:id",
     name: "User Performance",
-
     element: (
       <MasterAdminRoute>
         <ViewPerformance />
@@ -1344,6 +1347,52 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/fault-analysis-checklist",
+    name: "Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <FaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/fault-analysis-checklist/add-checklist/:id",
+    name: "Add Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <AddFaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/fault-analysis-checklist/update-checklist/:id",
+    name: "Update Fault Analysis Checklist",
+    element: (
+      <MasterAdminRoute>
+        <UpdateFaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/customer-feedback",
+    name: "Customer Feedback",
+    element: (
+      <MasterAdminRoute>
+        <ClientFeedback />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/faulty-inventory",
+    name: "Faulty Inventory",
+    element: (
+      <MasterAdminRoute>
+        <FaultyInventory />
+      </MasterAdminRoute>
+    ),
+  },
+
   {
     path: "/master-admin/expenses",
     name: "Expense Management",
@@ -3940,6 +3989,26 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  {
+    path: "/service-admin/user-performance-dashboard",
+    name: "User Performance",
+
+    element: (
+      <ServiceAdminRoute>
+        <UserPerformanceDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/user-performance-dashboard/user-performance/:id",
+    name: "User Performance",
+    element: (
+      <ServiceAdminRoute>
+        <ViewPerformance />
+      </ServiceAdminRoute>
+    ),
+  },
   {
     path: "/service-admin/expenses",
     name: "Expense Management",
@@ -4975,15 +5044,6 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
-  // {
-  //   path: "/client-admin/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ClientAdminRoute>
-  //       <ClientSearchRobot />
-  //     </ClientAdminRoute>
-  //   ),
-  // },
   {
     path: "/client-admin/timers",
     name: "Timers",

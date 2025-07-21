@@ -137,6 +137,23 @@ const ServiceTicketsFaultDashboard = () => {
       setViewModalVisible(false);
     }
   };
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      handlePageChange(pageNumber);
+    }
+  };
   return (
     <div>
       <h2 className="text-center mb-4">Service Tickets Faults</h2>
@@ -239,10 +256,11 @@ const ServiceTicketsFaultDashboard = () => {
         hasPrevPage={hasPrevPage}
         hasNextPage={hasNextPage}
         pageInput={pageInput}
+        handlePageChange={handlePageChange}
+        handlePageInputChange={handlePageInputChange}
+        handlePageInputSubmit={handlePageInputSubmit}
         limit={limit}
-        handleLimitChange={setLimit}
-        setPage={setPage}
-        setPageInput={setPageInput}
+        handleLimitChange={setLimit} // New prop
       />
 
       <CModal
