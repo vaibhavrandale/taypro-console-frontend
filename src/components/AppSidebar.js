@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  CCloseButton,
   CSidebar,
   CSidebarBrand,
   CSidebarFooter,

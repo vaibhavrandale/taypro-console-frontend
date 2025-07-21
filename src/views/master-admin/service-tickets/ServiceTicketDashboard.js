@@ -103,7 +103,7 @@ const ServiceTicketDashboard = () => {
       servicetickets,
       serviceticket,
       fetchserviceticketloading,
-      updateserviceticketloading,
+      // updateserviceticketloading,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -123,26 +123,27 @@ const ServiceTicketDashboard = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [selectedImage, setSelectedImage] = useState(null);
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [formData, setFormData] = useState({});
+  // const [selectedImage, setSelectedImage] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    // eslint-disable-next-line no-unused-vars
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  }
+
+  // let adminroute = "";
+  // if (userInfo.role === "Master Admin") {
+  //   adminroute = "master-admin";
+  // } else if (userInfo.role === "Service Admin") {
+  //   adminroute = "service-admin";
+  // } else if (userInfo.role === "Project Admin") {
+  //   // eslint-disable-next-line no-unused-vars
+  //   adminroute = "project-admin";
+  // } else if (userInfo.role === "Master User") {
+  //   adminroute = "master-user";
+  // } else if (userInfo.role === "Project User") {
+  //   adminroute = "project-user";
+  // } else if (userInfo.role === "Service User") {
+  //   adminroute = "service-user";
+  // }
   const openViewModal = async (id) => {
     setViewModalVisible(true);
 
@@ -162,30 +163,30 @@ const ServiceTicketDashboard = () => {
   };
 
   // 📌 Handle input change in modal
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const handleUpdate = async (id) => {
-    try {
-      dispatch({ type: "UPDATE_TICKET_REQUEST" });
-      await axios.put(`/api/v1/servicetickets/${id}`, formData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-      setModalVisible(false);
+  // const handleUpdate = async (id) => {
+  //   try {
+  //     dispatch({ type: "UPDATE_TICKET_REQUEST" });
+  //     await axios.put(`/api/v1/servicetickets/${id}`, formData, {
+  //       headers: { Authorization: `Bearer ${authtoken}` },
+  //     });
+  //     setModalVisible(false);
 
-      // Update local state with the modified ticket
-      dispatch({
-        type: "UPDATE_TICKET_SUCCESS",
-        payload: servicetickets.map((ticket) =>
-          ticket.id === id ? { ...ticket, ...formData } : ticket
-        ),
-      });
-    } catch (error) {
-      dispatch({ type: "UPDATE_TICKET_FAIL", payload: error });
-      console.error("Error updating ticket:", error);
-    }
-  };
+  //     // Update local state with the modified ticket
+  //     dispatch({
+  //       type: "UPDATE_TICKET_SUCCESS",
+  //       payload: servicetickets.map((ticket) =>
+  //         ticket.id === id ? { ...ticket, ...formData } : ticket
+  //       ),
+  //     });
+  //   } catch (error) {
+  //     dispatch({ type: "UPDATE_TICKET_FAIL", payload: error });
+  //     console.error("Error updating ticket:", error);
+  //   }
+  // };
 
   const [pageInput, setPageInput] = useState("");
 

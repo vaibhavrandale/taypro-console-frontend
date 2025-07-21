@@ -1,22 +1,12 @@
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
   cilCursor,
-  cilDescription,
-  cilDrop,
-  cilExternalLink,
-  cilNotes,
-  cilPencil,
   cilPuzzle,
   cilSettings,
   cilSpeedometer,
   cilFactory,
-  cilStar,
   cilBuilding,
-  cilSearch,
   cilCalendarCheck,
   cilTask,
   cilNoteAdd,
@@ -28,8 +18,9 @@ import {
   cilCheck,
   cilChatBubble,
   cilBarChart,
+  cilLan,
 } from "@coreui/icons";
-import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
+import { CNavGroup, CNavItem } from "@coreui/react";
 
 const _nav = [
   // -----------------------------------master admin----------------------------------------
@@ -236,6 +227,7 @@ const _nav = [
           },
         ],
       },
+      // /master-admin/customer-feedback
       {
         component: CNavGroup,
         name: "Operations",
@@ -314,17 +306,44 @@ const _nav = [
           />
         ),
       },
+
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "AI Model",
-        to: "/master-admin/ai-model",
         icon: (
           <CIcon
-            icon={cilFactory}
+            icon={cilLan}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Micro-Fiber cloth model",
+            to: "/master-admin/ai-model",
+          },
+        ],
+      },
+
+      //
+      {
+        component: CNavGroup,
+        name: "Feedback",
+        icon: (
+          <CIcon
+            icon={cilListRich}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Customer Feedback",
+            to: "/master-admin/customer-feedback",
+          },
+        ],
       },
     ],
   },
@@ -1207,17 +1226,40 @@ const _nav = [
       },
 
       // === Attendance Group ===
+      // {
+      //   component: CNavItem,
+      //   name: "Technician Attendance",
+      //   to: "/service-admin/technician-attendance",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilTask}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px" }}
+      //     />
+      //   ),
+      // },
       {
-        component: CNavItem,
-        name: "Technician Attendance",
-        to: "/service-admin/technician-attendance",
+        component: CNavGroup,
+        name: "Users Management",
         icon: (
           <CIcon
-            icon={cilTask}
+            icon={cilGroup}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Technician Attendance",
+            to: "/service-admin/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "User Performance",
+            to: "/service-admin/user-performance-dashboard",
+          },
+        ],
       },
       {
         component: CNavItem,
@@ -2149,6 +2191,207 @@ const _nav = [
 
   //-------------------------------client admin------------------------------------
 
+  // {
+  //   component: CNavGroup,
+  //   name: "Client Admin",
+  //   to: "/base",
+  //   icon: (
+  //     <CIcon
+  //       icon={cilPuzzle}
+  //       customClassName="nav-icon"
+  //       style={{ height: "30px" }}
+  //     />
+  //   ),
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: "Dashboard",
+  //       to: "/client-admin/dashboard",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilSpeedometer}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Statistics",
+  //       to: "/client-admin/statistics",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilBarChart}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+
+  //     {
+  //       component: CNavItem,
+  //       name: "Robot Commands",
+  //       to: "/client-admin/robot-commands",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilCursor}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Tickets",
+  //       to: "/client-admin/clientadmin-client-ticket",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilNoteAdd}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavGroup,
+  //       name: "Site Management",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilBuilding}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "All Site Data",
+  //           to: "/client-admin/site-management/all-site-data",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilFactory}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Site Management",
+  //           to: "/client-admin/site-management",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilBuilding}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "All Sites Timers",
+  //           to: "/client-admin/timers",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilClock}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       component: CNavGroup,
+  //       name: "Maintenance & Logs",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilCalendarCheck}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "Preventive Maintenance",
+  //           to: "/client-admin/preventive-maintenance-dashboard",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilCalendarCheck}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Cleaning Log",
+  //           to: "/client-admin/cleaning-log-sites",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilListRich}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //       ],
+  //     },
+
+  //     {
+  //       component: CNavGroup,
+  //       name: "Users & Communication",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilGroup}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "Users",
+  //           to: "/client-admin/external-users",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilGroup}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Chat with Users",
+  //           to: "/client-admin/chat",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilChatBubble}
+  //               customClassName="nav-icon"
+  //               style={{ height: "30px" }}
+  //             />
+  //           ),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Monthly Sites Report",
+  //       to: "/client-admin/monthlyreport",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilFactory}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px" }}
+  //         />
+  //       ),
+  //     },
+  //   ],
+  // },
+
   {
     component: CNavGroup,
     name: "Client Admin",
@@ -2185,18 +2428,6 @@ const _nav = [
           />
         ),
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Search Robot",
-      //   to: "/client-admin/search-robot",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilSearch}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
-      //     />
-      //   ),
-      // },
       {
         component: CNavItem,
         name: "Robot Commands",
@@ -2211,7 +2442,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "Client Tickets",
+        name: "Tickets",
         to: "/client-admin/clientadmin-client-ticket",
         icon: (
           <CIcon
@@ -2221,6 +2452,8 @@ const _nav = [
           />
         ),
       },
+
+      // Group: Site Management
       {
         component: CNavGroup,
         name: "Site Management",
@@ -2231,46 +2464,26 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
-
         items: [
           {
             component: CNavItem,
             name: "All Site Data",
             to: "/client-admin/site-management/all-site-data",
-            icon: (
-              <CIcon
-                icon={cilFactory}
-                customClassName="nav-icon"
-                style={{ height: "30px" }}
-              />
-            ),
           },
           {
             component: CNavItem,
             name: "Site Management",
             to: "/client-admin/site-management",
-            icon: (
-              <CIcon
-                icon={cilBuilding}
-                customClassName="nav-icon"
-                style={{ height: "30px" }}
-              />
-            ),
           },
           {
             component: CNavItem,
             name: "All Sites Timers",
             to: "/client-admin/timers",
-            icon: (
-              <CIcon
-                icon={cilClock}
-                customClassName="nav-icon"
-                style={{ height: "30px" }}
-              />
-            ),
           },
         ],
       },
+
+      // Group: Maintenance & Logs
       {
         component: CNavGroup,
         name: "Maintenance & Logs",
@@ -2286,29 +2499,16 @@ const _nav = [
             component: CNavItem,
             name: "Preventive Maintenance",
             to: "/client-admin/preventive-maintenance-dashboard",
-            icon: (
-              <CIcon
-                icon={cilCalendarCheck}
-                customClassName="nav-icon"
-                style={{ height: "30px" }}
-              />
-            ),
           },
           {
             component: CNavItem,
             name: "Cleaning Log",
             to: "/client-admin/cleaning-log-sites",
-            icon: (
-              <CIcon
-                icon={cilListRich}
-                customClassName="nav-icon"
-                style={{ height: "30px" }}
-              />
-            ),
           },
         ],
       },
 
+      // Group: Users & Communication
       {
         component: CNavGroup,
         name: "Users & Communication",
@@ -2346,6 +2546,7 @@ const _nav = [
           },
         ],
       },
+
       {
         component: CNavItem,
         name: "Monthly Sites Report",
@@ -2630,492 +2831,6 @@ const _nav = [
   },
 
   // ---------------------Client technician----------------------------------
-
-  {
-    component: CNavTitle,
-    name: "Theme",
-  },
-  {
-    component: CNavItem,
-    name: "Colors",
-    to: "/theme/colors",
-    icon: (
-      <CIcon
-        icon={cilDrop}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-  },
-  {
-    component: CNavItem,
-    name: "Typography",
-    to: "/theme/typography",
-    icon: (
-      <CIcon
-        icon={cilPencil}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-  },
-  {
-    component: CNavTitle,
-    name: "Components",
-  },
-  {
-    component: CNavGroup,
-    name: "Base",
-    to: "/base",
-    icon: (
-      <CIcon
-        icon={cilPuzzle}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "Accordion",
-        to: "/base/accordion",
-      },
-      {
-        component: CNavItem,
-        name: "Breadcrumb",
-        to: "/base/breadcrumbs",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Calendar"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/components/calendar/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Cards",
-        to: "/base/cards",
-      },
-      {
-        component: CNavItem,
-        name: "Carousel",
-        to: "/base/carousels",
-      },
-      {
-        component: CNavItem,
-        name: "Collapse",
-        to: "/base/collapses",
-      },
-      {
-        component: CNavItem,
-        name: "List group",
-        to: "/base/list-groups",
-      },
-      {
-        component: CNavItem,
-        name: "Navs & Tabs",
-        to: "/base/navs",
-      },
-      {
-        component: CNavItem,
-        name: "Pagination",
-        to: "/base/paginations",
-      },
-      {
-        component: CNavItem,
-        name: "Placeholders",
-        to: "/base/placeholders",
-      },
-      {
-        component: CNavItem,
-        name: "Popovers",
-        to: "/base/popovers",
-      },
-      {
-        component: CNavItem,
-        name: "Progress",
-        to: "/base/progress",
-      },
-      {
-        component: CNavItem,
-        name: "Smart Pagination",
-        href: "https://coreui.io/react/docs/components/smart-pagination/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Smart Table"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/components/smart-table/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Spinners",
-        to: "/base/spinners",
-      },
-      {
-        component: CNavItem,
-        name: "Tables",
-        to: "/base/tables",
-      },
-      {
-        component: CNavItem,
-        name: "Tabs",
-        to: "/base/tabs",
-      },
-      {
-        component: CNavItem,
-        name: "Tooltips",
-        to: "/base/tooltips",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Virtual Scroller"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/components/virtual-scroller/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-    ],
-  },
-  {
-    component: CNavGroup,
-    name: "Buttons",
-    to: "/buttons",
-    icon: (
-      <CIcon
-        icon={cilCursor}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "Buttons",
-        to: "/buttons/buttons",
-      },
-      {
-        component: CNavItem,
-        name: "Buttons groups",
-        to: "/buttons/button-groups",
-      },
-      {
-        component: CNavItem,
-        name: "Dropdowns",
-        to: "/buttons/dropdowns",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Loading Button"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/components/loading-button/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-    ],
-  },
-  {
-    component: CNavGroup,
-    name: "Forms",
-    icon: (
-      <CIcon
-        icon={cilNotes}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "Form Control",
-        to: "/forms/form-control",
-      },
-      {
-        component: CNavItem,
-        name: "Select",
-        to: "/forms/select",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Multi Select"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/forms/multi-select/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Checks & Radios",
-        to: "/forms/checks-radios",
-      },
-      {
-        component: CNavItem,
-        name: "Range",
-        to: "/forms/range",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Range Slider"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/forms/range-slider/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Rating"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/forms/rating/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Input Group",
-        to: "/forms/input-group",
-      },
-      {
-        component: CNavItem,
-        name: "Floating Labels",
-        to: "/forms/floating-labels",
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Date Picker"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/forms/date-picker/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Date Range Picker",
-        href: "https://coreui.io/react/docs/forms/date-range-picker/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: (
-          <React.Fragment>
-            {"Time Picker"}
-            <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
-          </React.Fragment>
-        ),
-        href: "https://coreui.io/react/docs/forms/time-picker/",
-        badge: {
-          color: "danger",
-          text: "PRO",
-        },
-      },
-      {
-        component: CNavItem,
-        name: "Layout",
-        to: "/forms/layout",
-      },
-      {
-        component: CNavItem,
-        name: "Validation",
-        to: "/forms/validation",
-      },
-    ],
-  },
-  {
-    component: CNavItem,
-    name: "Charts",
-    to: "/charts",
-    icon: (
-      <CIcon
-        icon={cilChartPie}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-  },
-  {
-    component: CNavGroup,
-    name: "Icons",
-    icon: (
-      <CIcon
-        icon={cilStar}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "CoreUI Free",
-        to: "/icons/coreui-icons",
-      },
-      {
-        component: CNavItem,
-        name: "CoreUI Flags",
-        to: "/icons/flags",
-      },
-      {
-        component: CNavItem,
-        name: "CoreUI Brands",
-        to: "/icons/brands",
-      },
-    ],
-  },
-  {
-    component: CNavGroup,
-    name: "Notifications",
-    icon: (
-      <CIcon
-        icon={cilBell}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "Alerts",
-        to: "/notifications/alerts",
-      },
-      {
-        component: CNavItem,
-        name: "Badges",
-        to: "/notifications/badges",
-      },
-      {
-        component: CNavItem,
-        name: "Modal",
-        to: "/notifications/modals",
-      },
-      {
-        component: CNavItem,
-        name: "Toasts",
-        to: "/notifications/toasts",
-      },
-    ],
-  },
-  {
-    component: CNavItem,
-    name: "Widgets",
-    to: "/widgets",
-    icon: (
-      <CIcon
-        icon={cilCalculator}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    badge: {
-      color: "info",
-      text: "DONE",
-    },
-  },
-  {
-    component: CNavTitle,
-    name: "Extras",
-  },
-  {
-    component: CNavGroup,
-    name: "Pages",
-    icon: (
-      <CIcon
-        icon={cilStar}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-    items: [
-      {
-        component: CNavItem,
-        name: "Login",
-        to: "/login",
-      },
-      {
-        component: CNavItem,
-        name: "Register",
-        to: "/register",
-      },
-      {
-        component: CNavItem,
-        name: "Error 404",
-        to: "/404",
-      },
-      {
-        component: CNavItem,
-        name: "Error 500",
-        to: "/500",
-      },
-    ],
-  },
-  {
-    component: CNavItem,
-    name: "Docs",
-    href: "https://coreui.io/react/docs/templates/installation/",
-    icon: (
-      <CIcon
-        icon={cilDescription}
-        customClassName="nav-icon"
-        style={{ height: "30px" }}
-      />
-    ),
-  },
 ];
 
 export default _nav;

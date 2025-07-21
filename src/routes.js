@@ -108,6 +108,7 @@ import ViewMicrofiber from "./views/ai-model/ViewMicrofiber";
 import AddFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/AddFaultAnalysisChecklist";
 import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/FaultAnalysisChecklist";
 import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
+import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1299,7 +1300,6 @@ const routes = [
   {
     path: "/master-admin/user-performance-dashboard/user-performance/:id",
     name: "User Performance",
-
     element: (
       <MasterAdminRoute>
         <ViewPerformance />
@@ -1367,6 +1367,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateFaultAnalysisChecklist />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/customer-feedback",
+    name: "Customer Feedback",
+    element: (
+      <MasterAdminRoute>
+        <ClientFeedback />
       </MasterAdminRoute>
     ),
   },
@@ -3825,6 +3834,26 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <BatteryAndTemperature />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/user-performance-dashboard",
+    name: "User Performance",
+
+    element: (
+      <ServiceAdminRoute>
+        <UserPerformanceDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/user-performance-dashboard/user-performance/:id",
+    name: "User Performance",
+    element: (
+      <ServiceAdminRoute>
+        <ViewPerformance />
       </ServiceAdminRoute>
     ),
   },
