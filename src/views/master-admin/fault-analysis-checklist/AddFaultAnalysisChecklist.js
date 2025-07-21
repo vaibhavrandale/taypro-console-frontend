@@ -15,6 +15,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import CIcon from "@coreui/icons-react";
+import { cilMinus } from "@coreui/icons";
 
 const initialState = {
   serviceItems: [],
@@ -91,9 +93,15 @@ const AddFaultAnalysisChecklist = () => {
     });
   };
 
+  const deleteRow = (index) => {
+    const updatedFields = formData.checklist_fields.filter(
+      (_, i) => i !== index
+    );
+    setFormData({ ...formData, checklist_fields: updatedFields });
+  };
+
   const handleOptionChange = (index, optionsStr) => {
-    const options = optionsStr.split(",").map((opt) => opt.trim());
-    handleFieldChange(index, "input_options", options);
+    handleFieldChange(index, "input_options", optionsStr); // Save raw string
   };
 
   const handleSubmit = async (e) => {
@@ -119,7 +127,7 @@ const AddFaultAnalysisChecklist = () => {
         <CForm onSubmit={handleSubmit}>
           {formData.checklist_fields.map((field, index) => (
             <CRow className="mb-3" key={index}>
-              <CCol md={4}>
+              <CCol md={3}>
                 <CFormInput
                   label="Field Name"
                   value={field.field_name}
@@ -142,24 +150,92 @@ const AddFaultAnalysisChecklist = () => {
                   <option value="checkbox">Checkbox</option>
                 </CFormSelect>
               </CCol>
+              {field.input_type !== "select" && (
+                <>
+                  <CCol
+                    md={2}
+                    className="d-flex align-items-center justify-content-start"
+                  >
+                    <div className="mt-4">
+                      <CButton
+                        className="ms-2"
+                        color="primary"
+                        size="sm"
+                        onClick={() => deleteRow(index)}
+                        style={{
+                          borderRadius: "50%",
+                          width: "30px",
+                          height: "30px",
+                          padding: "0",
+                        }}
+                      >
+                        <CIcon
+                          icon={cilMinus}
+                          size="sm"
+                          style={{ fontWeight: "bold" }}
+                        />
+                      </CButton>
+                    </div>
+                  </CCol>
+                </>
+              )}
               {field.input_type === "select" && (
-                <CCol md={5}>
-                  <CFormInput
-                    label="Input Options (comma separated)"
-                    value={field.input_options?.join(", ") || ""}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                  />
-                </CCol>
+                <>
+                  <CCol md={4}>
+                    <CFormInput
+                      label="Input Options (comma separated)"
+                      value={field.input_options || ""}
+                      onChange={(e) =>
+                        handleOptionChange(index, e.target.value)
+                      }
+                    />
+                  </CCol>
+                  <CCol
+                    md={2}
+                    className="d-flex align-items-center justify-content-start"
+                  >
+                    <div className="mt-4">
+                      <CButton
+                        className="ms-2"
+                        color="danger"
+                        size="sm"
+                        onClick={() => deleteRow(index)}
+                        style={{
+                          borderRadius: "50%",
+                          width: "30px",
+                          height: "30px",
+                          padding: "0",
+                        }}
+                      >
+                        <CIcon
+                          icon={cilMinus}
+                          size="sm"
+                          style={{ fontWeight: "bold" }}
+                        />
+                      </CButton>
+                    </div>
+                  </CCol>
+                </>
               )}
             </CRow>
           ))}
 
-          <CButton color="info" onClick={handleAddField} className="mb-3">
+          <CButton
+            color="primary"
+            onClick={handleAddField}
+            className="mb-3"
+            size="sm"
+          >
             + Add Checklist Field
           </CButton>
 
           <div className="d-flex justify-content-end">
-            <CButton type="submit" color="primary" disabled={state.submitting}>
+            <CButton
+              type="submit"
+              color="primary"
+              disabled={state.submitting}
+              size="sm"
+            >
               {state.submitting ? <CSpinner size="sm" /> : "Create Checklist"}
             </CButton>
           </div>

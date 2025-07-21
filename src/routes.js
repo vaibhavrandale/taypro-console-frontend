@@ -109,6 +109,7 @@ import AddFaultAnalysisChecklist from "./views/master-admin/fault-analysis-check
 import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/FaultAnalysisChecklist";
 import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
+import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1375,6 +1376,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ClientFeedback />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/faulty-inventory",
+    name: "Faulty Inventory",
+    element: (
+      <MasterAdminRoute>
+        <FaultyInventory />
       </MasterAdminRoute>
     ),
   },
