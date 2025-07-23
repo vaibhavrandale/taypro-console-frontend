@@ -69,8 +69,8 @@ const UpdateInventory = () => {
     item_code: "",
     item_id: "",
     site_id: "",
-    quantity: "",
-    threshold: "",
+    quantity: 0,
+    threshold: 0,
   });
 
   useEffect(() => {
@@ -206,7 +206,7 @@ const UpdateInventory = () => {
                       type="text"
                       className="form-control"
                       name="quantity"
-                      value={inventoryData.quantity || ""}
+                      value={inventoryData.quantity || 0}
                       onChange={handleChange}
                     />
                   </div>

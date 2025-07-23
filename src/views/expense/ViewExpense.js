@@ -67,10 +67,23 @@ const ViewExpenseClaim = () => {
         return "danger";
       case "Draft":
         return "info";
+      case true:
+        return "success";
+      case false:
+        return "info";
+      case "Waiting for HR Approval":
+        return "warning";
+      case "Waiting for Management Approval":
+        return "warning";
+      case "Waiting for Disbursement":
+        return "warning";
+      case "Paid":
+        return "success";
       default:
         return "primary";
     }
   };
+
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
