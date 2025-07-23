@@ -15,6 +15,8 @@ import {
 } from "@coreui/react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
+import CIcon from "@coreui/icons-react";
+import { cilPaperclip } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -67,28 +69,14 @@ const ViewExpenseClaim = () => {
         return "danger";
       case "Draft":
         return "info";
+      case true:
+        return "danger";
+      case false:
+        return "success";
       default:
         return "primary";
     }
   };
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo?.role === "Site Technician") {
-    adminroute = "site-technician";
-  }
 
   return (
     <div>
@@ -152,8 +140,8 @@ const ViewExpenseClaim = () => {
           </CTable>
 
           {/* Expense Items Table */}
-          <h5 className="mt-4">Expense Line Items</h5>
-          <CTable striped bordered responsive>
+          <h5 className="mt-4">Expense Items</h5>
+          <CTable bordered responsive style={{ background: "#fff" }}>
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
@@ -161,8 +149,9 @@ const ViewExpenseClaim = () => {
                 <CTableHeaderCell>Expense Type</CTableHeaderCell>
                 <CTableHeaderCell>Description</CTableHeaderCell>
                 <CTableHeaderCell>Amount</CTableHeaderCell>
-                <CTableHeaderCell>Cost Center</CTableHeaderCell>
-                <CTableHeaderCell>Default Account</CTableHeaderCell>
+                <CTableHeaderCell>File</CTableHeaderCell>
+                {/* <CTableHeaderCell>Cost Center</CTableHeaderCell> */}
+                {/* <CTableHeaderCell>Default Account</CTableHeaderCell> */}
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -172,22 +161,58 @@ const ViewExpenseClaim = () => {
                   <CTableDataCell>{item.expense_date}</CTableDataCell>
                   <CTableDataCell>{item.expense_type}</CTableDataCell>
                   <CTableDataCell>{item.description}</CTableDataCell>
-                  <CTableDataCell>₹{item.amount}</CTableDataCell>
-                  <CTableDataCell>{item.cost_center}</CTableDataCell>
-                  <CTableDataCell>{item.default_account}</CTableDataCell>
+                  <CTableDataCell>
+                    <CBadge color={getStatusBadge(item.is_over_limit)}>
+                      ₹{item.amount}{" "}
+                      {/* {item.is_over_limit ? "(Over Limit)" : "(Under Limit)"} */}
+                    </CBadge>
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    {item.file ? (
+                      <div className="d-flex align-items-center gap-2">
+                        {/* Image thumbnail */}
+                        <img
+                          src={item.file}
+                          alt="File"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                          }}
+                        />
+                        {/* View link */}
+                        <a
+                          href={item.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="white-link"
+                        >
+                          <CIcon
+                            icon={cilPaperclip}
+                            style={{ color: "white" }}
+                          />
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="text-muted">No File</span>
+                    )}
+                  </CTableDataCell>
+                  {/* <CTableDataCell>{item.cost_center}</CTableDataCell> */}
+                  {/* <CTableDataCell>{item.default_account}</CTableDataCell> */}
                 </CTableRow>
               ))}
 
               {/* Add Total Row */}
               <CTableRow>
-                <CTableDataCell className="text-end" colSpan={4}>
+                <CTableDataCell className="text-end" colSpan={5}>
                   Total
                 </CTableDataCell>
                 <CTableHeaderCell className="fw-bold text-start">
                   ₹{expense.total_claimed_amount}
                 </CTableHeaderCell>
-                <CTableDataCell />
-                <CTableDataCell />
+                {/* <CTableDataCell /> */}
+                {/* <CTableDataCell /> */}
               </CTableRow>
             </CTableBody>
           </CTable>

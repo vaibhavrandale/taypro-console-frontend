@@ -11,16 +11,14 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CCol,
   CForm,
   CFormCheck,
   CFormInput,
   CFormSelect,
-  CRow,
 } from "@coreui/react";
 import { GrAddCircle } from "react-icons/gr";
 import { MdDeleteOutline } from "react-icons/md";
-import { formatDate } from "date-fns";
+// import { formatDate } from "date-fns";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -56,7 +54,7 @@ const UpdateExpense = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
-  const isTechnician = userInfo?.role === "Site Technician";
+  // const isTechnician = userInfo?.role === "Site Technician";
 
   // Expense items
   const [expenseItems, setExpenseItems] = useState([
@@ -83,8 +81,27 @@ const UpdateExpense = () => {
     employee: "",
     employee_name: "",
   });
-  const canEdit =
-    !isTechnician || (isTechnician && formData?.can_technician_edit);
+  // const canEdit =
+  //   !isTechnician || (isTechnician && formData?.can_technician_edit);
+
+  // const getStatusBadge = (status) => {
+  //   switch (status) {
+  //     case "Approved":
+  //       return "success";
+  //     case "Pending Approval":
+  //       return "warning";
+  //     case "Rejected":
+  //       return "danger";
+  //     case "Draft":
+  //       return "info";
+  //     case true:
+  //       return "danger";
+  //     case false:
+  //       return "success";
+  //     default:
+  //       return "primary";
+  //   }
+  // };
 
   let adminroute = "";
 
@@ -470,7 +487,11 @@ const UpdateExpense = () => {
                           <td>
                             <CFormInput
                               type="number"
-                              className="form-control form-control-sm"
+                              className={`form-control form-control-sm ${
+                                item.is_over_limit
+                                  ? "text-danger"
+                                  : "text-success"
+                              }`}
                               min="0"
                               step="0.01"
                               value={item.amount}

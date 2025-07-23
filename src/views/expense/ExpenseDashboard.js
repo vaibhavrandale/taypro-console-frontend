@@ -93,7 +93,7 @@ const ExpenseDashboard = () => {
   const [uploadingFields, setUploadingFields] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [expense, setExpense] = useState(null);
-
+  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
   const fetchExpenses = async () => {
@@ -142,6 +142,8 @@ const ExpenseDashboard = () => {
     }
   };
   useEffect(() => {
+    // Show modal on page load
+    setVisible(true);
     fetchExpenses();
   }, [authtoken, page, limit]);
 
@@ -256,8 +258,50 @@ const ExpenseDashboard = () => {
           New Expense Claim
         </Link>
       </div>
-
-      {/* delete Modal */}
+      <CModal
+        visible={visible}
+        onClose={() => setVisible(false)}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Technician Daily Allowance Limits</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          <CTable bordered responsive>
+            <CTableBody>
+              <CTableRow>
+                <CTableHeaderCell>Food</CTableHeaderCell>
+                <CTableDataCell>₹500</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Stay</CTableHeaderCell>
+                <CTableDataCell>₹1,000</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Travel</CTableHeaderCell>
+                <CTableDataCell>₹1,000</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Other</CTableHeaderCell>
+                <CTableDataCell>₹110</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Total Per Day</CTableHeaderCell>
+                <CTableDataCell>₹2,610</CTableDataCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
+        </CModalBody>
+      </CModal>
+      {/* remark modal */}
       <CModal
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
