@@ -277,10 +277,6 @@ const UpdateServiceTicket = () => {
             <div className="d-flex justify-content-center align-items-center h-50">
               <LoadingSpinner />
             </div>
-          ) : state.error ? (
-            <div className="d-flex justify-content-center align-items-center w-100 ">
-              <p className="badge bg-danger p-2">{state.error}</p>
-            </div>
           ) : (
             <CForm onSubmit={handleSubmit}>
               <CRow>

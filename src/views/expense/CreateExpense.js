@@ -85,6 +85,7 @@ const CreateExpense = () => {
       amount: 0,
       sanctioned_amount: 0,
       default_account: "",
+      file: "",
     },
   ]);
 
@@ -97,23 +98,32 @@ const CreateExpense = () => {
   };
 
   const handleExpenseItemChange = (index, field, value) => {
-    const updatedItems = [...expenseItems];
-    updatedItems[index] = {
-      ...updatedItems[index],
-      [field]: value,
-    };
+    setExpenseItems((prevItems) => {
+      const newItems = [...prevItems];
+      const updatedItem = { ...newItems[index], [field]: value };
 
-    // Set default account based on expense type
-    if (field === "expense_type") {
-      updatedItems[index].default_account = getDefaultAccount(value);
-    }
+      // 🛑 Check if this change will cause a duplicate
+      const isDuplicate = newItems.some(
+        (itm, idx) =>
+          idx !== index &&
+          itm.expense_date ===
+            (field === "expense_date" ? value : updatedItem.expense_date) &&
+          itm.expense_type ===
+            (field === "expense_type" ? value : updatedItem.expense_type)
+      );
 
-    // Auto-set sanctioned amount equal to amount when amount changes
-    if (field === "amount") {
-      updatedItems[index].sanctioned_amount = value;
-    }
+      if (isDuplicate) {
+        // Optionally show a toast or alert
+        toast.error(
+          "This expense type is already selected for the selected date."
+        );
+        return prevItems; // 🚫 Do not apply the change
+      }
 
-    setExpenseItems(updatedItems);
+      // ✅ No duplicate, proceed
+      newItems[index] = updatedItem;
+      return newItems;
+    });
   };
 
   const getDefaultAccount = (expenseType) => {
@@ -185,59 +195,6 @@ const CreateExpense = () => {
     return errors;
   };
 
-  // const submitExpenseClaim = async (e) => {
-  //   e.preventDefault();
-
-  //   const validationErrors = validateForm();
-  //   if (validationErrors.length > 0) {
-  //     toast.error(`Missing required fields: ${validationErrors.join(", ")}`);
-  //     return;
-  //   }
-
-  //   try {
-  //     dispatch({ type: "CREATE_REQUEST" });
-
-  //     const payload = {
-  //       ...formData,
-  //       expenses: expenseItems,
-  //       ...calculateTotals(), // Should return {total_claimed_amount, total_sanctioned_amount}
-  //       approval_status: "Draft",
-  //       status: "Draft",
-  //       workflow_state: "Draft",
-  //       console_status: "Draft",
-  //       is_paid: false,
-  //       taxes: [],
-  //       advances: [],
-  //       last_activity: [
-  //         {
-  //           name: userInfo.username,
-  //           email: userInfo.email,
-  //           profile_image: userInfo.profile_image,
-  //           timestamp: new Date().toISOString(),
-  //           userId: userInfo._id,
-  //           details: `New Expense Claim was created by <span class='text-primary'>${userInfo.username}</span>.`,
-  //         },
-  //       ],
-  //     };
-
-  //     const { data } = await axios.post("/api/v1/expenseclaims", payload, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${authtoken}`,
-  //       },
-  //     });
-  //     console.log(data);
-
-  //     dispatch({ type: "CREATE_SUCCESS" });
-  //     toast.success("Expense claim created successfully");
-
-  //     navigate(`/${adminroute}/expenses`);
-  //   } catch (error) {
-  //     dispatch({ type: "CREATE_FAIL", payload: error.message });
-  //     toast.error(error.response?.data?.message || error.message);
-  //   }
-  // };
-
   const submitExpenseClaim = async (e) => {
     e.preventDefault();
 
@@ -251,6 +208,31 @@ const CreateExpense = () => {
       dispatch({ type: "CREATE_REQUEST" });
 
       const totals = calculateTotals();
+      for (const item of expenseItems) {
+        if (item.file) {
+          const formData = new FormData();
+          formData.append("file", item.file);
+          try {
+            dispatch({ type: "UPLOAD_REQUEST" });
+            const { data } = await axios.post(
+              "/api/v1/image-upload/expense-claim",
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${authtoken}`,
+                },
+              }
+            );
+            item.file = data.url; // assume server returns { url: "..." }
+            dispatch({ type: "UPLOAD_SUCCESS" });
+          } catch (uploadErr) {
+            dispatch({ type: "UPLOAD_FAIL" });
+            toast.error("Failed to upload attachment");
+            return;
+          }
+        }
+      }
 
       const payload = {
         ...formData,
@@ -287,6 +269,7 @@ const CreateExpense = () => {
           parentfield: "expenses",
           parenttype: "Expense Claim",
           idx: idx + 1,
+          attachment: item.file || "",
         })),
       };
 
@@ -448,137 +431,154 @@ const CreateExpense = () => {
                       <th>Type</th>
                       <th>Description</th>
                       <th>Amount (₹)</th>
-                      {/* <th>Bill Attachment</th> */}
+                      <th>Bill Attachment</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {expenseItems.map((item, index) => (
-                      <tr key={index}>
-                        <td>
-                          <CFormInput
-                            type="date"
-                            className="form-control form-control-sm"
-                            value={item.expense_date}
-                            onChange={(e) =>
-                              handleExpenseItemChange(
-                                index,
-                                "expense_date",
-                                e.target.value
-                              )
-                            }
-                            required
-                          />
-                        </td>
-                        <td>
-                          <select
-                            className="form-control form-control-sm"
-                            value={item.expense_type}
-                            onChange={(e) =>
-                              handleExpenseItemChange(
-                                index,
-                                "expense_type",
-                                e.target.value
-                              )
-                            }
-                            required
-                          >
-                            <option value="">Select Type</option>
-                            <option value="Food">Food</option>
-                            <option value="Travel">Travel</option>
-                            {/* <option value="Stay">Stay</option> */}
-                            <option value="Medical">Medical</option>
-                            <option value="Others">Other</option>
-                          </select>
-                        </td>
-                        <td>
-                          <textarea
-                            className="form-control form-control-sm"
-                            rows={2}
-                            value={item.description}
-                            onChange={(e) =>
-                              handleExpenseItemChange(
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                            required
-                          />
-                        </td>
-                        <td>
-                          <CFormInput
-                            type="number"
-                            className="form-control form-control-sm"
-                            min="0"
-                            step="0.01"
-                            value={item.amount}
-                            onChange={(e) =>
-                              handleExpenseItemChange(
-                                index,
-                                "amount",
-                                e.target.value
-                              )
-                            }
-                            required
-                          />
-                        </td>
-                        {/* <td>
-                          {item.bill_attachment ? (
-                            <a
-                              href={item.bill_attachment}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-sm btn-outline-success w-100"
-                            >
-                              <MdAttachFile /> View Bill
-                            </a>
-                          ) : (
-                            <div className="position-relative">
+                    {expenseItems.map((item, index) => {
+                      // 🔍 Check for duplicates: is this expense_type already used for this date in another row?
+                      const isDuplicate = expenseItems.some(
+                        (itm, idx) =>
+                          idx !== index &&
+                          itm.expense_date === item.expense_date &&
+                          itm.expense_type === item.expense_type &&
+                          item.expense_type !== ""
+                      );
+
+                      return (
+                        <React.Fragment key={index}>
+                          <tr>
+                            <td>
+                              <CFormInput
+                                type="date"
+                                className="form-control form-control-sm"
+                                value={item.expense_date}
+                                onChange={(e) =>
+                                  handleExpenseItemChange(
+                                    index,
+                                    "expense_date",
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              />
+                            </td>
+                            <td>
+                              <select
+                                className="form-control form-control-sm"
+                                value={item.expense_type}
+                                onChange={(e) =>
+                                  handleExpenseItemChange(
+                                    index,
+                                    "expense_type",
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              >
+                                <option value="">Select Type</option>
+                                {["Food", "Travel", "Medical", "Others"].map(
+                                  (type) => {
+                                    const isAlreadySelected = expenseItems.some(
+                                      (itm, idx) =>
+                                        idx !== index &&
+                                        itm.expense_date ===
+                                          item.expense_date &&
+                                        itm.expense_type === type
+                                    );
+                                    return (
+                                      <option
+                                        key={type}
+                                        value={type}
+                                        disabled={isAlreadySelected}
+                                      >
+                                        {type}
+                                      </option>
+                                    );
+                                  }
+                                )}
+                              </select>
+                            </td>
+                            <td>
+                              <textarea
+                                className="form-control form-control-sm"
+                                rows={2}
+                                value={item.description}
+                                onChange={(e) =>
+                                  handleExpenseItemChange(
+                                    index,
+                                    "description",
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              />
+                            </td>
+                            <td>
+                              <CFormInput
+                                type="number"
+                                className="form-control form-control-sm"
+                                min="0"
+                                step="0.01"
+                                value={item.amount}
+                                onChange={(e) =>
+                                  handleExpenseItemChange(
+                                    index,
+                                    "amount",
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              />
+                            </td>
+                            <td>
                               <CFormInput
                                 type="file"
-                                id={`file-upload-${index}`}
+                                className="form-control form-control-sm"
                                 onChange={(e) =>
-                                  handleFileUpload(e.target.files[0], index)
+                                  handleExpenseItemChange(
+                                    index,
+                                    "file",
+                                    e.target.files[0]
+                                  )
                                 }
-                                className="d-none"
-                                accept="image/*,.pdf"
                               />
-                              <label
-                                htmlFor={`file-upload-${index}`}
-                                className="btn btn-sm btn-outline-primary w-100"
+                            </td>
+                            <td className="text-center">
+                              <CButton
+                                type="button"
+                                onClick={() => removeExpenseItem(index)}
+                                className="btn btn-sm btn-danger"
+                                disabled={expenseItems.length <= 1}
+                                title="Remove Item"
                               >
-                                {uploadLoading ? (
-                                  "Uploading..."
-                                ) : (
-                                  <>
-                                    <MdAttachFile /> Upload Bill
-                                  </>
-                                )}
-                              </label>
-                            </div>
+                                <MdDeleteOutline />
+                              </CButton>
+                            </td>
+                          </tr>
+
+                          {/* 🔴 Show warning if duplicate found */}
+                          {isDuplicate && (
+                            <tr>
+                              <td colSpan="5">
+                                <div className="text-danger small mt-1">
+                                  <strong>{item.expense_type}</strong> already
+                                  selected for{" "}
+                                  <strong>{item.expense_date}</strong>. Please
+                                  choose a different type.
+                                </div>
+                              </td>
+                            </tr>
                           )}
-                        </td> */}
-                        <td className="text-center">
-                          <CButton
-                            type="button"
-                            onClick={() => removeExpenseItem(index)}
-                            className="btn btn-sm btn-danger"
-                            disabled={expenseItems.length <= 1}
-                            title="Remove Item"
-                          >
-                            <MdDeleteOutline />
-                          </CButton>
-                        </td>
-                      </tr>
-                    ))}
+                        </React.Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
             </div>
 
-            {/* Totals Section */}
-            {/* Totals Section */}
             <div className="mb-4">
               <div className="row justify-content-end">
                 <div className="col-md-4 col-sm-6 col-12">
