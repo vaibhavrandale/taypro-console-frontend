@@ -20,6 +20,7 @@ import {
   CTabs,
   CImage,
   CBadge,
+  CFormSelect,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -86,6 +87,12 @@ const reducer = (state, action) => {
       };
     case "FETCH_SERVICEITEM_FAIL":
       return { ...state, loadingServiceItems: false, error: action.payload };
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, siteError: "" };
+    case "FETCH_SITES_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, siteError: action.payload };
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true, successDelete: false };
 
@@ -108,6 +115,9 @@ const Inventories = () => {
       error,
       inventories,
       loadingInventories,
+      sites,
+      loadingSites,
+      siteError,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -116,6 +126,9 @@ const Inventories = () => {
     dispatch,
   ] = useReducer(reducer, {
     inventories: [],
+    sites: [],
+    loadingSites: true,
+    siteError: "",
     loading: true,
     loadingInventories: true,
     error: "",
@@ -123,11 +136,13 @@ const Inventories = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
   const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState(null);
+  const [siteId, setSiteId] = useState("all");
 
   const [pageInput, setPageInput] = useState("");
 
@@ -182,21 +197,50 @@ const Inventories = () => {
         toast.error("Failed to fetch Inventories");
       }
     };
+
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response.data.error,
+        });
+        toast.error("Failed to fetch sites");
+      }
+    };
+
     if (successDelete) {
       dispatch({ type: "DELETE_RESET" });
     } else {
       fetchInventories();
     }
+    fetchSites();
   }, [successDelete, authtoken, limit, page]);
+  const filteredInventories = inventories.filter((inventory) => {
+    // Apply site filter first
+    if (siteId !== "all" && inventory.site_id !== siteId) {
+      return false;
+    }
 
-  const filteredInventories = inventories.filter(
-    (inventory) =>
-      inventory.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    // Then apply search term filter
+    if (searchTerm) {
+      return (
+        inventory.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inventory.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
+    return true;
+  });
   // Open modal and load inventory data
   const openModal = (inventory) => {
     setSelectedInventory(inventory);
@@ -207,7 +251,6 @@ const Inventories = () => {
     setPageInput(e.target.value);
   };
 
-  // // console.item(uniqueSitenames);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -301,7 +344,21 @@ const Inventories = () => {
         </Link>
       </div>
       {/* Search Input */}
-      <CRow className="justify-content-end mb-3">
+      <CRow className="mb-3  justify-content-between align-items-center">
+        <CCol md={4}>
+          <CFormSelect
+            value={siteId}
+            onChange={(e) => setSiteId(e.target.value)}
+            disabled={loadingSites}
+          >
+            <option value="all">All Sites</option>
+            {sites.map((site) => (
+              <option key={site._id} value={site.site_id}>
+                {site.site_id}
+              </option>
+            ))}
+          </CFormSelect>
+        </CCol>
         <CCol md={4}>
           <CFormInput
             type="text"

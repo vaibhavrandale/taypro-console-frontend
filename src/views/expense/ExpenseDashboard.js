@@ -166,6 +166,14 @@ const ExpenseDashboard = () => {
         return "success";
       case false:
         return "info";
+      case "Waiting for HR Approval":
+        return "warning";
+      case "Waiting for Management Approval":
+        return "warning";
+      case "Waiting for Disbursement":
+        return "warning";
+      case "Paid":
+        return "success";
       default:
         return "primary";
     }
@@ -463,7 +471,7 @@ const ExpenseDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center">
+              <CTableDataCell colSpan="10" className="text-center">
                 No expense claims found
               </CTableDataCell>
             </CTableRow>

@@ -52,13 +52,20 @@ const LastActivity = ({ lastactivity }) => {
                 />
                 <div className="flex-grow-1 mx-2">
                   <p className="mb-1 fw-semibold d-flex justify-content-between">
-                    <span className="fw-semibold">{activity.name}</span>
-                    <span className="text-muted small">
-                      {activity.timestamp
-                        ? formatDistanceToNow(new Date(activity.timestamp), {
-                            addSuffix: true,
-                          })
-                        : "NA"}
+                    <span className="fw-semibold">
+                      {activity.name} -{" "}
+                      <span className="text-muted small">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </span>
+                    </span>
+                    <span className="d-flex flex-column">
+                      <span className="text-muted small">
+                        {activity.timestamp
+                          ? formatDistanceToNow(new Date(activity.timestamp), {
+                              addSuffix: true,
+                            })
+                          : "NA"}
+                      </span>
                     </span>
                   </p>
 
