@@ -70,8 +70,16 @@ const ViewExpenseClaim = () => {
       case "Draft":
         return "info";
       case true:
-        return "danger";
+        return "success";
       case false:
+        return "info";
+      case "Waiting for HR Approval":
+        return "warning";
+      case "Waiting for Management Approval":
+        return "warning";
+      case "Waiting for Disbursement":
+        return "warning";
+      case "Paid":
         return "success";
       default:
         return "primary";
