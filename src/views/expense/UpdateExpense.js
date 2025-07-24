@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useReducer } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -18,6 +18,8 @@ import {
 } from "@coreui/react";
 import { GrAddCircle } from "react-icons/gr";
 import { MdDeleteOutline } from "react-icons/md";
+import CIcon from "@coreui/icons-react";
+import { cilCloudDownload, cilPaperclip } from "@coreui/icons";
 // import { formatDate } from "date-fns";
 
 const reducer = (state, action) => {
@@ -34,21 +36,26 @@ const reducer = (state, action) => {
       return { ...state, updateloading: false };
     case "UPDATE_FAIL":
       return { ...state, updateloading: false, error: action.payload };
+    case "UPLOAD_REQUEST":
+      return { ...state, uploadLoading: true };
+    case "UPLOAD_SUCCESS":
+      return { ...state, uploadLoading: false };
+    case "UPLOAD_FAIL":
+      return { ...state, uploadLoading: false, error: action.payload };
     default:
       return state;
   }
 };
 
 const UpdateExpense = () => {
-  const [{ loading, error, updateloading, expense }, dispatch] = useReducer(
-    reducer,
-    {
+  const [{ loading, error, updateloading, expense, uploadLoading }, dispatch] =
+    useReducer(reducer, {
       loading: true,
       expense: {},
       error: "",
       updateloading: false,
-    }
-  );
+      uploadLoading: false,
+    });
 
   const { id } = useParams(); // expense claim ID from URL
   const authtoken = useSelector((state) => state.authtoken);
@@ -66,6 +73,7 @@ const UpdateExpense = () => {
       amount: 0,
       sanctioned_amount: 0,
       default_account: "",
+      file: "",
     },
   ]);
   const [formData, setFormData] = useState({
@@ -81,27 +89,6 @@ const UpdateExpense = () => {
     employee: "",
     employee_name: "",
   });
-  // const canEdit =
-  //   !isTechnician || (isTechnician && formData?.can_technician_edit);
-
-  // const getStatusBadge = (status) => {
-  //   switch (status) {
-  //     case "Approved":
-  //       return "success";
-  //     case "Pending Approval":
-  //       return "warning";
-  //     case "Rejected":
-  //       return "danger";
-  //     case "Draft":
-  //       return "info";
-  //     case true:
-  //       return "danger";
-  //     case false:
-  //       return "success";
-  //     default:
-  //       return "primary";
-  //   }
-  // };
 
   let adminroute = "";
 
@@ -165,7 +152,7 @@ const UpdateExpense = () => {
     }));
   };
 
-  const submitExpenseClaim = async (e) => {
+  const updatedExpenseClaim = async (e) => {
     e.preventDefault();
 
     try {
@@ -200,21 +187,64 @@ const UpdateExpense = () => {
     }
   };
 
-  const handleExpenseItemChange = (index, field, value) => {
+  // const handleExpenseItemChange = (index, field, value) => {
+  //   const updatedItems = [...expenseItems];
+  //   updatedItems[index] = {
+  //     ...updatedItems[index],
+  //     [field]: value,
+  //   };
+
+  //   // Set default account based on expense type
+  //   if (field === "expense_type") {
+  //     updatedItems[index].default_account = getDefaultAccount(value);
+  //   }
+
+  //   // Auto-set sanctioned amount equal to amount when amount changes
+  //   if (field === "amount") {
+  //     updatedItems[index].sanctioned_amount = value;
+  //   }
+
+  //   setExpenseItems(updatedItems);
+  // };
+
+  const handleExpenseItemChange = async (index, field, value) => {
     const updatedItems = [...expenseItems];
-    updatedItems[index] = {
-      ...updatedItems[index],
-      [field]: value,
-    };
 
-    // Set default account based on expense type
-    if (field === "expense_type") {
-      updatedItems[index].default_account = getDefaultAccount(value);
-    }
+    if (field === "file" && value) {
+      try {
+        dispatch({ type: "UPLOAD_REQUEST" });
 
-    // Auto-set sanctioned amount equal to amount when amount changes
-    if (field === "amount") {
-      updatedItems[index].sanctioned_amount = value;
+        const formData = new FormData();
+        formData.append("file", value);
+
+        const { data } = await axios.post(
+          "/api/v1/image-upload/expense-claim",
+          formData
+        );
+
+        updatedItems[index][field] = data.url; // Save the uploaded file URL
+
+        dispatch({ type: "UPLOAD_SUCCESS" });
+        toast.success("File uploaded");
+      } catch (error) {
+        dispatch({
+          type: "UPLOAD_FAIL",
+          payload: error.response.data.error || error.response.data.message,
+        });
+        toast.error(error.response.data.error || error.response.data.message);
+      }
+    } else {
+      updatedItems[index][field] = value;
+
+      // Auto-set default account
+      if (field === "expense_type") {
+        updatedItems[index].default_account = getDefaultAccount(value);
+      }
+
+      // Auto-set sanctioned amount equal to amount
+      if (field === "amount") {
+        updatedItems[index].sanctioned_amount = value;
+      }
     }
 
     setExpenseItems(updatedItems);
@@ -287,7 +317,7 @@ const UpdateExpense = () => {
           <CAlert color="danger">{error}</CAlert>
         ) : (
           <CCardBody>
-            <CForm onSubmit={submitExpenseClaim}>
+            <CForm onSubmit={updatedExpenseClaim}>
               {/* Basic Information Section */}
               <div className="mb-4">
                 <h4 className="border-bottom pb-2">Basic Information</h4>
@@ -420,11 +450,11 @@ const UpdateExpense = () => {
                         <th>Type</th>
                         <th>Description</th>
                         <th>Amount (₹)</th>
-                        {/* <th>Bill Attachment</th> */}
+                        <th>Bill Attachment</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    {/* <tbody>
                       {expenseItems.map((item, index) => (
                         <tr key={index}>
                           <td>
@@ -464,7 +494,7 @@ const UpdateExpense = () => {
                               <option value="">Select Type</option>
                               <option value="Food">Food</option>
                               <option value="Travel">Travel</option>
-                              {/* <option value="Stay">Stay</option> */}
+                         
                               <option value="Medical">Medical</option>
                               <option value="Others">Other</option>
                             </select>
@@ -519,6 +549,178 @@ const UpdateExpense = () => {
                           </td>
                         </tr>
                       ))}
+                    </tbody> */}
+                    <tbody>
+                      {expenseItems.map((item, index) => {
+                        // 🔍 Check for duplicates: is this expense_type already used for this date in another row?
+                        const isDuplicate = expenseItems.some(
+                          (itm, idx) =>
+                            idx !== index &&
+                            itm.expense_date === item.expense_date &&
+                            itm.expense_type === item.expense_type &&
+                            item.expense_type !== ""
+                        );
+
+                        return (
+                          <React.Fragment key={index}>
+                            <tr>
+                              <td>
+                                <CFormInput
+                                  type="date"
+                                  className="form-control form-control-sm"
+                                  value={item.expense_date}
+                                  onChange={(e) =>
+                                    handleExpenseItemChange(
+                                      index,
+                                      "expense_date",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
+                              </td>
+                              <td>
+                                <select
+                                  className="form-control form-control-sm"
+                                  value={item.expense_type}
+                                  onChange={(e) =>
+                                    handleExpenseItemChange(
+                                      index,
+                                      "expense_type",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                >
+                                  <option value="">Select Type</option>
+                                  {["Food", "Travel", "Medical", "Others"].map(
+                                    (type) => {
+                                      const isAlreadySelected =
+                                        expenseItems.some(
+                                          (itm, idx) =>
+                                            idx !== index &&
+                                            itm.expense_date ===
+                                              item.expense_date &&
+                                            itm.expense_type === type
+                                        );
+                                      return (
+                                        <option
+                                          key={type}
+                                          value={type}
+                                          disabled={isAlreadySelected}
+                                        >
+                                          {type}
+                                        </option>
+                                      );
+                                    }
+                                  )}
+                                </select>
+                              </td>
+                              <td>
+                                <textarea
+                                  className="form-control form-control-sm"
+                                  rows={2}
+                                  value={item.description}
+                                  onChange={(e) =>
+                                    handleExpenseItemChange(
+                                      index,
+                                      "description",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
+                              </td>
+                              <td>
+                                <CFormInput
+                                  type="number"
+                                  className="form-control form-control-sm"
+                                  value={item.amount}
+                                  onChange={(e) =>
+                                    handleExpenseItemChange(
+                                      index,
+                                      "amount",
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
+                              </td>
+                              <td className="text-center">
+                                <span className="d-flex align-items-center  justify-content-center">
+                                  {item.file ? (
+                                    item.file.endsWith(".pdf") ? (
+                                      <Link
+                                        to={`${item.file}?fl_attachment=true`}
+                                        className="d-flex align-items-center justify-content-center gap-2 white-link"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <CIcon
+                                          icon={cilCloudDownload}
+                                          style={{ color: "white" }}
+                                        />
+                                      </Link>
+                                    ) : (
+                                      <Link
+                                        to={`${item.file}?fl_attachment=true`}
+                                        className="d-flex align-items-center justify-content-center gap-2 white-link"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <CIcon
+                                          icon={cilPaperclip}
+                                          style={{ color: "white" }}
+                                        />
+                                      </Link>
+                                    )
+                                  ) : (
+                                    <span className="text-muted">No File</span>
+                                  )}{" "}
+                                  &nbsp; &nbsp;
+                                  <CFormInput
+                                    type="file"
+                                    className="form-control form-control-sm w-50"
+                                    onChange={(e) =>
+                                      handleExpenseItemChange(
+                                        index,
+                                        "file",
+                                        e.target.files[0]
+                                      )
+                                    }
+                                  />
+                                  {uploadLoading ? <LoadingSpinner /> : ""}
+                                </span>
+                              </td>
+                              <td className="text-center">
+                                <CButton
+                                  type="button"
+                                  onClick={() => removeExpenseItem(index)}
+                                  className="btn btn-sm btn-danger"
+                                  disabled={expenseItems.length <= 1}
+                                  title="Remove Item"
+                                >
+                                  <MdDeleteOutline />
+                                </CButton>
+                              </td>
+                            </tr>
+
+                            {/* 🔴 Show warning if duplicate found */}
+                            {isDuplicate && (
+                              <tr>
+                                <td colSpan="5">
+                                  <div className="text-danger small mt-1">
+                                    <strong>{item.expense_type}</strong> already
+                                    selected for{" "}
+                                    <strong>{item.expense_date}</strong>. Please
+                                    choose a different type.
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
