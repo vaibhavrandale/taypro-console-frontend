@@ -21,7 +21,7 @@ const reducer = (state, action) => {
     case "UPLOAD_SUCCESS":
       return { ...state, uploadLoading: false };
     case "UPLOAD_FAIL":
-      return { ...state, uploadLoading: false };
+      return { ...state, uploadLoading: false, error: action.payload };
     default:
       return state;
   }
@@ -71,7 +71,8 @@ const CreateExpense = () => {
     department: "Project - TPL",
     expense_approver: "tejas.memane@taypro.in",
     company_gstin: "27AAHCT4250H1ZA",
-    employee: userInfo.employee_id || "HR-EMP-00042",
+    department_of_visit: "",
+    employee: userInfo.employee_id,
     employee_name: userInfo.username,
   });
 
@@ -212,6 +213,7 @@ const CreateExpense = () => {
         if (item.file) {
           const formData = new FormData();
           formData.append("file", item.file);
+
           try {
             dispatch({ type: "UPLOAD_REQUEST" });
             const { data } = await axios.post(
@@ -348,25 +350,44 @@ const CreateExpense = () => {
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Department</label>
-                  <CFormSelect
+                  {/* <CFormSelect
+                    type="hidden"
                     name="department"
                     className="form-control"
                     value={formData.department}
                     onChange={handleFormChange}
                     required
                   >
-                    {/* <option value="">Select Department</option> */}
                     <option selected value="Project - TPL">
                       Project
                     </option>
-                    {/* <option value="HR - TPL">HR</option> */}
-                    {/* <option value="Finance - TPL">Finance</option> */}
-                    {/* <option value="Operations - TPL">Operations</option> */}
+                  </CFormSelect> */}
+                  <CFormInput
+                    type="hidden"
+                    name="department"
+                    className="form-control"
+                    value={formData.department}
+                    onChange={handleFormChange}
+                    required
+                    placeholder="Enter department"
+                  />
+                  <CFormSelect
+                    name="department_of_visit"
+                    className="form-control"
+                    value={formData.department_of_visit}
+                    onChange={handleFormChange}
+                    required
+                  >
+                    <option selected value="">
+                      Select Department of Visit
+                    </option>
+                    <option value="project">Project</option>
+                    <option value="service">Service</option>
                   </CFormSelect>
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">Cost Center</label>
-                  <se
+                  <CFormSelect
                     name="cost_center"
                     className="form-control"
                     value={formData.cost_center}
@@ -378,7 +399,7 @@ const CreateExpense = () => {
                     </option>
                     {/* <option value="Project - TPL">Project</option>
                     <option value="Administration - TPL">Administration</option> */}
-                  </se>
+                  </CFormSelect>
                 </div>
               </div>
 

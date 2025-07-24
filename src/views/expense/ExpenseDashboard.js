@@ -382,6 +382,9 @@ const ExpenseDashboard = () => {
             <CTableHeaderCell style={{ minWidth: "250px" }}>
               Claim ID
             </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Dept. of Visit
+            </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "160px" }}>
               Employee
             </CTableHeaderCell>
@@ -434,6 +437,7 @@ const ExpenseDashboard = () => {
                     {expense.name}
                   </Link>
                 </CTableDataCell>
+                <CTableDataCell>{expense.department_of_visit}</CTableDataCell>
                 <CTableDataCell>{expense.employee_name}</CTableDataCell>
                 <CTableDataCell>{expense.department}</CTableDataCell>
                 <CTableDataCell>

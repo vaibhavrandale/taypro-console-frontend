@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useReducer } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -16,7 +16,7 @@ import {
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
-import { cilPaperclip } from "@coreui/icons";
+import { cilCloudDownload, cilPaperclip } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -70,9 +70,9 @@ const ViewExpenseClaim = () => {
       case "Draft":
         return "info";
       case true:
-        return "success";
+        return "danger";
       case false:
-        return "info";
+        return "success";
       case "Waiting for HR Approval":
         return "warning";
       case "Waiting for Management Approval":
@@ -177,31 +177,31 @@ const ViewExpenseClaim = () => {
                   </CTableDataCell>
                   <CTableDataCell>
                     {item.file ? (
-                      <div className="d-flex align-items-center gap-2">
-                        {/* Image thumbnail */}
-                        <img
-                          src={item.file}
-                          alt="File"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                          }}
-                        />
-                        {/* View link */}
-                        <a
-                          href={item.file}
+                      item.file.endsWith(".pdf") ? (
+                        <Link
+                          to={`${item.file}?fl_attachment=true`}
+                          className="d-flex align-items-center justify-content-center gap-2 white-link"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="white-link"
+                        >
+                          <CIcon
+                            icon={cilCloudDownload}
+                            style={{ color: "white" }}
+                          />
+                        </Link>
+                      ) : (
+                        <Link
+                          to={`${item.file}?fl_attachment=true`}
+                          className="d-flex align-items-center justify-content-center gap-2 white-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           <CIcon
                             icon={cilPaperclip}
                             style={{ color: "white" }}
                           />
-                        </a>
-                      </div>
+                        </Link>
+                      )
                     ) : (
                       <span className="text-muted">No File</span>
                     )}
@@ -213,13 +213,13 @@ const ViewExpenseClaim = () => {
 
               {/* Add Total Row */}
               <CTableRow>
-                <CTableDataCell className="text-end" colSpan={5}>
+                <CTableDataCell className="text-end" colSpan={4}>
                   Total
                 </CTableDataCell>
                 <CTableHeaderCell className="fw-bold text-start">
                   ₹{expense.total_claimed_amount}
                 </CTableHeaderCell>
-                {/* <CTableDataCell /> */}
+                <CTableDataCell />
                 {/* <CTableDataCell /> */}
               </CTableRow>
             </CTableBody>
