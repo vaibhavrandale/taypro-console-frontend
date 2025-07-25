@@ -350,12 +350,16 @@ const ClientUsersManagement = () => {
   };
 
   const filteredUsers = users
-    ? users?.filter(
+    ? users.filter(
         (user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.department.toLowerCase().includes(searchTerm.toLowerCase())
+          (user.username || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (user.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (user.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (user.department || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       )
     : [];
 
