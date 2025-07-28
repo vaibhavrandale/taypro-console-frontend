@@ -23,9 +23,8 @@ import {
   CTableBody,
   CTableRow,
   CTableDataCell,
-  CButton,
 } from "@coreui/react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -34,7 +33,7 @@ import moment from "moment";
 const ViewSubscription = () => {
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
