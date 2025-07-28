@@ -4825,3 +4825,89 @@ export const customer_feedback = [
     createdAt: "2025-05-01T11:38:00.000Z",
   },
 ];
+
+export const clientSubscriptionPlans = [
+  {
+    plan_id: "basic",
+    name: "Basic Plan",
+    description: "Essential features for basic robot operation and monitoring.",
+    price: 1000, // Example price in INR/month
+    frequency: ["monthly", "yearly"],
+    features: [
+      "Robot operating",
+      "Battery status",
+      "Cleaning log",
+      "Site management",
+      "Only users",
+    ],
+    serviceTier: "basic",
+  },
+  {
+    plan_id: "premium",
+    name: "Premium Plan",
+    description:
+      "Advanced features including reports, maintenance, and alerts.",
+    price: 5000, // Example price in INR/month
+    frequency: ["monthly", "yearly"],
+    features: [
+      "Robot operating",
+      "Battery status",
+      "Cleaning log",
+      "Site management",
+      "Stats/Reports",
+      "Preventive maintenance",
+      "Data live chat",
+      "Multiple users",
+      "Multiple alerts",
+      "Robot failure",
+      "Robot offline",
+      "Manager breakdown",
+      "Grass cutting",
+      "Forecast weather alert",
+    ],
+    serviceTier: "premium",
+  },
+  {
+    plan_id: "enterprise",
+    name: "Enterprise Plan",
+    description:
+      "Comprehensive features with AI, weather models, and scalability.",
+    price: 10000, // Example price in INR/month
+    frequency: ["monthly", "yearly"],
+    features: [
+      "Robot operating",
+      "Battery status",
+      "Cleaning log",
+      "Site management",
+      "Stats/Reports",
+      "Preventive maintenance",
+      "Data live chat",
+      "Multiple users",
+      "Multiple alerts",
+      "Robot failure",
+      "Robot offline",
+      "Manager breakdown",
+      "Grass cutting",
+      "Forecast weather alert",
+      "AI model",
+      "Weather model",
+      "Scaled extension",
+    ],
+    serviceTier: "enterprise",
+  },
+  {
+    plan_id: "free",
+    name: "Free Trial Plan",
+    description: "7-day trial with basic robot operation features.",
+    price: 0,
+    frequency: ["trial"],
+    features: [
+      "Robot operating",
+      "Battery status",
+      "Cleaning log",
+      "Site management",
+    ],
+    serviceTier: "basic",
+    trialDuration: 7, // 7 days
+  },
+];

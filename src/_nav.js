@@ -348,6 +348,18 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: "Subscription Dashboard",
+        to: "/master-admin/client-subscriptions",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
         name: "Expense Management",
         to: "/master-admin/expenses",
         icon: (

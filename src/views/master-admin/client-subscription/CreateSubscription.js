@@ -1,0 +1,172 @@
+import React, { useState, useEffect, useReducer } from "react";
+import {
+  CForm,
+  CFormInput,
+  CFormSelect,
+  CButton,
+  CCol,
+  CRow,
+} from "@coreui/react";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { clientSubscriptionPlans } from "../../../data.js";
+import { useNavigate } from "react-router-dom";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "CREATE_REQUEST":
+      return { ...state, loading: true, error: "" };
+    case "CREATE_SUCCESS":
+      return { ...state, loading: false };
+    case "CREATE_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+const CreateSubscription = () => {
+  const [state, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: "",
+  });
+  const { loading, error } = state;
+
+  const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
+
+  const [formData, setFormData] = useState({
+    client_id: "",
+
+    plan_id: "basic",
+    frequency: "monthly",
+  });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const plan = clientSubscriptionPlans.find(
+      (p) => p.plan_id === formData.plan_id
+    );
+    if (plan && !plan.frequency.includes(formData.frequency)) {
+      setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
+    }
+  }, [formData.plan_id, formData.frequency]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const subscriptionData = {
+      ...formData,
+      client_object_id: null,
+    };
+
+    dispatch({ type: "CREATE_REQUEST" });
+
+    try {
+      const response = await axios.post(
+        "/api/v1/client-subscription",
+        subscriptionData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      dispatch({ type: "CREATE_SUCCESS" });
+      toast.success(response.data.message);
+      setFormData({
+        client_id: "",
+        client_name: "",
+        client_logo: "",
+        plan_id: "basic",
+        frequency: "monthly",
+      });
+      navigate(`/${adminroute}/client-subscriptions`);
+    } catch (error) {
+      dispatch({
+        type: "CREATE_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Create Subscription</h2>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <CForm onSubmit={handleSubmit}>
+        <CRow className="mb-3">
+          <CCol md={6}>
+            <CFormInput
+              type="text"
+              name="client_id"
+              value={formData.client_id}
+              onChange={handleChange}
+              placeholder="Client ID"
+              required
+            />
+          </CCol>
+          <CCol md={6}>
+            <CFormSelect
+              name="plan_id"
+              value={formData.plan_id}
+              onChange={handleChange}
+            >
+              {clientSubscriptionPlans.map((plan) => (
+                <option key={plan.plan_id} value={plan.plan_id}>
+                  {plan.name}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCol>
+        </CRow>
+
+        <CRow className="mb-3">
+          <CCol md={6}>
+            <CFormSelect
+              name="frequency"
+              value={formData.frequency}
+              onChange={handleChange}
+              disabled={formData.plan_id === "free_trial"}
+            >
+              {clientSubscriptionPlans
+                .find((p) => p.plan_id === formData.plan_id)
+                ?.frequency.map((freq) => (
+                  <option key={freq} value={freq}>
+                    {freq}
+                  </option>
+                ))}
+            </CFormSelect>
+          </CCol>
+        </CRow>
+        <div className="d-flex justify-content-end">
+          <CButton type="submit" size="sm" color="primary" disabled={loading}>
+            {loading ? "Creating..." : "Create Subscription"}
+          </CButton>
+        </div>
+      </CForm>
+    </div>
+  );
+};
+
+export default CreateSubscription;
