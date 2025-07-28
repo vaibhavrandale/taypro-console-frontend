@@ -114,6 +114,9 @@ import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklis
 import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
+import SubscriptionDashboard from "./views/master-admin/client-subscription/SubscriptionDashboard";
+import CreateSubscription from "./views/master-admin/client-subscription/CreateSubscription";
+import ViewSubscription from "./views/master-admin/client-subscription/ViewSubscription";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1427,6 +1430,33 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateExpense />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-subscriptions",
+    name: "Client Subscriptions",
+    element: (
+      <MasterAdminRoute>
+        <SubscriptionDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-subscriptions/create",
+    name: "Create Subscriptions",
+    element: (
+      <MasterAdminRoute>
+        <CreateSubscription />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/client-subscriptions/view/:id",
+    name: "View Subscriptions",
+    element: (
+      <MasterAdminRoute>
+        <ViewSubscription />
       </MasterAdminRoute>
     ),
   },
