@@ -28,7 +28,7 @@ const SubscriptionExpiryCard = ({ data }) => {
   } = data;
 
   const latestInvoice = invoice[0];
-  const clientUser = last_activity[0];
+  const clientUser = last_activity[last_activity.length - 1];
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("en-IN", {
