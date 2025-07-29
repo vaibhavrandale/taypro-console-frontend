@@ -341,7 +341,7 @@ const SiteTechnicianDashboard = () => {
   };
 
   return (
-    <CContainer className="mt-4">
+    <div className="my-2">
       <CCard>
         <CCardHeader>
           <strong>Technician Attendance</strong>
@@ -444,6 +444,8 @@ const SiteTechnicianDashboard = () => {
               center={
                 selectedSiteData
                   ? [selectedSiteData.latitude, selectedSiteData.longitude]
+                  : liveLocation
+                  ? [liveLocation.lat, liveLocation.lng]
                   : [18.6485, 73.8313]
               }
               zoom={13}
@@ -472,7 +474,7 @@ const SiteTechnicianDashboard = () => {
           </div>
         </CCardBody>
       </CCard>
-    </CContainer>
+    </div>
   );
 };
 
