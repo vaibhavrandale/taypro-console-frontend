@@ -73,9 +73,9 @@ const RobotCommands = () => {
       } catch (err) {
         dispatch({
           type: "FETCH_SITES_FAIL",
-          payload: err.response?.data?.error || err.message,
+          payload: err.response?.data?.error || err.response?.data?.message,
         });
-        toast.error("Failed to fetch sites");
+        toast.error(err.response?.data?.error || err.response?.data?.message);
       }
     };
     fetchSites();
