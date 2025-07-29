@@ -58,9 +58,7 @@ const SubscriptionExpiryCard = ({ data }) => {
               </CCol>
               <CCol>
                 <h4 className="mb-1">{client_name}</h4>
-                <div className="text-muted">
-                  Plan: {plan_id} ({serviceTier})
-                </div>
+                <div className="text-muted">Plan: {plan_id}</div>
               </CCol>
             </CRow>
 
