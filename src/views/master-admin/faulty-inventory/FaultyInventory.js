@@ -14,6 +14,7 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
+  CFormSelect,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -40,7 +41,12 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAULTYINVENTORY_FAIL":
       return { ...state, loadingInventories: false, error: action.payload };
-
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, siteError: "" };
+    case "FETCH_SITES_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, siteError: action.payload };
     default:
       return state;
   }
@@ -52,6 +58,9 @@ const FaultyInventory = () => {
       error,
       inventories,
       loadingInventories,
+      sites,
+      loadingSites,
+      siteError,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -60,6 +69,9 @@ const FaultyInventory = () => {
     dispatch,
   ] = useReducer(reducer, {
     inventories: [],
+    sites: [],
+    loadingSites: true,
+    siteError: "",
     loading: true,
     loadingInventories: true,
     error: "",
@@ -68,6 +80,7 @@ const FaultyInventory = () => {
     hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
+  const [siteId, setSiteId] = useState("all");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -126,17 +139,37 @@ const FaultyInventory = () => {
         toast.error("Failed to fetch Inventories");
       }
     };
-
-    fetchInventories();
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response.data.error,
+        });
+        toast.error("Failed to fetch sites");
+      }
+    };
+    fetchInventories(); // 👈 Add this!
+    fetchSites();
   }, [successDelete, authtoken, limit, page]);
-
-  const filteredInventories = inventories.filter(
-    (inventory) =>
+  const filteredInventories = inventories.filter((inventory) => {
+    const matchesSite = siteId === "all" || inventory.site_id === siteId;
+    const matchesSearch =
       inventory.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inventory.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inventory.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesSite && matchesSearch;
+  });
 
   // Open modal and load inventory data
   const openModal = (inventory) => {
@@ -183,7 +216,21 @@ const FaultyInventory = () => {
     <div className="p-2">
       <h2 className="text-center mt-4">Faulty Inventory List</h2>
       {/* Search Input */}
-      <CRow className="justify-content-end mb-3">
+      <CRow className="mb-3  justify-content-between align-items-center">
+        <CCol md={4}>
+          <CFormSelect
+            value={siteId}
+            onChange={(e) => setSiteId(e.target.value)}
+            disabled={loadingSites}
+          >
+            <option value="all">All Sites</option>
+            {sites.map((site) => (
+              <option key={site._id} value={site.site_id}>
+                {site.site_id}
+              </option>
+            ))}
+          </CFormSelect>
+        </CCol>
         <CCol md={4}>
           <CFormInput
             type="text"

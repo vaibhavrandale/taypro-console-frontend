@@ -114,6 +114,8 @@ import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklis
 import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
+import EmailLogs from "./views/master-admin/email-logs/EmailLogs";
+import ViewEmailLog from "./views/master-admin/email-logs/ViewEmailLog";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1427,6 +1429,24 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateExpense />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/email-logs",
+    name: "Email Logs",
+    element: (
+      <MasterAdminRoute>
+        <EmailLogs />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/email-logs/:id",
+    name: "Email Log",
+    element: (
+      <MasterAdminRoute>
+        <ViewEmailLog />
       </MasterAdminRoute>
     ),
   },
