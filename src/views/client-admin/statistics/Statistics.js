@@ -6,6 +6,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
 import RobotAndCleaningGraph from "./RobotAndCleaningGraph";
 import RobotAndBatteryGraph from "./RobotAndBatteryGraph";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -14,16 +15,21 @@ const reducer = (state, action) => {
     case "FETCH_ROBOTS_BATTERY_SUCCESS":
       return { ...state, batteryrobots: action.payload, loading: false };
     case "FETCH_ROBOTS_BATTERY_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        robotserror: action.payload,
+        subscriptiondata: action.subscriptiondata,
+      };
 
     case "FETCH_ROBOTS_CLEANING_REQUEST":
       return { ...state, loading: true };
     case "FETCH_ROBOTS_CLEANING_SUCCESS":
       return { ...state, cleaningrobots: action.payload, loading: false };
     case "FETCH_ROBOTS_CLEANING_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, cleaningError: action.payload };
     case "FETCH_SITEID_REQUEST":
-      return { ...state, loadingSiteIds: true, error: "" };
+      return { ...state, loadingSiteIds: true, sitesError: "" };
     case "FETCH_SITEID_SUCCESS":
       return {
         ...state,
@@ -31,7 +37,7 @@ const reducer = (state, action) => {
         sites: action.payload,
       };
     case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSiteIds: false, error: action.payload };
+      return { ...state, loadingSiteIds: false, sitesError: action.payload };
     default:
       return state;
   }
@@ -39,14 +45,27 @@ const reducer = (state, action) => {
 
 const Statistics = () => {
   const [
-    { loading, error, cleaningrobots, batteryrobots, loadingSiteIds, sites },
+    {
+      loading,
+      cleaningError,
+      sitesError,
+      cleaningrobots,
+      batteryrobots,
+      loadingSiteIds,
+      sites,
+      robotserror,
+      subscriptiondata,
+    },
     dispatch,
   ] = useReducer(reducer, {
     cleaningrobots: [],
     batteryrobots: [],
     sites: [],
     loading: true,
-    error: "",
+    cleaningError: "",
+    robotserror: "",
+    sitesError: "",
+    subscriptiondata: {},
   });
 
   const [startDate, setStartDate] = useState(
@@ -68,13 +87,21 @@ const Statistics = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-
+        console.log(response.data.data);
         dispatch({
           type: "FETCH_ROBOTS_BATTERY_SUCCESS",
-          payload: response.data.robots,
+          payload: response.data.data,
         });
       } catch (error) {
-        dispatch({ type: "FETCH_ROBOTS_BATTERY_FAIL", payload: error.message });
+        dispatch({
+          type: "FETCH_ROBOTS_BATTERY_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+          subscriptiondata: error.response?.data?.data,
+        });
+
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
 
@@ -91,9 +118,8 @@ const Statistics = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.error || "Error fetching sites",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error(error.response.data.error || "Error fetching sites");
       }
     };
     fetchBatteryRobots();
@@ -118,7 +144,7 @@ const Statistics = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_CLEANING_FAIL",
-          payload: error.message,
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
       }
     };
@@ -133,57 +159,62 @@ const Statistics = () => {
 
   return (
     <div>
-      <CRow className="my-2">
-        <CCol>
-          {loadingSiteIds ? (
-            <LoadingSpinner />
-          ) : (
-            <CFormSelect
-              name="site_id"
-              label="Site Id"
-              value={site_id}
-              onChange={handleSiteNameChange}
-            >
-              <option value="all">Select Site Id</option>
-              {sites?.length > 0 &&
-                sites.map((item) => (
-                  <option key={item.site_id} value={item.site_id}>
-                    {item.site_id}
-                  </option>
-                ))}
-            </CFormSelect>
-          )}
-        </CCol>
+      {loadingSiteIds ? (
+        <LoadingSpinner />
+      ) : (robotserror || sitesError || cleaningError) ===
+        "Subscription expired. Please renew your subscription." ? (
+        <SubscriptionExpiryCard data={subscriptiondata} />
+      ) : (
+        <>
+          <CRow className="my-2">
+            <CCol>
+              <CFormSelect
+                name="site_id"
+                label="Site Id"
+                value={site_id}
+                onChange={handleSiteNameChange}
+              >
+                <option value="all">Select Site Id</option>
+                {sites?.length > 0 &&
+                  sites.map((item) => (
+                    <option key={item.site_id} value={item.site_id}>
+                      {item.site_id}
+                    </option>
+                  ))}
+              </CFormSelect>
+            </CCol>
 
-        <CCol md={3} xs={12} className="m-1">
-          <CFormInput
-            label="Start Date"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            <CCol md={3} xs={12} className="m-1">
+              <CFormInput
+                label="Start Date"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </CCol>
+            <CCol md={3} xs={12} className="m-1">
+              <CFormInput
+                label="End Date"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </CCol>
+          </CRow>
+          <RobotAndBatteryGraph
+            batteryrobots={batteryrobots}
+            site_id={site_id}
+            loading={loading}
+            error={robotserror}
           />
-        </CCol>
-        <CCol md={3} xs={12} className="m-1">
-          <CFormInput
-            label="End Date"
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+          <RobotAndCleaningGraph
+            cleaningrobots={cleaningrobots}
+            site_id={site_id}
+            loading={loading}
+            error={cleaningError}
           />
-        </CCol>
-      </CRow>
-      <RobotAndBatteryGraph
-        batteryrobots={batteryrobots}
-        site_id={site_id}
-        loading={loading}
-        error={error}
-      />
-      <RobotAndCleaningGraph
-        cleaningrobots={cleaningrobots}
-        site_id={site_id}
-        loading={loading}
-        error={error}
-      />
+        </>
+      )}
     </div>
   );
 };

@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const ViewSubscription = () => {
-//   return <div>ViewSubscription</div>;
-// };
-
-// export default ViewSubscription;
-
 import React, { useEffect, useState } from "react";
 import {
   CCard,
@@ -29,11 +21,12 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import moment from "moment";
+import LastActivity from "../../../components/LastActivity";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const ViewSubscription = () => {
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
-  // const navigate = useNavigate();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,7 +50,12 @@ const ViewSubscription = () => {
     fetchSubscription();
   }, [id, authtoken]);
 
-  if (loading) return <div className="p-4 text-center">Loading...</div>;
+  if (loading)
+    return (
+      <div className="p-4 text-center">
+        <LoadingSpinner />
+      </div>
+    );
   if (error) return <div className="p-4 text-red-500 text-center">{error}</div>;
   if (!subscription)
     return <div className="p-4 text-center">No subscription found</div>;
@@ -101,7 +99,7 @@ const ViewSubscription = () => {
         </CCardBody>
       </CCard>
 
-      <CCard>
+      <CCard className="mb-4">
         <CCardHeader className="bg-primary text-white">
           <CCardTitle className="h4">Invoice Details</CCardTitle>
         </CCardHeader>
@@ -172,6 +170,10 @@ const ViewSubscription = () => {
           )}
         </CCardBody>
       </CCard>
+
+      {subscription.admin_last_activity && (
+        <LastActivity lastactivity={subscription.last_activity} />
+      )}
     </div>
   );
 };

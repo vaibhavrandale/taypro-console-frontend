@@ -260,121 +260,6 @@ const ClientAdminDashboard = () => {
   return (
     <>
       <div className="p-2">
-        {/* <div className="flex flex-wrap justify-content-between gap-4">
-          <CRow className="gap-3">
-            <CCol xs={12} md={7}>
-              <div style={{ width: "100%", height: "400px" }}>
-                {loadingSiteDetails ? (
-                  <LoadingSpinner />
-                ) : (
-                  GoogleMapEmbed(
-                    siteCoordinates.latitude,
-                    siteCoordinates.longitude
-                  )
-                )}
-              </div>
-            </CCol>
-
-            <CCol
-              xs={12}
-              md={4}
-              className="d-flex align-items-center justify-content-center border"
-              style={{ minHeight: "400px" }}
-            >
-              {loadingWeatherData ? (
-                <div className="text-center">
-                  <LoadingSpinner />
-                </div>
-              ) : errorWeatherData ? (
-                <p className="text-center text-muted">{errorWeatherData}</p>
-              ) : (
-                <div className="flex flex-col gap-3 w-100">
-                  <h6 className="mx-3">
-                    Hello{" "}
-                    <span className="text-primary">{userInfo.username}</span>,
-                    {getGreeting()}
-                  </h6>
-
-                  <CCard
-                    className="shadow-sm rounded border-0"
-                    style={{
-                      background: "linear-gradient(135deg, #C850C0, #4158D0)",
-                    }}
-                  >
-                    <CCardBody className="rounded-xl text-white">
-                      <div
-                        style={{
-                          fontSize: "0.875rem",
-                          color: "rgba(255, 255, 255, 0.78)",
-                        }}
-                      >
-                        Weather Today
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: "0.87rem",
-                          color: "rgba(255, 255, 255, 0.78)",
-                        }}
-                      >
-                        Last Fetched:{" "}
-                        {new Date(weatherData?.createdAt).toLocaleString()}
-                      </div>
-
-                      <div className="mt-2 text-lg font-semibold">
-                        {weatherData?.siteName}, {weatherData?.location} -{" "}
-                        {weatherData?.temperature}°C
-                      </div>
-                    </CCardBody>
-                  </CCard>
-
-                  <div className="grid grid-cols-2 gap-3 mt-4">
-                    <CRow className="my-1 text-center">
-                      <CCol md={6}>
-                        <div className="rounded-md p-2 shadow-sm text-center my-2">
-                          <div className="text-sm font-bold text-pink-600">
-                            {weatherData?.temperature}℃
-                          </div>
-                          <div style={{ fontSize: "14px" }}>Feels Like</div>
-                          <div style={{ fontSize: "14px" }}>Temperature</div>
-                        </div>
-                        <div className="rounded-md p-2 shadow-sm text-center my-2">
-                          <div className="text-sm font-bold text-pink-600">
-                            {weatherData?.humidity}%
-                          </div>
-                          <div style={{ fontSize: "14px" }}>Outside</div>
-                          <div style={{ fontSize: "14px" }}>Humidity</div>
-                        </div>
-                      </CCol>
-                      <CCol md={6}>
-                        <div className="rounded-md p-2 shadow-sm text-center my-2">
-                          <div className="text-sm font-bold text-pink-600">
-                            {weatherData?.wind_speed} m/s
-                          </div>
-                          <div style={{ fontSize: "14px" }}>Max Wind Speed</div>
-                          <div style={{ fontSize: "12px" }}>
-                            At{" "}
-                            {new Date(
-                              weatherData?.createdAt
-                            ).toLocaleTimeString()}
-                          </div>
-                        </div>
-                        <div className="rounded-md p-2 shadow-sm text-center my-2">
-                          <div className="text-sm font-bold text-pink-600">
-                            {weatherData?.cloudiness}%
-                          </div>
-                          <div style={{ fontSize: "14px" }}>Clouds</div>
-                          <div style={{ fontSize: "14px" }}>Outside</div>
-                        </div>
-                      </CCol>
-                    </CRow>
-                  </div>
-                </div>
-              )}
-            </CCol>
-          </CRow>
-        </div> */}
-
         <div className="">
           <CRow className="g-4">
             {/* Map Section */}
@@ -385,9 +270,7 @@ const ClientAdminDashboard = () => {
                   <span className="text-success"> {getGreeting()}</span>
                 </CCardHeader>
                 <CCardBody className="p-0">
-                  <div
-                  //  style={{ width: "100%", height: "400px" }}
-                  >
+                  <div>
                     {loadingSiteDetails ? (
                       <div
                         className="d-flex justify-content-center align-items-center"
@@ -438,9 +321,6 @@ const ClientAdminDashboard = () => {
                 </CCardHeader>
                 <CCardBody className="d-flex flex-column">
                   {loadingWeatherData ? (
-                    // <div className="d-flex justify-content-between align-items-center">
-                    //
-                    // </div>
                     <div
                       className="d-flex justify-content-center align-items-center"
                       style={{ minHeight: "350px" }}

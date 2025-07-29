@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import * as XLSX from "xlsx";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -47,6 +48,7 @@ const reducer = (state, action) => {
         ...state,
         loadingMonthlyReport: false,
         errorReport: action.payload,
+        subscriptiondata: action.subscriptiondata,
       };
     default:
       return state;
@@ -59,11 +61,13 @@ const MonthlySiteReport = () => {
       sites,
       loadingSites,
       loadingMonthlyReport,
-      reportError,
+      error,
+      errorReport,
       monthlyreports,
       totalPages,
       hasNextPage,
       hasPrevPage,
+      subscriptiondata,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -76,6 +80,7 @@ const MonthlySiteReport = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    subscriptiondata: {},
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -98,19 +103,11 @@ const MonthlySiteReport = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
-      } catch (err) {
+      } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
-          payload:
-            err.response?.data?.error ||
-            err.response?.data?.message ||
-            err.message,
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error(
-          "Failed to fetch sites" ||
-            err.response?.data?.error ||
-            err.response?.data?.message
-        );
       }
     };
 
@@ -144,6 +141,7 @@ const MonthlySiteReport = () => {
         dispatch({
           type: "FETCH_MONTHLYREPORT_FAIL",
           payload: err.response?.data?.message || err.response?.data.error,
+          subscriptiondata: err.response?.data?.data,
         });
         toast.error(err.response?.data?.message || err.response?.data?.error);
       }
@@ -256,201 +254,211 @@ const MonthlySiteReport = () => {
 
   return (
     <div className="p-4">
-      {/* Header Section */}
-      <div className="text-center mb-4">
-        <h3>Monthly Site Report </h3>
-      </div>
-
-      <CRow className="mt-auto justify-content-end">
-        <CCol
-          md={5}
-          xs={12}
-          className="d-flex justify-content-end align-items-end mb-3"
-        >
-          <CButton
-            color="primary"
-            size="sm"
-            onClick={exportMonthlyReportToExcel}
-          >
-            Export to Excel
-          </CButton>
-        </CCol>
-      </CRow>
-
-      {/* Site Selection & Search */}
-      <CRow className="mb-4 justify-content-between align-items-center">
-        <CCol md={4}>
-          <CFormSelect
-            id="siteSelect"
-            value={site_id}
-            onChange={(e) => setSiteId(e.target.value)}
-          >
-            <option value="">Select a site</option>
-            {loadingSites ? (
-              <LoadingSpinner />
-            ) : (
-              sites?.map((site, index) => (
-                <option key={index} value={site.site_id}>
-                  {site.site_id}
-                </option>
-              ))
-            )}
-          </CFormSelect>
-        </CCol>
-
-        <CCol
-          md={7}
-          xs={12}
-          className="d-flex flex-wrap gap-2 justify-content-end"
-        >
-          <CCol md={3} xs={12} className="m-1">
-            <CFormInput
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </CCol>
-          <CCol md={3} xs={12} className="m-1">
-            <CFormInput
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </CCol>
-        </CCol>
-      </CRow>
-
-      {/* Report Overview Section */}
-      {loadingMonthlyReport ? (
-        <CCol className="text-center py-5">
-          {" "}
-          <LoadingSpinner />
-        </CCol>
-      ) : reportError ? (
-        <CCol className="text-center text-danger py-5">{reportError}</CCol>
-      ) : monthlyreports?.length === 0 ? (
-        <CCol className="text-center py-5">No Monthly Report found</CCol>
+      {loadingSites || loadingMonthlyReport ? (
+        <LoadingSpinner />
+      ) : (errorReport || error) ===
+        "Subscription expired. Please renew your subscription." ? (
+        <SubscriptionExpiryCard data={subscriptiondata} />
       ) : (
-        monthlyreports.map((report, index) => (
-          <div key={index} className="mb-4">
-            <CCard className="mb-3">
-              <CCardHeader className="bg-light text-center">
-                <h5>
-                  {report.site_name} -{" "}
-                  {new Date(report.report_month).toLocaleString("default", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </h5>
-              </CCardHeader>
-              <CCardBody>
-                {/* Uptime & Robots Summary */}
-                <CRow className="mb-3">
-                  <CCol md={6}>
-                    <div className="border rounded p-3 text-center h-100 shadow-sm">
-                      <h6 className="text-white mb-1">Uptime</h6>
-                      <h5 className="text-success">
-                        {report.uptimeData?.uptime}%
-                      </h5>
-                    </div>
-                  </CCol>
-                  <CCol md={6}>
-                    <div className="border rounded p-3 text-center h-100 shadow-sm">
-                      <h6 className="text-white mb-1">Total Robots</h6>
-                      <h5 className="text-success">
-                        {report.uptimeData?.totalRobots}
-                      </h5>
-                    </div>
-                  </CCol>
-                </CRow>
+        <>
+          {/* Header Section */}
+          <div className="text-center mb-4">
+            <h3>Monthly Site Report </h3>
+          </div>
 
-                {/* Inventory Data */}
-                {report.inventoryData?.length > 0 && (
-                  <CCard className="mb-3">
-                    <CCardHeader className="bg-success text-white">
-                      Inventory
-                    </CCardHeader>
-                    <CCardBody>
-                      <CTable striped responsive bordered>
-                        <CTableHead>
-                          <CTableRow>
-                            <CTableHeaderCell scope="col">
-                              Sr No.
-                            </CTableHeaderCell>
-                            <CTableHeaderCell scope="col">
-                              Item Name
-                            </CTableHeaderCell>
-                            <CTableHeaderCell scope="col">
-                              Quantity
-                            </CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          {report.inventoryData.map((item, idx) => (
-                            <CTableRow key={idx}>
-                              <CTableDataCell>{idx + 1}</CTableDataCell>
-                              <CTableDataCell>{item.item_name}</CTableDataCell>
-                              <CTableDataCell>{item.quantity}</CTableDataCell>
-                            </CTableRow>
-                          ))}
-                        </CTableBody>
-                      </CTable>
-                    </CCardBody>
-                  </CCard>
-                )}
+          <CRow className="mt-auto justify-content-end">
+            <CCol
+              md={5}
+              xs={12}
+              className="d-flex justify-content-end align-items-end mb-3"
+            >
+              <CButton
+                color="primary"
+                size="sm"
+                onClick={exportMonthlyReportToExcel}
+              >
+                Export to Excel
+              </CButton>
+            </CCol>
+          </CRow>
 
-                {/* PM Data */}
+          {/* Site Selection & Search */}
+          <CRow className="mb-4 justify-content-between align-items-center">
+            <CCol md={4}>
+              <CFormSelect
+                id="siteSelect"
+                value={site_id}
+                onChange={(e) => setSiteId(e.target.value)}
+              >
+                <option value="">Select a site</option>
+                {sites &&
+                  sites?.map((site, index) => (
+                    <option key={index} value={site.site_id}>
+                      {site.site_id}
+                    </option>
+                  ))}
+              </CFormSelect>
+            </CCol>
+
+            <CCol
+              md={7}
+              xs={12}
+              className="d-flex flex-wrap gap-2 justify-content-end"
+            >
+              <CCol md={3} xs={12} className="m-1">
+                <CFormInput
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </CCol>
+              <CCol md={3} xs={12} className="m-1">
+                <CFormInput
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </CCol>
+            </CCol>
+          </CRow>
+
+          {/* Report Overview Section */}
+          {reportError ? (
+            <CCol className="text-center text-danger py-5">{reportError}</CCol>
+          ) : monthlyreports?.length === 0 ? (
+            <CCol className="text-center py-5">No Monthly Report found</CCol>
+          ) : (
+            monthlyreports.map((report, index) => (
+              <div key={index} className="mb-4">
                 <CCard className="mb-3">
-                  <CCardHeader className="bg-success text-white">
-                    PM Data
+                  <CCardHeader className="bg-light text-center">
+                    <h5>
+                      {report.site_name} -{" "}
+                      {new Date(report.report_month).toLocaleString("default", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </h5>
                   </CCardHeader>
                   <CCardBody>
-                    {report.pmData?.robotsServiced?.length > 0 ? (
-                      <CRow className="g-3">
-                        {report.pmData.robotsServiced.map((robot, idx) => (
-                          <CCol md={3} sm={6} xs={12} key={idx}>
-                            <CCard className="border shadow-sm h-100">
-                              <CCardBody>
-                                <h6 className="mb-2">
-                                  Robot: {robot.robot_no}
-                                </h6>
-                                <CBadge color="success" className="mb-2">
-                                  PM ID: {robot.pm_id}
-                                </CBadge>
-                                <div
-                                  style={{ fontSize: "0.9rem", color: "#666" }}
-                                >
-                                  {new Date(robot.createdAt).toLocaleString()}
-                                </div>
-                              </CCardBody>
-                            </CCard>
-                          </CCol>
-                        ))}
-                      </CRow>
-                    ) : (
-                      <p className="text-muted">
-                        No Robots serviced this month.
-                      </p>
+                    {/* Uptime & Robots Summary */}
+                    <CRow className="mb-3">
+                      <CCol md={6}>
+                        <div className="border rounded p-3 text-center h-100 shadow-sm">
+                          <h6 className="text-white mb-1">Uptime</h6>
+                          <h5 className="text-success">
+                            {report.uptimeData?.uptime}%
+                          </h5>
+                        </div>
+                      </CCol>
+                      <CCol md={6}>
+                        <div className="border rounded p-3 text-center h-100 shadow-sm">
+                          <h6 className="text-white mb-1">Total Robots</h6>
+                          <h5 className="text-success">
+                            {report.uptimeData?.totalRobots}
+                          </h5>
+                        </div>
+                      </CCol>
+                    </CRow>
+
+                    {/* Inventory Data */}
+                    {report.inventoryData?.length > 0 && (
+                      <CCard className="mb-3">
+                        <CCardHeader className="bg-success text-white">
+                          Inventory
+                        </CCardHeader>
+                        <CCardBody>
+                          <CTable striped responsive bordered>
+                            <CTableHead>
+                              <CTableRow>
+                                <CTableHeaderCell scope="col">
+                                  Sr No.
+                                </CTableHeaderCell>
+                                <CTableHeaderCell scope="col">
+                                  Item Name
+                                </CTableHeaderCell>
+                                <CTableHeaderCell scope="col">
+                                  Quantity
+                                </CTableHeaderCell>
+                              </CTableRow>
+                            </CTableHead>
+                            <CTableBody>
+                              {report.inventoryData.map((item, idx) => (
+                                <CTableRow key={idx}>
+                                  <CTableDataCell>{idx + 1}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {item.item_name}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {item.quantity}
+                                  </CTableDataCell>
+                                </CTableRow>
+                              ))}
+                            </CTableBody>
+                          </CTable>
+                        </CCardBody>
+                      </CCard>
                     )}
+
+                    {/* PM Data */}
+                    <CCard className="mb-3">
+                      <CCardHeader className="bg-success text-white">
+                        PM Data
+                      </CCardHeader>
+                      <CCardBody>
+                        {report.pmData?.robotsServiced?.length > 0 ? (
+                          <CRow className="g-3">
+                            {report.pmData.robotsServiced.map((robot, idx) => (
+                              <CCol md={3} sm={6} xs={12} key={idx}>
+                                <CCard className="border shadow-sm h-100">
+                                  <CCardBody>
+                                    <h6 className="mb-2">
+                                      Robot: {robot.robot_no}
+                                    </h6>
+                                    <CBadge color="success" className="mb-2">
+                                      PM ID: {robot.pm_id}
+                                    </CBadge>
+                                    <div
+                                      style={{
+                                        fontSize: "0.9rem",
+                                        color: "#666",
+                                      }}
+                                    >
+                                      {new Date(
+                                        robot.createdAt
+                                      ).toLocaleString()}
+                                    </div>
+                                  </CCardBody>
+                                </CCard>
+                              </CCol>
+                            ))}
+                          </CRow>
+                        ) : (
+                          <p className="text-muted">
+                            No Robots serviced this month.
+                          </p>
+                        )}
+                      </CCardBody>
+                    </CCard>
                   </CCardBody>
                 </CCard>
-              </CCardBody>
-            </CCard>
-          </div>
-        ))
+              </div>
+            ))
+          )}
+          <PaginateInput
+            page={page}
+            totalPages={totalPages}
+            hasPrevPage={hasPrevPage}
+            hasNextPage={hasNextPage}
+            pageInput={pageInput}
+            handlePageChange={handlePageChange}
+            handlePageInputChange={handlePageInputChange}
+            handlePageInputSubmit={handlePageInputSubmit}
+            limit={limit}
+            handleLimitChange={setLimit} // New prop
+          />
+        </>
       )}
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
     </div>
   );
 };
