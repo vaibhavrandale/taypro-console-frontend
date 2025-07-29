@@ -378,6 +378,18 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavItem,
+        name: "Email Logs",
+        to: "/master-admin/email-logs",
+        icon: (
+          <CIcon
+            icon={cilDollar}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------

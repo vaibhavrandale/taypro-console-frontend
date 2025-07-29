@@ -169,7 +169,7 @@ const CreateExpense = () => {
 
   const calculateTotals = () => {
     const totalClaimed = expenseItems.reduce(
-      (sum, item) => sum + parseFloat(item.amount || 0),
+      (sum, item) => sum + parseFloat(item.amount),
       0
     );
     return {
