@@ -119,6 +119,7 @@ import CreateSubscription from "./views/master-admin/client-subscription/CreateS
 import ViewSubscription from "./views/master-admin/client-subscription/ViewSubscription";
 import EmailLogs from "./views/master-admin/email-logs/EmailLogs";
 import ViewEmailLog from "./views/master-admin/email-logs/ViewEmailLog";
+import RenewSubscription from "./views/master-admin/client-subscription/RenewSubscription";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1482,6 +1483,15 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/client-subscriptions/renew/:client_id",
+    name: "Renew Subscriptions",
+    element: (
+      <MasterAdminRoute>
+        <RenewSubscription />
+      </MasterAdminRoute>
+    ),
+  },
   //preveantive maintanance
   // ------------------------master admin---------------------------------
 

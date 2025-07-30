@@ -167,7 +167,22 @@ const SubscriptionDashboard = () => {
                 {moment(sub.subscription_end_date).format("DD-MM-YYYY")}
               </CTableDataCell>
               <CTableDataCell style={{ minWidth: "200px" }}>
-                <Link to={`view/${sub._id}`}>View</Link>
+                {/* <Link to={`view/${sub._id}`}>View</Link> */}
+                <Link
+                  className="btn btn-sm btn-secondary m-1"
+                  color="secondary"
+                  size="sm"
+                  to={`view/${sub._id}`}
+                >
+                  View
+                </Link>
+
+                <Link
+                  className="btn btn-sm btn-warning m-1"
+                  to={`renew/${sub.client_id}`}
+                >
+                  Renew
+                </Link>
               </CTableDataCell>
             </CTableRow>
           ))}

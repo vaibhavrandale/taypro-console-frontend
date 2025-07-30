@@ -20,6 +20,7 @@ import {
   cilBarChart,
   cilDollar,
   cilLan,
+  cilMoney,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -347,17 +348,24 @@ const _nav = [
         ],
       },
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Subscription Dashboard",
-        to: "/master-admin/client-subscriptions",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Client Subscriptions",
+            to: "/master-admin/client-subscriptions",
+          },
+        ],
       },
+
       {
         component: CNavItem,
         name: "Expense Management",
