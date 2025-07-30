@@ -20,6 +20,8 @@ import {
   cilBarChart,
   cilDollar,
   cilLan,
+  cilEnvelopeOpen,
+  cilMoney,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -33,7 +35,7 @@ const _nav = [
       <CIcon
         icon={cilSpeedometer}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -45,7 +47,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -58,7 +60,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -113,7 +115,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -143,7 +145,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -202,7 +204,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -236,7 +238,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -269,7 +271,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -303,7 +305,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -315,7 +317,7 @@ const _nav = [
           <CIcon
             icon={cilLan}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -335,7 +337,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -354,7 +356,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -364,9 +366,9 @@ const _nav = [
         to: "/master-admin/expenses",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -376,9 +378,9 @@ const _nav = [
         to: "/master-admin/email-logs",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilEnvelopeOpen}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -395,7 +397,7 @@ const _nav = [
       <CIcon
         icon={cilSpeedometer}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -407,7 +409,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgba(63, 208, 10, 1)" }}
           />
         ),
       },
@@ -420,7 +422,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -475,7 +477,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -510,7 +512,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -559,7 +561,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -587,7 +589,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -616,7 +618,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -628,7 +630,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -646,7 +648,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -658,7 +660,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -671,7 +673,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -726,7 +728,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -756,7 +758,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -786,7 +788,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -826,7 +828,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -850,7 +852,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -862,7 +864,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -880,7 +882,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -892,7 +894,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -905,7 +907,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -960,7 +962,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -990,7 +992,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1015,7 +1017,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1050,7 +1052,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1074,7 +1076,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1086,7 +1088,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1103,7 +1105,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -1115,7 +1117,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1129,7 +1131,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1170,7 +1172,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1229,7 +1231,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1243,7 +1245,7 @@ const _nav = [
           <CIcon
             icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1274,7 +1276,7 @@ const _nav = [
           <CIcon
             icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1288,7 +1290,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1319,7 +1321,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilTask}
       //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       //     />
       //   ),
       // },
@@ -1330,7 +1332,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1354,7 +1356,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1372,7 +1374,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -1384,7 +1386,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1397,7 +1399,7 @@ const _nav = [
           <CIcon
             icon={cilCursor}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1410,7 +1412,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1445,7 +1447,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1470,7 +1472,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1500,7 +1502,7 @@ const _nav = [
           <CIcon
             icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1525,7 +1527,7 @@ const _nav = [
           <CIcon
             icon={cilCheck}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -1544,7 +1546,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -1562,7 +1564,7 @@ const _nav = [
   //     <CIcon
   //       icon={cilPuzzle}
   //       customClassName="nav-icon"
-  //       style={{ height: "30px" }}
+  //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //     />
   //   ),
   //   items: [
@@ -1574,7 +1576,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilSpeedometer}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -1591,7 +1593,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilDrop}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -1603,7 +1605,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilPencil}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -1619,7 +1621,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilPuzzle}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -1759,7 +1761,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilCursor}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -1801,7 +1803,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilNotes}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -1934,7 +1936,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilChartPie}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -1945,7 +1947,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilStar}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -1973,7 +1975,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilBell}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -2007,7 +2009,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilCalculator}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       badge: {
@@ -2026,7 +2028,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilStar}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -2060,7 +2062,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilDescription}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2074,7 +2076,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -2086,7 +2088,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2100,7 +2102,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2141,7 +2143,7 @@ const _nav = [
           <CIcon
             icon={cilSettings}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2193,7 +2195,7 @@ const _nav = [
           <CIcon
             icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2219,7 +2221,7 @@ const _nav = [
           <CIcon
             icon={cilStorage}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2233,7 +2235,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2264,7 +2266,7 @@ const _nav = [
           <CIcon
             icon={cilTask}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2277,7 +2279,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2289,7 +2291,7 @@ const _nav = [
           <CIcon
             icon={cilDollar}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2308,7 +2310,7 @@ const _nav = [
   //     <CIcon
   //       icon={cilPuzzle}
   //       customClassName="nav-icon"
-  //       style={{ height: "30px" }}
+  //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //     />
   //   ),
   //   items: [
@@ -2320,7 +2322,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilSpeedometer}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2332,7 +2334,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilBarChart}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2345,7 +2347,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilCursor}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2357,7 +2359,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilNoteAdd}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2368,7 +2370,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilBuilding}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
 
@@ -2381,7 +2383,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilFactory}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2393,7 +2395,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilBuilding}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2405,7 +2407,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilClock}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2418,7 +2420,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilCalendarCheck}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -2430,7 +2432,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilCalendarCheck}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2442,7 +2444,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilListRich}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2456,7 +2458,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilGroup}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //       items: [
@@ -2468,7 +2470,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilGroup}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2480,7 +2482,7 @@ const _nav = [
   //             <CIcon
   //               icon={cilChatBubble}
   //               customClassName="nav-icon"
-  //               style={{ height: "30px" }}
+  //               style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //             />
   //           ),
   //         },
@@ -2494,7 +2496,7 @@ const _nav = [
   //         <CIcon
   //           icon={cilFactory}
   //           customClassName="nav-icon"
-  //           style={{ height: "30px" }}
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
   //     },
@@ -2509,7 +2511,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -2521,7 +2523,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2533,7 +2535,7 @@ const _nav = [
           <CIcon
             icon={cilBarChart}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2545,7 +2547,7 @@ const _nav = [
           <CIcon
             icon={cilCursor}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2557,7 +2559,7 @@ const _nav = [
           <CIcon
             icon={cilNoteAdd}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2570,7 +2572,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2600,7 +2602,7 @@ const _nav = [
           <CIcon
             icon={cilCalendarCheck}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2625,7 +2627,7 @@ const _nav = [
           <CIcon
             icon={cilGroup}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2637,7 +2639,7 @@ const _nav = [
               <CIcon
                 icon={cilGroup}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2649,7 +2651,7 @@ const _nav = [
               <CIcon
                 icon={cilChatBubble}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2664,7 +2666,7 @@ const _nav = [
           <CIcon
             icon={cilFactory}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2682,7 +2684,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -2694,7 +2696,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2705,7 +2707,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2717,7 +2719,7 @@ const _nav = [
               <CIcon
                 icon={cilFactory}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2729,7 +2731,7 @@ const _nav = [
               <CIcon
                 icon={cilBuilding}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2741,7 +2743,7 @@ const _nav = [
               <CIcon
                 icon={cilClock}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2754,7 +2756,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2766,7 +2768,7 @@ const _nav = [
               <CIcon
                 icon={cilListRich}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2780,7 +2782,7 @@ const _nav = [
           <CIcon
             icon={cilCursor}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2792,7 +2794,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilSearch}
       //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       //     />
       //   ),
       // },
@@ -2810,7 +2812,7 @@ const _nav = [
       <CIcon
         icon={cilPuzzle}
         customClassName="nav-icon"
-        style={{ height: "30px" }}
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
@@ -2822,7 +2824,7 @@ const _nav = [
           <CIcon
             icon={cilSpeedometer}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2833,7 +2835,7 @@ const _nav = [
           <CIcon
             icon={cilBuilding}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2845,7 +2847,7 @@ const _nav = [
               <CIcon
                 icon={cilFactory}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2857,7 +2859,7 @@ const _nav = [
               <CIcon
                 icon={cilBuilding}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2869,7 +2871,7 @@ const _nav = [
               <CIcon
                 icon={cilClock}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2882,7 +2884,7 @@ const _nav = [
           <CIcon
             icon={cilListRich}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2894,7 +2896,7 @@ const _nav = [
               <CIcon
                 icon={cilListRich}
                 customClassName="nav-icon"
-                style={{ height: "30px" }}
+                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
           },
@@ -2908,7 +2910,7 @@ const _nav = [
           <CIcon
             icon={cilCursor}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2920,7 +2922,7 @@ const _nav = [
       //     <CIcon
       //       icon={cilSearch}
       //       customClassName="nav-icon"
-      //       style={{ height: "30px" }}
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
       //     />
       //   ),
       // },

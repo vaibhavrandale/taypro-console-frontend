@@ -11,7 +11,6 @@ import {
   CRow,
   CCol,
   CBadge,
-  CTooltip,
 } from "@coreui/react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -238,9 +237,19 @@ const EmailLogs = () => {
                 </CTableDataCell>
                 <CTableDataCell>
                   {log?.email_sent ? (
-                    <Link to={`${log?._id}`}>View</Link>
+                    <Link
+                      to={`${log?._id}`}
+                      className="btn btn-sm btn-secondary m-1"
+                    >
+                      View
+                    </Link>
                   ) : (
-                    <span className="text-muted">View</span>
+                    <span
+                      className="btn btn-sm btn-secondary m-1 disabled text-muted"
+                      style={{ pointerEvents: "none", opacity: 0.6 }}
+                    >
+                      View
+                    </span>
                   )}
                 </CTableDataCell>
               </CTableRow>
