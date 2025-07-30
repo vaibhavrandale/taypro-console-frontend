@@ -75,10 +75,10 @@ const ClientTimers = () => {
     updateLoading: false,
   });
 
-  const [pageInput, setPageInput] = useState("");
+  // const [pageInput, setPageInput] = useState("");
   const [site_id, setSiteId] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  // const [page, setPage] = useState(1);
+  // const [limit, setLimit] = useState(10);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
@@ -106,8 +106,8 @@ const ClientTimers = () => {
       dispatch({ type: "FETCH_TIMER_REQUEST" });
       try {
         const data = {
-          pg: page,
-          limit: limit,
+          // pg: page,
+          // limit: limit,
           site_id: site_id,
         };
 
@@ -140,29 +140,29 @@ const ClientTimers = () => {
     };
     fetchSiteIds();
     fetchAllTimers();
-  }, [authtoken, limit, page, site_id]);
+  }, [authtoken, site_id]);
 
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
+  // const handlePageInputChange = (e) => {
+  //   setPageInput(e.target.value);
+  // };
 
-  // // console.item(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= state.totalPages) {
-      setPage(newPage);
-    }
-  };
+  // // // console.item(uniqueSitenames);
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= state.totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
 
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (
-      !isNaN(pageNumber) &&
-      pageNumber >= 1 &&
-      pageNumber <= state.totalPages
-    ) {
-      handlePageChange(pageNumber);
-    }
-  };
+  // const handlePageInputSubmit = () => {
+  //   const pageNumber = parseInt(pageInput);
+  //   if (
+  //     !isNaN(pageNumber) &&
+  //     pageNumber >= 1 &&
+  //     pageNumber <= state.totalPages
+  //   ) {
+  //     handlePageChange(pageNumber);
+  //   }
+  // };
 
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
@@ -326,7 +326,7 @@ const ClientTimers = () => {
               )}
             </CTableBody>
           </CTable>
-          <PaginateInput
+          {/* <PaginateInput
             page={page}
             totalPages={state.totalPages}
             hasPrevPage={state.hasPrevPage}
@@ -337,7 +337,7 @@ const ClientTimers = () => {
             handlePageInputSubmit={handlePageInputSubmit}
             limit={limit}
             handleLimitChange={setLimit}
-          />
+          /> */}
         </CCardBody>
       </CCard>
     </div>

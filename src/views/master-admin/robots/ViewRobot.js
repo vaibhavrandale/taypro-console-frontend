@@ -186,14 +186,13 @@ const ViewRobot = () => {
           style={{ maxWidth: "900px" }}
         >
           <Link
-            to={`/${adminroute}/site-management/block-management/${robot.company
-              ?.toLowerCase()
-              .replaceAll(" ", "_")}/${robot.block}/${robot.site_robot_sr_no}`}
+            to={`/${adminroute}/site-management/block-management/${
+              robot.site_id
+            }/${encodeURIComponent(robot.block)}/${robot.robot_no}`}
             className="btn btn-outline-primary btn-sm"
           >
             Robot Operation
           </Link>
-
           <Link
             to={`/${adminroute}/robots/update/${robot._id}`}
             className="btn btn-outline-warning btn-sm"
