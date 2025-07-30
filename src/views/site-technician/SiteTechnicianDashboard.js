@@ -103,6 +103,7 @@ const SiteTechnicianDashboard = () => {
     punchedOut,
     selectedSiteData,
   } = state;
+  const [geoLoading, setGeoLoading] = useState(true); // ⬅️ add this
 
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
@@ -142,6 +143,36 @@ const SiteTechnicianDashboard = () => {
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLiveLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+
+          if (!punchedIn) {
+            dispatch({
+              type: "SET_LOCATION_FIELD",
+              locationType: "punchin_location",
+              field: "lat",
+              value: position.coords.latitude.toString(),
+            });
+            dispatch({
+              type: "SET_LOCATION_FIELD",
+              locationType: "punchin_location",
+              field: "lng",
+              value: position.coords.longitude.toString(),
+            });
+          }
+
+          setGeoLoading(false); // ✅ stop loading
+        },
+        (err) => {
+          console.error("Geolocation error:", err);
+          toast.error("Unable to access location");
+          setGeoLoading(false); // ✅ stop loading even on error
+        }
+      );
     } catch (error) {
       toast.error(error.response.data.message || error.response.data.error);
       dispatch({
@@ -151,8 +182,47 @@ const SiteTechnicianDashboard = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (!userInfo) return; // ⛔️
+  //   const userSites = userInfo.assigned_sites || [];
+  //   setSites(userSites);
+
+  //   if (userSites.length === 1) {
+  //     const siteId = userSites[0].site_id;
+  //     dispatch({ type: "SET_FIELD", name: "site_id", value: siteId });
+  //     fetchCoordinates(siteId);
+  //   }
+
+  //   fetchPunchStatus();
+
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       setLiveLocation({
+  //         lat: position.coords.latitude,
+  //         lng: position.coords.longitude,
+  //       });
+  //       if (!punchedIn) {
+  //         dispatch({
+  //           type: "SET_LOCATION_FIELD",
+  //           locationType: "punchin_location",
+  //           field: "lat",
+  //           value: position.coords.latitude.toString(),
+  //         });
+  //         dispatch({
+  //           type: "SET_LOCATION_FIELD",
+  //           locationType: "punchin_location",
+  //           field: "lng",
+  //           value: position.coords.longitude.toString(),
+  //         });
+  //       }
+  //     },
+  //     (err) => console.error("Geolocation error:", err)
+  //   );
+  // }, [punchedIn, userInfo]);
+
   useEffect(() => {
-    if (!userInfo) return; // ⛔️
+    if (!userInfo) return;
+
     const userSites = userInfo.assigned_sites || [];
     setSites(userSites);
 
@@ -164,29 +234,7 @@ const SiteTechnicianDashboard = () => {
 
     fetchPunchStatus();
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLiveLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-        if (!punchedIn) {
-          dispatch({
-            type: "SET_LOCATION_FIELD",
-            locationType: "punchin_location",
-            field: "lat",
-            value: position.coords.latitude.toString(),
-          });
-          dispatch({
-            type: "SET_LOCATION_FIELD",
-            locationType: "punchin_location",
-            field: "lng",
-            value: position.coords.longitude.toString(),
-          });
-        }
-      },
-      (err) => console.error("Geolocation error:", err)
-    );
+    setGeoLoading(true); // ⬅️ start loading
   }, [punchedIn, userInfo]);
 
   useEffect(() => {
@@ -340,140 +388,177 @@ const SiteTechnicianDashboard = () => {
     return diffInHours > 5;
   };
 
+  const getRemainingTime = () => {
+    const current = new Date(currentTime);
+    const punchIn = new Date(inTime);
+    const elapsedMs = current - punchIn;
+    const fiveHoursMs = 5 * 60 * 60 * 1000;
+    const remainingMs = fiveHoursMs - elapsedMs;
+
+    if (remainingMs <= 0) return null;
+
+    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+
   return (
     <div className="my-2">
-      <CCard>
-        <CCardHeader>
-          <strong>Technician Attendance</strong>
-        </CCardHeader>
-        <CCardBody>
-          {error && <CAlert color="danger">{error}</CAlert>}
-          {success && <CAlert color="success">Punch successful!</CAlert>}
+      <CRow>
+        <CCol md={5} lg={5}>
+          <CCard>
+            <CCardHeader>
+              <strong>Technician Attendance</strong>
+            </CCardHeader>
+            <CCardBody>
+              {error && <CAlert color="danger">{error}</CAlert>}
+              {success && <CAlert color="success">Punch successful!</CAlert>}
 
-          {!state.statusLoaded ? (
-            <CAlert color="warning">Loading attendance status...</CAlert>
-          ) : punchedIn && punchedOut ? (
-            <CAlert color="info">
-              ✅ You have already punched in and out for today.
-            </CAlert>
-          ) : !punchedIn ? (
-            <CForm
-              onSubmit={handlePunchIn}
-              className="needs-validation"
-              noValidate
-            >
-              <CRow>
-                <CCol md={6}>
-                  <CFormLabel>Select Site</CFormLabel>
-                  <CFormSelect
-                    value={site_id}
-                    onChange={(e) => {
-                      dispatch({
-                        type: "SET_FIELD",
-                        name: "site_id",
-                        value: e.target.value,
-                      });
-                      fetchCoordinates(e.target.value);
-                    }}
-                    required
-                  >
-                    <option value="">-- Select Site --</option>
-                    {sites.map((site, index) => (
-                      <option key={index} value={site.site_id}>
-                        {site.site_id}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                </CCol>
-              </CRow>
-              <CButton
-                type="submit"
-                color="success"
-                size="sm"
-                className="mt-3"
-                disabled={loading}
-              >
-                {loading ? "Punching In..." : "Punch In"}
-              </CButton>
-            </CForm>
-          ) : (
-            <CForm onSubmit={handlePunchOut}>
-              <CRow>
-                <CCol md={6}>
-                  <CFormLabel>Select Site</CFormLabel>
-                  <CFormSelect
-                    value={site_id}
-                    onChange={(e) => {
-                      dispatch({
-                        type: "SET_FIELD",
-                        name: "site_id",
-                        value: e.target.value,
-                      });
-                      fetchCoordinates(e.target.value);
-                    }}
-                    required
-                  >
-                    <option value="">-- Select Site --</option>
-                    {sites.map((site, index) => (
-                      <option key={index} value={site.site_id}>
-                        {site.site_id}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                </CCol>
-              </CRow>{" "}
-              {isAfterFiveHours() ? (
-                <CButton
-                  type="submit"
-                  color="warning"
-                  size="sm"
-                  className="mt-3"
-                  disabled={loading}
+              {!state.statusLoaded ? (
+                <CAlert color="warning">Loading attendance status...</CAlert>
+              ) : punchedIn && punchedOut ? (
+                <CAlert color="info">
+                  ✅ You have already punched in and out for today.
+                </CAlert>
+              ) : !punchedIn ? (
+                <CForm
+                  onSubmit={handlePunchIn}
+                  className="needs-validation"
+                  noValidate
                 >
-                  {loading ? "Punching Out..." : "Punch Out"}
-                </CButton>
+                  <CRow>
+                    <CCol md={6}>
+                      <CFormLabel>Select Site</CFormLabel>
+                      <CFormSelect
+                        value={site_id}
+                        onChange={(e) => {
+                          dispatch({
+                            type: "SET_FIELD",
+                            name: "site_id",
+                            value: e.target.value,
+                          });
+                          fetchCoordinates(e.target.value);
+                        }}
+                        required
+                      >
+                        <option value="">-- Select Site --</option>
+                        {sites.map((site, index) => (
+                          <option key={index} value={site.site_id}>
+                            {site.site_id}
+                          </option>
+                        ))}
+                      </CFormSelect>
+                    </CCol>
+                  </CRow>
+                  <CButton
+                    type="submit"
+                    color="success"
+                    size="sm"
+                    className="mt-3"
+                    disabled={loading}
+                  >
+                    {loading ? "Punching In..." : "Punch In"}
+                  </CButton>
+                </CForm>
               ) : (
-                <CBadge color="danger">Wait for Punch Out</CBadge>
+                <CForm onSubmit={handlePunchOut}>
+                  <CRow>
+                    <CCol md={6}>
+                      <CFormLabel>Select Site</CFormLabel>
+                      <CFormSelect
+                        value={site_id}
+                        onChange={(e) => {
+                          dispatch({
+                            type: "SET_FIELD",
+                            name: "site_id",
+                            value: e.target.value,
+                          });
+                          fetchCoordinates(e.target.value);
+                        }}
+                        required
+                      >
+                        <option value="">-- Select Site --</option>
+                        {sites.map((site, index) => (
+                          <option key={index} value={site.site_id}>
+                            {site.site_id}
+                          </option>
+                        ))}
+                      </CFormSelect>
+                    </CCol>
+                  </CRow>{" "}
+                  {isAfterFiveHours() ? (
+                    <CButton
+                      type="submit"
+                      color="warning"
+                      size="sm"
+                      className="mt-3"
+                      disabled={loading}
+                    >
+                      {loading ? "Punching Out..." : "Punch Out"}
+                    </CButton>
+                  ) : (
+                    <div className="my-3 d-flex align-items-start">
+                      <CBadge className="" color="danger">
+                        Wait for Punch Out
+                      </CBadge>
+                      &nbsp;
+                      <div className="text small">
+                        ( Time remaining: {getRemainingTime()} )
+                      </div>
+                    </div>
+                  )}
+                </CForm>
               )}
-            </CForm>
-          )}
 
-          {/* Map Section */}
-          <div className="mt-4" style={{ height: "400px" }}>
-            <MapContainer
-              center={
-                selectedSiteData
-                  ? [selectedSiteData.latitude, selectedSiteData.longitude]
-                  : liveLocation
-                  ? [liveLocation.lat, liveLocation.lng]
-                  : [18.6485, 73.8313]
-              }
-              zoom={13}
-              scrollWheelZoom={false}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              {selectedSiteData && (
-                <Circle
-                  center={[
-                    selectedSiteData.latitude,
-                    selectedSiteData.longitude,
-                  ]}
-                  radius={selectedSiteData.radius}
-                  pathOptions={{
-                    color: "blue",
-                    fillColor: "#00f",
-                    fillOpacity: 0.2,
-                  }}
-                />
-              )}
-              {liveLocation && (
-                <Marker position={[liveLocation.lat, liveLocation.lng]} />
-              )}
-            </MapContainer>
-          </div>
-        </CCardBody>
-      </CCard>
+              {/* Map Section */}
+              <div className="mt-4" style={{ height: "400px" }}>
+                {geoLoading ? (
+                  <CAlert color="info">
+                    📍 Fetching your current location...
+                  </CAlert>
+                ) : (
+                  <MapContainer
+                    center={
+                      liveLocation
+                        ? [liveLocation.lat, liveLocation.lng]
+                        : selectedSiteData
+                        ? [
+                            selectedSiteData.latitude,
+                            selectedSiteData.longitude,
+                          ]
+                        : ["", ""]
+                    }
+                    zoom={14}
+                    scrollWheelZoom={false}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {selectedSiteData && (
+                      <Circle
+                        center={[
+                          selectedSiteData.latitude,
+                          selectedSiteData.longitude,
+                        ]}
+                        radius={selectedSiteData.radius}
+                        pathOptions={{
+                          color: "#2aba47ff",
+                          fillColor: "#00FF00",
+                          fillOpacity: 0.1,
+                        }}
+                      />
+                    )}
+                    {liveLocation && (
+                      <Marker position={[liveLocation.lat, liveLocation.lng]} />
+                    )}
+                  </MapContainer>
+                )}
+              </div>
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
     </div>
   );
 };

@@ -1495,7 +1495,7 @@ const _nav = [
       // Inventory & Maintenance Module
       {
         component: CNavGroup,
-        name: "Inventory & Maintenance",
+        name: "Inventory + Maintenance",
         icon: (
           <CIcon
             icon={cilStorage}
@@ -1537,9 +1537,8 @@ const _nav = [
         ],
       },
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/site-technician/expenses",
         icon: (
           <CIcon
             icon={cilDollar}
@@ -1547,6 +1546,13 @@ const _nav = [
             style={{ height: "30px" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Expenses",
+            to: "/site-technician/expenses",
+          },
+        ],
       },
     ],
   },
