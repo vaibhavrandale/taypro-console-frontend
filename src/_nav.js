@@ -22,7 +22,6 @@ import {
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
-  cilMoney,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
