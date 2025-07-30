@@ -350,7 +350,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Subscription Dashboard",
+        name: "Subscriptions",
         icon: (
           <CIcon
             icon={cilMoney}
@@ -368,9 +368,8 @@ const _nav = [
       },
 
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/master-admin/expenses",
         icon: (
           <CIcon
             icon={cilMoney}
@@ -378,11 +377,18 @@ const _nav = [
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/master-admin/expenses",
+          },
+        ],
       },
+
       {
-        component: CNavItem,
-        name: "Email Logs",
-        to: "/master-admin/email-logs",
+        component: CNavGroup,
+        name: "Auto Email Logs",
         icon: (
           <CIcon
             icon={cilEnvelopeOpen}
@@ -390,6 +396,13 @@ const _nav = [
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Email Logs",
+            to: "/master-admin/email-logs",
+          },
+        ],
       },
     ],
   },
@@ -1529,7 +1542,7 @@ const _nav = [
       // Attendance Module
       {
         component: CNavGroup,
-        name: "Attendance",
+        name: "T. Attendance",
         icon: (
           <CIcon
             icon={cilCheck}
@@ -1540,7 +1553,12 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Site Attendance",
+            name: "Punch In/Out",
+            to: "/site-technician/punch-in-punch-out",
+          },
+          {
+            component: CNavItem,
+            name: " Attendance",
             to: "/site-technician/user-site-attendance",
           },
         ],
@@ -1550,7 +1568,7 @@ const _nav = [
         name: "Expense Management",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
@@ -1558,7 +1576,7 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Expenses",
+            name: "View Expenses",
             to: "/site-technician/expenses",
           },
         ],
@@ -2580,7 +2598,7 @@ const _nav = [
       // Group: Site Management
       {
         component: CNavGroup,
-        name: "Site Management",
+        name: "All Site Data",
         icon: (
           <CIcon
             icon={cilBuilding}
@@ -2715,7 +2733,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Site Management",
+        name: "Sites",
         icon: (
           <CIcon
             icon={cilBuilding}
@@ -2728,37 +2746,37 @@ const _nav = [
             component: CNavItem,
             name: "All Site Data",
             to: "/site-incharge/site-management/all-site-data",
-            icon: (
-              <CIcon
-                icon={cilFactory}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
+            // icon: (
+            //   <CIcon
+            //     icon={cilFactory}
+            //     customClassName="nav-icon"
+            //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            //   />
+            // ),
           },
           {
             component: CNavItem,
             name: "Site Management",
             to: "/site-incharge/site-management",
-            icon: (
-              <CIcon
-                icon={cilBuilding}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
+            // icon: (
+            //   <CIcon
+            //     icon={cilBuilding}
+            //     customClassName="nav-icon"
+            //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            //   />
+            // ),
           },
           {
             component: CNavItem,
             name: "All Sites Timers",
             to: "/site-incharge/timers",
-            icon: (
-              <CIcon
-                icon={cilClock}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
+            // icon: (
+            //   <CIcon
+            //     icon={cilClock}
+            //     customClassName="nav-icon"
+            //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            //   />
+            // ),
           },
         ],
       },
@@ -2777,13 +2795,13 @@ const _nav = [
             component: CNavItem,
             name: "Cleaning Log",
             to: "/site-incharge/cleaning-log-sites",
-            icon: (
-              <CIcon
-                icon={cilListRich}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
+            // icon: (
+            //   <CIcon
+            //     icon={cilListRich}
+            //     customClassName="nav-icon"
+            //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            //   />
+            // ),
           },
         ],
       },
@@ -2843,7 +2861,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Site Management",
+        name: "Sites",
         icon: (
           <CIcon
             icon={cilBuilding}
@@ -2856,37 +2874,16 @@ const _nav = [
             component: CNavItem,
             name: "All Site Data",
             to: "/client-site-technician/site-management/all-site-data",
-            icon: (
-              <CIcon
-                icon={cilFactory}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
           },
           {
             component: CNavItem,
             name: "Site Management",
             to: "/client-site-technician/site-management",
-            icon: (
-              <CIcon
-                icon={cilBuilding}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
           },
           {
             component: CNavItem,
             name: "All Sites Timers",
             to: "/client-site-technician/timers",
-            icon: (
-              <CIcon
-                icon={cilClock}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
           },
         ],
       },
@@ -2905,13 +2902,13 @@ const _nav = [
             component: CNavItem,
             name: "Cleaning Log",
             to: "/client-site-technician/cleaning-log-sites",
-            icon: (
-              <CIcon
-                icon={cilListRich}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
+            // icon: (
+            //   <CIcon
+            //     icon={cilListRich}
+            //     customClassName="nav-icon"
+            //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            //   />
+            // ),
           },
         ],
       },

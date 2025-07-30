@@ -69,9 +69,11 @@ const ClientDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_ALLSITES_FAIL",
-          payload: "Failed to fetch All Sites Data",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error("Failed to fetch All Sites Data");
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
     fetchAllSites();
@@ -117,419 +119,405 @@ const ClientDashboard = () => {
 
       {/* 🔹 Site-wise Robot Stats */}
       <CRow className="mt-4">
-        {allSites.sites
-          ? allSites.sites.map((site, index) => (
-              <CCol md={4} key={index} className="mb-3">
-                <CCard className="shadow-sm border-0">
-                  <CCardBody>
-                    {/* Client Logo */}
-                    <div className="text-center">
-                      <img
-                        src={site.logo}
-                        alt={site.siteName}
-                        style={{
-                          width: "120px",
-                          height: "70px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    </div>
+        {allSites.sites ? (
+          allSites.sites.map((site, index) => (
+            <CCol md={4} key={index} className="mb-3">
+              <CCard className="shadow-sm border-0">
+                <CCardBody>
+                  {/* Client Logo */}
+                  <div className="text-center">
+                    <img
+                      src={site.logo}
+                      alt={site.siteName}
+                      style={{
+                        width: "120px",
+                        height: "70px",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
 
-                    {/* Client Name */}
-                    <h6 className="text-center fw-bold mt-3">
-                      {site.siteName}, {site.location}
-                    </h6>
+                  {/* Client Name */}
+                  <h6 className="text-center fw-bold mt-3">
+                    {site.siteName}, {site.location}
+                  </h6>
 
-                    {/* Robot Status Table */}
-                    <CTable striped responsive className="mt-2 bg-important">
+                  {/* Robot Status Table */}
+                  <CTable striped responsive className="mt-2 bg-important">
+                    <CTableHead color="secondary">
+                      <CTableRow>
+                        <CTableHeaderCell className="text-center ">
+                          Total
+                        </CTableHeaderCell>
+                        <CTableHeaderCell className="text-center">
+                          Online
+                        </CTableHeaderCell>
+                        <CTableHeaderCell className="text-center">
+                          Offline
+                        </CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      <CTableRow>
+                        <CTableDataCell className="text-center">
+                          <CBadge color="blue">{site.site_total_robots}</CBadge>
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {/* ✅ Clickable Badge to Open Online Modal */}
+                          <CBadge
+                            color="success"
+                            onClick={() => setActiveOnlineSite(site.site_id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {site.site_total_online}
+                          </CBadge>
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {/* ✅ Clickable Badge to Open Offline Modal */}
+                          <CBadge
+                            color="danger"
+                            onClick={() => setActiveOfflineSite(site.site_id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {site.site_total_offline}
+                          </CBadge>
+                        </CTableDataCell>
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
+                </CCardBody>
+              </CCard>
+
+              {/* ✅ Online Robots Modal */}
+              <CModal
+                scrollable
+                size="xl"
+                visible={activeOnlineSite === site.site_id}
+                onClose={() => setActiveOnlineSite(null)}
+              >
+                <CModalHeader closeButton={false}>
+                  <CModalTitle>
+                    {site.siteName} - Online Robots List
+                  </CModalTitle>
+                  <button
+                    type="button"
+                    className=" border-0 ms-auto py-0 px-1"
+                    onClick={() => setActiveOnlineSite(false)}
+                    style={{ background: "none" }}
+                  >
+                    <CIcon icon={cilX} size="lg" />
+                  </button>
+                </CModalHeader>
+                <CModalBody>
+                  <>
+                    <CRow className="justify-content-end">
+                      <CCol xs={12} sm={10} md={6} lg={4}>
+                        <CInputGroup className="mb-3">
+                          <CFormInput
+                            type="text"
+                            placeholder="Search Robot..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                        </CInputGroup>
+                      </CCol>
+                    </CRow>
+                    <CTable responsive hover bordered>
                       <CTableHead color="secondary">
                         <CTableRow>
-                          <CTableHeaderCell className="text-center ">
-                            Total
+                          <CTableHeaderCell style={{ minWidth: "20px" }}>
+                            #
                           </CTableHeaderCell>
-                          <CTableHeaderCell className="text-center">
-                            Online
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Robot No
                           </CTableHeaderCell>
-                          <CTableHeaderCell className="text-center">
-                            Offline
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Lora No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Version
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Deveui
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Block
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Last Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "170px" }}>
+                            Last updateAt
                           </CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
-                        <CTableRow>
-                          <CTableDataCell className="text-center">
-                            <CBadge color="blue">
-                              {site.site_total_robots}
-                            </CBadge>
-                          </CTableDataCell>
-                          <CTableDataCell className="text-center">
-                            {/* ✅ Clickable Badge to Open Online Modal */}
-                            <CBadge
-                              color="success"
-                              onClick={() => setActiveOnlineSite(site.site_id)}
-                              style={{ cursor: "pointer" }}
+                        {site.robots.filter(
+                          (robot) =>
+                            robot.robot_no
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.deveui
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.block
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.last_status
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                        ).length > 0 ? (
+                          site.robots
+                            .filter(
+                              (robot) =>
+                                robot.lora_state === 1 &&
+                                (robot.robot_no
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase()) ||
+                                  robot.deveui
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()) ||
+                                  robot.block
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()) ||
+                                  robot.last_status
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()))
+                            )
+                            .map((robot, index) => (
+                              <CTableRow key={robot.robot_no}>
+                                <CTableHeaderCell style={{ minWidth: "20px" }}>
+                                  {index + 1}
+                                </CTableHeaderCell>
+                                <CTableDataCell>
+                                  {robot.robot_no}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  <CBadge
+                                    color={
+                                      robot.lora_state === 1
+                                        ? "success"
+                                        : "danger"
+                                    }
+                                  >
+                                    {robot.lora_state === 1
+                                      ? "Online"
+                                      : "Offline"}
+                                  </CBadge>
+                                </CTableDataCell>
+                                <CTableDataCell>{robot.lora_no}</CTableDataCell>
+                                <CTableDataCell>{robot.version}</CTableDataCell>
+                                <CTableDataCell>{robot.deveui}</CTableDataCell>
+                                <CTableDataCell>{robot.block}</CTableDataCell>
+                                <CTableDataCell>
+                                  {robot.last_status}
+                                </CTableDataCell>
+
+                                <CTableDataCell style={{ minWidth: "250px" }}>
+                                  {robot.last_uplink === null
+                                    ? "Robot is not yet activated"
+                                    : new Date(
+                                        robot.last_uplink
+                                      ).toLocaleString()}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ))
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell
+                              colSpan="7"
+                              className="text-center text-muted"
                             >
-                              {site.site_total_online}
-                            </CBadge>
-                          </CTableDataCell>
-                          <CTableDataCell className="text-center">
-                            {/* ✅ Clickable Badge to Open Offline Modal */}
-                            <CBadge
-                              color="danger"
-                              onClick={() => setActiveOfflineSite(site.site_id)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              {site.site_total_offline}
-                            </CBadge>
-                          </CTableDataCell>
-                        </CTableRow>
+                              No online robots found.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
                       </CTableBody>
                     </CTable>
-                  </CCardBody>
-                </CCard>
+                  </>
+                </CModalBody>
+                <CModalFooter>
+                  <CButton
+                    color="secondary"
+                    size="sm"
+                    onClick={() => setActiveOnlineSite(null)}
+                  >
+                    Close
+                  </CButton>
+                </CModalFooter>
+              </CModal>
 
-                {/* ✅ Online Robots Modal */}
-                <CModal
-                  scrollable
-                  size="xl"
-                  visible={activeOnlineSite === site.site_id}
-                  onClose={() => setActiveOnlineSite(null)}
-                >
-                  <CModalHeader closeButton={false}>
-                    <CModalTitle>
-                      {site.siteName} - Online Robots List
-                    </CModalTitle>
-                    <button
-                      type="button"
-                      className=" border-0 ms-auto py-0 px-1"
-                      onClick={() => setActiveOnlineSite(false)}
-                      style={{ background: "none" }}
-                    >
-                      <CIcon icon={cilX} size="lg" />
-                    </button>
-                  </CModalHeader>
-                  <CModalBody>
-                    <>
-                      <CRow className="justify-content-end">
-                        <CCol xs={12} sm={10} md={6} lg={4}>
-                          <CInputGroup className="mb-3">
-                            <CFormInput
-                              type="text"
-                              placeholder="Search Robot..."
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                          </CInputGroup>
-                        </CCol>
-                      </CRow>
-                      <CTable responsive hover bordered>
-                        <CTableHead color="secondary">
-                          <CTableRow>
-                            <CTableHeaderCell style={{ minWidth: "20px" }}>
-                              #
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Robot No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Lora No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Version
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Deveui
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Block
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Last Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "170px" }}>
-                              Last updateAt
-                            </CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          {site.robots.filter(
-                            (robot) =>
-                              robot.robot_no
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.deveui
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.block
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.last_status
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
-                          ).length > 0 ? (
-                            site.robots
-                              .filter(
-                                (robot) =>
-                                  robot.lora_state === 1 &&
-                                  (robot.robot_no
+              {/* ✅ Offline Robots Modal */}
+              <CModal
+                scrollable
+                size="xl"
+                visible={activeOfflineSite === site.site_id}
+                onClose={() => setActiveOfflineSite(null)}
+              >
+                <CModalHeader closeButton={false}>
+                  <CModalTitle>
+                    {site.siteName} - Offline Robots List
+                  </CModalTitle>
+                  <button
+                    type="button"
+                    className=" border-0 ms-auto py-0 px-1"
+                    onClick={() => setActiveOfflineSite(false)}
+                    style={{ background: "none" }}
+                  >
+                    <CIcon icon={cilX} size="lg" />
+                  </button>
+                </CModalHeader>
+                <CModalBody>
+                  <>
+                    <CRow className="justify-content-end">
+                      <CCol xs={12} sm={10} md={6} lg={4}>
+                        <CInputGroup className="mb-3">
+                          <CFormInput
+                            type="text"
+                            placeholder="Search Robot..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                        </CInputGroup>
+                      </CCol>
+                    </CRow>
+                    <CTable responsive hover bordered>
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell style={{ minWidth: "20px" }}>
+                            #
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Robot No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Lora No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Version
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Deveui
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Block
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Last Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "170px" }}>
+                            Last updateAt
+                          </CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        {site.robots.filter(
+                          (robot) =>
+                            robot.robot_no
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.deveui
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.block
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            robot.last_status
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                        ).length > 0 ? (
+                          site.robots
+                            .filter(
+                              (robot) =>
+                                robot.lora_state === 0 &&
+                                (robot.robot_no
+                                  .toLowerCase()
+                                  .includes(searchTerm.toLowerCase()) ||
+                                  robot.deveui
                                     .toLowerCase()
                                     .includes(searchTerm.toLowerCase()) ||
-                                    robot.deveui
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.block
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.last_status
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
-                              )
-                              .map((robot, index) => (
-                                <CTableRow key={robot.robot_no}>
-                                  <CTableHeaderCell
-                                    style={{ minWidth: "20px" }}
-                                  >
-                                    {index + 1}
-                                  </CTableHeaderCell>
-                                  <CTableDataCell>
-                                    {robot.robot_no}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    <CBadge
-                                      color={
-                                        robot.lora_state === 1
-                                          ? "success"
-                                          : "danger"
-                                      }
-                                    >
-                                      {robot.lora_state === 1
-                                        ? "Online"
-                                        : "Offline"}
-                                    </CBadge>
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.lora_no}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.version}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
-
-                                  <CTableDataCell style={{ minWidth: "250px" }}>
-                                    {robot.last_uplink === null
-                                      ? "Robot is not yet activated"
-                                      : new Date(
-                                          robot.last_uplink
-                                        ).toLocaleString()}
-                                  </CTableDataCell>
-                                </CTableRow>
-                              ))
-                          ) : (
-                            <CTableRow>
-                              <CTableDataCell
-                                colSpan="7"
-                                className="text-center text-muted"
-                              >
-                                No online robots found.
-                              </CTableDataCell>
-                            </CTableRow>
-                          )}
-                        </CTableBody>
-                      </CTable>
-                    </>
-                  </CModalBody>
-                  <CModalFooter>
-                    <CButton
-                      color="secondary"
-                      size="sm"
-                      onClick={() => setActiveOnlineSite(null)}
-                    >
-                      Close
-                    </CButton>
-                  </CModalFooter>
-                </CModal>
-
-                {/* ✅ Offline Robots Modal */}
-                <CModal
-                  scrollable
-                  size="xl"
-                  visible={activeOfflineSite === site.site_id}
-                  onClose={() => setActiveOfflineSite(null)}
-                >
-                  <CModalHeader closeButton={false}>
-                    <CModalTitle>
-                      {site.siteName} - Offline Robots List
-                    </CModalTitle>
-                    <button
-                      type="button"
-                      className=" border-0 ms-auto py-0 px-1"
-                      onClick={() => setActiveOfflineSite(false)}
-                      style={{ background: "none" }}
-                    >
-                      <CIcon icon={cilX} size="lg" />
-                    </button>
-                  </CModalHeader>
-                  <CModalBody>
-                    <>
-                      <CRow className="justify-content-end">
-                        <CCol xs={12} sm={10} md={6} lg={4}>
-                          <CInputGroup className="mb-3">
-                            <CFormInput
-                              type="text"
-                              placeholder="Search Robot..."
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                          </CInputGroup>
-                        </CCol>
-                      </CRow>
-                      <CTable responsive hover bordered>
-                        <CTableHead color="secondary">
-                          <CTableRow>
-                            <CTableHeaderCell style={{ minWidth: "20px" }}>
-                              #
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Robot No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Lora No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Version
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Deveui
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Block
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "150px" }}>
-                              Last Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell style={{ minWidth: "170px" }}>
-                              Last updateAt
-                            </CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          {site.robots.filter(
-                            (robot) =>
-                              robot.robot_no
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.deveui
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.block
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase()) ||
-                              robot.last_status
-                                .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
-                          ).length > 0 ? (
-                            site.robots
-                              .filter(
-                                (robot) =>
-                                  robot.lora_state === 0 &&
-                                  (robot.robot_no
+                                  robot.block
                                     .toLowerCase()
                                     .includes(searchTerm.toLowerCase()) ||
-                                    robot.deveui
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.block
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()) ||
-                                    robot.last_status
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
-                              )
-                              .map((robot, index) => (
-                                <CTableRow key={robot.robot_no}>
-                                  <CTableHeaderCell
-                                    style={{ minWidth: "20px" }}
+                                  robot.last_status
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase()))
+                            )
+                            .map((robot, index) => (
+                              <CTableRow key={robot.robot_no}>
+                                <CTableHeaderCell style={{ minWidth: "20px" }}>
+                                  {index + 1}
+                                </CTableHeaderCell>
+                                <CTableDataCell>
+                                  {robot.robot_no}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  <CBadge
+                                    color={
+                                      robot.lora_state === 1
+                                        ? "success"
+                                        : "danger"
+                                    }
                                   >
-                                    {index + 1}
-                                  </CTableHeaderCell>
-                                  <CTableDataCell>
-                                    {robot.robot_no}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    <CBadge
-                                      color={
-                                        robot.lora_state === 1
-                                          ? "success"
-                                          : "danger"
-                                      }
-                                    >
-                                      {robot.lora_state === 1
-                                        ? "Online"
-                                        : "Offline"}
-                                    </CBadge>
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.lora_no}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.version}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.deveui}
-                                  </CTableDataCell>
-                                  <CTableDataCell>{robot.block}</CTableDataCell>
-                                  <CTableDataCell>
-                                    {robot.last_status}
-                                  </CTableDataCell>
+                                    {robot.lora_state === 1
+                                      ? "Online"
+                                      : "Offline"}
+                                  </CBadge>
+                                </CTableDataCell>
+                                <CTableDataCell>{robot.lora_no}</CTableDataCell>
+                                <CTableDataCell>{robot.version}</CTableDataCell>
+                                <CTableDataCell>{robot.deveui}</CTableDataCell>
+                                <CTableDataCell>{robot.block}</CTableDataCell>
+                                <CTableDataCell>
+                                  {robot.last_status}
+                                </CTableDataCell>
 
-                                  <CTableDataCell style={{ minWidth: "250px" }}>
-                                    {robot.last_uplink === null
-                                      ? "Robot is not yet activated"
-                                      : new Date(
-                                          robot.last_uplink
-                                        ).toLocaleString()}
-                                  </CTableDataCell>
-                                </CTableRow>
-                              ))
-                          ) : (
-                            <CTableRow>
-                              <CTableDataCell
-                                colSpan="7"
-                                className="text-center text-muted"
-                              >
-                                No Offline robots found.
-                              </CTableDataCell>
-                            </CTableRow>
-                          )}
-                        </CTableBody>
-                      </CTable>
-                    </>
-                  </CModalBody>
-                  <CModalFooter>
-                    <CButton
-                      color="secondary"
-                      size="sm"
-                      onClick={() => setActiveOfflineSite(null)}
-                    >
-                      Close
-                    </CButton>
-                  </CModalFooter>
-                </CModal>
-              </CCol>
-            ))
-          : []}
+                                <CTableDataCell style={{ minWidth: "250px" }}>
+                                  {robot.last_uplink === null
+                                    ? "Robot is not yet activated"
+                                    : new Date(
+                                        robot.last_uplink
+                                      ).toLocaleString()}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ))
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell
+                              colSpan="7"
+                              className="text-center text-muted"
+                            >
+                              No Offline robots found.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
+                    </CTable>
+                  </>
+                </CModalBody>
+                <CModalFooter>
+                  <CButton
+                    color="secondary"
+                    size="sm"
+                    onClick={() => setActiveOfflineSite(null)}
+                  >
+                    Close
+                  </CButton>
+                </CModalFooter>
+              </CModal>
+            </CCol>
+          ))
+        ) : (
+          <CBadge color="warning" className="w-100">
+            No sites available
+          </CBadge>
+        )}
       </CRow>
     </CContainer>
   );
