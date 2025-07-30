@@ -15,13 +15,13 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CSpinner,
   CAvatar,
   CFormSelect,
   CFormInput,
   CButton,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -39,10 +39,15 @@ const reducer = (state, action) => {
         preventivemaintanance: action.payload,
       };
     case "FETCH_PM_FAIL":
-      return { ...state, pmloading: false, error: action.payload };
+      return {
+        ...state,
+        pmloading: false,
+        error: action.payload,
+        subscriptiondata: action.subscriptiondata,
+      };
 
     case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, error: "" };
+      return { ...state, loadingSites: true, sitesError: "" };
     case "FETCH_SITES_SUCCESS":
       return {
         ...state,
@@ -50,22 +55,33 @@ const reducer = (state, action) => {
         sites: action.payload,
       };
     case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, error: action.payload };
+      return { ...state, loadingSites: false, sitesError: action.payload };
     default:
       return state;
   }
 };
 const PreventiveMaintenanceList = () => {
-  const [{ preventivemaintanance, pmloading, loadingSites, sites }, dispatch] =
-    useReducer(reducer, {
-      preventivemaintanance: [],
-      loadingSites: false,
-      sites: [],
-      pmloading: true,
-      error: "",
-    });
+  const [
+    {
+      preventivemaintanance,
+      pmloading,
+      loadingSites,
+      sites,
+      sitesError,
+      error,
+      subscriptiondata,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    sitesError: "",
+    preventivemaintanance: [],
+    loadingSites: false,
+    sites: [],
+    pmloading: true,
+    subscriptiondata: {},
+    error: "",
+  });
   const authtoken = useSelector((state) => state.authtoken);
-
   const [site_id, setSiteId] = useState("all");
 
   const [startDate, setStartDate] = useState(
@@ -89,9 +105,11 @@ const PreventiveMaintenanceList = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
-          payload: error.response.data.error,
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error("Failed to fetch sites");
+        // toast.error(
+        //   error.response?.data?.error || error.response?.data?.message
+        // );
       }
     };
 
@@ -114,12 +132,11 @@ const PreventiveMaintenanceList = () => {
         dispatch({
           type: "FETCH_PM_FAIL",
           payload: error.response.data.error || error.response.data.message,
+          subscriptiondata: error.response?.data?.data,
         });
         toast.error(error.response.data.error || error.response.data.message);
-        dispatch({
-          type: "FETCH_PM_SUCCESS",
-          payload: [],
-        });
+
+        console.log(error.response.data.data);
       }
     };
     fetchSites();
@@ -165,217 +182,237 @@ const PreventiveMaintenanceList = () => {
 
   return (
     <div>
-      <CRow>
-        <CCol>
-          <h2>Preventive Maintenance Records</h2>
-          {pmloading ? (
-            <LoadingSpinner />
-          ) : (
-            <>
-              <form>
-                <CRow className="my-3">
-                  {/* Inputs aligned to the left */}
-                  <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
-                    <CCol md={4} xs={12}>
-                      <div className="m-1">
-                        <CFormSelect
-                          name="site_id"
-                          value={site_id}
-                          onChange={handleSiteNameChange}
-                        >
-                          <option value="all">All Data</option>
-                          {loadingSites ? (
-                            <LoadingSpinner />
-                          ) : (
-                            sites?.length > 0 &&
-                            sites.map((item) => (
-                              <option key={item.site_id} value={item.site_id}>
-                                {item.site_id}
-                              </option>
-                            ))
-                          )}
-                        </CFormSelect>
-                      </div>
-                    </CCol>
-                    <CCol md={3} xs={12} className="m-1">
-                      <CFormInput
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                      />
-                    </CCol>
-                    <CCol md={3} xs={12} className="m-1">
-                      <CFormInput
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                      />
-                    </CCol>
-                  </CCol>
+      {pmloading ? (
+        <LoadingSpinner />
+      ) : (sitesError || error) ===
+        "Subscription expired. Please renew your subscription." ? (
+        <SubscriptionExpiryCard data={subscriptiondata} />
+      ) : (
+        <>
+          <CRow>
+            <CCol>
+              <h2>Preventive Maintenance Records</h2>
 
-                  <CCol
-                    md={5}
-                    xs={12}
-                    className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
-                  >
-                    <CButton color="primary" size="sm" onClick={exportToExcel}>
-                      Export
-                    </CButton>
-                  </CCol>
-                </CRow>
-              </form>
-              <div className="table-responsive">
-                <CTable bordered hover className="bg-important">
-                  <CTableHead>
-                    {/* Top Row - Branding & Title */}
-                    <CTableRow className="bg-dark text-white">
-                      <CTableHeaderCell colSpan={1} className="text-center">
-                        <CAvatar
-                          src={TayproLogo}
-                          alt="Taypro Logo"
-                          className="sidebar-brand-full logo"
-                          style={{
-                            height: "60px",
-                            width: "180px",
-                            objectFit: "contain",
-                          }}
+              <>
+                <form>
+                  <CRow className="my-3">
+                    {/* Inputs aligned to the left */}
+                    <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
+                      <CCol md={4} xs={12}>
+                        <div className="m-1">
+                          <CFormSelect
+                            name="site_id"
+                            value={site_id}
+                            onChange={handleSiteNameChange}
+                          >
+                            <option value="all">All Data</option>
+                            {loadingSites ? (
+                              <LoadingSpinner />
+                            ) : (
+                              sites?.length > 0 &&
+                              sites.map((item) => (
+                                <option key={item.site_id} value={item.site_id}>
+                                  {item.site_id}
+                                </option>
+                              ))
+                            )}
+                          </CFormSelect>
+                        </div>
+                      </CCol>
+                      <CCol md={3} xs={12} className="m-1">
+                        <CFormInput
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
                         />
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={2} className="text-center">
-                        <h3>Preventive Maintenance Checklist - Quarterly</h3>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1}>
-                        Doc. No. : TPL-12
-                      </CTableHeaderCell>
+                      </CCol>
+                      <CCol md={3} xs={12} className="m-1">
+                        <CFormInput
+                          type="date"
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                        />
+                      </CCol>
+                    </CCol>
 
-                      <CTableHeaderCell colSpan={1}>
-                        Rev. No.: 1
-                      </CTableHeaderCell>
+                    <CCol
+                      md={5}
+                      xs={12}
+                      className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
+                    >
+                      <CButton
+                        color="primary"
+                        size="sm"
+                        onClick={exportToExcel}
+                      >
+                        Export
+                      </CButton>
+                    </CCol>
+                  </CRow>
+                </form>
+                <div className="table-responsive">
+                  <CTable bordered hover className="bg-important">
+                    <CTableHead>
+                      {/* Top Row - Branding & Title */}
+                      <CTableRow className="bg-dark text-white">
+                        <CTableHeaderCell colSpan={1} className="text-center">
+                          <CAvatar
+                            src={TayproLogo}
+                            alt="Taypro Logo"
+                            className="sidebar-brand-full logo"
+                            style={{
+                              height: "60px",
+                              width: "180px",
+                              objectFit: "contain",
+                            }}
+                          />
+                        </CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2} className="text-center">
+                          <h3>Preventive Maintenance Checklist - Quarterly</h3>
+                        </CTableHeaderCell>
+                        <CTableHeaderCell colSpan={1}>
+                          Doc. No. : TPL-12
+                        </CTableHeaderCell>
 
-                      <CTableHeaderCell>Revised By</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        Abhay Singh
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>Start Date</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        {preventivemaintanance.start_date}
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>End Date</CTableHeaderCell>
-                      <CTableHeaderCell colSpan={2} className="fw-bold">
-                        {preventivemaintanance.end_date}
-                      </CTableHeaderCell>
-                    </CTableRow>
+                        <CTableHeaderCell colSpan={1}>
+                          Rev. No.: 1
+                        </CTableHeaderCell>
 
-                    {/* Meta Information Row */}
-                    <CTableRow className="bg-light">
-                      <CTableHeaderCell>Site Id</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        {preventivemaintanance.site_id}
-                      </CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1}>Client</CTableHeaderCell>
-                      <CTableHeaderCell colSpan={1} className="fw-bold">
-                        {preventivemaintanance.site_name}
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>Location</CTableHeaderCell>
-                      <CTableHeaderCell colSpan={2} className="fw-bold">
-                        {preventivemaintanance.site_location}
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell>Tech. Name</CTableHeaderCell>
-                      <CTableHeaderCell className="fw-bold">
-                        {preventivemaintanance.technician_present?.join(", ")}
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      <CTableHeaderCell colSpan={2} className="fw-bold">
-                        Automatic
-                      </CTableHeaderCell>
-                    </CTableRow>
-
-                    {/* Main Table Header */}
-                    <CTableRow className="text-center ">
-                      <CTableHeaderCell style={{ maxWidth: "100px" }}>
-                        Sr. No
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>Robot No</CTableHeaderCell>
-                      <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                      <CTableHeaderCell>Created Date</CTableHeaderCell>
-
-                      <CTableHeaderCell>
-                        Physical Condition - TransPipe
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>
-                        Physical Condition - Channel
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>
-                        Oiling Needed (Bearing)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>
-                        Oiling Needed (Motors)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell>MF Clothes Alignment</CTableHeaderCell>
-                      <CTableHeaderCell>Wheels Alignment</CTableHeaderCell>
-                      <CTableHeaderCell>Are Wheels Loose?</CTableHeaderCell>
-                      <CTableHeaderCell>Are Nut-Bolts Loose?</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-
-                  <CTableBody>
-                    {pmloading ? (
-                      <LoadingSpinner />
-                    ) : preventivemaintanance.data?.length > 0 ? (
-                      preventivemaintanance.data.map((client, index) =>
-                        client.robots.map((record, idx) => (
-                          <CTableRow key={idx} className="text-center">
-                            <CTableDataCell>{idx + 1}</CTableDataCell>
-                            <CTableDataCell>{record.robot_no}</CTableDataCell>
-                            <CTableDataCell>{record.robot_type}</CTableDataCell>
-                            <CTableDataCell>
-                              {record.createdAt
-                                ? record.createdAt.slice(0, 10)
-                                : "NA"}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.physical_condition_of_transPipe_condition}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.physical_condition_of_channel_condition}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.oiling_need_for_bearing_condition}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.oiling_need_for_motors_condition}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.mf_clothes_alignment}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.wheels_alignment}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.is_wheels_loose ? "Yes" : "No"}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {record.is_nutbolt_loose ? "Yes" : "No"}
-                            </CTableDataCell>
-                          </CTableRow>
-                        ))
-                      )
-                    ) : (
-                      <CTableRow>
-                        <CTableDataCell colSpan={15} className="text-start">
-                          <span className="badge bg-danger">No Data Found</span>
-                        </CTableDataCell>
+                        <CTableHeaderCell>Revised By</CTableHeaderCell>
+                        <CTableHeaderCell className="fw-bold">
+                          Abhay Singh
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Start Date</CTableHeaderCell>
+                        <CTableHeaderCell className="fw-bold">
+                          {preventivemaintanance.start_date}
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>End Date</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2} className="fw-bold">
+                          {preventivemaintanance.end_date}
+                        </CTableHeaderCell>
                       </CTableRow>
-                    )}
-                  </CTableBody>
-                </CTable>
-              </div>
-            </>
-          )}
-        </CCol>
-      </CRow>
+
+                      {/* Meta Information Row */}
+                      <CTableRow className="bg-light">
+                        <CTableHeaderCell>Site Id</CTableHeaderCell>
+                        <CTableHeaderCell className="fw-bold">
+                          {preventivemaintanance.site_id}
+                        </CTableHeaderCell>
+                        <CTableHeaderCell colSpan={1}>Client</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={1} className="fw-bold">
+                          {preventivemaintanance.site_name}
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Location</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2} className="fw-bold">
+                          {preventivemaintanance.site_location}
+                        </CTableHeaderCell>
+
+                        <CTableHeaderCell>Tech. Name</CTableHeaderCell>
+                        <CTableHeaderCell className="fw-bold">
+                          {preventivemaintanance.technician_present?.join(", ")}
+                        </CTableHeaderCell>
+
+                        <CTableHeaderCell>Robot Type</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2} className="fw-bold">
+                          Automatic
+                        </CTableHeaderCell>
+                      </CTableRow>
+
+                      {/* Main Table Header */}
+                      <CTableRow className="text-center ">
+                        <CTableHeaderCell style={{ maxWidth: "100px" }}>
+                          Sr. No
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Robot No</CTableHeaderCell>
+                        <CTableHeaderCell>Robot Type</CTableHeaderCell>
+                        <CTableHeaderCell>Created Date</CTableHeaderCell>
+
+                        <CTableHeaderCell>
+                          Physical Condition - TransPipe
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>
+                          Physical Condition - Channel
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>
+                          Oiling Needed (Bearing)
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>
+                          Oiling Needed (Motors)
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>
+                          MF Clothes Alignment
+                        </CTableHeaderCell>
+                        <CTableHeaderCell>Wheels Alignment</CTableHeaderCell>
+                        <CTableHeaderCell>Are Wheels Loose?</CTableHeaderCell>
+                        <CTableHeaderCell>
+                          Are Nut-Bolts Loose?
+                        </CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+
+                    <CTableBody>
+                      {pmloading ? (
+                        <LoadingSpinner />
+                      ) : preventivemaintanance.data?.length > 0 ? (
+                        preventivemaintanance.data.map((client, index) =>
+                          client.robots.map((record, idx) => (
+                            <CTableRow key={idx} className="text-center">
+                              <CTableDataCell>{idx + 1}</CTableDataCell>
+                              <CTableDataCell>{record.robot_no}</CTableDataCell>
+                              <CTableDataCell>
+                                {record.robot_type}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.createdAt
+                                  ? record.createdAt.slice(0, 10)
+                                  : "NA"}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {
+                                  record.physical_condition_of_transPipe_condition
+                                }
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.physical_condition_of_channel_condition}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.oiling_need_for_bearing_condition}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.oiling_need_for_motors_condition}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.mf_clothes_alignment}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.wheels_alignment}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.is_wheels_loose ? "Yes" : "No"}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {record.is_nutbolt_loose ? "Yes" : "No"}
+                              </CTableDataCell>
+                            </CTableRow>
+                          ))
+                        )
+                      ) : (
+                        <CTableRow>
+                          <CTableDataCell colSpan={15} className="text-start">
+                            <span className="badge bg-danger">
+                              No Data Found
+                            </span>
+                          </CTableDataCell>
+                        </CTableRow>
+                      )}
+                    </CTableBody>
+                  </CTable>
+                </div>
+              </>
+            </CCol>
+          </CRow>
+        </>
+      )}
     </div>
   );
 };

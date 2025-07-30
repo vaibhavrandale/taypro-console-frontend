@@ -384,6 +384,15 @@ const UserBasedLinkDashboard = () => {
     }, 1000);
   }
 
+  if (userInfo.role === "Site Technician") {
+    setTimeout(() => {
+      toast.success(`Please Wait we are redirecting you to your dashboard!`, {
+        duration: 6000,
+      });
+      navigate("/site-technician/dashboard");
+    }, 1000);
+  }
+
   return (
     <div className="mt-3 mx-2">
       <h2 className="text-center mb-4">

@@ -11,21 +11,10 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { clientSubscriptionPlans } from "../../../data.js";
-import { useNavigate } from "react-router-dom";
-import LoadingSpinner from "../../../components/LoadingSpinner.js";
+import { useNavigate, useParams } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_CLIENTS_REQUEST":
-      return { ...state, loadingClient: true, clientError: "" };
-    case "FETCH_CLIENTS_SUCCESS":
-      return {
-        ...state,
-        loadingClient: false,
-        clients: action.payload,
-      };
-    case "FETCH_CLIENTS_FAIL":
-      return { ...state, loadingClient: false, clientError: action.payload };
     case "CREATE_REQUEST":
       return { ...state, loading: true, error: "" };
     case "CREATE_SUCCESS":
@@ -37,15 +26,14 @@ const reducer = (state, action) => {
   }
 };
 
-const CreateSubscription = () => {
-  const [{ loading, error, clients, loadingClient, clientError }, dispatch] =
-    useReducer(reducer, {
-      loading: false,
-      error: "",
-      clients: [],
-      loadingClient: false,
-      clientError: "",
-    });
+const RenewSubscription = () => {
+  const [state, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: "",
+  });
+  const { client_id } = useParams();
+  const { loading, error } = state;
+
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -65,11 +53,12 @@ const CreateSubscription = () => {
   }
 
   const [formData, setFormData] = useState({
+    client_id: "",
+
     plan_id: "basic",
     frequency: "monthly",
   });
 
-  const [client_id, setClientId] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,54 +68,11 @@ const CreateSubscription = () => {
     if (plan && !plan.frequency.includes(formData.frequency)) {
       setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
     }
-
-    const clients = async () => {
-      dispatch({ type: "FETCH_CLIENTS_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/clients/get-all-clients`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-        dispatch({
-          type: "FETCH_CLIENTS_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_CLIENTS_FAIL",
-          payload: error.response?.data?.error || error.response?.data?.message,
-        });
-        toast.error(
-          error.response?.data?.error || error.response?.data?.message
-        );
-      }
-    };
-    clients();
-  }, [formData.plan_id, formData.frequency, authtoken]);
+  }, [formData.plan_id, formData.frequency]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSiteNameChange = (e) => {
-    dispatch({ type: "SELECT_CLIENT_REQUEST" });
-
-    const selectedClients = e.target.value;
-
-    const selectedClient = clients.find(
-      (client) => client.client_id === selectedClients
-    );
-
-    if (selectedClient) {
-      setClientId(selectedClient.client_id);
-
-      dispatch({
-        type: "SELECT_CLIENT_SUCCESS",
-        payload: selectedClient.client_id,
-      });
-    } else {
-      dispatch({ type: "SELECT_CLIENT_FAIL" });
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -134,14 +80,13 @@ const CreateSubscription = () => {
     const subscriptionData = {
       ...formData,
       client_object_id: null,
-      client_id: client_id,
     };
 
     dispatch({ type: "CREATE_REQUEST" });
 
     try {
-      const response = await axios.post(
-        "/api/v1/client-subscription",
+      const response = await axios.put(
+        `/api/v1/client-subscription/renew-subscription/${client_id}`,
         subscriptionData,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
@@ -168,29 +113,19 @@ const CreateSubscription = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Create Subscription</h2>
+      <h2 className="text-2xl font-bold mb-4">Renew Subscription</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <CForm onSubmit={handleSubmit}>
         <CRow className="mb-3">
           <CCol md={6}>
-            {loadingClient ? (
-              <LoadingSpinner />
-            ) : clients?.length > 0 ? (
-              <CFormSelect
-                name="client_id"
-                value={client_id}
-                onChange={handleSiteNameChange}
-              >
-                <option value="">Select Client</option>
-                {clients.map((item) => (
-                  <option key={item.client_id} value={item.client_id}>
-                    {item.client_id}
-                  </option>
-                ))}
-              </CFormSelect>
-            ) : (
-              <p>No Clients Found</p>
-            )}
+            <CFormInput
+              type="text"
+              name="client_id"
+              value={client_id}
+              onChange={handleChange}
+              placeholder="Client ID"
+              required
+            />
           </CCol>
           <CCol md={6}>
             <CFormSelect
@@ -227,7 +162,7 @@ const CreateSubscription = () => {
         </CRow>
         <div className="d-flex justify-content-end">
           <CButton type="submit" size="sm" color="primary" disabled={loading}>
-            {loading ? "Creating..." : "Create Subscription"}
+            {loading ? "Updating..." : "Renew Subscription"}
           </CButton>
         </div>
       </CForm>
@@ -235,4 +170,4 @@ const CreateSubscription = () => {
   );
 };
 
-export default CreateSubscription;
+export default RenewSubscription;
