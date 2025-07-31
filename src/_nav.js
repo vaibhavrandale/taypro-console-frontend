@@ -404,6 +404,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Pricing",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Pricing",
+            to: "/master-admin/pricing",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
