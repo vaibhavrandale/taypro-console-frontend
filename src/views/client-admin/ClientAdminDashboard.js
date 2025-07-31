@@ -1,5 +1,6 @@
 import {
   CAlert,
+  CBadge,
   CCard,
   CCardBody,
   CCardHeader,
@@ -31,7 +32,7 @@ const reducer = (state, action) => {
         siteIds: action.payload,
       };
     case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSiteIds: false, errorSIteIds: action.payload };
+      return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
 
     case "FETCH_SITE_DETAILS_REQUEST":
       return {
@@ -81,6 +82,7 @@ const ClientAdminDashboard = () => {
       weatherData,
       loadingWeatherData,
       errorWeatherData,
+      errorSiteIds,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -91,12 +93,12 @@ const ClientAdminDashboard = () => {
     siteIds: [],
     loadingSiteIds: false,
     loadingWeatherData: true,
-    errorSIteIds: "",
+    errorSiteIds: "",
     errorWeatherData: "",
   });
 
   const [site_id, setSiteid] = useState(
-    userInfo.assigned_sites[0]?.site_id || ""
+    userInfo.assigned_sites[0]?.site_id || "abc"
   );
   const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
   const [gateways, setGateways] = useState([]);
@@ -119,7 +121,7 @@ const ClientAdminDashboard = () => {
         type: "FETCH_SITEID_FAIL",
         payload: error.response?.data?.error || error.response?.data?.message,
       });
-      toast.error(error.response?.data?.error || error.response?.data?.message);
+      // toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
 
@@ -148,7 +150,7 @@ const ClientAdminDashboard = () => {
           type: "FETCH_SITE_DETAILS_FAIL",
           payload: error.response?.data?.message || error.message,
         });
-        toast.error(error.response?.data?.message || error.message);
+        // toast.error(error.response?.data?.message || error.message);
       }
     };
 
@@ -172,9 +174,9 @@ const ClientAdminDashboard = () => {
           type: "FETCH_WEATHER_FAIL",
           payload: error.response?.data?.message || error.response?.data?.error,
         });
-        toast.error(
-          error.response?.data?.message || error.response?.data?.error
-        );
+        // toast.error(
+        //   error.response?.data?.message || error.response?.data?.error
+        // );
       }
     };
 
@@ -300,21 +302,30 @@ const ClientAdminDashboard = () => {
 
                     <CCol md={7} className="m-0">
                       {loadingSiteIds ? (
-                        "fetching"
-                      ) : siteIds?.length > 0 ? (
+                        // <LoadingSpinner />
+                        "Fetching"
+                      ) : errorSiteIds ? (
+                        <CBadge color="warning" className="">
+                          {errorSiteIds === "Site not found"
+                            ? "Please contact Admin to view Data"
+                            : errorSiteIds}
+                        </CBadge>
+                      ) : (
                         <CFormSelect
-                          name="site_id"
                           value={site_id}
                           onChange={handleSiteNameChange}
+                          className="form-select"
+                          aria-label="Select Site"
                         >
-                          {siteIds.map((item) => (
-                            <option key={item.site_id} value={item.site_id}>
-                              {item.site_id}
+                          <option value="" disabled>
+                            Select Site
+                          </option>
+                          {siteIds.map((site) => (
+                            <option key={site.site_id} value={site.site_id}>
+                              {site.site_id}
                             </option>
                           ))}
                         </CFormSelect>
-                      ) : (
-                        <p>No Sites Found</p>
                       )}
                     </CCol>
                   </CRow>
@@ -328,8 +339,18 @@ const ClientAdminDashboard = () => {
                       <LoadingSpinner />
                     </div>
                   ) : errorWeatherData ? (
-                    <div className="text-center text-danger">
-                      {errorWeatherData}
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ minHeight: "350px" }}
+                    >
+                      {errorWeatherData ===
+                      "Weather data for site: abc not found" ? (
+                        <CBadge color="warning" className="p-2">
+                          Please contact Admin to view Data
+                        </CBadge>
+                      ) : (
+                        errorWeatherData
+                      )}
                     </div>
                   ) : (
                     <>
@@ -429,9 +450,15 @@ const ClientAdminDashboard = () => {
                   {loadingSiteDetails ? (
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
-                    <p className="text-danger text-center">
-                      {siteDetailsError}
-                    </p>
+                    <>
+                      {siteDetailsError === "Site not found" ? (
+                        <CBadge color="warning" className="p-2">
+                          Please contact to Admin to view Data
+                        </CBadge>
+                      ) : (
+                        siteDetailsError
+                      )}
+                    </>
                   ) : (
                     <>
                       {blockWiseCleaning?.length > 0 ? (
@@ -494,9 +521,13 @@ const ClientAdminDashboard = () => {
                   {loadingSiteDetails ? (
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
-                    <p className="text-danger text-center">
-                      {siteDetailsError}
-                    </p>
+                    <>
+                      {siteDetailsError === "Site not found" ? (
+                        <CBadge color="warning" className="p-2">
+                          Please contact to Admin to view Data
+                        </CBadge>
+                      ) : null}
+                    </>
                   ) : (
                     <>
                       {gateways.length > 0 ? (
@@ -560,7 +591,15 @@ const ClientAdminDashboard = () => {
               {loadingSiteDetails ? (
                 <LoadingSpinner />
               ) : siteDetailsError ? (
-                <p className="text-danger text-center">{siteDetailsError}</p>
+                <>
+                  {siteDetailsError === "Site not found" ? (
+                    <CBadge color="warning" className="p-2">
+                      Please contact to Admin to view Data
+                    </CBadge>
+                  ) : (
+                    siteDetailsError
+                  )}
+                </>
               ) : (
                 <>
                   {robotsData?.length > 0 ? (
