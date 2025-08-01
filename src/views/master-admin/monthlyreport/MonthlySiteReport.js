@@ -252,12 +252,16 @@ const MonthlySiteReport = () => {
     }
   };
 
+  const subscriptionErrors = [
+    "Subscription expired. Please renew your subscription.",
+    "Please subscribe to use this feature.",
+  ];
+
   return (
     <div className="p-4">
       {loadingSites || loadingMonthlyReport ? (
         <LoadingSpinner />
-      ) : (errorReport || error) ===
-        "Subscription expired. Please renew your subscription." ? (
+      ) : subscriptionErrors.includes(errorReport || error) ? (
         <SubscriptionExpiryCard data={subscriptiondata} />
       ) : (
         <>

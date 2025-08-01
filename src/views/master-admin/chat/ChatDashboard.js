@@ -287,12 +287,16 @@ export default function ChatDashboard() {
     }
   }, [selectedChat]);
 
+  const subscriptionErrors = [
+    "Subscription expired. Please renew your subscription.",
+    "Please subscribe to use this feature.",
+  ];
+
   return (
     <div>
       {chatsloading || newchatloading || loading ? (
         <LoadingSpinner />
-      ) : (chatError || userError) ===
-        "Subscription expired. Please renew your subscription." ? (
+      ) : subscriptionErrors.includes(chatError || userError) ? (
         <SubscriptionExpiryCard data={subscriptiondata} />
       ) : (
         <>

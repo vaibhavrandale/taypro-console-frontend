@@ -180,12 +180,16 @@ const PreventiveMaintenanceList = () => {
     );
   };
 
+  const subscriptionErrors = [
+    "Subscription expired. Please renew your subscription.",
+    "Please subscribe to use this feature.",
+  ];
+
   return (
     <div>
       {pmloading ? (
         <LoadingSpinner />
-      ) : (sitesError || error) ===
-        "Subscription expired. Please renew your subscription." ? (
+      ) : subscriptionErrors.includes(sitesError || error) ? (
         <SubscriptionExpiryCard data={subscriptiondata} />
       ) : (
         <>

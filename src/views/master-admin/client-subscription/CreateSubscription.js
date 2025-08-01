@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import {
-  CForm,
-  CFormInput,
-  CFormSelect,
-  CButton,
-  CCol,
-  CRow,
-} from "@coreui/react";
+import { CForm, CFormSelect, CButton, CCol, CRow } from "@coreui/react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -73,13 +66,6 @@ const CreateSubscription = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const plan = clientSubscriptionPlans.find(
-      (p) => p.plan_id === formData.plan_id
-    );
-    if (plan && !plan.frequency.includes(formData.frequency)) {
-      setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
-    }
-
     const clients = async () => {
       dispatch({ type: "FETCH_CLIENTS_REQUEST" });
       try {
@@ -101,7 +87,14 @@ const CreateSubscription = () => {
       }
     };
     clients();
-  }, [formData.plan_id, formData.frequency, authtoken]);
+  }, [authtoken]);
+
+  const plan = clientSubscriptionPlans.find(
+    (p) => p.plan_id === formData.plan_id
+  );
+  if (plan && !plan.frequency.includes(formData.frequency)) {
+    setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -175,6 +168,8 @@ const CreateSubscription = () => {
           <CCol md={6}>
             {loadingClient ? (
               <LoadingSpinner />
+            ) : clientError ? (
+              <div className="text-red-500 mb-4">{clientError}</div>
             ) : clients?.length > 0 ? (
               <CFormSelect
                 name="client_id"

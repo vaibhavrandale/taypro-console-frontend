@@ -157,12 +157,18 @@ const Statistics = () => {
     setSiteId(selectedSiteId); // Updates local state
   };
 
+  const subscriptionErrors = [
+    "Subscription expired. Please renew your subscription.",
+    "Please subscribe to use this feature.",
+  ];
+
   return (
     <div>
       {loadingSiteIds ? (
         <LoadingSpinner />
-      ) : (robotserror || sitesError || cleaningError) ===
-        "Subscription expired. Please renew your subscription." ? (
+      ) : subscriptionErrors.includes(
+          sitesError || robotserror || cleaningError
+        ) ? (
         <SubscriptionExpiryCard data={subscriptiondata} />
       ) : (
         <>

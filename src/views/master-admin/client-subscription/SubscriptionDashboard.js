@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
+  CBadge,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -7,7 +8,7 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from "@coreui/react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import moment from "moment";
@@ -145,47 +146,75 @@ const SubscriptionDashboard = () => {
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {subscriptions.map((sub, index) => (
-            <CTableRow key={index}>
-              <CTableDataCell>{index + 1}</CTableDataCell>
-              <CTableDataCell style={{ minWidth: "250px" }}>
-                <Link to={`view/${sub._id}`}> {sub._id}</Link>
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "280px" }}>
-                {sub.client_name || "N/A"}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "200px" }}>
-                {sub.plan_id}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "200px" }}>
-                {sub.subscription_status}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "200px" }}>
-                {moment(sub.subscription_start_date).format("DD-MM-YYYY")}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "200px" }}>
-                {moment(sub.subscription_end_date).format("DD-MM-YYYY")}
-              </CTableDataCell>
-              <CTableDataCell style={{ minWidth: "200px" }}>
-                {/* <Link to={`view/${sub._id}`}>View</Link> */}
-                <Link
-                  className="btn btn-sm btn-secondary m-1"
-                  color="secondary"
-                  size="sm"
-                  to={`view/${sub._id}`}
-                >
-                  View
-                </Link>
-
-                <Link
-                  className="btn btn-sm btn-warning m-1"
-                  to={`renew/${sub.client_id}`}
-                >
-                  Renew
-                </Link>
+          {loading ? (
+            <CTableRow>
+              <CTableDataCell colSpan="7" className="text-center fw-bold">
+                <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ))}
+          ) : error ? (
+            <CTableRow>
+              <CTableDataCell
+                colSpan="7"
+                className="text-center text-danger fw-bold"
+              >
+                {error}
+              </CTableDataCell>
+            </CTableRow>
+          ) : subscriptions.length === 0 ? (
+            <CTableDataCell colSpan="7" className="text-center">
+              No Subscriptions found.
+            </CTableDataCell>
+          ) : (
+            subscriptions.map((sub, index) => (
+              <CTableRow key={index}>
+                <CTableDataCell>{index + 1}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "250px" }}>
+                  <Link to={`view/${sub._id}`}> {sub._id}</Link>
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "280px" }}>
+                  {sub.client_name || "N/A"}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  {sub.plan_id}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  {sub.subscription_status === "subscribed" ? (
+                    <CBadge color="success">Subscribed</CBadge>
+                  ) : sub.subscription_status === "expired" ? (
+                    <CBadge color="danger">Expired</CBadge>
+                  ) : sub.subscription_status === "cancelled" ? (
+                    <CBadge color="warning">Cancelled</CBadge>
+                  ) : (
+                    <CBadge color="secondary">{sub.subscription_status}</CBadge>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  {moment(sub.subscription_start_date).format("DD-MM-YYYY")}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  {moment(sub.subscription_end_date).format("DD-MM-YYYY")}
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  <Link
+                    className="btn btn-sm btn-secondary m-1"
+                    color="secondary"
+                    size="sm"
+                    to={`view/${sub._id}`}
+                  >
+                    View
+                  </Link>
+
+                  <Link
+                    className="btn btn-sm btn-warning m-1"
+                    to={`renew/${sub.client_id}`}
+                  >
+                    Renew
+                  </Link>
+                </CTableDataCell>
+              </CTableRow>
+            ))
+          )}
         </CTableBody>
       </CTable>
     </div>

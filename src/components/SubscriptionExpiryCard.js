@@ -12,13 +12,40 @@ import CIcon from "@coreui/icons-react";
 import { cilWarning, cilReload } from "@coreui/icons";
 
 const SubscriptionExpiryCard = ({ data }) => {
-  if (!data) return null;
+  if (!data) {
+    return (
+      <>
+        <CCard className="shadow-lg  border-2 p-5">
+          <CCardBody>
+            <div className="d-flex align-items-center justify-content-center flex-column">
+              <div className="d-flex mb-3 align-items-center">
+                <CIcon icon={cilWarning} className="me-2 text-warning" />
+                <h5 className="mb-0">
+                  Please Subscribe to Unlock this Feature!
+                </h5>
+              </div>
+              <CBadge
+                className="d-flex align-items-center p-2"
+                color="success"
+                variant="outline"
+                onClick={() => {
+                  // alert("Renew Subscription Clicked");
+                }}
+              >
+                <CIcon icon={cilReload} className="me-2" />
+                Subscribe Now
+              </CBadge>
+            </div>
+          </CCardBody>
+        </CCard>
+      </>
+    );
+  }
 
   const {
     client_name,
     client_logo,
     plan_id,
-    serviceTier,
     subscription_start_date,
     subscription_end_date,
     subscription_status,
@@ -47,7 +74,7 @@ const SubscriptionExpiryCard = ({ data }) => {
               <h5 className="mb-0">Subscription Expired</h5>
             </div>
             <CBadge color="light" textColor="danger" className="fw-bold">
-              {subscription_status.toUpperCase()}
+              {data ? subscription_status?.toUpperCase() : "Please Subscribe"}
             </CBadge>
           </CCardHeader>
 
