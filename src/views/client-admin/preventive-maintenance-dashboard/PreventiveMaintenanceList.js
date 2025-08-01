@@ -135,8 +135,6 @@ const PreventiveMaintenanceList = () => {
           subscriptiondata: error.response?.data?.data,
         });
         toast.error(error.response.data.error || error.response.data.message);
-
-        console.log(error.response.data.data);
       }
     };
     fetchSites();
