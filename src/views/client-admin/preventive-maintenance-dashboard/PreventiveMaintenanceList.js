@@ -189,7 +189,7 @@ const PreventiveMaintenanceList = () => {
       {pmloading ? (
         <LoadingSpinner />
       ) : subscriptionErrors.includes(sitesError || error) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} />
+        <SubscriptionExpiryCard data={subscriptiondata} error={error} />
       ) : (
         <>
           <CRow>

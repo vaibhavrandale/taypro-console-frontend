@@ -170,7 +170,7 @@ const Statistics = () => {
       ) : subscriptionErrors.includes(
           sitesError || robotserror || cleaningError
         ) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} />
+        <SubscriptionExpiryCard data={subscriptiondata} error={robotserror} />
       ) : (
         <>
           <CRow className="my-2">
