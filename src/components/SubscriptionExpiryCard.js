@@ -71,10 +71,16 @@ const SubscriptionExpiryCard = ({ data }) => {
           <CCardHeader className="bg-danger text-white d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <CIcon icon={cilWarning} className="me-2" />
-              <h5 className="mb-0">Subscription Expired</h5>
+              <h5 className="mb-0">
+                {data.invoice[data.invoice.length - 1].status === "pending"
+                  ? "Please Make Payments"
+                  : "Subscription Expired"}
+              </h5>
             </div>
             <CBadge color="light" textColor="danger" className="fw-bold">
-              {data ? subscription_status?.toUpperCase() : "Please Subscribe"}
+              {data.invoice[data.invoice.length - 1].status === "pending"
+                ? "Payment Pending"
+                : "Please Subscribe"}
             </CBadge>
           </CCardHeader>
 
