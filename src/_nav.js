@@ -413,7 +413,7 @@ const _nav = [
             icon={cilMoney}
             icon={cilShortText}
             customClassName="nav-icon"
-            style={{ height: "30px" }}
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
