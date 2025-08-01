@@ -11,7 +11,7 @@ import {
 import CIcon from "@coreui/icons-react";
 import { cilWarning, cilReload } from "@coreui/icons";
 
-const SubscriptionExpiryCard = ({ data }) => {
+const SubscriptionExpiryCard = ({ data, error }) => {
   if (!data) {
     return (
       <>
@@ -67,7 +67,7 @@ const SubscriptionExpiryCard = ({ data }) => {
   return (
     <CRow className="justify-content-center mt-5">
       <CCol md={10}>
-        <CCard className="shadow-lg border-danger border-2">
+        <CCard className="shadow-lg border-2">
           <CCardHeader className="bg-danger text-white d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <CIcon icon={cilWarning} className="me-2" />
@@ -111,6 +111,8 @@ const SubscriptionExpiryCard = ({ data }) => {
                 {latestInvoice?.amount || "--"}
               </CCol>
             </CRow>
+
+            <div className="text-muted mb-2">{error}</div>
 
             {clientUser && (
               <div className="d-flex align-items-center mb-4">

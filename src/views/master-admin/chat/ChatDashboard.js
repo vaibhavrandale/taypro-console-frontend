@@ -298,7 +298,7 @@ export default function ChatDashboard() {
       {chatsloading || newchatloading || loading ? (
         <LoadingSpinner />
       ) : subscriptionErrors.includes(chatError || userError) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} />
+        <SubscriptionExpiryCard data={subscriptiondata} error={chatError} />
       ) : (
         <>
           <CRow>

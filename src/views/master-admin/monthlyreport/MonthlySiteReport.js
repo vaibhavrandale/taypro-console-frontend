@@ -263,7 +263,7 @@ const MonthlySiteReport = () => {
       {loadingSites || loadingMonthlyReport ? (
         <LoadingSpinner />
       ) : subscriptionErrors.includes(errorReport || error) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} />
+        <SubscriptionExpiryCard data={subscriptiondata} error={errorReport} />
       ) : (
         <>
           {/* Header Section */}
