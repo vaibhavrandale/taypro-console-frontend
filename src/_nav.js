@@ -21,6 +21,7 @@ import {
   cilDollar,
   cilLan,
   cilMoney,
+  cilShortText,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -384,7 +385,7 @@ const _nav = [
         to: "/master-admin/email-logs",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilShortText}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
