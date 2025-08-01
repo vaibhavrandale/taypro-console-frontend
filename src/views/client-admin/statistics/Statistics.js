@@ -160,6 +160,7 @@ const Statistics = () => {
   const subscriptionErrors = [
     "Subscription expired. Please renew your subscription.",
     "Please subscribe to use this feature.",
+    "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
   ];
 
   return (
