@@ -327,9 +327,7 @@ const MonthlySiteReport = () => {
           </CRow>
 
           {/* Report Overview Section */}
-          {reportError ? (
-            <CCol className="text-center text-danger py-5">{reportError}</CCol>
-          ) : monthlyreports?.length === 0 ? (
+          {monthlyreports?.length === 0 ? (
             <CCol className="text-center py-5">No Monthly Report found</CCol>
           ) : (
             monthlyreports.map((report, index) => (
