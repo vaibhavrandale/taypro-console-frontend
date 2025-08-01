@@ -9,19 +9,19 @@ import {
   CFormLabel,
   CFormTextarea,
   CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
+  // CTable,
+  // CTableBody,
+  // CTableDataCell,
+  // CTableHead,
+  // CTableHeaderCell,
+  // CTableRow,
 } from "@coreui/react";
 
 const Profile = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   return (
-    <div className="container mt-4">
+    <div className=" mt-4">
       <CCard>
         <CCardHeader>Profile Details</CCardHeader>
 
@@ -134,29 +134,26 @@ const Profile = () => {
                 </div>
               </CCol>
 
-              <CCol md="6" xs="12">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">
-                    Auth Token
-                  </CFormLabel>
-                  <CFormTextarea
-                    type="text"
-                    className="form-control bg-important"
-                    rows={3}
-                    name="ds_setup"
-                    value={authtoken}
-                  ></CFormTextarea>
-                </div>
-              </CCol>
+              <CCol md="12" xs="12">
+                {userInfo?.assigned_sites?.length > 0 && (
+                  <>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h6 className="mb-0">Assigned Sites</h6>
+                    </div>
+                    <ul>
+                      {userInfo?.assigned_sites?.map((site, index) => (
+                        <li
+                          style={{ listStyle: "number" }}
+                          key={site._id}
+                          className="mb-2"
+                        >
+                          {site.site_id}
+                        </li>
+                      ))}
+                    </ul>
 
-              {userInfo?.assigned_sites?.length > 0 && (
-                <>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h6 className="mb-0">Assigned Sites</h6>
-                  </div>
-
-                  <CTable
-                    bordered
+                    {/* <CTable
+                bordered
                     hover
                     responsive
                     className="text-center shadow-sm"
@@ -209,9 +206,24 @@ const Profile = () => {
                         </CTableRow>
                       ))}
                     </CTableBody>
-                  </CTable>
-                </>
-              )}
+                  </CTable> */}
+                  </>
+                )}
+              </CCol>
+              <CCol md="12" xs="12">
+                <div className="mb-3">
+                  <CFormLabel className="form-CFormLabel">
+                    Auth Token
+                  </CFormLabel>
+                  <CFormTextarea
+                    type="text"
+                    className="form-control bg-important"
+                    rows={3}
+                    name="ds_setup"
+                    value={authtoken}
+                  ></CFormTextarea>
+                </div>
+              </CCol>
             </CRow>
           </form>
         </CCardBody>

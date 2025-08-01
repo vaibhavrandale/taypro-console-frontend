@@ -17,27 +17,27 @@ import { useSelector } from "react-redux";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ROBOTS_REQUEST":
-      return { ...state, fetchingRobots: true, robotsError: "" };
+      return { ...state, LoadingRobots: true, robotsError: "" };
     case "FETCH_ROBOTS_SUCCESS":
       return {
         ...state,
-        fetchingRobots: false,
+        LoadingRobots: false,
         shiftrobots: action.payload,
       };
     case "FETCH_ROBOTS_FAIL":
-      return { ...state, fetchingRobots: false, robotsError: action.payload };
+      return { ...state, LoadingRobots: false, robotsError: action.payload };
     case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, error: "" };
+      return { ...state, loadingSites: true, sitesError: "" };
     case "FETCH_SITES_SUCCESS":
       return { ...state, loadingSites: false, sites: action.payload };
     case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, error: action.payload };
+      return { ...state, loadingSites: false, sitesError: action.payload };
     case "SEND_DOWNLINK_REQUEST":
-      return { ...state, sendingDownlink: true, error: "" };
+      return { ...state, LoadingDownlink: true, sendDownLinkError: "" };
     case "SEND_DOWNLINK_SUCCESS":
-      return { ...state, sendingDownlink: false };
+      return { ...state, LoadingDownlink: false };
     case "SEND_DOWNLINK_FAIL":
-      return { ...state, sendingDownlink: false, error: action.payload };
+      return { ...state, LoadingDownlink: false, error: action.payload };
     default:
       return state;
   }
@@ -45,16 +45,26 @@ const reducer = (state, action) => {
 
 const RobotCommands = () => {
   const [
-    { fetchingRobots, shiftrobots, sites, sendingDownlink, error, robotsError },
+    {
+      LoadingRobots,
+      shiftrobots,
+      sites,
+      LoadingDownlink,
+      sitesError,
+      robotsError,
+      loadingSites,
+      sendDownLinkError,
+    },
     dispatch,
   ] = useReducer(reducer, {
     shiftrobots: [],
     loadingSites: false,
     sites: [],
-    fetchingRobots: false,
-    sendingDownlink: false,
+    LoadingRobots: false,
+    LoadingDownlink: false,
     robotsError: "",
-    error: "",
+    sitesError: "",
+    sendDownLinkError: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -165,23 +175,7 @@ const RobotCommands = () => {
       <h4 className="text-center mb-4">Send Commands To Robots</h4>
       <CCardBody>
         <CRow className="mb-3 justify-content-between align-items-center">
-          <CCol md={4}>
-            <CFormSelect
-              id="siteSelect"
-              value={site_id}
-              onChange={(e) => {
-                setSelectedRobots([]);
-                setSiteId(e.target.value);
-              }}
-            >
-              <option value="">Select a site</option>
-              {sites?.map((site, index) => (
-                <option key={index} value={site.site_id}>
-                  {site.site_id}
-                </option>
-              ))}
-            </CFormSelect>
-          </CCol>
+          <CCol md={4}>{loadingSites ? <LoadingSpinner /> : sitesError}</CCol>
           <CCol md={4}>
             <CFormInput
               type="text"
@@ -198,21 +192,21 @@ const RobotCommands = () => {
             <>
               <CButton
                 className="btn btn-sm btn-secondary m-1"
-                disabled={sendingDownlink}
+                disabled={LoadingDownlink}
                 onClick={() => sendMulticastDownlink(COMMAND_CODES.START)}
               >
                 START
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1"
-                disabled={sendingDownlink}
+                disabled={LoadingDownlink}
                 onClick={() => sendMulticastDownlink(COMMAND_CODES.STOP)}
               >
                 STOP
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1"
-                disabled={sendingDownlink}
+                disabled={LoadingDownlink}
                 onClick={() =>
                   sendMulticastDownlink(COMMAND_CODES.RETURN_TO_DOCK)
                 }
@@ -238,7 +232,7 @@ const RobotCommands = () => {
         )}
 
         <CRow className="g-3 mt-3">
-          {fetchingRobots ? (
+          {LoadingRobots ? (
             <CCol className="text-center py-5">
               <LoadingSpinner />
             </CCol>

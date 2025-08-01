@@ -244,7 +244,7 @@ const UserBasedLinkDashboard = () => {
       icon: faBuilding,
     },
     "Client Site Technician": {
-      path: "/client-admin/dashboard",
+      path: "/client-site-technician/dashboard",
       dept: "Client Management",
       icon: faBuilding,
     },
@@ -371,18 +371,72 @@ const UserBasedLinkDashboard = () => {
   // };
 
   // console.log(timernotification);
+  let adminroute = "";
 
-  if (userInfo.role === "Client Admin") {
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
+
+  if (
+    [
+      "Client Admin",
+      "Site Incharge",
+      "Client Site Technician",
+      "Site Technician",
+    ].includes(userInfo.role)
+  ) {
     setTimeout(() => {
-      toast.success(
-        `Welcome ${userInfo.username}! Please check your latest feedback and timer notifications.`,
-        {
-          duration: 6000,
-        }
-      );
-      navigate("/client-admin/dashboard");
+      toast.success(`Please wait while we redirect you to your dashboard!`, {
+        duration: 4000,
+      });
+      navigate(`/${adminroute}/dashboard`);
     }, 1000);
   }
+
+  // if (
+  //   userInfo.role ===
+  //   ("Client Admin" ||
+  //     "Site Incharge" ||
+  //     "Client Site Technician" ||
+  //     "Site Technician")
+  // ) {
+  //   setTimeout(() => {
+  //     toast.success(
+  //       `Welcome ${userInfo.username}! Please check your latest feedback and timer notifications.`,
+  //       {
+  //         duration: 4000,
+  //       }
+  //     );
+  //     navigate(`/${adminroute}/dashboard`);
+  //   }, 1000);
+  // }
+
+  // if (userInfo.role === "Site Technician") {
+  //   setTimeout(() => {
+  //     toast.success(`Please Wait we are redirecting you to your dashboard!`, {
+  //       duration: 6000,
+  //     });
+  //     navigate("/site-technician/dashboard");
+  //   }, 1000);
+  // }
 
   return (
     <div className="mt-3 mx-2">
