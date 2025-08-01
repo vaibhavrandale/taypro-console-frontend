@@ -358,8 +358,17 @@ const ClientAdminDashboard = () => {
                       <p className="">
                         Last Updated:{" "}
                         {/* {new Date(weatherData?.createdAt).toLocaleString()} */}
-                        {moment(weatherData?.createdAt).format(
-                          "DD/MM/YYYY hh:mm A"
+                        {new Date(weatherData?.createdAt).toLocaleString(
+                          "en-GB",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          }
                         )}
                       </p>
                       <p className="">{weatherData?.siteName}</p>

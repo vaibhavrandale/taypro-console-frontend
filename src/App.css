@@ -187,6 +187,18 @@ input {
 .card-header {
   color: #adb8d9;
 }
+.pricing-card-header {
+  background-color: rgb(57, 214, 0) !important;
+  /* background-color: rgb(57, 214, 0) !important; */
+}
+
+.pricing-card {
+  border-radius: 0px 30px 0px 30px !important;
+  -webkit-border-radius: 0px 30px 0px 30px !important;
+  -moz-border-radius: 0px 30px 0px 30px !important;
+  -ms-border-radius: 0px 30px 0px 30px !important;
+  -o-border-radius: 0px 30px 0px 30px !important;
+}
 
 /* Miscellaneous */
 icon {

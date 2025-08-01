@@ -1,232 +1,166 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CFormInput,
-  CFormLabel,
-  CFormTextarea,
-  CRow,
-  // CTable,
-  // CTableBody,
-  // CTableDataCell,
-  // CTableHead,
-  // CTableHeaderCell,
-  // CTableRow,
-} from "@coreui/react";
+import { CCard, CCardBody, CCardImage, CCol, CRow } from "@coreui/react";
+import LastActivity from "../../../components/LastActivity";
 
 const Profile = () => {
-  const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    return new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const isInternal = userInfo.type?.toLowerCase() === "internal";
+
   return (
-    <div className=" mt-4">
-      <CCard>
-        <CCardHeader>Profile Details</CCardHeader>
+    <div className="d-flex justify-content-center">
+      <CCard className="shadow-lg w-100 w-md-75 ">
+        {/* Header */}
+        <div className="bg-primary text-white text-center py-3  mb-3">
+          <h5 className="mb-0 text-uppercase">Profile Summary</h5>
+        </div>
 
-        <CCardBody>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <CRow>
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">Name</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="project_name"
-                    value={userInfo.username || ""}
-                  />
-                </div>
-              </CCol>
+        {/* Responsive Layout */}
+        <CRow className="g-0 flex-column flex-md-row align-items-start">
+          {/* Profile Image */}
+          <CCol xs={12} md={4} className="text-center mb-4 mb-md-0">
+            <div
+              className="border border-dark rounded-circle overflow-hidden mx-auto"
+              style={{ width: "180px", height: "180px" }}
+            >
+              <CCardImage
+                src={userInfo.profile_image}
+                alt="User"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+            </div>
+          </CCol>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">Email</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="prepared_by"
-                    value={userInfo.email || ""}
-                  />
-                </div>
-              </CCol>
+          {/* Info */}
+          <CCol xs={12} md={8}>
+            <CCardBody className="pt-0">
+              <div className="text-start" style={{ fontSize: "14px" }}>
+                {/* Common Fields */}
+                <CRow className="mb-2">
+                  <CCol xs={5}>
+                    <strong>Name</strong>
+                  </CCol>
+                  <CCol xs={7}>{userInfo.username}</CCol>
+                </CRow>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">Phone</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="project_location"
-                    value={userInfo.phone || ""}
-                  />
-                </div>
-              </CCol>
+                <CRow className="mb-2">
+                  <CCol xs={5}>
+                    <strong>Role</strong>
+                  </CCol>
+                  <CCol xs={7}>{userInfo.role}</CCol>
+                </CRow>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">User Id</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="client_role"
-                    value={userInfo._id || ""}
-                  />
-                </div>
-              </CCol>
+                <CRow className="mb-2">
+                  <CCol xs={5}>
+                    <strong>Email</strong>
+                  </CCol>
+                  <CCol xs={7}>{userInfo.email}</CCol>
+                </CRow>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">Role</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="project_approved_by"
-                    value={userInfo.role || ""}
-                  />
-                </div>
-              </CCol>
+                <CRow className="mb-2">
+                  <CCol xs={5}>
+                    <strong>User ID</strong>
+                  </CCol>
+                  <CCol xs={7}>{userInfo._id}</CCol>
+                </CRow>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">
-                    Designation
-                  </CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="client_name"
-                    value={userInfo.designation || ""}
-                  />
-                </div>
-              </CCol>
+                <CRow className="mb-2">
+                  <CCol xs={5}>
+                    <strong>Created</strong>
+                  </CCol>
+                  <CCol xs={7}>{formatDate(userInfo.createdAt)}</CCol>
+                </CRow>
 
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">User Type</CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="client_role"
-                    value={userInfo.type || ""}
-                  />
-                </div>
-              </CCol>
-
-              <CCol md="3">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">
-                    User Creation Date
-                  </CFormLabel>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
-                    name="client_email"
-                    value={
-                      new Date(userInfo.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      }) || ""
-                    }
-                  />
-                </div>
-              </CCol>
-
-              <CCol md="12" xs="12">
-                {userInfo?.assigned_sites?.length > 0 && (
+                {/* Internal Users – Extra Fields */}
+                {isInternal && (
                   <>
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <h6 className="mb-0">Assigned Sites</h6>
-                    </div>
-                    <ul>
-                      {userInfo?.assigned_sites?.map((site, index) => (
-                        <li
-                          style={{ listStyle: "number" }}
-                          key={site._id}
-                          className="mb-2"
-                        >
-                          {site.site_id}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* <CTable
-                bordered
-                    hover
-                    responsive
-                    className="text-center shadow-sm"
-                  >
-                    <CTableHead color="secondary">
-                      <CTableRow>
-                        <CTableHeaderCell>Sr No.</CTableHeaderCell>
-                        <CTableHeaderCell>Site ID</CTableHeaderCell>
-                        <CTableHeaderCell>Assigned At</CTableHeaderCell>
-                        <CTableHeaderCell>Assigned By</CTableHeaderCell>
-                      </CTableRow>
-                    </CTableHead>
-                    <CTableBody>
-                      {userInfo?.assigned_sites?.map((site, index) => (
-                        <CTableRow key={site._id}>
-                          <CTableDataCell>
-                            <CFormInput
-                              type="text"
-                              className="form-control"
-                              value={index + 1}
-                            />
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            <CFormInput
-                              type="text"
-                              className="form-control"
-                              value={site.site_id}
-                            />
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            <CFormInput
-                              type="text"
-                              className="form-control"
-                              value={new Date(
-                                site.assignedAt
-                              ).toLocaleDateString("en-IN", {
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Salutation</strong>
+                      </CCol>
+                      <CCol xs={7}>{userInfo.salutation || "N/A"}</CCol>
+                    </CRow>
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Department</strong>
+                      </CCol>
+                      <CCol xs={7}>{userInfo.department || "N/A"}</CCol>
+                    </CRow>
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Designation</strong>
+                      </CCol>
+                      <CCol xs={7}>{userInfo.designation || "N/A"}</CCol>
+                    </CRow>
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Phone</strong>
+                      </CCol>
+                      <CCol xs={7}>{userInfo.phone || "N/A"}</CCol>
+                    </CRow>
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Employee ID</strong>
+                      </CCol>
+                      <CCol xs={7}>{userInfo.employee_id || "N/A"}</CCol>
+                    </CRow>
+                    <CRow className="mb-2">
+                      <CCol xs={5}>
+                        <strong>Last Login</strong>
+                      </CCol>
+                      <CCol xs={7}>
+                        {userInfo.last_login
+                          ? new Date(userInfo.last_login).toLocaleString(
+                              "en-GB",
+                              {
                                 day: "2-digit",
-                                month: "short",
+                                month: "2-digit",
                                 year: "numeric",
-                              })}
-                            />
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            <CFormInput
-                              type="text"
-                              className="form-control"
-                              value={site.assignedBy?.username}
-                            />
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))}
-                    </CTableBody>
-                  </CTable> */}
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              }
+                            )
+                          : "N/A"}
+                      </CCol>
+                    </CRow>
                   </>
                 )}
-              </CCol>
-              <CCol md="12" xs="12">
-                <div className="mb-3">
-                  <CFormLabel className="form-CFormLabel">
-                    Auth Token
-                  </CFormLabel>
-                  <CFormTextarea
-                    type="text"
-                    className="form-control bg-important"
-                    rows={3}
-                    name="ds_setup"
-                    value={authtoken}
-                  ></CFormTextarea>
-                </div>
-              </CCol>
-            </CRow>
-          </form>
-        </CCardBody>
+              </div>
+              {/* Assigned Sites (if any) */}
+              {userInfo?.assigned_sites?.length > 0 && (
+                <>
+                  <hr className="my-3" />
+                  <div className="text-start mb-2 fw-bold">Assigned Sites</div>
+                  <ol className="ps-3 mb-0 small">
+                    {userInfo.assigned_sites.map((site) => (
+                      <li key={site._id} className="mb-1">
+                        {site.site_id}
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              )}{" "}
+              <LastActivity lastactivity={userInfo.last_activity} />
+            </CCardBody>
+          </CCol>
+        </CRow>
       </CCard>
     </div>
   );
