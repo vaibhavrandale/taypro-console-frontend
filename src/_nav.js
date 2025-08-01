@@ -22,6 +22,7 @@ import {
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
+  cilShortText,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -410,6 +411,7 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilMoney}
+            icon={cilShortText}
             customClassName="nav-icon"
             style={{ height: "30px" }}
           />
