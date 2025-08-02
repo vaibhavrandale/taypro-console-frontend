@@ -48,13 +48,13 @@ const SubscriptionExpiryCard = ({ data, error }) => {
     plan_id,
     subscription_start_date,
     subscription_end_date,
-    subscription_status,
     frequency,
     invoice = [],
     last_activity = [],
   } = data;
 
-  const latestInvoice = invoice[0];
+  const latestInvoice = invoice[invoice?.length - 1] || {};
+
   const clientUser = last_activity[last_activity.length - 1];
 
   const formatDate = (dateStr) =>
@@ -67,18 +67,18 @@ const SubscriptionExpiryCard = ({ data, error }) => {
   return (
     <CRow className="justify-content-center mt-5">
       <CCol md={10}>
-        <CCard className="shadow-lg border-2">
+        <CCard className="shadow-lg rounded-0">
           <CCardHeader className="bg-danger text-white d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
               <CIcon icon={cilWarning} className="me-2" />
               <h5 className="mb-0">
-                {data.invoice[data.invoice.length - 1].status === "pending"
-                  ? "Please Make Payments"
+                {latestInvoice.status === "pending"
+                  ? "Please Make Payment"
                   : "Subscription Expired"}
               </h5>
             </div>
-            <CBadge color="light" textColor="danger" className="fw-bold">
-              {data.invoice[data.invoice.length - 1].status === "pending"
+            <CBadge color="danger" className="fw-bold p-2">
+              {latestInvoice.status === "pending"
                 ? "Payment Pending"
                 : "Please Subscribe"}
             </CBadge>
@@ -87,32 +87,52 @@ const SubscriptionExpiryCard = ({ data, error }) => {
           <CCardBody>
             <CRow className="align-items-center mb-4">
               <CCol sm="auto">
-                <CAvatar size="lg" src={client_logo} />
+                <img className="fluid" src={client_logo} alt={data._id} />
               </CCol>
               <CCol>
                 <h4 className="mb-1">{client_name}</h4>
-                <div className="text-muted">Plan: {plan_id}</div>
+                <div className="text-muted">
+                  Plan :{" "}
+                  <CBadge color="success">{plan_id?.toUpperCase()}</CBadge>
+                </div>
               </CCol>
             </CRow>
 
-            <CRow className="mb-5">
+            {/* <CRow className="mb-5">
               <CCol md={6}>
-                <strong>Start Date:</strong>{" "}
+                <strong>Start Date :</strong>{" "}
                 {formatDate(subscription_start_date)}
               </CCol>
               <CCol md={6}>
-                <strong>End Date:</strong> {formatDate(subscription_end_date)}
+                <strong>End Date :</strong> {formatDate(subscription_end_date)}
               </CCol>
               <CCol md={6}>
-                <strong>Frequency:</strong> {frequency}
+                <strong>Frequency :</strong> {frequency}
               </CCol>
               <CCol md={6}>
-                <strong>Amount:</strong> {latestInvoice?.currency || "INR"}{" "}
+                <strong>Amount :</strong> {latestInvoice?.currency}&nbsp;
+                {latestInvoice?.amount || "--"}
+              </CCol>
+            </CRow> */}
+
+            <CRow className="mb-4">
+              <CCol md={6} className="mb-2">
+                <strong>Start Date -</strong>{" "}
+                {formatDate(subscription_start_date)}
+              </CCol>
+              <CCol md={6} className="mb-2">
+                <strong>End Date -</strong> {formatDate(subscription_end_date)}
+              </CCol>
+              <CCol md={6} className="mb-2">
+                <strong>Frequency -</strong> {frequency}
+              </CCol>
+              <CCol md={6} className="mb-2">
+                <strong>Amount -</strong> {latestInvoice?.currency}&nbsp;
                 {latestInvoice?.amount || "--"}
               </CCol>
             </CRow>
 
-            <div className="text-muted mb-2">{error}</div>
+            <div className="text-muted my-3">{error}</div>
 
             {clientUser && (
               <div className="d-flex align-items-center mb-4">

@@ -411,7 +411,6 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilMoney}
-            icon={cilShortText}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
@@ -2705,6 +2704,25 @@ const _nav = [
                 style={{ height: "30px", color: "rgb(57, 214, 0)" }}
               />
             ),
+          },
+        ],
+      },
+
+      {
+        component: CNavGroup,
+        name: "Subscription",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "My Subscriptions",
+            to: "/client-admin/subscriptions",
           },
         ],
       },
