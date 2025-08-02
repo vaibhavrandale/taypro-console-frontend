@@ -12,7 +12,6 @@ import TayproDashboard from "./views/master-admin/site-management/TayproDashboar
 import SiteManagement from "./views/master-admin/site-management/SiteManagement";
 import BlockManagement from "./views/master-admin/site-management/BlockManagement";
 import RobotOperating from "./views/master-admin/site-management/RobotOperating";
-// import SearchRobot from "./views/master-admin/site-management/SearchRobot";
 import DebugLog from "./views/master-admin/site-management/DebugLog";
 import CleaningLog from "./views/master-admin/site-management/CleaningLog";
 import NewDownlink from "./views/master-admin/site-management/NewDownlink";
@@ -22,21 +21,17 @@ import ClientDashboard from "./views/client-admin/site-management/ClientDashboar
 import ClientSiteManagement from "./views/client-admin/site-management/ClientSiteManagement";
 import ClientBlockManagement from "./views/client-admin/site-management/ClientBlockManagement";
 import ClientRobotOperating from "./views/client-admin/site-management/ClientRobotOperating";
-// import ClientSearchRobot from "./views/client-admin/site-management/ClientSearchRobot";
 import ClientTimers from "./views/client-admin/timers/ClientTimers";
 import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
-// import ClientSiteInchargeDashboard from "./views/client-site-incharge/ClientSiteInchargeDashboard";
-// import ClientSiteTechnicianDashboard from "./views/client-technician/ClientSiteTechnicianDashboard";
 import ShiftBlockwiseRobots from "./views/master-admin/robots/ShiftBlockwiseRobots";
 import SiteTechnicianDashboard from "./views/site-technician/SiteTechnicianDashboard";
 import AllSiteData from "./views/site-technician/AllSiteData";
 import SiteTechnicianSiteManagement from "./views/site-technician/site-management/SiteTechnicianSiteManagement";
 import SiteTechnicianBlockManagement from "./views/site-technician/site-management/SiteTechnicianBlockManagement";
 import SiteTechnicianRobotOperating from "./views/site-technician/site-management/SiteTechnicianRobotOperating";
-// import SiteTechnicianSearchRobot from "./views/site-technician/site-management/SiteTechnicianSearchRobot";
 import SiteTechnicianTimers from "./views/site-technician/timers/SiteTechnicianTimers";
 import SiteTechnicianUpdateTimer from "./views/site-technician/timers/SiteTechnicianUpdateTimer";
 import SiteTechnicianSites from "./views/site-technician/cleaninglog/SiteTechnicianSites";
@@ -55,7 +50,6 @@ import {
   ProjectAdminRoute,
   MasterAdminRoute,
   ServiceAdminRoute,
-  // ServiceAdminRoute,
   ClientAdminRoute,
   ClientSiteTechnicianRoute,
   ClientSiteInchargeRoute,
@@ -93,7 +87,6 @@ import UserPerformanceDashboard from "./views/master-admin/user-performance/User
 import ViewPerformance from "./views/master-admin/user-performance/ViewPerformance";
 import RobotPosition from "./views/robot-position/RobotPosition";
 import MonthlySiteReport from "./views/master-admin/monthlyreport/MonthlySiteReport";
-// import { element } from "prop-types";
 import TimerExecutionNotificationView from "./views/master-admin/timer-execution/GetTimerExecutionNotifications";
 import WeatherDataSitewise from "./views/master-admin/weather-data/WeatherDataSitewise";
 import Microfiberdata from "./views/site-technician/micro-fiber-data/Microfiberdata";
@@ -122,12 +115,9 @@ import ViewEmailLog from "./views/master-admin/email-logs/ViewEmailLog";
 import RenewSubscription from "./views/master-admin/client-subscription/RenewSubscription";
 import Pricing from "./pricing/Pricing";
 import PunchInPunchOut from "./views/site-technician/user-site-attendance/PunchInPunchOut";
+import SubscriptionViewPage from "./views/client-admin/subscription/SubscriptionViewPage";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
-
-// const UserBasedLinkDashboard = React.lazy(() =>
-//   import("")
-// );
 
 //-----------------------master admin----------------------------------
 
@@ -5217,6 +5207,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <UpdateClientTicketClient />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/subscriptions",
+    name: " View Subscription",
+    element: (
+      <ClientAdminRoute>
+        <SubscriptionViewPage />
       </ClientAdminRoute>
     ),
   },
