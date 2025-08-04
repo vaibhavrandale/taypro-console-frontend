@@ -107,9 +107,6 @@ const PreventiveMaintenanceList = () => {
           type: "FETCH_SITES_FAIL",
           payload: error.response?.data?.error || error.response?.data?.message,
         });
-        // toast.error(
-        //   error.response?.data?.error || error.response?.data?.message
-        // );
       }
     };
 

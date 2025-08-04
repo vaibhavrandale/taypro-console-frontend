@@ -81,7 +81,7 @@ const ViewSubscription = () => {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState(null);
-
+  const [downloadingInvoiceIds, setDownloadingInvoiceIds] = useState([]);
   const [{ subscription, updatingStatusLoading, updateError }, dispatch] =
     useReducer(reducer, {
       subscription: null,
@@ -154,6 +154,11 @@ const ViewSubscription = () => {
   };
 
   const exportToPdf = async (
+    subscriptionId,
+    clientId,
+    planId,
+    clientName,
+    clientLogo,
     invoice_id,
     frequency,
     amount,
@@ -162,42 +167,95 @@ const ViewSubscription = () => {
     cgst,
     sgst,
     igst,
-    place_of_supply
+    place_of_supply,
+    status,
+    transaction_id
   ) => {
     const headerBase64 = await getBase64ImageFromURL(headerImage);
     const footerBase64 = await getBase64ImageFromURL(footerImage);
+    const logoBase64 = await getBase64ImageFromURL(clientLogo);
+    const total = amount + cgst + sgst + igst;
 
     const content = `
-  <div style="font-family: Arial, sans-serif; font-size: 14px; color: #000; background-color: #fff; display: flex; flex-direction: column; min-height: 1120px; padding: 20px 40px 120px 40px; position: relative; box-sizing: border-box;">
+<div style="position: relative; width: 100%; height: 1122px; padding: 40px 40px 120px 40px; box-sizing: border-box; font-family: Arial, sans-serif; background-color: #fff; color: #000;">
 
-    <div>
-      <img src="${headerBase64}" style="width: 100%; height: auto; margin-bottom: 20px;" />
-    </div>
-
-    <div style="flex: 1;">
-      <h2 style="text-align: center; margin-bottom: 20px;">Invoice</h2>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr><td style="padding: 8px;"><strong>Invoice ID:</strong></td><td style="padding: 8px;">${invoice_id}</td></tr>
-        <tr><td style="padding: 8px;"><strong>Frequency:</strong></td><td style="padding: 8px;">${frequency}</td></tr>
-        <tr><td style="padding: 8px;"><strong>Amount (INR):</strong></td><td style="padding: 8px;">₹${amount}</td></tr>
-        <tr><td style="padding: 8px;"><strong>Start Date:</strong></td><td style="padding: 8px;">${moment(
-          start_date
-        ).format("DD-MM-YYYY HH:mm")}</td></tr>
-        <tr><td style="padding: 8px;"><strong>End Date:</strong></td><td style="padding: 8px;">${moment(
-          end_date
-        ).format("DD-MM-YYYY HH:mm")}</td></tr>
-        <tr><td style="padding: 8px;"><strong>CGST:</strong></td><td style="padding: 8px;">₹${cgst}</td></tr>
-        <tr><td style="padding: 8px;"><strong>SGST:</strong></td><td style="padding: 8px;">₹${sgst}</td></tr>
-        <tr><td style="padding: 8px;"><strong>IGST:</strong></td><td style="padding: 8px;">₹${igst}</td></tr>
-        <tr><td style="padding: 8px;"><strong>Place of Supply:</strong></td><td style="padding: 8px;">${place_of_supply}</td></tr>
-      </table>
-    </div>
-
-    <div style="width: 100%; position: absolute; bottom: 0; left: 0; padding: 0 40px;">
-      <img src="${footerBase64}" style="width: 100%; height: auto;" />
-    </div>
+  <!-- Header -->
+  <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    <img src="${headerBase64}" style="width: 80%; height: auto;" />
+    <img src="${logoBase64}" style="max-height: 60px; object-fit: contain;" />
   </div>
-  `;
+
+  <!-- Bill To -->
+  <table style="width: 100%; font-size: 14px; margin-bottom: 10px;">
+    <tr>
+      <td>
+        <strong>Bill to:</strong><br/>
+        ATTN: Yogesh Kudale<br/>
+        NL-4/41/05, Sector-11, Nerul, Navi Mumbai<br/>
+        Mumbai, Maharashtra, 400706, IN
+      </td>
+    </tr>
+  </table>
+
+  <!-- Faint Separator -->
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 10px 0 30px 0;" />
+
+  <!-- Invoice Metadata -->
+  <table style="width: 100%; font-size: 14px; margin-bottom: 30px;">
+    <tr>
+      <td><strong>Subscription ID:</strong></td>
+      <td>${subscriptionId}</td>
+        <td><strong>Invoice ID:</strong></td>
+      <td>${invoice_id}</td>
+    </tr>
+    <tr>
+      <td><strong>Client Name:</strong></td>
+      <td>${clientName}</td>
+      <td><strong>Status:</strong></td>
+      <td>${status}</td>
+    </tr>
+    <tr>
+      <td><strong>Frequency:</strong></td>
+      <td>${planId} (${frequency})</td>
+      <td><strong>Transaction ID:</strong></td>
+      <td>${transaction_id || "N/A"}</td>
+    </tr>
+    <tr>
+      <td><strong>Start Date:</strong></td>
+      <td>${moment(start_date).format("DD-MM-YYYY HH:mm")}</td>
+      <td><strong>End Date:</strong></td>
+      <td>${moment(end_date).format("DD-MM-YYYY HH:mm")}</td>
+    </tr>
+  </table>
+
+  <h3>Billing Details</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 60px;">
+  <thead style="background-color: #f5f5f5;">
+      <tr>
+        <th style="border: 1px solid #ccc; padding: 10px;">Amount (INR)</th>
+        <th style="border: 1px solid #ccc; padding: 10px;">CGST (INR)</th>
+        <th style="border: 1px solid #ccc; padding: 10px;">SGST (INR)</th>
+        <th style="border: 1px solid #ccc; padding: 10px;">IGST (INR)</th>
+        <th style="border: 1px solid #ccc; padding: 10px;">Total (INR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="text-align: center;">
+        <td style="border: 1px solid #ccc; padding: 10px;">₹${amount}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">₹${cgst}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">₹${sgst}</td>
+        <td style="border: 1px solid #ccc; padding: 10px;">₹${igst}</td>
+        <td style="border: 1px solid #ccc; padding: 10px; font-weight: bold;">₹${total}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Footer (strictly flush to page bottom) -->
+  <div style="position: absolute; bottom: 0; left: 0; width: 100%;">
+  <img src="${footerBase64}" style="width: 100%; height: auto;" />
+</div>
+</div>
+`;
 
     const opt = {
       margin: 0,
@@ -274,7 +332,7 @@ const ViewSubscription = () => {
             <CTable responsive>
               <CTableHead>
                 <CTableRow>
-                  <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  <CTableHeaderCell style={{ minWidth: "350px" }}>
                     Invoice ID
                   </CTableHeaderCell>
                   <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -330,10 +388,6 @@ const ViewSubscription = () => {
                         <CCol>
                           <strong>IGST:</strong> {invoice.tax_details.igst}
                         </CCol>
-                        <CCol>
-                          <strong>Place of Supply:</strong>{" "}
-                          {invoice.tax_details.place_of_supply}
-                        </CCol>
                       </CRow>
                     </CTableDataCell>
                     <CTableDataCell>
@@ -354,6 +408,11 @@ const ViewSubscription = () => {
                         className="btn btn-sm btn-secondary m-1"
                         onClick={() =>
                           exportToPdf(
+                            subscription._id,
+                            subscription.client_id,
+                            subscription.plan_id,
+                            subscription.client_name,
+                            subscription.client_logo,
                             invoice.invoice_id,
                             invoice.frequency,
                             invoice.amount,
@@ -362,14 +421,20 @@ const ViewSubscription = () => {
                             invoice.tax_details.cgst,
                             invoice.tax_details.sgst,
                             invoice.tax_details.igst,
-                            invoice.tax_details.place_of_supply
+                            invoice.tax_details.place_of_supply,
+                            invoice.status,
+                            invoice.transaction_id
                           )
                         }
                       >
-                        <CIcon
-                          icon={cilCloudDownload}
-                          style={{ color: "white" }}
-                        />
+                        {downloadingInvoiceIds.includes(invoice.invoice_id) ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <CIcon
+                            icon={cilCloudDownload}
+                            style={{ color: "white" }}
+                          />
+                        )}
                       </Link>
                     </CTableDataCell>
                   </CTableRow>

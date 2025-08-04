@@ -74,7 +74,7 @@ const Statistics = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [site_id, setSiteId] = useState("abc");
+  const [site_id, setSiteId] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {

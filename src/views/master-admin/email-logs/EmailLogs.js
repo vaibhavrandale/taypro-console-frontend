@@ -65,13 +65,14 @@ const EmailLogs = () => {
   useEffect(() => {
     const fetchEmailLogs = async () => {
       dispatch({ type: "FETCH_REQUEST" });
-
+      let pagination = {
+        pg: page,
+        limit: limit,
+      };
       try {
         const result = await axios.post(
           `/api/v1/email-logs/get-all-email-logs`,
-          {
-            Paginations,
-          },
+          pagination,
           {
             headers: {
               Authorization: `Bearer ${authtoken}`,
@@ -182,8 +183,13 @@ const EmailLogs = () => {
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell>Module</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Recipients</CTableHeaderCell>
-            <CTableHeaderCell>Log Message</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "160px" }}>
+              Recipients
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              {" "}
+              Log Message
+            </CTableHeaderCell>
 
             <CTableHeaderCell style={{ minWidth: "160px" }}>
               Sent At
@@ -194,13 +200,13 @@ const EmailLogs = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="6" className="text-center">
+              <CTableHeaderCell colSpan="7" className="text-center">
                 <LoadingSpinner />
               </CTableHeaderCell>
             </CTableRow>
           ) : error ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="6" className="text-center">
+              <CTableHeaderCell colSpan="7" className="text-center">
                 {error}
               </CTableHeaderCell>
             </CTableRow>
