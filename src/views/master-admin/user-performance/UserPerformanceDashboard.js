@@ -3,25 +3,15 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
-  CAvatar,
-  CBadge,
-  CCard,
-  CCardBody,
-  CCardHeader,
   CCol,
-  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CSpinner,
-  CAlert,
   CButton,
-  CInputGroup,
   CFormInput,
-  CTooltip,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
