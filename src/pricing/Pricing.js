@@ -26,7 +26,7 @@ const featureIcons = {
   "Only 3 Users": <Users size={16} className="me-2 text-warning" />,
   "Statistics/Reports": <BarChart2 size={16} className="me-2 text-warning" />,
   "Prev. Maintenance": <ShieldCheck size={16} className="me-2 text-warning" />,
-  "Data Live Chat": <MessageCircle size={16} className="me-2 text-warning" />,
+  "Live Chat": <MessageCircle size={16} className="me-2 text-warning" />,
   "Multiple Users": <Users2 size={16} className="me-2 text-warning" />,
   "Multiple Alerts": <AlertCircle size={16} className="me-2 text-warning" />,
   "Robot Failure Alert": (
@@ -40,7 +40,7 @@ const featureIcons = {
   "Forecast Weather Alert": (
     <CloudRain size={16} className="me-2 text-warning" />
   ),
-  "Weather Model": <Brain size={16} className="me-2 text-warning" />,
+
   "Scada Integration": <ServerCog size={16} className="me-2 text-warning" />,
 };
 
@@ -71,7 +71,7 @@ const plans = [
       "Site Management",
       "Statistics/Reports",
       "Prev. Maintenance",
-      "Data Live Chat",
+      "Live Chat",
       "Multiple Users",
       "Multiple Alerts",
       "Robot Failure Alert",
@@ -94,7 +94,7 @@ const plans = [
       "Site Management",
       "Statistics/Reports",
       "Prev. Maintenance",
-      "Data Live Chat",
+      "Live Chat",
       "Multiple Users",
       "Multiple Alerts",
       "Robot Failure Alert",
@@ -102,7 +102,6 @@ const plans = [
       "Major Breakdown",
       "Grass Cutting Alert",
       "Forecast Weather Alert",
-      "Weather Model",
       "Scada Integration",
     ],
   },
@@ -116,7 +115,7 @@ const allFeatures = [
   "Only 3 Users",
   "Statistics/Reports",
   "Prev. Maintenance",
-  "Data Live Chat",
+  "Live Chat",
   "Multiple Users",
   "Multiple Alerts",
   "Robot Failure Alert",
@@ -124,7 +123,6 @@ const allFeatures = [
   "Major Breakdown",
   "Grass Cutting Alert",
   "Forecast Weather Alert",
-  "Weather Model",
   "Scada Integration",
 ];
 
