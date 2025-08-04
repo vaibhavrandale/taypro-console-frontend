@@ -14,18 +14,15 @@ import {
   CAvatar,
   CBadge,
   CProgress,
-  CSpinner,
   CAlert,
   CTooltip,
   CLink,
 } from "@coreui/react";
 import {
-  cilUser,
   cilChartLine,
   cilHistory,
   cilWarning,
   cilCheckCircle,
-  cilArrowBottom,
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { format } from "date-fns";

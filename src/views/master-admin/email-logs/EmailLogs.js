@@ -65,13 +65,14 @@ const EmailLogs = () => {
   useEffect(() => {
     const fetchEmailLogs = async () => {
       dispatch({ type: "FETCH_REQUEST" });
-
+      let pagination = {
+        pg: page,
+        limit: limit,
+      };
       try {
         const result = await axios.post(
           `/api/v1/email-logs/get-all-email-logs`,
-          {
-            Paginations,
-          },
+          pagination,
           {
             headers: {
               Authorization: `Bearer ${authtoken}`,
