@@ -116,6 +116,9 @@ import RenewSubscription from "./views/master-admin/client-subscription/RenewSub
 import Pricing from "./pricing/Pricing";
 import PunchInPunchOut from "./views/site-technician/user-site-attendance/PunchInPunchOut";
 import SubscriptionViewPage from "./views/client-admin/subscription/SubscriptionViewPage";
+import OpexDashboard from "./views/master-admin/Opex/OpexDashboard";
+import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
+import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1494,7 +1497,33 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  //preveantive maintanance
+  {
+    path: "/master-admin/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <OpexDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <MasterAdminRoute>
+        <OpexTemplateManager />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <MasterAdminRoute>
+        <OpexManageCycle />
+      </MasterAdminRoute>
+    ),
+  },
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
