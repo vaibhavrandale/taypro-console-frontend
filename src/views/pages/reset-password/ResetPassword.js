@@ -1,10 +1,9 @@
 import React, { useReducer, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   CButton,
   CCard,
   CCardBody,
-  CCardGroup,
   CCol,
   CContainer,
   CForm,
@@ -16,7 +15,8 @@ import {
 import CIcon from "@coreui/icons-react";
 import { cilLockLocked } from "@coreui/icons";
 import toast from "react-hot-toast";
-import TayproLogo from "../../../assets/brand/logoforwhitebg.png";
+import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
+import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -43,6 +43,7 @@ const ResetPassword = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const theme = localStorage.getItem("theme");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -94,100 +95,103 @@ const ResetPassword = () => {
     >
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol xs={12} sm={10} md={8} lg={5}>
-            <CCardGroup>
-              <CCard className="p-3">
-                <CCardBody>
-                  <div className="text-center mb-4">
+          <CCol xs={12} sm={10} md={8} lg={4}>
+            <CCard className="p-3">
+              <CCardBody>
+                <div className="text-center mb-3">
+                  {theme === "light" ? (
                     <img
-                      src={TayproLogo}
+                      src={Tayproforwhitebg}
                       alt="Taypro Logo"
                       className=""
-                      style={{
-                        height: "80px",
-                        objectFit: "cover",
-                        width: "auto",
-                      }}
+                      style={{ height: "80px", width: "auto" }}
                     />
-                  </div>
-                  <CForm onSubmit={handleResetPassword} autoComplete="off">
-                    <h4 className="text-center mb-4">Reset Password</h4>
+                  ) : (
+                    <img
+                      src={Tayprofordarkbg}
+                      alt="Taypro Logo"
+                      className=""
+                      style={{ height: "80px", width: "auto" }}
+                    />
+                  )}
+                </div>
+                <CForm onSubmit={handleResetPassword} autoComplete="off">
+                  <h4 className="text-center mb-4">Reset Password</h4>
 
-                    <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type="password"
-                        placeholder="New Password"
-                        autoComplete="new-password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon={cilLockLocked} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="password"
+                      placeholder="New Password"
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-4 position-relative">
+                    <CInputGroupText>
+                      <CIcon icon={cilLockLocked} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm New Password"
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <CInputGroupText
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="border-0 bg-transparent position-absolute"
+                      style={{
+                        right: "10px", // Adjust position inside input
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        zIndex: 10, // Ensure it stays on top
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
                       />
-                    </CInputGroup>
-                    <CInputGroup className="mb-4 position-relative">
-                      <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Confirm New Password"
-                        autoComplete="new-password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                      />
-                      <CInputGroupText
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="border-0 bg-transparent position-absolute"
-                        style={{
-                          right: "10px", // Adjust position inside input
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          cursor: "pointer",
-                          zIndex: 10, // Ensure it stays on top
-                        }}
+                    </CInputGroupText>
+                  </CInputGroup>
+                  <CRow className="d-flex justify-content-between align-items-center">
+                    <CCol xs={6}>
+                      <CButton
+                        color="secondary"
+                        className="px-4 py-1"
+                        size="sm"
+                        type="submit"
+                        disabled={
+                          !newPassword ||
+                          !confirmPassword ||
+                          resetLoading ||
+                          newPassword !== confirmPassword
+                        }
                       >
-                        <FontAwesomeIcon
-                          icon={showPassword ? faEyeSlash : faEye}
-                        />
-                      </CInputGroupText>
-                    </CInputGroup>
-                    <CRow>
-                      <CCol xs={6}>
-                        <CButton
-                          color="primary"
-                          className="px-4 py-1"
-                          type="submit"
-                          disabled={
-                            !newPassword || !confirmPassword || resetLoading
-                          }
-                        >
-                          {resetLoading ? (
-                            <>
-                              Resetting...
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Reset Password"
-                          )}
-                        </CButton>
-                      </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton
-                          color="link"
-                          className="px-0"
-                          onClick={() => navigate("/login")}
-                        >
-                          Back to Login
-                        </CButton>
-                      </CCol>
-                    </CRow>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-            </CCardGroup>
+                        {resetLoading ? (
+                          <>
+                            Resetting...
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Reset"
+                        )}
+                      </CButton>
+                    </CCol>
+                    <CCol xs={6} className="text-end">
+                      <Link className="px-0" to="/login">
+                        Back to Login
+                      </Link>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              </CCardBody>
+            </CCard>
           </CCol>
         </CRow>
       </CContainer>

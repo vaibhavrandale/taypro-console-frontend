@@ -178,6 +178,7 @@ const PreventiveMaintenanceList = () => {
   const subscriptionErrors = [
     "Subscription expired. Please renew your subscription.",
     "Please subscribe to use this feature.",
+    "Sites Not Found",
     "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
   ];
 

@@ -434,6 +434,51 @@ export const role_permissions = [
       },
     ],
   },
+  {
+    role: "Opex Client Admin",
+    permissions: [
+      {
+        id: "P08",
+        description: "View and manage assigned sites and robots",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P09",
+        description: "Commission robots",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P010",
+        description: "Oversee service operations",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P011",
+        description: "Analyze trends for robot failures",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+      {
+        id: "P012",
+        description: "Send notifications",
+        read: true,
+        create: true,
+        delete: true,
+        update: true,
+      },
+    ],
+  },
 ];
 
 export const projects_role_permissions = [

@@ -65,3 +65,12 @@ export function ServiceUserRoute({ children }) {
   const userInfo = useSelector((state) => state.userInfo);
   return userInfo && userInfo.role === "Service User" ? children : <Page404 />;
 }
+// Service User
+export function OpexClientAdmin({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Opex Client Admin" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}
