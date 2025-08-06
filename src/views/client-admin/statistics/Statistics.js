@@ -74,7 +74,7 @@ const Statistics = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [site_id, setSiteId] = useState("");
+  const [site_id, setSiteId] = useState("abc");
   const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
@@ -120,10 +120,14 @@ const Statistics = () => {
           type: "FETCH_SITEID_FAIL",
           payload: error.response?.data?.error || error.response?.data?.message,
         });
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
-    fetchBatteryRobots();
+
     fetchSiteIds();
+    fetchBatteryRobots();
   }, [authtoken, site_id]);
 
   useEffect(() => {
@@ -160,6 +164,7 @@ const Statistics = () => {
   const subscriptionErrors = [
     "Subscription expired. Please renew your subscription.",
     "Please subscribe to use this feature.",
+    "Sites Not Found",
     "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
   ];
 
@@ -170,7 +175,7 @@ const Statistics = () => {
       ) : subscriptionErrors.includes(
           sitesError || robotserror || cleaningError
         ) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} error={robotserror} />
+        <SubscriptionExpiryCard data={subscriptiondata} error={cleaningError} />
       ) : (
         <>
           <CRow className="my-2">

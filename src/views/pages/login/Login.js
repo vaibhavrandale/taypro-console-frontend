@@ -20,7 +20,6 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
 import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
 import toast from "react-hot-toast";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
@@ -39,6 +38,8 @@ const Login = () => {
     if (!userInfo && !authtoken) {
       navigate("/login");
     }
+    setEmail("");
+    setPassword("");
   }, [userInfo, authtoken, navigate]);
 
   const handleLogin = async (e) => {
@@ -104,7 +105,7 @@ const Login = () => {
                   </div>
 
                   <CForm onSubmit={handleLogin} autoComplete="off">
-                    <h2 className="text-center mb-4">Login</h2>
+                    <h4 className="text-center mb-4">Login</h4>
 
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
@@ -142,17 +143,12 @@ const Login = () => {
                       <CCol xs="6">
                         <CButton
                           color="success"
-                          className="px-4 py-1"
+                          className="px-4"
+                          size="sm"
                           type="submit"
                           disabled={!email || !password || loading}
                         >
-                          {loading ? (
-                            <>
-                              Login.... <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Login"
-                          )}
+                          {loading ? <>Logging in...</> : "Login"}
                         </CButton>
                       </CCol>
                       <CCol xs="6" className="text-end">

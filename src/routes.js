@@ -56,6 +56,7 @@ import {
   MasterUserRoute,
   ProjectUserRoute,
   SiteTechnicianRoute,
+  OpexClientAdmin,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -116,6 +117,9 @@ import RenewSubscription from "./views/master-admin/client-subscription/RenewSub
 import Pricing from "./pricing/Pricing";
 import PunchInPunchOut from "./views/site-technician/user-site-attendance/PunchInPunchOut";
 import SubscriptionViewPage from "./views/client-admin/subscription/SubscriptionViewPage";
+import OpexClientAdminDashboard from "./views/opex-client-admin/OpexClientAdminDashboard";
+import OpexTemplate from "./views/opex-client-admin/OpexTemplate";
+import OpexCycleData from "./views/opex-client-admin/OpexCycleData";
 import OpexDashboard from "./views/master-admin/Opex/OpexDashboard";
 import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
 import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
@@ -5490,6 +5494,37 @@ const routes = [
   },
 
   // ------------------------client Site Technician---------------------------------
+
+  // ------------------------opex client admin ----------------------------------
+
+  {
+    path: "/opex-client-admin/dashboard",
+    name: "Opex Client Admin Dashboard",
+    element: (
+      <OpexClientAdmin>
+        <OpexClientAdminDashboard />
+      </OpexClientAdmin>
+    ),
+  },
+  {
+    path: "/opex-client-admin/my-opex-data",
+    name: "Opex Data",
+    element: (
+      <OpexClientAdmin>
+        <OpexTemplate />
+      </OpexClientAdmin>
+    ),
+  },
+  {
+    path: "/opex-client-admin/my-opex-data/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle Data",
+    element: (
+      <OpexClientAdmin>
+        <OpexCycleData />
+      </OpexClientAdmin>
+    ),
+  },
+  // ------------------------opex client admin ----------------------------------
 
   //common pages
 
