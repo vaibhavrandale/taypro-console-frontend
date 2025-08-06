@@ -146,9 +146,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     error: "",
     notifications: [],
     latestfeedback: null,
-    updateLoading: false,
-    timerLoading: false,
-    submitLoading: false,
+    updateLoading: true,
+    timerLoading: true,
+    submitLoading: true,
+    robotsGatewayLoading: true,
     timernotification: {},
     submiterror: "",
     updateError: "",
@@ -323,24 +324,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
-    // if (
-    //   !notificationsFetched.current &&
-    //   userInfo?.role &&
-    //   [
-    //     "Master Admin",
-    //     "Project Admin",
-    //     "Service Admin",
-    //     "Service User",
-    //     "Project User",
-    //   ].includes(userInfo.role)
-    // ) {
-    //   fetchNotifications();
-    //   fetchUserDetails();
-
-    //   notificationsFetched.current = true;
-    // }
-    // fetchRobotsAndGateways();
-
     const allowedRoles = [
       "Master Admin",
       "Master User",
@@ -360,7 +343,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       notificationsFetched.current = true;
     }
 
-    if (!robotsGatewaysFetched.current) {
+    if (
+      !robotsGatewaysFetched.current &&
+      !userInfo?.role.includes("Opex Client Admin")
+    ) {
       fetchRobotsAndGateways();
       fetchTimerData();
       robotsGatewaysFetched.current = true;
@@ -639,94 +625,116 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         <CHeaderNav className="ms-auto"> </CHeaderNav>
 
         <CHeaderNav className="ms-auto  d-flex align-items-center justify-content-end flex-wrap my-2">
-          <CRow className="">
-            <CCol>
-              <div className="position-relative responsive-search">
-                <CInputGroup>
-                  <CFormInput
-                    type="text"
-                    placeholder="Search Robot/Gateway"
-                    value={searchTerm}
-                    className="form-control"
-                    onChange={handleSearchChange}
-                    onFocus={() => setShowDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // delay to allow link click
-                  />
-                </CInputGroup>
-
-                {showDropdown && searchTerm && (
-                  <div
-                    className="position-absolute border rounded shadow-sm mt-1"
-                    style={{
-                      maxHeight: "200px",
-                      width: "210px",
-                      overflowY: "auto",
-                      zIndex: 10,
-                      backgroundColor: "#101936",
-                    }}
-                  >
+          {[
+            "Master Admin",
+            "Project Admin",
+            "Service Admin",
+            "Service User",
+            "Project User",
+            "Master User",
+            "Site Technician",
+            "Client Admin",
+            "Site Incharge",
+            "Client Site Technician",
+          ].includes(userInfo.role) && (
+            <>
+              <CRow className="">
+                <CCol>
+                  <div className="position-relative responsive-search">
                     {robotsGatewayLoading ? (
-                      <div className="text-center p-2">
+                      <div className="text-end p-2">
                         <LoadingSpinner />
                       </div>
-                    ) : robotsGatewayError ? (
-                      <div className="text-center text-danger p-2">
-                        {robotsGatewayError}
-                      </div>
-                    ) : filteredData.robots.length === 0 &&
-                      filteredData.gateways.length === 0 ? (
-                      <div className="text-center  p-2">
-                        No robots or gateways found
-                      </div>
                     ) : (
-                      <>
-                        {filteredData.robots.length > 0 && (
-                          <>
-                            <div className=" px-2  py-1">Robots</div>
-                            {filteredData.robots.map((robot, index) => (
-                              <Link
-                                key={`robot-${index}`}
-                                to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
-                                className="text-decoration-none"
-                              >
-                                <div className=" px-2 py-1 ">
-                                  {robot.robot_no}
-                                </div>
-                              </Link>
-                            ))}
-                          </>
-                        )}
+                      <CInputGroup>
+                        <CFormInput
+                          type="text"
+                          placeholder="Search Robot/Gateway"
+                          value={searchTerm}
+                          className="form-control"
+                          onChange={handleSearchChange}
+                          onFocus={() => setShowDropdown(true)}
+                          onBlur={() =>
+                            setTimeout(() => setShowDropdown(false), 200)
+                          } // delay to allow link click
+                        />
+                      </CInputGroup>
+                    )}
 
-                        {filteredData.gateways.length > 0 && (
+                    {showDropdown && searchTerm && (
+                      <div
+                        className="position-absolute border rounded shadow-sm mt-1"
+                        style={{
+                          maxHeight: "200px",
+                          width: "210px",
+                          overflowY: "auto",
+                          zIndex: 10,
+                          backgroundColor: "#101936",
+                        }}
+                      >
+                        {robotsGatewayLoading ? (
+                          <div className="text-center p-2">
+                            <LoadingSpinner />
+                          </div>
+                        ) : robotsGatewayError ? (
+                          <div className="text-center text-danger p-2">
+                            {robotsGatewayError}
+                          </div>
+                        ) : filteredData.robots.length === 0 &&
+                          filteredData.gateways.length === 0 ? (
+                          <div className="text-center  p-2">
+                            No robots or gateways found
+                          </div>
+                        ) : (
                           <>
-                            <div className=" px-2 pt-2">Gateways</div>
-                            {filteredData.gateways.map((gateway, index) => (
-                              <Link
-                                key={`gateway-${index}`}
-                                to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
-                                className="text-decoration-none "
-                              >
-                                <div className="px-2 py-1 ">
-                                  {gateway.gateway_name}
-                                </div>
-                              </Link>
-                            ))}
+                            {filteredData.robots.length > 0 && (
+                              <>
+                                <div className=" px-2  py-1">Robots</div>
+                                {filteredData.robots.map((robot, index) => (
+                                  <Link
+                                    key={`robot-${index}`}
+                                    to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                                    className="text-decoration-none"
+                                  >
+                                    <div className=" px-2 py-1 ">
+                                      {robot.robot_no}
+                                    </div>
+                                  </Link>
+                                ))}
+                              </>
+                            )}
+
+                            {filteredData.gateways.length > 0 && (
+                              <>
+                                <div className=" px-2 pt-2">Gateways</div>
+                                {filteredData.gateways.map((gateway, index) => (
+                                  <Link
+                                    key={`gateway-${index}`}
+                                    to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
+                                    className="text-decoration-none "
+                                  >
+                                    <div className="px-2 py-1 ">
+                                      {gateway.gateway_name}
+                                    </div>
+                                  </Link>
+                                ))}
+                              </>
+                            )}
                           </>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            </CCol>
-          </CRow>
-          <li className="nav-item py-1 mx-2">
-            {/* <div className="vr h-100 mx-2 text-body text-opacity-75"></div> */}
-          </li>
-
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
+                </CCol>
+              </CRow>
+              <li className="nav-item py-1 mx-2">
+                {/* <div className="vr h-100 mx-2 text-body text-opacity-75"></div> */}
+              </li>
+              <li className="nav-item py-1">
+                <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+              </li>
+            </>
+          )}
 
           {[
             "Master Admin",

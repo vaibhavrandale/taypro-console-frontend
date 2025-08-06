@@ -243,6 +243,11 @@ const UserBasedLinkDashboard = () => {
       dept: "Client Management",
       icon: faBuilding,
     },
+    "Opex Client Admin": {
+      path: "/opex-client-admin/dashboard",
+      dept: "Opex Client Management",
+      icon: faBuilding,
+    },
     "Client Site Technician": {
       path: "/client-site-technician/dashboard",
       dept: "Client Management",
@@ -381,6 +386,8 @@ const UserBasedLinkDashboard = () => {
     adminroute = "project-admin";
   } else if (userInfo?.role === "Client Admin") {
     adminroute = "client-admin";
+  } else if (userInfo?.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
   } else if (userInfo?.role === "Site Incharge") {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
@@ -401,12 +408,16 @@ const UserBasedLinkDashboard = () => {
       "Site Incharge",
       "Client Site Technician",
       "Site Technician",
+      "Opex Client Admin",
     ].includes(userInfo.role)
   ) {
     setTimeout(() => {
-      toast.success(`Please wait while we redirect you to your dashboard!`, {
-        duration: 4000,
-      });
+      toast.success(
+        `Please wait while we redirect you to your opex dashboard!`,
+        {
+          duration: 4000,
+        }
+      );
       navigate(`/${adminroute}/dashboard`);
     }, 1000);
   }

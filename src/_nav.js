@@ -2995,6 +2995,48 @@ const _nav = [
   },
 
   // ---------------------Client technician----------------------------------
+
+  // -------------------------opex client admin------------------------------
+  // /opex-client-admin/my-opex-data
+
+  {
+    component: CNavGroup,
+    name: "Opex Client Admin",
+    to: "/opex-client-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavGroup,
+        name: "Site Management",
+        icon: (
+          <CIcon
+            icon={cilBuilding}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/opex-client-admin/dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Site data",
+            to: "/opex-client-admin/my-opex-data",
+          },
+        ],
+      },
+    ],
+  },
+  // -------------------------opex client admin------------------------------
 ];
 
 export default _nav;
