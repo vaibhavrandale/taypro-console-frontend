@@ -238,7 +238,9 @@ const OpexTemplate = () => {
                 <CCol md={4}>
                   <h6 className="text-primary">Resources</h6>
                   <p className="mb-1">Robots : {opexData.total_robots}</p>
-                  <p className="mb-1">Manpower : {opexData.total_manpower}</p>
+                  {userInfo.role !== "Opex Site Technician" && (
+                    <p className="mb-1">Manpower : {opexData.total_manpower}</p>
+                  )}
                   <p className="mb-1">Trolleys : {opexData.total_trolley}</p>
                 </CCol>
               </CRow>
@@ -246,33 +248,38 @@ const OpexTemplate = () => {
           </CCard>
 
           {/* Blocks Configuration Card */}
-          {opexData && opexData.blocks_data.length > 0 && (
-            <CCard className="mb-4">
-              <CCardHeader>
-                <h5 className="mb-0">Blocks Configuration</h5>
-              </CCardHeader>
-              <CCardBody>
-                <CTable bordered hover responsive>
-                  <CTableHead>
-                    <CTableRow>
-                      <CTableHeaderCell>Block No</CTableHeaderCell>
-                      <CTableHeaderCell>Robots</CTableHeaderCell>
-                      <CTableHeaderCell>Manpower</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {opexData.blocks_data.map((block, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell>{block.block_no}</CTableDataCell>
-                        <CTableDataCell>{block.no_of_robots}</CTableDataCell>
-                        <CTableDataCell>{block.no_of_manpower}</CTableDataCell>
+
+          {userInfo.role !== "Opex Site Technician" &&
+            opexData &&
+            opexData.blocks_data.length > 0 && (
+              <CCard className="mb-4">
+                <CCardHeader>
+                  <h5 className="mb-0">Blocks Configuration</h5>
+                </CCardHeader>
+                <CCardBody>
+                  <CTable bordered hover responsive>
+                    <CTableHead>
+                      <CTableRow>
+                        <CTableHeaderCell>Block No</CTableHeaderCell>
+                        <CTableHeaderCell>Robots</CTableHeaderCell>
+                        <CTableHeaderCell>Manpower</CTableHeaderCell>
                       </CTableRow>
-                    ))}
-                  </CTableBody>
-                </CTable>
-              </CCardBody>
-            </CCard>
-          )}
+                    </CTableHead>
+                    <CTableBody>
+                      {opexData.blocks_data.map((block, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell>{block.block_no}</CTableDataCell>
+                          <CTableDataCell>{block.no_of_robots}</CTableDataCell>
+                          <CTableDataCell>
+                            {block.no_of_manpower}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))}
+                    </CTableBody>
+                  </CTable>
+                </CCardBody>
+              </CCard>
+            )}
 
           {/* Cycles Information Card */}
           <CCard className="mb-4">
@@ -282,13 +289,7 @@ const OpexTemplate = () => {
                 <div
                   className="d-flex align-items-center"
                   style={{ minWidth: "100px" }}
-                >
-                  {opexData && opexData.cycles.length > 0 && (
-                    <CBadge color="success">
-                      {opexData.cycles.length}/{opexData.total_cycles} Cycles
-                    </CBadge>
-                  )}
-                </div>
+                ></div>
 
                 {/* Center: Heading */}
                 <div className="flex-grow-1 text-center">

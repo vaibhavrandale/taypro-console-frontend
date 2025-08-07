@@ -428,6 +428,25 @@ const _nav = [
       //     },
       //   ],
       // },
+
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/master-admin/opexdata",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------

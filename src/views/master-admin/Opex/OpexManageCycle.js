@@ -1,5 +1,72 @@
+// import axios from "axios";
+// import React, { useEffect, useReducer, useState } from "react";
+// import toast from "react-hot-toast";
+// import { useSelector } from "react-redux";
+// import { useParams } from "react-router-dom";
+
+// const reducer = (state, action) => {
+//   switch (action.type) {
+//     case "FETCH_REQUEST":
+//       return { ...state, loading: true, error: "" };
+//     case "FETCH_SUCCESS":
+//       return {
+//         ...state,
+//         cycle: action.payload.data,
+//         loading: false,
+//       };
+//     case "FETCH_FAIL":
+//       return { ...state, loading: false, error: action.payload };
+//     default:
+//       return state;
+//   }
+// };
+
+// const OpexManageCycle = () => {
+//   const [{ loading, cycle, error }, dispatch] = useReducer(reducer, {
+//     cycle: [],
+//     loading: true,
+//     error: "",
+//   });
+//   const authtoken = useSelector((state) => state.authtoken);
+//   const { moduleId, cycleId } = useParams();
+
+//   useEffect(() => {
+//     const fetchCycle = async () => {
+//       try {
+//         dispatch({ type: "FETCH_REQUEST" });
+
+//         const result = await axios.get(
+//           `/api/v1/opex/${moduleId}/cycle/${cycleId}`,
+//           {
+//             headers: { Authorization: `Bearer ${authtoken}` },
+//           }
+//         );
+//         // console.log(result);
+//         dispatch({
+//           type: "FETCH_SUCCESS",
+//           payload: {
+//             data: result.data.data,
+//           },
+//         });
+//       } catch (error) {
+//         dispatch({
+//           type: "FETCH_FAIL",
+//           payload: error.response?.data.error || error.response?.data.message,
+//         });
+//         toast.error(error.response?.data.error || error.response?.data.message);
+//       }
+//     };
+
+//     fetchCycle();
+//   }, [authtoken, cycleId, moduleId]);
+
+//   return <div></div>;
+// };
+
+// export default OpexManageCycle;
+
 import React, { useEffect, useReducer } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -11,13 +78,18 @@ import {
   CTableHeaderCell,
   CTableDataCell,
   CBadge,
+  CProgress,
   CRow,
   CCol,
+  CInputGroup,
+  CFormInput,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilCheckCircle, cilX } from "@coreui/icons";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -32,7 +104,7 @@ const reducer = (state, action) => {
   }
 };
 
-const OpexCycleData = () => {
+const OpexManageCycle = () => {
   const [{ loading, cycle, error }, dispatch] = useReducer(reducer, {
     cycle: {},
     loading: true,
@@ -40,27 +112,8 @@ const OpexCycleData = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const { moduleId, cycleId, site_id } = useParams();
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo?.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo?.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+  const { moduleId, cycleId } = useParams();
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   useEffect(() => {
     const fetchCycle = async () => {
@@ -97,30 +150,11 @@ const OpexCycleData = () => {
     return (totalCleaned / cycle.modules_planned) * 100;
   };
 
-  const totalModulesPlanned = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_planned_for_day || 0),
-    0
-  );
-  const totalModulesCleaned = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_cleaned_for_day || 0),
-    0
-  );
-  const totalModulesRemaining = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_remaining_for_day || 0),
-    0
-  );
-
   return (
     <div className="mt-4">
       {/* Cycle Overview */}
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <div className="text-center">
-          <CBadge color="danger" className="p-2">
-            {error}
-          </CBadge>
-        </div>
       ) : (
         <>
           <CCard className="mb-4">
@@ -131,27 +165,23 @@ const OpexCycleData = () => {
                   {calculateProgress().toFixed(1)}% Complete
                 </CBadge>
                 <span>
-                  {new Date(cycle.start_date).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}{" "}
-                  -{" "}
-                  {new Date(cycle.end_date).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  {new Date(cycle.start_date).toLocaleDateString()} -{" "}
+                  {new Date(cycle.end_date).toLocaleDateString()}
                 </span>
               </div>
             </CCardHeader>
             <CCardBody>
               <CRow className="mb-2">
                 <CCol md={4}>
-                  Total Modules Planned: {cycle.modules_planned}
+                  <strong>Total Modules Planned:</strong>{" "}
+                  {cycle.modules_planned}
                 </CCol>
-                <CCol md={4}>Modules Cleaned: {cycle.modules_cleaned}</CCol>
-                <CCol md={4}>Modules Remaining: {cycle.modules_remaining}</CCol>
+                <CCol md={4}>
+                  <strong>Modules Cleaned:</strong> {cycle.modules_cleaned}
+                </CCol>
+                <CCol md={4}>
+                  <strong>Modules Remaining:</strong> {cycle.modules_remaining}
+                </CCol>
               </CRow>
             </CCardBody>
           </CCard>
@@ -160,6 +190,13 @@ const OpexCycleData = () => {
           <CCard>
             <CCardHeader className="d-flex justify-content-between align-items-center">
               <h5>Daily Cleaning Progress</h5>
+              <CInputGroup style={{ width: "300px" }}>
+                <CFormInput
+                  placeholder="Search by date..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </CInputGroup>
             </CCardHeader>
             <CCardBody>
               <CTable bordered hover responsive>
@@ -172,20 +209,21 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
-                    {userInfo.role === "Opex Site Technician" && (
-                      <CTableHeaderCell>Action</CTableHeaderCell>
-                    )}
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {cycle.day_wise_data.map((day, index) => (
-                    <>
+                  {cycle.day_wise_data
+                    .filter((day) =>
+                      new Date(day.date)
+                        .toLocaleDateString()
+                        .includes(searchTerm)
+                    )
+                    .map((day, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>Day {index + 1}</CTableDataCell>
                         <CTableDataCell>{day._id}</CTableDataCell>
                         <CTableDataCell>
-                          {new Date(day.date).toLocaleDateString("en-GB")}
-
+                          {new Date(day.date).toLocaleDateString()}
                           {day.is_sunday && (
                             <CBadge color="warning" className="ms-2">
                               Sunday
@@ -208,37 +246,14 @@ const OpexCycleData = () => {
                           ) : (
                             <CBadge color="warning">Pending</CBadge>
                           )}
-
                           {day.is_verified && (
                             <CBadge color="info" className="ms-2">
                               Verified
                             </CBadge>
                           )}
                         </CTableDataCell>
-                        {userInfo.role === "Opex Site Technician" && (
-                          <CTableDataCell>
-                            <Link
-                              className="btn btn-sm btn-secondary m-2"
-                              color="secondary"
-                              size="sm"
-                              to={`/${adminroute}/upload-images/${moduleId}/${cycleId}/${day._id}/${site_id}`}
-                            >
-                              Add Attachments
-                            </Link>
-                          </CTableDataCell>
-                        )}
                       </CTableRow>
-                    </>
-                  ))}
-                  <CTableRow color="">
-                    <CTableHeaderCell colSpan={3} className="text-center">
-                      Total
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesPlanned}</CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesCleaned}</CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesRemaining}</CTableHeaderCell>
-                    <CTableHeaderCell colSpan={1}></CTableHeaderCell>
-                  </CTableRow>
+                    ))}
                 </CTableBody>
               </CTable>
             </CCardBody>
@@ -249,4 +264,4 @@ const OpexCycleData = () => {
   );
 };
 
-export default OpexCycleData;
+export default OpexManageCycle;
