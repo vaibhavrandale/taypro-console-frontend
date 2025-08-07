@@ -19,6 +19,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -406,6 +407,7 @@ const OpexTemplateManager = () => {
               </CTable>
             </CCardBody>
           </CCard>
+          <LastActivity lastactivity={opexData.last_activity} />
         </>
       )}
     </div>

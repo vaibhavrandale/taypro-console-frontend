@@ -1,72 +1,5 @@
-// import axios from "axios";
-// import React, { useEffect, useReducer, useState } from "react";
-// import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
-// import { useParams } from "react-router-dom";
-
-// const reducer = (state, action) => {
-//   switch (action.type) {
-//     case "FETCH_REQUEST":
-//       return { ...state, loading: true, error: "" };
-//     case "FETCH_SUCCESS":
-//       return {
-//         ...state,
-//         cycle: action.payload.data,
-//         loading: false,
-//       };
-//     case "FETCH_FAIL":
-//       return { ...state, loading: false, error: action.payload };
-//     default:
-//       return state;
-//   }
-// };
-
-// const OpexManageCycle = () => {
-//   const [{ loading, cycle, error }, dispatch] = useReducer(reducer, {
-//     cycle: [],
-//     loading: true,
-//     error: "",
-//   });
-//   const authtoken = useSelector((state) => state.authtoken);
-//   const { moduleId, cycleId } = useParams();
-
-//   useEffect(() => {
-//     const fetchCycle = async () => {
-//       try {
-//         dispatch({ type: "FETCH_REQUEST" });
-
-//         const result = await axios.get(
-//           `/api/v1/opex/${moduleId}/cycle/${cycleId}`,
-//           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
-//           }
-//         );
-//         // console.log(result);
-//         dispatch({
-//           type: "FETCH_SUCCESS",
-//           payload: {
-//             data: result.data.data,
-//           },
-//         });
-//       } catch (error) {
-//         dispatch({
-//           type: "FETCH_FAIL",
-//           payload: error.response?.data.error || error.response?.data.message,
-//         });
-//         toast.error(error.response?.data.error || error.response?.data.message);
-//       }
-//     };
-
-//     fetchCycle();
-//   }, [authtoken, cycleId, moduleId]);
-
-//   return <div></div>;
-// };
-
-// export default OpexManageCycle;
-
 import React, { useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -78,7 +11,6 @@ import {
   CTableHeaderCell,
   CTableDataCell,
   CBadge,
-  CProgress,
   CRow,
   CCol,
   CInputGroup,
@@ -87,8 +19,6 @@ import {
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import CIcon from "@coreui/icons-react";
-import { cilCheckCircle, cilX } from "@coreui/icons";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const reducer = (state, action) => {
@@ -155,6 +85,10 @@ const OpexManageCycle = () => {
       {/* Cycle Overview */}
       {loading ? (
         <LoadingSpinner />
+      ) : error ? (
+        <CBadge color="danger" className="p-2">
+          {error}
+        </CBadge>
       ) : (
         <>
           <CCard className="mb-4">
@@ -209,6 +143,7 @@ const OpexManageCycle = () => {
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
+                    <CTableHeaderCell>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -251,6 +186,14 @@ const OpexManageCycle = () => {
                               Verified
                             </CBadge>
                           )}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          <Link
+                            className="btn btn-primary btn-sm"
+                            to={`verify-day/${day._id}`}
+                          >
+                            Verify
+                          </Link>
                         </CTableDataCell>
                       </CTableRow>
                     ))}
