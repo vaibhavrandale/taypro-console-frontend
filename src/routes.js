@@ -127,6 +127,7 @@ import OpexDashboard from "./views/master-admin/Opex/OpexDashboard";
 import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
 import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
 import OpexTemplateCreate from "./views/master-admin/Opex/CreateOpexTemplate";
+import VerifyCycleDay from "./views/master-admin/Opex/VerifyCycleDay";
 // import AddFirstCycle from "./views/master-admin/Opex/CraeteFirstOpexCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1530,6 +1531,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexManageCycle />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <MasterAdminRoute>
+        <VerifyCycleDay />
       </MasterAdminRoute>
     ),
   },
