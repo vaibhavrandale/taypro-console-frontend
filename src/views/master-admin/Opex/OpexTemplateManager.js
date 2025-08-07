@@ -32,15 +32,27 @@ const reducer = (state, action) => {
       };
     case "FETCH_OPEX_FAIL":
       return { ...state, loadingOpex: false, error: action.payload };
+
+    case "CREATE_REQUEST":
+      return { ...state, createLoading: true, createError: "", success: false };
+    case "CREATE_SUCCESS":
+      return { ...state, createLoading: false, success: true };
+    case "CREATE_FAIL":
+      return { ...state, createLoading: false, createError: action.payload };
     default:
       return state;
   }
 };
 
 const OpexTemplateManager = () => {
-  const [{ opexData, loadingOpex, error }, dispatch] = useReducer(reducer, {
+  const [
+    { opexData, loadingOpex, error, createLoading, createError },
+    dispatch,
+  ] = useReducer(reducer, {
     opexData: {},
     loadingOpex: true,
+    createError: "",
+    createLoading: false,
     error: "",
   });
 
@@ -64,38 +76,68 @@ const OpexTemplateManager = () => {
   } else if (userInfo.role === "Site Technician") {
     adminroute = "site-technician";
   }
+  const fetchOpexData = async () => {
+    dispatch({ type: "FETCH_OPEX_REQUEST" });
+    try {
+      const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
 
+      dispatch({
+        type: "FETCH_OPEX_SUCCESS",
+        payload: result.data.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: "FETCH_OPEX_FAIL",
+        payload: error.response.data.message || error.response.data.error,
+      });
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+  };
   useEffect(() => {
-    const fetchOpexData = async () => {
-      dispatch({ type: "FETCH_OPEX_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-
-        dispatch({
-          type: "FETCH_OPEX_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_OPEX_FAIL",
-          payload: error.response.data.message || error.response.data.error,
-        });
-        toast.error(error.response.data.message || error.response.data.error);
-      }
-    };
     fetchOpexData();
-  }, [authtoken, site_id]);
+  }, [authtoken]);
 
-  console.log(!opexData);
+  const handleCreateCycle = async (id) => {
+    dispatch({ type: "CREATE_REQUEST" });
+
+    try {
+      const response = await axios.post(
+        `/api/v1/opex/first-cycle/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch({
+        type: "CREATE_SUCCESS",
+        sucess: true,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success(response.data.message);
+      }
+      fetchOpexData();
+    } catch (error) {
+      dispatch({
+        type: "CREATE_FAIL",
+        payload: error.response.data.message || error.response.data.error,
+      });
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+  };
 
   return (
     <div className="mt-5">
       {!loadingOpex && Object.keys(opexData).length === 0 && (
         <div style={{ minWidth: "160px" }} className="text-end mb-2">
           <Link
-            to={`/${adminroute}/opex-templates/create`}
+            to={`/${adminroute}/create-template/${site_id}`}
             className="btn btn-warning btn-sm"
           >
             Create Template
@@ -114,82 +156,68 @@ const OpexTemplateManager = () => {
       ) : (
         <>
           <CCard className="mb-4">
-            <>
-              <CCardHeader>
-                <div className="d-flex w-100 align-items-center justify-content-between">
-                  {/* Left: Client Logo */}
-                  <div style={{ minWidth: "60px" }}>
-                    {opexData.client.logo && (
-                      <CImage
-                        src={opexData?.client?.logo}
-                        width={60}
-                        height={60}
-                        className="me-2 rounded-50"
-                      />
-                    )}
-                  </div>
+            <CCardHeader>
+              <div className="d-flex w-100 align-items-center justify-content-between">
+                {/* Left: Client Logo */}
 
-                  {/* Center: Title */}
-                  <div className="flex-grow-1 text-center">
-                    <h5 className="mb-0">Site Information</h5>
-                  </div>
-
-                  {/* Right: Create Template Button */}
+                {/* Center: Title */}
+                <div className="">
+                  <h5 className="mb-0">Site Information</h5>
                 </div>
-              </CCardHeader>
+              </div>
+            </CCardHeader>
 
-              <CCardBody>
-                <CRow>
-                  <CCol md={4}>
-                    <div className="d-flex align-items-center mb-3">
-                      <div>
-                        <h6 className="text-primary mb-0">
-                          {opexData.client.client_name}
-                        </h6>
-                        <CBadge color="info">{opexData.site.site_type}</CBadge>
-                      </div>
+            <CCardBody>
+              <CRow>
+                <CCol md={4}>
+                  <div className="d-flex align-items-between mb-3">
+                    <div
+                      style={{ minWidth: "60px", background: "#fff" }}
+                      className="m-1"
+                    >
+                      {opexData.client.logo && (
+                        <CImage
+                          src={opexData.client.logo}
+                          width={90}
+                          height={60}
+                          className="me-2"
+                          style={{ objectFit: "contain" }}
+                        />
+                      )}
                     </div>
-                    <p className="mb-1">
-                      <strong>Site:</strong> {opexData.site.siteName}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Location:</strong> {opexData.site.location}
-                    </p>
-                  </CCol>
-                  <CCol md={4}>
-                    <h6 className="text-primary">Modules Information</h6>
-                    <p className="mb-1">
-                      <strong>Total Modules:</strong>{" "}
-                      <span className="fw-bold">{opexData.total_modules}</span>
-                    </p>
-                    <p className="mb-1">
-                      <strong>Cycle Frequency:</strong>{" "}
-                      <CBadge color="primary">
-                        {opexData.cycle_frequency}
-                      </CBadge>
-                    </p>
-                    <p className="mb-1">
-                      <strong>Daily Target:</strong>{" "}
-                      {opexData.modules_cleaned_per_day}
-                    </p>
-                  </CCol>
-                  <CCol md={4}>
-                    <h6 className="text-primary">Resources</h6>
-                    <p className="mb-1">
-                      <strong>Robots:</strong> {opexData.total_robots}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Manpower:</strong> {opexData.total_manpower}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Trolleys:</strong> {opexData.total_trolley}
-                    </p>
-                  </CCol>
-                </CRow>
-              </CCardBody>
-            </>
+                    <div>
+                      <h6 className="text-danger mb-0">
+                        {opexData.client.client_name}
+                      </h6>
+                      <CBadge color="success">{opexData.site.site_type}</CBadge>
+                    </div>
+                  </div>
+                  <p className="mb-1">Site : {opexData.site.siteName}</p>
+                  <p className="mb-1">Location : {opexData.site.location}</p>
+                </CCol>
+                <CCol md={4}>
+                  <h6 className="text-success">Modules Information</h6>
+                  <p className="mb-1">
+                    Total Modules :{" "}
+                    <span className="">{opexData.total_modules}</span>
+                  </p>
+                  <p className="mb-1">
+                    Cycle Frequency :{" "}
+                    <CBadge color="success">{opexData.cycle_frequency}</CBadge>
+                  </p>
+                  <p className="mb-1">
+                    Daily Target : {opexData.modules_cleaned_per_day}
+                  </p>
+                </CCol>
+                <CCol md={4}>
+                  <h6 className="text-success">Resources</h6>
+                  <p className="mb-1">Robots : {opexData.total_robots}</p>
+                  <p className="mb-1">Manpower : {opexData.total_manpower}</p>
+                  <p className="mb-1">Trolleys : {opexData.total_trolley}</p>
+                </CCol>
+              </CRow>
+            </CCardBody>
           </CCard>
-
           {/* Blocks Configuration Card */}
           {opexData && opexData.blocks_data.length > 0 && (
             <CCard className="mb-4">
@@ -251,47 +279,37 @@ const OpexTemplateManager = () => {
             </CCard>
           )}
 
-          {opexData.cycles.length === 0 && (
-            <div
-              className="d-flex align-items-center justify-content-end mb-2"
-              style={{ minWidth: "150px" }}
-            >
-              {!["Master User", "Project User", "Service User"].includes(
-                userInfo.role
-              ) && (
-                <Link
-                  to={`/${adminroute}/opex-templates/create-cycle/${site_id}`}
-                  className="btn btn-primary btn-sm"
-                >
-                  Create Cycle
-                </Link>
-              )}
-            </div>
-          )}
-
+          <div
+            className="d-flex flex-column align-items-end justify-content-end mb-2"
+            style={{ minWidth: "150px" }}
+          >
+            {!["Master User", "Project User", "Service User"].includes(
+              userInfo.role
+            ) && (
+              <Link
+                // to={`/${adminroute}/opex-templates/create-cycle/${site_id}`}
+                onClick={() => handleCreateCycle(opexData._id)}
+                className="btn btn-primary btn-sm"
+              >
+                {createLoading ? (
+                  <>
+                    Creating <LoadingSpinner />
+                  </>
+                ) : (
+                  "Create Cycle"
+                )}{" "}
+              </Link>
+            )}
+            {createError ? (
+              <span className="text-danger">{createError}</span>
+            ) : (
+              ""
+            )}
+          </div>
           {/* Cycles Information Card */}
           <CCard className="mb-4">
             <CCardHeader>
-              <div className="d-flex w-100 align-items-center justify-content-between">
-                {/* Left: Total cycles badge */}
-                <div
-                  className="d-flex align-items-center"
-                  style={{ minWidth: "100px" }}
-                >
-                  {opexData && opexData.cycles.length > 0 && (
-                    <CBadge color="primary">
-                      {opexData.cycles.length}/{opexData.total_cycles} Cycles
-                    </CBadge>
-                  )}
-                </div>
-
-                {/* Center: Heading */}
-                <div className="flex-grow-1 text-center">
-                  <h5 className="mb-0">Cycles Information</h5>
-                </div>
-
-                {/* Right: Create Cycle button (if role is allowed) */}
-              </div>
+              <h5 className="mb-0">Cycles Information</h5>
             </CCardHeader>
 
             <CCardBody>
@@ -299,9 +317,13 @@ const OpexTemplateManager = () => {
                 <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>Cycle</CTableHeaderCell>
+                    <CTableHeaderCell>Cycle id</CTableHeaderCell>
+                    <CTableHeaderCell>Cycle status</CTableHeaderCell>
                     <CTableHeaderCell>Start Date</CTableHeaderCell>
                     <CTableHeaderCell>End Date</CTableHeaderCell>
-                    <CTableHeaderCell>Modules</CTableHeaderCell>
+                    <CTableHeaderCell>Planned</CTableHeaderCell>
+                    <CTableHeaderCell>Cleaned</CTableHeaderCell>
+                    <CTableHeaderCell>Remaining</CTableHeaderCell>{" "}
                     <CTableHeaderCell>Status</CTableHeaderCell>
                     <CTableHeaderCell>Actions</CTableHeaderCell>
                   </CTableRow>
@@ -330,28 +352,28 @@ const OpexTemplateManager = () => {
                     opexData.cycles.map((cycle, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
+                        <CTableDataCell>{cycle._id}</CTableDataCell>
+                        <CTableDataCell>
+                          {cycle.is_cycle_verified ? (
+                            <CBadge color="success">Verified</CBadge>
+                          ) : (
+                            <CBadge color="warning">Pending</CBadge>
+                          )}
+                        </CTableDataCell>
                         <CTableDataCell>
                           {new Date(cycle.start_date).toLocaleDateString()}
                         </CTableDataCell>
                         <CTableDataCell>
                           {new Date(cycle.end_date).toLocaleDateString()}
                         </CTableDataCell>
+                        <CTableDataCell>{cycle.modules_planned}</CTableDataCell>
                         <CTableDataCell>
-                          <div className="d-flex flex-column">
-                            <span className="text-success">
-                              Cleaned- {cycle.modules_cleaned.toLocaleString()}
-                            </span>
-                            <span className="text-warning">
-                              Remaining-
-                              {(
-                                cycle.modules_planned - cycle.modules_cleaned
-                              ).toLocaleString()}{" "}
-                            </span>
-                            <span className="text-primary">
-                              Planned-
-                              {cycle.modules_planned.toLocaleString()}
-                            </span>
-                          </div>
+                          {" "}
+                          {cycle.modules_cleaned}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {" "}
+                          {cycle.modules_remaining}
                         </CTableDataCell>
                         <CTableDataCell>
                           {cycle.modules_cleaned === cycle.modules_planned ? (
