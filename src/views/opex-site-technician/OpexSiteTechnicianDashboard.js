@@ -12,7 +12,7 @@ import React, { useEffect, useReducer, useState } from "react";
 
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import "./GoogleMapEmbed.css";
+import "../opex-client-admin/GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
 
@@ -60,7 +60,7 @@ const reducer = (state, action) => {
   }
 };
 
-const OpexClientAdminDashboard = () => {
+const OpexSiteTechnicianDashboard = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [
@@ -132,7 +132,6 @@ const OpexClientAdminDashboard = () => {
           type: "FETCH_SITE_COORDINATES_FAIL",
           payload: error.response?.data?.message || error.response?.data?.error,
         });
-        // toast.error(error.response?.data?.message || error.message);
       }
     };
 
@@ -156,9 +155,6 @@ const OpexClientAdminDashboard = () => {
           type: "FETCH_WEATHER_FAIL",
           payload: error.response?.data?.message || error.response?.data?.error,
         });
-        // toast.error(
-        //   error.response?.data?.message || error.response?.data?.error
-        // );
       }
     };
 
@@ -430,4 +426,4 @@ const OpexClientAdminDashboard = () => {
   );
 };
 
-export default OpexClientAdminDashboard;
+export default OpexSiteTechnicianDashboard;

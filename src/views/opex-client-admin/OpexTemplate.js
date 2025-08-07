@@ -1,13 +1,5 @@
-// import React from "react";
-
-// const OpexTemplate = () => {
-//   return <div>OpexTemplate</div>;
-// };
-
-// export default OpexTemplate;
-
 import React, { useEffect, useReducer, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -80,6 +72,8 @@ const OpexTemplate = () => {
   let adminroute = "";
   if (userInfo.role === "Opex Client Admin") {
     adminroute = "opex-client-admin";
+  } else if (userInfo.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
   }
   const fetchSiteIds = async () => {
     dispatch({ type: "FETCH_SITEID_REQUEST" });

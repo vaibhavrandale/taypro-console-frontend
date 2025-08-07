@@ -3037,6 +3037,71 @@ const _nav = [
     ],
   },
   // -------------------------opex client admin------------------------------
+
+  // -----------------------------Opex Site Technician----------------------------
+  {
+    component: CNavGroup,
+    name: "Opex Site Technician",
+    to: "/opex-site-technician/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/opex-site-technician/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Site Data",
+        to: "/opex-site-technician/my-opex-data",
+        icon: (
+          <CIcon
+            icon={cilBuilding}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavGroup,
+        name: "Opex T. Attendance",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Punch In/Out",
+            to: "/opex-site-technician/punch-in-punch-out",
+          },
+          {
+            component: CNavItem,
+            name: " Attendance",
+            to: "/opex-site-technician/user-site-attendance",
+          },
+        ],
+      },
+    ],
+  },
+
+  // -----------------------------Opex Site Technician----------------------------
 ];
 
 export default _nav;

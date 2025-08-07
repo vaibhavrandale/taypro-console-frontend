@@ -248,6 +248,11 @@ const UserBasedLinkDashboard = () => {
       dept: "Opex Client Management",
       icon: faBuilding,
     },
+    "Opex Site Technician": {
+      path: "/opex-site-technician/dashboard",
+      dept: "Opex Site Management",
+      icon: faBuilding,
+    },
     "Client Site Technician": {
       path: "/client-site-technician/dashboard",
       dept: "Client Management",
@@ -388,6 +393,8 @@ const UserBasedLinkDashboard = () => {
     adminroute = "client-admin";
   } else if (userInfo?.role === "Opex Client Admin") {
     adminroute = "opex-client-admin";
+  } else if (userInfo?.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
   } else if (userInfo?.role === "Site Incharge") {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
@@ -409,6 +416,7 @@ const UserBasedLinkDashboard = () => {
       "Client Site Technician",
       "Site Technician",
       "Opex Client Admin",
+      "Opex Site Technician",
     ].includes(userInfo.role)
   ) {
     setTimeout(() => {
