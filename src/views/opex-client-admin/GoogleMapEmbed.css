@@ -21,6 +21,17 @@
   animation: spin 0.8s linear infinite;
 }
 
+img.rounded {
+  transition: transform 0.2s ease;
+}
+img.rounded:hover {
+  transform: scale(1.02);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

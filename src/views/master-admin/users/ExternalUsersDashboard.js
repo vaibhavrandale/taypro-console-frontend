@@ -77,7 +77,11 @@ const reducer = (state, action) => {
     case "ADD_USER_REQUEST":
       return { ...state, userAddloading: true, error: "" };
     case "ADD_USER_SUCCESS":
-      return { ...state, userAddloading: false, users: action.payload };
+      return {
+        ...state,
+        userAddloading: false,
+        users: [...state.users, action.payload],
+      };
     case "ADD_USER_FAIL":
       return { ...state, userAddloading: false, error: action.payload };
 
@@ -322,7 +326,7 @@ const ExternalUsersDashboard = () => {
       if (response.status === 201 || response.status === 200) {
         dispatch({
           type: "ADD_USER_SUCCESS",
-          payload: [...users, response.data.data], // Append new robot to state
+          payload: response.data.data.user, // Append new robot to state
         });
         setAddModalVisible(false);
       }
@@ -330,8 +334,11 @@ const ExternalUsersDashboard = () => {
       setImage("");
     } catch (error) {
       console.error(error);
-      dispatch({ type: "ADD_USER_FAIL", payload: error.response.data.error });
-      alert(error.response.data.error);
+      dispatch({
+        type: "ADD_USER_FAIL",
+        payload: error.response.data.error || error.response.data.message,
+      });
+      toast.error(error.response.data.error || error.response.data.message);
     }
   };
 

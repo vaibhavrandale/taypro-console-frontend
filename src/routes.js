@@ -57,6 +57,7 @@ import {
   ProjectUserRoute,
   SiteTechnicianRoute,
   OpexClientAdmin,
+  OpexSiteTechnicianRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -120,6 +121,8 @@ import SubscriptionViewPage from "./views/client-admin/subscription/Subscription
 import OpexClientAdminDashboard from "./views/opex-client-admin/OpexClientAdminDashboard";
 import OpexTemplate from "./views/opex-client-admin/OpexTemplate";
 import OpexCycleData from "./views/opex-client-admin/OpexCycleData";
+import OpexSiteTechnicianDashboard from "./views/opex-site-technician/OpexSiteTechnicianDashboard";
+import UploadImages from "./views/opex-site-technician/UploadImages";
 import OpexDashboard from "./views/master-admin/Opex/OpexDashboard";
 import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
 import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
@@ -5536,7 +5539,84 @@ const routes = [
       </OpexClientAdmin>
     ),
   },
+  {
+    path: "/opex-client-admin/profile-tab",
+    name: "Profile Details",
+    element: (
+      <OpexClientAdmin>
+        <Profile />
+      </OpexClientAdmin>
+    ),
+  },
   // ------------------------opex client admin ----------------------------------
+
+  // ------------------------opex site technician ----------------------------------
+
+  {
+    path: "/opex-site-technician/dashboard",
+    name: "Opex Site Technician Dashboard",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <OpexSiteTechnicianDashboard />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/punch-in-punch-out",
+    name: "Punch In / Punch Out",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <PunchInPunchOut />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/user-site-attendance",
+    name: "Technician Site Attendance",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <UserSiteAttendance />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/my-opex-data",
+    name: "Opex Data",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <OpexTemplate />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle Data",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <OpexCycleData />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/profile-tab",
+    name: "Profile Details",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <Profile />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/upload-images/:moduleId/:cycleId/:dayId/:site_id",
+    name: "Profile Details",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <UploadImages />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+
+  // ------------------------opex site technician ----------------------------------
 
   //common pages
 

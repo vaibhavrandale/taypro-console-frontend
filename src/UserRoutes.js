@@ -74,3 +74,12 @@ export function OpexClientAdmin({ children }) {
     <Page404 />
   );
 }
+
+export function OpexSiteTechnicianRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Opex Site Technician" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}
