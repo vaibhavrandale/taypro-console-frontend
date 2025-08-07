@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const PunchInPunchOut = () => {
-//   return <div>PunchInPunchOut</div>;
-// };
-
-// export default PunchInPunchOut;
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,

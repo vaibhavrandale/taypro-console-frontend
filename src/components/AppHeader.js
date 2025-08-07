@@ -339,13 +339,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       allowedRoles.includes(userInfo.role)
     ) {
       fetchNotifications();
-      // fetchUserDetails();
       notificationsFetched.current = true;
     }
 
     if (
       !robotsGatewaysFetched.current &&
-      !userInfo?.role.includes("Opex Client Admin")
+      !userInfo?.role.includes(["Opex Client Admin", "Opex Site Technician"])
     ) {
       fetchRobotsAndGateways();
       fetchTimerData();
