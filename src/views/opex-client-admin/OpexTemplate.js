@@ -1,11 +1,3 @@
-// import React from "react";
-
-// const OpexTemplate = () => {
-//   return <div>OpexTemplate</div>;
-// };
-
-// export default OpexTemplate;
-
 import React, { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import {
