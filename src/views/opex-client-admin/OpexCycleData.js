@@ -6,7 +6,7 @@
 
 // export default OpexCycleData;
 
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   CCard,
@@ -21,11 +21,18 @@ import {
   CBadge,
   CRow,
   CCol,
+  CButton,
+  CModal,
+  CModalHeader,
+  CModalBody,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { formatDistanceToNow } from "date-fns";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -49,7 +56,9 @@ const OpexCycleData = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [activityData, setActivityData] = useState([]);
+  const [cleaningDay, setCleaningDay] = useState("");
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -97,6 +106,14 @@ const OpexCycleData = () => {
     (sum, day) => sum + (day.modules_remaining_for_day || 0),
     0
   );
+
+  const openActivityModal = (day, index) => {
+    console.log(day);
+
+    setActivityData(day);
+    setCleaningDay(index);
+    setModalVisible(true);
+  };
 
   return (
     <div className="mt-4">
@@ -160,6 +177,7 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
+                    <CTableHeaderCell>Activity</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -190,6 +208,11 @@ const OpexCycleData = () => {
                           {day.is_cleaning_done &&
                           day.modules_remaining_for_day === 0 ? (
                             <CBadge color="success">Completed</CBadge>
+                          ) : day.modules_cleaned_for_day +
+                              day.modules_planned_for_day +
+                              day.modules_remaining_for_day ===
+                            0 ? (
+                            <CBadge color="danger">cancelled</CBadge>
                           ) : (
                             <CBadge color="warning">Pending</CBadge>
                           )}
@@ -197,6 +220,23 @@ const OpexCycleData = () => {
                             <CBadge color="info" className="ms-2">
                               Verified
                             </CBadge>
+                          )}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {day.is_verified ? (
+                            <CButton
+                              color="primary"
+                              size="sm"
+                              onClick={() =>
+                                openActivityModal(day, `Day ${index + 1}`)
+                              }
+                            >
+                              activity
+                            </CButton>
+                          ) : (
+                            <CButton color="primary" size="sm" disabled>
+                              data is not verified
+                            </CButton>
                           )}
                         </CTableDataCell>
                       </CTableRow>
@@ -209,10 +249,107 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>{totalModulesPlanned}</CTableHeaderCell>
                     <CTableHeaderCell>{totalModulesCleaned}</CTableHeaderCell>
                     <CTableHeaderCell>{totalModulesRemaining}</CTableHeaderCell>
-                    <CTableHeaderCell colSpan={1}></CTableHeaderCell>
+                    <CTableHeaderCell colSpan={2}></CTableHeaderCell>
                   </CTableRow>
                 </CTableBody>
               </CTable>
+              {modalVisible && (
+                <CModal
+                  className="rounded-0"
+                  visible={modalVisible}
+                  backdrop="static"
+                  alignment="center"
+                  scrollable={true}
+                  onClose={() => setModalVisible(false)}
+                  size="lg"
+                >
+                  <CModalHeader closeButton={false}>
+                    <CBadge color="success">{cleaningDay}</CBadge>&nbsp;
+                    Verification details
+                    <button
+                      type="button"
+                      className=" border-0 ms-auto py-0 px-1"
+                      onClick={() => setModalVisible(false)}
+                      style={{ background: "none" }}
+                    >
+                      <CIcon icon={cilX} size="lg" />
+                    </button>
+                  </CModalHeader>
+                  <CModalBody>
+                    <div className="d-flex align-items-center pb-3 mb-3">
+                      <img
+                        src={activityData.verified_by.profile_image}
+                        alt="Profile"
+                        className="rounded-circle"
+                        width="50"
+                        height="50"
+                        style={{ objectFit: "cover", cursor: "pointer" }}
+                      />
+                      <div className="flex-grow-1 mx-2">
+                        <p className="mb-1 fw-semibold d-flex justify-content-between flex-wrap">
+                          <span className="fw-semibold">
+                            {activityData.verified_by.name} -{" "}
+                            <span className="text-muted small">
+                              {new Date(
+                                activityData.verified_by.verified_at
+                              ).toLocaleString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              })}
+                            </span>
+                          </span>
+                          <span className="d-flex flex-column">
+                            <span className="text-muted small">
+                              {activityData.verified_by.verified_at
+                                ? formatDistanceToNow(
+                                    new Date(
+                                      activityData.verified_by.verified_at
+                                    ),
+                                    {
+                                      addSuffix: true,
+                                    }
+                                  )
+                                : "NA"}
+                            </span>
+                          </span>
+                        </p>
+
+                        <p
+                          className=" maxw-75 mw-75"
+                          style={{
+                            fontSize: "14px",
+                            lineHeight: "1.5",
+                            textAlign: "start",
+                          }}
+                        >
+                          <CBadge color="warning">Details</CBadge> :&nbsp;
+                          {activityData.verified_by.details}
+                        </p>
+                        {activityData.is_other ? (
+                          <p
+                            className=" maxw-75 mw-75"
+                            style={{
+                              fontSize: "14px",
+                              lineHeight: "1.5",
+                              textAlign: "start",
+                            }}
+                          >
+                            <CBadge color="warning">Remark</CBadge> :&nbsp;
+                            {activityData.remarks}
+                          </p>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
+                  </CModalBody>
+                </CModal>
+              )}
             </CCardBody>
           </CCard>
         </>

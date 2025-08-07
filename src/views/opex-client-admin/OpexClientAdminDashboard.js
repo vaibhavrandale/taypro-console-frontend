@@ -340,7 +340,7 @@ const OpexClientAdminDashboard = () => {
                       style={{ minHeight: "350px" }}
                     >
                       {weatherError ===
-                      "Weather data for site: abc not found" ? (
+                      `Weather data for site: ${site_id} not found` ? (
                         <CBadge color="warning" className="p-2">
                           Please contact Admin to view Data
                         </CBadge>

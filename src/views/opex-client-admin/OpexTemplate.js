@@ -7,7 +7,7 @@
 // export default OpexTemplate;
 
 import React, { useEffect, useReducer, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -149,44 +149,47 @@ const OpexTemplate = () => {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
+      <CRow className="justify-content-end mb-3">
+        <CCol md={4}>
+          {loadingSiteIds ? (
+            <LoadingSpinner />
+          ) : errorSiteIds ? (
+            <CBadge color="warning" className="">
+              {errorSiteIds === "Site not found"
+                ? "Please contact Admin to view Data"
+                : errorSiteIds}
+            </CBadge>
+          ) : (
+            <CFormSelect
+              value={site_id}
+              onChange={handleSiteNameChange}
+              className="form-select"
+              aria-label="Select Site"
+            >
+              <option value="" disabled>
+                Select Site
+              </option>
+              {siteIds.map((site) => (
+                <option key={site.site_id} value={site.site_id}>
+                  {site.site_id}
+                </option>
+              ))}
+            </CFormSelect>
+          )}
+        </CCol>
+      </CRow>
+
       {loadingOpex ? (
         <LoadingSpinner />
       ) : error ? (
-        <CBadge color="warning" className="text-center p-2">
-          {error}
-        </CBadge>
+        <div className="text-center">
+          <CBadge color="danger" className="p-2">
+            {error}
+          </CBadge>
+        </div>
       ) : (
         <>
-          <CRow className="justify-content-end mb-3">
-            <CCol md={4}>
-              {loadingSiteIds ? (
-                <LoadingSpinner />
-              ) : errorSiteIds ? (
-                <CBadge color="warning" className="">
-                  {errorSiteIds === "Site not found"
-                    ? "Please contact Admin to view Data"
-                    : errorSiteIds}
-                </CBadge>
-              ) : (
-                <CFormSelect
-                  value={site_id}
-                  onChange={handleSiteNameChange}
-                  className="form-select"
-                  aria-label="Select Site"
-                >
-                  <option value="" disabled>
-                    Select Site
-                  </option>
-                  {siteIds.map((site) => (
-                    <option key={site.site_id} value={site.site_id}>
-                      {site.site_id}
-                    </option>
-                  ))}
-                </CFormSelect>
-              )}
-            </CCol>
-          </CRow>
           <CCard className="mb-4">
             <CCardHeader>
               <div className="d-flex w-100 align-items-center justify-content-between">
@@ -204,7 +207,7 @@ const OpexTemplate = () => {
                 <CCol md={4}>
                   <div className="d-flex align-items-between mb-3">
                     <div
-                      style={{ minWidth: "60px", background: "#fff" }}
+                      style={{ minWidth: "60px", background: "#DBD9D9" }}
                       className="m-1"
                     >
                       {opexData.client.logo && (
@@ -218,7 +221,7 @@ const OpexTemplate = () => {
                       )}
                     </div>
                     <div>
-                      <h6 className="text-primary mb-0">
+                      <h6 className="text-danger mb-0">
                         {opexData.client.client_name}
                       </h6>
                       <CBadge color="success">{opexData.site.site_type}</CBadge>
@@ -228,7 +231,7 @@ const OpexTemplate = () => {
                   <p className="mb-1">Location : {opexData.site.location}</p>
                 </CCol>
                 <CCol md={4}>
-                  <h6 className="text-primary">Modules Information</h6>
+                  <h6 className="text-success">Modules Information</h6>
                   <p className="mb-1">
                     Total Modules :{" "}
                     <span className="">{opexData.total_modules}</span>
@@ -242,7 +245,7 @@ const OpexTemplate = () => {
                   </p>
                 </CCol>
                 <CCol md={4}>
-                  <h6 className="text-primary">Resources</h6>
+                  <h6 className="text-success">Resources</h6>
                   <p className="mb-1">Robots : {opexData.total_robots}</p>
                   <p className="mb-1">Manpower : {opexData.total_manpower}</p>
                   <p className="mb-1">Trolleys : {opexData.total_trolley}</p>
@@ -357,7 +360,9 @@ const OpexTemplate = () => {
                     ))
                   ) : (
                     <CTableRow>
-                      <CTableDataCell>No data </CTableDataCell>
+                      <CTableDataCell colSpan={8}>
+                        No cycles found
+                      </CTableDataCell>
                     </CTableRow>
                   )}
                 </CTableBody>
