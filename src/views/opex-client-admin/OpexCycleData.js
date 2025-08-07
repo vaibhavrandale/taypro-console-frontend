@@ -1,13 +1,5 @@
-// import React from "react";
-
-// const OpexCycleData = () => {
-//   return <div>OpexCycleData</div>;
-// };
-
-// export default OpexCycleData;
-
 import React, { useEffect, useReducer, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -55,10 +47,31 @@ const OpexCycleData = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const { moduleId, cycleId } = useParams();
+  const { moduleId, cycleId, site_id } = useParams();
   const [modalVisible, setModalVisible] = useState(false);
   const [activityData, setActivityData] = useState([]);
   const [cleaningDay, setCleaningDay] = useState("");
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
+  } else if (userInfo?.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
+  }
+
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -178,6 +191,9 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
                     <CTableHeaderCell>Activity</CTableHeaderCell>
+                    {userInfo.role === "Opex Site Technician" && (
+                      <CTableHeaderCell>Action</CTableHeaderCell>
+                    )}
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -216,6 +232,7 @@ const OpexCycleData = () => {
                           ) : (
                             <CBadge color="warning">Pending</CBadge>
                           )}
+
                           {day.is_verified && (
                             <CBadge color="info" className="ms-2">
                               Verified
@@ -239,6 +256,18 @@ const OpexCycleData = () => {
                             </CButton>
                           )}
                         </CTableDataCell>
+                        {userInfo.role === "Opex Site Technician" && (
+                          <CTableDataCell>
+                            <Link
+                              className="btn btn-sm btn-secondary m-2"
+                              color="secondary"
+                              size="sm"
+                              to={`/${adminroute}/upload-images/${moduleId}/${cycleId}/${day._id}/${site_id}`}
+                            >
+                              Add Attachments
+                            </Link>
+                          </CTableDataCell>
+                        )}
                       </CTableRow>
                     </>
                   ))}
