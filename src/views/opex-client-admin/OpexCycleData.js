@@ -25,6 +25,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import LastActivity from "../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -107,18 +108,18 @@ const OpexCycleData = () => {
     return (totalCleaned / cycle.modules_planned) * 100;
   };
 
-  const totalModulesPlanned = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_planned_for_day || 0),
-    0
-  );
-  const totalModulesCleaned = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_cleaned_for_day || 0),
-    0
-  );
-  const totalModulesRemaining = cycle?.day_wise_data?.reduce(
-    (sum, day) => sum + (day.modules_remaining_for_day || 0),
-    0
-  );
+  // const totalModulesPlanned = cycle?.day_wise_data?.reduce(
+  //   (sum, day) => sum + (day.modules_planned_for_day || 0),
+  //   0
+  // );
+  // const totalModulesCleaned = cycle?.day_wise_data?.reduce(
+  //   (sum, day) => sum + (day.modules_cleaned_for_day || 0),
+  //   0
+  // );
+  // const totalModulesRemaining = cycle?.day_wise_data?.reduce(
+  //   (sum, day) => sum + (day.modules_remaining_for_day || 0),
+  //   0
+  // );
 
   const openActivityModal = (day, index) => {
     console.log(day);
@@ -146,7 +147,7 @@ const OpexCycleData = () => {
               <h5>Cycle Overview</h5>
               <div className="d-flex align-items-center">
                 <CBadge color="success" className="me-3">
-                  {calculateProgress().toFixed(1)}% Complete
+                  {calculateProgress().toFixed(0)} % Complete
                 </CBadge>
                 <span>
                   {new Date(cycle.start_date).toLocaleDateString("en-IN", {
@@ -203,7 +204,11 @@ const OpexCycleData = () => {
                         <CTableDataCell>Day {index + 1}</CTableDataCell>
                         <CTableDataCell>{day._id}</CTableDataCell>
                         <CTableDataCell>
-                          {new Date(day.date).toLocaleDateString("en-GB")}
+                          {new Date(day.date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
 
                           {day.is_sunday && (
                             <CBadge color="warning" className="ms-2">
@@ -271,7 +276,7 @@ const OpexCycleData = () => {
                       </CTableRow>
                     </>
                   ))}
-                  <CTableRow color="">
+                  {/* <CTableRow color="">
                     <CTableHeaderCell colSpan={3} className="text-center">
                       Total
                     </CTableHeaderCell>
@@ -279,7 +284,7 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>{totalModulesCleaned}</CTableHeaderCell>
                     <CTableHeaderCell>{totalModulesRemaining}</CTableHeaderCell>
                     <CTableHeaderCell colSpan={2}></CTableHeaderCell>
-                  </CTableRow>
+                  </CTableRow> */}
                 </CTableBody>
               </CTable>
               {modalVisible && (
@@ -355,10 +360,13 @@ const OpexCycleData = () => {
                             lineHeight: "1.5",
                             textAlign: "start",
                           }}
-                        >
-                          <CBadge color="warning">Details</CBadge> :&nbsp;
-                          {activityData.verified_by.details}
-                        </p>
+                          dangerouslySetInnerHTML={{
+                            __html: activityData.verified_by.details.replace(
+                              /, /g,
+                              ",<br>"
+                            ),
+                          }}
+                        ></p>
                         {activityData.is_other ? (
                           <p
                             className=" maxw-75 mw-75"
@@ -381,6 +389,8 @@ const OpexCycleData = () => {
               )}
             </CCardBody>
           </CCard>
+
+          <LastActivity lastactivity={cycle.cycle_last_activity} />
         </>
       )}
     </div>

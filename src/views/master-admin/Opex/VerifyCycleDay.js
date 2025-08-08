@@ -146,19 +146,17 @@ const VerifyCycleDay = () => {
         <LoadingSpinner />
       ) : dayDataError ? (
         <p className="text-danger">{dayDataError}</p>
-      ) : verifiedData ? (
-        <CCard className="mb-4">
-          <CCardHeader>
-            <h5>✅ Day Verified and Updated Successfully</h5>
-          </CCardHeader>
-          <CCardBody>{/* Success display remains the same */}</CCardBody>
-        </CCard>
       ) : (
         <>
           <CCard>
             <CCardHeader>
               <h5>
-                Verify Day - {new Date(day.data?.date).toLocaleDateString()}
+                Verify Day -{" "}
+                {new Date(day.date).toLocaleString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
               </h5>
             </CCardHeader>
             <CCardBody>
@@ -167,7 +165,11 @@ const VerifyCycleDay = () => {
                   <h6>Day Information</h6>
                   <p>
                     <strong>Date:</strong>{" "}
-                    {new Date(day.date).toLocaleDateString()}
+                    {new Date(day.date).toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </p>
                   <p>
                     <strong>Modules Planned:</strong>{" "}
@@ -350,9 +352,15 @@ const VerifyCycleDay = () => {
                         lineHeight: "1.5",
                         textAlign: "start",
                       }}
+                      dangerouslySetInnerHTML={{
+                        __html: `<span class="text-warning bg-warning p-1 rounded-1">Details</span> :&nbsp; ${day.verified_by.details.replace(
+                          /, /g,
+                          ",<br>"
+                        )}`,
+                      }}
                     >
-                      <CBadge color="warning">Details</CBadge> :&nbsp;
-                      {day.verified_by.details}
+                      {/* <CBadge color="warning">Details</CBadge> :&nbsp; */}
+                      {/* {day.verified_by.details} */}
                     </p>
 
                     <p

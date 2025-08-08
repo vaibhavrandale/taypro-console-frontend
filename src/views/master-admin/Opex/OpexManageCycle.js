@@ -13,13 +13,12 @@ import {
   CBadge,
   CRow,
   CCol,
-  CInputGroup,
-  CFormInput,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -43,7 +42,6 @@ const OpexManageCycle = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
-  const [searchTerm, setSearchTerm] = React.useState("");
 
   useEffect(() => {
     const fetchCycle = async () => {
@@ -99,8 +97,17 @@ const OpexManageCycle = () => {
                   {calculateProgress().toFixed(1)}% Complete
                 </CBadge>
                 <span>
-                  {new Date(cycle.start_date).toLocaleDateString()} -{" "}
-                  {new Date(cycle.end_date).toLocaleDateString()}
+                  {new Date(cycle.start_date).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}{" "}
+                  -{" "}
+                  {new Date(cycle.end_date).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </span>
               </div>
             </CCardHeader>
@@ -124,13 +131,6 @@ const OpexManageCycle = () => {
           <CCard>
             <CCardHeader className="d-flex justify-content-between align-items-center">
               <h5>Daily Cleaning Progress</h5>
-              <CInputGroup style={{ width: "300px" }}>
-                <CFormInput
-                  placeholder="Search by date..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </CInputGroup>
             </CCardHeader>
             <CCardBody>
               <CTable bordered hover responsive>
@@ -147,60 +147,60 @@ const OpexManageCycle = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {cycle.day_wise_data
-                    .filter((day) =>
-                      new Date(day.date)
-                        .toLocaleDateString()
-                        .includes(searchTerm)
-                    )
-                    .map((day, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell>Day {index + 1}</CTableDataCell>
-                        <CTableDataCell>{day._id}</CTableDataCell>
-                        <CTableDataCell>
-                          {new Date(day.date).toLocaleDateString()}
-                          {day.is_sunday && (
-                            <CBadge color="warning" className="ms-2">
-                              Sunday
-                            </CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_planned_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_cleaned_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_remaining_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.is_cleaning_done &&
-                          day.modules_remaining_for_day === 0 ? (
-                            <CBadge color="success">Completed</CBadge>
-                          ) : (
-                            <CBadge color="warning">Pending</CBadge>
-                          )}
-                          {day.is_verified && (
-                            <CBadge color="info" className="ms-2">
-                              Verified
-                            </CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <Link
-                            className="btn btn-primary btn-sm"
-                            to={`verify-day/${day._id}`}
-                          >
-                            Verify
-                          </Link>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
+                  {cycle.day_wise_data.map((day, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell>Day {index + 1}</CTableDataCell>
+                      <CTableDataCell>{day._id}</CTableDataCell>
+                      <CTableDataCell>
+                        {new Date(day.date).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                        {day.is_sunday && (
+                          <CBadge color="warning" className="ms-2">
+                            Sunday
+                          </CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_planned_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_cleaned_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_remaining_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.is_cleaning_done &&
+                        day.modules_remaining_for_day === 0 ? (
+                          <CBadge color="success">Completed</CBadge>
+                        ) : (
+                          <CBadge color="warning">Pending</CBadge>
+                        )}
+                        {day.is_verified && (
+                          <CBadge color="info" className="ms-2">
+                            Verified
+                          </CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          className="btn btn-primary btn-sm"
+                          to={`verify-day/${day._id}`}
+                        >
+                          Verify
+                        </Link>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
                 </CTableBody>
               </CTable>
             </CCardBody>
           </CCard>
+
+          <LastActivity lastactivity={cycle.cycle_last_activity} />
         </>
       )}
     </div>
