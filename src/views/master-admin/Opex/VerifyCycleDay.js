@@ -148,6 +148,38 @@ const VerifyCycleDay = () => {
         <p className="text-danger">{dayDataError}</p>
       ) : (
         <>
+          <CCard className="mb-3">
+            <CCardHeader>
+              <h6>Day Information</h6>
+            </CCardHeader>
+            <CCardBody>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Date:</strong>
+                </CCol>
+                <CCol sm="8">{new Date(day.date).toLocaleDateString()}</CCol>
+              </CRow>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Modules Planned:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_planned_for_day}</CCol>
+              </CRow>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Modules Cleaned:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_cleaned_for_day}</CCol>
+              </CRow>
+              <CRow>
+                <CCol sm="4">
+                  <strong>Modules Remaining:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_remaining_for_day}</CCol>
+              </CRow>
+            </CCardBody>
+          </CCard>
+
           <CCard>
             <CCardHeader>
               <h5>
@@ -256,13 +288,14 @@ const VerifyCycleDay = () => {
                         </span>
                       </CFormLabel>
                       <CFormInput
-                        type="number"
+                        type="text"
                         id="modules_cleaned_for_day"
                         name="modules_cleaned_for_day"
                         value={formData.modules_cleaned_for_day}
                         onChange={handleChange}
                         min="0"
                         required={formData.is_cleaning_done}
+                        style={{ maxWidth: "200px" }}
                       />
                     </CCol>
                   </CRow>

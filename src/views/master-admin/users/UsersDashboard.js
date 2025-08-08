@@ -347,6 +347,9 @@ const UsersDashboard = () => {
       const response = await axios.post("/api/v1/users", newdata, {
         headers: { authorization: `Bearer ${authtoken}` },
       });
+
+      console.log(response.data.data);
+
       if (response.status === 201 || response.status === 200) {
         dispatch({
           type: "ADD_USER_SUCCESS",
