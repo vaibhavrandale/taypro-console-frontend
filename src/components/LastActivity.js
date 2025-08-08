@@ -7,7 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 const LastActivity = ({ lastactivity }) => {
   if (!lastactivity || !Array.isArray(lastactivity)) {
     return (
-      <CCard className="mx-auto shadow rounded">
+      <CCard className="mx-auto shadow rounded my-2">
         <CCardHeader className="bg-light d-flex align-items-center justify-content-between">
           <div>
             <CIcon icon={cilSpeech} className="me-2 text-primary" />
@@ -22,7 +22,7 @@ const LastActivity = ({ lastactivity }) => {
   }
 
   return (
-    <CCard className="w-full mx-auto shadow rounded">
+    <CCard className="w-full mx-auto shadow rounded my-3">
       <CCardHeader className=" d-flex align-items-center justify-content-between">
         <div>
           <CIcon icon={cilSpeech} className="me-2 text-primary" />
@@ -55,7 +55,15 @@ const LastActivity = ({ lastactivity }) => {
                     <span className="fw-semibold">
                       {activity.name} -{" "}
                       <span className="text-muted small">
-                        {new Date(activity.timestamp).toLocaleString()}
+                        {new Date(activity.timestamp).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
                       </span>
                     </span>
                     <span className="d-flex flex-column">

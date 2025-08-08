@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import LastActivity from "../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -63,7 +64,7 @@ const OpexTemplate = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-
+  const [opexActivity, setOpexActivity] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   const [site_id, setSiteid] = useState(
     userInfo.assigned_sites[0]?.site_id || "abc"
@@ -107,6 +108,8 @@ const OpexTemplate = () => {
           type: "FETCH_OPEX_SUCCESS",
           payload: result.data.data,
         });
+
+        setOpexActivity(result.data.data.cycles.cycle_last_activity);
       } catch (error) {
         const message =
           error?.response?.data?.message ||
@@ -325,10 +328,18 @@ const OpexTemplate = () => {
                       <CTableRow key={index}>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.start_date).toLocaleDateString()}
+                          {new Date(cycle.start_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.end_date).toLocaleDateString()}
+                          {new Date(cycle.end_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>{cycle.modules_planned}</CTableDataCell>
                         <CTableDataCell>{cycle.modules_cleaned}</CTableDataCell>
@@ -364,6 +375,7 @@ const OpexTemplate = () => {
               </CTable>
             </CCardBody>
           </CCard>
+          <LastActivity lastactivity={opexActivity} />
         </>
       )}
     </div>
