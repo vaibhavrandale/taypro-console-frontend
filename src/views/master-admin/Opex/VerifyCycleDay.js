@@ -155,6 +155,38 @@ const VerifyCycleDay = () => {
         </CCard>
       ) : (
         <>
+          <CCard className="mb-3">
+            <CCardHeader>
+              <h6>Day Information</h6>
+            </CCardHeader>
+            <CCardBody>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Date:</strong>
+                </CCol>
+                <CCol sm="8">{new Date(day.date).toLocaleDateString()}</CCol>
+              </CRow>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Modules Planned:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_planned_for_day}</CCol>
+              </CRow>
+              <CRow className="mb-2">
+                <CCol sm="4">
+                  <strong>Modules Cleaned:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_cleaned_for_day}</CCol>
+              </CRow>
+              <CRow>
+                <CCol sm="4">
+                  <strong>Modules Remaining:</strong>
+                </CCol>
+                <CCol sm="8">{day.modules_remaining_for_day}</CCol>
+              </CRow>
+            </CCardBody>
+          </CCard>
+
           <CCard>
             <CCardHeader>
               <h5>
@@ -162,27 +194,6 @@ const VerifyCycleDay = () => {
               </h5>
             </CCardHeader>
             <CCardBody>
-              <CRow className="mt-3">
-                <CCol>
-                  <h6>Day Information</h6>
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(day.date).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <strong>Modules Planned:</strong>{" "}
-                    {day.modules_planned_for_day}
-                  </p>
-                  <p>
-                    <strong>Modules cleaned:</strong>{" "}
-                    {day.modules_cleaned_for_day}
-                  </p>
-                  <p>
-                    <strong>Modules Remaining:</strong>{" "}
-                    {day.modules_remaining_for_day}
-                  </p>
-                </CCol>
-              </CRow>
               <CForm onSubmit={handleSubmit}>
                 <CRow className="mb-3">
                   <CCol>
@@ -254,13 +265,14 @@ const VerifyCycleDay = () => {
                         </span>
                       </CFormLabel>
                       <CFormInput
-                        type="number"
+                        type="text"
                         id="modules_cleaned_for_day"
                         name="modules_cleaned_for_day"
                         value={formData.modules_cleaned_for_day}
                         onChange={handleChange}
                         min="0"
                         required={formData.is_cleaning_done}
+                        style={{ maxWidth: "200px" }}
                       />
                     </CCol>
                   </CRow>

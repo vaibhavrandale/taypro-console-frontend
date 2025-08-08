@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   CTable,
@@ -14,6 +14,8 @@ import {
   CCardBody,
   CCardHeader,
   CImage,
+  CButton,
+  CFormCheck,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSelector } from "react-redux";
@@ -40,6 +42,50 @@ const reducer = (state, action) => {
       return { ...state, createLoading: false, success: true };
     case "CREATE_FAIL":
       return { ...state, createLoading: false, createError: action.payload };
+
+    case "GENERATE_CERTIFICATE_REQUEST":
+      return { ...state, generatingCertificate: true, certificateError: "" };
+    case "GENERATE_CERTIFICATE_SUCCESS":
+      return {
+        ...state,
+        generatingCertificate: false,
+        opexData: action.payload,
+        selectedCycles: [],
+      };
+    case "GENERATE_CERTIFICATE_FAIL":
+      return {
+        ...state,
+        generatingCertificate: false,
+        certificateError: action.payload,
+      };
+
+    case "VERIFY_CYCLE_REQUEST":
+      return {
+        ...state,
+        verifyCycleLoading: true,
+        verifyCycleError: "",
+        success: false,
+      };
+    case "VERIFY_CYCLE_SUCCESS":
+      return {
+        ...state,
+        verifyCycleLoading: false,
+
+        // cycles: [...state.opexData.cycles, action.payload],
+        opexData: {
+          ...state.opexData,
+          cycles: state.opexData.cycles.map((cycle) =>
+            cycle._id === action.payload._id ? action.payload : cycle
+          ),
+        },
+      };
+    case "VERIFY_CYCLE_FAIL":
+      return {
+        ...state,
+        verifyCycleLoading: false,
+        verifyCycleError: action.payload,
+      };
+
     default:
       return state;
   }
@@ -47,7 +93,17 @@ const reducer = (state, action) => {
 
 const OpexTemplateManager = () => {
   const [
-    { opexData, loadingOpex, error, createLoading, createError },
+    {
+      opexData,
+      loadingOpex,
+      error,
+      createLoading,
+      createError,
+      generatingCertificate,
+      certificateError,
+      verifyCycleError,
+      verifyCycleLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     opexData: {},
@@ -55,8 +111,13 @@ const OpexTemplateManager = () => {
     createError: "",
     createLoading: false,
     error: "",
+    generatingCertificate: false,
+    certificateError: "",
+    verifyCycleError: "",
+    verifyCycleLoading: false,
   });
 
+  const [selectedCycles, setSelectedCycles] = useState([]);
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
@@ -77,6 +138,7 @@ const OpexTemplateManager = () => {
   } else if (userInfo.role === "Site Technician") {
     adminroute = "site-technician";
   }
+
   const fetchOpexData = async () => {
     dispatch({ type: "FETCH_OPEX_REQUEST" });
     try {
@@ -96,6 +158,7 @@ const OpexTemplateManager = () => {
       toast.error(error.response.data.message || error.response.data.error);
     }
   };
+
   useEffect(() => {
     fetchOpexData();
   }, [authtoken]);
@@ -127,6 +190,86 @@ const OpexTemplateManager = () => {
     } catch (error) {
       dispatch({
         type: "CREATE_FAIL",
+        payload: error.response.data.message || error.response.data.error,
+      });
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+  };
+
+  // Handle checkbox selection
+  const handleCheckboxChange = (cycle) => {
+    setSelectedCycles((prev) =>
+      prev.some((c) => c._id === cycle._id)
+        ? prev.filter((c) => c._id !== cycle._id)
+        : [...prev, cycle]
+    );
+  };
+
+  // Select all cycles
+  const selectAllCycles = () => {
+    if (selectedCycles.length === opexData.cycles.length) {
+      setSelectedCycles([]);
+    } else {
+      setSelectedCycles([...opexData.cycles]);
+    }
+  };
+
+  // Generate certificate for selected cycles
+  const generateCertificate = async () => {
+    if (selectedCycles.length === 0) {
+      toast.error("Please select at least one cycle to generate certificate");
+      return;
+    }
+
+    dispatch({ type: "GENERATE_CERTIFICATE_REQUEST" });
+
+    try {
+      const response = await axios.put(
+        `/api/v1/opex/generate-certificate/${opexData._id}`,
+        { cyclesArray: selectedCycles.map((cycle) => cycle._id) },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+
+      dispatch({
+        type: "GENERATE_CERTIFICATE_SUCCESS",
+        payload: response.data.updatedModule,
+      });
+
+      toast.success("Certificate generated successfully");
+      fetchOpexData();
+    } catch (error) {
+      dispatch({
+        type: "GENERATE_CERTIFICATE_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
+
+  const verifyCycleHandler = async (id) => {
+    dispatch({ type: "VERIFY_CYCLE_REQUEST" });
+
+    try {
+      const response = await axios.put(
+        `/api/v1/opex/verify-cycle/${opexData._id}/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      dispatch({
+        type: "VERIFY_CYCLE_SUCCESS",
+        payload: response.data.cycle,
+      });
+
+      toast.success(response.data.message);
+    } catch (error) {
+      dispatch({
+        type: "VERIFY_CYCLE_FAIL",
         payload: error.response.data.message || error.response.data.error,
       });
       toast.error(error.response.data.message || error.response.data.error);
@@ -280,6 +423,83 @@ const OpexTemplateManager = () => {
             </CCard>
           )}
 
+          {/* certificate Card */}
+          {opexData && opexData.blocks_data.length > 0 && (
+            <CCard className="mb-4">
+              <CCardHeader>
+                <h5 className="mb-0">Certificates</h5>
+              </CCardHeader>
+              <CCardBody>
+                <CTable bordered hover responsive>
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>Month</CTableHeaderCell>
+                      <CTableHeaderCell>Certificate ID</CTableHeaderCell>
+                      <CTableHeaderCell>Verified By</CTableHeaderCell>
+                      <CTableHeaderCell>Verified At</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {loadingOpex ? (
+                      <CTableRow>
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          <LoadingSpinner />
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : error ? (
+                      <CTableRow>
+                        {" "}
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          {error}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : opexData.certificates.length > 0 ? (
+                      opexData.certificates.map((block, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell>
+                            {new Date(
+                              block.verified_by.timestamp
+                            ).toLocaleString("en-GB", {
+                              month: "2-digit",
+                            })}
+                          </CTableDataCell>
+                          <CTableDataCell>{block._id}</CTableDataCell>
+                          <CTableDataCell>
+                            {block.verified_by.name}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {new Date(
+                              block.verified_by.timestamp
+                            ).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          No certificates Found.
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+              </CCardBody>
+            </CCard>
+          )}
+
           <div
             className="d-flex flex-column align-items-end justify-content-end mb-2"
             style={{ minWidth: "150px" }}
@@ -307,6 +527,28 @@ const OpexTemplateManager = () => {
               ""
             )}
           </div>
+
+          <div className="d-flex justify-content-end mb-3">
+            {selectedCycles.length > 0 ? (
+              <CButton
+                color="success"
+                size="sm"
+                onClick={generateCertificate}
+                disabled={generatingCertificate || selectedCycles.length === 0}
+              >
+                {generatingCertificate ? (
+                  <>
+                    Generating Certificate <LoadingSpinner />
+                  </>
+                ) : (
+                  "Generate Certificate"
+                )}
+              </CButton>
+            ) : (
+              ""
+            )}
+          </div>
+
           {/* Cycles Information Card */}
           <CCard className="mb-4">
             <CCardHeader>
@@ -317,6 +559,15 @@ const OpexTemplateManager = () => {
               <CTable bordered hover responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
+                    <CTableHeaderCell>
+                      <CFormCheck
+                        checked={
+                          opexData.cycles &&
+                          selectedCycles.length === opexData.cycles.length
+                        }
+                        onChange={selectAllCycles}
+                      />
+                    </CTableHeaderCell>
                     <CTableHeaderCell>Cycle</CTableHeaderCell>
                     <CTableHeaderCell>Cycle id</CTableHeaderCell>
                     <CTableHeaderCell>Cycle status</CTableHeaderCell>
@@ -324,7 +575,7 @@ const OpexTemplateManager = () => {
                     <CTableHeaderCell>End Date</CTableHeaderCell>
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
-                    <CTableHeaderCell>Remaining</CTableHeaderCell>{" "}
+                    <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
                     <CTableHeaderCell>Actions</CTableHeaderCell>
                   </CTableRow>
@@ -333,7 +584,7 @@ const OpexTemplateManager = () => {
                   {loadingOpex ? (
                     <CTableRow>
                       <CTableDataCell
-                        colSpan="9"
+                        colSpan="10"
                         className="text-center fw-bold"
                       >
                         <LoadingSpinner />
@@ -341,17 +592,24 @@ const OpexTemplateManager = () => {
                     </CTableRow>
                   ) : error ? (
                     <CTableRow>
-                      {" "}
                       <CTableDataCell
-                        colSpan="9"
+                        colSpan="10"
                         className="text-center fw-bold"
                       >
                         {error}
                       </CTableDataCell>
                     </CTableRow>
-                  ) : opexData.cycles.length > 0 ? (
+                  ) : opexData.cycles && opexData.cycles.length > 0 ? (
                     opexData.cycles.map((cycle, index) => (
                       <CTableRow key={index}>
+                        <CTableDataCell>
+                          <CFormCheck
+                            checked={selectedCycles.some(
+                              (c) => c._id === cycle._id
+                            )}
+                            onChange={() => handleCheckboxChange(cycle)}
+                          />
+                        </CTableDataCell>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
                         <CTableDataCell>{cycle._id}</CTableDataCell>
                         <CTableDataCell>
@@ -368,12 +626,8 @@ const OpexTemplateManager = () => {
                           {new Date(cycle.end_date).toLocaleDateString()}
                         </CTableDataCell>
                         <CTableDataCell>{cycle.modules_planned}</CTableDataCell>
+                        <CTableDataCell>{cycle.modules_cleaned}</CTableDataCell>
                         <CTableDataCell>
-                          {" "}
-                          {cycle.modules_cleaned}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {" "}
                           {cycle.modules_remaining}
                         </CTableDataCell>
                         <CTableDataCell>
@@ -385,21 +639,39 @@ const OpexTemplateManager = () => {
                         </CTableDataCell>
                         <CTableDataCell>
                           <Link
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-primary btn-sm m-1"
                             to={`/${adminroute}/opexdata/${site_id}/${opexData._id}/cycle/${cycle._id}`}
                           >
                             Manage
                           </Link>
+
+                          {!cycle.is_cycle_verified &&
+                          cycle.modules_planned === cycle.modules_cleaned ? (
+                            <Link
+                              className="btn btn-primary btn-sm m-1"
+                              onClick={() => verifyCycleHandler(cycle._id)}
+                            >
+                              {verifyCycleLoading ? (
+                                <LoadingSpinner />
+                              ) : (
+                                "verify"
+                              )}
+                            </Link>
+                          ) : cycle.is_cycle_verified ? (
+                            <CBadge color="success">Verified</CBadge>
+                          ) : (
+                            <CBadge color="warning">Pending</CBadge>
+                          )}
                         </CTableDataCell>
                       </CTableRow>
                     ))
                   ) : (
                     <CTableRow>
                       <CTableDataCell
-                        colSpan="9"
+                        colSpan="11"
                         className="text-center fw-bold"
                       >
-                        No matching DPR found.
+                        No cycles found
                       </CTableDataCell>
                     </CTableRow>
                   )}
@@ -413,4 +685,5 @@ const OpexTemplateManager = () => {
     </div>
   );
 };
+
 export default OpexTemplateManager;
