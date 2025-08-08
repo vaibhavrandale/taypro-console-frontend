@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import LastActivity from "../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -63,7 +64,7 @@ const OpexTemplate = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-
+  const [opexActivity, setOpexActivity] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   const [site_id, setSiteid] = useState(
     userInfo.assigned_sites[0]?.site_id || "abc"
@@ -107,6 +108,8 @@ const OpexTemplate = () => {
           type: "FETCH_OPEX_SUCCESS",
           payload: result.data.data,
         });
+
+        setOpexActivity(result.data.data.cycles.cycle_last_activity);
       } catch (error) {
         const message =
           error?.response?.data?.message ||
@@ -143,44 +146,47 @@ const OpexTemplate = () => {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
+      <CRow className="justify-content-end mb-3">
+        <CCol md={4}>
+          {loadingSiteIds ? (
+            <LoadingSpinner />
+          ) : errorSiteIds ? (
+            <CBadge color="warning" className="">
+              {errorSiteIds === "Site not found"
+                ? "Please contact Admin to view Data"
+                : errorSiteIds}
+            </CBadge>
+          ) : (
+            <CFormSelect
+              value={site_id}
+              onChange={handleSiteNameChange}
+              className="form-select"
+              aria-label="Select Site"
+            >
+              <option value="" disabled>
+                Select Site
+              </option>
+              {siteIds.map((site) => (
+                <option key={site.site_id} value={site.site_id}>
+                  {site.site_id}
+                </option>
+              ))}
+            </CFormSelect>
+          )}
+        </CCol>
+      </CRow>
+
       {loadingOpex ? (
         <LoadingSpinner />
       ) : error ? (
-        <CBadge color="warning" className="text-center p-2">
-          {error}
-        </CBadge>
+        <div className="text-center">
+          <CBadge color="danger" className="p-2">
+            {error}
+          </CBadge>
+        </div>
       ) : (
         <>
-          <CRow className="justify-content-end mb-3">
-            <CCol md={4}>
-              {loadingSiteIds ? (
-                <LoadingSpinner />
-              ) : errorSiteIds ? (
-                <CBadge color="warning" className="">
-                  {errorSiteIds === "Site not found"
-                    ? "Please contact Admin to view Data"
-                    : errorSiteIds}
-                </CBadge>
-              ) : (
-                <CFormSelect
-                  value={site_id}
-                  onChange={handleSiteNameChange}
-                  className="form-select"
-                  aria-label="Select Site"
-                >
-                  <option value="" disabled>
-                    Select Site
-                  </option>
-                  {siteIds.map((site) => (
-                    <option key={site.site_id} value={site.site_id}>
-                      {site.site_id}
-                    </option>
-                  ))}
-                </CFormSelect>
-              )}
-            </CCol>
-          </CRow>
           <CCard className="mb-4">
             <CCardHeader>
               <div className="d-flex w-100 align-items-center justify-content-between">
@@ -198,7 +204,7 @@ const OpexTemplate = () => {
                 <CCol md={4}>
                   <div className="d-flex align-items-between mb-3">
                     <div
-                      style={{ minWidth: "60px", background: "#fff" }}
+                      style={{ minWidth: "60px", background: "#DBD9D9" }}
                       className="m-1"
                     >
                       {opexData.client.logo && (
@@ -212,7 +218,7 @@ const OpexTemplate = () => {
                       )}
                     </div>
                     <div>
-                      <h6 className="text-primary mb-0">
+                      <h6 className="text-danger mb-0">
                         {opexData.client.client_name}
                       </h6>
                       <CBadge color="success">{opexData.site.site_type}</CBadge>
@@ -222,7 +228,7 @@ const OpexTemplate = () => {
                   <p className="mb-1">Location : {opexData.site.location}</p>
                 </CCol>
                 <CCol md={4}>
-                  <h6 className="text-primary">Modules Information</h6>
+                  <h6 className="text-success">Modules Information</h6>
                   <p className="mb-1">
                     Total Modules :{" "}
                     <span className="">{opexData.total_modules}</span>
@@ -236,7 +242,7 @@ const OpexTemplate = () => {
                   </p>
                 </CCol>
                 <CCol md={4}>
-                  <h6 className="text-primary">Resources</h6>
+                  <h6 className="text-success">Resources</h6>
                   <p className="mb-1">Robots : {opexData.total_robots}</p>
                   {userInfo.role !== "Opex Site Technician" && (
                     <p className="mb-1">Manpower : {opexData.total_manpower}</p>
@@ -322,10 +328,18 @@ const OpexTemplate = () => {
                       <CTableRow key={index}>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.start_date).toLocaleDateString()}
+                          {new Date(cycle.start_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.end_date).toLocaleDateString()}
+                          {new Date(cycle.end_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>{cycle.modules_planned}</CTableDataCell>
                         <CTableDataCell>{cycle.modules_cleaned}</CTableDataCell>
@@ -352,13 +366,16 @@ const OpexTemplate = () => {
                     ))
                   ) : (
                     <CTableRow>
-                      <CTableDataCell>No data </CTableDataCell>
+                      <CTableDataCell colSpan={8}>
+                        No cycles found
+                      </CTableDataCell>
                     </CTableRow>
                   )}
                 </CTableBody>
               </CTable>
             </CCardBody>
           </CCard>
+          <LastActivity lastactivity={opexActivity} />
         </>
       )}
     </div>

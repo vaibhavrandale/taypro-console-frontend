@@ -620,10 +620,18 @@ const OpexTemplateManager = () => {
                           )}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.start_date).toLocaleDateString()}
+                          {new Date(cycle.start_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {new Date(cycle.end_date).toLocaleDateString()}
+                          {new Date(cycle.end_date).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </CTableDataCell>
                         <CTableDataCell>{cycle.modules_planned}</CTableDataCell>
                         <CTableDataCell>{cycle.modules_cleaned}</CTableDataCell>
