@@ -76,38 +76,25 @@ const OpexTemplate = () => {
   } else if (userInfo.role === "Opex Site Technician") {
     adminroute = "opex-site-technician";
   }
-  const fetchSiteIds = async () => {
-    dispatch({ type: "FETCH_SITEID_REQUEST" });
-    try {
-      const result = await axios.get(`/api/v1/sites`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-      dispatch({
-        type: "FETCH_SITEID_SUCCESS",
-        payload: result.data.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: "FETCH_SITEID_FAIL",
-        payload: error.response?.data?.error || error.response?.data?.message,
-      });
-    }
-  };
 
   useEffect(() => {
-    const fetchOpexData = async () => {
-      if (!site_id) return; // Prevent call if site_id is still not set
+    if (
+      userInfo.role === "Opex Site Technician" &&
+      userInfo.is_master_opex_site_technician
+    ) {
+      const fetchOpexData = async () => {
+        if (!site_id) return; // Prevent call if site_id is still not set
 
-      dispatch({ type: "FETCH_OPEX_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
+        dispatch({ type: "FETCH_OPEX_REQUEST" });
+        try {
+          const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          });
 
-        dispatch({
-          type: "FETCH_OPEX_SUCCESS",
-          payload: result.data.data,
-        });
+          dispatch({
+            type: "FETCH_OPEX_SUCCESS",
+            payload: result.data.data,
+          });
 
         // setOpexActivity(result.data.data.cycles.cycle_last_activity);
       } catch (error) {
@@ -144,6 +131,18 @@ const OpexTemplate = () => {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
     }
   };
+
+  if (
+    userInfo &&
+    userInfo.role === "Opex Site Technician" &&
+    !userInfo.is_master_opex_site_technician
+  ) {
+    return (
+      <CCard className="mb-4">
+        <CCardHeader>You dont have access to view this data</CCardHeader>
+      </CCard>
+    );
+  }
 
   return (
     <div className="">

@@ -291,10 +291,10 @@ const OpexTemplateManager = () => {
 
       {loadingOpex ? (
         <LoadingSpinner />
-      ) : error ? (
+      ) : error || certificateError || verifyCycleError ? (
         <div className="d-flex justify-content-center">
           <CBadge color="danger" className="p-3">
-            {error}
+            {error || certificateError || verifyCycleError}
           </CBadge>
         </div>
       ) : (
@@ -437,6 +437,7 @@ const OpexTemplateManager = () => {
                       <CTableHeaderCell>Certificate ID</CTableHeaderCell>
                       <CTableHeaderCell>Verified By</CTableHeaderCell>
                       <CTableHeaderCell>Verified At</CTableHeaderCell>
+                      <CTableHeaderCell>Action</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -481,6 +482,14 @@ const OpexTemplateManager = () => {
                               month: "2-digit",
                               year: "numeric",
                             })}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            <Link
+                              className="btn btn-primary btn-sm m-1"
+                              to={`/${adminroute}/opexdata/${site_id}/opex-certificate/${block._id}`}
+                            >
+                              View
+                            </Link>
                           </CTableDataCell>
                         </CTableRow>
                       ))
@@ -662,7 +671,7 @@ const OpexTemplateManager = () => {
                               {verifyCycleLoading ? (
                                 <LoadingSpinner />
                               ) : (
-                                "verify"
+                                "Verify"
                               )}
                             </Link>
                           ) : cycle.is_cycle_verified ? (
