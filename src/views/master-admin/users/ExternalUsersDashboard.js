@@ -302,6 +302,7 @@ const ExternalUsersDashboard = () => {
       phone: "",
       type: "External",
       profile_image: "",
+      is_master_opex_site_technician: false,
     });
     setAddModalVisible(true);
   };
@@ -743,6 +744,19 @@ const ExternalUsersDashboard = () => {
             name="profile_image"
             value={formData.profile_image}
             onChange={handleFileChange}
+          />
+          <CFormLabel className="my-2">
+            Master Opex Site Technician{" "}
+            <span className="text-muted">
+              (This user have access to update daily dpr of opex acitivty)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="is_master_opex_site_technician"
+            name="is_master_opex_site_technician"
+            checked={formData.is_master_opex_site_technician || false}
+            onChange={handleChange}
           />{" "}
           {loadingUpload ? (
             <div className="mt-2 d-flex justify-content-center">
@@ -937,6 +951,19 @@ const ExternalUsersDashboard = () => {
               </CBadge>
             </div>
           ) : null}
+          <CFormLabel className="my-2">
+            Master Opex Site Technician{" "}
+            <span className="text-muted">
+              (This user have access to update daily dpr of opex acitivty)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="is_master_opex_site_technician"
+            name="is_master_opex_site_technician"
+            checked={formData.is_master_opex_site_technician || false}
+            onChange={handleChange}
+          />{" "}
         </CModalBody>
         <CModalFooter>
           <CButton

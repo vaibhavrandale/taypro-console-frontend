@@ -128,6 +128,7 @@ import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
 import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
 import OpexTemplateCreate from "./views/master-admin/Opex/CreateOpexTemplate";
 import VerifyCycleDay from "./views/master-admin/Opex/VerifyCycleDay";
+import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 // import AddFirstCycle from "./views/master-admin/Opex/CraeteFirstOpexCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -1550,6 +1551,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexTemplateCreate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
+    name: "Add Day In Cycle ",
+    element: (
+      <MasterAdminRoute>
+        <AddDayInCycle />
       </MasterAdminRoute>
     ),
   },

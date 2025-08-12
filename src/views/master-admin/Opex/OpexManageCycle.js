@@ -28,6 +28,7 @@ const reducer = (state, action) => {
       return { ...state, cycle: action.payload.data, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
     default:
       return state;
   }
@@ -111,6 +112,7 @@ const OpexManageCycle = () => {
                 </span>
               </div>
             </CCardHeader>
+
             <CCardBody>
               <CRow className="mb-2">
                 <CCol md={4}>
@@ -127,6 +129,13 @@ const OpexManageCycle = () => {
             </CCardBody>
           </CCard>
 
+          <div className="d-flex justify-content-end mb-2">
+            {cycle.modules_remaining > 0 && (
+              <Link className="btn btn-primary btn-sm" to={`/add-day`}>
+                Add Day
+              </Link>
+            )}
+          </div>
           {/* Daily Progress */}
           <CCard>
             <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -173,18 +182,29 @@ const OpexManageCycle = () => {
                         {day.modules_remaining_for_day}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {day.is_cleaning_done &&
-                        day.modules_remaining_for_day === 0 ? (
-                          <CBadge color="success">Completed</CBadge>
-                        ) : (
-                          <CBadge color="warning">Pending</CBadge>
-                        )}
+                        {/* Cleaning status */}
+                        <CBadge
+                          color={
+                            day.is_cleaning_done &&
+                            day.modules_remaining_for_day === 0
+                              ? "success"
+                              : "warning"
+                          }
+                        >
+                          {day.is_cleaning_done &&
+                          day.modules_remaining_for_day === 0
+                            ? "Completed"
+                            : "Pending"}
+                        </CBadge>
+
+                        {/* Verified status */}
                         {day.is_verified && (
                           <CBadge color="info" className="ms-2">
                             Verified
                           </CBadge>
                         )}
                       </CTableDataCell>
+
                       <CTableDataCell>
                         <Link
                           className="btn btn-primary btn-sm"
