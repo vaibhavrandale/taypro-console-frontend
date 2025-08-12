@@ -152,14 +152,20 @@ const OpexManageCycle = () => {
               <CTable bordered hover responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
-                    <CTableHeaderCell>DAY</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "70px" }}>
+                      DAY
+                    </CTableHeaderCell>
                     <CTableHeaderCell>Id</CTableHeaderCell>
                     <CTableHeaderCell>Date</CTableHeaderCell>
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Action</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Status
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Action
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -192,6 +198,11 @@ const OpexManageCycle = () => {
                         {day.is_cleaning_done &&
                         day.modules_remaining_for_day === 0 ? (
                           <CBadge color="success">Cleaning Completed</CBadge>
+                        ) : (day.is_sunday &&
+                            day.modules_remaining_for_day &&
+                            day.modules_cleaned_for_day &&
+                            day.modules_planned_for_day) === 0 ? (
+                          <CBadge color="danger">Cancelled</CBadge>
                         ) : (
                           <CBadge color="warning">Pending</CBadge>
                         )}
@@ -204,7 +215,7 @@ const OpexManageCycle = () => {
 
                       <CTableDataCell>
                         <Link
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary btn-sm  m-1"
                           to={`verify-day/${day._id}`}
                         >
                           Verify
@@ -213,7 +224,7 @@ const OpexManageCycle = () => {
                         {day.is_verified ? (
                           <Link
                             to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary"
+                            className="btn btn-sm btn-primary m-1"
                           >
                             Cleaning Activity
                           </Link>

@@ -182,7 +182,7 @@ const OpexCycleData = () => {
                     <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Status
                     </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
                       Activity
                     </CTableHeaderCell>
                     {userInfo.role === "Opex Site Technician" && (
@@ -233,7 +233,7 @@ const OpexCycleData = () => {
                         {day.is_verified ? (
                           <Link
                             to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary"
+                            className="btn btn-sm btn-primary  m-1"
                           >
                             Cleaning Activity
                           </Link>
@@ -244,7 +244,7 @@ const OpexCycleData = () => {
                       {userInfo.role === "Opex Site Technician" && (
                         <CTableDataCell>
                           <Link
-                            className="btn btn-sm btn-outline-dark"
+                            className="btn btn-sm btn-outline-dark  m-1"
                             to={`${day._id}/upload-images`}
                           >
                             Attachments
