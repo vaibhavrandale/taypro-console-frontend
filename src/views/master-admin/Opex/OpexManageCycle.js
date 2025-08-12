@@ -175,13 +175,18 @@ const OpexManageCycle = () => {
                 &nbsp;
                 <CBadge color="warning" className="">
                   <span className="">
-                    {new Date(cycle.start_date).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}{" "}
+                    {new Date(cycle.day_wise_data[0].date).toLocaleDateString(
+                      "en-IN",
+                      {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}{" "}
                     -{" "}
-                    {new Date(cycle.end_date).toLocaleDateString("en-IN", {
+                    {new Date(
+                      cycle.day_wise_data[cycle.day_wise_data.length - 1].date
+                    ).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
