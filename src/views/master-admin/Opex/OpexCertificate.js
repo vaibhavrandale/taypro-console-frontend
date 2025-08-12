@@ -317,10 +317,7 @@ const OpexCertificate = () => {
         <CCol>
           <h2 className="text-center mt-4 mb-4">Opex Certificate Details</h2>
           {certificateLoading ? (
-            <div
-              style={{ height: "80vh" }}
-              className="d-flex justify-content-center align-items-center"
-            >
+            <div className="d-flex justify-content-center align-items-center">
               <LoadingSpinner />
             </div>
           ) : (
@@ -333,10 +330,10 @@ const OpexCertificate = () => {
                   {loadingPdf ? <LoadingSpinner size="sm" /> : "Export PDF"}
                 </Link>
               </div>
-              <div className="table-responsive">
+              {/* <div className="table-responsive">
                 <CTable bordered hover>
                   <CTableHead>
-                    {/* Top Row - Branding & Title */}
+                   
                     <CTableRow className="bg-dark text-white text-center">
                       <CTableHeaderCell>
                         <img
@@ -370,7 +367,7 @@ const OpexCertificate = () => {
                       </CTableHeaderCell>
                     </CTableRow>
 
-                    <CTableRow className="bg-light text-center">
+                    <CTableRow className=" text-center">
                       <CTableHeaderCell style={{ minWidth: "100px" }}>
                         Project:
                         <span className="fw-bold">
@@ -420,37 +417,37 @@ const OpexCertificate = () => {
                       </CTableHeaderCell>
                     </CTableRow>
 
-                    {/* Main Table Header */}
+                   
                     <CTableRow className="text-center">
-                      <CTableHeaderCell className="bg-white text-dark">
+                      <CTableHeaderCell className="">
                         Sr. No
                       </CTableHeaderCell>
                       <CTableHeaderCell
-                        className="bg-white text-dark"
+                        className=""
                         style={{ width: "140px" }}
                       >
                         Start Date
                       </CTableHeaderCell>
                       <CTableHeaderCell
-                        className="bg-white text-dark"
+                        className=""
                         style={{ width: "140px" }}
                       >
                         End Date
                       </CTableHeaderCell>
                       <CTableHeaderCell
-                        className="bg-white text-dark"
+                        className=""
                         style={{ width: "160px" }}
                       >
                         Module
                       </CTableHeaderCell>
                       <CTableHeaderCell
-                        className="bg-white text-dark"
+                        className=""
                         style={{ width: "180px" }}
                       >
                         Cleaning Cycle No.
                       </CTableHeaderCell>
                       <CTableHeaderCell
-                        className="bg-white text-dark"
+                        className=""
                         style={{ width: "180px" }}
                       >
                         Project Incharge Sign
@@ -488,7 +485,7 @@ const OpexCertificate = () => {
                           </CTableRow>
                         ))}
 
-                        {/* Total Module Cleaned row */}
+                       
                         <CTableRow
                           className="fw-bold"
                           style={{ backgroundColor: "#f8f9fa" }}
@@ -518,6 +515,172 @@ const OpexCertificate = () => {
                     )}
                   </CTableBody>
                 </CTable>
+              </div> */}
+
+              <div className="table-responsive">
+                <table
+                  style={{
+                    borderCollapse: "collapse",
+                    width: "100%",
+                    fontFamily: "Arial, sans-serif",
+                  }}
+                  border="1"
+                >
+                  <thead>
+                    {/* Top Row - Branding & Title */}
+                    <tr style={{ textAlign: "center" }}>
+                      <th style={{ padding: "1px" }}>
+                        <img
+                          src={TayproLogo}
+                          alt="Taypro Logo"
+                          style={{
+                            height: "60px",
+                            width: "100px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      </th>
+                      <th
+                        colSpan="3"
+                        style={{ padding: "5px", fontWeight: "bold" }}
+                      >
+                        MONTHLY CLEANING CYCLE CERTIFICATION
+                      </th>
+                      <th
+                        style={{
+                          width: "20px",
+                          padding: "5px",
+                          textAlign: "left",
+                        }}
+                      >
+                        <strong>Doc. No.:</strong> {certificate.doc_no || "N/A"}
+                      </th>
+                      <th
+                        style={{
+                          width: "120px",
+                          padding: "5px",
+                          textAlign: "left",
+                        }}
+                      >
+                        <strong>Prepared By:</strong>{" "}
+                        {certificate.prepared_by || "N/A"}
+                      </th>
+                    </tr>
+
+                    <tr style={{ textAlign: "center" }}>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Project Name:</strong>{" "}
+                        {certificate.project_name || "N/A"}
+                      </th>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Site Capacity:</strong> 50 MW
+                      </th>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Date:</strong>{" "}
+                        {new Date(
+                          0,
+                          certificate.certificate_month - 1
+                        ).toLocaleString("en-US", { month: "long" })}
+                        -{certificate.certificate_year}
+                      </th>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Rev. No.:</strong>{" "}
+                        {certificate.revision || "N/A"}
+                      </th>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Project Type:</strong>{" "}
+                        {certificate.project_type || "N/A"}
+                      </th>
+                      <th style={{ padding: "5px", textAlign: "left" }}>
+                        <strong>Approved By:</strong>{" "}
+                        {certificate.approved_by || "N/A"}
+                      </th>
+                    </tr>
+
+                    {/* Main Table Header */}
+                    <tr
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      <th style={{ padding: "5px" }}>Sr No</th>
+                      <th style={{ padding: "5px" }}>Start Date</th>
+                      <th style={{ padding: "5px" }}>End Date</th>
+                      <th style={{ padding: "5px" }}>Module</th>
+                      <th style={{ padding: "5px" }}>Cleaning Cycle No.</th>
+                      <th style={{ padding: "5px" }}>Project Incharge Sign</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {certificateLoading ? (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          style={{ textAlign: "center", padding: "10px" }}
+                        >
+                          <LoadingSpinner />
+                        </td>
+                      </tr>
+                    ) : certificate.cycles?.length > 0 ? (
+                      <>
+                        {certificate.cycles.map((cycle, index) => (
+                          <tr key={index} style={{ textAlign: "center" }}>
+                            <td style={{ padding: "5px" }}>{index + 1}</td>
+                            <td style={{ padding: "5px" }}>
+                              {cycle.cycle_start_date
+                                ? cycle.cycle_start_date.slice(0, 10)
+                                : "N/A"}
+                            </td>
+                            <td style={{ padding: "5px" }}>
+                              {cycle.cycle_end_date
+                                ? cycle.cycle_end_date.slice(0, 10)
+                                : "N/A"}
+                            </td>
+                            <td style={{ padding: "5px" }}>
+                              {cycle.cycle_module_count}
+                            </td>
+                            <td style={{ padding: "5px" }}>
+                              {cycle.cycle_number}
+                            </td>
+                            <td style={{ padding: "5px" }}>
+                              <span className="badge bg-success">Verified</span>
+                            </td>
+                          </tr>
+                        ))}
+
+                        {/* Total Module Cleaned row */}
+                        <tr
+                          style={{
+                            fontWeight: "bold",
+                          }}
+                        >
+                          <td
+                            colSpan="4"
+                            style={{ textAlign: "center", padding: "10px" }}
+                          >
+                            Total Module Cleaned
+                          </td>
+                          <td
+                            colSpan="2"
+                            style={{ textAlign: "center", padding: "10px" }}
+                          >
+                            {certificate.total_modules_cleaned}
+                          </td>
+                        </tr>
+                      </>
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="6"
+                          style={{ textAlign: "center", padding: "10px" }}
+                        >
+                          <span className="badge bg-danger">No Data Found</span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </>
           )}

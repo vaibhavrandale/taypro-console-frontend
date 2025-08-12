@@ -110,10 +110,69 @@ const RobotOperating = () => {
   const userInfo = useSelector((state) => state.userInfo);
 
   const [pageInput, setPageInput] = useState("");
+  const [wheelCurrentValue, setWheelCurrentValue] = useState("");
+  const [brushCurrentValue, setBrushCurrentValue] = useState("");
+  const [wheelSpeedValue, setWheelSpeedValue] = useState("");
+  const [brushSpeedValue, setBrushSpeedValue] = useState("");
 
   let start = "C1";
   let stop = "CC";
   let returntodock = "D1";
+  let setWheelPwm100 = "W1";
+  let setWheelPwm200 = "W2";
+  let setWheelPwm250 = "W3";
+  let setBrushPwm100 = "R1";
+  let setBrushPwm200 = "R2";
+  let setBrushPwm250 = "R3";
+  let setWheelCurrent = "GWC";
+  let setBrushCurrent = "GBC";
+  let batteryVoltage = "BV";
+  let temp = "TP";
+  let cleanRight = "C3";
+  let cleanLeft = "C2";
+  let stopMotors = "CC"; // Cleaning Cancel
+  let cleaningFinished = "CF";
+  let moveLeft = "C4";
+  let moveRight = "C5";
+  let returnToDock = "D1";
+  let cleaningStart = "C1";
+  let weatherLockEnable = "WE";
+  let weatherLockDisable = "WD";
+  let testModeOn = "TS";
+  let testModeOff = "TC";
+  let setDockAtLeft = "D2";
+  let setDockAtRight = "D3";
+
+  let setWheelSpeed = "RWS";
+  let setBrushSpeed = "RBS";
+  let getPwmWheel = "PW";
+  let getPwmBrush = "PB";
+  let getAntiStuckBrushSpeed = "SP"; // PA180
+  let getBrushCurrent = "SB"; // CB
+  let getWheelCurrent = "SW"; // CW
+  let getEepromWheelCurrent = "EW";
+  let getEepromBrushCurrent = "EB";
+
+  let resetBoard = "RE";
+  let atDock = "AD";
+  let CheckDock = "ZD";
+  let CheckSensorState = "CD";
+  let checkManualMode = "AU";
+  let checkActuatorMode = "LE";
+  let checkBrushCurrent = "EB";
+  let checkWheelCurrent = "EW";
+  let checkWheelSpeed = "PW";
+  let checkBrushSpeed = "PB";
+  let checkTracker = "KE";
+
+  let setManualEnable = "NE";
+  let setManualDisable = "YD";
+
+  let setActuatorEnable = "ILE";
+  let setActuatorDisable = "ILD";
+
+  let setTrackerEnable = "KTE";
+  let setTrackerDisable = "KTD";
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
@@ -951,14 +1010,44 @@ const RobotOperating = () => {
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
                   <p>Set Wheel Speed</p>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    LOW
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setWheelPwm100, 4)}
+                  >
+                    {commandButton === 4 ? (
+                      <>
+                        LOW&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "LOW"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    MEDIUM
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setWheelPwm200, 5)}
+                  >
+                    {commandButton === 5 ? (
+                      <>
+                        MEDIUM&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "MEDIUM"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    HIGH
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setWheelPwm250, 6)}
+                  >
+                    {commandButton === 6 ? (
+                      <>
+                        HIGH&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "HIGH"
+                    )}
                   </CButton>
                 </CCardBody>
               </CCard>
@@ -969,14 +1058,44 @@ const RobotOperating = () => {
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
                   <p>Set Brush Speed</p>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    LOW
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setBrushPwm100, 7)}
+                  >
+                    {commandButton === 7 ? (
+                      <>
+                        LOW&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "LOW"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    MEDIUM
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setBrushPwm200, 8)}
+                  >
+                    {commandButton === 8 ? (
+                      <>
+                        MEDIUM&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "MEDIUM"
+                    )}
                   </CButton>
-                  <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                    HIGH
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1 shadow-sm"
+                    onClick={() => sendsingleDownlink(setBrushPwm250, 9)}
+                  >
+                    {commandButton === 9 ? (
+                      <>
+                        HIGH&nbsp;
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "HIGH"
+                    )}
                   </CButton>
                 </CCardBody>
               </CCard>
@@ -1036,12 +1155,26 @@ const RobotOperating = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter Wheel Current"
+                          value={wheelCurrentValue}
+                          onChange={(e) => setWheelCurrentValue(e.target.value)}
                         />
                         <CButton
+                          onClick={() =>
+                            sendsingleDownlink(
+                              `${setWheelCurrent}${wheelCurrentValue}`,
+                              10
+                            )
+                          }
                           type="button"
                           className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
                         >
-                          <FaArrowUp />
+                          {commandButton === 10 ? (
+                            <>
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            <FaArrowUp />
+                          )}
                         </CButton>
                       </div>
 
@@ -1051,12 +1184,26 @@ const RobotOperating = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter Brush Current"
+                          value={brushCurrentValue}
+                          onChange={(e) => setBrushCurrentValue(e.target.value)}
                         />
                         <CButton
                           type="button"
                           className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(
+                              `${setBrushCurrent}${brushCurrentValue}`,
+                              11
+                            )
+                          }
                         >
-                          <FaArrowUp />
+                          {commandButton === 11 ? (
+                            <>
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            <FaArrowUp />
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1077,13 +1224,27 @@ const RobotOperating = () => {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Enter Speed"
+                          placeholder="Brush Speed"
+                          value={brushSpeedValue}
+                          onChange={(e) => setBrushSpeedValue(e.target.value)}
                         />
                         <CButton
                           type="button"
                           className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(
+                              `${setBrushSpeed}${brushSpeedValue}`,
+                              12
+                            )
+                          }
                         >
-                          <FaArrowUp />
+                          {commandButton === 12 ? (
+                            <>
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            <FaArrowUp />
+                          )}
                         </CButton>
                       </div>
 
@@ -1092,13 +1253,27 @@ const RobotOperating = () => {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Brush Speed"
+                          placeholder="wheel Speed"
+                          value={wheelSpeedValue}
+                          onChange={(e) => setWheelSpeedValue(e.target.value)}
                         />
                         <CButton
                           type="button"
                           className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(
+                              `${setWheelSpeed}${wheelSpeedValue}`,
+                              13
+                            )
+                          }
                         >
-                          <FaArrowUp />
+                          {commandButton === 13 ? (
+                            <>
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            <FaArrowUp />
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1111,17 +1286,57 @@ const RobotOperating = () => {
                     <CCardBody>
                       <p>Direction</p>
                       <div className="d-flex flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Move Left
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(moveLeft, 14)}
+                        >
+                          {commandButton === 14 ? (
+                            <>
+                              Move Left&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Move Left"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Move Right
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(moveLeft, 15)}
+                        >
+                          {commandButton === 15 ? (
+                            <>
+                              Move Right&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Move Right"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Clean Left
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(cleanLeft, 16)}
+                        >
+                          {commandButton === 16 ? (
+                            <>
+                              Clean Left&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Clean Left"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Clean Right
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(cleanRight, 17)}
+                        >
+                          {commandButton === 17 ? (
+                            <>
+                              Clean Right&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Clean Right"
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1133,8 +1348,31 @@ const RobotOperating = () => {
                   <CCard className="shadow border-0" style={{ height: "100%" }}>
                     <CCardBody>
                       <p>Test Mode ☀️</p>
-                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                        Enable
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(testModeOn, 18)}
+                      >
+                        {commandButton === 18 ? (
+                          <>
+                            Enable&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Enable"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(testModeOff, 19)}
+                      >
+                        {commandButton === 19 ? (
+                          <>
+                            Disable&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Disable"
+                        )}
                       </CButton>
                     </CCardBody>
                   </CCard>
@@ -1152,8 +1390,35 @@ const RobotOperating = () => {
                   <CCard className="shadow border-0" style={{ height: "100%" }}>
                     <CCardBody>
                       <p>Weather Lock ☀️</p>
-                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                        Enable
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() =>
+                          sendsingleDownlink(weatherLockEnable, 20)
+                        }
+                      >
+                        {commandButton === 20 ? (
+                          <>
+                            Enable&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Enable"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() =>
+                          sendsingleDownlink(weatherLockDisable, 21)
+                        }
+                      >
+                        {commandButton === 21 ? (
+                          <>
+                            Disable&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Disable"
+                        )}
                       </CButton>
                     </CCardBody>
                   </CCard>
@@ -1164,8 +1429,18 @@ const RobotOperating = () => {
                   <CCard className="shadow border-0" style={{ height: "100%" }}>
                     <CCardBody>
                       <p>Reset</p>
-                      <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                        Reset
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(resetBoard, 22)}
+                      >
+                        {commandButton === 22 ? (
+                          <>
+                            Reset&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "Reset"
+                        )}
                       </CButton>
                     </CCardBody>
                   </CCard>
@@ -1177,17 +1452,60 @@ const RobotOperating = () => {
                     <CCardBody>
                       <p>Set Dock Station</p>
                       <div className="d-flex flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Left
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(setDockAtLeft, 23)}
+                        >
+                          {" "}
+                          {commandButton === 23 ? (
+                            <>
+                              Left&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Left"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Right
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(setDockAtRight, 24)}
+                        >
+                          {commandButton === 24 ? (
+                            <>
+                              Right&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Right"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Check EEPROM Dock
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(CheckDock, 25)}
+                        >
+                          {commandButton === 25 ? (
+                            <>
+                              Check EEPROM Dock&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Check EEPROM Dock"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Check Sensor State
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(CheckSensorState, 26)
+                          }
+                        >
+                          {commandButton === 26 ? (
+                            <>
+                              Check Sensor State&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Check Sensor State"
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1224,11 +1542,31 @@ const RobotOperating = () => {
                     <CCardBody>
                       <p>Get Values</p>
                       <div className="d-flex flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Battery Voltage
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(batteryVoltage, 27)}
+                        >
+                          {commandButton === 27 ? (
+                            <>
+                              Battery Voltage&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Battery Voltage"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Temperature
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(temp, 28)}
+                        >
+                          {commandButton === 28 ? (
+                            <>
+                              Temperature&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Temperature"
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1241,29 +1579,108 @@ const RobotOperating = () => {
                     <CCardBody>
                       <p>Get EEPROM Values</p>
                       <div className="d-flex justify-content-start flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Check Manual
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkManualMode, 29)
+                          }
+                        >
+                          {commandButton === 29 ? (
+                            <>
+                              Check Manual&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Check Manual"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Check Actuator
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkActuatorMode, 30)
+                          }
+                        >
+                          {commandButton === 30 ? (
+                            <>
+                              Check Actuator&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Check Actuator"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Brush Current
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkBrushCurrent, 31)
+                          }
+                        >
+                          {commandButton === 31 ? (
+                            <>
+                              Brush Current&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Brush Current"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Wheel Current
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkWheelCurrent, 32)
+                          }
+                        >
+                          {commandButton === 32 ? (
+                            <>
+                              Wheel Current&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Wheel Current"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Wheel Speed
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkWheelSpeed, 33)
+                          }
+                        >
+                          {commandButton === 33 ? (
+                            <>
+                              Wheel Speed&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Wheel Speed"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Burush Speed
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(checkBrushSpeed, 34)
+                          }
+                        >
+                          {commandButton === 34 ? (
+                            <>
+                              Burush Speed&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Burush Speed"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Check Tracker
-                        </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Brush Speed
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() => sendsingleDownlink(checkTracker, 35)}
+                        >
+                          {commandButton === 35 ? (
+                            <>
+                              Check Tracker&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Check Tracker"
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1276,14 +1693,96 @@ const RobotOperating = () => {
                     <CCardBody>
                       <p>Set EEPROM Values</p>
                       <div className="d-flex flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Manual Disable
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setManualEnable, 36)
+                          }
+                        >
+                          {commandButton === 36 ? (
+                            <>
+                              Manual Enable &nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Manual Enable"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Actuator Enable
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setManualDisable, 37)
+                          }
+                        >
+                          {commandButton === 37 ? (
+                            <>
+                              Manual Disable&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Manual Disable"
+                          )}
                         </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Tracker Enable
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setActuatorEnable, 38)
+                          }
+                        >
+                          {commandButton === 38 ? (
+                            <>
+                              Actuator Enable&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Actuator Enable"
+                          )}
+                        </CButton>
+
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setActuatorDisable, 39)
+                          }
+                        >
+                          {commandButton === 39 ? (
+                            <>
+                              Actuator Disable&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Actuator Disable"
+                          )}
+                        </CButton>
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setTrackerEnable, 40)
+                          }
+                        >
+                          {commandButton === 40 ? (
+                            <>
+                              Tracker Enable&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Tracker Enable"
+                          )}
+                        </CButton>
+                        <CButton
+                          className="btn btn-sm btn-secondary m-1 shadow-sm"
+                          onClick={() =>
+                            sendsingleDownlink(setTrackerDisable, 41)
+                          }
+                        >
+                          {commandButton === 41 ? (
+                            <>
+                              Tracker Disable&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Tracker Disable"
+                          )}
                         </CButton>
                       </div>
                     </CCardBody>
@@ -1302,7 +1801,7 @@ const RobotOperating = () => {
                   <CCard className="shadow border-0" style={{ height: "100%" }}>
                     <CCardBody>
                       <div className="d-flex justify-content-between align-items-center mb-3">
-                        <p className="mb-0">Running Current</p>
+                        <p className="mb-0">Custom Temp</p>
                         <span className="text-danger fst-italic small"></span>
                       </div>
                       <div className="position-relative">
@@ -1310,36 +1809,12 @@ const RobotOperating = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter Temp"
-                          value={text}
                         />
                         <CButton
                           type="button"
                           className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
                         >
                           <FaArrowUp />
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 2 - Direction */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Direction</p>
-                      <div className="d-flex justify-content-start flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Move Left
-                        </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Move Right
-                        </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Clean Left
-                        </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          Clean Right
                         </CButton>
                       </div>
                     </CCardBody>
