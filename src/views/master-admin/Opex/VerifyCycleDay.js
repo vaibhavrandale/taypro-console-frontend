@@ -11,6 +11,7 @@ import {
   CFormTextarea,
   CFormLabel,
   CBadge,
+  CWidgetStatsB,
 } from "@coreui/react";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
@@ -132,6 +133,8 @@ const VerifyCycleDay = () => {
       });
 
       toast.success(result.data.message);
+      console.log(verifiedData);
+
       navigate(-1);
     } catch (error) {
       dispatch({
@@ -141,14 +144,6 @@ const VerifyCycleDay = () => {
       toast.error(error.response?.data.error || error.response?.data.message);
     }
   };
-
-  //   const handleChange = (e) => {
-  //     const { name, value, type, checked } = e.target;
-  //     setFormData({
-  //       ...formData,
-  //       [name]: type === "checkbox" ? checked : value,
-  //     });
-  //   };
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -166,75 +161,63 @@ const VerifyCycleDay = () => {
         <p className="text-danger">{dayDataError}</p>
       ) : (
         <>
-          <CCard className="mb-3">
-            <CCardHeader>
-              <h6>Day Information</h6>
-            </CCardHeader>
-            <CCardBody>
-              <CRow className="mb-2">
-                <CCol sm="4">
-                  <strong>Date:</strong>
-                </CCol>
-                <CCol sm="8">{new Date(day.date).toLocaleDateString()}</CCol>
-              </CRow>
-              <CRow className="mb-2">
-                <CCol sm="4">
-                  <strong>Modules Planned:</strong>
-                </CCol>
-                <CCol sm="8">{day.modules_planned_for_day}</CCol>
-              </CRow>
-              <CRow className="mb-2">
-                <CCol sm="4">
-                  <strong>Modules Cleaned:</strong>
-                </CCol>
-                <CCol sm="8">{day.modules_cleaned_for_day}</CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="4">
-                  <strong>Modules Remaining:</strong>
-                </CCol>
-                <CCol sm="8">{day.modules_remaining_for_day}</CCol>
-              </CRow>
-            </CCardBody>
-          </CCard>
-
           <CCard>
             <CCardHeader>
               <h5>
-                Verify Day -{" "}
-                {new Date(day.date).toLocaleString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
+                Verify Day {day.dayNo + 1} of Cycle {day.CycleNo + 1}&nbsp;
+                <CBadge color="warning">
+                  {new Date(day.date).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </CBadge>
               </h5>
             </CCardHeader>
             <CCardBody>
-              <CRow className="mt-3">
-                <CCol>
-                  <h6>Day Information</h6>
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(day.date).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}
-                  </p>
-                  <p>
-                    <strong>Modules Planned:</strong>{" "}
-                    {day.modules_planned_for_day}
-                  </p>
-                  <p>
-                    <strong>Modules cleaned:</strong>{" "}
-                    {day.modules_cleaned_for_day}
-                  </p>
-                  <p>
-                    <strong>Modules Remaining:</strong>{" "}
-                    {day.modules_remaining_for_day}
-                  </p>
+              <CRow className="my-2">
+                {/* Modules Planned */}
+                <CCol xs={12} md={3}>
+                  <CWidgetStatsB
+                    className="shadow-sm"
+                    color="primary"
+                    value={day.modules_planned_for_day}
+                    title="Modules Planned"
+                    progress={{ value: 0 }}
+                  />
+                </CCol>
+
+                {/* Modules Cleaned */}
+                <CCol xs={12} md={3}>
+                  <CWidgetStatsB
+                    className="shadow-sm"
+                    color="success"
+                    value={
+                      day.modules_cleaned_for_day === 0
+                        ? "0"
+                        : day.modules_cleaned_for_day
+                    }
+                    title="Modules Cleaned"
+                    progress={{ value: 0 }}
+                  />
+                </CCol>
+
+                {/* Modules Remaining */}
+                <CCol xs={12} md={3}>
+                  <CWidgetStatsB
+                    className="shadow-sm"
+                    color="danger"
+                    value={
+                      day.modules_remaining_for_day === 0
+                        ? "0"
+                        : day.modules_remaining_for_day
+                    }
+                    title="Modules Remaining"
+                    progress={{ value: 0 }}
+                  />
                 </CCol>
               </CRow>
+
               <CForm onSubmit={handleSubmit}>
                 <CRow className="mb-3">
                   <CCol>

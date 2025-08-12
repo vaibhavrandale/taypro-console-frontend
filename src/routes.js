@@ -128,6 +128,8 @@ import OpexTemplateManager from "./views/master-admin/Opex/OpexTemplateManager";
 import OpexManageCycle from "./views/master-admin/Opex/OpexManageCycle";
 import OpexTemplateCreate from "./views/master-admin/Opex/CreateOpexTemplate";
 import VerifyCycleDay from "./views/master-admin/Opex/VerifyCycleDay";
+import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetails";
+import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 // import AddFirstCycle from "./views/master-admin/Opex/CraeteFirstOpexCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
@@ -1550,6 +1552,25 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexTemplateCreate />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <MasterAdminRoute>
+        <ViewTechnicianDetails />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
+    name: "Add Day In Cycle ",
+    element: (
+      <MasterAdminRoute>
+        <AddDayInCycle />
       </MasterAdminRoute>
     ),
   },
@@ -5677,6 +5698,15 @@ const routes = [
     ),
   },
   {
+    path: "/opex-client-admin/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <OpexClientAdmin>
+        <ViewTechnicianDetails />
+      </OpexClientAdmin>
+    ),
+  },
+  {
     path: "/opex-client-admin/profile-tab",
     name: "Profile Details",
     element: (
@@ -5744,8 +5774,9 @@ const routes = [
     ),
   },
   {
-    path: "/opex-site-technician/upload-images/:moduleId/:cycleId/:dayId/:site_id",
-    name: "Profile Details",
+    // path: "/opex-site-technician/upload-images/:moduleId/:cycleId/:dayId/:site_id",
+    path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId/:dayId/upload-images",
+    name: "Upload Day Wise Images",
     element: (
       <OpexSiteTechnicianRoute>
         <UploadImages />

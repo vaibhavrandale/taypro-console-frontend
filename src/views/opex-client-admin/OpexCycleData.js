@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   CCard,
@@ -13,19 +13,13 @@ import {
   CBadge,
   CRow,
   CCol,
-  CButton,
-  CModal,
-  CModalHeader,
-  CModalBody,
+  CWidgetStatsB,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import LoadingSpinner from "../../components/LoadingSpinner";
-import { formatDistanceToNow } from "date-fns";
-import CIcon from "@coreui/icons-react";
-import { cilX } from "@coreui/icons";
 import LastActivity from "../../components/LastActivity";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -48,30 +42,8 @@ const OpexCycleData = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const { moduleId, cycleId, site_id } = useParams();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [activityData, setActivityData] = useState([]);
-  const [cleaningDay, setCleaningDay] = useState("");
   const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo?.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo?.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+  const { moduleId, cycleId } = useParams();
 
   useEffect(() => {
     const fetchCycle = async () => {
@@ -108,90 +80,111 @@ const OpexCycleData = () => {
     return (totalCleaned / cycle.modules_planned) * 100;
   };
 
-  // const totalModulesPlanned = cycle?.day_wise_data?.reduce(
-  //   (sum, day) => sum + (day.modules_planned_for_day || 0),
-  //   0
-  // );
-  // const totalModulesCleaned = cycle?.day_wise_data?.reduce(
-  //   (sum, day) => sum + (day.modules_cleaned_for_day || 0),
-  //   0
-  // );
-  // const totalModulesRemaining = cycle?.day_wise_data?.reduce(
-  //   (sum, day) => sum + (day.modules_remaining_for_day || 0),
-  //   0
-  // );
-
-  const openActivityModal = (day, index) => {
-    console.log(day);
-
-    setActivityData(day);
-    setCleaningDay(index);
-    setModalVisible(true);
-  };
-
   return (
-    <div className="mt-4">
-      {/* Cycle Overview */}
+    <div className="mt-1">
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
         <div className="text-center">
-          <CBadge color="danger" className="p-2">
+          <CBadge color="danger" className="p-3">
             {error}
           </CBadge>
         </div>
       ) : (
         <>
-          <CCard className="mb-4">
+          <h5 className="my-2 d-flex justify-content-center align-items-center">
+            {new Date(cycle.start_date).toLocaleDateString("en-GB", {
+              month: "long",
+            })}{" "}
+            - Cycle <span className="text-success ms-1">{cycle.index + 1}</span>
+          </h5>
+
+          {/* Cycle Overview */}
+          <CRow className="mb-2">
+            {/* Total Planned */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="primary"
+                inverse
+                value={cycle.modules_planned}
+                title="Total Modules Planned"
+                progress="disable"
+              />
+            </CCol>
+
+            {/* Modules Cleaned */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="success"
+                inverse
+                value={cycle.modules_cleaned}
+                title="Modules Cleaned"
+              />
+            </CCol>
+
+            {/* Modules Remaining */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="warning"
+                inverse
+                value={
+                  cycle.modules_remaining === 0 ? "0" : cycle.modules_remaining
+                }
+                title="Modules Remaining"
+              />
+            </CCol>
+          </CRow>
+
+          {/* Daily Progress Table */}
+          <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
-              <h5>Cycle Overview</h5>
-              <div className="d-flex align-items-center">
-                <CBadge color="success" className="me-3">
-                  {calculateProgress().toFixed(0)} % Complete
-                </CBadge>
+              <h5 className="mb-0">Daily Cleaning Progress</h5>{" "}
+              <div className="d-flex justify-content-end align-items-center">
                 <span>
-                  {new Date(cycle.start_date).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}{" "}
-                  -{" "}
-                  {new Date(cycle.end_date).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  Cycle Completion:{" "}
+                  <CBadge color="success">
+                    {calculateProgress().toFixed(0)}%
+                  </CBadge>
                 </span>
+                &nbsp;
+                <CBadge color="warning" className="">
+                  <span className="">
+                    {new Date(cycle.start_date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}{" "}
+                    -{" "}
+                    {new Date(cycle.end_date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                </CBadge>
               </div>
             </CCardHeader>
             <CCardBody>
-              <CRow className="mb-2">
-                <CCol md={4}>
-                  Total Modules Planned: {cycle.modules_planned}
-                </CCol>
-                <CCol md={4}>Modules Cleaned: {cycle.modules_cleaned}</CCol>
-                <CCol md={4}>Modules Remaining: {cycle.modules_remaining}</CCol>
-              </CRow>
-            </CCardBody>
-          </CCard>
-
-          {/* Daily Progress */}
-          <CCard>
-            <CCardHeader className="d-flex justify-content-between align-items-center">
-              <h5>Daily Cleaning Progress</h5>
-            </CCardHeader>
-            <CCardBody>
-              <CTable bordered hover responsive>
-                <CTableHead color="secondary">
+              <CTable hover responsive>
+                <CTableHead color="dark">
                   <CTableRow>
-                    <CTableHeaderCell>DAY</CTableHeaderCell>
-                    <CTableHeaderCell>Id</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "50px" }}>
+                      Day
+                    </CTableHeaderCell>
+                    <CTableHeaderCell>ID</CTableHeaderCell>
                     <CTableHeaderCell>Date</CTableHeaderCell>
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Activity</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                      Status
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Activity
+                    </CTableHeaderCell>
                     {userInfo.role === "Opex Site Technician" && (
                       <CTableHeaderCell>Action</CTableHeaderCell>
                     )}
@@ -199,194 +192,69 @@ const OpexCycleData = () => {
                 </CTableHead>
                 <CTableBody>
                   {cycle.day_wise_data.map((day, index) => (
-                    <>
-                      <CTableRow key={index}>
-                        <CTableDataCell>Day {index + 1}</CTableDataCell>
-                        <CTableDataCell>{day._id}</CTableDataCell>
-                        <CTableDataCell>
-                          {new Date(day.date).toLocaleString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
-
-                          {day.is_sunday && (
-                            <CBadge color="warning" className="ms-2">
-                              Sunday
-                            </CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_planned_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_cleaned_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.modules_remaining_for_day}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.is_cleaning_done &&
-                          day.modules_remaining_for_day === 0 ? (
-                            <CBadge color="success">Completed</CBadge>
-                          ) : day.modules_cleaned_for_day +
-                              day.modules_planned_for_day +
-                              day.modules_remaining_for_day ===
-                            0 ? (
-                            <CBadge color="danger">cancelled</CBadge>
-                          ) : (
-                            <CBadge color="warning">Pending</CBadge>
-                          )}
-
-                          {day.is_verified && (
-                            <CBadge color="info" className="ms-2">
-                              Verified
-                            </CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {day.is_verified ? (
-                            <CButton
-                              color="primary"
-                              size="sm"
-                              onClick={() =>
-                                openActivityModal(day, `Day ${index + 1}`)
-                              }
-                            >
-                              activity
-                            </CButton>
-                          ) : (
-                            <CButton color="primary" size="sm" disabled>
-                              data is not verified
-                            </CButton>
-                          )}
-                        </CTableDataCell>
-                        {userInfo.role === "Opex Site Technician" && (
-                          <CTableDataCell>
-                            <Link
-                              className="btn btn-sm btn-secondary m-2"
-                              color="secondary"
-                              size="sm"
-                              to={`/${adminroute}/upload-images/${moduleId}/${cycleId}/${day._id}/${site_id}`}
-                            >
-                              Add Attachments
-                            </Link>
-                          </CTableDataCell>
+                    <CTableRow key={day._id} className="align-middle">
+                      <CTableDataCell>Day {index + 1}</CTableDataCell>
+                      <CTableDataCell>{day._id}</CTableDataCell>
+                      <CTableDataCell>
+                        {new Date(day.date).toLocaleDateString("en-GB")}
+                        {day.is_sunday && (
+                          <CBadge color="warning" className="ms-2">
+                            Sunday
+                          </CBadge>
                         )}
-                      </CTableRow>
-                    </>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_planned_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_cleaned_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.modules_remaining_for_day}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.is_cleaning_done &&
+                        day.modules_remaining_for_day === 0 ? (
+                          <CBadge color="success">Cleaning Completed</CBadge>
+                        ) : day.modules_cleaned_for_day === 0 &&
+                          day.modules_planned_for_day === 0 &&
+                          day.modules_remaining_for_day === 0 ? (
+                          <CBadge color="danger">Cancelled</CBadge>
+                        ) : (
+                          <CBadge color="warning">Pending</CBadge>
+                        )}
+                        {day.is_verified && (
+                          <CBadge color="success" className="ms-2">
+                            Verified
+                          </CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {day.is_verified ? (
+                          <Link
+                            to={`day/${day._id}/technician-detials`}
+                            className="btn btn-sm btn-primary  m-1"
+                          >
+                            Cleaning Activity
+                          </Link>
+                        ) : (
+                          <CBadge color="secondary">Pending</CBadge>
+                        )}
+                      </CTableDataCell>
+                      {userInfo.role === "Opex Site Technician" && (
+                        <CTableDataCell>
+                          <Link
+                            className="btn btn-sm btn-outline-dark  m-1"
+                            to={`${day._id}/upload-images`}
+                          >
+                            Attachments
+                          </Link>
+                        </CTableDataCell>
+                      )}
+                    </CTableRow>
                   ))}
-                  {/* <CTableRow color="">
-                    <CTableHeaderCell colSpan={3} className="text-center">
-                      Total
-                    </CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesPlanned}</CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesCleaned}</CTableHeaderCell>
-                    <CTableHeaderCell>{totalModulesRemaining}</CTableHeaderCell>
-                    <CTableHeaderCell colSpan={2}></CTableHeaderCell>
-                  </CTableRow> */}
                 </CTableBody>
               </CTable>
-              {modalVisible && (
-                <CModal
-                  className="rounded-0"
-                  visible={modalVisible}
-                  backdrop="static"
-                  alignment="center"
-                  scrollable={true}
-                  onClose={() => setModalVisible(false)}
-                  size="lg"
-                >
-                  <CModalHeader closeButton={false}>
-                    <CBadge color="success">{cleaningDay}</CBadge>&nbsp;
-                    Verification details
-                    <button
-                      type="button"
-                      className=" border-0 ms-auto py-0 px-1"
-                      onClick={() => setModalVisible(false)}
-                      style={{ background: "none" }}
-                    >
-                      <CIcon icon={cilX} size="lg" />
-                    </button>
-                  </CModalHeader>
-                  <CModalBody>
-                    <div className="d-flex align-items-center pb-3 mb-3">
-                      <img
-                        src={activityData.verified_by.profile_image}
-                        alt="Profile"
-                        className="rounded-circle"
-                        width="50"
-                        height="50"
-                        style={{ objectFit: "cover", cursor: "pointer" }}
-                      />
-                      <div className="flex-grow-1 mx-2">
-                        <p className="mb-1 fw-semibold d-flex justify-content-between flex-wrap">
-                          <span className="fw-semibold">
-                            {activityData.verified_by.name} -{" "}
-                            <span className="text-muted small">
-                              {new Date(
-                                activityData.verified_by.verified_at
-                              ).toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                              })}
-                            </span>
-                          </span>
-                          <span className="d-flex flex-column">
-                            <span className="text-muted small">
-                              {activityData.verified_by.verified_at
-                                ? formatDistanceToNow(
-                                    new Date(
-                                      activityData.verified_by.verified_at
-                                    ),
-                                    {
-                                      addSuffix: true,
-                                    }
-                                  )
-                                : "NA"}
-                            </span>
-                          </span>
-                        </p>
-
-                        <p
-                          className=" maxw-75 mw-75"
-                          style={{
-                            fontSize: "14px",
-                            lineHeight: "1.5",
-                            textAlign: "start",
-                          }}
-                          dangerouslySetInnerHTML={{
-                            __html: activityData.verified_by.details.replace(
-                              /, /g,
-                              ",<br>"
-                            ),
-                          }}
-                        ></p>
-                        {activityData.is_other ? (
-                          <p
-                            className=" maxw-75 mw-75"
-                            style={{
-                              fontSize: "14px",
-                              lineHeight: "1.5",
-                              textAlign: "start",
-                            }}
-                          >
-                            <CBadge color="warning">Remark</CBadge> :&nbsp;
-                            {activityData.remarks}
-                          </p>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </div>
-                  </CModalBody>
-                </CModal>
-              )}
             </CCardBody>
           </CCard>
 

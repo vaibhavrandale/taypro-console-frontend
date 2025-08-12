@@ -175,12 +175,12 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Card styles */
 .card,
 .card-header,
-CTable,
-CTableHead,
-CTableRow,
-CTableBody,
 CListGroup,
 input {
+  background-color: var(--important) !important;
+}
+
+table {
   background-color: var(--important) !important;
 }
 
