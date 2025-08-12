@@ -2952,6 +2952,60 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <OpexDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <ProjectAdminRoute>
+        <OpexTemplateManager />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <ProjectAdminRoute>
+        <OpexManageCycle />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <ProjectAdminRoute>
+        <VerifyCycleDay />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/create-template/:site_id",
+    name: "CreateOpex ",
+    element: (
+      <ProjectAdminRoute>
+        <OpexTemplateCreate />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/opexdata/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <ProjectAdminRoute>
+        <OpexCertificate />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -4196,6 +4250,60 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <UpdateExpense />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <ServiceAdminRoute>
+        <OpexDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <ServiceAdminRoute>
+        <OpexTemplateManager />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <ServiceAdminRoute>
+        <OpexManageCycle />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <ServiceAdminRoute>
+        <VerifyCycleDay />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/create-template/:site_id",
+    name: "CreateOpex ",
+    element: (
+      <ServiceAdminRoute>
+        <OpexTemplateCreate />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <ServiceAdminRoute>
+        <OpexCertificate />
       </ServiceAdminRoute>
     ),
   },
@@ -5577,6 +5685,15 @@ const routes = [
     element: (
       <OpexClientAdmin>
         <OpexCycleData />
+      </OpexClientAdmin>
+    ),
+  },
+  {
+    path: "/opex-client-admin/my-opex-data/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <OpexClientAdmin>
+        <OpexCertificate />
       </OpexClientAdmin>
     ),
   },
