@@ -42,7 +42,25 @@ const OpexManageCycle = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
-
+  const userInfo = useSelector((state) => state.userInfo);
+  let adminroute = "";
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
+  } else if (userInfo.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
+  }
   useEffect(() => {
     const fetchCycle = async () => {
       try {

@@ -883,6 +883,25 @@ const _nav = [
         ],
       },
 
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/project-admin/opexdata",
+          },
+        ],
+      },
+
       // ✅ GROUP 5: Users
       {
         component: CNavGroup,
@@ -895,11 +914,6 @@ const _nav = [
           />
         ),
         items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Users",
-          //   to: "/project-admin/users",
-          // },
           {
             component: CNavItem,
             name: "Technician Attendance",
@@ -907,6 +921,7 @@ const _nav = [
           },
         ],
       },
+
       {
         component: CNavItem,
         name: "Monthly Sites Report",
@@ -1326,6 +1341,25 @@ const _nav = [
             component: CNavItem,
             name: "Micro Fiber Data",
             to: "/service-admin/micro-fiber-data",
+          },
+        ],
+      },
+
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/service-admin/opexdata",
           },
         ],
       },

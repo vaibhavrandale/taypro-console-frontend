@@ -83,8 +83,10 @@ const OpexTemplateCreate = () => {
     adminroute = "service-user";
   } else if (userInfo.role === "Project User") {
     adminroute = "project-user";
-  } else if (userInfo.role === "Site Technician") {
-    adminroute = "site-technician";
+  } else if (userInfo.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
+  } else if (userInfo.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
   }
 
   // Handle input changes
