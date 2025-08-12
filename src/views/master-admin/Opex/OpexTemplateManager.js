@@ -317,7 +317,7 @@ const OpexTemplateManager = () => {
                   <div className="d-flex align-items-between mb-3">
                     <div
                       style={{ minWidth: "60px", background: "#fff" }}
-                      className="m-1"
+                      className="m-1 rounded-1"
                     >
                       {opexData.client.logo && (
                         <CImage
