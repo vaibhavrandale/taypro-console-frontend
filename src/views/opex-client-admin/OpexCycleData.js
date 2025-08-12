@@ -42,8 +42,26 @@ const OpexCycleData = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
+  const { moduleId, cycleId, site_id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
-  const { moduleId, cycleId } = useParams();
+  let adminroute = "";
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
+  } else if (userInfo.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
+  }
 
   useEffect(() => {
     const fetchCycle = async () => {
@@ -202,6 +220,20 @@ const OpexCycleData = () => {
                             Sunday
                           </CBadge>
                         )}
+
+                        {day.is_pm && (
+                          <CBadge color="warning" className="ms-2">
+                            Preventive Maintenance Scheduled
+                          </CBadge>
+                        )}
+                        {day.is_labour_absent && (
+                          <CBadge color="warning">Labour Absent</CBadge>
+                        )}
+                        {day.is_other && (
+                          <CBadge color="warning">
+                            Other Reasonis_master_opex_site_technician
+                          </CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         {day.modules_planned_for_day}
@@ -216,9 +248,13 @@ const OpexCycleData = () => {
                         {day.is_cleaning_done &&
                         day.modules_remaining_for_day === 0 ? (
                           <CBadge color="success">Cleaning Completed</CBadge>
-                        ) : day.modules_cleaned_for_day === 0 &&
-                          day.modules_planned_for_day === 0 &&
-                          day.modules_remaining_for_day === 0 ? (
+                        ) : (day.modules_cleaned_for_day === 0 &&
+                            day.modules_planned_for_day === 0 &&
+                            day.modules_remaining_for_day === 0) ||
+                          day.is_sunday ||
+                          day.is_pm ||
+                          day.is_labour_absent ||
+                          day.is_other ? (
                           <CBadge color="danger">Cancelled</CBadge>
                         ) : (
                           <CBadge color="warning">Pending</CBadge>
@@ -238,7 +274,7 @@ const OpexCycleData = () => {
                             Cleaning Activity
                           </Link>
                         ) : (
-                          <CBadge color="secondary">Pending</CBadge>
+                          <CBadge color="warning">Pending</CBadge>
                         )}
                       </CTableDataCell>
                       {userInfo.role === "Opex Site Technician" && (
