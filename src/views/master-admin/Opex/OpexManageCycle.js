@@ -13,6 +13,7 @@ import {
   CBadge,
   CRow,
   CCol,
+  CWidgetStatsB,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -90,44 +91,50 @@ const OpexManageCycle = () => {
         </CBadge>
       ) : (
         <>
-          <CCard className="mb-4">
-            <CCardHeader className="d-flex justify-content-between align-items-center">
-              <h5>Cycle Overview</h5>
-              <div className="d-flex align-items-center">
-                <CBadge color="success" className="me-3">
-                  {calculateProgress().toFixed(1)}% Complete
-                </CBadge>
-                <span>
-                  {new Date(cycle.start_date).toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}{" "}
-                  -{" "}
-                  {new Date(cycle.end_date).toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
-                </span>
-              </div>
-            </CCardHeader>
+          <h5 className="my-2 d-flex justify-content-center align-items-center">
+            {new Date(cycle.start_date).toLocaleDateString("en-GB", {
+              month: "long",
+            })}{" "}
+            - Cycle <span className="text-success ms-1">{cycle.index + 1}</span>
+          </h5>
+          {/* Cycle Overview */}
+          <CRow className="mb-2">
+            {/* Total Planned */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="primary"
+                inverse
+                value={cycle.modules_planned}
+                title="Total Modules Planned"
+                progress="disable"
+              />
+            </CCol>
 
-            <CCardBody>
-              <CRow className="mb-2">
-                <CCol md={4}>
-                  <strong>Total Modules Planned:</strong>{" "}
-                  {cycle.modules_planned}
-                </CCol>
-                <CCol md={4}>
-                  <strong>Modules Cleaned:</strong> {cycle.modules_cleaned}
-                </CCol>
-                <CCol md={4}>
-                  <strong>Modules Remaining:</strong> {cycle.modules_remaining}
-                </CCol>
-              </CRow>
-            </CCardBody>
-          </CCard>
+            {/* Modules Cleaned */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="success"
+                inverse
+                value={cycle.modules_cleaned}
+                title="Modules Cleaned"
+              />
+            </CCol>
+
+            {/* Modules Remaining */}
+            <CCol sm={6} lg={4}>
+              <CWidgetStatsB
+                className="mb-3 shadow-sm"
+                color="warning"
+                inverse
+                value={
+                  cycle.modules_remaining === 0 ? "0" : cycle.modules_remaining
+                }
+                title="Modules Remaining"
+              />
+            </CCol>
+          </CRow>
 
           <div className="d-flex justify-content-end mb-2">
             {cycle.modules_remaining > 0 && (
@@ -145,14 +152,20 @@ const OpexManageCycle = () => {
               <CTable bordered hover responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
-                    <CTableHeaderCell>DAY</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "70px" }}>
+                      DAY
+                    </CTableHeaderCell>
                     <CTableHeaderCell>Id</CTableHeaderCell>
                     <CTableHeaderCell>Date</CTableHeaderCell>
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Action</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Status
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Action
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -182,24 +195,19 @@ const OpexManageCycle = () => {
                         {day.modules_remaining_for_day}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {/* Cleaning status */}
-                        <CBadge
-                          color={
-                            day.is_cleaning_done &&
-                            day.modules_remaining_for_day === 0
-                              ? "success"
-                              : "warning"
-                          }
-                        >
-                          {day.is_cleaning_done &&
-                          day.modules_remaining_for_day === 0
-                            ? "Completed"
-                            : "Pending"}
-                        </CBadge>
-
-                        {/* Verified status */}
+                        {day.is_cleaning_done &&
+                        day.modules_remaining_for_day === 0 ? (
+                          <CBadge color="success">Cleaning Completed</CBadge>
+                        ) : (day.is_sunday &&
+                            day.modules_remaining_for_day &&
+                            day.modules_cleaned_for_day &&
+                            day.modules_planned_for_day) === 0 ? (
+                          <CBadge color="danger">Cancelled</CBadge>
+                        ) : (
+                          <CBadge color="warning">Pending</CBadge>
+                        )}
                         {day.is_verified && (
-                          <CBadge color="info" className="ms-2">
+                          <CBadge color="success" className="ms-2">
                             Verified
                           </CBadge>
                         )}
@@ -207,11 +215,22 @@ const OpexManageCycle = () => {
 
                       <CTableDataCell>
                         <Link
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary btn-sm  m-1"
                           to={`verify-day/${day._id}`}
                         >
                           Verify
                         </Link>
+                        &nbsp;
+                        {day.is_verified ? (
+                          <Link
+                            to={`day/${day._id}/technician-detials`}
+                            className="btn btn-sm btn-primary m-1"
+                          >
+                            Cleaning Activity
+                          </Link>
+                        ) : (
+                          <CBadge color="warning">Pending</CBadge>
+                        )}
                       </CTableDataCell>
                     </CTableRow>
                   ))}

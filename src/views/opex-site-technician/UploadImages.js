@@ -2,55 +2,104 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import {
   CBadge,
-  CButton,
+  CCarousel,
+  CCarouselCaption,
+  CCarouselItem,
   CFormInput,
   CFormLabel,
   CImage,
-  CModal,
-  CModalBody,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilX } from "@coreui/icons";
+
+// const reducer = (state, action) => {
+//   switch (action.type) {
+//     case "FETCH_ATTACHMENTS_REQUEST":
+//       return { ...state, loadingAttachments: true, error: "" };
+//     case "FETCH_ATTACHMENTS_SUCCESS":
+//       return {
+//         ...state,
+//         loadingAttachments: false,
+//         attachmentsData: action.payload,
+//         error: "",
+//       };
+//     case "FETCH_ATTACHMENTS_FAIL":
+//       return { ...state, loadingAttachments: false, error: action.payload };
+//     case "UPLOAD_REQUEST":
+//       return { ...state, loadingUpload: true, errorUpload: "" };
+//     case "UPLOAD_SUCCESS":
+//       return {
+//         ...state,
+//         loadingUpload: false,
+//         errorUpload: "",
+//       };
+//     case "UPLOAD_FAIL":
+//       return { ...state, loadingUpload: false, errorUpload: action.payload };
+//     case "ADD_ATTACHMENT_REQUEST":
+//       return { ...state, attachmentAddLoading: true, error: "" };
+//     case "ADD_ATTACHMENT_SUCCESS":
+//       return {
+//         ...state,
+//         attachmentAddLoading: false,
+//         attachmentsData: [...state.attachmentsData, action.payload], // ✅ update the actual carousel data
+//       };
+
+//     case "ADD_ATTACHMENT_FAIL":
+//       return { ...state, attachmentAddLoading: false, error: action.payload };
+//     default:
+//       return state;
+//   }
+// };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ATTACHMENTS_REQUEST":
       return { ...state, loadingAttachments: true, error: "" };
+
     case "FETCH_ATTACHMENTS_SUCCESS":
       return {
         ...state,
         loadingAttachments: false,
-        attachmentsData: action.payload,
+        attachmentsData: Array.isArray(action.payload)
+          ? [...action.payload]
+          : [],
         error: "",
       };
+
     case "FETCH_ATTACHMENTS_FAIL":
       return { ...state, loadingAttachments: false, error: action.payload };
+
     case "UPLOAD_REQUEST":
       return { ...state, loadingUpload: true, errorUpload: "" };
+
     case "UPLOAD_SUCCESS":
-      return {
-        ...state,
-        loadingUpload: false,
-        errorUpload: "",
-      };
+      return { ...state, loadingUpload: false, errorUpload: "" };
+
     case "UPLOAD_FAIL":
       return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     case "ADD_ATTACHMENT_REQUEST":
       return { ...state, attachmentAddLoading: true, error: "" };
 
-    case "ADD_ATTACHMENT_SUCCESS":
+    case "ADD_ATTACHMENT_SUCCESS": {
+      const newData = action.payload;
+      // If array, replace; if single object, append
+      const updatedData = Array.isArray(newData)
+        ? [...newData]
+        : [...state.attachmentsData, newData];
+
       return {
         ...state,
         attachmentAddLoading: false,
-        attachments: [...state.attachments, action.payload],
+        attachmentsData: updatedData,
       };
+    }
 
     case "ADD_ATTACHMENT_FAIL":
       return { ...state, attachmentAddLoading: false, error: action.payload };
+
     default:
       return state;
   }
@@ -63,7 +112,7 @@ const UploadImages = () => {
       loadingUpload,
       attachmentAddLoading,
       error,
-      attachments,
+
       loadingAttachments,
       attachmentsData,
     },
@@ -76,34 +125,11 @@ const UploadImages = () => {
     attachmentsData: [],
     loadingAttachments: false,
   });
-  const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.userInfo);
+
   const authtoken = useSelector((state) => state.authtoken);
-  const { moduleId, cycleId, dayId, site_id } = useParams();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const { moduleId, cycleId, dayId } = useParams();
 
   const [image, setImage] = useState("");
-
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
-
   useEffect(() => {
     const fetchAttachments = async () => {
       dispatch({ type: "FETCH_ATTACHMENTS_REQUEST" });
@@ -123,21 +149,25 @@ const UploadImages = () => {
         console.error(error);
         dispatch({
           type: "FETCH_ATTACHMENTS_FAIL",
-          payload: error.response?.data?.error || "Failed to fetch attachments",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
       }
     };
 
     fetchAttachments();
   }, [moduleId, cycleId, dayId, authtoken]);
-
+  console.log(image);
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
+
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
+
+      // 1. Upload image
       const { data } = await axios.post(
         "/api/v1/image-upload/daywise-cleaning",
         bodyFormData,
@@ -148,57 +178,59 @@ const UploadImages = () => {
           },
         }
       );
+
       dispatch({ type: "UPLOAD_SUCCESS" });
       setImage(data.url);
-      toast.success("Image uploaded successfully");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      // toast.success("Image uploadeed");
 
-  const handleAdd = async () => {
-    try {
+      // 2. Immediately send to backend after image upload
       dispatch({ type: "ADD_ATTACHMENT_REQUEST" });
+
       const response = await axios.post(
         `/api/v1/opex/attachments/${moduleId}/${cycleId}/${dayId}`,
-        { url: image },
+        { url: data.url },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
+          headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
+      console.log(response.data.data);
+
       if (response.status === 201 || response.status === 200) {
         dispatch({
           type: "ADD_ATTACHMENT_SUCCESS",
-          payload: response.data.data.user,
+          payload: response.data.data,
         });
-        setImage("");
+
+        toast.success("Attachment saved successfully");
+
+        setImage(""); // clear preview
       }
-      navigate(
-        `/${adminroute}/my-opex-data/${site_id}/${moduleId}/cycle/${cycleId}`
-      );
-      toast.success(response.data.message);
     } catch (error) {
       console.error(error);
       dispatch({
-        type: "ADD_ATTACHMENT_FAIL",
-        payload: error.response.data.error,
+        type: "UPLOAD_FAIL",
+        payload: error.response?.data?.error || error.response?.data?.message,
       });
-      toast.error(error.response.data.error);
+      toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
 
   return (
-    <div className="container p-3">
-      <h5 className="text-center mb-4">Cleaning Images</h5>
+    <div className="">
+      <h5 className="text-center ">Cleaning Images</h5>
 
       {/* Image Uplaod */}
       <div className="row g-3 mb-4">
         <div className="col-auto">
           <CFormLabel htmlFor="imageUpload" className="fw-semibold">
-            {loadingUpload ? (
+            {loadingUpload || attachmentAddLoading ? (
               <div className="mt-3 d-flex justify-content-center">
                 <LoadingSpinner />
               </div>
+            ) : errorUpload || error ? (
+              <CBadge className="" color="danger">
+                {error || errorUpload}
+              </CBadge>
             ) : (
               "Upload Image"
             )}
@@ -211,53 +243,10 @@ const UploadImages = () => {
             style={{ width: 250 }}
           />
         </div>
-
-        {/* image when selected */}
-        {image && (
-          <div className="col-auto">
-            <div className="position-relative border rounded shadow-sm p-2">
-              <img
-                src={image}
-                alt="Preview"
-                width="100%"
-                height="160"
-                className="rounded"
-                style={{ objectFit: "cover" }}
-              />
-              <button
-                className="position-absolute top-0 end-0 border-0 rounded-circle"
-                onClick={() => setImage("")}
-                aria-label="Remove image"
-              >
-                <CIcon icon={cilX} className="text-white" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Upload Button */}
-        <div className="col-auto d-flex align-items-end">
-          <CButton
-            type="submit"
-            size="sm"
-            color="success"
-            className="text-white"
-            onClick={handleAdd}
-            disabled={!image || attachmentAddLoading}
-          >
-            {attachmentAddLoading ? (
-              <>
-                Uploading... <LoadingSpinner size="sm" />
-              </>
-            ) : (
-              "Upload Attachment"
-            )}
-          </CButton>
-        </div>
       </div>
 
       {/* Uploaded images */}
-      <div className="row g-3">
+      <div className="">
         {loadingAttachments ? (
           <div className="my-3 d-flex justify-content-center">
             <LoadingSpinner />
@@ -268,59 +257,45 @@ const UploadImages = () => {
               {error}
             </CBadge>
           </div>
-        ) : (
-          attachmentsData &&
-          attachmentsData.map((img, index) => (
-            <div key={img._id} className="col-auto">
-              <div
-                className="position-relative border rounded shadow-sm p-2 bg-white"
-                style={{ width: 180 }}
-              >
-                <img
+        ) : attachmentsData.length > 0 ? (
+          <CCarousel controls indicators dark>
+            {attachmentsData.map((img, index) => (
+              <CCarouselItem key={index}>
+                <CImage
+                  className="d-block w-100"
                   src={img.url}
-                  alt={`uploaded-${index}`}
-                  width="100%"
-                  height="160"
-                  className="rounded cursor-pointer"
-                  style={{ objectFit: "cover" }}
-                  onClick={() => {
-                    setSelectedImage(img.url);
-                    setShowModal(true);
+                  alt={`slide-${index}`}
+                  style={{
+                    height: "400px",
+                    width: "100vw",
+                    objectFit: "contain",
                   }}
                 />
-                <div className="small mt-2 text-dark text-center fw-medium">
-                  <div>{img.uploaded_by?.name}</div>
-                  <div style={{ fontSize: "0.75rem" }}>
-                    {new Date(img.uploaded_by?.timestamp).toLocaleString()}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
+                <CCarouselCaption className="d-none d-md-block">
+                  <h5>Slide {index + 1}</h5>
+                  <p>
+                    {img.uploaded_by?.name || "Unknown"} at{" "}
+                    {new Date(img.uploaded_by?.timestamp).toLocaleString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      }
+                    )}
+                  </p>
+                </CCarouselCaption>
+              </CCarouselItem>
+            ))}
+          </CCarousel>
+        ) : (
+          <p className="text-center text-muted">No images uploaded yet.</p>
         )}
       </div>
-
-      <CModal
-        visible={showModal}
-        onClose={() => setShowModal(false)}
-        size="lg"
-        centered
-      >
-        <CModalBody>
-          {selectedImage && (
-            <CImage
-              src={selectedImage}
-              fluid
-              alt="Full Preview"
-              style={{
-                maxHeight: "500px",
-                width: "100%",
-                objectFit: "contain",
-              }}
-            />
-          )}
-        </CModalBody>
-      </CModal>
     </div>
   );
 };

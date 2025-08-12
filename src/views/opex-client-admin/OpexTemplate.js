@@ -64,7 +64,7 @@ const OpexTemplate = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const [opexActivity, setOpexActivity] = useState([]);
+  // const [opexActivity, setOpexActivity] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   const [site_id, setSiteid] = useState(
     userInfo.assigned_sites[0]?.site_id || "abc"
@@ -79,8 +79,9 @@ const OpexTemplate = () => {
 
   useEffect(() => {
     if (
-      userInfo.role === "Opex Site Technician" &&
-      userInfo.is_master_opex_site_technician
+      (userInfo.role === "Opex Site Technician" &&
+        userInfo.is_master_opex_site_technician) ||
+      userInfo.role === "Opex Client Admin"
     ) {
       const fetchOpexData = async () => {
         if (!site_id) return; // Prevent call if site_id is still not set
@@ -96,7 +97,7 @@ const OpexTemplate = () => {
             payload: result.data.data,
           });
 
-          setOpexActivity(result.data.data.cycles.cycle_last_activity);
+          // setOpexActivity(result.data.data.cycles.cycle_last_activity);
         } catch (error) {
           const message =
             error?.response?.data?.message ||
@@ -106,6 +107,7 @@ const OpexTemplate = () => {
           toast.error(message);
         }
       };
+
       const fetchSiteIds = async () => {
         dispatch({ type: "FETCH_SITEID_REQUEST" });
         try {
@@ -197,11 +199,11 @@ const OpexTemplate = () => {
       {loadingOpex ? (
         <LoadingSpinner />
       ) : error ? (
-        <div className="text-center">
+        <h3 className="text-center">
           <CBadge color="danger" className="p-2">
             {error}
           </CBadge>
-        </div>
+        </h3>
       ) : (
         <>
           <CCard className="mb-4">
@@ -304,6 +306,83 @@ const OpexTemplate = () => {
               </CCard>
             )}
 
+          {/* certificate Card */}
+          {opexData && opexData.blocks_data.length > 0 && (
+            <CCard className="mb-4">
+              <CCardHeader>
+                <h5 className="mb-0">Certificates</h5>
+              </CCardHeader>
+              <CCardBody>
+                <CTable bordered hover responsive>
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>Month</CTableHeaderCell>
+                      <CTableHeaderCell>Certificate ID</CTableHeaderCell>
+                      <CTableHeaderCell>Verified By</CTableHeaderCell>
+                      <CTableHeaderCell>Verified At</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {loadingOpex ? (
+                      <CTableRow>
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          <LoadingSpinner />
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : error ? (
+                      <CTableRow>
+                        {" "}
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          {error}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : opexData.certificates.length > 0 ? (
+                      opexData.certificates.map((block, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell>
+                            {new Date(
+                              block.verified_by.timestamp
+                            ).toLocaleString("en-GB", {
+                              month: "2-digit",
+                            })}
+                          </CTableDataCell>
+                          <CTableDataCell>{block._id}</CTableDataCell>
+                          <CTableDataCell>
+                            {block.verified_by.name}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {new Date(
+                              block.verified_by.timestamp
+                            ).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell
+                          colSpan="9"
+                          className="text-center fw-bold"
+                        >
+                          No certificates Found.
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+              </CCardBody>
+            </CCard>
+          )}
+
           {/* Cycles Information Card */}
           <CCard className="mb-4">
             <CCardHeader>
@@ -392,7 +471,7 @@ const OpexTemplate = () => {
               </CTable>
             </CCardBody>
           </CCard>
-          <LastActivity lastactivity={opexActivity} />
+          <LastActivity lastactivity={opexData.last_activity} />
         </>
       )}
     </div>
