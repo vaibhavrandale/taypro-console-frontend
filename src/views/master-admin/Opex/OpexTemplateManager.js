@@ -291,10 +291,10 @@ const OpexTemplateManager = () => {
 
       {loadingOpex ? (
         <LoadingSpinner />
-      ) : error ? (
+      ) : error || certificateError || verifyCycleError ? (
         <div className="d-flex justify-content-center">
           <CBadge color="danger" className="p-3">
-            {error}
+            {error || certificateError || verifyCycleError}
           </CBadge>
         </div>
       ) : (

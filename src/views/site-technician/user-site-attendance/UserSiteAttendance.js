@@ -103,9 +103,9 @@ const SitesCoordinates = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_ATTENDANCE_FAIL",
-          payload: "Failed to fetch User Attendance",
+          payload: error.response.data.error || error.response.data.message,
         });
-        toast.error("Failed to fetch User Attendance");
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
 
