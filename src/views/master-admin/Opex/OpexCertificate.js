@@ -123,7 +123,7 @@ const OpexCertificate = () => {
         { content: `Project Name: ` },
         {
           content: `${certificate.project_name || ""}`,
-          styles: { fontStyle: "bold" },
+          styles: { fontStyle: "bold", fontSize: 7 },
         },
         { content: `Site Capacity: ` },
         {
@@ -187,7 +187,7 @@ const OpexCertificate = () => {
           formatDate(cycle.cycle_end_date) || "",
           cycle.cycle_module_count || "",
           cycle.cycle_number || "",
-          "Verified",
+          "",
         ]);
       });
 
@@ -224,7 +224,7 @@ const OpexCertificate = () => {
               data.cell.x + 5,
               data.cell.y + 5,
               110,
-              40
+              38
             );
           }
         },
