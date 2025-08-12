@@ -327,6 +327,7 @@ const UsersDashboard = () => {
       profile_image: "",
       designation: "",
       employee_id: "",
+      is_master_opex_site_technician: false,
     });
     setAddModalVisible(true);
     setImage(""); // Reset image state when opening modal
@@ -816,6 +817,19 @@ const UsersDashboard = () => {
             accept="image/*"
             onChange={handleFileChange}
           />
+          <CFormLabel className="my-2">
+            Master Opex Site Technician{" "}
+            <span className="text-muted">
+              (This user have access to update daily dpr of opex acitivty)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="is_master_opex_site_technician"
+            name="is_master_opex_site_technician"
+            checked={formData.is_master_opex_site_technician || false}
+            onChange={handleChange}
+          />{" "}
           {loadingUpload ? (
             <div className="mt-2 d-flex justify-content-center">
               <LoadingSpinner />
@@ -993,6 +1007,19 @@ const UsersDashboard = () => {
             accept="image/*"
             onChange={handleFileChange}
           />
+          <CFormLabel className="my-2">
+            Master Opex Site Technician{" "}
+            <span className="text-muted">
+              (This user have access to update daily dpr of opex acitivty)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="is_master_opex_site_technician"
+            name="is_master_opex_site_technician"
+            checked={formData.is_master_opex_site_technician || false}
+            onChange={handleChange}
+          />{" "}
           {loadingUpload ? (
             <div className="mt-2 d-flex justify-content-center">
               <LoadingSpinner />

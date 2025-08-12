@@ -162,44 +162,79 @@ const OpexManageCycle = () => {
             )}
           </div>
           {/* Daily Progress */}
-          <CCard>
+          <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
-              <h5>Daily Cleaning Progress</h5>
+              <h5 className="mb-0">Daily Cleaning Progress</h5>{" "}
+              <div className="d-flex justify-content-end align-items-center">
+                <span>
+                  Cycle Completion:{" "}
+                  <CBadge color="success">
+                    {calculateProgress().toFixed(0)}%
+                  </CBadge>
+                </span>
+                &nbsp;
+                <CBadge color="warning" className="">
+                  <span className="">
+                    {new Date(cycle.start_date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}{" "}
+                    -{" "}
+                    {new Date(cycle.end_date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                </CBadge>
+              </div>
             </CCardHeader>
             <CCardBody>
-              <CTable bordered hover responsive>
-                <CTableHead color="secondary">
+              <CTable hover responsive>
+                <CTableHead color="dark">
                   <CTableRow>
-                    <CTableHeaderCell style={{ minWidth: "70px" }}>
-                      DAY
+                    <CTableHeaderCell style={{ minWidth: "50px" }}>
+                      Day
                     </CTableHeaderCell>
-                    <CTableHeaderCell>Id</CTableHeaderCell>
+                    <CTableHeaderCell>ID</CTableHeaderCell>
                     <CTableHeaderCell>Date</CTableHeaderCell>
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Status
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "200px" }}>
-                      Action
+                      Activity
                     </CTableHeaderCell>
+                    <CTableHeaderCell>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
                   {cycle.day_wise_data.map((day, index) => (
-                    <CTableRow key={index}>
+                    <CTableRow key={day._id} className="align-middle">
                       <CTableDataCell>Day {index + 1}</CTableDataCell>
                       <CTableDataCell>{day._id}</CTableDataCell>
                       <CTableDataCell>
-                        {new Date(day.date).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
+                        {new Date(day.date).toLocaleDateString("en-GB")}
                         {day.is_sunday && (
                           <CBadge color="warning" className="ms-2">
                             Sunday
+                          </CBadge>
+                        )}
+
+                        {day.is_pm && (
+                          <CBadge color="warning" className="ms-2">
+                            Preventive Maintenance Scheduled
+                          </CBadge>
+                        )}
+                        {day.is_labour_absent && (
+                          <CBadge color="warning">Labour Absent</CBadge>
+                        )}
+                        {day.is_other && (
+                          <CBadge color="warning">
+                            Other Reasonis_master_opex_site_technician
                           </CBadge>
                         )}
                       </CTableDataCell>
@@ -216,10 +251,13 @@ const OpexManageCycle = () => {
                         {day.is_cleaning_done &&
                         day.modules_remaining_for_day === 0 ? (
                           <CBadge color="success">Cleaning Completed</CBadge>
-                        ) : (day.is_sunday &&
-                            day.modules_remaining_for_day &&
-                            day.modules_cleaned_for_day &&
-                            day.modules_planned_for_day) === 0 ? (
+                        ) : (day.modules_cleaned_for_day === 0 &&
+                            day.modules_planned_for_day === 0 &&
+                            day.modules_remaining_for_day === 0) ||
+                          day.is_sunday ||
+                          day.is_pm ||
+                          day.is_labour_absent ||
+                          day.is_other ? (
                           <CBadge color="danger">Cancelled</CBadge>
                         ) : (
                           <CBadge color="warning">Pending</CBadge>
@@ -230,25 +268,25 @@ const OpexManageCycle = () => {
                           </CBadge>
                         )}
                       </CTableDataCell>
-
                       <CTableDataCell>
-                        <Link
-                          className="btn btn-primary btn-sm  m-1"
-                          to={`verify-day/${day._id}`}
-                        >
-                          Verify
-                        </Link>
-                        &nbsp;
                         {day.is_verified ? (
                           <Link
                             to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary m-1"
+                            className="btn btn-sm btn-primary  m-1"
                           >
                             Cleaning Activity
                           </Link>
                         ) : (
                           <CBadge color="warning">Pending</CBadge>
                         )}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          className="btn btn-sm btn-outline-dark  m-1"
+                          to={`${day._id}/upload-images`}
+                        >
+                          Attachments
+                        </Link>
                       </CTableDataCell>
                     </CTableRow>
                   ))}

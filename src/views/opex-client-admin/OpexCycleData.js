@@ -220,6 +220,20 @@ const OpexCycleData = () => {
                             Sunday
                           </CBadge>
                         )}
+
+                        {day.is_pm && (
+                          <CBadge color="warning" className="ms-2">
+                            Preventive Maintenance Scheduled
+                          </CBadge>
+                        )}
+                        {day.is_labour_absent && (
+                          <CBadge color="warning">Labour Absent</CBadge>
+                        )}
+                        {day.is_other && (
+                          <CBadge color="warning">
+                            Other Reasonis_master_opex_site_technician
+                          </CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell>
                         {day.modules_planned_for_day}
@@ -234,9 +248,13 @@ const OpexCycleData = () => {
                         {day.is_cleaning_done &&
                         day.modules_remaining_for_day === 0 ? (
                           <CBadge color="success">Cleaning Completed</CBadge>
-                        ) : day.modules_cleaned_for_day === 0 &&
-                          day.modules_planned_for_day === 0 &&
-                          day.modules_remaining_for_day === 0 ? (
+                        ) : (day.modules_cleaned_for_day === 0 &&
+                            day.modules_planned_for_day === 0 &&
+                            day.modules_remaining_for_day === 0) ||
+                          day.is_sunday ||
+                          day.is_pm ||
+                          day.is_labour_absent ||
+                          day.is_other ? (
                           <CBadge color="danger">Cancelled</CBadge>
                         ) : (
                           <CBadge color="warning">Pending</CBadge>
@@ -256,7 +274,7 @@ const OpexCycleData = () => {
                             Cleaning Activity
                           </Link>
                         ) : (
-                          <CBadge color="secondary">Pending</CBadge>
+                          <CBadge color="warning">Pending</CBadge>
                         )}
                       </CTableDataCell>
                       {userInfo.role === "Opex Site Technician" && (
