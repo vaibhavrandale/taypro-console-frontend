@@ -1,5 +1,17 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { CRow, CCol } from "@coreui/react";
+import {
+  CRow,
+  CCol,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CFormLabel,
+  CFormInput,
+  CModalFooter,
+  CButton,
+  CBadge,
+} from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -9,6 +21,9 @@ import TayproDarkBgLogo from "../../../assets/brand/logofordarkbg.png";
 import TayproWhiteBgLogo from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
+import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -31,29 +46,123 @@ const reducer = (state, action) => {
         certificateLoading: false,
         certificateError: action.payload,
       };
+    case "UPLOAD_TAYPRO_SIGN_REQUEST":
+      return {
+        ...state,
+        tayproSignUploadLoading: true,
+        tayproSignUploadError: "",
+      };
+    case "UPLOAD_TAYPRO_SIGN_SUCCESS":
+      return {
+        ...state,
+        tayproSignUploadLoading: false,
+        tayproSignUploadError: "",
+      };
+    case "UPLOAD_TAYPRO_SIGN_FAIL":
+      return {
+        ...state,
+        tayproSignUploadLoading: false,
+        tayproSignUploadError: action.payload,
+      };
+    case "ADD_TAYPRO_SIGN_REQUEST":
+      return { ...state, tayproSignAddloading: true, tayproSignError: "" };
 
+    case "ADD_TAYPRO_SIGN_SUCCESS":
+      return {
+        ...state,
+        tayproSignAddloading: false,
+        certificate: { ...state.certificate, ...action.payload },
+      };
+
+    case "ADD_TAYPRO_SIGN_FAIL":
+      return {
+        ...state,
+        tayproSignAddloading: false,
+        tayproSignError: action.payload,
+      };
+    case "UPLOAD_CLIENT_SIGN_REQUEST":
+      return {
+        ...state,
+        clientSignUploadLoading: true,
+        clientSignUploadError: "",
+      };
+    case "UPLOAD_CLIENT_SIGN_SUCCESS":
+      return {
+        ...state,
+        clientSignUploadLoading: false,
+        clientSignUploadError: "",
+      };
+    case "UPLOAD_CLIENT_SIGN_FAIL":
+      return {
+        ...state,
+        clientSignUploadLoading: false,
+        clientSignUploadError: action.payload,
+      };
+    case "ADD_CLIENT_SIGN_REQUEST":
+      return { ...state, clientSignAddloading: true, clientSignError: "" };
+
+    case "ADD_CLIENT_SIGN_SUCCESS":
+      return {
+        ...state,
+        clientSignAddloading: false,
+        certificate: { ...state.certificate, ...action.payload },
+      };
+
+    case "ADD_CLIENT_SIGN_FAIL":
+      return {
+        ...state,
+        clientSignAddloading: false,
+        clientSignError: action.payload,
+      };
     default:
       return state;
   }
 };
-
 const OpexCertificate = () => {
-  const [{ certificate, certificateLoading }, dispatch] = useReducer(reducer, {
+  const [
+    {
+      certificate,
+      certificateLoading,
+      certificateError,
+      tayproSignUploadLoading,
+      tayproSignAddloading,
+      tayproSignError,
+      tayproSignUploadError,
+      clientSignUploadLoading,
+      clientSignAddloading,
+      clientSignError,
+      clientSignUploadError,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
     certificate: [],
     certificateLoading: true,
     certificateError: "",
+    tayproSignUploadLoading: false,
+    tayproSignAddloading: false,
+    tayproSignError: "",
+    tayproSignUploadError: "",
+    clientSignUploadLoading: false,
+    clientSignAddloading: false,
+    clientSignError: "",
+    clientSignUploadError: "",
   });
 
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [image, setImage] = useState("");
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [clientImage, setClientImage] = useState("");
+  const [clientSignAddModalVisible, setClientSignAddModalVisible] =
+    useState(false);
 
   useEffect(() => {
     const fetchOpexCertificate = async () => {
       dispatch({ type: "FETCH_CERTIFICATE_REQUEST" });
       try {
         const result = await axios.get(
-          `/api/v1/opex/get-opex-certificate/${id}`,
+          `/api/v1/opex-certificate/get-opex-certificate/${id}`,
 
           {
             headers: { Authorization: `Bearer ${authtoken}` },
@@ -78,6 +187,131 @@ const OpexCertificate = () => {
     };
     fetchOpexCertificate();
   }, [authtoken, id]);
+
+  const handleAdd = async () => {
+    try {
+      dispatch({ type: "ADD_TAYPRO_SIGN_REQUEST" });
+      const response = await axios.put(
+        `/api/v1/opex-certificate/upload-taypro-sign/${certificate._id}`,
+        { sign_url: image },
+        {
+          headers: { authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({
+        type: "ADD_TAYPRO_SIGN_SUCCESS",
+        payload: response.data.data,
+      });
+      setAddModalVisible(false);
+      setImage("");
+
+      toast.success(response.data.message);
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: "ADD_TAYPRO_SIGN_FAIL",
+        payload: error.response.data.error,
+      });
+      toast.error(error.response.data.error);
+    }
+  };
+  const handleClientSignAdd = async () => {
+    try {
+      dispatch({ type: "ADD_CLIENT_SIGN_REQUEST" });
+      const response = await axios.put(
+        `/api/v1/opex-certificate/upload-client-sign/${certificate._id}`,
+        { sign_url: clientImage },
+        {
+          headers: { authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({
+        type: "ADD_CLIENT_SIGN_SUCCESS",
+        payload: response.data.data,
+      });
+      setClientSignAddModalVisible(false);
+      setClientImage("");
+
+      toast.success(response.data.message);
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: "ADD_CLIENT_SIGN_FAIL",
+        payload: error.response.data.error,
+      });
+      toast.error(error.response.data.error);
+    }
+  };
+
+  const openTayproSignUploadModal = () => {
+    setAddModalVisible(true);
+    setImage(""); // Reset image state when opening modal
+  };
+
+  const openClientSignUploadModal = () => {
+    setClientSignAddModalVisible(true);
+    setClientImage(""); // Reset clientImage state when opening modal
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_TAYPRO_SIGN_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/opex-taypro-signature",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      dispatch({ type: "UPLOAD_TAYPRO_SIGN_SUCCESS" });
+      setImage(data.url);
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_TAYPRO_SIGN_FAIL",
+        payload: error.response.data.error,
+      });
+      console.error(error);
+    }
+  };
+
+  const handleClientSignFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_CLIENT_SIGN_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/opex-client-signature",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      dispatch({ type: "UPLOAD_CLIENT_SIGN_SUCCESS" });
+      setClientImage(data.url);
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_CLIENT_SIGN_FAIL",
+        payload: error.response.data.error,
+      });
+      console.error(error);
+    }
+  };
 
   const exportToPdf = async () => {
     try {
@@ -463,7 +697,11 @@ const OpexCertificate = () => {
                               }}
                             >
                               {cycle.cycle_start_date
-                                ? cycle.cycle_start_date.slice(0, 10)
+                                ? cycle.cycle_start_date
+                                    .slice(0, 10)
+                                    .split("-")
+                                    .reverse()
+                                    .join("-")
                                 : "N/A"}
                             </td>
                             <td
@@ -473,7 +711,11 @@ const OpexCertificate = () => {
                               }}
                             >
                               {cycle.cycle_end_date
-                                ? cycle.cycle_end_date.slice(0, 10)
+                                ? cycle.cycle_end_date
+                                    .slice(0, 10)
+                                    .split("-")
+                                    .reverse()
+                                    .join("-")
                                 : "N/A"}
                             </td>
                             <td
@@ -514,136 +756,7 @@ const OpexCertificate = () => {
                     )}
                   </tbody>
                 </table>
-                {/* <table
-                  style={{
-                    borderCollapse: "collapse",
-                    width: "100%",
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "14px",
-                    border: "0.5px solid white",
-                  }}
-                >
-                  <thead>
-                    <tr style={{ fontWeight: "bold" }}>
-                      <th
-                        colSpan={2}
-                        style={{
-                          border: "0.5px solid white",
-                          padding: "5px",
-                          textAlign: "center",
-                        }}
-                      >
-                        Total Module Cleaned
-                      </th>
-                      <th
-                        colSpan={2}
-                        style={{
-                          border: "0.5px solid white",
-                          padding: "5px",
-                          textAlign: "left",
-                        }}
-                      >
-                        1069376
-                      </th>
-                    </tr>
-                    <tr
-                      style={{ backgroundColor: "#d9d9d9", fontWeight: "bold" }}
-                    >
-                      <th
-                        colSpan={2}
-                        style={{
-                          border: "0.5px solid white",
-                          padding: "5px",
-                          textAlign: "center",
-                          color: "#000",
-                        }}
-                      >
-                        For Client
-                      </th>
-                      <th
-                        colSpan={2}
-                        style={{
-                          border: "0.5px solid white",
-                          padding: "5px",
-                          textAlign: "center",
-                          color: "#000",
-                        }}
-                      >
-                        For TAYPRO
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td
-                        style={{
-                          border: "0.5px solid white",
-                          padding: "5px",
-                          width: "15%",
-                        }}
-                      >
-                        Name
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      ></td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Sign
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        <img
-                          src="signature.png" // replace with actual signature image path
-                          alt="Signature"
-                          style={{ height: "40px" }}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Sign
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      ></td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Name
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Abhay Singh
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Designation
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      ></td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Designation
-                      </td>
-                      <td
-                        style={{ border: "0.5px solid white", padding: "5px" }}
-                      >
-                        Asst. Service Manager
-                      </td>
-                    </tr>
-                  </tbody>
-                </table> */}
+
                 <table
                   style={{
                     width: "100%",
@@ -716,14 +829,21 @@ const OpexCertificate = () => {
                           width: "50%",
                         }}
                       >
-                        Name <span style={{ marginLeft: "60px" }}>:</span>
+                        Name{" "}
+                        <span style={{ marginLeft: "60px" }}>
+                          :{" "}
+                          {certificate.is_client_verification &&
+                            certificate.client_verification.name}
+                        </span>
                       </td>
                       <td
                         style={{ border: "0.5px solid white", padding: "5px" }}
                       >
                         Name
                         <span style={{ marginLeft: "60px" }}>
-                          : {certificate.taypro_name}
+                          :{" "}
+                          {certificate.is_taypro_verification &&
+                            certificate.taypro_verification.name}
                         </span>
                       </td>
                     </tr>
@@ -737,11 +857,13 @@ const OpexCertificate = () => {
                         Sign
                         <span style={{ marginLeft: "70px" }}>
                           :
-                          {/* <img
-                            src={TayproLogo}
-                            alt="Taypro Logo"
-                            style={{ height: "40px" }}
-                          /> */}
+                          {certificate.is_client_verification && (
+                            <img
+                              src={certificate.client_verification.signature}
+                              alt="Client Sign"
+                              style={{ height: "40px", marginLeft: "20px" }}
+                            />
+                          )}
                         </span>
                       </td>
                       <td
@@ -753,12 +875,13 @@ const OpexCertificate = () => {
                         Sign
                         <span style={{ marginLeft: "70px" }}>
                           :
-                          <img
-                            // src="https://res.cloudinary.com/decyim6cd/image/upload/v1755000739/profile-image/giwgwsgzvkcrdszr6luz.jpg"
-                            src={certificate.taypro_sign}
-                            alt="Taypro Sign"
-                            style={{ height: "40px", marginLeft: "20px" }}
-                          />
+                          {certificate.is_taypro_verification && (
+                            <img
+                              src={certificate.taypro_verification.signature}
+                              alt="Taypro Sign"
+                              style={{ height: "40px", marginLeft: "20px" }}
+                            />
+                          )}
                         </span>
                       </td>
                     </tr>
@@ -767,24 +890,219 @@ const OpexCertificate = () => {
                         style={{ border: "0.5px solid white", padding: "5px" }}
                       >
                         Designation
-                        <span style={{ marginLeft: "25px" }}>:</span>
+                        <span style={{ marginLeft: "25px" }}>
+                          :
+                          {certificate.is_client_verification &&
+                            certificate.client_verification.designation}
+                        </span>
                       </td>
                       <td
                         style={{ border: "0.5px solid white", padding: "5px" }}
                       >
                         Designation
                         <span style={{ marginLeft: "25px" }}>
-                          : {certificate.taypro_designation}
+                          :{" "}
+                          {certificate.is_taypro_verification &&
+                            certificate.taypro_verification.designation}
                         </span>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+
+              <div className="d-flex justify-content-between my-3">
+                <Link
+                  className="btn btn-sm btn-primary m-1"
+                  onClick={openClientSignUploadModal}
+                >
+                  Client Sign
+                </Link>
+                {!certificate.is_taypro_verification && (
+                  <Link
+                    className="btn btn-sm btn-primary m-1"
+                    onClick={openTayproSignUploadModal}
+                  >
+                    {" "}
+                    Taypro Sign
+                  </Link>
+                )}
+              </div>
             </>
+            <hr />
+            <LastActivity lastactivity={certificate.last_activity} />
           </CCol>
         )}
       </CRow>
+
+      {/* taypro sign upload modal */}
+      <CModal
+        size="md"
+        scrollable
+        alignment="center"
+        backdrop="static"
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle id="addUserModalTitle">Upload Signature</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setAddModalVisible(false)}
+            style={{ background: "none" }}
+            aria-label="Close"
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          <CFormLabel htmlFor="profile_image">Taypro Signature</CFormLabel>
+          <CFormInput
+            id="sign_url"
+            type="file"
+            name="sign_url"
+            onChange={handleFileChange}
+          />
+          {tayproSignUploadLoading ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : tayproSignError ? (
+            <CBadge color="danger">{tayproSignError}</CBadge>
+          ) : image ? (
+            <div className="my-2 position-relative">
+              <img
+                className="my-2 border"
+                src={image}
+                alt="Profile preview"
+                width="100"
+                height="100"
+                style={{ objectFit: "contain", borderRadius: "5px" }}
+              />
+              <button
+                className="position-absolute top-10 end-12 bg-danger border-0 rounded-circle "
+                onClick={() => setImage("")}
+                aria-label="Remove image"
+              >
+                <CIcon icon={cilX} />
+              </button>
+            </div>
+          ) : null}
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setAddModalVisible(false);
+              setImage("");
+            }}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white"
+            onClick={handleAdd}
+            disabled={tayproSignAddloading || !image}
+          >
+            {tayproSignAddloading ? (
+              <>
+                Uploading..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Upload"
+            )}
+          </CButton>
+        </CModalFooter>
+      </CModal>
+      {/* client sign uplaod modal */}
+      <CModal
+        size="md"
+        scrollable
+        alignment="center"
+        backdrop="static"
+        visible={clientSignAddModalVisible}
+        onClose={() => setClientSignAddModalVisible(false)}
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle id="addUserModalTitle">Upload Signature</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setClientSignAddModalVisible(false)}
+            style={{ background: "none" }}
+            aria-label="Close"
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          <CFormLabel htmlFor="profile_image">Client Signature</CFormLabel>
+          <CFormInput
+            id="sign_url"
+            type="file"
+            name="sign_url"
+            onChange={handleClientSignFileChange}
+          />
+          {clientSignUploadLoading ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : clientSignError ? (
+            <CBadge color="danger">{clientSignError}</CBadge>
+          ) : clientImage ? (
+            <div className="my-2 position-relative">
+              <img
+                className="my-2 border"
+                src={clientImage}
+                alt="Profile preview"
+                width="100"
+                height="100"
+                style={{ objectFit: "contain", borderRadius: "5px" }}
+              />
+              <button
+                className="position-absolute top-10 end-12 bg-danger border-0 rounded-circle "
+                onClick={() => setClientImage("")}
+                aria-label="Remove clientImage"
+              >
+                <CIcon icon={cilX} />
+              </button>
+            </div>
+          ) : null}
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setClientSignAddModalVisible(false);
+              setClientImage("");
+            }}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white"
+            onClick={handleClientSignAdd}
+            disabled={clientSignAddloading || !clientImage}
+          >
+            {clientSignAddloading ? (
+              <>
+                Uploading..
+                <LoadingSpinner />
+              </>
+            ) : (
+              "Upload"
+            )}
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };

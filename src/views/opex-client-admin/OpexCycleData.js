@@ -237,14 +237,17 @@ const OpexCycleData = () => {
                     <CTableHeaderCell style={{ minWidth: "230px" }}>
                       Status
                     </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "200px" }}>
-                      Activity
-                    </CTableHeaderCell>
-                    {userInfo.role === "Opex Site Technician" && (
+                    {userInfo.role === "Opex Client Admin" && (
+                      <CTableHeaderCell style={{ minWidth: "200px" }}>
+                        Activity
+                      </CTableHeaderCell>
+                    )}
+
+                    {userInfo.role === "Opex Client Admin" && (
                       <CTableHeaderCell>Action</CTableHeaderCell>
                     )}
-                    {userInfo.role === "Opex Client Admin" && (
-                      <CTableHeaderCell>Verify</CTableHeaderCell>
+                    {userInfo.role === "Opex Site Technician" && (
+                      <CTableHeaderCell>Attachment</CTableHeaderCell>
                     )}
                   </CTableRow>
                 </CTableHead>
@@ -305,37 +308,46 @@ const OpexCycleData = () => {
                             Taypro Verified
                           </CBadge>
                         )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.is_verified ? (
-                          <Link
-                            to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary  m-1"
-                          >
-                            Cleaning Activity
-                          </Link>
-                        ) : (
-                          <CBadge color="warning">Pending</CBadge>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.is_verified && !day.is_client_verified ? (
-                          <CButton
-                            color="success"
-                            size="sm"
-                            onClick={(e) => handleClientVerifyDay(e, day._id)}
-                          >
-                            {verifyLoading ? <LoadingSpinner /> : "Verify"}
-                          </CButton>
-                        ) : day.is_client_verified ? (
-                          <CBadge color="success">Client Verified</CBadge>
-                        ) : (
-                          <CBadge color="warning">
-                            Wait for Taypro Verification
+                        {day.is_client_verified && (
+                          <CBadge color="success" className="ms-2">
+                            Client Verified
                           </CBadge>
                         )}
                       </CTableDataCell>
+                      {userInfo.role === "Opex Client Admin" && (
+                        <CTableDataCell>
+                          {day.is_verified ? (
+                            <Link
+                              to={`day/${day._id}/technician-detials`}
+                              className="btn btn-sm btn-primary  m-1"
+                            >
+                              Cleaning Activity
+                            </Link>
+                          ) : (
+                            <CBadge color="warning">Pending</CBadge>
+                          )}
+                        </CTableDataCell>
+                      )}
 
+                      {userInfo.role === "Opex Client Admin" && (
+                        <CTableDataCell>
+                          {day.is_verified && !day.is_client_verified ? (
+                            <CButton
+                              color="success"
+                              size="sm"
+                              onClick={(e) => handleClientVerifyDay(e, day._id)}
+                            >
+                              {verifyLoading ? <LoadingSpinner /> : "Verify"}
+                            </CButton>
+                          ) : day.is_client_verified ? (
+                            <CBadge color="success">Client Verified</CBadge>
+                          ) : (
+                            <CBadge color="warning">
+                              Wait for Taypro Verification
+                            </CBadge>
+                          )}
+                        </CTableDataCell>
+                      )}
                       {userInfo.role === "Opex Site Technician" && (
                         <CTableDataCell>
                           <Link

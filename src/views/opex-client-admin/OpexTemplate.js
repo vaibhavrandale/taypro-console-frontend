@@ -713,26 +713,29 @@ const OpexTemplate = () => {
                             </Link>
 
                             {/* Cycle verification button with same logic pattern */}
-                            {cycle.is_client_verified_cycle ? (
-                              <CBadge color="success">Client Verified</CBadge>
-                            ) : cycle.is_cycle_verified ? (
-                              <CButton
-                                color="success"
-                                size="sm"
-                                onClick={(e) => handleVerifyCycle(e, cycle._id)}
-                                disabled={verifyLoading}
-                              >
-                                {verifyLoading ? (
-                                  <LoadingSpinner />
-                                ) : (
-                                  "Verify Cycle"
-                                )}
-                              </CButton>
-                            ) : (
-                              <CBadge color="warning">
-                                Wait for Taypro Verification
-                              </CBadge>
-                            )}
+                            {userInfo.role === "Opex Client Admin" &&
+                              (cycle.is_client_verified_cycle ? (
+                                <CBadge color="success">Client Verified</CBadge>
+                              ) : cycle.is_cycle_verified ? (
+                                <CButton
+                                  color="success"
+                                  size="sm"
+                                  onClick={(e) =>
+                                    handleVerifyCycle(e, cycle._id)
+                                  }
+                                  disabled={verifyLoading}
+                                >
+                                  {verifyLoading ? (
+                                    <LoadingSpinner />
+                                  ) : (
+                                    "Verify Cycle"
+                                  )}
+                                </CButton>
+                              ) : (
+                                <CBadge color="warning">
+                                  Wait for Taypro Verification
+                                </CBadge>
+                              ))}
                           </div>
                         </CTableDataCell>
                       </CTableRow>
