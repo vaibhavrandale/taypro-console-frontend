@@ -5765,6 +5765,15 @@ const routes = [
     ),
   },
   {
+    path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <ViewTechnicianDetails />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
     path: "/opex-site-technician/profile-tab",
     name: "Profile Details",
     element: (

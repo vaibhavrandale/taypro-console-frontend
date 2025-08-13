@@ -44,25 +44,7 @@ const OpexManageCycle = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -175,6 +157,22 @@ const OpexManageCycle = () => {
                 &nbsp;
                 <CBadge color="warning" className="">
                   <span className="">
+                    {/* {new Date(cycle.day_wise_data[0].date).toLocaleDateString(
+                      "en-IN",
+                      {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}{" "}
+                    -{" "}
+                    {new Date(
+                      cycle.day_wise_data[cycle.day_wise_data.length - 1].date
+                    ).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })} */}
                     {new Date(cycle.start_date).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -194,7 +192,7 @@ const OpexManageCycle = () => {
               <CTable hover responsive>
                 <CTableHead color="dark">
                   <CTableRow>
-                    <CTableHeaderCell style={{ minWidth: "50px" }}>
+                    <CTableHeaderCell style={{ minWidth: "70px" }}>
                       Day
                     </CTableHeaderCell>
                     <CTableHeaderCell>ID</CTableHeaderCell>
@@ -202,7 +200,7 @@ const OpexManageCycle = () => {
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                    <CTableHeaderCell style={{ minWidth: "250px" }}>
                       Status
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "200px" }}>
@@ -263,7 +261,16 @@ const OpexManageCycle = () => {
                         )}
                         {day.is_verified && (
                           <CBadge color="success" className="ms-2">
-                            Verified
+                            Admin Verified
+                          </CBadge>
+                        )}
+                        {day.is_client_verified ? (
+                          <CBadge color="success" className="ms-2">
+                            client Verified
+                          </CBadge>
+                        ) : (
+                          <CBadge color="danger" className="ms-2">
+                            client verification pending
                           </CBadge>
                         )}
                       </CTableDataCell>

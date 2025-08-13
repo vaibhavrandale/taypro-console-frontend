@@ -69,8 +69,9 @@ const OpexCycleData = () => {
     });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const userInfo = useSelector((state) => state.userInfo);
   const { moduleId, cycleId } = useParams();
+  const userInfo = useSelector((state) => state.userInfo);
+
   const [client_remark, setClient_remark] = useState("");
 
   useEffect(() => {

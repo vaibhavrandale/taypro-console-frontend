@@ -65,25 +65,7 @@ const VerifyCycleDay = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId, dayId } = useParams();
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -335,7 +317,7 @@ const VerifyCycleDay = () => {
 
           {day.is_verified && (
             <CCard className="my-2">
-              <CCardHeader>Verified By</CCardHeader>
+              <CCardHeader>Admin Verified</CCardHeader>
               <CCardBody>
                 <div className="d-flex align-items-center pb-3 mb-3">
                   <img
@@ -407,6 +389,86 @@ const VerifyCycleDay = () => {
                     >
                       <CBadge color="warning">Remark</CBadge> :&nbsp;
                       {day.remarks ? day.remarks : "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </CCardBody>
+            </CCard>
+          )}
+
+          {day.is_client_verified && (
+            <CCard className="my-2">
+              <CCardHeader>Client Verification</CCardHeader>
+              <CCardBody>
+                <div className="d-flex align-items-center pb-3 mb-3">
+                  <img
+                    src={day.client_verified_by.profile_image}
+                    alt="Profile"
+                    className="rounded-circle"
+                    width="50"
+                    height="50"
+                    style={{ objectFit: "cover", cursor: "pointer" }}
+                  />
+                  <div className="flex-grow-1 mx-2">
+                    <p className="mb-1 fw-semibold d-flex justify-content-between flex-wrap">
+                      <span className="fw-semibold">
+                        {day.client_verified_by.name} -{" "}
+                        <span className="text-muted small">
+                          {new Date(
+                            day.client_verified_by.verified_at
+                          ).toLocaleString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })}
+                        </span>
+                      </span>
+                      <span className="d-flex flex-column">
+                        <span className="text-muted small">
+                          {day.verified_by.verified_at
+                            ? formatDistanceToNow(
+                                new Date(day.client_verified_by.verified_at),
+                                {
+                                  addSuffix: true,
+                                }
+                              )
+                            : "NA"}
+                        </span>
+                      </span>
+                    </p>
+
+                    <p
+                      className=" maxw-75 mw-75"
+                      style={{
+                        fontSize: "14px",
+                        lineHeight: "1.5",
+                        textAlign: "start",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: `<span class="text-warning bg-warning p-1 rounded-1">Details</span> :&nbsp; ${day.client_verified_by.details.replace(
+                          /, /g,
+                          ",<br>"
+                        )}`,
+                      }}
+                    >
+                      {/* <CBadge color="warning">Details</CBadge> :&nbsp; */}
+                      {/* {day.verified_by.details} */}
+                    </p>
+
+                    <p
+                      className=" maxw-75 mw-75"
+                      style={{
+                        fontSize: "14px",
+                        lineHeight: "1.5",
+                        textAlign: "start",
+                      }}
+                    >
+                      <CBadge color="warning">Remark</CBadge> :&nbsp;
+                      {day.client_remark ? day.client_remark : "N/A"}
                     </p>
                   </div>
                 </div>
