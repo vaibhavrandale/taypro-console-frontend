@@ -44,25 +44,7 @@ const OpexManageCycle = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -194,7 +176,7 @@ const OpexManageCycle = () => {
               <CTable hover responsive>
                 <CTableHead color="dark">
                   <CTableRow>
-                    <CTableHeaderCell style={{ minWidth: "50px" }}>
+                    <CTableHeaderCell style={{ minWidth: "70px" }}>
                       Day
                     </CTableHeaderCell>
                     <CTableHeaderCell>ID</CTableHeaderCell>
@@ -202,13 +184,12 @@ const OpexManageCycle = () => {
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                    <CTableHeaderCell style={{ minWidth: "250px" }}>
                       Status
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "200px" }}>
                       Activity
                     </CTableHeaderCell>
-                    <CTableHeaderCell>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -264,28 +245,32 @@ const OpexManageCycle = () => {
                         )}
                         {day.is_verified && (
                           <CBadge color="success" className="ms-2">
-                            Verified
+                            Admin Verified
+                          </CBadge>
+                        )}
+                        {day.is_client_verified ? (
+                          <CBadge color="success" className="ms-2">
+                            client Verified
+                          </CBadge>
+                        ) : (
+                          <CBadge color="danger" className="ms-2">
+                            client verification pending
                           </CBadge>
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {day.is_verified ? (
-                          <Link
-                            to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary  m-1"
-                          >
-                            Cleaning Activity
-                          </Link>
-                        ) : (
-                          <CBadge color="warning">Pending</CBadge>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
                         <Link
-                          className="btn btn-sm btn-outline-dark  m-1"
-                          to={`${day._id}/upload-images`}
+                          to={`verify-day/${day._id}`}
+                          className="btn btn-sm btn-primary  m-1"
                         >
-                          Attachments
+                          Verify
+                        </Link>
+
+                        <Link
+                          to={`day/${day._id}/technician-detials`}
+                          className="btn btn-sm btn-primary  m-1"
+                        >
+                          Cleaning Activity
                         </Link>
                       </CTableDataCell>
                     </CTableRow>

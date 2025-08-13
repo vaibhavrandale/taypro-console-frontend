@@ -1,24 +1,14 @@
 import React, { useEffect, useReducer, useState } from "react";
-import {
-  CRow,
-  CCol,
-  CTable,
-  CTableHead,
-  CTableBody,
-  CTableRow,
-  CTableHeaderCell,
-  CTableDataCell,
-  CBadge,
-} from "@coreui/react";
+import { CRow, CCol } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import TayproLogo from "../../../assets/brand/logofordarkbg.png";
-import WhiteTayproLogo from "../../../assets/brand/logoforwhitebg.png";
+import TayproDarkBgLogo from "../../../assets/brand/logofordarkbg.png";
+import TayproWhiteBgLogo from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -57,25 +47,6 @@ const OpexCertificate = () => {
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const [loadingPdf, setLoadingPdf] = useState(false);
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
 
   useEffect(() => {
     const fetchOpexCertificate = async () => {
@@ -108,224 +79,93 @@ const OpexCertificate = () => {
     fetchOpexCertificate();
   }, [authtoken, id]);
 
-  const exportToPdf = async (certificate) => {
+  const exportToPdf = async () => {
     try {
       setLoadingPdf(true);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      const doc = new jsPDF("p", "pt", "a4");
-      const formatDate = (dateStr) => {
-        if (!dateStr) return "";
-        const date = new Date(dateStr);
-        if (isNaN(date)) return dateStr;
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-      };
-      const bodyRows = [];
 
-      // Row 1: Logo + Title
-      bodyRows.push([
-        {
-          content: "", // Logo placeholder
-          styles: { cellWidth: 120, halign: "center", minCellHeight: 50 },
-        },
-        {
-          content: "MONTHLY CLEANING CYCLE CERTIFICATION",
-          colSpan: 5,
-          styles: { halign: "center", fontStyle: "bold", fontSize: 14 },
-        },
-      ]);
+      const input = document.querySelector(".table-responsive");
+      if (!input) {
+        toast.error("Table not found for export");
+        setLoadingPdf(false);
+        return;
+      }
 
-      // Row 2: Project Info
-      bodyRows.push([
-        { content: `Project Name: ` },
-        {
-          content: `${certificate.project_name || ""}`,
-          styles: { fontStyle: "bold", fontSize: 7 },
-        },
-        { content: `Site Capacity: ` },
-        {
-          content: `${certificate.site_capacity || ""}`,
-          styles: { fontStyle: "bold" },
-        },
-        { content: `Date: ` },
-        {
-          content: `${new Date(
-            0,
-            certificate.certificate_month - 1
-          ).toLocaleString("en-US", { month: "long" })} - ${
-            certificate.certificate_year || ""
-          }`,
-          styles: { fontStyle: "bold" },
-        },
-      ]);
+      // Clone the table so we don't modify the page
+      const clone = input.cloneNode(true);
 
-      // Row 3: Approval and Meta Info
-      bodyRows.push([
-        { content: `Doc. No.: ` },
-        {
-          content: `${certificate.doc_no || ""}`,
-          styles: { fontStyle: "bold" },
-        },
-        { content: `Prepared By: ` },
-        {
-          content: `${certificate.prepared_by || ""}`,
-          styles: { fontStyle: "bold" },
-        },
-        { content: `Approved By: ` },
-        { content: `TM-TPL`, styles: { fontStyle: "bold" } },
-      ]);
+      // Change logo in clone
+      const logo = clone.querySelector("img");
+      if (logo) logo.src = TayproWhiteBgLogo;
 
-      // Row 4: Rev. & Project Type
-      bodyRows.push([
-        { content: `Rev.: ` },
-        { content: `A`, styles: { fontStyle: "bold" } },
-        { content: `Project Type: ` },
-        { content: `OPEX`, styles: { fontStyle: "bold" } },
-        "",
-        "",
-      ]);
+      // Apply white bg + dark text to clone
+      clone.setAttribute(
+        "style",
+        `background-color: white !important;
+         color: #000 !important;
+         border: 1px solid #000 !important;`
+      );
+      clone.querySelectorAll("table, th, td").forEach((el) => {
+        el.style.backgroundColor = "white";
+        el.style.color = "#000";
+        el.style.border = "1px solid #000";
+      });
+      // Special style for the header row with id="cycle-head"
 
-      // Header for cycles
-      const cycleHeader = [
-        "Sr No",
-        "Start Date",
-        "End Date",
-        "Module",
-        "Cleaning Cycle No",
-        "Project Incharge Sign",
-      ];
-      bodyRows.push(cycleHeader);
+      // Special style for the header row with id="cycle-head"
+      const cycleHead = clone.querySelector("#cycle-head");
+      if (cycleHead) {
+        cycleHead.style.backgroundColor = "rgb(217, 217, 217)";
+        cycleHead.style.color = "#000";
+        cycleHead.style.fontWeight = "bold";
+        cycleHead.style.borderLeft = "1px solid #000";
+        cycleHead.style.borderRight = "1px solid #000";
+        cycleHead.style.borderTop = "none";
+        cycleHead.style.borderBottom = "none";
+      }
 
-      // Cycle data with Verified under Project Incharge Sign
-      certificate.cycles.forEach((cycle, idx) => {
-        bodyRows.push([
-          idx + 1,
-          formatDate(cycle.cycle_start_date) || "",
-          formatDate(cycle.cycle_end_date) || "",
-          cycle.cycle_module_count || "",
-          cycle.cycle_number || "",
-          "",
-        ]);
+      // Put clone off-screen so html2canvas can read it
+      clone.style.position = "fixed";
+      clone.style.left = "-9999px";
+      document.body.appendChild(clone);
+
+      // Capture the CLONE
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
       });
 
-      // Total row
-      bodyRows.push([
-        {
-          content: "Total Module Cleaned",
-          colSpan: 4,
-          styles: { halign: "center", fontStyle: "bold" },
-        },
-        {
-          content: certificate.total_modules_cleaned || "0",
-          colSpan: 2,
-          styles: { halign: "center", fontStyle: "bold" },
-        },
-      ]);
-      // Draw the first table (main data)
-      autoTable(doc, {
-        head: [],
-        body: bodyRows,
-        theme: "grid",
-        styles: {
-          fontSize: 9,
-          halign: "left",
-          valign: "middle",
-          lineColor: [0, 0, 0],
-          lineWidth: 0.5,
-        },
-        didDrawCell: (data) => {
-          if (data.row.index === 0 && data.column.index === 0) {
-            doc.addImage(
-              WhiteTayproLogo,
-              "PNG",
-              data.cell.x + 5,
-              data.cell.y + 5,
-              110,
-              38
-            );
-          }
-        },
-        didParseCell: (data) => {
-          if (data.row.index === 4) {
-            data.cell.styles.fillColor = [220, 220, 220];
-            data.cell.styles.textColor = [0, 0, 0];
-            data.cell.styles.fontStyle = "bold";
-            data.cell.styles.halign = "center";
-          }
-        },
-      });
+      // Remove clone from DOM
+      document.body.removeChild(clone);
 
-      autoTable(doc, {
-        head: [
-          [
-            {
-              content: "For Client",
-              colSpan: 2,
-              styles: {
-                halign: "center",
-                fontStyle: "bold",
-                fillColor: [220, 220, 220], // Light gray
-                textColor: [0, 0, 0], // Dark text
-              },
-            },
-            {
-              content: "For TAYPRO",
-              colSpan: 2,
-              styles: {
-                halign: "center",
-                fontStyle: "bold",
-                fillColor: [220, 220, 220], // Light gray
-                textColor: [0, 0, 0], // Dark text
-              },
-            },
-          ],
-        ],
-        body: [
-          [
-            { content: "Name:", styles: { fontStyle: "bold" } },
-            { content: "             " },
-            { content: "Name:", styles: { fontStyle: "bold" } },
-            { content: "Abhay Singh" },
-          ],
-          [
-            { content: "Sign:", styles: { fontStyle: "bold" } },
-            { content: "             " },
-            { content: "Sign:", styles: { fontStyle: "bold" } },
-            { content: "Verified" },
-          ],
-          [
-            { content: "Designation:", styles: { fontStyle: "bold" } },
-            { content: "              " },
-            { content: "Designation:", styles: { fontStyle: "bold" } },
-            { content: "Ass. Service Manager" },
-          ],
-        ],
-        theme: "grid",
-        styles: {
-          fontSize: 9,
-          halign: "left",
-          valign: "middle",
-          lineColor: [0, 0, 0],
-          lineWidth: 0.5,
-        },
-        columnStyles: {
-          0: { cellWidth: "auto" }, // Auto adjust but equal space
-          1: { cellWidth: "auto" },
-          2: { cellWidth: "auto" },
-          3: { cellWidth: "auto" },
-        },
-        tableWidth: "auto", // Ensures it spans full width like the table above
-        startY: doc.lastAutoTable.finalY + 10,
-      });
+      // Create PDF
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
 
-      doc.save(`Opex_Certificate_${certificate.project_name || "N_A"}.pdf`);
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 5;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(
+        `Opex_Certificate_${certificate.certificate_month}_${certificate.certificate_year}.pdf`
+      );
 
       setLoadingPdf(false);
     } catch (error) {
-      console.error("PDF generation failed:", error);
-    } finally {
+      console.error("PDF Export Error:", error);
+      toast.error("Failed to export PDF");
       setLoadingPdf(false);
     }
   };
@@ -333,13 +173,23 @@ const OpexCertificate = () => {
   return (
     <div>
       <CRow>
-        <CCol>
-          <h2 className="text-center mt-4 mb-4">Opex Certificate Details</h2>
-          {certificateLoading ? (
-            <div className="d-flex justify-content-center align-items-center">
-              <LoadingSpinner />
-            </div>
-          ) : (
+        {certificateLoading ? (
+          <div className="d-flex justify-content-center align-items-center">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <CCol>
+            <h4 className="text-center my-1">
+              <span className="text-success">
+                {new Date(certificate.certificate_month - 1).toLocaleString(
+                  "en-US",
+                  { month: "long" }
+                )}
+                &nbsp;{certificate.certificate_year}&nbsp;
+              </span>
+              - Cleaning Certificate
+            </h4>
+
             <>
               <div className="d-flex justify-content-end mb-3">
                 <Link
@@ -349,361 +199,591 @@ const OpexCertificate = () => {
                   {loadingPdf ? <LoadingSpinner size="sm" /> : "Export PDF"}
                 </Link>
               </div>
-              {/* <div className="table-responsive">
-                <CTable bordered hover>
-                  <CTableHead>
-                   
-                    <CTableRow className="bg-dark text-white text-center">
-                      <CTableHeaderCell>
-                        <img
-                          src={TayproLogo}
-                          alt="Taypro Logo"
-                          style={{
-                            height: "60px",
-                            width: "300px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      </CTableHeaderCell>
-                      <CTableHeaderCell className="text-center" colSpan={3}>
-                        <h5 className="mb-0 ">
-                          MONTHLY CLEANING CYCLE CERTIFICATION
-                        </h5>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ width: "120px" }}>
-                        Doc. No.:{" "}
-                        <span className="fw-bold">
-                          {certificate.doc_no || "N/A"}
-                        </span>
-                      </CTableHeaderCell>
 
-                      <CTableHeaderCell style={{ width: "120px" }}>
-                        Prepared By:{" "}
-                        <span className="fw-bold">
-                          {" "}
-                          {certificate.prepared_by || "N/A"}
-                        </span>
-                      </CTableHeaderCell>
-                    </CTableRow>
-
-                    <CTableRow className=" text-center">
-                      <CTableHeaderCell style={{ minWidth: "100px" }}>
-                        Project:
-                        <span className="fw-bold">
-                          {certificate.project_name || "N/A"}{" "}
-                        </span>
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell style={{ width: "180px" }}>
-                        Site Capacity: <span className="fw-bold">50 MW</span>
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell style={{ width: "200px" }}>
-                        Date:{" "}
-                        <span className="fw-bold">
-                          {" "}
-                          {new Date(
-                            0,
-                            certificate.certificate_month - 1
-                          ).toLocaleString("en-US", { month: "long" })}
-                        </span>
-                        -
-                        <span className="fw-bold">
-                          {certificate.certificate_year}
-                        </span>
-                      </CTableHeaderCell>
-
-                      <CTableHeaderCell style={{ width: "100px" }}>
-                        Rev. No.:
-                        <span className="fw-bold">
-                          {" "}
-                          {certificate.revision || "N/A"}
-                        </span>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ width: "120px" }}>
-                        Project Type:{" "}
-                        <span className="fw-bold">
-                          {" "}
-                          {certificate.project_type || "N/A"}
-                        </span>
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ width: "120px" }}>
-                        Approved By:{" "}
-                        <span className="fw-bold">
-                          {" "}
-                          {certificate.approved_by || "N/A"}
-                        </span>
-                      </CTableHeaderCell>
-                    </CTableRow>
-
-                   
-                    <CTableRow className="text-center">
-                      <CTableHeaderCell className="">
-                        Sr. No
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        className=""
-                        style={{ width: "140px" }}
-                      >
-                        Start Date
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        className=""
-                        style={{ width: "140px" }}
-                      >
-                        End Date
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        className=""
-                        style={{ width: "160px" }}
-                      >
-                        Module
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        className=""
-                        style={{ width: "180px" }}
-                      >
-                        Cleaning Cycle No.
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        className=""
-                        style={{ width: "180px" }}
-                      >
-                        Project Incharge Sign
-                      </CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-
-                  <CTableBody>
-                    {certificateLoading ? (
-                      <LoadingSpinner />
-                    ) : certificate.cycles?.length > 0 ? (
-                      <>
-                        {certificate.cycles.map((cycle, index) => (
-                          <CTableRow key={index} className="text-center">
-                            <CTableDataCell>{index + 1}</CTableDataCell>
-                            <CTableDataCell>
-                              {cycle.cycle_start_date
-                                ? cycle.cycle_start_date.slice(0, 10)
-                                : "N/A"}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {cycle.cycle_end_date
-                                ? cycle.cycle_end_date.slice(0, 10)
-                                : "N/A"}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {cycle.cycle_module_count}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {cycle.cycle_number}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              <CBadge color="success">Verified</CBadge>
-                            </CTableDataCell>
-                          </CTableRow>
-                        ))}
-
-                       
-                        <CTableRow
-                          className="fw-bold"
-                          style={{ backgroundColor: "#f8f9fa" }}
-                        >
-                          <CTableDataCell
-                            colSpan={4}
-                            className="text-center"
-                            style={{ padding: "15px" }}
-                          >
-                            Total Module Cleaned
-                          </CTableDataCell>
-                          <CTableDataCell
-                            colSpan={2}
-                            className="text-center"
-                            style={{ padding: "15px" }}
-                          >
-                            {certificate.total_modules_cleaned}
-                          </CTableDataCell>
-                        </CTableRow>
-                      </>
-                    ) : (
-                      <CTableRow>
-                        <CTableDataCell colSpan={15} className="text-center">
-                          <span className="badge bg-danger">No Data Found</span>
-                        </CTableDataCell>
-                      </CTableRow>
-                    )}
-                  </CTableBody>
-                </CTable>
-              </div> */}
-
-              <div className="table-responsive">
+              <div className="table-responsive  p-2">
                 <table
                   style={{
                     borderCollapse: "collapse",
                     width: "100%",
                     fontFamily: "Arial, sans-serif",
+                    fontSize: "14px",
+                    border: "0.5px solid white",
                   }}
-                  border="1"
                 >
                   <thead>
-                    {/* Top Row - Branding & Title */}
-                    <tr style={{ textAlign: "center" }}>
-                      <th style={{ padding: "1px" }}>
+                    <tr>
+                      <td
+                        rowSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+                          textAlign: "center",
+                          padding: "5px",
+                          width: "200px",
+                        }}
+                      >
                         <img
-                          src={TayproLogo}
+                          src={TayproDarkBgLogo}
+                          className="logo"
                           alt="Taypro Logo"
-                          style={{
-                            height: "60px",
-                            width: "100px",
-                            objectFit: "contain",
-                          }}
+                          style={{ height: "50px" }}
                         />
-                      </th>
-                      <th
-                        colSpan="3"
-                        style={{ padding: "5px", fontWeight: "bold" }}
+                      </td>
+                      <td
+                        rowSpan={2}
+                        colSpan={3}
+                        style={{
+                          border: "0.5px solid white",
+                          textAlign: "center",
+                          fontSize: "20px",
+                        }}
                       >
                         MONTHLY CLEANING CYCLE CERTIFICATION
-                      </th>
-                      <th
+                      </td>
+                      <td
                         style={{
-                          width: "20px",
+                          border: "0.5px solid white",
+
                           padding: "5px",
-                          textAlign: "left",
                         }}
                       >
-                        <strong>Doc. No.:</strong> {certificate.doc_no || "N/A"}
-                      </th>
-                      <th
-                        style={{
-                          width: "120px",
-                          padding: "5px",
-                          textAlign: "left",
-                        }}
+                        Doc. No.
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
                       >
-                        <strong>Prepared By:</strong>{" "}
-                        {certificate.prepared_by || "N/A"}
-                      </th>
+                        {certificate.doc_no || "N/A"}
+                      </td>
                     </tr>
 
-                    <tr style={{ textAlign: "center" }}>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Project Name:</strong>{" "}
-                        {certificate.project_name || "N/A"}
-                      </th>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Site Capacity:</strong> 50 MW
-                      </th>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Date:</strong>{" "}
+                    <tr>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Prepared By
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        {certificate.prepared_by || "N/A"}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Project - {certificate.project_name || "N/A"}
+                      </td>
+                      <td
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Date -{" "}
                         {new Date(
                           0,
                           certificate.certificate_month - 1
-                        ).toLocaleString("en-US", { month: "long" })}
-                        -{certificate.certificate_year}
-                      </th>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Rev. No.:</strong>{" "}
-                        {certificate.revision || "N/A"}
-                      </th>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Project Type:</strong>{" "}
-                        {certificate.project_type || "N/A"}
-                      </th>
-                      <th style={{ padding: "5px", textAlign: "left" }}>
-                        <strong>Approved By:</strong>{" "}
-                        {certificate.approved_by || "N/A"}
-                      </th>
-                    </tr>
+                        ).toLocaleString("en-US", { month: "long" })}{" "}
+                        {certificate.certificate_year}
+                      </td>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
 
-                    {/* Main Table Header */}
-                    <tr
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <th style={{ padding: "5px" }}>Sr No</th>
-                      <th style={{ padding: "5px" }}>Start Date</th>
-                      <th style={{ padding: "5px" }}>End Date</th>
-                      <th style={{ padding: "5px" }}>Module</th>
-                      <th style={{ padding: "5px" }}>Cleaning Cycle No.</th>
-                      <th style={{ padding: "5px" }}>Project Incharge Sign</th>
+                          padding: "5px",
+                        }}
+                      >
+                        Approved By
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        {certificate.approved_by || "N/A"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Site Capacity - 50 MW
+                      </td>
+                      <td
+                        colSpan={2}
+                        style={{ border: "0.5px solid white" }}
+                      ></td>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Rev.
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        {certificate.revision || "N/A"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        colSpan={4}
+                        style={{ border: "0.5px solid white" }}
+                      ></td>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+
+                          padding: "5px",
+                        }}
+                      >
+                        Project Type
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        {certificate.project_type || "N/A"}
+                      </td>
                     </tr>
                   </thead>
-
+                </table>
+                <table
+                  style={{
+                    width: "100%",
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "14px",
+                    borderRight: "0.5px solid white",
+                    borderBottom: "0.5px solid white",
+                  }}
+                >
+                  <thead>
+                    <tr
+                      id="cycle-head"
+                      style={{ backgroundColor: "#d9d9d9", color: "#000" }}
+                    >
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          width: "50px",
+                          textAlign: "center",
+                        }}
+                      >
+                        Sr No.
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "150px",
+                        }}
+                      >
+                        Start Date
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "150px",
+                        }}
+                      >
+                        End Date
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "150px",
+                        }}
+                      >
+                        Module
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "150px",
+                        }}
+                      >
+                        Cleaning Cycle No
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                        }}
+                      >
+                        Project Incharge Sign
+                      </th>
+                    </tr>
+                  </thead>
                   <tbody>
                     {certificateLoading ? (
-                      <tr>
-                        <td
-                          colSpan="6"
-                          style={{ textAlign: "center", padding: "10px" }}
-                        >
-                          <LoadingSpinner />
-                        </td>
-                      </tr>
+                      <LoadingSpinner />
                     ) : certificate.cycles?.length > 0 ? (
                       <>
                         {certificate.cycles.map((cycle, index) => (
                           <tr key={index} style={{ textAlign: "center" }}>
-                            <td style={{ padding: "5px" }}>{index + 1}</td>
-                            <td style={{ padding: "5px" }}>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "10px",
+                                width: "50px",
+                              }}
+                            >
+                              {index + 1}
+                            </td>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "5px",
+                              }}
+                            >
                               {cycle.cycle_start_date
                                 ? cycle.cycle_start_date.slice(0, 10)
                                 : "N/A"}
                             </td>
-                            <td style={{ padding: "5px" }}>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "5px",
+                              }}
+                            >
                               {cycle.cycle_end_date
                                 ? cycle.cycle_end_date.slice(0, 10)
                                 : "N/A"}
                             </td>
-                            <td style={{ padding: "5px" }}>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "5px",
+                              }}
+                            >
                               {cycle.cycle_module_count}
                             </td>
-                            <td style={{ padding: "5px" }}>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "5px",
+                              }}
+                            >
                               {cycle.cycle_number}
                             </td>
-                            <td style={{ padding: "5px" }}>
-                              <span className="badge bg-success">Verified</span>
+                            <td
+                              style={{
+                                border: "0.5px solid white",
+                                padding: "5px",
+                              }}
+                            >
+                              {cycle.projectInchargeSign ? (
+                                <img
+                                  src={cycle.projectInchargeSign}
+                                  alt="Signature"
+                                  style={{ height: "30px" }}
+                                />
+                              ) : null}
                             </td>
                           </tr>
                         ))}
-
-                        {/* Total Module Cleaned row */}
-                        <tr
-                          style={{
-                            fontWeight: "bold",
-                          }}
-                        >
-                          <td
-                            colSpan="4"
-                            style={{ textAlign: "center", padding: "10px" }}
-                          >
-                            Total Module Cleaned
-                          </td>
-                          <td
-                            colSpan="2"
-                            style={{ textAlign: "center", padding: "10px" }}
-                          >
-                            {certificate.total_modules_cleaned}
-                          </td>
-                        </tr>
                       </>
                     ) : (
-                      <tr>
-                        <td
-                          colSpan="6"
-                          style={{ textAlign: "center", padding: "10px" }}
-                        >
-                          <span className="badge bg-danger">No Data Found</span>
-                        </td>
-                      </tr>
+                      <span style={{ textAlign: "center" }}>No Data Found</span>
                     )}
+                  </tbody>
+                </table>
+                {/* <table
+                  style={{
+                    borderCollapse: "collapse",
+                    width: "100%",
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "14px",
+                    border: "0.5px solid white",
+                  }}
+                >
+                  <thead>
+                    <tr style={{ fontWeight: "bold" }}>
+                      <th
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                        }}
+                      >
+                        Total Module Cleaned
+                      </th>
+                      <th
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "left",
+                        }}
+                      >
+                        1069376
+                      </th>
+                    </tr>
+                    <tr
+                      style={{ backgroundColor: "#d9d9d9", fontWeight: "bold" }}
+                    >
+                      <th
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          color: "#000",
+                        }}
+                      >
+                        For Client
+                      </th>
+                      <th
+                        colSpan={2}
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          color: "#000",
+                        }}
+                      >
+                        For TAYPRO
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          width: "15%",
+                        }}
+                      >
+                        Name
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      ></td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Sign
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        <img
+                          src="signature.png" // replace with actual signature image path
+                          alt="Signature"
+                          style={{ height: "40px" }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Sign
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      ></td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Name
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Abhay Singh
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Designation
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      ></td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Designation
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Asst. Service Manager
+                      </td>
+                    </tr>
+                  </tbody>
+                </table> */}
+                <table
+                  style={{
+                    width: "100%",
+                    fontFamily: "Arial, sans-serif",
+                    fontSize: "14px",
+                    borderRight: "0.5px solid white",
+                    borderBottom: "0.5px solid white",
+                  }}
+                >
+                  <thead>
+                    {/* Total Module Cleaned Row */}
+                    <tr style={{ fontWeight: "bold" }}>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "50%",
+                        }}
+                      >
+                        Total Module Cleaned
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          width: "50%",
+                        }}
+                      >
+                        {certificate.total_modules_cleaned}
+                      </th>
+                    </tr>
+
+                    {/* Section Headers */}
+                    <tr
+                      style={{ backgroundColor: "#d9d9d9", fontWeight: "bold" }}
+                    >
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          color: "#000",
+                          width: "50%",
+                        }}
+                      >
+                        For Client
+                      </th>
+                      <th
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          textAlign: "center",
+                          color: "#000",
+                          width: "50%",
+                        }}
+                      >
+                        For TAYPRO
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "5px",
+                          width: "50%",
+                        }}
+                      >
+                        Name <span style={{ marginLeft: "60px" }}>:</span>
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Name
+                        <span style={{ marginLeft: "60px" }}>
+                          : {certificate.taypro_name}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "15px 5px",
+                        }}
+                      >
+                        Sign
+                        <span style={{ marginLeft: "70px" }}>
+                          :
+                          {/* <img
+                            src={TayproLogo}
+                            alt="Taypro Logo"
+                            style={{ height: "40px" }}
+                          /> */}
+                        </span>
+                      </td>
+                      <td
+                        style={{
+                          border: "0.5px solid white",
+                          padding: "15px 5px",
+                        }}
+                      >
+                        Sign
+                        <span style={{ marginLeft: "70px" }}>
+                          :
+                          <img
+                            // src="https://res.cloudinary.com/decyim6cd/image/upload/v1755000739/profile-image/giwgwsgzvkcrdszr6luz.jpg"
+                            src={certificate.taypro_sign}
+                            alt="Taypro Sign"
+                            style={{ height: "40px", marginLeft: "20px" }}
+                          />
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Designation
+                        <span style={{ marginLeft: "25px" }}>:</span>
+                      </td>
+                      <td
+                        style={{ border: "0.5px solid white", padding: "5px" }}
+                      >
+                        Designation
+                        <span style={{ marginLeft: "25px" }}>
+                          : {certificate.taypro_designation}
+                        </span>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </>
-          )}
-        </CCol>
+          </CCol>
+        )}
       </CRow>
     </div>
   );
