@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -15,6 +15,7 @@ import {
   CCardHeader,
   CImage,
   CFormSelect,
+  CButton,
 } from "@coreui/react";
 
 import { useSelector } from "react-redux";
@@ -45,6 +46,26 @@ const reducer = (state, action) => {
       };
     case "FETCH_SITEID_FAIL":
       return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
+
+    case "VERIFY_CYCLE_REQUEST":
+      return {
+        ...state,
+        verifyLoading: true,
+        verifyError: "",
+      };
+    case "VERIFY_CYCLE_SUCCESS":
+      return {
+        ...state,
+        verifyLoading: false,
+        opexData: action.payload,
+        verifyError: "",
+      };
+    case "VERIFY_CYCLE_FAIL":
+      return {
+        ...state,
+        verifyLoading: false,
+        verifyError: action.payload,
+      };
     default:
       return state;
   }
@@ -52,7 +73,16 @@ const reducer = (state, action) => {
 
 const OpexTemplate = () => {
   const [
-    { opexData, loadingOpex, error, loadingSiteIds, siteIds, errorSiteIds },
+    {
+      opexData,
+      loadingOpex,
+      error,
+      loadingSiteIds,
+      siteIds,
+      errorSiteIds,
+      verifyError,
+      verifyLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     opexData: {},
@@ -61,6 +91,8 @@ const OpexTemplate = () => {
     loadingSiteIds: true,
     siteIds: [],
     errorSiteIds: "",
+    verifyLoading: false,
+    verifyError: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -69,7 +101,6 @@ const OpexTemplate = () => {
   const [site_id, setSiteid] = useState(
     userInfo.assigned_sites[0]?.site_id || "abc"
   );
-
   let adminroute = "";
   if (userInfo.role === "Opex Client Admin") {
     adminroute = "opex-client-admin";
@@ -152,6 +183,39 @@ const OpexTemplate = () => {
     }
   };
 
+  // opexRouter.put(
+  //   "/client-verify-cycle/:moduleId/:cycleId/",
+  //   authorize,
+  //   clientVerifyCycle
+  // );
+
+  const handleVerifyCycle = async (e, cycleId) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "VERIFY_CYCLE_REQUEST" });
+
+      const response = await axios.put(
+        `/api/v1/opex/client-verify-cycle/${opexData._id}/${cycleId}`,
+        {}, // Empty payload as per your API
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+
+      console.log(response.data.data);
+
+      dispatch({
+        type: "VERIFY_CYCLE_SUCCESS",
+        payload: response.data.data,
+      });
+
+      toast.success(response.data.message);
+    } catch (error) {
+      dispatch({
+        type: "VERIFY_CYCLE_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
   if (
     userInfo &&
     userInfo.role === "Opex Site Technician" &&
@@ -226,15 +290,13 @@ const OpexTemplate = () => {
                       style={{ minWidth: "60px", background: "#DBD9D9" }}
                       className="m-1"
                     >
-                      {opexData.client.logo && (
-                        <CImage
-                          src={opexData.client.logo}
-                          width={90}
-                          height={60}
-                          className="me-2"
-                          style={{ objectFit: "contain" }}
-                        />
-                      )}
+                      <CImage
+                        src={opexData.client.logo}
+                        width={90}
+                        height={60}
+                        className="me-2"
+                        style={{ objectFit: "contain" }}
+                      />
                     </div>
                     <div>
                       <h6 className="text-danger mb-0">
@@ -307,7 +369,7 @@ const OpexTemplate = () => {
             )}
 
           {/* certificate Card */}
-          {opexData && opexData.blocks_data.length > 0 && (
+          {/* {opexData && opexData.blocks_data.length > 0 && (
             <CCard className="mb-4">
               <CCardHeader>
                 <h5 className="mb-0">Certificates</h5>
@@ -381,10 +443,10 @@ const OpexTemplate = () => {
                 </CTable>
               </CCardBody>
             </CCard>
-          )}
+          )} */}
 
           {/* certificate Card */}
-          {opexData && opexData.blocks_data.length > 0 && (
+          {/* {opexData && opexData.blocks_data.length > 0 && (
             <CCard className="mb-4">
               <CCardHeader>
                 <h5 className="mb-0">Certificates</h5>
@@ -467,7 +529,7 @@ const OpexTemplate = () => {
                 </CTable>
               </CCardBody>
             </CCard>
-          )}
+          )} */}
 
           {/* certificate Card */}
           {opexData && opexData.blocks_data.length > 0 && (
@@ -589,9 +651,7 @@ const OpexTemplate = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {loadingOpex ? (
-                    <LoadingSpinner />
-                  ) : opexData.cycles.length > 0 ? (
+                  {opexData.cycles.length > 0 ? (
                     opexData.cycles.map((cycle, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
@@ -621,7 +681,7 @@ const OpexTemplate = () => {
                             <CBadge color="warning">In Progress</CBadge>
                           )}
                         </CTableDataCell>
-                        <CTableDataCell>
+                        {/* <CTableDataCell>
                           <Link
                             className="btn btn-primary btn-sm"
                             // to={`/${adminroute}/opexdata/${site_id}/${opexData._id}/cycle/${cycle._id}`}
@@ -629,6 +689,49 @@ const OpexTemplate = () => {
                           >
                             Manage
                           </Link>
+                        </CTableDataCell> */}
+
+                        <CTableDataCell>
+                          <div className="d-flex gap-2">
+                            {/* Keep your existing Manage button */}
+                            <Link
+                              className="btn btn-primary btn-sm"
+                              to={`/${adminroute}/my-opex-data/${site_id}/${opexData._id}/cycle/${cycle._id}`}
+                            >
+                              Manage - {opexData._id}
+                            </Link>
+
+                            {/* Cycle verification button with same logic pattern */}
+                            {cycle.is_verified && !cycle.is_client_verified ? (
+                              <CButton
+                                color="success"
+                                size="sm"
+                                onClick={(e) => handleVerifyCycle(e, cycle._id)}
+                                disabled={verifyLoading}
+                              >
+                                {verifyLoading ? (
+                                  <LoadingSpinner />
+                                ) : (
+                                  "Verify Cycle"
+                                )}
+                              </CButton>
+                            ) : cycle.is_client_verified ? (
+                              <CBadge color="success">Cycle Verified</CBadge>
+                            ) : (
+                              <CButton
+                                color="success"
+                                size="sm"
+                                onClick={(e) => handleVerifyCycle(e, cycle._id)}
+                                disabled={verifyLoading}
+                              >
+                                {verifyLoading ? (
+                                  <LoadingSpinner />
+                                ) : (
+                                  "Verify Cycle"
+                                )}
+                              </CButton>
+                            )}
+                          </div>
                         </CTableDataCell>
                       </CTableRow>
                     ))

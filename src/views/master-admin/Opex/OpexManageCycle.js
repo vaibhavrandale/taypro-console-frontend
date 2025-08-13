@@ -208,7 +208,6 @@ const OpexManageCycle = () => {
                     <CTableHeaderCell style={{ minWidth: "200px" }}>
                       Activity
                     </CTableHeaderCell>
-                    <CTableHeaderCell>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -269,23 +268,18 @@ const OpexManageCycle = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        {day.is_verified ? (
-                          <Link
-                            to={`day/${day._id}/technician-detials`}
-                            className="btn btn-sm btn-primary  m-1"
-                          >
-                            Cleaning Activity
-                          </Link>
-                        ) : (
-                          <CBadge color="warning">Pending</CBadge>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
                         <Link
-                          className="btn btn-sm btn-outline-dark  m-1"
-                          to={`${day._id}/upload-images`}
+                          to={`verify-day/${day._id}`}
+                          className="btn btn-sm btn-primary  m-1"
                         >
-                          Attachments
+                          Verify
+                        </Link>
+
+                        <Link
+                          to={`day/${day._id}/technician-detials`}
+                          className="btn btn-sm btn-primary  m-1"
+                        >
+                          Cleaning Activity
                         </Link>
                       </CTableDataCell>
                     </CTableRow>
