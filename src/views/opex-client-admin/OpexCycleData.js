@@ -328,17 +328,14 @@ const OpexCycleData = () => {
                             {verifyLoading ? <LoadingSpinner /> : "Verify"}
                           </CButton>
                         ) : day.is_client_verified ? (
-                          <CBadge color="success">Already Verified</CBadge>
+                          <CBadge color="success">Client Verified</CBadge>
                         ) : (
-                          <CButton
-                            color="success"
-                            size="sm"
-                            onClick={(e) => handleClientVerifyDay(e, day._id)}
-                          >
-                            {verifyLoading ? <LoadingSpinner /> : "Verify"}
-                          </CButton>
+                          <CBadge color="warning">
+                            Wait for Taypro Verification
+                          </CBadge>
                         )}
                       </CTableDataCell>
+
                       {userInfo.role === "Opex Site Technician" && (
                         <CTableDataCell>
                           <Link

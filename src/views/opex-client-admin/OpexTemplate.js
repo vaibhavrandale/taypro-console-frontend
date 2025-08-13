@@ -647,7 +647,9 @@ const OpexTemplate = () => {
                     <CTableHeaderCell>Modules cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Modules Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Actions</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "200px" }}>
+                      Actions
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -676,9 +678,18 @@ const OpexTemplate = () => {
                         </CTableDataCell>
                         <CTableDataCell>
                           {cycle.modules_cleaned === cycle.modules_planned ? (
-                            <CBadge color="success">Completed</CBadge>
+                            <CBadge color="success">Cleaning Completed</CBadge>
                           ) : (
                             <CBadge color="warning">In Progress</CBadge>
+                          )}
+                          {cycle.is_cycle_verified ? (
+                            <CBadge color="success" className="ms-2">
+                              Taypro Verified
+                            </CBadge>
+                          ) : (
+                            <CBadge color="warning" className="ms-2">
+                              Taypro Verification Pending
+                            </CBadge>
                           )}
                         </CTableDataCell>
                         {/* <CTableDataCell>
@@ -698,11 +709,13 @@ const OpexTemplate = () => {
                               className="btn btn-primary btn-sm"
                               to={`/${adminroute}/my-opex-data/${site_id}/${opexData._id}/cycle/${cycle._id}`}
                             >
-                              Manage - {opexData._id}
+                              Manage
                             </Link>
 
                             {/* Cycle verification button with same logic pattern */}
-                            {cycle.is_verified && !cycle.is_client_verified ? (
+                            {cycle.is_client_verified_cycle ? (
+                              <CBadge color="success">Client Verified</CBadge>
+                            ) : cycle.is_cycle_verified ? (
                               <CButton
                                 color="success"
                                 size="sm"
@@ -715,21 +728,10 @@ const OpexTemplate = () => {
                                   "Verify Cycle"
                                 )}
                               </CButton>
-                            ) : cycle.is_client_verified ? (
-                              <CBadge color="success">Cycle Verified</CBadge>
                             ) : (
-                              <CButton
-                                color="success"
-                                size="sm"
-                                onClick={(e) => handleVerifyCycle(e, cycle._id)}
-                                disabled={verifyLoading}
-                              >
-                                {verifyLoading ? (
-                                  <LoadingSpinner />
-                                ) : (
-                                  "Verify Cycle"
-                                )}
-                              </CButton>
+                              <CBadge color="warning">
+                                Wait for Taypro Verification
+                              </CBadge>
                             )}
                           </div>
                         </CTableDataCell>
