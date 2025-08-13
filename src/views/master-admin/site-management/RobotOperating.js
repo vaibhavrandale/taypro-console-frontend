@@ -118,6 +118,7 @@ const RobotOperating = () => {
   let start = "C1";
   let stop = "CC";
   let returntodock = "D1";
+  let removecurrentLimit = "HCD";
   let setWheelPwm100 = "W1";
   let setWheelPwm200 = "W2";
   let setWheelPwm250 = "W3";
@@ -130,8 +131,7 @@ const RobotOperating = () => {
   let temp = "TP";
   let cleanRight = "C3";
   let cleanLeft = "C2";
-  let stopMotors = "CC"; // Cleaning Cancel
-  let cleaningFinished = "CF";
+
   let moveLeft = "C4";
   let moveRight = "C5";
   let returnToDock = "D1";
@@ -520,6 +520,12 @@ const RobotOperating = () => {
                   onClick={() => sendMulticastDownlink(returntodock, 3)}
                 >
                   RETURN TO DOCK ALL
+                </CButton>
+                <CButton
+                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
+                  onClick={() => sendMulticastDownlink(removecurrentLimit, 42)}
+                >
+                  REMOVE CURRENT LIMIT ALL
                 </CButton>
                 <Link
                   to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
@@ -1301,7 +1307,7 @@ const RobotOperating = () => {
                         </CButton>
                         <CButton
                           className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(moveLeft, 15)}
+                          onClick={() => sendsingleDownlink(moveRight, 15)}
                         >
                           {commandButton === 15 ? (
                             <>
