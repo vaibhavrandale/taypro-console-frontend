@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   CCard,
@@ -14,6 +14,7 @@ import {
   CRow,
   CCol,
   CWidgetStatsB,
+  CButton,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -29,41 +30,52 @@ const reducer = (state, action) => {
       return { ...state, cycle: action.payload.data, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "CLIENT_VERIFY_DAY_REQUEST":
+      return { ...state, verifyLoading: true, verifyError: "" };
+
+    case "CLIENT_VERIFY_DAY_SUCCESS":
+      return {
+        ...state,
+        verifyLoading: false,
+        cycle: {
+          ...state.cycle,
+          day_wise_data: state.cycle.day_wise_data.map((day) =>
+            day._id === action.payload._id ? action.payload : day
+          ),
+        },
+      };
+
+    case "CLIENT_VERIFY_DAY_FAIL":
+      return {
+        ...state,
+        verifyLoading: false,
+        verifyError: action.payload,
+      };
+
     default:
       return state;
   }
 };
 
 const OpexCycleData = () => {
-  const [{ loading, cycle, error }, dispatch] = useReducer(reducer, {
-    cycle: {},
-    loading: true,
-    error: "",
-  });
+  const [{ loading, cycle, error, verifyError, verifyLoading }, dispatch] =
+    useReducer(reducer, {
+      cycle: {},
+      loading: true,
+      verifyLoading: false,
+      error: "",
+      verifyError: "",
+    });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const { moduleId, cycleId, site_id } = useParams();
+  const { moduleId, cycleId } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
+
+  const [client_remark, setClient_remark] = useState("");
 
   useEffect(() => {
+    setClient_remark("as per scheduled");
     const fetchCycle = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
@@ -89,12 +101,39 @@ const OpexCycleData = () => {
     fetchCycle();
   }, [authtoken, moduleId, cycleId]);
 
+  const handleClientVerifyDay = async (e, dayId) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "CLIENT_VERIFY_DAY_REQUEST" });
+      const response = await axios.put(
+        `/api/v1/opex/${moduleId}/cycle/${cycleId}/day/${dayId}/client-verify-day`,
+        { client_remark },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      console.log(response);
+
+      dispatch({
+        type: "CLIENT_VERIFY_DAY_SUCCESS",
+        payload: response.data.data,
+      });
+
+      toast.success(response.data.message);
+    } catch (error) {
+      dispatch({
+        type: "CLIENT_VERIFY_DAY_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
+
   const calculateProgress = () => {
     if (!cycle || !cycle.day_wise_data) return 0;
     const totalCleaned = cycle.day_wise_data.reduce(
       (sum, day) => sum + day.modules_cleaned_for_day,
       0
     );
+
     return (totalCleaned / cycle.modules_planned) * 100;
   };
 
@@ -102,12 +141,6 @@ const OpexCycleData = () => {
     <div className="mt-1">
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <div className="text-center">
-          <CBadge color="danger" className="p-3">
-            {error}
-          </CBadge>
-        </div>
       ) : (
         <>
           <h5 className="my-2 d-flex justify-content-center align-items-center">
@@ -116,7 +149,6 @@ const OpexCycleData = () => {
             })}{" "}
             - Cycle <span className="text-success ms-1">{cycle.index + 1}</span>
           </h5>
-
           {/* Cycle Overview */}
           <CRow className="mb-2">
             {/* Total Planned */}
@@ -127,7 +159,6 @@ const OpexCycleData = () => {
                 inverse
                 value={cycle.modules_planned}
                 title="Total Modules Planned"
-                progress="disable"
               />
             </CCol>
 
@@ -155,7 +186,13 @@ const OpexCycleData = () => {
               />
             </CCol>
           </CRow>
-
+          {error || verifyError ? (
+            <div className="text-end my-1">
+              <CBadge color="danger">{error || verifyError}</CBadge>
+            </div>
+          ) : (
+            ""
+          )}
           {/* Daily Progress Table */}
           <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -197,7 +234,7 @@ const OpexCycleData = () => {
                     <CTableHeaderCell>Planned</CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                    <CTableHeaderCell style={{ minWidth: "230px" }}>
                       Status
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "200px" }}>
@@ -206,8 +243,12 @@ const OpexCycleData = () => {
                     {userInfo.role === "Opex Site Technician" && (
                       <CTableHeaderCell>Action</CTableHeaderCell>
                     )}
+                    {userInfo.role === "Opex Client Admin" && (
+                      <CTableHeaderCell>Verify</CTableHeaderCell>
+                    )}
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
                   {cycle.day_wise_data.map((day, index) => (
                     <CTableRow key={day._id} className="align-middle">
@@ -261,7 +302,7 @@ const OpexCycleData = () => {
                         )}
                         {day.is_verified && (
                           <CBadge color="success" className="ms-2">
-                            Verified
+                            Taypro Verified
                           </CBadge>
                         )}
                       </CTableDataCell>
@@ -277,6 +318,24 @@ const OpexCycleData = () => {
                           <CBadge color="warning">Pending</CBadge>
                         )}
                       </CTableDataCell>
+                      <CTableDataCell>
+                        {day.is_verified && !day.is_client_verified ? (
+                          <CButton
+                            color="success"
+                            size="sm"
+                            onClick={(e) => handleClientVerifyDay(e, day._id)}
+                          >
+                            {verifyLoading ? <LoadingSpinner /> : "Verify"}
+                          </CButton>
+                        ) : day.is_client_verified ? (
+                          <CBadge color="success">Client Verified</CBadge>
+                        ) : (
+                          <CBadge color="warning">
+                            Wait for Taypro Verification
+                          </CBadge>
+                        )}
+                      </CTableDataCell>
+
                       {userInfo.role === "Opex Site Technician" && (
                         <CTableDataCell>
                           <Link
@@ -293,7 +352,6 @@ const OpexCycleData = () => {
               </CTable>
             </CCardBody>
           </CCard>
-
           <LastActivity lastactivity={cycle.cycle_last_activity} />
         </>
       )}
