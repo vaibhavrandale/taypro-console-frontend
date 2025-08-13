@@ -697,11 +697,13 @@ const OpexCertificate = () => {
                               }}
                             >
                               {cycle.cycle_start_date
-                                ? cycle.cycle_start_date
-                                    .slice(0, 10)
-                                    .split("-")
-                                    .reverse()
-                                    .join("-")
+                                ? new Date(
+                                    cycle.cycle_start_date
+                                  ).toLocaleString("en-GB", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  })
                                 : "N/A"}
                             </td>
                             <td
@@ -711,11 +713,14 @@ const OpexCertificate = () => {
                               }}
                             >
                               {cycle.cycle_end_date
-                                ? cycle.cycle_end_date
-                                    .slice(0, 10)
-                                    .split("-")
-                                    .reverse()
-                                    .join("-")
+                                ? new Date(cycle.cycle_end_date).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  )
                                 : "N/A"}
                             </td>
                             <td
