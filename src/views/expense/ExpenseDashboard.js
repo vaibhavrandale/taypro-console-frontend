@@ -163,11 +163,11 @@ const ExpenseDashboard = () => {
       case "Rejected":
         return "danger";
       case "Draft":
-        return "info";
+        return "warning";
       case true:
         return "success";
       case false:
-        return "info";
+        return "warning";
       case "Waiting for HR Approval":
         return "warning";
       case "Waiting for Management Approval":
@@ -386,6 +386,9 @@ const ExpenseDashboard = () => {
               Dept. of Visit
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "160px" }}>
+              Date
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "160px" }}>
               Employee
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "160px" }}>
@@ -438,6 +441,13 @@ const ExpenseDashboard = () => {
                   </Link>
                 </CTableDataCell>
                 <CTableDataCell>{expense.department_of_visit}</CTableDataCell>
+                <CTableDataCell>
+                  {new Date(expense.posting_date).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </CTableDataCell>
                 <CTableDataCell>{expense.employee_name}</CTableDataCell>
                 <CTableDataCell>{expense.department}</CTableDataCell>
                 <CTableDataCell>
@@ -470,7 +480,17 @@ const ExpenseDashboard = () => {
                   >
                     <span>{moment(expense.createdAt).fromNow()}</span>
                   </CTooltip>
-                  <br />({new Date(expense.createdAt).toLocaleString()})
+                  <br />(
+                  {new Date(expense.createdAt).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true,
+                  })}
+                  )
                 </CTableDataCell>
                 <CTableDataCell>
                   <Link
