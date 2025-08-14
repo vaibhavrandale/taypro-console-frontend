@@ -24,7 +24,7 @@ import {
   CCarouselItem,
   CCarousel,
 } from "@coreui/react";
-
+import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PieChart from "./PieChart";
 import "./servicetickts.css";
@@ -37,6 +37,8 @@ import PaginateInput from "../../../components/PaginateInput";
 import BarGraph from "./BarGraph";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import toast from "react-hot-toast";
+import moment from "moment";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -103,7 +105,6 @@ const ServiceTicketDashboard = () => {
       servicetickets,
       serviceticket,
       fetchserviceticketloading,
-      // updateserviceticketloading,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -122,28 +123,9 @@ const ServiceTicketDashboard = () => {
   });
   const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // const [modalVisible, setModalVisible] = useState(false);
-  // const [formData, setFormData] = useState({});
-  // const [selectedImage, setSelectedImage] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
 
-  // let adminroute = "";
-  // if (userInfo.role === "Master Admin") {
-  //   adminroute = "master-admin";
-  // } else if (userInfo.role === "Service Admin") {
-  //   adminroute = "service-admin";
-  // } else if (userInfo.role === "Project Admin") {
-  //   // eslint-disable-next-line no-unused-vars
-  //   adminroute = "project-admin";
-  // } else if (userInfo.role === "Master User") {
-  //   adminroute = "master-user";
-  // } else if (userInfo.role === "Project User") {
-  //   adminroute = "project-user";
-  // } else if (userInfo.role === "Service User") {
-  //   adminroute = "service-user";
-  // }
   const openViewModal = async (id) => {
     setViewModalVisible(true);
 
@@ -162,34 +144,7 @@ const ServiceTicketDashboard = () => {
     }
   };
 
-  // 📌 Handle input change in modal
-  // const handleChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
-
-  // const handleUpdate = async (id) => {
-  //   try {
-  //     dispatch({ type: "UPDATE_TICKET_REQUEST" });
-  //     await axios.put(`/api/v1/servicetickets/${id}`, formData, {
-  //       headers: { Authorization: `Bearer ${authtoken}` },
-  //     });
-  //     setModalVisible(false);
-
-  //     // Update local state with the modified ticket
-  //     dispatch({
-  //       type: "UPDATE_TICKET_SUCCESS",
-  //       payload: servicetickets.map((ticket) =>
-  //         ticket.id === id ? { ...ticket, ...formData } : ticket
-  //       ),
-  //     });
-  //   } catch (error) {
-  //     dispatch({ type: "UPDATE_TICKET_FAIL", payload: error });
-  //     console.error("Error updating ticket:", error);
-  //   }
-  // };
-
   const [pageInput, setPageInput] = useState("");
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -265,6 +220,31 @@ const ServiceTicketDashboard = () => {
     }
   };
 
+  const exportToExcel = () => {
+    if (servicetickets.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      servicetickets.map((item, index) => ({
+        "#": index + 1,
+        "Ticket Id": item.ticket_id,
+        "Robot No": item.robot_no,
+        "Site Id": item.site_id,
+        "Fault Type": item.fault_type,
+        Status: item.ticket_resolved ? "Resolved" : "Open",
+        Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Ticket");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Service Ticket.xlsx");
+  };
+
   return (
     <div className="">
       <h4 className="mb-4 text-center">Service Tickets Overview</h4>
@@ -292,6 +272,12 @@ const ServiceTicketDashboard = () => {
                 NEW
               </Link>
             )}
+            <Link
+              className="btn btn-sm btn-secondary m-1"
+              onClick={exportToExcel}
+            >
+              Export
+            </Link>
           </div>
         </CCardHeader>
 
@@ -318,7 +304,7 @@ const ServiceTicketDashboard = () => {
                 <CTableHeaderCell>Site ID</CTableHeaderCell>
                 <CTableHeaderCell>Fault Type</CTableHeaderCell>
                 <CTableHeaderCell>Status</CTableHeaderCell>
-                <CTableHeaderCell>created At</CTableHeaderCell>
+                <CTableHeaderCell>Date</CTableHeaderCell>
                 <CTableHeaderCell>Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
