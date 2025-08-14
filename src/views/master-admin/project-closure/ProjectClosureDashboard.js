@@ -282,7 +282,7 @@ const ProjectClosureDashboard = () => {
         <CTableBody>
           {loadingProjectDocs ? (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
+              <CTableDataCell colSpan="11" className="text-center fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
