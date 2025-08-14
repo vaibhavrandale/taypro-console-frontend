@@ -25,6 +25,8 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import KeyMaintenanceMatrixOverview from "./KeyMaintenanceMatrixOverview";
+import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 const KeyPMMatrix = () => {
   return (
@@ -119,7 +121,6 @@ const KeyMaintenanceMatrix = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [site_id, setSiteId] = useState("");
@@ -230,10 +231,43 @@ const KeyMaintenanceMatrix = () => {
     }
   };
 
+  const exportToExcel = () => {
+    if (parameters.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+
+    // Convert JSON to sheet
+    const worksheet = XLSX.utils.json_to_sheet(
+      parameters.map((item, index) => ({
+        "#": index + 1,
+        "Robot No": item.robot_no,
+        "Fault Type": item.fault_type,
+        "MTBF (Mean Time Between Failures)": item.mtbf,
+        "MTTR (Average Time to Repair)": item.mttr,
+        "Failure Rate info": item.failure_rate_info,
+        Reliability: item.reliability,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Maintenance Matrix");
+
+    // Trigger download
+    XLSX.writeFile(workbook, "Maintenance Matrix.xlsx");
+  };
+
   return (
     <CCard className="mt-4">
       <CCardHeader>
         <h2 className="text-center">Key Maintenance Matrix</h2>
+        <div className="d-flex justify-content-end mb-3">
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            onClick={exportToExcel}
+          >
+            Export
+          </Link>
+        </div>
       </CCardHeader>
       {/* Search Input */}
       <CCardBody>
