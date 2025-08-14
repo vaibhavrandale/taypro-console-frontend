@@ -180,9 +180,9 @@ input {
   background-color: var(--important) !important;
 }
 
-table {
-  background-color: var(--important) !important;
-}
+/* table {
+   background-color: var(--important) !important; 
+} */
 
 .card-header {
   color: #adb8d9;
