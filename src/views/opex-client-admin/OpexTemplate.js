@@ -98,6 +98,13 @@ const OpexTemplate = () => {
   const authtoken = useSelector((state) => state.authtoken);
   // const [opexActivity, setOpexActivity] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
+
+  const currentMonth = new Date().getMonth() + 1; // 1-12
+  const currentYear = new Date().getFullYear();
+
+  const [selectedMonth, setSelectedMonth] = useState(String(currentMonth));
+  const [selectedYear, setSelectedYear] = useState(String(currentYear));
+
   const [site_id, setSiteid] = useState(
     userInfo.assigned_sites[0]?.site_id || "abc"
   );
@@ -227,6 +234,22 @@ const OpexTemplate = () => {
       </CCard>
     );
   }
+
+  const years = [
+    ...new Set(
+      opexData?.cycles?.map((c) => new Date(c.start_date).getFullYear())
+    ),
+  ];
+  const filteredCycles = opexData?.cycles?.filter((cycle) => {
+    const startDate = new Date(cycle.start_date);
+    const monthMatch = selectedMonth
+      ? startDate.getMonth() + 1 === parseInt(selectedMonth)
+      : true;
+    const yearMatch = selectedYear
+      ? startDate.getFullYear() === parseInt(selectedYear)
+      : true;
+    return monthMatch && yearMatch;
+  });
 
   return (
     <div className="">
@@ -575,7 +598,8 @@ const OpexTemplate = () => {
                             {new Date(
                               block.verified_by.timestamp
                             ).toLocaleString("en-GB", {
-                              month: "2-digit",
+                              month: "long",
+                              year: "numeric",
                             })}
                           </CTableDataCell>
                           <CTableDataCell>{block._id}</CTableDataCell>
@@ -589,6 +613,10 @@ const OpexTemplate = () => {
                               day: "2-digit",
                               month: "2-digit",
                               year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
                             })}
                           </CTableDataCell>
                           <CTableDataCell>
@@ -619,23 +647,57 @@ const OpexTemplate = () => {
 
           {/* Cycles Information Card */}
           <CCard className="mb-4">
-            <CCardHeader>
-              <div className="d-flex w-100 align-items-center justify-content-between">
-                {/* Left: Total cycles badge */}
-                <div
-                  className="d-flex align-items-center"
-                  style={{ minWidth: "100px" }}
-                ></div>
+            <CCardHeader className="bg-light border-bottom py-3">
+              <CRow className="align-items-center">
+                {/* Title */}
+                <CCol xs="12" md="4" className="mb-2 mb-md-0">
+                  <h5 className="mb-0 fw-bold text-secondary">
+                    Cycles Information
+                  </h5>
+                </CCol>
 
-                {/* Center: Heading */}
-                <div className="flex-grow-1 text-center">
-                  <h5 className="mb-0">Cycles Information</h5>
-                </div>
+                {/* Filters */}
+                <CCol xs="12" md="8">
+                  <div className="d-flex justify-content-md-end gap-2">
+                    <CFormSelect
+                      size="sm"
+                      value={selectedMonth}
+                      onChange={(e) => setSelectedMonth(e.target.value)}
+                      className="shadow-sm "
+                      style={{ maxWidth: "160px" }}
+                    >
+                      <option value="1">January</option>
+                      <option value="2">February</option>
+                      <option value="3">March</option>
+                      <option value="4">April</option>
+                      <option value="5">May</option>
+                      <option value="6">June</option>
+                      <option value="7">July</option>
+                      <option value="8">August</option>
+                      <option value="9">September</option>
+                      <option value="10">October</option>
+                      <option value="11">November</option>
+                      <option value="12">December</option>
+                    </CFormSelect>
 
-                {/* Right: Create Cycle button (if role is allowed) */}
-              </div>
+                    <CFormSelect
+                      size="sm"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="shadow-sm "
+                      style={{ maxWidth: "140px" }}
+                    >
+                      <option value="">All Years</option>
+                      {years.map((year, idx) => (
+                        <option key={idx} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  </div>
+                </CCol>
+              </CRow>
             </CCardHeader>
-
             <CCardBody>
               <CTable bordered hover responsive>
                 <CTableHead color="primary">
@@ -653,8 +715,8 @@ const OpexTemplate = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {opexData.cycles.length > 0 ? (
-                    opexData.cycles.map((cycle, index) => (
+                  {filteredCycles && filteredCycles.length > 0 ? (
+                    filteredCycles.map((cycle, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
                         <CTableDataCell>
@@ -703,7 +765,7 @@ const OpexTemplate = () => {
                         </CTableDataCell> */}
 
                         <CTableDataCell>
-                          <div className="d-flex gap-2">
+                          <div className="d-flex gap-2 justify-content-center align-items-center">
                             {/* Keep your existing Manage button */}
                             <Link
                               className="btn btn-primary btn-sm"

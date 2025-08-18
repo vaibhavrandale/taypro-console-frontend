@@ -18,7 +18,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import TayproDarkBgLogo from "../../../assets/brand/logofordarkbg.png";
+// import TayproDarkBgLogo from "../../../assets/brand/logofordarkbg.png";
 import TayproWhiteBgLogo from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -545,13 +545,14 @@ const OpexCertificate = () => {
                         style={{
                           border: "0.5px solid white",
                           textAlign: "center",
+                          backgroundColor: "#fff",
                           padding: "5px",
                           width: "200px",
                         }}
                       >
                         <img
-                          src={TayproDarkBgLogo}
-                          className="logo"
+                          src={TayproWhiteBgLogo}
+                          className="logo "
                           alt="Taypro Logo"
                           style={{ height: "50px" }}
                         />
