@@ -339,16 +339,12 @@ const OpexTemplateManager = () => {
               <CRow>
                 <CCol md={4}>
                   <div className="d-flex align-items-between mb-3">
-                    <div
-                      style={{ minWidth: "60px", background: "#fff" }}
-                      className="m-1 rounded-1"
-                    >
+                    <div style={{ minWidth: "60px" }} className="m-1 rounded-1">
                       {opexData.client.logo && (
                         <CImage
                           src={opexData.client.logo}
                           width={90}
                           height={60}
-                          className="me-2"
                           style={{ objectFit: "contain" }}
                         />
                       )}
@@ -546,7 +542,6 @@ const OpexTemplateManager = () => {
               userInfo.role
             ) && (
               <Link
-                // to={`/${adminroute}/opex-templates/create-cycle/${site_id}`}
                 onClick={() => handleCreateCycle(opexData._id)}
                 className="btn btn-primary btn-sm"
               >

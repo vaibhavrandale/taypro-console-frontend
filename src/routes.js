@@ -131,6 +131,7 @@ import VerifyCycleDay from "./views/master-admin/Opex/VerifyCycleDay";
 import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetails";
 import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
+import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
 // import AddFirstCycle from "./views/master-admin/Opex/CraeteFirstOpexCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -5761,6 +5762,15 @@ const routes = [
     element: (
       <OpexSiteTechnicianRoute>
         <OpexCycleData />
+      </OpexSiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/opex-site-technician/my-opex-data/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <OpexSiteTechnicianRoute>
+        <OpexSiteTechnicianCertificate />
       </OpexSiteTechnicianRoute>
     ),
   },
