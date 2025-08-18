@@ -11,6 +11,7 @@ import {
   CModalFooter,
   CButton,
   CBadge,
+  CFormCheck,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -22,7 +23,7 @@ import TayproWhiteBgLogo from "../../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import CIcon from "@coreui/icons-react";
-import { cilX } from "@coreui/icons";
+import { cilCloudDownload, cilX } from "@coreui/icons";
 import LastActivity from "../../../components/LastActivity";
 
 const reducer = (state, action) => {
@@ -98,6 +99,7 @@ const reducer = (state, action) => {
         clientSignUploadLoading: false,
         clientSignUploadError: action.payload,
       };
+
     case "ADD_CLIENT_SIGN_REQUEST":
       return { ...state, clientSignAddloading: true, clientSignError: "" };
 
@@ -114,6 +116,24 @@ const reducer = (state, action) => {
         clientSignAddloading: false,
         clientSignError: action.payload,
       };
+    case "UPLOAD_CLIENT_HARDCOPY_REQUEST":
+      return {
+        ...state,
+        clientHardcopyUploadLoading: true,
+        clientHardcopyUploadError: "",
+      };
+    case "UPLOAD_CLIENT_HARDCOPY_SUCCESS":
+      return {
+        ...state,
+        clientHardcopyUploadLoading: false,
+        clientHardcopyUploadError: "",
+      };
+    case "UPLOAD_CLIENT_HARDCOPY_FAIL":
+      return {
+        ...state,
+        clientHardcopyUploadLoading: false,
+        clientHardcopyUploadError: action.payload,
+      };
     default:
       return state;
   }
@@ -123,15 +143,14 @@ const OpexCertificate = () => {
     {
       certificate,
       certificateLoading,
-      certificateError,
       tayproSignUploadLoading,
       tayproSignAddloading,
       tayproSignError,
-      tayproSignUploadError,
       clientSignUploadLoading,
       clientSignAddloading,
       clientSignError,
-      clientSignUploadError,
+      clientHardcopyUploadLoading,
+      clientHardcopyUploadError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -146,6 +165,8 @@ const OpexCertificate = () => {
     clientSignAddloading: false,
     clientSignError: "",
     clientSignUploadError: "",
+    clientHardcopyUploadLoading: false,
+    clientHardcopyUploadError: "",
   });
 
   const { id } = useParams();
@@ -154,6 +175,11 @@ const OpexCertificate = () => {
   const [image, setImage] = useState("");
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [clientImage, setClientImage] = useState("");
+  // Add these to your existing state declarations
+  const [hardCopyFile, setHardCopyFile] = useState("");
+  const [verificationType, setVerificationType] = useState("digital");
+  const userInfo = useSelector((state) => state.userInfo);
+
   const [clientSignAddModalVisible, setClientSignAddModalVisible] =
     useState(false);
 
@@ -216,32 +242,54 @@ const OpexCertificate = () => {
       toast.error(error.response.data.error);
     }
   };
+
   const handleClientSignAdd = async () => {
     try {
       dispatch({ type: "ADD_CLIENT_SIGN_REQUEST" });
+
+      let newdata;
+      console.log(`hihi: ${verificationType}`);
+      if (verificationType === "digital") {
+        newdata = {
+          sign_url: clientImage,
+          is_digitally_verified: true,
+        };
+      } else {
+        newdata = {
+          signed_hard_copy: hardCopyFile,
+          is_digitally_verified: false,
+        };
+      }
+      console.log(newdata);
+
       const response = await axios.put(
         `/api/v1/opex-certificate/upload-client-sign/${certificate._id}`,
-        { sign_url: clientImage },
+        newdata,
         {
-          headers: { authorization: `Bearer ${authtoken}` },
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+            "Content-Type": "application/json", // use JSON content type
+            // "Content-Type": "multipart/form-data",
+          },
         }
       );
 
+      console.log(response);
       dispatch({
         type: "ADD_CLIENT_SIGN_SUCCESS",
         payload: response.data.data,
       });
-      setClientSignAddModalVisible(false);
-      setClientImage("");
 
-      toast.success(response.data.message);
+      toast.success("Verification submitted successfully");
+      setClientSignAddModalVisible(false);
+      setHardCopyFile(null);
     } catch (error) {
-      console.error(error);
+      console.error("Verification error:", error);
       dispatch({
         type: "ADD_CLIENT_SIGN_FAIL",
-        payload: error.response.data.error,
+        payload: error.response?.data?.error || error.response?.data?.message,
       });
-      toast.error(error.response.data.error);
+      toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
 
@@ -308,6 +356,36 @@ const OpexCertificate = () => {
       dispatch({
         type: "UPLOAD_CLIENT_SIGN_FAIL",
         payload: error.response.data.error,
+      });
+      console.error(error);
+    }
+  };
+
+  const handleClientHardcopyChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    try {
+      dispatch({ type: "UPLOAD_CLIENT_HARDCOPY_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/opex-certificate-hardcopy",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      console.log(data.url);
+      dispatch({ type: "UPLOAD_CLIENT_HARDCOPY_SUCCESS" });
+      setHardCopyFile(data.url);
+      toast.success("The file uploaded successfully");
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_CLIENT_HARDCOPY_FAIL",
+        payload: error.response.data.error || error.response.data.message,
       });
       console.error(error);
     }
@@ -403,6 +481,22 @@ const OpexCertificate = () => {
       setLoadingPdf(false);
     }
   };
+  let adminroute = "";
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  }
 
   return (
     <div>
@@ -862,13 +956,26 @@ const OpexCertificate = () => {
                         Sign
                         <span style={{ marginLeft: "70px" }}>
                           :
-                          {certificate.is_client_verification && (
-                            <img
-                              src={certificate.client_verification.signature}
-                              alt="Client Sign"
-                              style={{ height: "40px", marginLeft: "20px" }}
-                            />
-                          )}
+                          {certificate.is_client_verification &&
+                            certificate.client_verification &&
+                            (certificate.client_verification
+                              .is_digitally_verified ? (
+                              <img
+                                src={certificate.client_verification.signature}
+                                alt="Client Sign"
+                                style={{ height: "40px", marginLeft: "20px" }}
+                              />
+                            ) : (
+                              certificate.client_verification
+                                .signed_hard_copy &&
+                              certificate.client_verification.signed_hard_copy.endsWith(
+                                ".pdf"
+                              ) && (
+                                <span style={{ marginLeft: "5px" }}>
+                                  Manually Verified
+                                </span>
+                              )
+                            ))}
                         </span>
                       </td>
                       <td
@@ -917,21 +1024,50 @@ const OpexCertificate = () => {
               </div>
 
               <div className="d-flex justify-content-between my-3">
-                <Link
-                  className="btn btn-sm btn-primary m-1"
-                  onClick={openClientSignUploadModal}
-                >
-                  Client Sign
-                </Link>
-                {!certificate.is_taypro_verification && (
-                  <Link
-                    className="btn btn-sm btn-primary m-1"
-                    onClick={openTayproSignUploadModal}
-                  >
-                    {" "}
-                    Taypro Sign
-                  </Link>
-                )}
+                <div>
+                  {certificate.is_taypro_verification &&
+                    userInfo.role === "Opex Client Admin" &&
+                    !certificate.is_client_verification && (
+                      <Link
+                        className="btn btn-sm btn-primary m-1"
+                        onClick={openClientSignUploadModal}
+                      >
+                        Client Sign
+                      </Link>
+                    )}
+
+                  {certificate.client_verification?.signed_hard_copy &&
+                    certificate.client_verification?.signed_hard_copy.endsWith(
+                      ".pdf"
+                    ) && (
+                      <Link
+                        to={`${certificate.client_verification.signed_hard_copy}?fl_attachment=true`}
+                        className="d-flex align-items-center justify-content-center gap-2 white-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <CIcon
+                          icon={cilCloudDownload}
+                          style={{ color: "white" }}
+                        />
+                        Download PDF
+                      </Link>
+                    )}
+                </div>
+
+                <div>
+                  {!certificate.is_taypro_verification &&
+                    (userInfo.role === "Master Admin" ||
+                      userInfo.role === "Service Admin" ||
+                      userInfo.role === "Project Admin") && (
+                      <Link
+                        className="btn btn-sm btn-primary m-1"
+                        onClick={openTayproSignUploadModal}
+                      >
+                        Taypro Sign
+                      </Link>
+                    )}
+                </div>
               </div>
             </>
             <hr />
@@ -942,7 +1078,6 @@ const OpexCertificate = () => {
 
       {/* taypro sign upload modal */}
       <CModal
-        size="md"
         scrollable
         alignment="center"
         backdrop="static"
@@ -1026,7 +1161,6 @@ const OpexCertificate = () => {
       </CModal>
       {/* client sign uplaod modal */}
       <CModal
-        size="md"
         scrollable
         alignment="center"
         backdrop="static"
@@ -1034,7 +1168,7 @@ const OpexCertificate = () => {
         onClose={() => setClientSignAddModalVisible(false)}
       >
         <CModalHeader closeButton={false}>
-          <CModalTitle id="addUserModalTitle">Upload Signature</CModalTitle>
+          <CModalTitle id="addUserModalTitle">Client Verification</CModalTitle>
           <button
             type="button"
             className="border-0 ms-auto py-0 px-1"
@@ -1046,38 +1180,88 @@ const OpexCertificate = () => {
           </button>
         </CModalHeader>
         <CModalBody>
-          <CFormLabel htmlFor="profile_image">Client Signature</CFormLabel>
-          <CFormInput
-            id="sign_url"
-            type="file"
-            name="sign_url"
-            onChange={handleClientSignFileChange}
-          />
-          {clientSignUploadLoading ? (
-            <div className="mt-2 d-flex justify-content-center">
-              <LoadingSpinner />
-            </div>
-          ) : clientSignError ? (
-            <CBadge color="danger">{clientSignError}</CBadge>
-          ) : clientImage ? (
-            <div className="my-2 position-relative">
-              <img
-                className="my-2 border"
-                src={clientImage}
-                alt="Profile preview"
-                width="100"
-                height="100"
-                style={{ objectFit: "contain", borderRadius: "5px" }}
+          {/* Verification Type Selection */}
+          <div className="mb-3">
+            <CFormLabel>Verification Method</CFormLabel>
+            <CFormCheck
+              type="radio"
+              name="verificationType"
+              id="digitalRadio"
+              label="Digital Signature"
+              value="digital"
+              checked={verificationType === "digital"}
+              onChange={() => setVerificationType("digital")}
+            />
+            <CFormCheck
+              type="radio"
+              name="verificationType"
+              id="hardCopyRadio"
+              label="Hard Copy"
+              value="hard_copy"
+              checked={verificationType === "hard_copy"}
+              onChange={() => setVerificationType("hard_copy")}
+            />
+          </div>
+
+          {/* Digital Signature Upload */}
+          {verificationType === "digital" && (
+            <>
+              <CFormLabel htmlFor="clientSignImage">
+                Upload Digital Signature
+              </CFormLabel>
+              <CFormInput
+                id="clientSignImage"
+                type="file"
+                accept="image/*"
+                onChange={handleClientSignFileChange}
               />
-              <button
-                className="position-absolute top-10 end-12 bg-danger border-0 rounded-circle "
-                onClick={() => setClientImage("")}
-                aria-label="Remove clientImage"
-              >
-                <CIcon icon={cilX} />
-              </button>
-            </div>
-          ) : null}
+              {clientSignUploadLoading ? (
+                <div className="mt-2 d-flex justify-content-center">
+                  <LoadingSpinner />
+                </div>
+              ) : clientImage ? (
+                <div className="my-2 position-relative">
+                  <img
+                    className="my-2 border rounded"
+                    src={clientImage}
+                    alt="Signature preview"
+                    width="150"
+                    height="100"
+                    style={{ objectFit: "contain" }}
+                  />
+                  <button
+                    className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle"
+                    onClick={() => setClientImage("")}
+                    aria-label="Remove signature"
+                  >
+                    <CIcon icon={cilX} size="sm" />
+                  </button>
+                </div>
+              ) : null}
+            </>
+          )}
+
+          {/* Hard Copy Upload */}
+          {verificationType === "hard_copy" && (
+            <>
+              <CFormLabel htmlFor="hardCopyFile">
+                Upload Signed Hard Copy (Image/PDF)
+              </CFormLabel>
+              <CFormInput
+                id="hardCopyFile"
+                type="file"
+                accept="image/*,.pdf"
+                onChange={handleClientHardcopyChange}
+              />
+              {clientHardcopyUploadLoading ? (
+                <LoadingSpinner />
+              ) : clientHardcopyUploadError ? (
+                clientHardcopyUploadError
+              ) : (
+                ""
+              )}
+            </>
+          )}
         </CModalBody>
         <CModalFooter>
           <CButton
@@ -1086,6 +1270,7 @@ const OpexCertificate = () => {
             onClick={() => {
               setClientSignAddModalVisible(false);
               setClientImage("");
+              setHardCopyFile(null);
             }}
           >
             Cancel
@@ -1095,15 +1280,18 @@ const OpexCertificate = () => {
             size="sm"
             className="text-white"
             onClick={handleClientSignAdd}
-            disabled={clientSignAddloading || !clientImage}
+            disabled={
+              clientSignAddloading ||
+              (verificationType === "digital" && !clientImage)
+            }
           >
             {clientSignAddloading ? (
               <>
-                Uploading..
+                Uploading...
                 <LoadingSpinner />
               </>
             ) : (
-              "Upload"
+              "Submit Verification"
             )}
           </CButton>
         </CModalFooter>

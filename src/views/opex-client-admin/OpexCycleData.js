@@ -15,12 +15,20 @@ import {
   CCol,
   CWidgetStatsB,
   CButton,
+  CModalFooter,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CFormTextarea,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LastActivity from "../../components/LastActivity";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -72,7 +80,9 @@ const OpexCycleData = () => {
   const { moduleId, cycleId } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
 
-  const [client_remark, setClient_remark] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDayId, setSelectedDayId] = useState(null);
+  const [client_remark, setClient_remark] = useState(""); // start empty
 
   useEffect(() => {
     setClient_remark("as per scheduled");
@@ -335,9 +345,13 @@ const OpexCycleData = () => {
                             <CButton
                               color="success"
                               size="sm"
-                              onClick={(e) => handleClientVerifyDay(e, day._id)}
+                              onClick={() => {
+                                setSelectedDayId(day._id);
+                                setClient_remark(""); // empty so client must type
+                                setShowModal(true); // open modal instead of calling API directly
+                              }}
                             >
-                              {verifyLoading ? <LoadingSpinner /> : "Verify"}
+                              Verify
                             </CButton>
                           ) : day.is_client_verified ? (
                             <CBadge color="success">Client Verified</CBadge>
@@ -367,6 +381,47 @@ const OpexCycleData = () => {
           <LastActivity lastactivity={cycle.cycle_last_activity} />
         </>
       )}
+
+      <CModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        alignment="center"
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Client Verification Remark</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setShowModal(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <CFormTextarea
+            rows={3}
+            placeholder="Enter your remark"
+            value={client_remark}
+            onChange={(e) => setClient_remark(e.target.value)}
+          />
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="success"
+            disabled={!client_remark.trim()}
+            onClick={(e) => {
+              handleClientVerifyDay(e, selectedDayId); // your existing handler
+              setShowModal(false);
+            }}
+          >
+            {verifyLoading ? <LoadingSpinner /> : "Verify"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };
