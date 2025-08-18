@@ -309,15 +309,12 @@ const OpexTemplate = () => {
               <CRow>
                 <CCol md={4}>
                   <div className="d-flex align-items-between mb-3">
-                    <div
-                      style={{ minWidth: "60px", background: "#DBD9D9" }}
-                      className="m-1"
-                    >
+                    <div style={{ minWidth: "60px" }} className="m-1">
                       <CImage
                         src={opexData.client.logo}
                         width={90}
                         height={60}
-                        className="me-2"
+                        className=""
                         style={{ objectFit: "contain" }}
                       />
                     </div>
@@ -390,169 +387,6 @@ const OpexTemplate = () => {
                 </CCardBody>
               </CCard>
             )}
-
-          {/* certificate Card */}
-          {/* {opexData && opexData.blocks_data.length > 0 && (
-            <CCard className="mb-4">
-              <CCardHeader>
-                <h5 className="mb-0">Certificates</h5>
-              </CCardHeader>
-              <CCardBody>
-                <CTable bordered hover responsive>
-                  <CTableHead color="secondary">
-                    <CTableRow>
-                      <CTableHeaderCell>Month</CTableHeaderCell>
-                      <CTableHeaderCell>Certificate ID</CTableHeaderCell>
-                      <CTableHeaderCell>Verified By</CTableHeaderCell>
-                      <CTableHeaderCell>Verified At</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {loadingOpex ? (
-                      <CTableRow>
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          <LoadingSpinner />
-                        </CTableDataCell>
-                      </CTableRow>
-                    ) : error ? (
-                      <CTableRow>
-                        {" "}
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          {error}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ) : opexData.certificates.length > 0 ? (
-                      opexData.certificates.map((block, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell>
-                            {new Date(
-                              block.verified_by.timestamp
-                            ).toLocaleString("en-GB", {
-                              month: "2-digit",
-                            })}
-                          </CTableDataCell>
-                          <CTableDataCell>{block._id}</CTableDataCell>
-                          <CTableDataCell>
-                            {block.verified_by.name}
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            {new Date(
-                              block.verified_by.timestamp
-                            ).toLocaleString("en-GB", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })}
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))
-                    ) : (
-                      <CTableRow>
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          No certificates Found.
-                        </CTableDataCell>
-                      </CTableRow>
-                    )}
-                  </CTableBody>
-                </CTable>
-              </CCardBody>
-            </CCard>
-          )} */}
-
-          {/* certificate Card */}
-          {/* {opexData && opexData.blocks_data.length > 0 && (
-            <CCard className="mb-4">
-              <CCardHeader>
-                <h5 className="mb-0">Certificates</h5>
-              </CCardHeader>
-              <CCardBody>
-                <CTable bordered hover responsive>
-                  <CTableHead color="secondary">
-                    <CTableRow>
-                      <CTableHeaderCell>Month</CTableHeaderCell>
-                      <CTableHeaderCell>Certificate ID</CTableHeaderCell>
-                      <CTableHeaderCell>Verified By</CTableHeaderCell>
-                      <CTableHeaderCell>Verified At</CTableHeaderCell>
-                      <CTableHeaderCell>Action</CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {loadingOpex ? (
-                      <CTableRow>
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          <LoadingSpinner />
-                        </CTableDataCell>
-                      </CTableRow>
-                    ) : error ? (
-                      <CTableRow>
-                        {" "}
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          {error}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ) : opexData.certificates.length > 0 ? (
-                      opexData.certificates.map((block, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell>
-                            {new Date(
-                              block.verified_by.timestamp
-                            ).toLocaleString("en-GB", {
-                              month: "2-digit",
-                            })}
-                          </CTableDataCell>
-                          <CTableDataCell>{block._id}</CTableDataCell>
-                          <CTableDataCell>
-                            {block.verified_by.name}
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            {new Date(
-                              block.verified_by.timestamp
-                            ).toLocaleString("en-GB", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })}
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            <Link
-                              className="btn btn-primary btn-sm m-1"
-                              to={`/${adminroute}/my-opex-data/${site_id}/opex-certificate/${block._id}`}
-                            >
-                              View
-                            </Link>
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))
-                    ) : (
-                      <CTableRow>
-                        <CTableDataCell
-                          colSpan="9"
-                          className="text-center fw-bold"
-                        >
-                          No certificates Found.
-                        </CTableDataCell>
-                      </CTableRow>
-                    )}
-                  </CTableBody>
-                </CTable>
-              </CCardBody>
-            </CCard>
-          )} */}
 
           {/* certificate Card */}
           {opexData && opexData.blocks_data.length > 0 && (
@@ -754,16 +588,6 @@ const OpexTemplate = () => {
                             </CBadge>
                           )}
                         </CTableDataCell>
-                        {/* <CTableDataCell>
-                          <Link
-                            className="btn btn-primary btn-sm"
-                            // to={`/${adminroute}/opexdata/${site_id}/${opexData._id}/cycle/${cycle._id}`}
-                            to={`/${adminroute}/my-opex-data/${site_id}/${opexData._id}/cycle/${cycle._id}`}
-                          >
-                            Manage
-                          </Link>
-                        </CTableDataCell> */}
-
                         <CTableDataCell>
                           <div className="d-flex gap-2 justify-content-center align-items-center">
                             {/* Keep your existing Manage button */}
@@ -788,6 +612,8 @@ const OpexTemplate = () => {
                                   disabled={verifyLoading}
                                 >
                                   {verifyLoading ? (
+                                    <LoadingSpinner />
+                                  ) : verifyError ? (
                                     <LoadingSpinner />
                                   ) : (
                                     "Verify Cycle"

@@ -17,14 +17,13 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-// import TayproDarkBgLogo from "../../../assets/brand/logofordarkbg.png";
-import TayproWhiteBgLogo from "../../../assets/brand/logoforwhitebg.png";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import TayproWhiteBgLogo from "../../assets/brand/logoforwhitebg.png";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import CIcon from "@coreui/icons-react";
 import { cilCloudDownload, cilX } from "@coreui/icons";
-import LastActivity from "../../../components/LastActivity";
+import LastActivity from "../../components/LastActivity";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -138,7 +137,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const OpexCertificate = () => {
+const OpexSiteTechnicianCertificate = () => {
   const [
     {
       certificate,
@@ -175,7 +174,6 @@ const OpexCertificate = () => {
   const [image, setImage] = useState("");
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [clientImage, setClientImage] = useState("");
-  // Add these to your existing state declarations
   const [hardCopyFile, setHardCopyFile] = useState("");
   const [verificationType, setVerificationType] = useState("digital");
   const userInfo = useSelector((state) => state.userInfo);
@@ -1287,4 +1285,4 @@ const OpexCertificate = () => {
   );
 };
 
-export default OpexCertificate;
+export default OpexSiteTechnicianCertificate;
