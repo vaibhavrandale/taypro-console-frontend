@@ -275,12 +275,14 @@ const OpexManageCycle = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
-                        <Link
-                          to={`verify-day/${day._id}`}
-                          className="btn btn-sm btn-primary  m-1"
-                        >
-                          Verify
-                        </Link>
+                        {!day.is_verified && (
+                          <Link
+                            to={`verify-day/${day._id}`}
+                            className="btn btn-sm btn-primary  m-1"
+                          >
+                            Verify
+                          </Link>
+                        )}
 
                         <Link
                           to={`day/${day._id}/technician-detials`}
