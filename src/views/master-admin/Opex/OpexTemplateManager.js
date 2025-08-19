@@ -300,6 +300,12 @@ const OpexTemplateManager = () => {
     return monthMatch && yearMatch;
   });
 
+  const isLastDayOfMonth = (dateStr) => {
+    const d = new Date(dateStr);
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    return d.getDate() === lastDay.getDate();
+  };
+
   return (
     <div className="mt-5">
       {!loadingOpex && Object.keys(opexData).length === 0 && (
@@ -735,7 +741,12 @@ const OpexTemplateManager = () => {
                           </Link>
 
                           {!cycle.is_cycle_verified &&
-                          cycle.modules_planned === cycle.modules_cleaned ? (
+                          (cycle.modules_planned === cycle.modules_cleaned ||
+                            isLastDayOfMonth(
+                              cycle.day_wise_data[
+                                cycle.day_wise_data.length - 1
+                              ].date
+                            )) ? (
                             <Link
                               className="btn btn-primary btn-sm m-1"
                               onClick={() => verifyCycleHandler(cycle._id)}
