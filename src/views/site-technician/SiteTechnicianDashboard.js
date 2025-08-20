@@ -722,9 +722,11 @@ const SiteTechnicianDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITE_DETAILS_FAIL",
-          payload: error.response?.data?.message || error.message,
+          payload: error.response?.data?.message || error.response?.data?.error,
         });
-        toast.error(error.response?.data?.message || error.message);
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error
+        );
       }
     };
 
@@ -904,8 +906,11 @@ const SiteTechnicianDashboard = () => {
                       <LoadingSpinner />
                     </div>
                   ) : errorWeatherData ? (
-                    <div className="text-center text-danger">
-                      {errorWeatherData}
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ minHeight: "350px" }}
+                    >
+                      <CBadge color="danger">{errorWeatherData}</CBadge>
                     </div>
                   ) : (
                     <>
@@ -1014,9 +1019,12 @@ const SiteTechnicianDashboard = () => {
                   {loadingSiteDetails ? (
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
-                    <p className="text-danger text-center">
-                      {siteDetailsError}
-                    </p>
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ minHeight: "350px" }}
+                    >
+                      <CBadge color="warning">{siteDetailsError}</CBadge>
+                    </div>
                   ) : (
                     <>
                       {blockWiseCleaning?.length > 0 ? (
@@ -1079,7 +1087,12 @@ const SiteTechnicianDashboard = () => {
                   {loadingSiteDetails ? (
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
-                    <CBadge color="warning">{siteDetailsError}</CBadge>
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ minHeight: "350px" }}
+                    >
+                      <CBadge color="warning">{siteDetailsError}</CBadge>
+                    </div>
                   ) : (
                     <>
                       {gateways.length > 0 ? (
@@ -1143,7 +1156,13 @@ const SiteTechnicianDashboard = () => {
               {loadingSiteDetails ? (
                 <LoadingSpinner />
               ) : siteDetailsError ? (
-                <p className="text-danger text-center">{siteDetailsError}</p>
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "350px" }}
+                >
+                  {" "}
+                  <CBadge color="warning">{siteDetailsError}</CBadge>
+                </div>
               ) : (
                 <>
                   {robotsData?.length > 0 ? (

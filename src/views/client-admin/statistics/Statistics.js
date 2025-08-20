@@ -227,10 +227,6 @@ const Statistics = () => {
           subscriptionStatus={subscriptionStatus}
           error={cleaningError || cleaningError}
         />
-      ) : cleaningError || batteryError || sitesError ? (
-        <CBadge color="danger">
-          {cleaningError || batteryError || sitesError}
-        </CBadge>
       ) : (
         <>
           <CRow className="my-2">
