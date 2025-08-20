@@ -619,7 +619,7 @@ const UsersDashboard = () => {
                       className="rounded-circle"
                       width="50"
                       height="50"
-                      style={{ objectFit: "cover", cursor: "pointer" }}
+                      style={{ objectFit: "contain", cursor: "pointer" }}
                       onClick={() => openViewModal(user)}
                     />
                   </div>
@@ -836,14 +836,15 @@ const UsersDashboard = () => {
           ) : image ? (
             <div className="my-2 position-relative">
               <img
+                className="my-2 border rounded"
                 src={image}
                 alt="Profile preview"
                 width="100"
                 height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
+                style={{ objectFit: "contain" }}
               />
               <button
-                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle "
                 onClick={() => setImage("")}
                 aria-label="Remove image"
               >
@@ -1006,6 +1007,47 @@ const UsersDashboard = () => {
             accept="image/*"
             onChange={handleFileChange}
           />
+          {loadingUpload ? (
+            <div className="mt-2 d-flex justify-content-center">
+              <LoadingSpinner />
+            </div>
+          ) : image ? (
+            <div className="my-2 position-relative">
+              <img
+                className="my-2 border rounded"
+                src={image}
+                alt="Profile preview"
+                width="100"
+                height="100"
+                style={{ objectFit: "contain" }}
+              />
+              <button
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle"
+                onClick={() => setImage("")}
+                aria-label="Remove image"
+              >
+                <CIcon icon={cilX} />
+              </button>
+            </div>
+          ) : formData.profile_image ? (
+            <div className="my-2 position-relative">
+              <img
+                className="my-2 border rounded"
+                src={formData.profile_image}
+                alt="Current profile"
+                width="100"
+                height="100"
+                style={{ objectFit: "contain" }}
+              />
+              <button
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle"
+                onClick={() => setFormData({ ...formData, profile_image: "" })}
+                aria-label="Remove image"
+              >
+                <CIcon icon={cilX} />
+              </button>
+            </div>
+          ) : null}
           <CFormLabel className="my-2">
             Master Opex Site Technician{" "}
             <span className="text-muted">
@@ -1019,45 +1061,6 @@ const UsersDashboard = () => {
             checked={formData.is_master_opex_site_technician || false}
             onChange={handleChange}
           />{" "}
-          {loadingUpload ? (
-            <div className="mt-2 d-flex justify-content-center">
-              <LoadingSpinner />
-            </div>
-          ) : image ? (
-            <div className="my-2 position-relative">
-              <img
-                src={image}
-                alt="Profile preview"
-                width="100"
-                height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
-              />
-              <button
-                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
-                onClick={() => setImage("")}
-                aria-label="Remove image"
-              >
-                <CIcon icon={cilX} />
-              </button>
-            </div>
-          ) : formData.profile_image ? (
-            <div className="my-2 position-relative">
-              <img
-                src={formData.profile_image}
-                alt="Current profile"
-                width="100"
-                height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
-              />
-              <button
-                className="position-absolute top-0 end-0 bg-danger border-0 rounded-circle p-1"
-                onClick={() => setFormData({ ...formData, profile_image: "" })}
-                aria-label="Remove image"
-              >
-                <CIcon icon={cilX} />
-              </button>
-            </div>
-          ) : null}
         </CModalBody>
         <CModalFooter>
           <CButton
@@ -1175,7 +1178,7 @@ const UsersDashboard = () => {
                         alt={`Profile of ${selectedItem.username}`}
                         width="100"
                         height="100"
-                        style={{ objectFit: "cover", borderRadius: "8px" }}
+                        style={{ objectFit: "contain", borderRadius: "8px" }}
                       />
                     </CTableDataCell>
                   </CTableRow>
