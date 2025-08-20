@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -11,9 +11,9 @@ import {
   CWidgetStatsC,
   CWidgetStatsE,
   CWidgetStatsF,
-} from '@coreui/react';
-import { getStyle } from '@coreui/utils';
-import CIcon from '@coreui/icons-react';
+} from "@coreui/react";
+import { getStyle } from "@coreui/utils";
+import CIcon from "@coreui/icons-react";
 import {
   cilArrowRight,
   cilBasket,
@@ -27,12 +27,12 @@ import {
   cilSpeedometer,
   cilUser,
   cilUserFollow,
-} from '@coreui/icons';
-import { CChartBar, CChartLine } from '@coreui/react-chartjs';
-import { DocsExample } from '../../components';
+} from "@coreui/icons";
+import { CChartBar, CChartLine } from "@coreui/react-chartjs";
+import { DocsExample } from "../../components";
 
-import WidgetsBrand from './WidgetsBrand';
-import WidgetsDropdown from './WidgetsDropdown';
+import WidgetsBrand from "./WidgetsBrand";
+import WidgetsDropdown from "./WidgetsDropdown";
 
 const Widgets = () => {
   const random = (min, max) =>
@@ -42,14 +42,14 @@ const Widgets = () => {
     <CCard className="mb-4">
       <CCardHeader>Widgets</CCardHeader>
       <CCardBody>
-        <DocsExample href="components/widgets/#cwidgetstatsa">
+        <DocsExample to="components/widgets/#cwidgetstatsa">
           <WidgetsDropdown />
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsb">
+        <DocsExample to="components/widgets/#cwidgetstatsb">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={12} sm={6} xl={4} xxl={3}>
               <CWidgetStatsB
-                progress={{ color: 'success', value: 89.9 }}
+                progress={{ color: "success", value: 89.9 }}
                 text="Lorem ipsum dolor sit amet enim."
                 title="Widget title"
                 value="89.9%"
@@ -59,7 +59,7 @@ const Widgets = () => {
               <CWidgetStatsB
                 value="12.124"
                 title="Widget title"
-                progress={{ color: 'info', value: 89.9 }}
+                progress={{ color: "info", value: 89.9 }}
                 text="Lorem ipsum dolor sit amet enim."
               />
             </CCol>
@@ -67,7 +67,7 @@ const Widgets = () => {
               <CWidgetStatsB
                 value="$98.111,00"
                 title="Widget title"
-                progress={{ color: 'warning', value: 89.9 }}
+                progress={{ color: "warning", value: 89.9 }}
                 text="Lorem ipsum dolor sit amet enim."
               />
             </CCol>
@@ -75,13 +75,13 @@ const Widgets = () => {
               <CWidgetStatsB
                 value="2 TB"
                 title="Widget title"
-                progress={{ color: 'primary', value: 89.9 }}
+                progress={{ color: "primary", value: 89.9 }}
                 text="Lorem ipsum dolor sit amet enim."
               />
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsb">
+        <DocsExample to="components/widgets/#cwidgetstatsb">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={12} sm={6} xl={4} xxl={3}>
               <CWidgetStatsB
@@ -125,36 +125,36 @@ const Widgets = () => {
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatse">
+        <DocsExample to="components/widgets/#cwidgetstatse">
           <CRow xs={{ gutter: 4 }}>
             <CCol sm={4} md={3} xl={2}>
               <CWidgetStatsE
                 chart={
                   <CChartBar
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: getStyle('--cui-danger'),
-                          borderColor: 'transparent',
+                          backgroundColor: getStyle("--cui-danger"),
+                          borderColor: "transparent",
                           borderWidth: 1,
                           data: [
                             random(40, 100),
@@ -203,29 +203,29 @@ const Widgets = () => {
                 chart={
                   <CChartBar
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: getStyle('--cui-primary'),
-                          borderColor: 'transparent',
+                          backgroundColor: getStyle("--cui-primary"),
+                          borderColor: "transparent",
                           borderWidth: 1,
                           data: [
                             random(40, 100),
@@ -274,29 +274,29 @@ const Widgets = () => {
                 chart={
                   <CChartBar
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: getStyle('--cui-success'),
-                          borderColor: 'transparent',
+                          backgroundColor: getStyle("--cui-success"),
+                          borderColor: "transparent",
                           borderWidth: 1,
                           data: [
                             random(40, 100),
@@ -345,29 +345,29 @@ const Widgets = () => {
                 chart={
                   <CChartLine
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: 'transparent',
-                          borderColor: getStyle('--cui-danger'),
+                          backgroundColor: "transparent",
+                          borderColor: getStyle("--cui-danger"),
                           borderWidth: 2,
                           data: [
                             random(40, 100),
@@ -424,29 +424,29 @@ const Widgets = () => {
                 chart={
                   <CChartLine
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: 'transparent',
-                          borderColor: getStyle('--cui-success'),
+                          backgroundColor: "transparent",
+                          borderColor: getStyle("--cui-success"),
                           borderWidth: 2,
                           data: [
                             random(40, 100),
@@ -503,29 +503,29 @@ const Widgets = () => {
                 chart={
                   <CChartLine
                     className="mx-auto"
-                    style={{ height: '40px', width: '80px' }}
+                    style={{ height: "40px", width: "80px" }}
                     data={{
                       labels: [
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
-                        'T',
-                        'W',
-                        'T',
-                        'F',
-                        'S',
-                        'S',
-                        'M',
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
+                        "T",
+                        "W",
+                        "T",
+                        "F",
+                        "S",
+                        "S",
+                        "M",
                       ],
                       datasets: [
                         {
-                          backgroundColor: 'transparent',
-                          borderColor: getStyle('--cui-info'),
+                          backgroundColor: "transparent",
+                          borderColor: getStyle("--cui-info"),
                           borderWidth: 2,
                           data: [
                             random(40, 100),
@@ -579,7 +579,7 @@ const Widgets = () => {
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsf">
+        <DocsExample to="components/widgets/#cwidgetstatsf">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={12} sm={6} xl={4} xxl={3}>
               <CWidgetStatsF
@@ -615,7 +615,7 @@ const Widgets = () => {
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsf">
+        <DocsExample to="components/widgets/#cwidgetstatsf">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={12} sm={6} xl={4} xxl={3}>
               <CWidgetStatsF
@@ -626,7 +626,7 @@ const Widgets = () => {
                 footer={
                   <CLink
                     className="font-weight-bold font-xs text-body-secondary"
-                    href="https://coreui.io/"
+                    to="https://coreui.io/"
                     rel="noopener norefferer"
                     target="_blank"
                   >
@@ -649,7 +649,7 @@ const Widgets = () => {
                 footer={
                   <CLink
                     className="font-weight-bold font-xs text-body-secondary"
-                    href="https://coreui.io/"
+                    to="https://coreui.io/"
                     rel="noopener norefferer"
                     target="_blank"
                   >
@@ -672,7 +672,7 @@ const Widgets = () => {
                 footer={
                   <CLink
                     className="font-weight-bold font-xs text-body-secondary"
-                    href="https://coreui.io/"
+                    to="https://coreui.io/"
                     rel="noopener norefferer"
                     target="_blank"
                   >
@@ -695,7 +695,7 @@ const Widgets = () => {
                 footer={
                   <CLink
                     className="font-weight-bold font-xs text-body-secondary"
-                    href="https://coreui.io/"
+                    to="https://coreui.io/"
                     rel="noopener norefferer"
                     target="_blank"
                   >
@@ -711,7 +711,7 @@ const Widgets = () => {
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsf">
+        <DocsExample to="components/widgets/#cwidgetstatsf">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={12} sm={6} xl={4} xxl={3}>
               <CWidgetStatsF
@@ -751,54 +751,54 @@ const Widgets = () => {
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsd">
+        <DocsExample to="components/widgets/#cwidgetstatsd">
           <WidgetsBrand />
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsd">
+        <DocsExample to="components/widgets/#cwidgetstatsd">
           <WidgetsBrand withCharts />
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsc">
+        <DocsExample to="components/widgets/#cwidgetstatsc">
           <CCardGroup className="mb-4">
             <CWidgetStatsC
               icon={<CIcon icon={cilPeople} height={36} />}
               value="87.500"
               title="Visitors"
-              progress={{ color: 'info', value: 75 }}
+              progress={{ color: "info", value: 75 }}
             />
             <CWidgetStatsC
               icon={<CIcon icon={cilUserFollow} height={36} />}
               value="385"
               title="New Clients"
-              progress={{ color: 'success', value: 75 }}
+              progress={{ color: "success", value: 75 }}
             />
             <CWidgetStatsC
               icon={<CIcon icon={cilBasket} height={36} />}
               value="1238"
               title="Products sold"
-              progress={{ color: 'warning', value: 75 }}
+              progress={{ color: "warning", value: 75 }}
             />
             <CWidgetStatsC
               icon={<CIcon icon={cilChartPie} height={36} />}
               value="28%"
               title="Returning Visitors"
-              progress={{ color: 'primary', value: 75 }}
+              progress={{ color: "primary", value: 75 }}
             />
             <CWidgetStatsC
               icon={<CIcon icon={cilSpeedometer} height={36} />}
               value="5:34:11"
               title="Avg. Time"
-              progress={{ color: 'danger', value: 75 }}
+              progress={{ color: "danger", value: 75 }}
             />
           </CCardGroup>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsc">
+        <DocsExample to="components/widgets/#cwidgetstatsc">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={6} lg={4} xxl={2}>
               <CWidgetStatsC
                 icon={<CIcon icon={cilPeople} height={36} />}
                 value="87.500"
                 title="Visitors"
-                progress={{ color: 'info', value: 75 }}
+                progress={{ color: "info", value: 75 }}
               />
             </CCol>
             <CCol xs={6} lg={4} xxl={2}>
@@ -806,7 +806,7 @@ const Widgets = () => {
                 icon={<CIcon icon={cilUserFollow} height={36} />}
                 value="385"
                 title="New Clients"
-                progress={{ color: 'success', value: 75 }}
+                progress={{ color: "success", value: 75 }}
               />
             </CCol>
             <CCol xs={6} lg={4} xxl={2}>
@@ -814,7 +814,7 @@ const Widgets = () => {
                 icon={<CIcon icon={cilBasket} height={36} />}
                 value="1238"
                 title="Products sold"
-                progress={{ color: 'warning', value: 75 }}
+                progress={{ color: "warning", value: 75 }}
               />
             </CCol>
             <CCol xs={6} lg={4} xxl={2}>
@@ -822,7 +822,7 @@ const Widgets = () => {
                 icon={<CIcon icon={cilChartPie} height={36} />}
                 value="28%"
                 title="Returning Visitors"
-                progress={{ color: 'primary', value: 75 }}
+                progress={{ color: "primary", value: 75 }}
               />
             </CCol>
             <CCol xs={6} lg={4} xxl={2}>
@@ -830,7 +830,7 @@ const Widgets = () => {
                 icon={<CIcon icon={cilSpeedometer} height={36} />}
                 value="5:34:11"
                 title="Avg. Time"
-                progress={{ color: 'danger', value: 75 }}
+                progress={{ color: "danger", value: 75 }}
               />
             </CCol>
             <CCol xs={6} lg={4} xxl={2}>
@@ -838,12 +838,12 @@ const Widgets = () => {
                 icon={<CIcon icon={cilSpeech} height={36} />}
                 value="972"
                 title="Comments"
-                progress={{ color: 'info', value: 75 }}
+                progress={{ color: "info", value: 75 }}
               />
             </CCol>
           </CRow>
         </DocsExample>
-        <DocsExample href="components/widgets/#cwidgetstatsc">
+        <DocsExample to="components/widgets/#cwidgetstatsc">
           <CRow xs={{ gutter: 4 }}>
             <CCol xs={6} lg={4} xxl={2}>
               <CWidgetStatsC

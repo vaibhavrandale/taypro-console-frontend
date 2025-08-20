@@ -14,7 +14,6 @@ import {
   cilCheckCircle,
   cilGroup,
   cilListRich,
-  cilClock,
   cilCheck,
   cilChatBubble,
   cilBarChart,
@@ -22,7 +21,9 @@ import {
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
-  cilShortText,
+  cilBadge,
+  cilDiamond,
+  cilUser,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -362,7 +363,7 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Client Subscriptions",
+            name: "Manage Subscriptions",
             to: "/master-admin/client-subscriptions",
           },
           {
@@ -1751,7 +1752,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/components/calendar/",
+  //           to: "https://coreui.io/react/docs/components/calendar/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1805,7 +1806,7 @@ const _nav = [
   //         {
   //           component: CNavItem,
   //           name: "Smart Pagination",
-  //           href: "https://coreui.io/react/docs/components/smart-pagination/",
+  //           to: "https://coreui.io/react/docs/components/smart-pagination/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1819,7 +1820,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/components/smart-table/",
+  //           to: "https://coreui.io/react/docs/components/smart-table/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1853,7 +1854,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/components/virtual-scroller/",
+  //           to: "https://coreui.io/react/docs/components/virtual-scroller/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1896,7 +1897,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/components/loading-button/",
+  //           to: "https://coreui.io/react/docs/components/loading-button/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1933,7 +1934,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/forms/multi-select/",
+  //           to: "https://coreui.io/react/docs/forms/multi-select/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1957,7 +1958,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/forms/range-slider/",
+  //           to: "https://coreui.io/react/docs/forms/range-slider/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1971,7 +1972,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/forms/rating/",
+  //           to: "https://coreui.io/react/docs/forms/rating/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -1995,7 +1996,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/forms/date-picker/",
+  //           to: "https://coreui.io/react/docs/forms/date-picker/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -2004,7 +2005,7 @@ const _nav = [
   //         {
   //           component: CNavItem,
   //           name: "Date Range Picker",
-  //           href: "https://coreui.io/react/docs/forms/date-range-picker/",
+  //           to: "https://coreui.io/react/docs/forms/date-range-picker/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -2018,7 +2019,7 @@ const _nav = [
   //               <CIcon icon={cilExternalLink} size="sm" className="ms-2" />
   //             </React.Fragment>
   //           ),
-  //           href: "https://coreui.io/react/docs/forms/time-picker/",
+  //           to: "https://coreui.io/react/docs/forms/time-picker/",
   //           badge: {
   //             color: "danger",
   //             text: "PRO",
@@ -2165,7 +2166,7 @@ const _nav = [
   //     {
   //       component: CNavItem,
   //       name: "Docs",
-  //       href: "https://coreui.io/react/docs/templates/installation/",
+  //       to: "https://coreui.io/react/docs/templates/installation/",
   //       icon: (
   //         <CIcon
   //           icon={cilDescription}
@@ -2646,6 +2647,16 @@ const _nav = [
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        subscriptionIcon: (
+          <CIcon
+            icon={cilDiamond}
+            style={{
+              height: "18px",
+              width: "18px",
+              color: "yellow",
+            }}
+          />
+        ),
       },
       {
         component: CNavItem,
@@ -2675,7 +2686,7 @@ const _nav = [
       // Group: Site Management
       {
         component: CNavGroup,
-        name: "All Site Data",
+        name: "Sites",
         icon: (
           <CIcon
             icon={cilBuilding}
@@ -2716,8 +2727,18 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Preventive Maintenance",
+            name: "Prev. Maintenance",
             to: "/client-admin/preventive-maintenance-dashboard",
+            subscriptionIcon: (
+              <CIcon
+                icon={cilDiamond}
+                style={{
+                  height: "18px",
+                  width: "18px",
+                  color: "yellow",
+                }}
+              />
+            ),
           },
           {
             component: CNavItem,
@@ -2741,49 +2762,44 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Users",
+            name: "User Management",
             to: "/client-admin/external-users",
-            icon: (
-              <CIcon
-                icon={cilGroup}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-              />
-            ),
           },
           {
             component: CNavItem,
-            name: "Chat with Users",
+            name: "Live Chat",
             to: "/client-admin/chat",
-            icon: (
+            subscriptionIcon: (
               <CIcon
-                icon={cilChatBubble}
-                customClassName="nav-icon"
-                style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+                icon={cilDiamond}
+                style={{
+                  height: "18px",
+                  width: "18px",
+                  color: "yellow",
+                }}
               />
             ),
           },
         ],
       },
-
-      {
-        component: CNavGroup,
-        name: "Subscription",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "My Subscriptions",
-            to: "/client-admin/subscriptions",
-          },
-        ],
-      },
+      // {
+      //   component: CNavGroup,
+      //   name: "Subscription",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilMoney}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "My Subscriptions",
+      //       to: "/client-admin/subscriptions",
+      //     },
+      //   ],
+      // },
 
       {
         component: CNavItem,
@@ -2794,6 +2810,16 @@ const _nav = [
             icon={cilFactory}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        subscriptionIcon: (
+          <CIcon
+            icon={cilDiamond}
+            style={{
+              height: "18px",
+              width: "18px",
+              color: "yellow",
+            }}
           />
         ),
       },

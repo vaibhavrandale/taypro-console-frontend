@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import ComponentsImg from "../assets/images/components.webp";
+import { Link } from "react-router-dom";
 
 const DocsComponents = (props) => (
   <div className="bg-primary bg-opacity-10 border border-2 border-primary rounded mb-4">
@@ -26,21 +27,21 @@ const DocsComponents = (props) => (
         documentation, and customization options, refer to our docs.
       </div>
       <div className="col-md-auto col-12 mt-3 mt-lg-0">
-        <a
+        <Link
           className="btn btn-primary text-nowrap text-white"
-          href={`https://coreui.io/react/docs/${props.href}`}
+          to={`https://coreui.io/react/docs/${props.to}`}
           target="_blank"
           rel="noopener noreferrer"
         >
           Explore Documentation
-        </a>
+        </Link>
       </div>
     </div>
   </div>
 );
 
 DocsComponents.propTypes = {
-  href: PropTypes.string,
+  to: PropTypes.string,
 };
 
 export default DocsComponents;

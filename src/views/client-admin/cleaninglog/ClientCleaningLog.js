@@ -9,8 +9,8 @@ import {
   CFormInput,
   CRow,
   CCol,
-  CSpinner,
   CButton,
+  CBadge,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -19,28 +19,56 @@ import axios from "axios";
 import PaginateInput from "../../../components/PaginateInput";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true, error: "" };
-    case "FETCH_SUCCESS":
+    case "FETCH_CLEANING_REQUEST":
+      return { ...state, cleaningLoading: true, cleaningError: "" };
+    case "FETCH_CLEANING_SUCCESS":
       return {
         ...state,
-        loading: false,
+        cleaningLoading: false,
         cleaninglogs: action.payload.cleaninglogs,
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
       };
-    case "FETCH_ERROR_LOGS_SUCCESS":
-      return { ...state, errorLogs: action.payload };
-    case "FETCH_TIMER_LOGS_SUCCESS":
-      return { ...state, timerLogs: action.payload };
-    case "FETCH_TIMER_LOGS_FAIL":
-      return { ...state, error: action.payload };
     case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        cleaningLoading: false,
+        cleaningError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
+
+    case "FETCH_ERROR_LOGS_REQUEST":
+      return { ...state, errLogloading: true, errorLogError: "" };
+    case "FETCH_ERROR_LOGS_SUCCESS":
+      return { ...state, errorLogs: action.payload, errLogloading: false };
+    case "FETCH_ERROR_LOGS_FAIL":
+      return {
+        ...state,
+        errLogloading: false,
+        errorLogError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
+
+    case "FETCH_TIMER_LOGS_REQUEST":
+      return { ...state, timerLogLoading: true, timerLogError: "" };
+    case "FETCH_TIMER_LOGS_SUCCESS":
+      return { ...state, timerLogs: action.payload, timerLogLoading: false };
+    case "FETCH_TIMER_LOGS_FAIL":
+      return {
+        ...state,
+        timerLogError: action.payload,
+        timerLogLoading: false,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
+
     default:
       return state;
   }
@@ -49,22 +77,35 @@ const reducer = (state, action) => {
 const ClientCleaningLog = () => {
   const [
     {
-      loading,
+      cleaningLoading,
+      cleaningError,
       cleaninglogs,
+      errLogloading,
+      errorLogError,
+      errorLogs,
+      timerLogLoading,
+      timerLogs,
+      timerLogError,
       totalPages,
       hasNextPage,
       hasPrevPage,
-      errorLogs,
-      timerLogs,
-      error,
+      subscriptiondata,
+      subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
+    cleaningLoading: false,
+    cleaningError: "",
+
+    errLogloading: false,
+    errorLogError: "",
     errorLogs: [],
+    subscriptionStatus: "",
+    subscriptiondata: {},
     timerLogs: [],
-    loading: false,
-    error: "",
+    timerLogLoading: false,
+    timerLogError: "",
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
@@ -90,7 +131,7 @@ const ClientCleaningLog = () => {
         limit: limit,
       };
       try {
-        dispatch({ type: "FETCH_REQUEST" });
+        dispatch({ type: "FETCH_CLEANING_REQUEST" });
         const result = await axios.post(
           `/api/v1/cleaninglogs/${startDate}/${endDate}/${site_id}`,
           pagination,
@@ -107,7 +148,7 @@ const ClientCleaningLog = () => {
         let prev = result.data.hasPrevPage;
         const data = result.data.data;
         dispatch({
-          type: "FETCH_SUCCESS",
+          type: "FETCH_CLEANING_SUCCESS",
           payload: {
             cleaninglogs: data,
             totalPages: total,
@@ -119,6 +160,8 @@ const ClientCleaningLog = () => {
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response?.data?.error || error.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(error.response?.data?.error || error.message);
       }
@@ -126,6 +169,7 @@ const ClientCleaningLog = () => {
 
     const fetchErrorLogs = async () => {
       try {
+        dispatch({ type: "FETCH_ERROR_LOGS_REQUEST" });
         const response = await axios.get(
           `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${endDate}`,
           {
@@ -139,12 +183,19 @@ const ClientCleaningLog = () => {
           payload: response.data.data,
         });
       } catch (error) {
-        toast.error("Failed to fetch error logs");
+        dispatch({
+          type: "FETCH_ERROR_LOGS_FAIL",
+          payload: error.response?.data?.error || error.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
+        });
+        toast.error(error.response?.data?.error || error.message);
       }
     };
 
     const fetchTimerLogs = async () => {
       try {
+        dispatch({ type: "FETCH_TIMER_LOGS_REQUEST" });
         const response = await axios.get(
           `/api/v1/weathertimerupdatenotification/get-weather-timer-update-notification/${site_id}/${startDate}/${endDate}`,
           {
@@ -160,16 +211,11 @@ const ClientCleaningLog = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_TIMER_LOGS_FAIL",
-          payload:
-            error.response?.data?.error ||
-            error.response?.data?.message ||
-            error.message,
+          payload: error.response?.data?.error || error.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
         });
-        toast.error(
-          error.response?.data?.error ||
-            error.response?.data?.message ||
-            error.message
-        );
+        toast.error(error.response?.data?.error || error.message);
       }
     };
 
@@ -355,267 +401,295 @@ const ClientCleaningLog = () => {
       handlePageChange(pageNumber);
     }
   };
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
+  ];
 
   return (
-    <div className="p-4">
-      <form>
-        <CRow className="my-3">
-          <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
-            <CCol md={3} xs={12} className="m-1">
-              <CFormInput
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </CCol>
-            <CCol md={3} xs={12} className="m-1">
-              <CFormInput
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </CCol>
-          </CCol>
-          <CCol
-            md={5}
-            xs={12}
-            className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
-          >
-            <CButton color="primary" size="sm" onClick={exportToExcel}>
-              Export to Excel
-            </CButton>
-          </CCol>
-        </CRow>
-      </form>
-      {loading ? (
-        <div className="text-center my-4">
-          <LoadingSpinner />
-        </div>
+    <>
+      {cleaningLoading || errLogloading || timerLogLoading ? (
+        <LoadingSpinner />
+      ) : checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={errorLogError || cleaningError || timerLogError}
+        />
+      ) : errorLogError || cleaningError || timerLogError ? (
+        <CBadge color="danger">
+          {errorLogError || cleaningError || timerLogError}
+        </CBadge>
       ) : (
-        <>
-          {/* Timer Update Notifications Table - Comes First */}
-          <h5 className="mt-3 mb-3">
-            ⏱ Timer Update Notifications -{" "}
-            <span className="text-danger">{site_id}</span>
-          </h5>
-          <CTable
-            bordered
-            hover
-            responsive
-            className="text-center bg-important"
-          >
-            <CTableHead color="info">
-              <CTableRow>
-                <CTableHeaderCell>#</CTableHeaderCell>
-                <CTableHeaderCell>Block</CTableHeaderCell>
-                <CTableHeaderCell>Timer Updates</CTableHeaderCell>
-                <CTableHeaderCell>Last Updated</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {Array.isArray(timerLogs) && timerLogs.length > 0 ? (
-                timerLogs.flatMap(
-                  (siteData, siteIndex) =>
-                    Array.isArray(siteData.last_activity)
-                      ? siteData.last_activity.map((blockData, blockIndex) => (
-                          <CTableRow key={`${siteIndex}-${blockIndex}`}>
-                            <CTableDataCell>
-                              {siteIndex * siteData.last_activity.length +
-                                blockIndex +
-                                1}
-                            </CTableDataCell>
-                            <CTableDataCell>{blockData.block}</CTableDataCell>
-                            <CTableDataCell>
-                              <ul
-                                className="text-start"
-                                style={{
-                                  listStyleType: "none",
-                                  paddingLeft: 0,
-                                }}
-                              >
-                                {blockData.details?.map(
-                                  (detail, detailIndex) => (
-                                    <li key={detailIndex}>{detail}</li>
-                                  )
-                                )}
-                              </ul>
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {new Date(siteData.updatedAt).toLocaleString()}
-                            </CTableDataCell>
-                          </CTableRow>
-                        ))
-                      : [] // fallback if last_activity is not an array
-                )
-              ) : (
-                <CTableRow>
-                  <CTableDataCell colSpan={4} className="text-info text-center">
-                    No timer update notifications found for the selected date.
-                  </CTableDataCell>
-                </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
-
-          {/* Cleaning Logs Table */}
-          <h5 className="mt-5 mb-3">
-            🤖 Cleaning Logs - <span className="text-danger">{site_id}</span>
-          </h5>
-          <CTable
-            bordered
-            hover
-            responsive
-            className="text-center bg-important"
-          >
-            <CTableHead color="secondary">
-              <CTableRow>
-                <CTableHeaderCell>Sr</CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "150px" }}>
-                  Robot No
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Row Number
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Row Length (Meters)
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "160px" }}>
-                  Cleaning Date
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Started At
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "150px" }}>
-                  Battery Start (%)
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Finished At
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Battery Finished (%)
-                </CTableHeaderCell>
-                <CTableHeaderCell style={{ minWidth: "190px" }}>
-                  Distance Covered (Meters)
-                </CTableHeaderCell>
-                <CTableHeaderCell>Status</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {cleaninglogs.length > 0 ? (
-                cleaninglogs.map((log, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{index + 1}</CTableDataCell>
-                    <CTableDataCell>{log.robot_no}</CTableDataCell>
-                    <CTableDataCell>{log.row_number}</CTableDataCell>
-                    <CTableDataCell>{log.row_length}</CTableDataCell>
-                    <CTableDataCell>
-                      {
-                        new Date(log.start_timestamp)
-                          .toISOString()
-                          .split("T")[0]
-                      }
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {new Date(log.start_timestamp).toLocaleString()}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {log.start_battery_percentage}
-                    </CTableDataCell>
-                    {log.finish_timestamp === null ? (
-                      <CTableDataCell colSpan={4} className="text-center">
-                        <span className="badge bg-warning">
-                          Cleaning in progress
-                        </span>
+        <div className="p-4">
+          <div>
+            <CRow className="my-3">
+              <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
+                <CCol md={3} xs={12} className="m-1">
+                  <CFormInput
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </CCol>
+                <CCol md={3} xs={12} className="m-1">
+                  <CFormInput
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </CCol>
+              </CCol>
+              <CCol
+                md={5}
+                xs={12}
+                className="d-flex justify-content-md-end justify-content-center align-items-center mt-2 mt-md-0"
+              >
+                <CButton color="primary" size="sm" onClick={exportToExcel}>
+                  Export to Excel
+                </CButton>
+              </CCol>
+            </CRow>
+          </div>
+          {timerLogLoading ? (
+            <div className="text-center my-4">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              {/* Timer Update Notifications Table - Comes First */}
+              <h5 className="mt-3 mb-3">
+                ⏱ Timer Update Notifications -{" "}
+                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
+              </h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="info">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Timer Updates</CTableHeaderCell>
+                    <CTableHeaderCell>Last Updated</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {Array.isArray(timerLogs) && timerLogs.length > 0 ? (
+                    timerLogs.flatMap(
+                      (siteData, siteIndex) =>
+                        Array.isArray(siteData.last_activity)
+                          ? siteData.last_activity.map(
+                              (blockData, blockIndex) => (
+                                <CTableRow key={`${siteIndex}-${blockIndex}`}>
+                                  <CTableDataCell>
+                                    {siteIndex * siteData.last_activity.length +
+                                      blockIndex +
+                                      1}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {blockData.block}
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    <ul
+                                      className="text-start"
+                                      style={{
+                                        listStyleType: "none",
+                                        paddingLeft: 0,
+                                      }}
+                                    >
+                                      {blockData.details?.map(
+                                        (detail, detailIndex) => (
+                                          <li key={detailIndex}>{detail}</li>
+                                        )
+                                      )}
+                                    </ul>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {new Date(
+                                      siteData.updatedAt
+                                    ).toLocaleString()}
+                                  </CTableDataCell>
+                                </CTableRow>
+                              )
+                            )
+                          : [] // fallback if last_activity is not an array
+                    )
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={4} className="  text-start ">
+                        No timer update notifications found for the selected
+                        date.
                       </CTableDataCell>
-                    ) : (
-                      <>
-                        <CTableDataCell>
-                          {new Date(log.finish_timestamp).toLocaleString()}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {log.finish_battery_percentage}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {log.calculated_distance}
-                        </CTableDataCell>
-                        <CTableDataCell>{log.cleaning_status}</CTableDataCell>
-                      </>
-                    )}
-                  </CTableRow>
-                ))
-              ) : (
-                <CTableRow>
-                  <CTableDataCell
-                    colSpan="11"
-                    className="text-center text-danger"
-                  >
-                    No logs found for the selected date.
-                  </CTableDataCell>
-                </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
 
-          <PaginateInput
-            page={page}
-            totalPages={totalPages}
-            hasPrevPage={hasPrevPage}
-            hasNextPage={hasNextPage}
-            pageInput={pageInput}
-            handlePageChange={handlePageChange}
-            handlePageInputChange={handlePageInputChange}
-            handlePageInputSubmit={handlePageInputSubmit}
-            limit={limit}
-            handleLimitChange={setLimit}
-          />
-
-          {/* Error Logs Table */}
-          <h5 className="mt-5 mb-3">
-            🚨 Error Logs for - <span className="text-danger">{site_id}</span>
-          </h5>
-          <CTable
-            bordered
-            hover
-            responsive
-            className="text-center bg-important"
-          >
-            <CTableHead color="dark">
-              <CTableRow>
-                <CTableHeaderCell>#</CTableHeaderCell>
-                <CTableHeaderCell>Robot No</CTableHeaderCell>
-                <CTableHeaderCell>Block</CTableHeaderCell>
-                <CTableHeaderCell>Error Type</CTableHeaderCell>
-                <CTableHeaderCell>Date</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {errorLogs?.length > 0 ? (
-                errorLogs.map((log, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{index + 1}</CTableDataCell>
-                    <CTableDataCell>{log.robot_no}</CTableDataCell>
-                    <CTableDataCell>{log.block}</CTableDataCell>
-                    <CTableDataCell>{log.error_type}</CTableDataCell>
-                    <CTableDataCell>
-                      {new Date(log.date).toLocaleDateString()}{" "}
-                    </CTableDataCell>
+              {/* Cleaning Logs Table */}
+              <h5 className="mt-5 mb-3">
+                🤖 Cleaning Logs -{" "}
+                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
+              </h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>Sr</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                      Robot No
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Row Number
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Row Length (Meters)
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "160px" }}>
+                      Cleaning Date
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Started At
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                      Battery Start (%)
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Finished At
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Battery Finished (%)
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                      Distance Covered (Meters)
+                    </CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
                   </CTableRow>
-                ))
-              ) : (
-                <CTableRow>
-                  <CTableDataCell
-                    colSpan={5}
-                    className="text-danger text-center"
-                  >
-                    No error logs found for the selected date.
-                  </CTableDataCell>
-                </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
-        </>
+                </CTableHead>
+                <CTableBody>
+                  {cleaninglogs.length > 0 ? (
+                    cleaninglogs.map((log, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>{log.row_number}</CTableDataCell>
+                        <CTableDataCell>{log.row_length}</CTableDataCell>
+                        <CTableDataCell>
+                          {
+                            new Date(log.start_timestamp)
+                              .toISOString()
+                              .split("T")[0]
+                          }
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {new Date(log.start_timestamp).toLocaleString()}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {log.start_battery_percentage}
+                        </CTableDataCell>
+                        {log.finish_timestamp === null ? (
+                          <CTableDataCell colSpan={4} className="text-center">
+                            <span className="badge bg-warning">
+                              Cleaning in progress
+                            </span>
+                          </CTableDataCell>
+                        ) : (
+                          <>
+                            <CTableDataCell>
+                              {new Date(log.finish_timestamp).toLocaleString()}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.finish_battery_percentage}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.calculated_distance}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {log.cleaning_status}
+                            </CTableDataCell>
+                          </>
+                        )}
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan="11" className=" text-start  ">
+                        No logs found for the selected date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+
+              <PaginateInput
+                page={page}
+                totalPages={totalPages}
+                hasPrevPage={hasPrevPage}
+                hasNextPage={hasNextPage}
+                pageInput={pageInput}
+                handlePageChange={handlePageChange}
+                handlePageInputChange={handlePageInputChange}
+                handlePageInputSubmit={handlePageInputSubmit}
+                limit={limit}
+                handleLimitChange={setLimit}
+              />
+
+              {/* Error Logs Table */}
+              <h5 className="mt-5 mb-3">
+                🚨 Error Logs for -{" "}
+                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
+              </h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="dark">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Error Type</CTableHeaderCell>
+                    <CTableHeaderCell>Date</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {errorLogs?.length > 0 ? (
+                    errorLogs.map((log, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>{log.block}</CTableDataCell>
+                        <CTableDataCell>{log.error_type}</CTableDataCell>
+                        <CTableDataCell>
+                          {new Date(log.date).toLocaleDateString()}{" "}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5} className=" text-start ">
+                        No error logs found for the selected date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+            </>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

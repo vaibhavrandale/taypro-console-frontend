@@ -99,9 +99,38 @@ const reducer = (state, action) => {
 };
 
 const RobotOperating = () => {
+  const [
+    {
+      loading,
+      loadingRobot,
+      error,
+      robot,
+      downlinks,
+      successDelete,
+      loadingRobots,
+      robots,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      sendingCommandloading,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    downlinks: [],
+    robots: [],
+    robot: {},
+    loading: true,
+    error: "",
+    loadingRobots: true,
+    sendingCommandloading: false,
+    loadingRobot: false,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
   const { site_id, block, robot_no } = useParams();
   const [modalVisible, setModalVisible] = useState(false);
-  const [siteRobots, setSiteRobots] = useState([]);
+  // const [siteRobots, setSiteRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [text, setText] = useState("");
   const [base64Text, setBase64Text] = useState("");
@@ -134,8 +163,8 @@ const RobotOperating = () => {
 
   let moveLeft = "C4";
   let moveRight = "C5";
-  let returnToDock = "D1";
-  let cleaningStart = "C1";
+  // let returnToDock = "D1";
+  // let cleaningStart = "C1";
   let weatherLockEnable = "WE";
   let weatherLockDisable = "WD";
   let testModeOn = "TS";
@@ -145,16 +174,16 @@ const RobotOperating = () => {
 
   let setWheelSpeed = "RWS";
   let setBrushSpeed = "RBS";
-  let getPwmWheel = "PW";
-  let getPwmBrush = "PB";
-  let getAntiStuckBrushSpeed = "SP"; // PA180
-  let getBrushCurrent = "SB"; // CB
-  let getWheelCurrent = "SW"; // CW
-  let getEepromWheelCurrent = "EW";
-  let getEepromBrushCurrent = "EB";
+  // let getPwmWheel = "PW";
+  // let getPwmBrush = "PB";
+  // let getAntiStuckBrushSpeed = "SP"; // PA180
+  // let getBrushCurrent = "SB"; // CB
+  // let getWheelCurrent = "SW"; // CW
+  // let getEepromWheelCurrent = "EW";
+  // let getEepromBrushCurrent = "EB";
 
   let resetBoard = "RE";
-  let atDock = "AD";
+  // let atDock = "AD";
   let CheckDock = "ZD";
   let CheckSensorState = "CD";
   let checkManualMode = "AU";
@@ -176,34 +205,6 @@ const RobotOperating = () => {
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
-  const [
-    {
-      loading,
-      error,
-      robot,
-      downlinks,
-      successDelete,
-      loadingRobots,
-      robots,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      sendingCommandloading,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
-    downlinks: [],
-    robots: [],
-    robot: {},
-    loading: true,
-    error: "",
-    loadingRobots: true,
-    sendingCommandloading: false,
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
-  });
-
   const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -223,54 +224,28 @@ const RobotOperating = () => {
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
 
-        if (site_id) {
-          const extractNumber = (robotNo) =>
-            parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
+        // const filteredRobots = robotsData.sort(
+        //   (a, b) => a.robot_no - b.robot_no
+        // );
 
-          const filteredRobots = robotsData.sort(
-            (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
-          );
-
-          setSiteRobots(filteredRobots);
-        }
+        // setSiteRobots(filteredRobots);
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
-          payload: error.response ? error.response.data.message : error.message,
-        });
-      }
-    };
-
-    const getRobot = async () => {
-      try {
-        dispatch({ type: "FETCH_ROBOT_REQUEST" });
-        const response = await axios.get(
-          `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-
-        dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_ROBOT_FAIL",
-          payload: error.response
-            ? error.response.data.message
-            : error.response.data.error,
+          payload: error.response.data.message || error.response.data.error,
         });
       }
     };
 
     getRobots();
-    getRobot();
-  }, [block, site_id, authtoken, robot_no]);
+  }, [block, site_id, authtoken]);
 
   useEffect(() => {
     let pagination = {
       pg: page,
       limit: limit,
     };
+
     const getDownlinks = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
@@ -310,6 +285,31 @@ const RobotOperating = () => {
       getDownlinks();
     }
   }, [successDelete, authtoken, page, limit]);
+
+  useEffect(() => {
+    const getRobot = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOT_REQUEST" });
+        const response = await axios.get(
+          `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOT_FAIL",
+          payload: error.response
+            ? error.response.data.message
+            : error.response.data.error,
+        });
+      }
+    };
+
+    getRobot();
+  }, [authtoken, robot_no]);
 
   const filteredDownlink = downlinks.filter((item) =>
     item.downlink.toLowerCase().includes(searchTerm.toLowerCase())
@@ -546,8 +546,8 @@ const RobotOperating = () => {
                   Robot Activity
                 </Link> */}
 
-                <CDropdown className="dropdown me-2 mb-2">
-                  {siteRobots.length > 1 ? (
+                {/* <CDropdown className="dropdown me-2 mb-2">
+                  {robots.length > 1 ? (
                     <CDropdownToggle
                       size="sm"
                       className="shadow-sm"
@@ -556,24 +556,27 @@ const RobotOperating = () => {
                       {robot.robot_no}
                     </CDropdownToggle>
                   ) : (
-                    <CButton
+                    <Link
                       className={`${
                         robot.lora_state === 1 ? `` : `text-white`
                       } shadow-sm`}
                       color={`${robot.lora_state === 1 ? `success` : `danger`}`}
                       size="sm"
+                      to={`${
+                        robot.robot_no === robot_no ? `#` : `${robot.robot_no}`
+                      }`}
                     >
                       {robot.robot_no}
-                    </CButton>
+                    </Link>
                   )}
 
                   <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
-                    {siteRobots.length === 1
+                    {robots.length === 1
                       ? ""
-                      : siteRobots.map((item, index) => (
+                      : robots.map((item, index) => (
                           <CDropdownItem
                             key={index}
-                            href={`${
+                            to={`${
                               item.robot_no === robot_no
                                 ? `#`
                                 : `${item.robot_no}`
@@ -586,6 +589,51 @@ const RobotOperating = () => {
                           </CDropdownItem>
                         ))}
                   </CDropdownMenu>
+                </CDropdown> */}
+                <CDropdown className="dropdown me-2 mb-2">
+                  {robots.length > 1 ? (
+                    <CDropdownToggle
+                      size="sm"
+                      className="shadow-sm"
+                      color={robot.lora_state === 1 ? "success" : "danger"}
+                    >
+                      {robot.robot_no}
+                    </CDropdownToggle>
+                  ) : (
+                    <CButton
+                      size="sm"
+                      color={robot.lora_state === 1 ? "success" : "danger"}
+                      className="shadow-sm"
+                      disabled // since no dropdown when single robot
+                    >
+                      {robot.robot_no}
+                    </CButton>
+                  )}
+
+                  {robots.length > 1 && (
+                    <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
+                      {robots.map((item, index) => (
+                        <Link
+                          key={index}
+                          to={
+                            item.robot_no === robot_no
+                              ? `#`
+                              : `/${adminroute}/site-management/block-management/${site_id}/${block}/${item.robot_no}`
+                          }
+                          className="dopdown-item-robot "
+                        >
+                          <CBadge
+                            color={`${
+                              item.lora_state === 1 ? "success" : "danger"
+                            }`}
+                            className="p-2 my-1"
+                          >
+                            {item.robot_no}{" "}
+                          </CBadge>
+                        </Link>
+                      ))}
+                    </CDropdownMenu>
+                  )}
                 </CDropdown>
 
                 {userInfo?.role === "Master Admin" && robot?._id && (
@@ -611,1224 +659,1304 @@ const RobotOperating = () => {
           <CRow className="my-2">
             <CCol></CCol>
           </CRow>
-
-          <CRow>
-            {/* First Card */}
-            <CCol md={5} className="mt-2">
-              {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
-              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                <CCardBody className="d-flex flex-column flex-grow-1">
-                  <div className="d-flex flex-row justify-content-between p-1">
-                    <CRow
-                      className="d-flex flex-column"
-                      style={{ gap: "10px" }}
-                    >
-                      <CCol>
-                        <span style={{ fontSize: "15px" }}>
-                          {robot.robot_no}
-                        </span>
-                      </CCol>
-                      <CCol>🔋: {robot.battery_voltage}%</CCol>
-                      <CCol>
-                        <span className="badge bg-success">
-                          {robot.version}
-                        </span>
-                      </CCol>
-                    </CRow>
-
-                    <CRow
-                      className="d-flex flex-column"
-                      style={{ gap: "10px" }}
-                    >
-                      <CCol>
-                        <span style={{ fontSize: "13px" }}>{robot.deveui}</span>
-                      </CCol>
-                      <CCol>Wheel Speed</CCol>
-                      <CCol>
-                        <CBadge
-                          className="badge bg-danger"
-                          shape="rounded-pill"
+          {loadingRobot ? (
+            <LoadingSpinner />
+          ) : (
+            <div>
+              <CRow>
+                {/* First Card */}
+                <CCol md={5} className="mt-2">
+                  {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
+                  <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                    <CCardBody className="d-flex flex-column flex-grow-1">
+                      <div className="d-flex flex-row justify-content-between p-1">
+                        <CRow
+                          className="d-flex flex-column"
+                          style={{ gap: "10px" }}
                         >
-                          {robot.wheel_motor_speed}
-                        </CBadge>
-                      </CCol>
-                    </CRow>
+                          <CCol>
+                            <span style={{ fontSize: "15px" }}>
+                              {robot.robot_no}
+                            </span>
+                          </CCol>
+                          <CCol>🔋: {robot.battery_voltage}%</CCol>
+                          <CCol>
+                            <span className="badge bg-success">
+                              {robot.version}
+                            </span>
+                          </CCol>
+                        </CRow>
 
-                    <CRow
-                      className="d-flex flex-column"
-                      style={{ gap: "10px" }}
-                    >
-                      <CCol>
-                        Lora:{" "}
-                        <span className="text-success">{robot.lora_no}</span>
-                      </CCol>
-                      <CCol>Brush Speed</CCol>
-                      <CCol>
-                        <CBadge
-                          className="badge bg-danger"
-                          shape="rounded-pill"
+                        <CRow
+                          className="d-flex flex-column"
+                          style={{ gap: "10px" }}
                         >
-                          {robot.brush_motor_speed}
-                        </CBadge>
-                      </CCol>
-                    </CRow>
-                  </div>
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            {/* Second Card */}
-            <CCol md={4} className="mt-2">
-              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                <CCardBody className="d-flex flex-column flex-grow-1">
-                  <div className="d-flex flex-row justify-content-between p-1">
-                    <CRow
-                      className="d-flex flex-column"
-                      style={{ gap: "10px" }}
-                    >
-                      <CCol>
-                        <span
-                          className={`text-${
-                            robot.lora_state === 1 ? `success` : `danger`
-                          }`}
-                        >
-                          {robot.lora_state === 1 ? `online` : `offline`}
-                        </span>
-                      </CCol>
-                      <CCol>
-                        {" "}
-                        <span className=" ">{robot.last_status}</span>
-                      </CCol>
-                    </CRow>
-                    <CRow
-                      className="d-flex flex-column"
-                      style={{ gap: "10px" }}
-                    >
-                      <CCol>
-                        <span className="text-danger">
-                          SC : {robot.stuck_count}
-                        </span>
-                      </CCol>
-                      <CCol>
-                        {" "}
-                        {!robot.last_uplink ||
-                        isNaN(new Date(robot.last_uplink).getTime()) ? (
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            Robot is not activated
-                          </CBadge>
-                        ) : (
-                          <span>
-                            <CTooltip
-                              content={new Date(
-                                robot.last_uplink
-                              ).toLocaleString()}
-                              placement="top"
+                          <CCol>
+                            <span style={{ fontSize: "13px" }}>
+                              {robot.deveui}
+                            </span>
+                          </CCol>
+                          <CCol>Wheel Speed</CCol>
+                          <CCol>
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
                             >
+                              {robot.wheel_motor_speed}
+                            </CBadge>
+                          </CCol>
+                        </CRow>
+
+                        <CRow
+                          className="d-flex flex-column"
+                          style={{ gap: "10px" }}
+                        >
+                          <CCol>
+                            Lora:{" "}
+                            <span className="text-success">
+                              {robot.lora_no}
+                            </span>
+                          </CCol>
+                          <CCol>Brush Speed</CCol>
+                          <CCol>
+                            <CBadge
+                              className="badge bg-danger"
+                              shape="rounded-pill"
+                            >
+                              {robot.brush_motor_speed}
+                            </CBadge>
+                          </CCol>
+                        </CRow>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Second Card */}
+                <CCol md={4} className="mt-2">
+                  <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                    <CCardBody className="d-flex flex-column flex-grow-1">
+                      <div className="d-flex flex-row justify-content-between p-1">
+                        <CRow
+                          className="d-flex flex-column"
+                          style={{ gap: "10px" }}
+                        >
+                          <CCol>
+                            <span
+                              className={`text-${
+                                robot.lora_state === 1 ? `success` : `danger`
+                              }`}
+                            >
+                              {robot.lora_state === 1 ? `online` : `offline`}
+                            </span>
+                          </CCol>
+                          <CCol>
+                            {" "}
+                            <span className=" ">{robot.last_status}</span>
+                          </CCol>
+                        </CRow>
+                        <CRow
+                          className="d-flex flex-column"
+                          style={{ gap: "10px" }}
+                        >
+                          <CCol>
+                            <span className="text-danger">
+                              SC : {robot.stuck_count}
+                            </span>
+                          </CCol>
+                          <CCol>
+                            {" "}
+                            {!robot.last_uplink ||
+                            isNaN(new Date(robot.last_uplink).getTime()) ? (
+                              <CBadge
+                                className="badge bg-danger"
+                                shape="rounded-pill"
+                              >
+                                Robot is not activated
+                              </CBadge>
+                            ) : (
                               <span>
-                                {formatDistanceToNow(
-                                  new Date(robot.last_uplink),
-                                  {
-                                    addSuffix: true,
-                                  }
-                                )}
+                                <CTooltip
+                                  content={new Date(
+                                    robot.last_uplink
+                                  ).toLocaleString()}
+                                  placement="top"
+                                >
+                                  <span>
+                                    {formatDistanceToNow(
+                                      new Date(robot.last_uplink),
+                                      {
+                                        addSuffix: true,
+                                      }
+                                    )}
+                                  </span>
+                                </CTooltip>
                               </span>
-                            </CTooltip>
-                          </span>
-                        )}
-                      </CCol>
-                    </CRow>
-                  </div>
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            {/* Third Card (Custom Downlink) */}
-            {userInfo.role === "Master Admin" && (
-              <CCol md={3} className="mt-2">
-                <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                  <CCardBody>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h6 className="fw-bold">Custom Downlink</h6>
-                      <FaCircleInfo
-                        className="text-primary"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setModalVisible(true)}
-                      />
-                    </div>
-                    <form className="position-relative mt-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter command"
-                        name={customDownlink}
-                        onChange={(e) => setCustomDownlink(e.target.value)}
-                      />
-                      <CButton
-                        disabled={!customDownlink}
-                        onClick={() => sendCustomDownlink(customDownlink)}
-                        type="button"
-                        className="d-flex justify-content-center align-items-center btn-sm send-button"
-                      >
-                        <span className="d-flex justify-content-center align-items-center">
-                          {" "}
-                          {sendingCommandloading ? (
-                            <LoadingSpinner />
-                          ) : (
-                            <FaArrowUp />
-                          )}
-                        </span>
-                      </CButton>
-                    </form>
-                  </CCardBody>
-                </CCard>
-              </CCol>
-            )}
-          </CRow>
-
-          {/* Modal for Commands */}
-          <CModal
-            scrollable
-            backdrop="static"
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            size="xl"
-          >
-            <CModalHeader>
-              <CModalTitle>Custom Downlink</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-              <CRow className="d-flex justify-content-between">
-                <CCol xs={12} sm={10} md={6} lg={4}>
-                  <CInputGroup className="mb-3">
-                    <CFormInput
-                      type="text"
-                      placeholder="Search downlink..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </CInputGroup>
+                            )}
+                          </CCol>
+                        </CRow>
+                      </div>
+                    </CCardBody>
+                  </CCard>
                 </CCol>
-                <CCol
-                  className="d-flex justify-content-end align-items-center"
-                  xs={12}
-                  sm={10}
-                  md={6}
-                  lg={4}
-                >
-                  <Link
-                    className="btn btn-sm btn-warning justify-content-end"
-                    size="md"
-                    // to="/master-admin/site-management/add-downlink"
-                    to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/add-downlink`}
-                  >
-                    Add Downlink
-                  </Link>
-                </CCol>
-              </CRow>
-              <CTable responsive hover bordered>
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell style={{ minWidth: "70px" }}>
-                      Sr No
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
-                      Command
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>
-                      Decoded String
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "120px" }}>
-                      Hexa decimal
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "120px" }}>
-                      Uplink
-                    </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "240px" }}>
-                      Description
-                    </CTableHeaderCell>
-                    <CTableHeaderCell
-                      style={{ minWidth: "250px" }}
-                      className="text-center"
+
+                {/* Third Card (Custom Downlink) */}
+                {userInfo.role === "Master Admin" && (
+                  <CCol md={3} className="mt-2">
+                    <CCard
+                      className="shadow border-0 "
+                      style={{ height: "100%" }}
                     >
-                      Action
-                    </CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
+                      <CCardBody>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className="fw-bold">Custom Downlink</h6>
+                          <FaCircleInfo
+                            className="text-primary"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setModalVisible(true)}
+                          />
+                        </div>
+                        <form className="position-relative mt-4">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter command"
+                            name={customDownlink}
+                            onChange={(e) => setCustomDownlink(e.target.value)}
+                          />
+                          <CButton
+                            disabled={!customDownlink}
+                            onClick={() => sendCustomDownlink(customDownlink)}
+                            type="button"
+                            className="d-flex justify-content-center align-items-center btn-sm send-button"
+                          >
+                            <span className="d-flex justify-content-center align-items-center">
+                              {" "}
+                              {sendingCommandloading ? (
+                                <LoadingSpinner />
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </span>
+                          </CButton>
+                        </form>
+                      </CCardBody>
+                    </CCard>
+                  </CCol>
+                )}
+              </CRow>
 
-                <CTableBody>
-                  {loading ? (
-                    <CTableRow className="text-center">
-                      <CTableDataCell colSpan={7}>
-                        <LoadingSpinner />
-                      </CTableDataCell>
-                    </CTableRow>
-                  ) : error ? (
-                    <CTableRow>
-                      <CTableDataCell
-                        colSpan={7}
-                        className="text-center text-danger"
+              {/* Modal for Commands */}
+              <CModal
+                scrollable
+                backdrop="static"
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                size="xl"
+              >
+                <CModalHeader>
+                  <CModalTitle>Custom Downlink</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                  <CRow className="d-flex justify-content-between">
+                    <CCol xs={12} sm={10} md={6} lg={4}>
+                      <CInputGroup className="mb-3">
+                        <CFormInput
+                          type="text"
+                          placeholder="Search downlink..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                      </CInputGroup>
+                    </CCol>
+                    <CCol
+                      className="d-flex justify-content-end align-items-center"
+                      xs={12}
+                      sm={10}
+                      md={6}
+                      lg={4}
+                    >
+                      <Link
+                        className="btn btn-sm btn-warning justify-content-end"
+                        size="md"
+                        // to="/master-admin/site-management/add-downlink"
+                        to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/add-downlink`}
                       >
-                        {error}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ) : filteredDownlink.length > 0 ? (
-                    filteredDownlink.map((item, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        Add Downlink
+                      </Link>
+                    </CCol>
+                  </CRow>
+                  <CTable responsive hover bordered>
+                    <CTableHead color="secondary">
+                      <CTableRow>
+                        <CTableHeaderCell style={{ minWidth: "70px" }}>
+                          Sr No
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ minWidth: "150px" }}>
+                          Command
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ minWidth: "150px" }}>
+                          Decoded String
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ minWidth: "120px" }}>
+                          Hexa decimal
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ minWidth: "120px" }}>
+                          Uplink
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ minWidth: "240px" }}>
+                          Description
+                        </CTableHeaderCell>
+                        <CTableHeaderCell
+                          style={{ minWidth: "250px" }}
+                          className="text-center"
+                        >
+                          Action
+                        </CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
 
-                        <CTableDataCell>
-                          <Link
-                            className=" "
-                            style={{ textDecoration: "none" }}
+                    <CTableBody>
+                      {loading ? (
+                        <CTableRow className="text-center">
+                          <CTableDataCell colSpan={7}>
+                            <LoadingSpinner />
+                          </CTableDataCell>
+                        </CTableRow>
+                      ) : error ? (
+                        <CTableRow>
+                          <CTableDataCell
+                            colSpan={7}
+                            className="text-center text-danger"
+                          >
+                            {error}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ) : filteredDownlink.length > 0 ? (
+                        filteredDownlink.map((item, index) => (
+                          <CTableRow key={index}>
+                            <CTableDataCell>{index + 1}</CTableDataCell>
+
+                            <CTableDataCell>
+                              <Link
+                                className=" "
+                                style={{ textDecoration: "none" }}
+                                onClick={() =>
+                                  sendsingleDownlink(item.downlink, index)
+                                }
+                              >
+                                {item.downlink}&nbsp;
+                                {loadingRow === index ? <LoadingSpinner /> : ""}
+                              </Link>
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {item.decodedString}
+                            </CTableDataCell>
+                            <CTableDataCell>{item.hexadecimal}</CTableDataCell>
+                            <CTableDataCell>{item.uplink}</CTableDataCell>
+                            <CTableDataCell>
+                              {item.additionalInfo}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              <div className="d-flex justify-content-center align-items-center">
+                                <Link
+                                  to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/view-downlink/${item._id}`}
+                                  color=""
+                                  size="sm"
+                                  className="btn btn-sm btn-secondary m-1"
+                                >
+                                  View
+                                </Link>
+
+                                <Link
+                                  to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/update-downlink/${item._id}`}
+                                  color="warning"
+                                  size="sm"
+                                  className="btn btn-sm btn-warning m-1"
+                                >
+                                  Edit
+                                </Link>
+
+                                <Link
+                                  color="danger"
+                                  size="sm"
+                                  className=" btn btn-sm btn-danger m-1 text-white"
+                                  onClick={() => deleteDownlink(item)}
+                                >
+                                  Delete
+                                </Link>
+                              </div>
+                            </CTableDataCell>
+                          </CTableRow>
+                        ))
+                      ) : (
+                        <CTableRow>
+                          <CTableDataCell className="text-center" colSpan={7}>
+                            No Data Found.
+                          </CTableDataCell>
+                        </CTableRow>
+                      )}
+                    </CTableBody>
+                  </CTable>
+
+                  <PaginateInput
+                    page={page}
+                    totalPages={totalPages}
+                    hasPrevPage={hasPrevPage}
+                    hasNextPage={hasNextPage}
+                    pageInput={pageInput}
+                    handlePageChange={handlePageChange}
+                    handlePageInputChange={handlePageInputChange}
+                    handlePageInputSubmit={handlePageInputSubmit}
+                    limit={limit}
+                    handleLimitChange={setLimit} // New prop
+                  />
+                </CModalBody>
+
+                <CModalFooter>
+                  <CButton
+                    size="sm"
+                    color="secondary"
+                    onClick={() => setModalVisible(false)}
+                  >
+                    Close
+                  </CButton>
+                </CModalFooter>
+              </CModal>
+
+              <CRow className="my-2">
+                {/* First Card - Cleaning Cycle */}
+                <CCol md={3} className="mt-2">
+                  <CCard
+                    className="shadow border-0 "
+                    style={{ height: "100%" }}
+                  >
+                    <CCardBody>
+                      <p>Cleaning Cycle</p>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow"
+                        onClick={() => sendsingleDownlink(start, 1)}
+                      >
+                        {commandButton === 1 ? (
+                          <>
+                            START&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "START"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(stop, 2)}
+                      >
+                        {commandButton === 2 ? (
+                          <>
+                            STOP&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "STOP"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(returntodock, 3)}
+                      >
+                        {commandButton === 3 ? (
+                          <>
+                            RETURN&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "RETURN"
+                        )}
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Second Card - Set Wheel Speed */}
+                <CCol md={3} className="mt-2">
+                  <CCard
+                    className="shadow border-0 "
+                    style={{ height: "100%" }}
+                  >
+                    <CCardBody>
+                      <p>Set Wheel Speed</p>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setWheelPwm100, 4)}
+                      >
+                        {commandButton === 4 ? (
+                          <>
+                            LOW&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "LOW"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setWheelPwm200, 5)}
+                      >
+                        {commandButton === 5 ? (
+                          <>
+                            MEDIUM&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "MEDIUM"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setWheelPwm250, 6)}
+                      >
+                        {commandButton === 6 ? (
+                          <>
+                            HIGH&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "HIGH"
+                        )}
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Third Card - Set Brush Speed */}
+                <CCol md={3} className="mt-2">
+                  <CCard
+                    className="shadow border-0 "
+                    style={{ height: "100%" }}
+                  >
+                    <CCardBody>
+                      <p>Set Brush Speed</p>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setBrushPwm100, 7)}
+                      >
+                        {commandButton === 7 ? (
+                          <>
+                            LOW&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "LOW"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setBrushPwm200, 8)}
+                      >
+                        {commandButton === 8 ? (
+                          <>
+                            MEDIUM&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "MEDIUM"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink(setBrushPwm250, 9)}
+                      >
+                        {commandButton === 9 ? (
+                          <>
+                            HIGH&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "HIGH"
+                        )}
+                      </CButton>
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+
+                {/* Fourth Card - Text To Base64 */}
+                {userInfo.role === "Master Admin" && (
+                  <CCol md={3} className="mt-2">
+                    <CCard
+                      className="shadow border-0 "
+                      style={{ height: "100%" }}
+                    >
+                      <CCardBody>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className="fw-bold">Text to Base64</h6>
+                          <span className="text-danger fst-italic">
+                            {base64Text}
+                          </span>
+                        </div>
+                        <form className="position-relative mt-4">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter value"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                          />
+                          <CButton
+                            onClick={() => TextToBase64(text)}
+                            type="button"
+                            className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
+                          >
+                            <FaArrowUp />
+                          </CButton>
+                        </form>
+                      </CCardBody>
+                    </CCard>
+                  </CCol>
+                )}
+              </CRow>
+
+              {/* Fourth Row */}
+              <CRow className="my-2">
+                {userInfo.role === "Master Admin" && (
+                  <>
+                    {/* Card 1 - Custom Current */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <div className="d-flex justify-content-between align-items-center mb-3">
+                            <p className="mb-0">Custom Current</p>
+                            <CButton className="btn btn-sm btn-secondary me-2 mb-2">
+                              Remove Current Limit
+                            </CButton>
+                          </div>
+
+                          {/* Wheel Current */}
+                          <div className="position-relative mb-3">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter Wheel Current"
+                              value={wheelCurrentValue}
+                              onChange={(e) =>
+                                setWheelCurrentValue(e.target.value)
+                              }
+                            />
+                            <CButton
+                              onClick={() =>
+                                sendsingleDownlink(
+                                  `${setWheelCurrent}${wheelCurrentValue}`,
+                                  10
+                                )
+                              }
+                              type="button"
+                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                            >
+                              {commandButton === 10 ? (
+                                <>
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </CButton>
+                          </div>
+
+                          {/* Brush Current */}
+                          <div className="position-relative">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter Brush Current"
+                              value={brushCurrentValue}
+                              onChange={(e) =>
+                                setBrushCurrentValue(e.target.value)
+                              }
+                            />
+                            <CButton
+                              type="button"
+                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(
+                                  `${setBrushCurrent}${brushCurrentValue}`,
+                                  11
+                                )
+                              }
+                            >
+                              {commandButton === 11 ? (
+                                <>
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+
+                    {/* Card 2 - Speed */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <div className="d-flex justify-content-between align-items-center mb-3">
+                            <p className="mb-0">Custom Speed</p>
+                            <small className="text-danger">(0-255)</small>
+                          </div>
+
+                          {/* Enter Speed */}
+                          <div className="position-relative mb-3">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Brush Speed"
+                              value={brushSpeedValue}
+                              onChange={(e) =>
+                                setBrushSpeedValue(e.target.value)
+                              }
+                            />
+                            <CButton
+                              type="button"
+                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(
+                                  `${setBrushSpeed}${brushSpeedValue}`,
+                                  12
+                                )
+                              }
+                            >
+                              {commandButton === 12 ? (
+                                <>
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </CButton>
+                          </div>
+
+                          {/* Brush Speed */}
+                          <div className="position-relative">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="wheel Speed"
+                              value={wheelSpeedValue}
+                              onChange={(e) =>
+                                setWheelSpeedValue(e.target.value)
+                              }
+                            />
+                            <CButton
+                              type="button"
+                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(
+                                  `${setWheelSpeed}${wheelSpeedValue}`,
+                                  13
+                                )
+                              }
+                            >
+                              {commandButton === 13 ? (
+                                <>
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+
+                    {/* Card 3 - Direction */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <p>Direction</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(moveLeft, 14)}
+                            >
+                              {commandButton === 14 ? (
+                                <>
+                                  Move Left&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Move Left"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(moveRight, 15)}
+                            >
+                              {commandButton === 15 ? (
+                                <>
+                                  Move Right&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Move Right"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(cleanLeft, 16)}
+                            >
+                              {commandButton === 16 ? (
+                                <>
+                                  Clean Left&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Clean Left"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(cleanRight, 17)}
+                            >
+                              {commandButton === 17 ? (
+                                <>
+                                  Clean Right&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Clean Right"
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+
+                    {/* Card 4 - Test Mode */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <p>Test Mode ☀️</p>
+                          <CButton
+                            className="btn btn-sm btn-secondary m-1 shadow-sm"
+                            onClick={() => sendsingleDownlink(testModeOn, 18)}
+                          >
+                            {commandButton === 18 ? (
+                              <>
+                                Enable&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Enable"
+                            )}
+                          </CButton>
+                          <CButton
+                            className="btn btn-sm btn-secondary m-1 shadow-sm"
+                            onClick={() => sendsingleDownlink(testModeOff, 19)}
+                          >
+                            {commandButton === 19 ? (
+                              <>
+                                Disable&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Disable"
+                            )}
+                          </CButton>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  </>
+                )}
+              </CRow>
+
+              {/* Seventh Row */}
+              <CRow className="my-2">
+                {userInfo.role === "Master Admin" && (
+                  <>
+                    {/* Card 1 - Weather Lock */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <p>Weather Lock ☀️</p>
+                          <CButton
+                            className="btn btn-sm btn-secondary m-1 shadow-sm"
                             onClick={() =>
-                              sendsingleDownlink(item.downlink, index)
+                              sendsingleDownlink(weatherLockEnable, 20)
                             }
                           >
-                            {item.downlink}&nbsp;
-                            {loadingRow === index ? <LoadingSpinner /> : ""}
-                          </Link>
-                        </CTableDataCell>
-                        <CTableDataCell>{item.decodedString}</CTableDataCell>
-                        <CTableDataCell>{item.hexadecimal}</CTableDataCell>
-                        <CTableDataCell>{item.uplink}</CTableDataCell>
-                        <CTableDataCell>{item.additionalInfo}</CTableDataCell>
-                        <CTableDataCell>
-                          <div className="d-flex justify-content-center align-items-center">
-                            <Link
-                              to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/view-downlink/${item._id}`}
-                              color=""
-                              size="sm"
-                              className="btn btn-sm btn-secondary m-1"
-                            >
-                              View
-                            </Link>
+                            {commandButton === 20 ? (
+                              <>
+                                Enable&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Enable"
+                            )}
+                          </CButton>
+                          <CButton
+                            className="btn btn-sm btn-secondary m-1 shadow-sm"
+                            onClick={() =>
+                              sendsingleDownlink(weatherLockDisable, 21)
+                            }
+                          >
+                            {commandButton === 21 ? (
+                              <>
+                                Disable&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Disable"
+                            )}
+                          </CButton>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
 
-                            <Link
-                              to={`/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}/update-downlink/${item._id}`}
-                              color="warning"
-                              size="sm"
-                              className="btn btn-sm btn-warning m-1"
-                            >
-                              Edit
-                            </Link>
+                    {/* Card 2 - Reset */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <p>Reset</p>
+                          <CButton
+                            className="btn btn-sm btn-secondary m-1 shadow-sm"
+                            onClick={() => sendsingleDownlink(resetBoard, 22)}
+                          >
+                            {commandButton === 22 ? (
+                              <>
+                                Reset&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Reset"
+                            )}
+                          </CButton>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
 
-                            <Link
-                              color="danger"
-                              size="sm"
-                              className=" btn btn-sm btn-danger m-1 text-white"
-                              onClick={() => deleteDownlink(item)}
+                    {/* Card 3 - Set Dock Station */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
+                      >
+                        <CCardBody>
+                          <p>Set Dock Station</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setDockAtLeft, 23)
+                              }
                             >
-                              Delete
-                            </Link>
+                              {" "}
+                              {commandButton === 23 ? (
+                                <>
+                                  Left&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Left"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setDockAtRight, 24)
+                              }
+                            >
+                              {commandButton === 24 ? (
+                                <>
+                                  Right&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Right"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(CheckDock, 25)}
+                            >
+                              {commandButton === 25 ? (
+                                <>
+                                  Check EEPROM Dock&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check EEPROM Dock"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(CheckSensorState, 26)
+                              }
+                            >
+                              {commandButton === 26 ? (
+                                <>
+                                  Check Sensor State&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check Sensor State"
+                              )}
+                            </CButton>
                           </div>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))
-                  ) : (
-                    <CTableRow>
-                      <CTableDataCell className="text-center" colSpan={7}>
-                        No Data Found.
-                      </CTableDataCell>
-                    </CTableRow>
-                  )}
-                </CTableBody>
-              </CTable>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
 
-              <PaginateInput
-                page={page}
-                totalPages={totalPages}
-                hasPrevPage={hasPrevPage}
-                hasNextPage={hasNextPage}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-                limit={limit}
-                handleLimitChange={setLimit} // New prop
-              />
-            </CModalBody>
-
-            <CModalFooter>
-              <CButton
-                size="sm"
-                color="secondary"
-                onClick={() => setModalVisible(false)}
-              >
-                Close
-              </CButton>
-            </CModalFooter>
-          </CModal>
-
-          <CRow className="my-2">
-            {/* First Card - Cleaning Cycle */}
-            <CCol md={3} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <p>Cleaning Cycle</p>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow"
-                    onClick={() => sendsingleDownlink(start, 1)}
-                  >
-                    {commandButton === 1 ? (
-                      <>
-                        START&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "START"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(stop, 2)}
-                  >
-                    {commandButton === 2 ? (
-                      <>
-                        STOP&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "STOP"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(returntodock, 3)}
-                  >
-                    {commandButton === 3 ? (
-                      <>
-                        RETURN&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "RETURN"
-                    )}
-                  </CButton>
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            {/* Second Card - Set Wheel Speed */}
-            <CCol md={3} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <p>Set Wheel Speed</p>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setWheelPwm100, 4)}
-                  >
-                    {commandButton === 4 ? (
-                      <>
-                        LOW&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "LOW"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setWheelPwm200, 5)}
-                  >
-                    {commandButton === 5 ? (
-                      <>
-                        MEDIUM&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "MEDIUM"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setWheelPwm250, 6)}
-                  >
-                    {commandButton === 6 ? (
-                      <>
-                        HIGH&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "HIGH"
-                    )}
-                  </CButton>
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            {/* Third Card - Set Brush Speed */}
-            <CCol md={3} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <p>Set Brush Speed</p>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setBrushPwm100, 7)}
-                  >
-                    {commandButton === 7 ? (
-                      <>
-                        LOW&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "LOW"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setBrushPwm200, 8)}
-                  >
-                    {commandButton === 8 ? (
-                      <>
-                        MEDIUM&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "MEDIUM"
-                    )}
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1 shadow-sm"
-                    onClick={() => sendsingleDownlink(setBrushPwm250, 9)}
-                  >
-                    {commandButton === 9 ? (
-                      <>
-                        HIGH&nbsp;
-                        <LoadingSpinner />
-                      </>
-                    ) : (
-                      "HIGH"
-                    )}
-                  </CButton>
-                </CCardBody>
-              </CCard>
-            </CCol>
-
-            {/* Fourth Card - Text To Base64 */}
-            {userInfo.role === "Master Admin" && (
-              <CCol md={3} className="mt-2">
-                <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                  <CCardBody>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h6 className="fw-bold">Text to Base64</h6>
-                      <span className="text-danger fst-italic">
-                        {base64Text}
-                      </span>
-                    </div>
-                    <form className="position-relative mt-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter value"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                      />
-                      <CButton
-                        onClick={() => TextToBase64(text)}
-                        type="button"
-                        className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
+                    {/* Card 4 - Motor Modes */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
                       >
-                        <FaArrowUp />
-                      </CButton>
-                    </form>
-                  </CCardBody>
-                </CCard>
-              </CCol>
-            )}
-          </CRow>
+                        <CCardBody>
+                          <p>Motor Modes</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                              40W
+                            </CButton>
+                            <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
+                              60W
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  </>
+                )}
+              </CRow>
 
-          {/* Fourth Row */}
-          <CRow className="my-2">
-            {userInfo.role === "Master Admin" && (
-              <>
-                {/* Card 1 - Custom Current */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <p className="mb-0">Custom Current</p>
-                        <CButton className="btn btn-sm btn-secondary me-2 mb-2">
-                          Remove Current Limit
-                        </CButton>
-                      </div>
-
-                      {/* Wheel Current */}
-                      <div className="position-relative mb-3">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Enter Wheel Current"
-                          value={wheelCurrentValue}
-                          onChange={(e) => setWheelCurrentValue(e.target.value)}
-                        />
-                        <CButton
-                          onClick={() =>
-                            sendsingleDownlink(
-                              `${setWheelCurrent}${wheelCurrentValue}`,
-                              10
-                            )
-                          }
-                          type="button"
-                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
-                        >
-                          {commandButton === 10 ? (
-                            <>
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            <FaArrowUp />
-                          )}
-                        </CButton>
-                      </div>
-
-                      {/* Brush Current */}
-                      <div className="position-relative">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Enter Brush Current"
-                          value={brushCurrentValue}
-                          onChange={(e) => setBrushCurrentValue(e.target.value)}
-                        />
-                        <CButton
-                          type="button"
-                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(
-                              `${setBrushCurrent}${brushCurrentValue}`,
-                              11
-                            )
-                          }
-                        >
-                          {commandButton === 11 ? (
-                            <>
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            <FaArrowUp />
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 2 - Speed */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <p className="mb-0">Custom Speed</p>
-                        <small className="text-danger">(0-255)</small>
-                      </div>
-
-                      {/* Enter Speed */}
-                      <div className="position-relative mb-3">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Brush Speed"
-                          value={brushSpeedValue}
-                          onChange={(e) => setBrushSpeedValue(e.target.value)}
-                        />
-                        <CButton
-                          type="button"
-                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(
-                              `${setBrushSpeed}${brushSpeedValue}`,
-                              12
-                            )
-                          }
-                        >
-                          {commandButton === 12 ? (
-                            <>
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            <FaArrowUp />
-                          )}
-                        </CButton>
-                      </div>
-
-                      {/* Brush Speed */}
-                      <div className="position-relative">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="wheel Speed"
-                          value={wheelSpeedValue}
-                          onChange={(e) => setWheelSpeedValue(e.target.value)}
-                        />
-                        <CButton
-                          type="button"
-                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(
-                              `${setWheelSpeed}${wheelSpeedValue}`,
-                              13
-                            )
-                          }
-                        >
-                          {commandButton === 13 ? (
-                            <>
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            <FaArrowUp />
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 3 - Direction */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Direction</p>
-                      <div className="d-flex flex-wrap gap-2">
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(moveLeft, 14)}
-                        >
-                          {commandButton === 14 ? (
-                            <>
-                              Move Left&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Move Left"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(moveRight, 15)}
-                        >
-                          {commandButton === 15 ? (
-                            <>
-                              Move Right&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Move Right"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(cleanLeft, 16)}
-                        >
-                          {commandButton === 16 ? (
-                            <>
-                              Clean Left&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Clean Left"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(cleanRight, 17)}
-                        >
-                          {commandButton === 17 ? (
-                            <>
-                              Clean Right&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Clean Right"
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 4 - Test Mode */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Test Mode ☀️</p>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink(testModeOn, 18)}
+              {/* Fifth Row */}
+              <CRow className="my-2">
+                {userInfo.role === "Master Admin" && (
+                  <>
+                    {/* Card 1 - Get Values */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
                       >
-                        {commandButton === 18 ? (
-                          <>
-                            Enable&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Enable"
-                        )}
-                      </CButton>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink(testModeOff, 19)}
+                        <CCardBody>
+                          <p>Get Values</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(batteryVoltage, 27)
+                              }
+                            >
+                              {commandButton === 27 ? (
+                                <>
+                                  Battery Voltage&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Battery Voltage"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() => sendsingleDownlink(temp, 28)}
+                            >
+                              {commandButton === 28 ? (
+                                <>
+                                  Temperature&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Temperature"
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+
+                    {/* Card 2 - Get EEPROM Values */}
+                    <CCol md={6} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
                       >
-                        {commandButton === 19 ? (
-                          <>
-                            Disable&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Disable"
-                        )}
-                      </CButton>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-              </>
-            )}
-          </CRow>
+                        <CCardBody>
+                          <p>Get EEPROM Values</p>
+                          <div className="d-flex justify-content-start flex-wrap gap-2">
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkManualMode, 29)
+                              }
+                            >
+                              {commandButton === 29 ? (
+                                <>
+                                  Check Manual&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check Manual"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkActuatorMode, 30)
+                              }
+                            >
+                              {commandButton === 30 ? (
+                                <>
+                                  Check Actuator&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check Actuator"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkBrushCurrent, 31)
+                              }
+                            >
+                              {commandButton === 31 ? (
+                                <>
+                                  Brush Current&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Brush Current"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkWheelCurrent, 32)
+                              }
+                            >
+                              {commandButton === 32 ? (
+                                <>
+                                  Wheel Current&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Wheel Current"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkWheelSpeed, 33)
+                              }
+                            >
+                              {commandButton === 33 ? (
+                                <>
+                                  Wheel Speed&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Wheel Speed"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkBrushSpeed, 34)
+                              }
+                            >
+                              {commandButton === 34 ? (
+                                <>
+                                  Burush Speed&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Burush Speed"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(checkTracker, 35)
+                              }
+                            >
+                              {commandButton === 35 ? (
+                                <>
+                                  Check Tracker&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check Tracker"
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
 
-          {/* Seventh Row */}
-          <CRow className="my-2">
-            {userInfo.role === "Master Admin" && (
-              <>
-                {/* Card 1 - Weather Lock */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Weather Lock ☀️</p>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() =>
-                          sendsingleDownlink(weatherLockEnable, 20)
-                        }
+                    {/* Card 3 - Set EEPROM Values */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
                       >
-                        {commandButton === 20 ? (
-                          <>
-                            Enable&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Enable"
-                        )}
-                      </CButton>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() =>
-                          sendsingleDownlink(weatherLockDisable, 21)
-                        }
+                        <CCardBody>
+                          <p>Set EEPROM Values</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setManualEnable, 36)
+                              }
+                            >
+                              {commandButton === 36 ? (
+                                <>
+                                  Manual Enable &nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Manual Enable"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setManualDisable, 37)
+                              }
+                            >
+                              {commandButton === 37 ? (
+                                <>
+                                  Manual Disable&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Manual Disable"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setActuatorEnable, 38)
+                              }
+                            >
+                              {commandButton === 38 ? (
+                                <>
+                                  Actuator Enable&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Actuator Enable"
+                              )}
+                            </CButton>
+
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setActuatorDisable, 39)
+                              }
+                            >
+                              {commandButton === 39 ? (
+                                <>
+                                  Actuator Disable&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Actuator Disable"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setTrackerEnable, 40)
+                              }
+                            >
+                              {commandButton === 40 ? (
+                                <>
+                                  Tracker Enable&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Tracker Enable"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              onClick={() =>
+                                sendsingleDownlink(setTrackerDisable, 41)
+                              }
+                            >
+                              {commandButton === 41 ? (
+                                <>
+                                  Tracker Disable&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Tracker Disable"
+                              )}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  </>
+                )}
+              </CRow>
+
+              {/* Sixth Row */}
+              <CRow className="my-2">
+                {userInfo.role === "Master Admin" && (
+                  <>
+                    {/* Card 1 - Custom Temperature Limit */}
+                    <CCol md={3} className="mt-2">
+                      <CCard
+                        className="shadow border-0"
+                        style={{ height: "100%" }}
                       >
-                        {commandButton === 21 ? (
-                          <>
-                            Disable&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Disable"
-                        )}
-                      </CButton>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 2 - Reset */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Reset</p>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink(resetBoard, 22)}
-                      >
-                        {commandButton === 22 ? (
-                          <>
-                            Reset&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Reset"
-                        )}
-                      </CButton>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 3 - Set Dock Station */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Set Dock Station</p>
-                      <div className="d-flex flex-wrap gap-2">
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(setDockAtLeft, 23)}
-                        >
-                          {" "}
-                          {commandButton === 23 ? (
-                            <>
-                              Left&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Left"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(setDockAtRight, 24)}
-                        >
-                          {commandButton === 24 ? (
-                            <>
-                              Right&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Right"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(CheckDock, 25)}
-                        >
-                          {commandButton === 25 ? (
-                            <>
-                              Check EEPROM Dock&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Check EEPROM Dock"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(CheckSensorState, 26)
-                          }
-                        >
-                          {commandButton === 26 ? (
-                            <>
-                              Check Sensor State&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Check Sensor State"
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 4 - Motor Modes */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Motor Modes</p>
-                      <div className="d-flex flex-wrap gap-2">
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          40W
-                        </CButton>
-                        <CButton className="btn btn-sm btn-secondary m-1 shadow-sm">
-                          60W
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-              </>
-            )}
-          </CRow>
-
-          {/* Fifth Row */}
-          <CRow className="my-2">
-            {userInfo.role === "Master Admin" && (
-              <>
-                {/* Card 1 - Get Values */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Get Values</p>
-                      <div className="d-flex flex-wrap gap-2">
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(batteryVoltage, 27)}
-                        >
-                          {commandButton === 27 ? (
-                            <>
-                              Battery Voltage&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Battery Voltage"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(temp, 28)}
-                        >
-                          {commandButton === 28 ? (
-                            <>
-                              Temperature&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Temperature"
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 2 - Get EEPROM Values */}
-                <CCol md={6} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Get EEPROM Values</p>
-                      <div className="d-flex justify-content-start flex-wrap gap-2">
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkManualMode, 29)
-                          }
-                        >
-                          {commandButton === 29 ? (
-                            <>
-                              Check Manual&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Check Manual"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkActuatorMode, 30)
-                          }
-                        >
-                          {commandButton === 30 ? (
-                            <>
-                              Check Actuator&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Check Actuator"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkBrushCurrent, 31)
-                          }
-                        >
-                          {commandButton === 31 ? (
-                            <>
-                              Brush Current&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Brush Current"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkWheelCurrent, 32)
-                          }
-                        >
-                          {commandButton === 32 ? (
-                            <>
-                              Wheel Current&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Wheel Current"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkWheelSpeed, 33)
-                          }
-                        >
-                          {commandButton === 33 ? (
-                            <>
-                              Wheel Speed&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Wheel Speed"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(checkBrushSpeed, 34)
-                          }
-                        >
-                          {commandButton === 34 ? (
-                            <>
-                              Burush Speed&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Burush Speed"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() => sendsingleDownlink(checkTracker, 35)}
-                        >
-                          {commandButton === 35 ? (
-                            <>
-                              Check Tracker&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Check Tracker"
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-
-                {/* Card 3 - Set EEPROM Values */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <p>Set EEPROM Values</p>
-                      <div className="d-flex flex-wrap gap-2">
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setManualEnable, 36)
-                          }
-                        >
-                          {commandButton === 36 ? (
-                            <>
-                              Manual Enable &nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Manual Enable"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setManualDisable, 37)
-                          }
-                        >
-                          {commandButton === 37 ? (
-                            <>
-                              Manual Disable&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Manual Disable"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setActuatorEnable, 38)
-                          }
-                        >
-                          {commandButton === 38 ? (
-                            <>
-                              Actuator Enable&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Actuator Enable"
-                          )}
-                        </CButton>
-
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setActuatorDisable, 39)
-                          }
-                        >
-                          {commandButton === 39 ? (
-                            <>
-                              Actuator Disable&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Actuator Disable"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setTrackerEnable, 40)
-                          }
-                        >
-                          {commandButton === 40 ? (
-                            <>
-                              Tracker Enable&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Tracker Enable"
-                          )}
-                        </CButton>
-                        <CButton
-                          className="btn btn-sm btn-secondary m-1 shadow-sm"
-                          onClick={() =>
-                            sendsingleDownlink(setTrackerDisable, 41)
-                          }
-                        >
-                          {commandButton === 41 ? (
-                            <>
-                              Tracker Disable&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Tracker Disable"
-                          )}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-              </>
-            )}
-          </CRow>
-
-          {/* Sixth Row */}
-          <CRow className="my-2">
-            {userInfo.role === "Master Admin" && (
-              <>
-                {/* Card 1 - Custom Temperature Limit */}
-                <CCol md={3} className="mt-2">
-                  <CCard className="shadow border-0" style={{ height: "100%" }}>
-                    <CCardBody>
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <p className="mb-0">Custom Temp</p>
-                        <span className="text-danger fst-italic small"></span>
-                      </div>
-                      <div className="position-relative">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Enter Temp"
-                        />
-                        <CButton
-                          type="button"
-                          className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
-                        >
-                          <FaArrowUp />
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-              </>
-            )}
-          </CRow>
+                        <CCardBody>
+                          <div className="d-flex justify-content-between align-items-center mb-3">
+                            <p className="mb-0">Custom Temp</p>
+                            <span className="text-danger fst-italic small"></span>
+                          </div>
+                          <div className="position-relative">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter Temp"
+                            />
+                            <CButton
+                              type="button"
+                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                            >
+                              <FaArrowUp />
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  </>
+                )}
+              </CRow>
+            </div>
+          )}
         </div>
       )}
     </>

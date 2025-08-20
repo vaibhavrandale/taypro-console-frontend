@@ -1,6 +1,6 @@
-import React from 'react';
-import { CCard, CCardHeader, CCardBody } from '@coreui/react';
-import { DocsLink } from '../../../components';
+import React from "react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
+import { DocsLink } from "../../../components";
 
 const Typography = () => {
   return (
@@ -8,7 +8,7 @@ const Typography = () => {
       <CCard className="mb-4">
         <CCardHeader>
           Headings
-          <DocsLink href="https://coreui.io/docs/content/typography/" />
+          <DocsLink to="https://coreui.io/docs/content/typography/" />
         </CCardHeader>
         <CCardBody>
           <p>
@@ -207,7 +207,7 @@ const Typography = () => {
           <p>
             Align terms and descriptions horizontally by using our grid system’s
             predefined classes (or semantic mixins). For longer terms, you can
-            optionally add a{' '}
+            optionally add a{" "}
             <code className="highlighter-rouge">.text-truncate</code> class to
             truncate the text with an ellipsis.
           </p>

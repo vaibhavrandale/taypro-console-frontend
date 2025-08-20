@@ -59,10 +59,11 @@ const reducer = (state, action) => {
         chatsloading: false,
         chatError: action.payload,
         subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
       };
 
     case "CREATE_CHAT_REQUEST":
-      return { ...state, newchatloading: true, error: "" };
+      return { ...state, newchatloading: true, createError: "" };
     case "CREATE_CHAT_SUCCESS":
       return {
         ...state,
@@ -70,7 +71,7 @@ const reducer = (state, action) => {
         chat: action.payload,
       };
     case "CREATE_CHAT_FAIL":
-      return { ...state, newchatloading: false, error: action.payload };
+      return { ...state, newchatloading: false, createError: action.payload };
     case "NEW_CHAT_REQUEST":
       return {
         ...state,
@@ -99,7 +100,9 @@ export default function ChatDashboard() {
       sendMessageLoading,
       chatError,
       userError,
+      createError,
       subscriptiondata,
+      subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -108,14 +111,15 @@ export default function ChatDashboard() {
     newchatloading: false,
     usersloading: false,
     chatsloading: false,
-    error: "",
+    createError: "",
     chatError: "",
     userError: "",
     subscriptiondata: {},
+    subscriptionStatus: "",
   });
   const [selectedChat, setSelectedChat] = useState(null);
   const [textMessage, setTextMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null); // Ref to scroll to the bottom of the chat
 
   const [showUserModal, setShowUserModal] = useState(false);
@@ -142,11 +146,11 @@ export default function ChatDashboard() {
         setSelectedChat(result.data.data[0]);
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
       dispatch({
         type: "FETCH_CHAT_FAIL",
         payload: error.response?.data?.error || error.response?.data?.message,
         subscriptiondata: error.response?.data?.data,
+        subscriptionStatus: error.response?.data?.subscriptionStatus,
       });
       toast.error(error.response?.data?.error || error.response?.data?.message);
     }
@@ -161,7 +165,7 @@ export default function ChatDashboard() {
 
           {
             headers: {
-              authorization: ` error.response?.data?.messageBearer ${authtoken}`,
+              authorization: `Bearer ${authtoken}`,
             },
           }
         ); // Replace with your API endpoint
@@ -171,10 +175,9 @@ export default function ChatDashboard() {
           payload: result.data.data,
         });
       } catch (error) {
-        console.error("Error fetching users:", error);
         dispatch({
           type: "FETCH_USER_FAIL",
-          payload: "Failed to fetch users",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
       }
     };
@@ -287,20 +290,37 @@ export default function ChatDashboard() {
     }
   }, [selectedChat]);
 
-  const subscriptionErrors = [
-    "Subscription expired. Please renew your subscription.",
-    "Please subscribe to use this feature.",
-    "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // const subscriptionErrors = [
+  //   "Subscription expired. Please renew your subscription.",
+  //   "Please subscribe to use this feature.",
+  //   "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // ];
+
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
   ];
 
   return (
     <div>
-      {chatsloading || newchatloading || loading ? (
+      {chatsloading || newchatloading ? (
         <LoadingSpinner />
-      ) : subscriptionErrors.includes(chatError || userError) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} error={chatError} />
+      ) : //  subscriptionErrors.includes(chatError || userError) ? (
+      //   <SubscriptionExpiryCard data={subscriptiondata} subscriptionStatus={subscriptionStatus}  error={chatError} />
+      // )
+      checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={chatError}
+        />
       ) : (
         <>
+          {(createError || userError || chatError) &&
+            (createError || userError || chatError)}
           <CRow>
             <CCol md={4} className="border-end p-3 overflow-auto">
               <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">

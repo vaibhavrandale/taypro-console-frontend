@@ -221,18 +221,13 @@ const SubscriptionViewPage = () => {
   return (
     <div className="p-4">
       {loading ? (
-        <div
-          style={{ height: "80vh" }}
-          className="d-flex justify-content-center align-items-center"
-        >
-          <LoadingSpinner />
-        </div>
+        <LoadingSpinner />
       ) : error ? (
         <span className="text-center fw-bold">{error}</span>
       ) : (
         <>
           {" "}
-          <CCard className="mb-4">
+          {/* <CCard className="mb-4">
             <CCardHeader className="bg-primary text-white">
               <CCardTitle className="h4">Subscription Details</CCardTitle>
             </CCardHeader>
@@ -268,6 +263,73 @@ const SubscriptionViewPage = () => {
                 </CListGroupItem>
               </CListGroup>
             </CCardBody>
+          </CCard> */}
+          <CCard className="mb-4 shadow-sm border-0">
+            <CCardHeader className="bg-gradient-primary text-white">
+              <h4 className="mb-0">Subscription Details</h4>
+            </CCardHeader>
+            <CCardBody>
+              <CRow className="gy-3">
+                <CCol md={6}>
+                  <small className="text-muted">Client ID</small>
+                  <div className="fw-bold">{subscription.client_id}</div>
+                </CCol>
+                <CCol md={6}>
+                  <small className="text-muted">Client Name</small>
+                  <div className="fw-bold">
+                    {subscription.client_name || "N/A"}
+                  </div>
+                </CCol>
+
+                <CCol md={6}>
+                  <small className="text-muted">Plan</small>
+                  <div>
+                    <CBadge color="success" className="px-3 py-1">
+                      {subscription.plan_id.toUpperCase()}
+                    </CBadge>
+                  </div>
+                </CCol>
+                <CCol md={6}>
+                  <small className="text-muted">Status</small>
+                  <div>
+                    <CBadge
+                      color={
+                        subscription.subscription_status === "subscribed"
+                          ? "success"
+                          : subscription.subscription_status === "expired"
+                          ? "warning"
+                          : "danger"
+                      }
+                      className="px-3 py-1"
+                    >
+                      {subscription.subscription_status.toUpperCase()}
+                    </CBadge>
+                  </div>
+                </CCol>
+
+                <CCol md={6}>
+                  <small className="text-muted">Start Date</small>
+                  <div className="fw-bold">
+                    {moment(subscription.subscription_start_date).format(
+                      "DD-MM-YYYY"
+                    )}
+                  </div>
+                </CCol>
+                <CCol md={6}>
+                  <small className="text-muted">End Date</small>
+                  <div className="fw-bold">
+                    {moment(subscription.subscription_end_date).format(
+                      "DD-MM-YYYY"
+                    )}
+                  </div>
+                </CCol>
+
+                <CCol md={6}>
+                  <small className="text-muted">Frequency</small>
+                  <div className="fw-bold">{subscription.frequency}</div>
+                </CCol>
+              </CRow>
+            </CCardBody>
           </CCard>
           <CCard className="mb-4">
             <CCardHeader className="bg-primary text-white">
@@ -286,20 +348,27 @@ const SubscriptionViewPage = () => {
                       <CTableHeaderCell style={{ minWidth: "150px" }}>
                         Frequency
                       </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Amount (INR)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Status
-                      </CTableHeaderCell>
+
                       <CTableHeaderCell style={{ minWidth: "150px" }}>
                         Start Date
                       </CTableHeaderCell>
                       <CTableHeaderCell style={{ minWidth: "150px" }}>
                         End Date
                       </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "400px" }}>
+                      <CTableHeaderCell
+                        style={{ minWidth: "400px" }}
+                        className="text-center"
+                      >
                         Tax Details
+                      </CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: "150px" }}>
+                        Basic Amount (INR)
+                      </CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: "150px" }}>
+                        Total (INR)
+                      </CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: "150px" }}>
+                        Payment Status
                       </CTableHeaderCell>
                       <CTableHeaderCell style={{ minWidth: "100px" }}>
                         Action
@@ -310,22 +379,25 @@ const SubscriptionViewPage = () => {
                     {subscription?.invoice?.map((invoice, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{invoice.invoice_id}</CTableDataCell>
-                        <CTableDataCell>{invoice.frequency}</CTableDataCell>
-                        <CTableDataCell>{invoice.amount}</CTableDataCell>
                         <CTableDataCell>
-                          {invoice.status === "paid" ? (
-                            <CBadge color="success">Paid</CBadge>
+                          {invoice.frequency === "monthly" ? (
+                            <CBadge color="success text-uppercase">
+                              Monthly
+                            </CBadge>
+                          ) : invoice.frequency === "yearly" ? (
+                            <CBadge color="warning text-uppercase">
+                              Yearly
+                            </CBadge>
                           ) : (
-                            <CBadge color="danger">Pending</CBadge>
+                            <CBadge color="warning text-uppercase">FREE</CBadge>
                           )}
                         </CTableDataCell>
+
                         <CTableDataCell>
-                          {moment(invoice.start_date).format(
-                            "DD-MM-YYYY HH:mm"
-                          )}
+                          {moment(invoice.start_date).format("DD-MM-YYYY")}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {moment(invoice.end_date).format("DD-MM-YYYY HH:mm")}
+                          {moment(invoice.end_date).format("DD-MM-YYYY")}
                         </CTableDataCell>
                         <CTableDataCell>
                           <CRow>
@@ -339,6 +411,22 @@ const SubscriptionViewPage = () => {
                               <strong>IGST:</strong> {invoice.tax_details.igst}
                             </CCol>
                           </CRow>
+                        </CTableDataCell>
+                        <CTableDataCell>{invoice.amount}</CTableDataCell>
+                        <CTableDataCell>
+                          {invoice.amount +
+                            invoice.tax_details.cgst +
+                            invoice.tax_details.sgst +
+                            invoice.tax_details.igst}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {invoice.status === "paid" ? (
+                            <CBadge color="success text-uppercase">Paid</CBadge>
+                          ) : (
+                            <CBadge color="danger text-uppercase">
+                              Pending
+                            </CBadge>
+                          )}
                         </CTableDataCell>
                         <CTableDataCell>
                           <Link
@@ -392,16 +480,9 @@ const SubscriptionViewPage = () => {
               )}
             </CCardBody>
           </CCard>
-          <CCard className="mb-4">
-            <CCardHeader className="bg-primary text-white">
-              Last Activity
-            </CCardHeader>
-            <CCardBody>
-              {subscription.last_activity && (
-                <LastActivity lastactivity={subscription.last_activity} />
-              )}
-            </CCardBody>
-          </CCard>{" "}
+          {subscription.last_activity && (
+            <LastActivity lastactivity={subscription.last_activity} />
+          )}
         </>
       )}
     </div>

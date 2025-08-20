@@ -37,20 +37,39 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
   return (
     <CRow className="justify-content-center">
       {loading ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "100px", width: "100px" }}
-        >
-          <LoadingSpinner />
-        </div>
+        <CCol xs={12}>
+          <CCard className="mb-4 shadow">
+            <CCardHeader>
+              <h5 className="text-start">
+                Cleaning Log per Robot of &nbsp;
+                <span className="text-primary">{site_id}</span>
+              </h5>
+            </CCardHeader>
+            <CCardBody className="">
+              <LoadingSpinner />
+            </CCardBody>
+          </CCard>
+        </CCol>
       ) : error ? (
-        <p className="text-danger text-center">{error}</p>
+        <CCol xs={12}>
+          <CCard className="mb-4 shadow">
+            <CCardHeader>
+              <h5 className="text-start">
+                Cleaning Log per Robot of &nbsp;
+                <span className="text-primary">{site_id}</span>
+              </h5>
+            </CCardHeader>
+            <CCardBody className="">
+              <CBadge color="danger">{error}</CBadge>
+            </CCardBody>
+          </CCard>
+        </CCol>
       ) : cleaningrobots.length > 0 ? (
         <CCol xs={12}>
           <CCard className="mb-4 shadow">
             <CCardHeader>
-              <h5 className="text-center">
-                Cleaning Log per Robot of{" "}
+              <h5 className="text-start">
+                Cleaning Log per Robot of &nbsp;
                 <span className="text-primary">{site_id}</span>
               </h5>
             </CCardHeader>

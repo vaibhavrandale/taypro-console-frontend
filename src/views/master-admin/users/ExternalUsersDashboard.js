@@ -249,10 +249,9 @@ const ExternalUsersDashboard = () => {
           },
         });
       } catch (error) {
-        console.error("Error fetching users:", error);
         dispatch({
           type: "FETCH_FAIL",
-          payload: "Failed to fetch users",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
       }
     };

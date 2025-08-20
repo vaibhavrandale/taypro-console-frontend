@@ -6,7 +6,7 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from "@coreui/react";
-import { cilLockLocked, cilSettings, cilUser } from "@coreui/icons";
+import { cilLockLocked, cilMoney, cilUser } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -146,20 +146,29 @@ const AppHeaderDropdown = () => {
         </CDropdownToggle>
 
         <CDropdownMenu className="pt-0" placement="bottom-end">
-          <CDropdownItem onClick={() => navigate(`/${adminroute}/profile-tab`)}>
-            <CIcon icon={cilUser} className="me-2" />
+          <CDropdownItem
+            onClick={() => navigate(`/${adminroute}/profile-tab`)}
+            className="cursor-pointer"
+          >
+            <CIcon icon={cilUser} className="me-2 text-info" />
             Profile
             {userError ? userError : ""}
           </CDropdownItem>
-          <CDropdownItem href="#">
-            <CIcon icon={cilSettings} className="me-2" />
-            Settings
-          </CDropdownItem>
+
+          {userInfo.role === "Client Admin" && (
+            <CDropdownItem
+              onClick={() => navigate(`/${adminroute}/subscriptions`)}
+              className="cursor-pointer"
+            >
+              <CIcon icon={cilMoney} className="me-2 text-success" />
+              My Scubsription
+            </CDropdownItem>
+          )}
 
           <CDropdownDivider />
 
           <CDropdownItem onClick={LogoutHandler} as="button">
-            <CIcon icon={cilLockLocked} className="me-2" />
+            <CIcon icon={cilLockLocked} className="me-2 text-danger" />
             Logout
           </CDropdownItem>
         </CDropdownMenu>

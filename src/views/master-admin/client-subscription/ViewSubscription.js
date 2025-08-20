@@ -284,7 +284,7 @@ const ViewSubscription = () => {
 
   return (
     <div className="p-4">
-      <CCard className="mb-4">
+      {/* <CCard className="mb-4">
         <CCardHeader className="bg-primary text-white">
           <CCardTitle className="h4">Subscription Details</CCardTitle>
         </CCardHeader>
@@ -318,6 +318,71 @@ const ViewSubscription = () => {
               <strong>Frequency:</strong> {subscription.frequency}
             </CListGroupItem>
           </CListGroup>
+        </CCardBody>
+      </CCard> */}
+      <CCard className="mb-4 shadow-sm border-0">
+        <CCardHeader className="bg-gradient-primary text-white">
+          <h4 className="mb-0">Subscription Details</h4>
+        </CCardHeader>
+        <CCardBody>
+          <CRow className="gy-3">
+            <CCol md={6}>
+              <small className="text-muted">Client ID</small>
+              <div className="fw-bold">{subscription.client_id}</div>
+            </CCol>
+            <CCol md={6}>
+              <small className="text-muted">Client Name</small>
+              <div className="fw-bold">{subscription.client_name || "N/A"}</div>
+            </CCol>
+
+            <CCol md={6}>
+              <small className="text-muted">Plan</small>
+              <div>
+                <CBadge color="success" className="px-3 py-1">
+                  {subscription.plan_id.toUpperCase()}
+                </CBadge>
+              </div>
+            </CCol>
+            <CCol md={6}>
+              <small className="text-muted">Status</small>
+              <div>
+                <CBadge
+                  color={
+                    subscription.subscription_status === "subscribed"
+                      ? "success"
+                      : subscription.subscription_status === "expired"
+                      ? "warning"
+                      : "danger"
+                  }
+                  className="px-3 py-1"
+                >
+                  {subscription.subscription_status.toUpperCase()}
+                </CBadge>
+              </div>
+            </CCol>
+
+            <CCol md={6}>
+              <small className="text-muted">Start Date</small>
+              <div className="fw-bold">
+                {moment(subscription.subscription_start_date).format(
+                  "DD-MM-YYYY"
+                )}
+              </div>
+            </CCol>
+            <CCol md={6}>
+              <small className="text-muted">End Date</small>
+              <div className="fw-bold">
+                {moment(subscription.subscription_end_date).format(
+                  "DD-MM-YYYY"
+                )}
+              </div>
+            </CCol>
+
+            <CCol md={6}>
+              <small className="text-muted">Frequency</small>
+              <div className="fw-bold">{subscription.frequency}</div>
+            </CCol>
+          </CRow>
         </CCardBody>
       </CCard>
 
@@ -445,27 +510,13 @@ const ViewSubscription = () => {
         </CCardBody>
       </CCard>
 
-      <CCard className="mb-4">
-        <CCardHeader className="bg-primary text-white">
-          Admin Last Activity
-        </CCardHeader>
-        <CCardBody>
-          {subscription.admin_last_activity && (
-            <LastActivity lastactivity={subscription.admin_last_activity} />
-          )}
-        </CCardBody>
-      </CCard>
+      {subscription.admin_last_activity && (
+        <LastActivity lastactivity={subscription.admin_last_activity} />
+      )}
 
-      <CCard className="mb-4">
-        <CCardHeader className="bg-primary text-white">
-          Last Activity
-        </CCardHeader>
-        <CCardBody>
-          {subscription.last_activity && (
-            <LastActivity lastactivity={subscription.last_activity} />
-          )}
-        </CCardBody>
-      </CCard>
+      {subscription.last_activity && (
+        <LastActivity lastactivity={subscription.last_activity} />
+      )}
 
       <CModal
         scrollable

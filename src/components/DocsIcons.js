@@ -1,6 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import IconsImg from '../assets/images/icons.webp';
+import IconsImg from "../assets/images/icons.webp";
+import { Link } from "react-router-dom";
 
 const DocsIcons = () => (
   <div className="bg-warning bg-opacity-10 border border-2 border-warning rounded mb-4">
@@ -22,14 +23,14 @@ const DocsIcons = () => (
         documentation.
       </div>
       <div className="col-md-auto col-12 mt-3 mt-lg-0">
-        <a
+        <Link
           className="btn btn-warning text-nowrap text-white"
-          href="https://coreui.io/react/docs/components/icon/"
+          to="https://coreui.io/react/docs/components/icon/"
           target="_blank"
           rel="noopener noreferrer"
         >
           Explore Documentation
-        </a>
+        </Link>
       </div>
     </div>
   </div>

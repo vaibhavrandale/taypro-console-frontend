@@ -11,6 +11,7 @@ import {
   CFormCheck,
   CButton,
   CFormInput,
+  CBadge,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 
@@ -68,7 +69,8 @@ const RobotCommands = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const [site_id, setSiteId] = useState("");
+  const userInfo = useSelector((state) => state.userInfo);
+  const [site_id, setSiteId] = useState(userInfo.assigned_sites[0].site_id);
   const [selectedRobots, setSelectedRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -170,12 +172,52 @@ const RobotCommands = () => {
     robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSiteNameChange = (e) => {
+    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+
+    const selectedSiteName = e.target.value;
+    const selectedSite = sites.find(
+      (site) => site.site_id.toString() === selectedSiteName
+    );
+
+    if (selectedSite) {
+      setSiteId(selectedSite.site_id);
+
+      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
+    } else {
+      dispatch({ type: "SELECT_SITENAME_FAIL" });
+    }
+  };
+
   return (
     <div className="p-2">
       <h4 className="text-center mb-4">Send Commands To Robots</h4>
+
       <CCardBody>
         <CRow className="mb-3 justify-content-between align-items-center">
-          <CCol md={4}>{loadingSites ? <LoadingSpinner /> : sitesError}</CCol>
+          <CCol md="6">
+            <div className="mb-3">
+              <label className="form-label">Site Id</label>
+              {loadingSites ? (
+                <LoadingSpinner />
+              ) : (
+                <CFormSelect
+                  name="site_id"
+                  value={site_id}
+                  onChange={handleSiteNameChange}
+                >
+                  <option value="">Select Site Name</option>
+                  {sites?.length > 0 &&
+                    sites.map((item) => (
+                      <option key={item.site_id} value={item.site_id}>
+                        {item.site_id}
+                      </option>
+                    ))}
+                </CFormSelect>
+              )}
+            </div>
+          </CCol>
+
           <CCol md={4}>
             <CFormInput
               type="text"
@@ -216,7 +258,9 @@ const RobotCommands = () => {
             </>
           )}
         </div>
-
+        {sendDownLinkError && (
+          <CBadge color="danger">{sendDownLinkError}</CBadge>
+        )}
         {selectedRobots.length > 0 && (
           <div className="mt-3">
             <h5>Send Command 🔽</h5>
@@ -244,14 +288,14 @@ const RobotCommands = () => {
             filteredRobots.map((robot) => (
               <CCol md={3} sm={4} xs={6} key={robot.deveui}>
                 <CCard className="h-100">
-                  <CCardBody className="d-flex align-items-center p-3">
+                  <CCardBody className="d-flex align-items-center p-2">
                     <CFormCheck
                       checked={selectedRobots.some(
                         (r) => r.deveui === robot.deveui
                       )}
                       onChange={() => handleCheckboxChange(robot)}
                       className="me-3"
-                      style={{ transform: "scale(1.5)" }}
+                      style={{}}
                     />
                     <div className="flex-grow-1 text-center">
                       <div>{robot.robot_no}</div>

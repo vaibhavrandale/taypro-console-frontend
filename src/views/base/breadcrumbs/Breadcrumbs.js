@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CBreadcrumb,
   CBreadcrumbItem,
@@ -8,14 +8,15 @@ import {
   CCol,
   CRow,
   CLink,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
+import { Link } from "react-router-dom";
 
 const Breadcrumbs = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/breadcrumb/" />
+        <DocsComponents to="components/breadcrumb/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Breadcrumb</strong>
@@ -25,43 +26,43 @@ const Breadcrumbs = () => {
               The breadcrumb navigation provides links back to each previous
               page the user navigated through and shows the current location in
               a website or an application. You don’t have to add separators,
-              because they automatically added in CSS through{' '}
-              <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::before">
-                {' '}
+              because they automatically added in CSS through{" "}
+              <Link to="https://developer.mozilla.org/en-US/docs/Web/CSS/::before">
+                {" "}
                 <code>::before</code>
-              </a>{' '}
-              and{' '}
-              <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/content">
-                {' '}
+              </Link>{" "}
+              and{" "}
+              <Link to="https://developer.mozilla.org/en-US/docs/Web/CSS/content">
+                {" "}
                 <code>content</code>
-              </a>
+              </Link>
               .
             </p>
-            <DocsExample href="components/breadcrumb">
+            <DocsExample to="components/breadcrumb">
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink to="#">Home</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem active>Library</CBreadcrumbItem>
               </CBreadcrumb>
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink to="#">Home</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem>
-                  <CLink href="#">Library</CLink>
+                  <CLink to="#">Library</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem active>Data</CBreadcrumbItem>
               </CBreadcrumb>
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink to="#">Home</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem>
-                  <CLink href="#">Library</CLink>
+                  <CLink to="#">Library</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem>
-                  <CLink href="#">Data</CLink>
+                  <CLink to="#">Data</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem active>Bootstrap</CBreadcrumbItem>
               </CBreadcrumb>

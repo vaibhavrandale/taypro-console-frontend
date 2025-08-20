@@ -142,14 +142,14 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     },
     dispatch,
   ] = useReducer(reducer, {
-    loading: true,
+    loading: false,
     error: "",
     notifications: [],
     latestfeedback: null,
-    updateLoading: true,
+    updateLoading: false,
     timerLoading: false,
     submitLoading: false,
-    robotsGatewayLoading: true,
+    robotsGatewayLoading: false,
     timernotification: {},
     submiterror: "",
     updateError: "",
@@ -177,33 +177,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     rating: "",
   });
   useEffect(() => {
-    // const fetchUserDetails = async () => {
-    //   try {
-    //     dispatch({ type: "FETCH_USER_REQUEST" });
-    //     const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
-    //       headers: { Authorization: `Bearer ${authtoken}` },
-    //     });
-
-    //     let result = response.data.data;
-    //     dispatch({ type: "FETCH_USER_SUCCESS", payload: result });
-    //   } catch (error) {
-    //     if (error?.response?.data?.message === "Session Expired") {
-    //       dispatch({
-    //         type: "EMP_SIGNOUT",
-    //         payload: null,
-    //         token: null,
-    //       });
-    //       localStorage.removeItem("userInfo");
-    //       localStorage.removeItem("authtoken");
-    //       navigate("/login");
-    //     }
-    //     dispatch({
-    //       type: "FETCH_USER_FAIL",
-    //       payload:
-    //         error?.response?.data?.message || error?.response?.data?.error,
-    //     });
-    //   }
-    // };
     if (!userInfo) {
       navigate("/login"); // Redirect if user is not found
     }
@@ -992,9 +965,20 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                 <CModalTitle>
                   {" "}
                   Cleaning Timer Executed At &nbsp;
-                  <b>
-                    {new Date(timernotification.createdAt).toLocaleString()}
-                  </b>
+                  <CBadge color="warning">
+                    {new Date(timernotification.createdAt).toLocaleString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      }
+                    )}
+                  </CBadge>
                 </CModalTitle>
               </CModalHeader>
 

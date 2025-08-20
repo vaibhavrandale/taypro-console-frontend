@@ -28,7 +28,7 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
       onVisibleChange={(visible) => setSidebarShow(visible)}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand>
+        {/* <CSidebarBrand>
           <Link to="/">
             <img
               src={TayproLogo}
@@ -45,7 +45,22 @@ const AppSidebar = ({ sidebarShow, setSidebarShow }) => {
               className="sidebar-brand-narrow"
             />
           </Link>
+        </CSidebarBrand> */}
+        <CSidebarBrand component="a" href="/" className="">
+          <img
+            src={TayproLogo}
+            alt="Taypro Logo"
+            style={{ height: "50px", width: "200px", objectFit: "contain" }}
+            className="sidebar-brand-full"
+          />
+          <img
+            src={TayproLogo}
+            alt="Taypro Logo"
+            height={30}
+            className="sidebar-brand-narrow"
+          />
         </CSidebarBrand>
+
         <button
           type="button"
           className=" border-0 ms-auto py-0 px-1 d-lg-none"
