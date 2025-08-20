@@ -75,7 +75,11 @@ const reducer = (state, action) => {
     case "ADD_USER_REQUEST":
       return { ...state, userAddloading: true, error: "" };
     case "ADD_USER_SUCCESS":
-      return { ...state, userAddloading: false, users: action.payload };
+      return {
+        ...state,
+        userAddloading: false,
+        users: [...state.users, action.payload],
+      };
     case "ADD_USER_FAIL":
       return { ...state, userAddloading: false, error: action.payload };
 
@@ -228,7 +232,6 @@ const ClientUsersManagement = () => {
           },
         });
       } catch (error) {
-        console.error("Error fetching users:", error);
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response?.data?.error || error.response?.data?.message,
@@ -333,7 +336,7 @@ const ClientUsersManagement = () => {
       if (response.status === 201 || response.status === 200) {
         dispatch({
           type: "ADD_USER_SUCCESS",
-          payload: [...users, response.data.data],
+          payload: response.data.data.user,
         });
         setAddModalVisible(false);
       }
@@ -541,20 +544,16 @@ const ClientUsersManagement = () => {
         <h2 className="text-center">External Users </h2>
       </div>
       <div className="d-flex justify-content-end align-items-center mb-3">
-        {users.length === 3 ? (
-          ""
-        ) : (
-          <div className="d-flex justify-content-between align-items-center">
-            <CButton
-              color="success"
-              size="sm"
-              className="text-whit m-1e"
-              onClick={openAddModal}
-            >
-              + Add User
-            </CButton>
-          </div>
-        )}
+        <div className="d-flex justify-content-between align-items-center">
+          <CButton
+            color="success"
+            size="sm"
+            className="text-whit m-1e"
+            onClick={openAddModal}
+          >
+            + Add User
+          </CButton>
+        </div>
       </div>
       <CRow className="mb-3 justify-content-end">
         {" "}
@@ -784,13 +783,7 @@ const ClientUsersManagement = () => {
           ) : null}
         </CModalBody>
         <CModalFooter>
-          <CButton
-            color="secondary"
-            size="sm"
-            onClick={() => setAddModalVisible(false)}
-          >
-            Cancel
-          </CButton>
+          <span className="text-danger">{error}</span>
           <CButton
             color="success"
             size="sm"

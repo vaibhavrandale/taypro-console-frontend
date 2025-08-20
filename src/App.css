@@ -218,3 +218,7 @@ icon {
   top: 50%;
   transform: translateY(-50%);
 }
+
+a:hover {
+  cursor: pointer;
+}

@@ -82,10 +82,10 @@
 //     const Component = component;
 //     return (
 //       <Component as="div" key={index}>
-//         {rest.to || rest.href ? (
+//         {rest.to || rest.to ? (
 //           <CNavLink
 //             {...(rest.to && { as: NavLink })}
-//             {...(rest.href && { target: "_blank", rel: "noopener noreferrer" })}
+//             {...(rest.to && { target: "_blank", rel: "noopener noreferrer" })}
 //             {...rest}
 //           >
 //             {navLink(name, icon, badge, indent)}
@@ -158,41 +158,79 @@ export const AppSidebarNav = () => {
 
   if (!userInfo) return null;
 
-  const navLink = (name, icon, badge, indent = false) => (
-    <>
-      {icon ||
-        (indent && (
-          <span className="nav-icon">
-            <span
-              className="nav-icon-bullet"
-              style={{ color: "rgb(57, 214, 0)" }}
-            ></span>
-          </span>
-        ))}
-      {name}
-      {badge && (
-        <CBadge color={badge.color} className="ms-auto" size="sm">
-          {badge.text}
-        </CBadge>
-      )}
-    </>
+  // const navLink = (name, icon, badge, indent = false, subscriptionIcon) => (
+  //   <>
+  //     {icon ||
+  //       (indent && (
+  //         <span className="nav-icon">
+  //           <span
+  //             className="nav-icon-bullet"
+  //             style={{ color: "rgb(57, 214, 0)" }}
+  //           ></span>
+  //         </span>
+  //       ))}
+  //     {name}
+  //     <span className="d-flex justify-content-between align-items-center">
+  //       <span>
+  //         {badge && (
+  //           <CBadge color={badge.color} className="ms-auto" size="sm">
+  //             {badge.text}
+  //           </CBadge>
+  //         )}
+  //       </span>
+  //       <span> {subscriptionIcon && subscriptionIcon}</span>
+  //     </span>
+  //   </>
+  // );
+
+  const navLink = (name, icon, badge, indent = false, subscriptionIcon) => (
+    <div className="d-flex justify-content-between align-items-center w-100">
+      {/* Left side: icon + name */}
+      <div className="d-flex align-items-center">
+        {icon ||
+          (indent && (
+            <span className="nav-icon">
+              <span
+                className="nav-icon-bullet"
+                style={{ color: "rgb(57, 214, 0)" }}
+              ></span>
+            </span>
+          ))}
+        <span className="ms-2">{name}</span>
+      </div>
+
+      {/* Right side: badge + premium icon */}
+      <div className="d-flex align-items-center">
+        {badge && (
+          <CBadge
+            color={badge.color}
+            className="ms-2"
+            size="sm"
+            style={{ fontWeight: 600, fontSize: "0.75rem" }}
+          >
+            {badge.text}
+          </CBadge>
+        )}
+        {subscriptionIcon && <span className="ms-2">{subscriptionIcon}</span>}
+      </div>
+    </div>
   );
 
   const navItem = (item, index, indent = false) => {
-    const { component, name, badge, icon, ...rest } = item;
+    const { component, name, badge, icon, subscriptionIcon, ...rest } = item;
     const Component = component;
     return (
       <Component as="div" key={index}>
-        {rest.to || rest.href ? (
+        {rest.to || rest.to ? (
           <CNavLink
             {...(rest.to && { as: NavLink })}
-            {...(rest.href && { target: "_blank", rel: "noopener noreferrer" })}
+            {...(rest.to && { rel: "noopener noreferrer" })}
             {...rest}
           >
-            {navLink(name, icon, badge, indent)}
+            {navLink(name, icon, badge, indent, subscriptionIcon)}
           </CNavLink>
         ) : (
-          navLink(name, icon, badge, indent)
+          navLink(name, icon, badge, indent, subscriptionIcon)
         )}
       </Component>
     );

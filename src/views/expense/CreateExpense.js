@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,7 +6,23 @@ import { MdDeleteOutline } from "react-icons/md";
 import { GrAddCircle } from "react-icons/gr";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CButton, CForm, CFormInput, CFormSelect } from "@coreui/react";
+import {
+  CButton,
+  CForm,
+  CFormInput,
+  CFormSelect,
+  CModalBody,
+  CModalHeader,
+  CModalTitle,
+  CModal,
+  CTableBody,
+  CTable,
+  CTableRow,
+  CTableHeaderCell,
+  CTableDataCell,
+} from "@coreui/react";
+import { cilX } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -36,6 +52,8 @@ const CreateExpense = () => {
 
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
+
+  const [visible, setVisible] = useState(false);
   const authtoken = useSelector((state) => state.authtoken);
   let adminroute = "";
 
@@ -60,6 +78,11 @@ const CreateExpense = () => {
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
   }
+
+  useEffect(() => {
+    // Show modal on page load
+    setVisible(true);
+  }, []);
   // Main form state
   const [formData, setFormData] = useState({
     company: "Taypro Private Limited",
@@ -297,6 +320,49 @@ const CreateExpense = () => {
 
   return (
     <div className="container py-4">
+      <CModal
+        visible={visible}
+        onClose={() => setVisible(false)}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Technician Daily Allowance Limits</CModalTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          <CTable bordered responsive>
+            <CTableBody>
+              <CTableRow>
+                <CTableHeaderCell>Food</CTableHeaderCell>
+                <CTableDataCell>₹500</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Stay</CTableHeaderCell>
+                <CTableDataCell>₹1,000</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Travel</CTableHeaderCell>
+                <CTableDataCell>₹1,000</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Other</CTableHeaderCell>
+                <CTableDataCell>₹110</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Total Per Day</CTableHeaderCell>
+                <CTableDataCell>₹2,610</CTableDataCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
+        </CModalBody>
+      </CModal>
       <div className="card">
         <div className="card-header bg-primary text-white">
           <h3 className="mb-0">New Expense</h3>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CButton,
   CCard,
@@ -7,8 +7,8 @@ import {
   CCol,
   CCollapse,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Collapses = () => {
   const [visible, setVisible] = useState(false);
@@ -19,7 +19,7 @@ const Collapses = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/collapse/" />
+        <DocsComponents to="components/collapse/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Collapse</strong>
@@ -28,10 +28,10 @@ const Collapses = () => {
             <p className="text-body-secondary small">
               You can use a link or a button component.
             </p>
-            <DocsExample href="components/collapse">
+            <DocsExample to="components/collapse">
               <CButton
                 color="primary"
-                href="#"
+                to="#"
                 onClick={(e) => {
                   e.preventDefault();
                   setVisible(!visible);
@@ -65,7 +65,7 @@ const Collapses = () => {
             <p className="text-body-secondary small">
               You can use a link or a button component.
             </p>
-            <DocsExample href="components/collapse#horizontal">
+            <DocsExample to="components/collapse#horizontal">
               <CButton
                 className="mb-3"
                 color="primary"
@@ -75,13 +75,13 @@ const Collapses = () => {
               >
                 Button
               </CButton>
-              <div style={{ minHeight: '120px' }}>
+              <div style={{ minHeight: "120px" }}>
                 <CCollapse
                   id="collapseWidthExample"
                   horizontal
                   visible={visibleHorizontal}
                 >
-                  <CCard style={{ width: '300px' }}>
+                  <CCard style={{ width: "300px" }}>
                     <CCardBody>
                       This is some placeholder content for a horizontal
                       collapse. It&#39;s hidden by default and shown when
@@ -104,7 +104,7 @@ const Collapses = () => {
               A <code>&lt;CButton&gt;</code> can show and hide multiple
               elements.
             </p>
-            <DocsExample href="components/collapse#multiple-targets">
+            <DocsExample to="components/collapse#multiple-targets">
               <CButton color="primary" onClick={() => setVisibleA(!visibleA)}>
                 Toggle first element
               </CButton>

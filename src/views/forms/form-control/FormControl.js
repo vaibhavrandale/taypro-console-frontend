@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CButton,
   CCard,
@@ -10,20 +10,20 @@ import {
   CFormLabel,
   CFormTextarea,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const FormControl = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="forms/form-control/" />
+        <DocsComponents to="forms/form-control/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Form Control</strong>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/form-control">
+            <DocsExample to="forms/form-control">
               <CForm>
                 <div className="mb-3">
                   <CFormLabel htmlFor="exampleFormControlInput1">
@@ -56,10 +56,10 @@ const FormControl = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Set heights using <code>size</code> property like{' '}
+              Set heights using <code>size</code> property like{" "}
               <code>size=&#34;lg&#34;</code> and <code>size=&#34;sm&#34;</code>.
             </p>
-            <DocsExample href="forms/form-control#sizing">
+            <DocsExample to="forms/form-control#sizing">
               <CFormInput
                 type="text"
                 size="lg"
@@ -93,7 +93,7 @@ const FormControl = () => {
               Add the <code>disabled</code> boolean attribute on an input to
               give it a grayed out appearance and remove pointer events.
             </p>
-            <DocsExample href="forms/form-control#disabled">
+            <DocsExample to="forms/form-control#disabled">
               <CFormInput
                 type="text"
                 placeholder="Disabled input"
@@ -125,7 +125,7 @@ const FormControl = () => {
               appear lighter (just like disabled inputs), but retain the
               standard cursor.
             </p>
-            <DocsExample href="forms/form-control#readonly">
+            <DocsExample to="forms/form-control#readonly">
               <CFormInput
                 type="text"
                 placeholder="Readonly input here..."
@@ -139,17 +139,17 @@ const FormControl = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Form Control</strong>{' '}
+            <strong>React Form Control</strong>{" "}
             <small>Readonly plain text</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
               If you want to have <code>&lt;input readonly&gt;</code> elements
-              in your form styled as plain text, use the <code>plainText</code>{' '}
+              in your form styled as plain text, use the <code>plainText</code>{" "}
               boolean property to remove the default form field styling and
               preserve the correct margin and padding.
             </p>
-            <DocsExample href="components/accordion">
+            <DocsExample to="components/accordion">
               <CRow className="mb-3">
                 <CFormLabel
                   htmlFor="staticEmail"
@@ -179,7 +179,7 @@ const FormControl = () => {
                 </div>
               </CRow>
             </DocsExample>
-            <DocsExample href="components/accordion">
+            <DocsExample to="components/accordion">
               <CForm className="row g-3">
                 <div className="col-auto">
                   <CFormLabel
@@ -225,7 +225,7 @@ const FormControl = () => {
             <strong>React Form Control</strong> <small>File input</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/form-control#file-input">
+            <DocsExample to="forms/form-control#file-input">
               <div className="mb-3">
                 <CFormLabel htmlFor="formFile">
                   Default file input example
@@ -266,7 +266,7 @@ const FormControl = () => {
             <strong>React Form Control</strong> <small>Color</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/form-control#color">
+            <DocsExample to="forms/form-control#color">
               <CFormLabel htmlFor="exampleColorInput">Color picker</CFormLabel>
               <CFormInput
                 type="color"

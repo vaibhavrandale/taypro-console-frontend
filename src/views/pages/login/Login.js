@@ -32,6 +32,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  let adminroute = "";
 
   const theme = localStorage.getItem("theme");
   useEffect(() => {
@@ -58,9 +59,38 @@ const Login = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data.data.user));
       localStorage.setItem("authtoken", JSON.stringify(data.data.token));
-      navigate("/user-dashboard");
+
+      if (data.data.user.role === "Master Admin") {
+        adminroute = "master-admin";
+      } else if (data.data.user.role === "Service Admin") {
+        adminroute = "service-admin";
+      } else if (data.data.user.role === "Project Admin") {
+        adminroute = "project-admin";
+      } else if (data.data.user.role === "Client Admin") {
+        adminroute = "client-admin";
+      } else if (data.data.user.role === "Site Incharge") {
+        adminroute = "site-incharge";
+      } else if (data.data.user.role === "Site Technician") {
+        adminroute = "site-technician";
+      } else if (data.data.user.role === "Client Technician") {
+        adminroute = "client-technician";
+      } else if (data.data.user.role === "Master User") {
+        adminroute = "master-user";
+      } else if (data.data.user.role === "Service User") {
+        adminroute = "service-user";
+      } else if (data.data.user.role === "Project User") {
+        adminroute = "project-user";
+      } else if (data.data.user.role === "Opex Client Admin") {
+        adminroute = "opex-client-admin";
+      } else if (data.data.user.role === "Opex Site Technician") {
+        adminroute = "opex-site-technician";
+      }
+
+      // "Opex Client Admin", "Opex Site Technician"
+
       // toast.success(`Login Successfull!`);
       toast.success(`Welcome Back!  ${data.data.user.username}`);
+      navigate(`/${adminroute}/dashboard`);
     } catch (error) {
       toast.error(error.response.data.error);
     }

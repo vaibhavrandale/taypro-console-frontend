@@ -575,6 +575,7 @@
 
 import {
   CAlert,
+  CBadge,
   CCard,
   CCardBody,
   CCardHeader,
@@ -1056,9 +1057,9 @@ const SiteTechnicianDashboard = () => {
                           }}
                         />
                       ) : (
-                        <p className="text-center">
-                          No cleaning data available
-                        </p>
+                        <CBadge color="warning">
+                          No Cleaning Data available
+                        </CBadge>
                       )}
                     </>
                   )}
@@ -1078,9 +1079,7 @@ const SiteTechnicianDashboard = () => {
                   {loadingSiteDetails ? (
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
-                    <p className="text-danger text-center">
-                      {siteDetailsError}
-                    </p>
+                    <CBadge color="warning">{siteDetailsError}</CBadge>
                   ) : (
                     <>
                       {gateways.length > 0 ? (
@@ -1121,9 +1120,9 @@ const SiteTechnicianDashboard = () => {
                           }}
                         />
                       ) : (
-                        <p className="text-center text-muted">
+                        <CBadge color="warning">
                           No Gateway details available
-                        </p>
+                        </CBadge>
                       )}
                     </>
                   )}
@@ -1172,9 +1171,9 @@ const SiteTechnicianDashboard = () => {
                       }}
                     />
                   ) : (
-                    <CAlert color="warning">
+                    <CBadge color="warning">
                       No battery logs found for the Robots
-                    </CAlert>
+                    </CBadge>
                   )}
                 </>
               )}

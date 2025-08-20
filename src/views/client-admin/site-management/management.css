@@ -73,15 +73,16 @@
 }
 
 .dropdown-menu-robot {
-  width: 200px;
+  min-width: 120px;
+  margin: auto;
   border: none;
   max-height: 200px;
   overflow-y: auto;
 }
 
-.dropdown-menu-robot .dropdown-item {
-  margin: 5px 0px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+.dropdown-menu-robot > .dopdown-item-robot {
+  margin: 2px 0px;
+  padding: 10px;
 }
 
 .online:hover {

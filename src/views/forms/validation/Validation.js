@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CButton,
   CCard,
@@ -15,8 +15,8 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const CustomStyles = () => {
   const [validated, setValidated] = useState(false);
@@ -287,7 +287,7 @@ const Validation = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="forms/validation/" />
+        <DocsComponents to="forms/validation/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>Validation</strong> <small>Custom styles</small>
@@ -295,20 +295,20 @@ const Validation = () => {
           <CCardBody>
             <p className="text-body-secondary small">
               For custom CoreUI form validation messages, you&#39;ll need to add
-              the <code>noValidate</code> boolean property to your{' '}
+              the <code>noValidate</code> boolean property to your{" "}
               <code>&lt;CForm&gt;</code>. This disables the browser default
               feedback tooltips, but still provides access to the form
               validation APIs in JavaScript. Try to submit the form below; our
               JavaScript will intercept the submit button and relay feedback to
-              you. When attempting to submit, you&#39;ll see the{' '}
+              you. When attempting to submit, you&#39;ll see the{" "}
               <code>:invalid</code> and <code>:valid</code> styles applied to
               your form controls.
             </p>
             <p className="text-body-secondary small">
               Custom feedback styles apply custom colors, borders, focus styles,
-              and background icons to better communicate feedback.{' '}
+              and background icons to better communicate feedback.{" "}
             </p>
-            <DocsExample href="forms/validation">{CustomStyles()}</DocsExample>
+            <DocsExample to="forms/validation">{CustomStyles()}</DocsExample>
           </CCardBody>
         </CCard>
       </CCol>
@@ -329,7 +329,7 @@ const Validation = () => {
               While these feedback styles cannot be styled with CSS, you can
               still customize the feedback text through JavaScript.
             </p>
-            <DocsExample href="forms/validation#browser-defaults">
+            <DocsExample to="forms/validation#browser-defaults">
               {BrowserDefaults()}
             </DocsExample>
           </CCardBody>
@@ -349,12 +349,12 @@ const Validation = () => {
             </p>
             <p className="text-body-secondary small">
               For invalid fields, ensure that the invalid feedback/error message
-              is associated with the relevant form field using{' '}
+              is associated with the relevant form field using{" "}
               <code>aria-describedby</code> (noting that this attribute allows
               more than one <code>id</code> to be referenced, in case the field
               already points to additional form text).
             </p>
-            <DocsExample href="forms/validation#server-side">
+            <DocsExample to="forms/validation#server-side">
               <CForm className="row g-3 needs-validation">
                 <CCol md={4}>
                   <CFormLabel htmlFor="validationServer01">Email</CFormLabel>
@@ -476,7 +476,7 @@ const Validation = () => {
                 <code>&lt;CFormCheck&gt;</code>s
               </li>
             </ul>
-            <DocsExample href="forms/validation#supported-elements">
+            <DocsExample to="forms/validation#supported-elements">
               <CForm validated={true}>
                 <div className="mb-3">
                   <CFormLabel
@@ -573,7 +573,7 @@ const Validation = () => {
               have this already, but your project may require an alternative
               setup.
             </p>
-            <DocsExample href="forms/validation#tooltips">
+            <DocsExample to="forms/validation#tooltips">
               {Tooltips()}
             </DocsExample>
           </CCardBody>

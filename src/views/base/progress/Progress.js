@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -7,14 +7,14 @@ import {
   CProgress,
   CProgressBar,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
-
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
+import { Link } from "react-router-dom";
 const Progress = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/progress/" />
+        <DocsComponents to="components/progress/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Progress</strong> <small>Basic example</small>
@@ -22,14 +22,14 @@ const Progress = () => {
           <CCardBody>
             <p className="text-body-secondary small">
               Progress components are built with two HTML elements, some CSS to
-              set the width, and a few attributes. We don&#39;tuse{' '}
-              <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress">
+              set the width, and a few attributes. We don&#39;tuse{" "}
+              <Link to="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress">
                 the HTML5 <code>&lt;progress&gt;</code> element
-              </a>
+              </Link>
               , ensuring you can stack progress bars, animate them, and place
               text labels over them.
             </p>
-            <DocsExample href="components/progress">
+            <DocsExample to="components/progress">
               <CProgress className="mb-3">
                 <CProgressBar value={0} />
               </CProgress>
@@ -56,10 +56,10 @@ const Progress = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add labels to your progress bars by placing text within the{' '}
+              Add labels to your progress bars by placing text within the{" "}
               <code>&lt;CProgressBar&gt;</code>.
             </p>
-            <DocsExample href="components/progress#labels">
+            <DocsExample to="components/progress#labels">
               <CProgress className="mb-3">
                 <CProgressBar value={25}>25%</CProgressBar>
               </CProgress>
@@ -74,12 +74,12 @@ const Progress = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              We only set a <code>height</code> value on the{' '}
+              We only set a <code>height</code> value on the{" "}
               <code>&lt;CProgress&gt;</code>, so if you change that value the
               inner <code>&lt;CProgressBar&gt;</code> will automatically resize
               accordingly.
             </p>
-            <DocsExample href="components/progress#height">
+            <DocsExample to="components/progress#height">
               <CProgress height={1} className="mb-3">
                 <CProgressBar value={25}></CProgressBar>
               </CProgress>
@@ -100,7 +100,7 @@ const Progress = () => {
               Use <code>color</code> prop to change the appearance of individual
               progress bars.
             </p>
-            <DocsExample href="components/progress#backgrounds">
+            <DocsExample to="components/progress#backgrounds">
               <CProgress className="mb-3">
                 <CProgressBar color="success" value={25} />
               </CProgress>
@@ -127,7 +127,7 @@ const Progress = () => {
               Include multiple progress bars in a progress component if you
               need.
             </p>
-            <DocsExample href="components/progress#multiple-bars">
+            <DocsExample to="components/progress#multiple-bars">
               <CProgress className="mb-3">
                 <CProgressBar value={15} />
                 <CProgressBar color="success" value={30} />
@@ -144,11 +144,11 @@ const Progress = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add <code>variant=&#34;striped&#34;</code> to any{' '}
+              Add <code>variant=&#34;striped&#34;</code> to any{" "}
               <code>&lt;CProgressBar&gt;</code> to apply a stripe via CSS
               gradient over the progress bar&#39;s background color.
             </p>
-            <DocsExample href="components/progress#striped">
+            <DocsExample to="components/progress#striped">
               <CProgress className="mb-3">
                 <CProgressBar color="success" variant="striped" value={25} />
               </CProgress>
@@ -172,12 +172,12 @@ const Progress = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              The striped gradient can also be animated. Add{' '}
-              <code>animated</code> property to{' '}
+              The striped gradient can also be animated. Add{" "}
+              <code>animated</code> property to{" "}
               <code>&lt;CProgressBar&gt;</code> to animate the stripes right to
               left via CSS3 animations.
             </p>
-            <DocsExample href="components/progress#animated-stripes">
+            <DocsExample to="components/progress#animated-stripes">
               <CProgress className="mb-3">
                 <CProgressBar
                   color="success"
