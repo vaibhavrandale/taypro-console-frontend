@@ -763,22 +763,22 @@ const ExternalUsersDashboard = () => {
               <LoadingSpinner />
             </div>
           ) : image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
+                className="my-2 border rounded"
                 src={image}
                 alt="Uploaded Logo"
                 width="100"
                 height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
+                style={{ objectFit: "contain" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
-              ></CBadge>
+              <button
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle "
+                onClick={() => setImage("")}
+                aria-label="Remove image"
+              >
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : null}
         </CModalBody>
@@ -911,44 +911,40 @@ const ExternalUsersDashboard = () => {
               <LoadingSpinner />
             </div>
           ) : image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
+                className="my-2 border rounded"
                 src={image}
                 alt="Uploaded Logo"
                 width="100"
                 height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
+                style={{ objectFit: "contain" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
+              <button
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle"
+                onClick={() => setImage("")}
+                aria-label="Remove image"
               >
-                <CIcon icon={cilX} cursor="pointer" title="Remove file" />
-              </CBadge>
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : formData.profile_image ? (
-            <div className="my-2">
+            <div className="my-2 position-relative">
               <img
+                className="my-2 border rounded"
                 src={formData.profile_image}
                 alt="Uploaded Logo"
                 width="100"
                 height="100"
-                style={{ objectFit: "cover", borderRadius: "5px" }}
+                style={{ objectFit: "contain" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
+              <button
+                className="position-absolute top-11 end-5 bg-danger border-0 rounded-circle"
+                onClick={() => setFormData({ ...formData, profile_image: "" })}
+                aria-label="Remove image"
               >
-                <CIcon icon={cilX} cursor="pointer" title="Remove file" />
-              </CBadge>
+                <CIcon icon={cilX} />
+              </button>
             </div>
           ) : null}
           <CFormLabel className="my-2">
