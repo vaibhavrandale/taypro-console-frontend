@@ -449,10 +449,10 @@ const CreateExpense = () => {
                   <thead className="table-light">
                     <tr>
                       <th>Date</th>
-                      <th>Type</th>
-                      <th>Description</th>
-                      <th>Amount (₹)</th>
-                      <th>Bill Attachment</th>
+                      <th style={{ minWidth: "150px" }}>Type</th>
+                      <th style={{ minWidth: "200px" }}>Description</th>
+                      <th style={{ minWidth: "150px" }}>Amount (₹)</th>
+                      <th style={{ minWidth: "150px" }}>Bill Attachment</th>
                       <th>Actions</th>
                     </tr>
                   </thead>

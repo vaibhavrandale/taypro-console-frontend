@@ -161,13 +161,19 @@ const ViewExpenseClaim = () => {
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
-                <CTableHeaderCell>Expense Date</CTableHeaderCell>
-                <CTableHeaderCell>Expense Type</CTableHeaderCell>
-                <CTableHeaderCell>Description</CTableHeaderCell>
-                <CTableHeaderCell>Amount</CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  Expense Date
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  Expense Type
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "200px" }}>
+                  Description
+                </CTableHeaderCell>
+                <CTableHeaderCell style={{ minWidth: "150px" }}>
+                  Amount
+                </CTableHeaderCell>
                 <CTableHeaderCell>File</CTableHeaderCell>
-                {/* <CTableHeaderCell>Cost Center</CTableHeaderCell> */}
-                {/* <CTableHeaderCell>Default Account</CTableHeaderCell> */}
               </CTableRow>
             </CTableHead>
             <CTableBody>

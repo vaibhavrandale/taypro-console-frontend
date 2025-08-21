@@ -447,109 +447,13 @@ const UpdateExpense = () => {
                     <thead className="table-light">
                       <tr>
                         <th>Date</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Amount (₹)</th>
-                        <th>Bill Attachment</th>
+                        <th style={{ minWidth: "150px" }}>Type</th>
+                        <th style={{ minWidth: "200px" }}>Description</th>
+                        <th style={{ minWidth: "150px" }}>Amount (₹)</th>
+                        <th style={{ minWidth: "150px" }}>Bill Attachment</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
-                    {/* <tbody>
-                      {expenseItems.map((item, index) => (
-                        <tr key={index}>
-                          <td>
-                            <CFormInput
-                              type="date"
-                              className="form-control form-control-sm"
-                              value={
-                                item.expense_date
-                                  ? new Date(item.expense_date)
-                                      .toISOString()
-                                      .split("T")[0]
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                handleExpenseItemChange(
-                                  index,
-                                  "expense_date",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </td>
-                          <td>
-                            <select
-                              className="form-control form-control-sm"
-                              value={item.expense_type}
-                              onChange={(e) =>
-                                handleExpenseItemChange(
-                                  index,
-                                  "expense_type",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            >
-                              <option value="">Select Type</option>
-                              <option value="Food">Food</option>
-                              <option value="Travel">Travel</option>
-                         
-                              <option value="Medical">Medical</option>
-                              <option value="Others">Other</option>
-                            </select>
-                          </td>
-                          <td>
-                            <textarea
-                              className="form-control form-control-sm"
-                              rows={2}
-                              value={item.description}
-                              onChange={(e) =>
-                                handleExpenseItemChange(
-                                  index,
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </td>
-                          <td>
-                            <CFormInput
-                              type="number"
-                              className={`form-control form-control-sm ${
-                                item.is_over_limit
-                                  ? "text-danger"
-                                  : "text-success"
-                              }`}
-                              min="0"
-                              step="0.01"
-                              value={item.amount}
-                              onChange={(e) =>
-                                handleExpenseItemChange(
-                                  index,
-                                  "amount",
-                                  e.target.value
-                                )
-                              }
-                              required
-                            />
-                          </td>
-
-                          <td className="text-center">
-                            <CButton
-                              type="button"
-                              onClick={() => removeExpenseItem(index)}
-                              className="btn btn-sm btn-danger"
-                              disabled={expenseItems.length <= 1}
-                              title="Remove Item"
-                            >
-                              <MdDeleteOutline />
-                            </CButton>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody> */}
                     <tbody>
                       {expenseItems.map((item, index) => {
                         // 🔍 Check for duplicates: is this expense_type already used for this date in another row?
