@@ -49,6 +49,7 @@ const reducer = (state, action) => {
         loadingMonthlyReport: false,
         errorReport: action.payload,
         subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
       };
     default:
       return state;
@@ -68,10 +69,11 @@ const MonthlySiteReport = () => {
       hasNextPage,
       hasPrevPage,
       subscriptiondata,
+      subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
-    loadingSites: false,
+    loadingSites: true,
     loadingMonthlyReport: true,
     sites: [],
     monthlyreports: [],
@@ -81,6 +83,7 @@ const MonthlySiteReport = () => {
     hasNextPage: false,
     hasPrevPage: false,
     subscriptiondata: {},
+    subscriptionStatus: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -102,6 +105,7 @@ const MonthlySiteReport = () => {
         const res = await axios.get(`/api/v1/sites`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
+        console.log(res);
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
       } catch (error) {
         dispatch({
@@ -124,6 +128,7 @@ const MonthlySiteReport = () => {
         const res = await axios.post(`/api/v1/monthlysitereports`, data, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
+        console.log(res);
 
         let total = Math.ceil(Number(res.data.total) / Number(res.data.limit));
         let next = res.data.hasNextPage;
@@ -142,6 +147,7 @@ const MonthlySiteReport = () => {
           type: "FETCH_MONTHLYREPORT_FAIL",
           payload: err.response?.data?.message || err.response?.data.error,
           subscriptiondata: err.response?.data?.data,
+          subscriptionStatus: err.response?.data?.subscriptionStatus,
         });
         toast.error(err.response?.data?.message || err.response?.data?.error);
       }
@@ -252,18 +258,38 @@ const MonthlySiteReport = () => {
     }
   };
 
-  const subscriptionErrors = [
-    "Subscription expired. Please renew your subscription.",
-    "Please subscribe to use this feature.",
-    "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // const subscriptionErrors = [
+  //   "Subscription expired. Please renew your subscription.",
+  //   "Please subscribe to use this feature.",
+  //   "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // ];
+
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
   ];
 
   return (
     <div className="p-4">
-      {loadingSites || loadingMonthlyReport ? (
+      {loadingSites ? (
+        <>
+          <LoadingSpinner />
+        </>
+      ) : loadingMonthlyReport ? (
         <LoadingSpinner />
-      ) : subscriptionErrors.includes(errorReport || error) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} error={errorReport} />
+      ) : // subscriptionErrors.includes(errorReport || error) ? (
+      //   <SubscriptionExpiryCard data={subscriptiondata} subscriptionStatus={subscriptionStatus}  error={errorReport} />
+      checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={errorReport}
+        />
+      ) : errorReport || error ? (
+        error || errorReport
       ) : (
         <>
           {/* Header Section */}

@@ -1,33 +1,45 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { CRow, CCol, CFormSelect, CFormInput } from "@coreui/react";
+import { CRow, CCol, CFormSelect, CFormInput, CBadge } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import toast from "react-hot-toast";
 import RobotAndCleaningGraph from "./RobotAndCleaningGraph";
 import RobotAndBatteryGraph from "./RobotAndBatteryGraph";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ROBOTS_BATTERY_REQUEST":
-      return { ...state, loading: true };
+      return { ...state, batteryLoading: true, batteryError: "" };
     case "FETCH_ROBOTS_BATTERY_SUCCESS":
-      return { ...state, batteryrobots: action.payload, loading: false };
+      return { ...state, batteryrobots: action.payload, batteryLoading: false };
     case "FETCH_ROBOTS_BATTERY_FAIL":
       return {
         ...state,
-        loading: false,
-        robotserror: action.payload,
+        batteryLoading: false,
+        batteryError: action.payload,
         subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
       };
 
     case "FETCH_ROBOTS_CLEANING_REQUEST":
-      return { ...state, loading: true };
+      return { ...state, cleaningLoading: true, cleaningError: "" };
     case "FETCH_ROBOTS_CLEANING_SUCCESS":
-      return { ...state, cleaningrobots: action.payload, loading: false };
+      return {
+        ...state,
+        cleaningrobots: action.payload,
+
+        cleaningLoading: false,
+      };
     case "FETCH_ROBOTS_CLEANING_FAIL":
-      return { ...state, loading: false, cleaningError: action.payload };
+      return {
+        ...state,
+        cleaningLoading: false,
+        cleaningError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
     case "FETCH_SITEID_REQUEST":
       return { ...state, loadingSiteIds: true, sitesError: "" };
     case "FETCH_SITEID_SUCCESS":
@@ -46,26 +58,31 @@ const reducer = (state, action) => {
 const Statistics = () => {
   const [
     {
-      loading,
+      batteryLoading,
+      loadingSiteIds,
+      cleaningLoading,
       cleaningError,
       sitesError,
       cleaningrobots,
       batteryrobots,
-      loadingSiteIds,
+
       sites,
-      robotserror,
+      batteryError,
       subscriptiondata,
+      subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
     cleaningrobots: [],
     batteryrobots: [],
     sites: [],
-    loading: true,
+    batteryLoading: true,
+    cleaningLoading: true,
     cleaningError: "",
-    robotserror: "",
+    batteryError: "",
     sitesError: "",
     subscriptiondata: {},
+    subscriptionStatus: "",
   });
 
   const [startDate, setStartDate] = useState(
@@ -74,9 +91,13 @@ const Statistics = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [site_id, setSiteId] = useState("abc");
-  const authtoken = useSelector((state) => state.authtoken);
 
+  const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  // const [site_id, setSiteId] = useState(
+  //   userInfo.assigned_sites[0].site_id || "abc"
+  // );
+  const [site_id, setSiteId] = useState(userInfo.assigned_sites[0].site_id);
   useEffect(() => {
     const fetchBatteryRobots = async () => {
       try {
@@ -87,7 +108,7 @@ const Statistics = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(response.data.data);
+
         dispatch({
           type: "FETCH_ROBOTS_BATTERY_SUCCESS",
           payload: response.data.data,
@@ -97,6 +118,7 @@ const Statistics = () => {
           type: "FETCH_ROBOTS_BATTERY_FAIL",
           payload: error.response?.data?.error || error.response?.data?.message,
           subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
 
         toast.error(
@@ -149,6 +171,8 @@ const Statistics = () => {
         dispatch({
           type: "FETCH_ROBOTS_CLEANING_FAIL",
           payload: error.response?.data?.error || error.response?.data?.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
       }
     };
@@ -156,44 +180,77 @@ const Statistics = () => {
     fetchCleaningRobots();
   }, [authtoken, endDate, site_id, startDate]);
 
+  // const handleSiteNameChange = (e) => {
+  //   const selectedSiteId = e.target.value;
+  //   setSiteId(selectedSiteId); // Updates local state
+  // };
+
   const handleSiteNameChange = (e) => {
-    const selectedSiteId = e.target.value;
-    setSiteId(selectedSiteId); // Updates local state
+    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+
+    const selectedSiteName = e.target.value;
+    const selectedSite = sites.find(
+      (site) => site.site_id.toString() === selectedSiteName
+    );
+    console.log(selectedSite);
+    if (selectedSite) {
+      setSiteId(selectedSite.site_id);
+
+      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
+    } else {
+      dispatch({ type: "SELECT_SITENAME_FAIL" });
+    }
   };
 
-  const subscriptionErrors = [
-    "Subscription expired. Please renew your subscription.",
-    "Please subscribe to use this feature.",
-    "Sites Not Found",
-    "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // const subscriptionErrors = [
+  //   "Subscription expired. Please renew your subscription.",
+  //   "Please subscribe to use this feature.",
+  //   "Sites Not Found",
+  //   "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // ];
+
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
   ];
 
   return (
     <div>
-      {loadingSiteIds ? (
+      {loadingSiteIds || cleaningLoading || batteryLoading ? (
         <LoadingSpinner />
-      ) : subscriptionErrors.includes(
-          sitesError || robotserror || cleaningError
-        ) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} error={cleaningError} />
+      ) : checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={cleaningError || cleaningError}
+        />
       ) : (
         <>
           <CRow className="my-2">
-            <CCol>
-              <CFormSelect
-                name="site_id"
-                label="Site Id"
-                value={site_id}
-                onChange={handleSiteNameChange}
-              >
-                <option value="all">Select Site Id</option>
-                {sites?.length > 0 &&
-                  sites.map((item) => (
-                    <option key={item.site_id} value={item.site_id}>
-                      {item.site_id}
-                    </option>
-                  ))}
-              </CFormSelect>
+            <CCol md={3} className="m-1">
+              {loadingSiteIds ? (
+                <LoadingSpinner />
+              ) : sitesError ? (
+                sitesError
+              ) : (
+                <CFormSelect
+                  label="Site ID"
+                  name="site_id"
+                  value={site_id}
+                  onChange={handleSiteNameChange}
+                >
+                  <option value="">Select Site Name</option>
+                  {sites?.length > 0 &&
+                    sites.map((item) => (
+                      <option key={item.site_id} value={item.site_id}>
+                        {item.site_id}
+                      </option>
+                    ))}
+                </CFormSelect>
+              )}
             </CCol>
 
             <CCol md={3} xs={12} className="m-1">
@@ -216,13 +273,13 @@ const Statistics = () => {
           <RobotAndBatteryGraph
             batteryrobots={batteryrobots}
             site_id={site_id}
-            loading={loading}
-            error={robotserror}
+            loading={batteryLoading}
+            error={batteryError}
           />
           <RobotAndCleaningGraph
             cleaningrobots={cleaningrobots}
             site_id={site_id}
-            loading={loading}
+            loading={cleaningLoading}
             error={cleaningError}
           />
         </>

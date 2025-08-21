@@ -1,5 +1,4 @@
 import {
-  CAlert,
   CBadge,
   CCard,
   CCardBody,
@@ -10,14 +9,12 @@ import {
 } from "@coreui/react";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
-import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChartLine, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
-import moment from "moment";
 
 const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
 
@@ -295,7 +292,7 @@ const ClientAdminDashboard = () => {
               <CCard className="h-100 shadow-sm border-0">
                 <CCardHeader className="fw-bold">
                   <CRow className="d-flex justify-content-between align-items-center">
-                    <CCol md={5} className="mb-3">
+                    <CCol md={5} className="">
                       Weather Today{" "}
                     </CCol>
 
@@ -313,7 +310,7 @@ const ClientAdminDashboard = () => {
                         <CFormSelect
                           value={site_id}
                           onChange={handleSiteNameChange}
-                          className="form-select"
+                          className="form-select p-1 m-0"
                           aria-label="Select Site"
                         >
                           <option value="" disabled>
@@ -347,6 +344,10 @@ const ClientAdminDashboard = () => {
                         <CBadge color="warning" className="p-2">
                           Please contact Admin to view Data
                         </CBadge>
+                      ) : errorWeatherData ? (
+                        <CBadge color="warning" className="p-2">
+                          {errorWeatherData}
+                        </CBadge>
                       ) : (
                         errorWeatherData
                       )}
@@ -375,7 +376,7 @@ const ClientAdminDashboard = () => {
                       {/* Weather Grid */}
                       <CRow className="s">
                         <CCol xs={6}>
-                          <CCard className="text-center border-0 shadow-sm">
+                          <CCard className="text-center border-0  bg-gradient rounded-0">
                             <CCardBody>
                               <CIcon
                                 icon={cilSpeedometer}
@@ -388,7 +389,7 @@ const ClientAdminDashboard = () => {
                           </CCard>
                         </CCol>
                         <CCol xs={6}>
-                          <CCard className="text-center border-0 shadow-sm">
+                          <CCard className="text-center border-0 bg-gradient rounded-0">
                             <CCardBody>
                               <CIcon
                                 icon={cilCloud}
@@ -401,7 +402,7 @@ const ClientAdminDashboard = () => {
                           </CCard>
                         </CCol>
                         <CCol xs={6}>
-                          <CCard className="text-center border-0 shadow-sm">
+                          <CCard className="text-center border-0 bg-gradient rounded-0">
                             <CCardBody>
                               <CIcon
                                 icon={cilSpeedometer}
@@ -419,7 +420,7 @@ const ClientAdminDashboard = () => {
                           </CCard>
                         </CCol>
                         <CCol xs={6}>
-                          <CCard className="text-center border-0 shadow-sm">
+                          <CCard className="text-center border-0  bg-gradient rounded-0">
                             <CCardBody>
                               <CIcon
                                 icon={cilBolt}
@@ -507,9 +508,9 @@ const ClientAdminDashboard = () => {
                           }}
                         />
                       ) : (
-                        <p className="text-center">
-                          No cleaning data available
-                        </p>
+                        <CBadge color="warning">
+                          No Cleaning Data available
+                        </CBadge>
                       )}
                     </>
                   )}
@@ -533,6 +534,10 @@ const ClientAdminDashboard = () => {
                       {siteDetailsError === "Site not found" ? (
                         <CBadge color="warning" className="p-2">
                           Please contact to Admin to view Data
+                        </CBadge>
+                      ) : siteDetailsError ? (
+                        <CBadge color="warning" className="p-2">
+                          {siteDetailsError}
                         </CBadge>
                       ) : null}
                     </>
@@ -576,9 +581,9 @@ const ClientAdminDashboard = () => {
                           }}
                         />
                       ) : (
-                        <p className="text-center text-muted">
+                        <CBadge color="warning">
                           No Gateway details available
-                        </p>
+                        </CBadge>
                       )}
                     </>
                   )}
@@ -635,9 +640,9 @@ const ClientAdminDashboard = () => {
                       }}
                     />
                   ) : (
-                    <CAlert color="warning">
+                    <CBadge color="warning">
                       No battery logs found for the Robots
-                    </CAlert>
+                    </CBadge>
                   )}
                 </>
               )}

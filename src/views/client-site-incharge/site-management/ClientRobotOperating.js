@@ -273,7 +273,7 @@ const ClientRobotOperating = () => {
                     : siteRobots.map((item, index) => (
                         <CDropdownItem
                           key={index}
-                          href={`${
+                          to={`${
                             item.robot_no === robot_no
                               ? `#`
                               : `${item.robot_no}`

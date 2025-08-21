@@ -24,7 +24,7 @@ const ButtonGroups = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/button-group/" />
+        <DocsComponents to="components/button-group/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Button Group</strong> <span>Basic example</span>
@@ -34,7 +34,7 @@ const ButtonGroups = () => {
               Wrap a series of <code>&lt;CButton&gt;</code> components in{" "}
               <code>&lt;CButtonGroup&gt;</code>.{" "}
             </p>
-            <DocsExample href="components/button-group">
+            <DocsExample to="components/button-group">
               <CButtonGroup role="group" aria-label="Basic example">
                 <CButton color="primary">Left</CButton>
                 <CButton color="primary">Middle</CButton>
@@ -45,15 +45,15 @@ const ButtonGroups = () => {
               These classes can also be added to groups of links, as an
               alternative to the <code>&lt;CNav&gt;</code> components.
             </p>
-            <DocsExample href="components/button-group">
+            <DocsExample to="components/button-group">
               <CButtonGroup>
-                <CButton href="#" color="primary" active>
+                <CButton to="#" color="primary" active>
                   Active link
                 </CButton>
-                <CButton href="#" color="primary">
+                <CButton to="#" color="primary">
                   Link
                 </CButton>
-                <CButton href="#" color="primary">
+                <CButton to="#" color="primary">
                   Link
                 </CButton>
               </CButtonGroup>
@@ -67,7 +67,7 @@ const ButtonGroups = () => {
             <strong>React Button Group</strong> <span>Mixed styles</span>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="components/button-group#mixed-styles">
+            <DocsExample to="components/button-group#mixed-styles">
               <CButtonGroup
                 role="group"
                 aria-label="Basic mixed styles example"
@@ -86,7 +86,7 @@ const ButtonGroups = () => {
             <strong>React Button Group</strong> <span>Outlined styles</span>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="components/button-group#outlined-styles">
+            <DocsExample to="components/button-group#outlined-styles">
               <CButtonGroup role="group" aria-label="Basic outlined example">
                 <CButton color="primary" variant="outline">
                   Left
@@ -113,7 +113,7 @@ const ButtonGroups = () => {
               Combine button-like checkbox and radio toggle buttons into a
               seamless looking button group.
             </p>
-            <DocsExample href="components/button-group#checkbox-and-radio-button-groups">
+            <DocsExample to="components/button-group#checkbox-and-radio-button-groups">
               <CButtonGroup
                 role="group"
                 aria-label="Basic checkbox toggle button group"
@@ -138,7 +138,7 @@ const ButtonGroups = () => {
                 />
               </CButtonGroup>
             </DocsExample>
-            <DocsExample href="components/button-group#checkbox-and-radio-button-groups">
+            <DocsExample to="components/button-group#checkbox-and-radio-button-groups">
               <CButtonGroup
                 role="group"
                 aria-label="Basic checkbox toggle button group"
@@ -183,7 +183,7 @@ const ButtonGroups = () => {
               complicated components. Use utility classes as needed to space out
               groups, buttons, and more.
             </p>
-            <DocsExample href="components/button-group#button-toolbar">
+            <DocsExample to="components/button-group#button-toolbar">
               <CButtonToolbar
                 role="group"
                 aria-label="Toolbar with button groups"
@@ -221,7 +221,7 @@ const ButtonGroups = () => {
               toolbars. Similar to the example above, you’ll likely need some
               utilities through to space items correctly.
             </p>
-            <DocsExample href="components/button-group#button-toolbar">
+            <DocsExample to="components/button-group#button-toolbar">
               <CButtonToolbar
                 className="mb-3"
                 role="group"
@@ -302,7 +302,7 @@ const ButtonGroups = () => {
               <code>&lt;CButtonGroup&gt;</code>&#39;s, including each one when
               nesting multiple groups.
             </p>
-            <DocsExample href="components/button-group#sizing">
+            <DocsExample to="components/button-group#sizing">
               <CButtonGroup
                 size="lg"
                 role="group"
@@ -361,7 +361,7 @@ const ButtonGroups = () => {
               <code>&lt;CButtonGroup&gt;</code> when you need dropdown menus
               combined with a series of buttons.
             </p>
-            <DocsExample href="components/button-group#nesting">
+            <DocsExample to="components/button-group#nesting">
               <CButtonGroup
                 role="group"
                 aria-label="Button group with nested dropdown"
@@ -371,11 +371,11 @@ const ButtonGroups = () => {
                 <CDropdown variant="btn-group">
                   <CDropdownToggle color="primary">Dropdown</CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
               </CButtonGroup>
@@ -394,7 +394,7 @@ const ButtonGroups = () => {
               horizontally.{" "}
               <strong>Split button dropdowns are not supported here.</strong>
             </p>
-            <DocsExample href="components/button-group/#vertical-variation">
+            <DocsExample to="components/button-group/#vertical-variation">
               <CButtonGroup
                 vertical
                 role="group"
@@ -409,7 +409,7 @@ const ButtonGroups = () => {
                 <CButton color="dark">Button</CButton>
               </CButtonGroup>
             </DocsExample>
-            <DocsExample href="components/button-group/#vertical-variation">
+            <DocsExample to="components/button-group/#vertical-variation">
               <CButtonGroup
                 vertical
                 role="group"
@@ -420,11 +420,11 @@ const ButtonGroups = () => {
                 <CDropdown variant="btn-group">
                   <CDropdownToggle color="primary">Dropdown</CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CButton color="primary">Button</CButton>
@@ -432,36 +432,36 @@ const ButtonGroups = () => {
                 <CDropdown variant="btn-group">
                   <CDropdownToggle color="primary">Dropdown</CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CDropdown variant="btn-group">
                   <CDropdownToggle color="primary">Dropdown</CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CDropdown variant="btn-group">
                   <CDropdownToggle color="primary">Dropdown</CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
               </CButtonGroup>
             </DocsExample>
-            <DocsExample href="components/button-group/#vertical-variation">
+            <DocsExample to="components/button-group/#vertical-variation">
               <CButtonGroup
                 vertical
                 role="group"

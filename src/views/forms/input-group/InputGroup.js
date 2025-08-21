@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CButton,
   CCard,
@@ -18,14 +18,14 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const InputGroup = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="forms/input-group/" />
+        <DocsComponents to="forms/input-group/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Input group</strong> <small>Basic example</small>
@@ -33,10 +33,10 @@ const InputGroup = () => {
           <CCardBody>
             <p className="text-body-secondary small">
               Place one add-on or button on either side of an input. You may
-              also place one on both sides of an input. Remember to place{' '}
+              also place one on both sides of an input. Remember to place{" "}
               <code>&lt;CFormLabel&gt;</code>s outside the input group.
             </p>
-            <DocsExample href="forms/input-group">
+            <DocsExample to="forms/input-group">
               <CInputGroup className="mb-3">
                 <CInputGroupText id="basic-addon1">@</CInputGroupText>
                 <CFormInput
@@ -91,7 +91,7 @@ const InputGroup = () => {
               order to accommodate custom form field validation within an input
               group. You may disable this with <code>.flex-nowrap</code>.
             </p>
-            <DocsExample href="forms/input-group#wrapping">
+            <DocsExample to="forms/input-group#wrapping">
               <CInputGroup className="flex-nowrap">
                 <CInputGroupText id="addon-wrapping">@</CInputGroupText>
                 <CFormInput
@@ -111,7 +111,7 @@ const InputGroup = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add the relative form sizing classes to the{' '}
+              Add the relative form sizing classes to the{" "}
               <code>&lt;CInputGroup&gt;</code> itself and contents within will
               automatically resize—no need for repeating the form control size
               classes on each element.
@@ -122,7 +122,7 @@ const InputGroup = () => {
                 isn&#39;tsupported.
               </strong>
             </p>
-            <DocsExample href="forms/input-group#sizing">
+            <DocsExample to="forms/input-group#sizing">
               <CInputGroup size="sm" className="mb-3">
                 <CInputGroupText id="inputGroup-sizing-sm">
                   Small
@@ -157,7 +157,7 @@ const InputGroup = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Input group</strong>{' '}
+            <strong>React Input group</strong>{" "}
             <small>Checkboxes and radios</small>
           </CCardHeader>
           <CCardBody>
@@ -165,7 +165,7 @@ const InputGroup = () => {
               Place any checkbox or radio option within an input group&#39;s
               addon instead of text.
             </p>
-            <DocsExample href="forms/input-group#checkboxes-and-radios">
+            <DocsExample to="forms/input-group#checkboxes-and-radios">
               <CInputGroup className="mb-3">
                 <CInputGroupText>
                   <CFormCheck
@@ -201,7 +201,7 @@ const InputGroup = () => {
               visually, validation styles are only available for input groups
               with a single <code>&lt;CFormInput&gt;</code>.
             </p>
-            <DocsExample href="forms/input-group#multiple-inputs">
+            <DocsExample to="forms/input-group#multiple-inputs">
               <CInputGroup>
                 <CInputGroupText>First and last name</CInputGroupText>
                 <CFormInput aria-label="First name" />
@@ -221,7 +221,7 @@ const InputGroup = () => {
               Multiple add-ons are supported and can be mixed with checkbox and
               radio input versions..
             </p>
-            <DocsExample href="forms/input-group#multiple-addons">
+            <DocsExample to="forms/input-group#multiple-addons">
               <CInputGroup className="mb-3">
                 <CInputGroupText>$</CInputGroupText>
                 <CInputGroupText>0.00</CInputGroupText>
@@ -246,7 +246,7 @@ const InputGroup = () => {
               Multiple add-ons are supported and can be mixed with checkbox and
               radio input versions..
             </p>
-            <DocsExample href="forms/input-group#button-addons">
+            <DocsExample to="forms/input-group#button-addons">
               <CInputGroup className="mb-3">
                 <CButton
                   type="button"
@@ -308,22 +308,22 @@ const InputGroup = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Input group</strong>{' '}
+            <strong>React Input group</strong>{" "}
             <small>Buttons with dropdowns</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/input-group#buttons-with-dropdowns">
+            <DocsExample to="forms/input-group#buttons-with-dropdowns">
               <CInputGroup className="mb-3">
                 <CDropdown variant="input-group">
                   <CDropdownToggle color="secondary" variant="outline">
                     Dropdown
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CFormInput aria-label="Text input with dropdown button" />
@@ -335,11 +335,11 @@ const InputGroup = () => {
                     Dropdown
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
               </CInputGroup>
@@ -349,11 +349,11 @@ const InputGroup = () => {
                     Dropdown
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CFormInput aria-label="Text input with 2 dropdown buttons" />
@@ -362,11 +362,11 @@ const InputGroup = () => {
                     Dropdown
                   </CDropdownToggle>
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
               </CInputGroup>
@@ -380,7 +380,7 @@ const InputGroup = () => {
             <strong>React Input group</strong> <small>Segmented buttons</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/input-group#segmented-buttons">
+            <DocsExample to="forms/input-group#segmented-buttons">
               <CInputGroup className="mb-3">
                 <CDropdown variant="input-group">
                   <CButton type="button" color="secondary" variant="outline">
@@ -388,11 +388,11 @@ const InputGroup = () => {
                   </CButton>
                   <CDropdownToggle color="secondary" variant="outline" split />
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
                 <CFormInput aria-label="Text input with segmented dropdown button" />
@@ -405,11 +405,11 @@ const InputGroup = () => {
                   </CButton>
                   <CDropdownToggle color="secondary" variant="outline" split />
                   <CDropdownMenu>
-                    <CDropdownItem href="#">Action</CDropdownItem>
-                    <CDropdownItem href="#">Another action</CDropdownItem>
-                    <CDropdownItem href="#">Something else here</CDropdownItem>
+                    <CDropdownItem to="#">Action</CDropdownItem>
+                    <CDropdownItem to="#">Another action</CDropdownItem>
+                    <CDropdownItem to="#">Something else here</CDropdownItem>
                     <CDropdownDivider />
-                    <CDropdownItem href="#">Separated link</CDropdownItem>
+                    <CDropdownItem to="#">Separated link</CDropdownItem>
                   </CDropdownMenu>
                 </CDropdown>
               </CInputGroup>
@@ -423,7 +423,7 @@ const InputGroup = () => {
             <strong>React Input group</strong> <small>Custom select</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/input-group#custom-select">
+            <DocsExample to="forms/input-group#custom-select">
               <CInputGroup className="mb-3">
                 <CInputGroupText as="label" htmlFor="inputGroupSelect01">
                   Options
@@ -484,7 +484,7 @@ const InputGroup = () => {
             <strong>React Input group</strong> <small>Custom file input</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/input-group#custom-file-input">
+            <DocsExample to="forms/input-group#custom-file-input">
               <CInputGroup className="mb-3">
                 <CInputGroupText as="label" htmlFor="inputGroupFile01">
                   Upload

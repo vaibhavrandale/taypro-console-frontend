@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CButton,
   CCard,
@@ -7,14 +7,14 @@ import {
   CCol,
   CSpinner,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Spinners = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/spinner/" />
+        <DocsComponents to="components/spinner/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Spinner</strong> <small>Border</small>
@@ -23,15 +23,15 @@ const Spinners = () => {
             <p className="text-body-secondary small">
               Use the border spinners for a lightweight loading indicator.
             </p>
-            <DocsExample href="components/spinner">
+            <DocsExample to="components/spinner">
               <CSpinner />
             </DocsExample>
             <p className="text-body-secondary small">
-              The border spinner uses <code>currentColor</code> for its{' '}
+              The border spinner uses <code>currentColor</code> for its{" "}
               <code>border-color</code>. You can use any of our text color
               utilities on the standard spinner.
             </p>
-            <DocsExample href="components/spinner#colors">
+            <DocsExample to="components/spinner#colors">
               <CSpinner color="primary" />
               <CSpinner color="secondary" />
               <CSpinner color="success" />
@@ -55,7 +55,7 @@ const Spinners = () => {
               spinner. While it doesn&#39;t technically spin, it does repeatedly
               grow!
             </p>
-            <DocsExample href="components/spinner#growing-spinner">
+            <DocsExample to="components/spinner#growing-spinner">
               <CSpinner variant="grow" />
             </DocsExample>
             <p className="text-body-secondary small">
@@ -63,7 +63,7 @@ const Spinners = () => {
               so you can easily change its appearance. Here it is in blue, along
               with the supported variants.
             </p>
-            <DocsExample href="components/spinner#growing-spinner">
+            <DocsExample to="components/spinner#growing-spinner">
               <CSpinner color="primary" variant="grow" />
               <CSpinner color="secondary" variant="grow" />
               <CSpinner color="success" variant="grow" />
@@ -86,7 +86,7 @@ const Spinners = () => {
               Add <code>size=&#34;sm&#34;</code> property to make a smaller
               spinner that can quickly be used within other components.
             </p>
-            <DocsExample href="components/spinner#size">
+            <DocsExample to="components/spinner#size">
               <CSpinner size="sm" />
               <CSpinner size="sm" variant="grow" />
             </DocsExample>
@@ -104,7 +104,7 @@ const Spinners = () => {
               processing or taking place. You may also swap the text out of the
               spinner element and utilize button text as needed.
             </p>
-            <DocsExample href="components/spinner#buttons">
+            <DocsExample to="components/spinner#buttons">
               <CButton color="primary" disabled>
                 <CSpinner as="span" size="sm" aria-hidden="true" />
               </CButton>
@@ -113,7 +113,7 @@ const Spinners = () => {
                 Loading...
               </CButton>
             </DocsExample>
-            <DocsExample href="components/spinner#buttons">
+            <DocsExample to="components/spinner#buttons">
               <CButton color="primary" disabled>
                 <CSpinner
                   as="span"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CButton,
   CCard,
@@ -7,14 +7,14 @@ import {
   CCol,
   CBadge,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Badges = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/badge/" />
+        <DocsComponents to="components/badge/" />
       </CCol>
       <CCol lg={6}>
         <CCard className="mb-4">
@@ -26,7 +26,7 @@ const Badges = () => {
               Bootstrap badge scale to suit the size of the parent element by
               using relative font sizing and <code>em</code> units.
             </p>
-            <DocsExample href="components/badge">
+            <DocsExample to="components/badge">
               <h1>
                 Example heading <CBadge color="secondary">New</CBadge>
               </h1>
@@ -50,7 +50,7 @@ const Badges = () => {
               Badges can be used as part of links or buttons to provide a
               counter.
             </p>
-            <DocsExample href="components/badge">
+            <DocsExample to="components/badge">
               <CButton color="primary">
                 Notifications <CBadge color="secondary">4</CBadge>
               </CButton>
@@ -64,7 +64,7 @@ const Badges = () => {
               Unless the context is clear, consider including additional context
               with a visually hidden piece of additional text.
             </p>
-            <DocsExample href="components/badge">
+            <DocsExample to="components/badge">
               <CButton color="primary">
                 Profile <CBadge color="secondary">9</CBadge>
                 <span className="visually-hidden">unread messages</span>
@@ -83,7 +83,7 @@ const Badges = () => {
               Add any of the below-mentioned <code>color</code> props to modify
               the presentation of a badge.
             </p>
-            <DocsExample href="components/badge#contextual-variations">
+            <DocsExample to="components/badge#contextual-variations">
               <CBadge color="primary">primary</CBadge>
               <CBadge color="success">success</CBadge>
               <CBadge color="danger">danger</CBadge>
@@ -103,7 +103,7 @@ const Badges = () => {
               Apply the <code>shape=&#34;rounded-pill&#34;</code> prop to make
               badges rounded.
             </p>
-            <DocsExample href="components/badge#pill-badges">
+            <DocsExample to="components/badge#pill-badges">
               <CBadge color="primary" shape="rounded-pill">
                 primary
               </CBadge>

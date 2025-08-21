@@ -44,6 +44,7 @@ const reducer = (state, action) => {
         pmloading: false,
         error: action.payload,
         subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
       };
 
     case "FETCH_SITES_REQUEST":
@@ -70,6 +71,7 @@ const PreventiveMaintenanceList = () => {
       sitesError,
       error,
       subscriptiondata,
+      subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -78,8 +80,10 @@ const PreventiveMaintenanceList = () => {
     loadingSites: false,
     sites: [],
     pmloading: true,
-    subscriptiondata: {},
+
     error: "",
+    subscriptionStatus: "",
+    subscriptiondata: {},
   });
   const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("all");
@@ -130,6 +134,7 @@ const PreventiveMaintenanceList = () => {
           type: "FETCH_PM_FAIL",
           payload: error.response.data.error || error.response.data.message,
           subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(error.response.data.error || error.response.data.message);
       }
@@ -175,24 +180,40 @@ const PreventiveMaintenanceList = () => {
     );
   };
 
-  const subscriptionErrors = [
-    "Subscription expired. Please renew your subscription.",
-    "Please subscribe to use this feature.",
-    "Sites Not Found",
-    "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // const subscriptionErrors = [
+  //   "Subscription expired. Please renew your subscription.",
+  //   "Please subscribe to use this feature.",
+  //   "Sites Not Found",
+  //   "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
+  // ];
+
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
   ];
 
   return (
     <div>
       {pmloading ? (
         <LoadingSpinner />
-      ) : subscriptionErrors.includes(sitesError || error) ? (
-        <SubscriptionExpiryCard data={subscriptiondata} error={error} />
+      ) : //  subscriptionErrors.includes(sitesError || error) ? (
+      //   <SubscriptionExpiryCard data={subscriptiondata} subscriptionStatus={subscriptionStatus}  error={error} />)
+      checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={error}
+        />
+      ) : sitesError || error ? (
+        sitesError || error
       ) : (
         <>
           <CRow>
             <CCol>
-              <h2>Preventive Maintenance Records</h2>
+              <h4 className="text-center">Preventive Maintenance Records</h4>
 
               <>
                 <form>

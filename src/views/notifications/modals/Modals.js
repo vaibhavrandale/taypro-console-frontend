@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   CButton,
   CCard,
@@ -14,8 +14,8 @@ import {
   CPopover,
   CRow,
   CTooltip,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const LiveDemo = () => {
   const [visible, setVisible] = useState(false);
@@ -409,7 +409,7 @@ const TooltipsPopovers = () => {
               content="Popover body content is set in this property."
             >
               <CButton color="primary">button</CButton>
-            </CPopover>{' '}
+            </CPopover>{" "}
             triggers a popover on click.
           </p>
           <hr />
@@ -417,11 +417,11 @@ const TooltipsPopovers = () => {
           <p>
             <CTooltip content="Tooltip">
               <CLink>This link</CLink>
-            </CTooltip>{' '}
+            </CTooltip>{" "}
             and
             <CTooltip content="Tooltip">
               <CLink>that link</CLink>
-            </CTooltip>{' '}
+            </CTooltip>{" "}
             have tooltips on hover.
           </p>
         </CModalBody>
@@ -565,21 +565,21 @@ const Modals = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/modal/" />
+        <DocsComponents to="components/modal/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Modal</strong>
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Below is a static modal example (meaning its <code>position</code>{' '}
+              Below is a static modal example (meaning its <code>position</code>{" "}
               and <code>display</code> have been overridden). Included are the
               modal header, modal body (required for <code>padding</code>), and
               modal footer (optional). We ask that you include modal headers
               with dismiss actions whenever possible, or provide another
               explicit dismiss action.
             </p>
-            <DocsExample href="components/modal">
+            <DocsExample to="components/modal">
               <CModal
                 className="show d-block position-static"
                 backdrop={false}
@@ -610,7 +610,7 @@ const Modals = () => {
               Toggle a working modal demo by clicking the button below. It will
               slide down and fade in from the top of the page.
             </p>
-            <DocsExample href="components/modal#live-demo">
+            <DocsExample to="components/modal#live-demo">
               {LiveDemo()}
             </DocsExample>
           </CCardBody>
@@ -628,7 +628,7 @@ const Modals = () => {
               static, meaning it will not close when clicking outside it. Click
               the button below to try it.
             </p>
-            <DocsExample href="components/modal#static-backdrop">
+            <DocsExample to="components/modal#static-backdrop">
               {StaticBackdrop()}
             </DocsExample>
           </CCardBody>
@@ -646,14 +646,14 @@ const Modals = () => {
               static, meaning it will not close when clicking outside it. Click
               the button below to try it.
             </p>
-            <DocsExample href="components/modal#scrolling-long-content">
+            <DocsExample to="components/modal#scrolling-long-content">
               {ScrollingLongContent()}
             </DocsExample>
             <p className="text-body-secondary small">
               You can also create a scrollable modal that allows scroll the
               modal body by adding <code>scrollable</code> prop.
             </p>
-            <DocsExample href="components/modal#scrolling-long-content">
+            <DocsExample to="components/modal#scrolling-long-content">
               {ScrollingLongContent2()}
             </DocsExample>
           </CCardBody>
@@ -666,13 +666,13 @@ const Modals = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Add <code>alignment=&#34;center&#34;</code> to{' '}
+              Add <code>alignment=&#34;center&#34;</code> to{" "}
               <code>&lt;CModal&gt;</code> to vertically center the modal.
             </p>
-            <DocsExample href="components/modal#vertically-centered">
+            <DocsExample to="components/modal#vertically-centered">
               {VerticallyCentered()}
             </DocsExample>
-            <DocsExample href="components/modal#vertically-centered">
+            <DocsExample to="components/modal#vertically-centered">
               {VerticallyCentered2()}
             </DocsExample>
           </CCardBody>
@@ -685,11 +685,11 @@ const Modals = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              <code>&lt;CTooltips&gt;</code> and <code>&lt;CPopovers&gt;</code>{' '}
+              <code>&lt;CTooltips&gt;</code> and <code>&lt;CPopovers&gt;</code>{" "}
               can be placed within modals as needed. When modals are closed, any
               tooltips and popovers within are also automatically dismissed.
             </p>
-            <DocsExample href="components/modal#tooltips-and-popovers">
+            <DocsExample to="components/modal#tooltips-and-popovers">
               {TooltipsPopovers()}
             </DocsExample>
           </CCardBody>
@@ -752,7 +752,7 @@ const Modals = () => {
                 </tr>
               </tbody>
             </table>
-            <DocsExample href="components/modal#optional-sizes">
+            <DocsExample to="components/modal#optional-sizes">
               {OptionalSizes()}
             </DocsExample>
           </CCardBody>
@@ -824,7 +824,7 @@ const Modals = () => {
                 </tr>
               </tbody>
             </table>
-            <DocsExample href="components/modal#fullscreen-modal">
+            <DocsExample to="components/modal#fullscreen-modal">
               {FullscreenModal()}
             </DocsExample>
           </CCardBody>

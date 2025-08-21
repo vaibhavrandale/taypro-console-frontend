@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -6,20 +6,20 @@ import {
   CCol,
   CFormSelect,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
 
 const Select = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="forms/select/" />
+        <DocsComponents to="forms/select/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Select</strong> <small>Default</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="forms/select">
+            <DocsExample to="forms/select">
               <CFormSelect aria-label="Default select example">
                 <option>Open this select menu</option>
                 <option value="1">One</option>
@@ -40,7 +40,7 @@ const Select = () => {
               You may also choose from small and large custom selects to match
               our similarly sized text inputs.
             </p>
-            <DocsExample href="forms/select#sizing">
+            <DocsExample to="forms/select#sizing">
               <CFormSelect
                 size="lg"
                 className="mb-3"
@@ -65,7 +65,7 @@ const Select = () => {
             <p className="text-body-secondary small">
               The <code>multiple</code> attribute is also supported:
             </p>
-            <DocsExample href="forms/select#sizing">
+            <DocsExample to="forms/select#sizing">
               <CFormSelect
                 size="lg"
                 multiple
@@ -80,7 +80,7 @@ const Select = () => {
             <p className="text-body-secondary small">
               As is the <code>htmlSize</code> property:
             </p>
-            <DocsExample href="forms/select#sizing">
+            <DocsExample to="forms/select#sizing">
               <CFormSelect
                 size="lg"
                 multiple
@@ -105,7 +105,7 @@ const Select = () => {
               Add the <code>disabled</code> boolean attribute on a select to
               give it a grayed out appearance and remove pointer events.
             </p>
-            <DocsExample href="forms/select#disabled">
+            <DocsExample to="forms/select#disabled">
               <CFormSelect aria-label="Disabled select example" disabled>
                 <option>Open this select menu</option>
                 <option value="1">One</option>

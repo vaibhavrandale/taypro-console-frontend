@@ -22,51 +22,53 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-
-    case "FETCH_SUCCESS":
-      return {
-        ...state,
-        downlinks: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
-        loading: false,
-      };
-
-    case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
-
     case "FETCH_ROBOTS_REQUEST":
-      return { ...state, loadingRobots: true, error: "" };
+      return { ...state, loadingRobots: true, robotsError: "" };
 
     case "FETCH_ROBOTS_SUCCESS":
       return { ...state, loadingRobots: false, robots: action.payload };
 
     case "FETCH_ROBOTS_FAIL":
-      return { ...state, loadingRobots: false, error: action.payload };
+      return {
+        ...state,
+        loadingRobots: false,
+        robotsError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
 
     case "SEND_DOWNLINK_REQUEST":
-      return { ...state, sendingCommandloading: true, error: "" };
+      return { ...state, sendingCommandloading: true, sendingCommandError: "" };
 
     case "SEND_DOWNLINK_SUCCESS":
       return { ...state, sendingCommandloading: false };
 
     case "SEND_DOWNLINK_FAIL":
-      return { ...state, sendingCommandloading: false, error: action.payload };
+      return {
+        ...state,
+        sendingCommandloading: false,
+        sendingCommandError: action.payload,
+      };
+
     case "FETCH_ROBOT_REQUEST":
-      return { ...state, loadingRobot: true, error: "" };
+      return { ...state, loadingRobot: true, robotError: "" };
 
     case "FETCH_ROBOT_SUCCESS":
       return { ...state, loadingRobot: false, robot: action.payload };
 
     case "FETCH_ROBOT_FAIL":
-      return { ...state, loadingRobot: false, error: action.payload };
+      return {
+        ...state,
+        loadingRobot: false,
+        robotError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
 
     default:
       return state;
@@ -74,8 +76,34 @@ const reducer = (state, action) => {
 };
 
 const ClientRobotOperating = () => {
+  const [
+    {
+      loadingRobot,
+
+      robot,
+      loadingRobots,
+      robots,
+
+      subscriptiondata,
+      subscriptionStatus,
+      robotError,
+      robotsError,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robots: [],
+    robot: {},
+    loading: true,
+    error: "",
+    robotError: "",
+    robotsError: "",
+    loadingRobots: true,
+    sendingCommandloading: false,
+    loadingRobot: false,
+    subscriptiondata: {},
+    subscriptionStatus: "",
+  });
   const { site_id, block, robot_no } = useParams();
-  const [siteRobots, setSiteRobots] = useState([]);
   const authtoken = useSelector((state) => state.authtoken);
 
   let start = "C1";
@@ -84,59 +112,14 @@ const ClientRobotOperating = () => {
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
-  const [{ error, loadingRobots, robots }, dispatch] = useReducer(reducer, {
-    robots: [],
-    robot: {},
-    loading: true,
-    loadingRobot: true,
-    error: "",
-    loadingRobots: true,
-    sendingCommandloading: false,
-  });
+  const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
-    const getRobots = async () => {
-      try {
-        dispatch({ type: "FETCH_ROBOTS_REQUEST" });
-        const response = await axios.get(
-          `/api/v1/robots/site/${site_id}/${block}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-        // robots/site/taypro_office/Block-1/
-        const robotsData = response.data.data; // Ensure correct data access
-
-        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
-
-        // ✅ Filter robots assigned to this site
-        if (site_id) {
-          const extractNumber = (robotNo) =>
-            parseInt(robotNo.match(/\d+/g)?.join("") || "0", 10);
-
-          const filteredRobots = robotsData
-            .filter(
-              (robot) => robot.site_id === site_id && robot.block === block
-            )
-            .sort(
-              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
-            );
-
-          setSiteRobots(filteredRobots);
-        }
-      } catch (error) {
-        dispatch({
-          type: "FETCH_ROBOTS_FAIL",
-          payload: error.response ? error.response.data.message : error.message,
-        });
-      }
-    };
-
     const getRobot = async () => {
       try {
         dispatch({ type: "FETCH_ROBOT_REQUEST" });
         const response = await axios.get(
-          `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
+          `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
@@ -153,33 +136,62 @@ const ClientRobotOperating = () => {
       }
     };
 
-    getRobots();
     getRobot();
-  }, [block, site_id, authtoken, robot_no]);
+  }, [authtoken, robot_no]);
+  useEffect(() => {
+    const getRobots = async () => {
+      try {
+        dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+        const response = await axios.get(
+          `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        // robots/site/taypro_office/Block-1/
+        const robotsData = response.data.data; // Ensure correct data access
+
+        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: robotsData });
+
+        // const filteredRobots = robotsData.sort(
+        //   (a, b) => a.robot_no - b.robot_no
+        // );
+
+        // setSiteRobots(filteredRobots);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: error.response.data.message || error.response.data.error,
+        });
+      }
+    };
+
+    getRobots();
+  }, [block, site_id, authtoken]);
 
   // ✅ Ensure robots exist before filtering
-  const Robotdata =
-    robots?.length > 0
-      ? robots.filter(
-          (robot) =>
-            robot.site_id === site_id &&
-            robot.block === block &&
-            robot.robot_no === robot_no
-        )
-      : [];
-  const blockwiserobots =
-    robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
+  // const Robotdata =
+  //   robots?.length > 0
+  //     ? robots.filter(
+  //         (robot) =>
+  //           robot.site_id === site_id &&
+  //           robot.block === block &&
+  //           robot.robot_no === robot_no
+  //       )
+  //     : [];
+  // const blockwiserobots =
+  //   robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
 
   const sendsingleDownlink = async (command, index) => {
     setLoadingRow(index);
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
-      deveui: Robotdata[0].deveui,
-      robot_no: Robotdata[0].robot_no,
+      deveui: robot.deveui,
+      robot_no: robot.robot_no,
       site_id: site_id,
       command: command,
-      lora_no: Robotdata[0].lora_no,
+      lora_no: robot.lora_no,
     };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
@@ -202,7 +214,7 @@ const ClientRobotOperating = () => {
   };
 
   const sendMulticastDownlink = async (command, index) => {
-    let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
 
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no
@@ -236,14 +248,56 @@ const ClientRobotOperating = () => {
     setCommandButton(null);
   };
 
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
+  ];
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  }
+  console.log("robots");
+  console.log(robots);
+  console.log("robots");
+  console.log("robot");
+  console.log(robot);
+  console.log("robot");
+
   return (
     <>
-      {loadingRobots ? (
+      {loadingRobots || loadingRobot ? (
         <div className="loading-container">
           <LoadingSpinner />
         </div>
-      ) : error ? (
-        <h1>{error}</h1>
+      ) : checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={robotError}
+        />
+      ) : robotError || robotsError ? (
+        <CBadge color="danger">{robotError || robotsError}</CBadge>
       ) : (
         <div className="">
           {/* Page Header */}
@@ -258,7 +312,7 @@ const ClientRobotOperating = () => {
           </CRow>
 
           {/* Action Buttons */}
-          <CRow className="my-2">
+          <CRow className="">
             <CCol>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
@@ -279,50 +333,50 @@ const ClientRobotOperating = () => {
                 RETURN TO DOCK ALL
               </CButton>
 
-              <CDropdown className="dropdown">
-                {siteRobots.length > 1 ? (
+              <CDropdown className="dropdown ">
+                {robots.length > 1 ? (
                   <CDropdownToggle
                     size="sm"
-                    className="shadow-sm "
-                    color={`${
-                      Robotdata[0].lora_state === 1 ? `success` : `danger`
-                    }`}
+                    className="shadow-sm"
+                    color={robot.lora_state === 1 ? "success" : "danger"}
                   >
-                    {Robotdata[0].robot_no}
+                    {robot.robot_no}
                   </CDropdownToggle>
                 ) : (
                   <CButton
-                    className={`${
-                      Robotdata[0].lora_state === 1 ? `` : `text-white`
-                    } shadow-sm`}
-                    color={`${
-                      Robotdata[0].lora_state === 1 ? `success` : `danger`
-                    }`}
                     size="sm"
+                    color={robot.lora_state === 1 ? "success" : "danger"}
+                    className="shadow-sm"
+                    disabled // since no dropdown when single robot
                   >
-                    {Robotdata[0].robot_no}
+                    {robot.robot_no}
                   </CButton>
                 )}
 
-                <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
-                  {siteRobots.length === 1
-                    ? ""
-                    : siteRobots.map((item, index) => (
-                        <CDropdownItem
-                          key={index}
-                          href={`${
-                            item.robot_no === robot_no
-                              ? `#`
-                              : `${item.robot_no}`
+                {robots.length > 1 && (
+                  <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
+                    {robots.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={
+                          item.robot_no === robot_no
+                            ? `#`
+                            : `/${adminroute}/site-management/block-management/${site_id}/${block}/${item.robot_no}`
+                        }
+                        className="dopdown-item-robot "
+                      >
+                        <CBadge
+                          color={`${
+                            item.lora_state === 1 ? "success" : "danger"
                           }`}
-                          className={`m-1 dopdown-item ${
-                            item.lora_state === 1 ? `online` : `offline`
-                          }`}
+                          className="p-2 my-1"
                         >
-                          {item.robot_no}
-                        </CDropdownItem>
-                      ))}
-                </CDropdownMenu>
+                          {item.robot_no}{" "}
+                        </CBadge>
+                      </Link>
+                    ))}
+                  </CDropdownMenu>
+                )}
               </CDropdown>
             </CCol>
           </CRow>
@@ -332,7 +386,7 @@ const ClientRobotOperating = () => {
 
           <CRow className="">
             {/* First Card */}
-            <CCol md={7} className="mt-2">
+            {/* <CCol md={7} className="mt-2">
               <CCard className="shadow border-0" style={{ height: "100%" }}>
                 <CCardBody>
                   <CTable borderless className="bg-important">
@@ -340,15 +394,15 @@ const ClientRobotOperating = () => {
                       <CTableRow>
                         <CTableDataCell>
                           <span className="" style={{ fontSize: "15px" }}>
-                            {Robotdata[0].robot_no}
+                            {robot.robot_no}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          🔋: {Robotdata[0].battery_voltage}%
+                          🔋: {robot.battery_voltage}%
                         </CTableDataCell>
                         <CTableDataCell>
                           <span className="badge bg-success">
-                            {Robotdata[0].version}
+                            {robot.version}
                           </span>
                         </CTableDataCell>
                       </CTableRow>
@@ -360,14 +414,14 @@ const ClientRobotOperating = () => {
                         </CTableDataCell>
                         <CTableDataCell>Wheel Speed</CTableDataCell>
                         <CTableDataCell>
-                          {Robotdata[0].wheel_motor_speed === 255 ? (
+                          {robot.wheel_motor_speed === 255 ? (
                             <CBadge
                               className="badge bg-success"
                               shape="rounded-pill"
                             >
                               High
                             </CBadge>
-                          ) : Robotdata[0].wheel_motor_speed === 150 ? (
+                          ) : robot.wheel_motor_speed === 150 ? (
                             <CBadge
                               className="badge bg-info"
                               shape="rounded-pill"
@@ -387,30 +441,20 @@ const ClientRobotOperating = () => {
                       <CTableRow>
                         <CTableDataCell>
                           Deveui:
-                          <span className="text-danger">
-                            ({Robotdata[0].lora_no})
-                          </span>
-                          -
-                          <span className="text-success">
-                            {Robotdata[0].deveui}
-                          </span>
+                          <span className="text-danger">({robot.lora_no})</span>
+                          -<span className="text-success">{robot.deveui}</span>
                         </CTableDataCell>
                         <CTableDataCell>Brush Speed</CTableDataCell>
                         <CTableDataCell>
-                          {/* <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {Robotdata[0].brush_motor_speed}
-                          </CBadge> */}
-                          {Robotdata[0].brush_motor_speed === 255 ? (
+                         
+                          {robot.brush_motor_speed === 255 ? (
                             <CBadge
                               className="badge bg-success"
                               shape="rounded-pill"
                             >
                               High
                             </CBadge>
-                          ) : Robotdata[0].brush_motor_speed === 150 ? (
+                          ) : robot.brush_motor_speed === 150 ? (
                             <CBadge
                               className="badge bg-info"
                               shape="rounded-pill"
@@ -431,10 +475,105 @@ const ClientRobotOperating = () => {
                   </CTable>
                 </CCardBody>
               </CCard>
+            </CCol> */}
+
+            <CCol md={7} className="mt-2">
+              {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
+              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                <CCardBody className="d-flex flex-column flex-grow-1">
+                  <div className="d-flex flex-row justify-content-between p-1">
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span style={{ fontSize: "15px" }}>
+                          {robot.robot_no}
+                        </span>
+                      </CCol>
+                      <CCol>🔋: {robot.battery_voltage}%</CCol>
+                      <CCol>
+                        <span className="badge bg-success">
+                          {robot.version}
+                        </span>
+                      </CCol>
+                    </CRow>
+
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span style={{ fontSize: "13px" }}>{robot.deveui}</span>
+                      </CCol>
+                      <CCol>Wheel Speed</CCol>
+                      <CCol>
+                        {robot.wheel_motor_speed === 255 ? (
+                          <CBadge
+                            className="badge bg-success"
+                            shape="rounded-pill"
+                          >
+                            High
+                          </CBadge>
+                        ) : robot.wheel_motor_speed === 150 ? (
+                          <CBadge
+                            className="badge bg-info"
+                            shape="rounded-pill"
+                          >
+                            Medium
+                          </CBadge>
+                        ) : (
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
+                          >
+                            Low
+                          </CBadge>
+                        )}
+                      </CCol>
+                    </CRow>
+
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        Lora:{" "}
+                        <span className="text-success">{robot.lora_no}</span>
+                      </CCol>
+                      <CCol>Brush Speed</CCol>
+                      <CCol>
+                        {robot.brush_motor_speed === 255 ? (
+                          <CBadge
+                            className="badge bg-success"
+                            shape="rounded-pill"
+                          >
+                            High
+                          </CBadge>
+                        ) : robot.brush_motor_speed === 150 ? (
+                          <CBadge
+                            className="badge bg-info"
+                            shape="rounded-pill"
+                          >
+                            Medium
+                          </CBadge>
+                        ) : (
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
+                          >
+                            Low
+                          </CBadge>
+                        )}
+                      </CCol>
+                    </CRow>
+                  </div>
+                </CCardBody>
+              </CCard>
             </CCol>
 
             {/* Second Card */}
-            <CCol md={5} className="mt-2">
+            {/* <CCol md={5} className="mt-2">
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
                   <CTable borderless>
@@ -443,32 +582,26 @@ const ClientRobotOperating = () => {
                         <CTableDataCell>
                           <span
                             className={`text-${
-                              Robotdata[0].lora_state === 1
-                                ? `success`
-                                : `danger`
+                              robot.lora_state === 1 ? `success` : `danger`
                             }`}
                           >
-                            {Robotdata[0].lora_state === 1
-                              ? `online`
-                              : `offline`}
+                            {robot.lora_state === 1 ? `online` : `offline`}
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>
-                          <span className="">{Robotdata[0].last_status}</span>
+                          <span className="">{robot.last_status}</span>
                         </CTableDataCell>
                       </CTableRow>
                       <CTableRow>
                         <CTableDataCell>
                           <span className="text-danger">
-                            SC : {Robotdata[0].stuck_count}
+                            SC : {robot.stuck_count}
                           </span>
                         </CTableDataCell>
 
                         <CTableDataCell>
-                          {!Robotdata[0].last_uplink ||
-                          isNaN(
-                            new Date(Robotdata[0].last_uplink).getTime()
-                          ) ? (
+                          {!robot.last_uplink ||
+                          isNaN(new Date(robot.last_uplink).getTime()) ? (
                             <CBadge
                               className="badge bg-danger"
                               shape="rounded-pill"
@@ -479,13 +612,13 @@ const ClientRobotOperating = () => {
                             <span>
                               <CTooltip
                                 content={new Date(
-                                  Robotdata[0].last_uplink
+                                  robot.last_uplink
                                 ).toLocaleString()}
                                 placement="top"
                               >
                                 <span>
                                   {formatDistanceToNow(
-                                    new Date(Robotdata[0].last_uplink),
+                                    new Date(robot.last_uplink),
                                     {
                                       addSuffix: true,
                                     }
@@ -498,6 +631,74 @@ const ClientRobotOperating = () => {
                       </CTableRow>
                     </CTableBody>
                   </CTable>
+                </CCardBody>
+              </CCard>
+            </CCol> */}
+
+            {/* Second Card */}
+            <CCol md={5} className="mt-2">
+              <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                <CCardBody className="d-flex flex-column flex-grow-1">
+                  <div className="d-flex flex-row justify-content-between p-1">
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span
+                          className={`text-${
+                            robot.lora_state === 1 ? `success` : `danger`
+                          }`}
+                        >
+                          {robot.lora_state === 1 ? `online` : `offline`}
+                        </span>
+                      </CCol>
+                      <CCol>
+                        {" "}
+                        <span className=" ">{robot.last_status}</span>
+                      </CCol>
+                    </CRow>
+                    <CRow
+                      className="d-flex flex-column"
+                      style={{ gap: "10px" }}
+                    >
+                      <CCol>
+                        <span className="text-danger">
+                          SC : {robot.stuck_count}
+                        </span>
+                      </CCol>
+                      <CCol>
+                        {" "}
+                        {!robot.last_uplink ||
+                        isNaN(new Date(robot.last_uplink).getTime()) ? (
+                          <CBadge
+                            className="badge bg-danger"
+                            shape="rounded-pill"
+                          >
+                            Robot is not activated
+                          </CBadge>
+                        ) : (
+                          <span>
+                            <CTooltip
+                              content={new Date(
+                                robot.last_uplink
+                              ).toLocaleString()}
+                              placement="top"
+                            >
+                              <span>
+                                {formatDistanceToNow(
+                                  new Date(robot.last_uplink),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                            </CTooltip>
+                          </span>
+                        )}
+                      </CCol>
+                    </CRow>
+                  </div>
                 </CCardBody>
               </CCard>
             </CCol>

@@ -17,14 +17,14 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
-import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITEID_REQUEST":
-      return { ...state, loadingSiteIds: true, error: "" };
+      return { ...state, loadingSiteIds: true, sitesError: "" };
     case "FETCH_SITEID_SUCCESS":
       return {
         ...state,
@@ -32,7 +32,7 @@ const reducer = (state, action) => {
         siteIds: action.payload,
       };
     case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSiteIds: false, error: action.payload };
+      return { ...state, loadingSiteIds: false, sitesError: action.payload };
 
     case "SELECT_SITENAME_REQUEST":
       return { ...state, loadingFields: true };
@@ -50,7 +50,7 @@ const reducer = (state, action) => {
       return { ...state, loadingFields: false };
 
     case "FETCH_TIMER_REQUEST":
-      return { ...state, loadingAllTimers: true, error: "" };
+      return { ...state, loadingAllTimers: true, timerError: "" };
     case "FETCH_TIMER_SUCCESS":
       return {
         ...state,
@@ -58,21 +58,43 @@ const reducer = (state, action) => {
         timers: action.payload.data,
       };
     case "FETCH_TIMER_FAIL":
-      return { ...state, loadingAllTimers: false, error: action.payload };
+      return {
+        ...state,
+        loadingAllTimers: false,
+        timerError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
     default:
       return state;
   }
 };
 
 const ClientTimers = () => {
-  const [state, dispatch] = useReducer(reducer, {
+  const [
+    {
+      timers,
+      siteIds,
+      loadingSiteIds,
+      loadingAllTimers,
+      sitesError,
+
+      timerError,
+
+      subscriptiondata,
+      subscriptionStatus,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
     timers: {},
-    loadingAllTimers: true,
-    error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
-    updateLoading: false,
+    siteIds: {},
+    loadingAllTimers: false,
+    loadingSiteIds: false,
+    sitesError: "",
+    timerError: "",
+
+    subscriptiondata: {},
+    subscriptionStatus: "",
   });
 
   // const [pageInput, setPageInput] = useState("");
@@ -96,9 +118,9 @@ const ClientTimers = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.error || "Error fetching sites",
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
-        toast.error(error.response.data.error || "Error fetching sites");
+        toast.error(error.response.data.error || error.response?.data?.message);
       }
     };
 
@@ -133,9 +155,11 @@ const ClientTimers = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_TIMER_FAIL",
-          payload: "Failed to fetch the Timers",
+          payload: error.response.data.error || error.response.data.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
-        toast.error("Failed to fetch the Timers");
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
     fetchSiteIds();
@@ -168,7 +192,7 @@ const ClientTimers = () => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
     const selectedSiteName = e.target.value;
-    const selectedSite = state.siteIds.find(
+    const selectedSite = siteIds.find(
       (site) => site.site_id.toString() === selectedSiteName
     );
 
@@ -205,141 +229,162 @@ const ClientTimers = () => {
     adminroute = "project-user";
   }
 
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
+  ];
+
   return (
-    <div className="p-4">
-      <h2>⏳ Timers Management</h2>
+    <div className="">
+      {loadingAllTimers || loadingSiteIds ? (
+        <LoadingSpinner />
+      ) : checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={timerError}
+        />
+      ) : timerError || sitesError ? (
+        <CBadge color="danger">{timerError || sitesError}</CBadge>
+      ) : (
+        <div>
+          <h4>⏳ Timers Management</h4>
+          {/* 📌 Site Filter */}
+          <CRow className="justify-content-start mb-3">
+            <CCol md={4}>
+              <CFormSelect
+                name="site_id"
+                value={site_id}
+                onChange={handleSiteNameChange}
+              >
+                <option value="">All</option>
+                {siteIds?.length > 0 &&
+                  siteIds.map((item) => (
+                    <option key={item.site_id} value={item.site_id}>
+                      {item.site_id}
+                    </option>
+                  ))}
+              </CFormSelect>
+            </CCol>
+          </CRow>
 
-      {/* 📌 Site Filter */}
-      <CRow className="justify-content-start mb-3">
-        <CCol md={4}>
-          <CFormSelect
-            name="site_id"
-            value={site_id}
-            onChange={handleSiteNameChange}
-          >
-            <option value="">All</option>
-            {state.siteIds?.length > 0 &&
-              state.siteIds.map((item) => (
-                <option key={item.site_id} value={item.site_id}>
-                  {item.site_id}
-                </option>
-              ))}
-          </CFormSelect>
-        </CCol>
-      </CRow>
-
-      {/* 📝 Timers Table */}
-      <CCard className="shadow-sm">
-        <CCardHeader>
-          <h5 className="m-0">
-            📋 Timers for &nbsp;
-            <b>{site_id ? site_id : "All Sites"}</b>
-          </h5>
-        </CCardHeader>
-        <CCardBody>
-          <CTable bordered hover responsive className="bg-important">
-            <CTableHead color="secondary">
-              <CTableRow>
-                <CTableHeaderCell>Sr</CTableHeaderCell>
-                <CTableHeaderCell>Site ID</CTableHeaderCell>
-                <CTableHeaderCell>Block</CTableHeaderCell>
-                <CTableHeaderCell>Total Robots</CTableHeaderCell>
-                <CTableHeaderCell>Timer 1</CTableHeaderCell>
-                <CTableHeaderCell>Date 1</CTableHeaderCell>
-                <CTableHeaderCell>Timer 2</CTableHeaderCell>
-                <CTableHeaderCell>Date 2</CTableHeaderCell>
-                <CTableHeaderCell>Timer 3</CTableHeaderCell>
-                <CTableHeaderCell>Date 3</CTableHeaderCell>
-                <CTableHeaderCell>Action</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {state.loadingAllTimers ? (
-                <CTableRow className="text-center">
-                  <CTableDataCell colSpan={11}>
-                    <LoadingSpinner />
-                  </CTableDataCell>
-                </CTableRow>
-              ) : state.timers.length > 0 ? (
-                state.timers.flatMap((site, siteIndex) =>
-                  site.blocks.map((block, blockIndex) => (
-                    <CTableRow key={`${siteIndex}-${blockIndex}`}>
-                      <CTableDataCell>
-                        {siteIndex * site.blocks.length + blockIndex + 1}
-                      </CTableDataCell>
-                      <CTableDataCell>{site.site_id}</CTableDataCell>
-                      <CTableDataCell>{block.block}</CTableDataCell>
-                      <CTableDataCell>
-                        {block.total_robots_in_block}
-                      </CTableDataCell>
-
-                      <CTableDataCell>
-                        {block.robots[0]?.timer1 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer1
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer1_date}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer2 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer2
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer2_date}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer3 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer3
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer3_date}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <Link
-                          className="btn btn-sm btn-warning m-1"
-                          to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
-                        >
-                          Update
-                        </Link>
+          {/* 📝 Timers Table */}
+          <CCard className="shadow-sm">
+            <CCardHeader>
+              <h5 className="m-0">
+                📋 Timers for &nbsp;
+                <b>{site_id ? site_id : "All Sites"}</b>
+              </h5>
+            </CCardHeader>
+            <CCardBody>
+              <CTable bordered hover responsive className="bg-important">
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>Sr</CTableHeaderCell>
+                    <CTableHeaderCell>Site ID</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                    <CTableHeaderCell>Timer 1</CTableHeaderCell>
+                    <CTableHeaderCell>Date 1</CTableHeaderCell>
+                    <CTableHeaderCell>Timer 2</CTableHeaderCell>
+                    <CTableHeaderCell>Date 2</CTableHeaderCell>
+                    <CTableHeaderCell>Timer 3</CTableHeaderCell>
+                    <CTableHeaderCell>Date 3</CTableHeaderCell>
+                    <CTableHeaderCell>Action</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {loadingAllTimers ? (
+                    <CTableRow className="text-center">
+                      <CTableDataCell colSpan={11}>
+                        <LoadingSpinner />
                       </CTableDataCell>
                     </CTableRow>
-                  ))
-                )
-              ) : (
-                <CTableRow>
-                  <CTableDataCell
-                    colSpan="11"
-                    className="text-center text-danger"
-                  >
-                    No blocks found for this site.
-                  </CTableDataCell>
-                </CTableRow>
-              )}
-            </CTableBody>
-          </CTable>
-          {/* <PaginateInput
-            page={page}
-            totalPages={state.totalPages}
-            hasPrevPage={state.hasPrevPage}
-            hasNextPage={state.hasNextPage}
-            pageInput={pageInput}
-            handlePageChange={handlePageChange}
-            handlePageInputChange={handlePageInputChange}
-            handlePageInputSubmit={handlePageInputSubmit}
-            limit={limit}
-            handleLimitChange={setLimit}
-          /> */}
-        </CCardBody>
-      </CCard>
+                  ) : timers.length > 0 ? (
+                    timers.flatMap((site, siteIndex) =>
+                      site.blocks.map((block, blockIndex) => (
+                        <CTableRow key={`${siteIndex}-${blockIndex}`}>
+                          <CTableDataCell>
+                            {siteIndex * site.blocks.length + blockIndex + 1}
+                          </CTableDataCell>
+                          <CTableDataCell>{site.site_id}</CTableDataCell>
+                          <CTableDataCell>{block.block}</CTableDataCell>
+                          <CTableDataCell>
+                            {block.total_robots_in_block}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {block.robots[0]?.timer1 === "25:00:00" ? (
+                              <CBadge color="danger">Disabled</CBadge>
+                            ) : (
+                              block.robots[0]?.timer1
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {block.robots[0]?.timer1_date}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {block.robots[0]?.timer2 === "25:00:00" ? (
+                              <CBadge color="danger">Disabled</CBadge>
+                            ) : (
+                              block.robots[0]?.timer2
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {block.robots[0]?.timer2_date}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {block.robots[0]?.timer3 === "25:00:00" ? (
+                              <CBadge color="danger">Disabled</CBadge>
+                            ) : (
+                              block.robots[0]?.timer3
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {block.robots[0]?.timer3_date}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            <Link
+                              className="btn btn-sm btn-warning m-1"
+                              to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
+                            >
+                              Update
+                            </Link>
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    )
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell
+                        colSpan="11"
+                        className="text-center text-danger"
+                      >
+                        No blocks found for this site.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+              {/* <PaginateInput
+          page={page}
+          totalPages={state.totalPages}
+          hasPrevPage={state.hasPrevPage}
+          hasNextPage={state.hasNextPage}
+          pageInput={pageInput}
+          handlePageChange={handlePageChange}
+          handlePageInputChange={handlePageInputChange}
+          handlePageInputSubmit={handlePageInputSubmit}
+          limit={limit}
+          handleLimitChange={setLimit}
+        /> */}
+            </CCardBody>
+          </CCard>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { CFooter } from "@coreui/react";
 import logo from "../assets/brand/favicon.png";
+import { Link } from "react-router-dom";
 const AppFooter = () => {
   return (
     <CFooter className="px-4" style={{ background: "#080f25" }}>
@@ -10,14 +11,14 @@ const AppFooter = () => {
           alt="Company Logo"
           style={{ width: "30px", height: "30px", marginRight: "8px" }}
         />
-        <a
+        <Link
           className="text-decoration-none"
-          href="https://taypro.in"
+          to="https://taypro.in"
           target="_blank"
           rel="noopener noreferrer"
         >
           Taypro Private Limited
-        </a>
+        </Link>
         <span className="ms-1">
           <b>&copy; {new Date().getFullYear()}</b>
         </span>

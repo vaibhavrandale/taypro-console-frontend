@@ -311,7 +311,7 @@
 //                     : siteRobots.map((item, index) => (
 //                         <CDropdownItem
 //                           key={index}
-//                           href={`${
+//                           to={`${
 //                             item.robot_no === robot_no
 //                               ? `#`
 //                               : `${item.robot_no}`
@@ -884,7 +884,7 @@ const SiteTechnicianRobotOperating = () => {
                     : siteRobots.map((item, index) => (
                         <CDropdownItem
                           key={index}
-                          href={`${
+                          to={`${
                             item.robot_no === robot_no
                               ? `#`
                               : `${item.robot_no}`

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   CCard,
   CCardBody,
@@ -7,14 +7,14 @@ import {
   CPagination,
   CPaginationItem,
   CRow,
-} from '@coreui/react';
-import { DocsComponents, DocsExample } from '../../../components';
-
+} from "@coreui/react";
+import { DocsComponents, DocsExample } from "../../../components";
+import { Link } from "react-router-dom";
 const Paginations = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/pagination/" />
+        <DocsComponents to="components/pagination/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Pagination</strong>
@@ -24,20 +24,20 @@ const Paginations = () => {
               We use a large block of connected links for our pagination, making
               links hard to miss and easily scalable—all while providing large
               hit areas. Pagination is built with list HTML elements so screen
-              readers can announce the number of available links. Use a wrapping{' '}
+              readers can announce the number of available links. Use a wrapping{" "}
               <code>&lt;nav&gt;</code> element to identify it as a navigation
               section to screen readers and other assistive technologies.
             </p>
             <p className="text-body-secondary small">
               In addition, as pages likely have more than one such navigation
-              section, it&#39;s advisable to provide a descriptive{' '}
+              section, it&#39;s advisable to provide a descriptive{" "}
               <code>aria-label</code> for the <code>&lt;nav&gt;</code> to
               reflect its purpose. For example, if the pagination component is
               used to navigate between a set of search results, an appropriate
-              label could be{' '}
+              label could be{" "}
               <code>aria-label=&#34;Search results pages&#34;</code>.
             </p>
-            <DocsExample href="components/pagination">
+            <DocsExample to="components/pagination">
               <CPagination aria-label="Page navigation example">
                 <CPaginationItem>Previous</CPaginationItem>
                 <CPaginationItem>1</CPaginationItem>
@@ -60,7 +60,7 @@ const Paginations = () => {
               pagination links? Be sure to provide proper screen reader support
               with <code>aria</code> attributes.
             </p>
-            <DocsExample href="components/pagination#working-with-icons">
+            <DocsExample to="components/pagination#working-with-icons">
               <CPagination aria-label="Page navigation example">
                 <CPaginationItem aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
@@ -79,25 +79,25 @@ const Paginations = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Pagination</strong>{' '}
+            <strong>React Pagination</strong>{" "}
             <small>Disabled and active states</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Pagination links are customizable for different circumstances. Use{' '}
-              <code>disabled</code> for links that appear un-clickable and{' '}
+              Pagination links are customizable for different circumstances. Use{" "}
+              <code>disabled</code> for links that appear un-clickable and{" "}
               <code>.active</code> to indicate the current page.
             </p>
             <p className="text-body-secondary small">
-              While the <code>disabled</code> prop uses{' '}
+              While the <code>disabled</code> prop uses{" "}
               <code>pointer-events: none</code> to <em>try</em> to disable the
               link functionality of <code>&lt;a&gt;</code>s, that CSS property
               is not yet standardized and doesn&#39;taccount for keyboard
-              navigation. As such, we always add{' '}
+              navigation. As such, we always add{" "}
               <code>tabindex=&#34;-1&#34;</code> on disabled links and use
               custom JavaScript to fully disable their functionality.
             </p>
-            <DocsExample href="components/pagination#disabled-and-active-states">
+            <DocsExample to="components/pagination#disabled-and-active-states">
               <CPagination aria-label="Page navigation example">
                 <CPaginationItem aria-label="Previous" disabled>
                   <span aria-hidden="true">&laquo;</span>
@@ -120,11 +120,11 @@ const Paginations = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Fancy larger or smaller pagination? Add{' '}
-              <code>size=&#34;lg&#34;</code> or <code>size=&#34;sm&#34;</code>{' '}
+              Fancy larger or smaller pagination? Add{" "}
+              <code>size=&#34;lg&#34;</code> or <code>size=&#34;sm&#34;</code>{" "}
               for additional sizes.
             </p>
-            <DocsExample href="components/pagination#sizing">
+            <DocsExample to="components/pagination#sizing">
               <CPagination size="lg" aria-label="Page navigation example">
                 <CPaginationItem>Previous</CPaginationItem>
                 <CPaginationItem>1</CPaginationItem>
@@ -133,7 +133,7 @@ const Paginations = () => {
                 <CPaginationItem>Next</CPaginationItem>
               </CPagination>
             </DocsExample>
-            <DocsExample href="components/pagination#sizing">
+            <DocsExample to="components/pagination#sizing">
               <CPagination size="sm" aria-label="Page navigation example">
                 <CPaginationItem>Previous</CPaginationItem>
                 <CPaginationItem>1</CPaginationItem>
@@ -152,13 +152,13 @@ const Paginations = () => {
           </CCardHeader>
           <CCardBody>
             <p className="text-body-secondary small">
-              Change the alignment of pagination components with{' '}
-              <a href="https://coreui.io/docs/utilities/flex/">
+              Change the alignment of pagination components with{" "}
+              <Link to="https://coreui.io/docs/utilities/flex/">
                 flexbox utilities
-              </a>
+              </Link>
               .
             </p>
-            <DocsExample href="components/pagination#aligment">
+            <DocsExample to="components/pagination#aligment">
               <CPagination
                 className="justify-content-center"
                 aria-label="Page navigation example"
@@ -170,7 +170,7 @@ const Paginations = () => {
                 <CPaginationItem>Next</CPaginationItem>
               </CPagination>
             </DocsExample>
-            <DocsExample href="components/pagination#aligment">
+            <DocsExample to="components/pagination#aligment">
               <CPagination
                 className="justify-content-end"
                 aria-label="Page navigation example"

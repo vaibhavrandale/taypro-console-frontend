@@ -38,20 +38,39 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
   return (
     <CRow className="justify-content-center">
       {loading ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "100px", width: "100px" }}
-        >
-          <LoadingSpinner />
-        </div>
+        <CCol xs={12}>
+          <CCard className="mb-4 shadow">
+            <CCardHeader>
+              <h5 className="text-start">
+                Battery Voltage per Robot of &nbsp;
+                <span className="text-primary">{site_id}</span>
+              </h5>
+            </CCardHeader>
+            <CCardBody className="">
+              <LoadingSpinner />
+            </CCardBody>
+          </CCard>
+        </CCol>
       ) : error ? (
-        <p className="text-danger text-center">{error}</p>
+        <CCol xs={12}>
+          <CCard className="mb-4 shadow">
+            <CCardHeader>
+              <h5 className="text-start">
+                Battery Voltage per Robot of &nbsp;
+                <span className="text-primary">{site_id}</span>
+              </h5>
+            </CCardHeader>
+            <CCardBody className="">
+              <CBadge color="danger">{error}</CBadge>
+            </CCardBody>
+          </CCard>
+        </CCol>
       ) : batteryrobots.length > 0 ? (
         <CCol xs={12}>
           <CCard className="mb-4 shadow">
             <CCardHeader>
-              <h5 className="text-center">
-                Battery Voltage per Robot of{" "}
+              <h5 className="text-start">
+                Battery Voltage per Robot of &nbsp;
                 <span className="text-primary">{site_id}</span>
               </h5>
             </CCardHeader>
@@ -60,7 +79,9 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                 <CChartBar
                   style={{ height: "350px", width: "100%" }}
                   data={{
-                    labels: batteryrobots.map((robot) => robot.robot_no),
+                    labels: batteryrobots.map((robot) =>
+                      robot.robot_no.slice(-4)
+                    ),
                     datasets: [
                       {
                         label: "Battery Voltage (V)",
@@ -105,7 +126,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                         title: {
                           display: true,
                           text: "Robot Number",
-                          font: { size: 12 },
+                          font: { size: 8 },
                         },
                       },
                     },

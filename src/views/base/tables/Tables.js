@@ -14,12 +14,12 @@ import {
   CTableRow,
 } from "@coreui/react";
 import { DocsComponents, DocsExample } from "../../../components";
-
+import { Link } from "react-router-dom";
 const Tables = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/table/" />
+        <DocsComponents to="components/table/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Table</strong> <small>Basic example</small>
@@ -29,7 +29,7 @@ const Tables = () => {
               Using the most basic table CoreUI, here&#39;s how{" "}
               <code>&lt;CTable&gt;</code>-based tables look in CoreUI.
             </p>
-            <DocsExample href="components/table">
+            <DocsExample to="components/table">
               <CTable className="bg-important">
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -73,7 +73,7 @@ const Tables = () => {
               Use contextual classes to color tables, table rows or individual
               cells.
             </p>
-            <DocsExample href="components/table#variants">
+            <DocsExample to="components/table#variants">
               <CTable>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -144,7 +144,7 @@ const Tables = () => {
               Use <code>striped</code> property to add zebra-striping to any
               table row within the <code>&lt;CTableBody&gt;</code>.
             </p>
-            <DocsExample href="components/table#striped-rows">
+            <DocsExample to="components/table#striped-rows">
               <CTable striped>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -178,7 +178,7 @@ const Tables = () => {
             <p className="text-body-secondary small">
               These classes can also be added to table variants:
             </p>
-            <DocsExample href="components/table#striped-rows">
+            <DocsExample to="components/table#striped-rows">
               <CTable color="dark" striped>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -209,7 +209,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#striped-rows">
+            <DocsExample to="components/table#striped-rows">
               <CTable color="success" striped>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -253,7 +253,7 @@ const Tables = () => {
               Use <code>hover</code> property to enable a hover state on table
               rows within a <code>&lt;CTableBody&gt;</code>.
             </p>
-            <DocsExample href="components/table#hoverable-rows">
+            <DocsExample to="components/table#hoverable-rows">
               <CTable hover>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -284,7 +284,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#hoverable-rows">
+            <DocsExample to="components/table#hoverable-rows">
               <CTable color="dark" hover>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -315,7 +315,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#hoverable-rows">
+            <DocsExample to="components/table#hoverable-rows">
               <CTable striped hover>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -355,7 +355,7 @@ const Tables = () => {
             <strong>React Table</strong> <small>Active tables</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="components/table#active-tables">
+            <DocsExample to="components/table#active-tables">
               <CTable>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -388,7 +388,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#active-tables">
+            <DocsExample to="components/table#active-tables">
               <CTable color="dark">
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -434,7 +434,7 @@ const Tables = () => {
               Add <code>bordered</code> property for borders on all sides of the
               table and cells.
             </p>
-            <DocsExample href="components/table#bordered-tables">
+            <DocsExample to="components/table#bordered-tables">
               <CTable bordered>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -466,12 +466,12 @@ const Tables = () => {
               </CTable>
             </DocsExample>
             <p className="text-body-secondary small">
-              <a href="https://coreui.io/docs/utilities/borders#border-color">
+              <Link to="https://coreui.io/docs/utilities/borders#border-color">
                 Border color utilities
-              </a>{" "}
+              </Link>{" "}
               can be added to change colors:
             </p>
-            <DocsExample href="components/table#bordered-tables">
+            <DocsExample to="components/table#bordered-tables">
               <CTable bordered borderColor="primary">
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -514,7 +514,7 @@ const Tables = () => {
             <p className="text-body-secondary small">
               Add <code>borderless</code> property for a table without borders.
             </p>
-            <DocsExample href="components/table#tables-without-borders">
+            <DocsExample to="components/table#tables-without-borders">
               <CTable borderless>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -545,7 +545,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#tables-without-borders">
+            <DocsExample to="components/table#tables-without-borders">
               <CTable color="dark" borderless>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -590,7 +590,7 @@ const Tables = () => {
               <code>&lt;CTable&gt;</code> more compact by cutting all cell{" "}
               <code>padding</code> in half.
             </p>
-            <DocsExample href="components/table#small-tables">
+            <DocsExample to="components/table#small-tables">
               <CTable small>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -637,7 +637,7 @@ const Tables = () => {
               <code>&lt;CTable&gt;</code> and are aligned to the the top by
               default. Use the align property to re-align where needed.
             </p>
-            <DocsExample href="components/table#vertical-alignment">
+            <DocsExample to="components/table#vertical-alignment">
               <CTable align="middle" responsive>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -728,7 +728,7 @@ const Tables = () => {
               Border styles, active styles, and table variants are not inherited
               by nested tables.
             </p>
-            <DocsExample href="components/table#nesting">
+            <DocsExample to="components/table#nesting">
               <CTable striped>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -804,7 +804,7 @@ const Tables = () => {
               <code>color=&#34;dark&#34;</code> to make{" "}
               <code>&lt;CTableHead&gt;</code>s appear light or dark gray.
             </p>
-            <DocsExample href="components/table#table-head">
+            <DocsExample to="components/table#table-head">
               <CTable>
                 <CTableHead color="light">
                   <CTableRow>
@@ -836,7 +836,7 @@ const Tables = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
-            <DocsExample href="components/table#table-head">
+            <DocsExample to="components/table#table-head">
               <CTable>
                 <CTableHead color="secondary">
                   <CTableRow>
@@ -876,7 +876,7 @@ const Tables = () => {
             <strong>React Table</strong> <small>Table foot</small>
           </CCardHeader>
           <CCardBody>
-            <DocsExample href="components/table#table-foot">
+            <DocsExample to="components/table#table-foot">
               <CTable>
                 <CTableHead color="light">
                   <CTableRow>
@@ -929,7 +929,7 @@ const Tables = () => {
               a table. It helps users with screen readers to find a table and
               understand what it&#39;s about and decide if they want to read it.
             </p>
-            <DocsExample href="components/table#captions">
+            <DocsExample to="components/table#captions">
               <CTable>
                 <CTableCaption>List of users</CTableCaption>
                 <CTableHead color="secondary">
@@ -966,7 +966,7 @@ const Tables = () => {
               You can also put the <code>&lt;CTableCaption&gt;</code> on the top
               of the table with <code>caption=&#34;top&#34;</code>.
             </p>
-            <DocsExample href="components/table#captions">
+            <DocsExample to="components/table#captions">
               <CTable caption="top">
                 <CTableCaption>List of users</CTableCaption>
                 <CTableHead color="secondary">

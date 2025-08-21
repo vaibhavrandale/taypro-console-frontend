@@ -16,7 +16,7 @@ const Accordion = () => {
   return (
     <CRow>
       <CCol xs={12}>
-        <DocsComponents href="components/accordion/" />
+        <DocsComponents to="components/accordion/" />
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Accordion</strong>
@@ -26,7 +26,7 @@ const Accordion = () => {
               Click the accordions below to expand/collapse the accordion
               content.
             </p>
-            <DocsExample href="components/accordion">
+            <DocsExample to="components/accordion">
               <CAccordion activeItemKey={2}>
                 <CAccordionItem itemKey={1}>
                   <CAccordionHeader>Accordion Item #1</CAccordionHeader>
@@ -91,7 +91,7 @@ const Accordion = () => {
               corners to render accordions edge-to-edge with their parent
               container.
             </p>
-            <DocsExample href="components/accordion#flush">
+            <DocsExample to="components/accordion#flush">
               <CAccordion flush>
                 <CAccordionItem itemKey={1}>
                   <CAccordionHeader>Accordion Item #1</CAccordionHeader>
@@ -154,7 +154,7 @@ const Accordion = () => {
               Add <code>alwaysOpen</code> property to make accordion items stay
               open when another item is opened.
             </p>
-            <DocsExample href="components/accordion#flush">
+            <DocsExample to="components/accordion#flush">
               <CAccordion alwaysOpen>
                 <CAccordionItem itemKey={1}>
                   <CAccordionHeader>Accordion Item #1</CAccordionHeader>
