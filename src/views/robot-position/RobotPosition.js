@@ -22,7 +22,6 @@ import {
   COffcanvasTitle,
   CRow,
 } from "@coreui/react";
-// import RobotRobotImgImg from "./robot.png";
 import RobotImg from "./image.png";
 
 const reducer = (state, action) => {
@@ -187,7 +186,6 @@ const RobotRow = ({ robot, index }) => {
       }
 
       //case 4 - cleaning cancelled case
-
       if (
         robot.is_cleaning_cancelled &&
         robot.cleaning_cancelled_at &&
@@ -201,11 +199,6 @@ const RobotRow = ({ robot, index }) => {
           cancelledTime * speedInMetersPerSecond, // ✅ correct conversion
           oneWayDistance * 2
         );
-
-        // const cancelledDistanceCovered = Math.min(
-        //   cancelledTime * robot.speed, // speed is in m/s
-        //   oneWayDistance * 2 // clamp to full round trip
-        // );
 
         // Work out location text
         let cancelledLocation;
@@ -379,7 +372,6 @@ const RobotRow = ({ robot, index }) => {
       minute: "2-digit",
     });
   };
-  // const formatDate = (isoDate) => new Date(isoDate).toLocaleString();
 
   return (
     <div style={{ marginBottom: "10px", padding: "5px 20px" }}>
@@ -417,7 +409,6 @@ const RobotRow = ({ robot, index }) => {
           style={{
             fontSize: "12px",
             color: robotColor,
-            // marginTop: "4px",
             left: 0,
             top: "-30px",
             position: "absolute",
@@ -468,24 +459,6 @@ const RobotRow = ({ robot, index }) => {
             height="80"
             style={{ objectFit: "contain", borderRadius: "5px" }}
           />
-          {/* <div
-            style={{
-              fontSize: "12px",
-              color: robotColor,
-              marginTop: "4px",
-              fontWeight: "bold",
-            }}
-          >
-            {robot.robot_no}
-          </div> */}
-
-          <div
-            style={{
-              color: "#fff",
-              textAlign: "start",
-              fontSize: "13px",
-            }}
-          ></div>
         </div>
       </div>
 
@@ -609,7 +582,7 @@ const RobotRow = ({ robot, index }) => {
                     </>
                   )}
                 </div>
-                <h6 className="text-success mt-4">Device Information</h6>
+                <h6 className="text-success mt-4">Robot Information</h6>
                 <span>
                   {" "}
                   <strong>Robot No:</strong> {robotDetails.robot_no}
@@ -633,8 +606,7 @@ const RobotRow = ({ robot, index }) => {
                   <br />
                 </span>
               </div>
-
-              <h6 className="text-success">Running Information</h6>
+              <h6 className="text-success">Running Status</h6>
               {[
                 {
                   label: "Battery Voltage",
@@ -797,7 +769,15 @@ const RobotPosition = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div
+      style={{
+        padding: "20px",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* header */}
       <h2 style={{ marginBottom: "30px", textAlign: "center" }}>
         <CIcon icon={cilLocationPin} color="primary" size="xl" /> Live Robot
         Position Tracking -{" "}
@@ -807,6 +787,7 @@ const RobotPosition = () => {
           year: "numeric",
         })}
       </h2>
+
       <CRow className="mb-5">
         <CCol md={2} xs={12}>
           <div className="m-1">
@@ -820,7 +801,6 @@ const RobotPosition = () => {
                   onChange={handleSiteNameChange}
                 >
                   <option value="all">All Data</option>
-
                   {sites.map((item, index) => (
                     <option key={item.site_id} value={item.site_id}>
                       {item.site_id}
@@ -833,7 +813,15 @@ const RobotPosition = () => {
         </CCol>
       </CRow>
 
-      <div style={{ overflowX: "auto", padding: "20px 0" }}>
+      {/* robots row */}
+      <div
+        style={{
+          flex: 1,
+          overflowX: "auto",
+          padding: "20px 0",
+          minHeight: "350px",
+        }}
+      >
         {loadingRobots ? (
           <LoadingSpinner />
         ) : error ? (
@@ -852,6 +840,52 @@ const RobotPosition = () => {
             })}
           </CBadge>
         )}
+      </div>
+
+      {/*footer */}
+      <div
+        style={{
+          position: "sticky",
+          bottom: 0,
+          padding: "5px 5px",
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "15px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#FFA000",
+            }}
+          ></div>
+          <span>Running</span>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#4CAF50",
+            }}
+          ></div>
+          <span>At Dock</span>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#ff0000ab",
+            }}
+          ></div>
+          <span>Cancelled/Stuck</span>
+        </div>
       </div>
     </div>
   );
