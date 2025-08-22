@@ -4,6 +4,7 @@ import { CRow, CCol, CCard, CCardBody, CCardHeader } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { auto } from "@popperjs/core";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -188,6 +189,7 @@ const InventoryOverview = () => {
                 <CCardBody className="d-flex justify-content-center align-items-center">
                   <div style={{ width: "100%", height: "100%" }}>
                     <CChartPie
+                      style={{ height: "350px", width: "100%", margin: "auto" }}
                       data={{
                         labels: itemLabels,
                         datasets: [

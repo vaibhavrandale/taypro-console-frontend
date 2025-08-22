@@ -496,7 +496,125 @@ const _nav = [
           />
         ),
       },
+      //auto-email logs
+      {
+        component: CNavGroup,
+        name: "Auto Email Logs",
+        icon: (
+          <CIcon
+            icon={cilEnvelopeOpen}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Email Logs",
+            to: "/master-user/email-logs",
+          },
+        ],
+      },
 
+      //Opex Data
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/master-user/opexdata",
+          },
+        ],
+      },
+      //Feedback
+      {
+        component: CNavGroup,
+        name: "Feedback",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Customer Feedback",
+            to: "/master-user/customer-feedback",
+          },
+        ],
+      },
+
+      //Inventory Data
+
+      {
+        component: CNavGroup,
+        name: "Inventory Data",
+        icon: (
+          <CIcon
+            icon={cilTask}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Service Inventory",
+            to: "/master-user/inventories",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Inventory",
+            to: "/master-user/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "ServiceTickets Fault",
+            to: "/master-user/serviceticket-fault/service-tickets-fault-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Fault Analysis Checklist",
+            to: "/master-user/fault-analysis-checklist",
+          },
+        ],
+      },
+
+      //Subscriptions
+      {
+        component: CNavGroup,
+        name: "Subscriptions",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Manage Subscriptions",
+            to: "/master-user/client-subscriptions",
+          },
+          {
+            component: CNavItem,
+            name: "Pricing",
+            to: "/master-user/pricing",
+          },
+        ],
+      },
       // ✅ GROUP 1: Site Data
       {
         component: CNavGroup,
@@ -551,6 +669,26 @@ const _nav = [
           },
         ],
       },
+      // AI -Model
+
+      {
+        component: CNavGroup,
+        name: "AI Model",
+        icon: (
+          <CIcon
+            icon={cilLan}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Micro-Fiber cloth model",
+            to: "/master-user/ai-model",
+          },
+        ],
+      },
 
       // ✅ GROUP 2: Tickets
       {
@@ -579,11 +717,11 @@ const _nav = [
             name: "Client Tickets",
             to: "/master-user/client-tickets",
           },
-          {
-            component: CNavItem,
-            name: "ServiceTickets Fault",
-            to: "/master-user/serviceticket-fault/service-tickets-fault-dashboard",
-          },
+          // {
+          //   component: CNavItem,
+          //   name: "ServiceTickets Fault",
+          //   to: "/master-user/serviceticket-fault/service-tickets-fault-dashboard",
+          // },
         ],
       },
 
@@ -634,6 +772,16 @@ const _nav = [
             name: "Weather Timer Notifications",
             to: "/master-user/weather-timer-notifications",
           },
+          {
+            component: CNavItem,
+            name: "Timer Execution Notification View",
+            to: "/master-user/timer-execution-notification-view",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Data ",
+            to: "/master-user/weather-data-sitewise",
+          },
         ],
       },
 
@@ -648,6 +796,11 @@ const _nav = [
           />
         ),
         items: [
+          {
+            component: CNavItem,
+            name: "Chat",
+            to: "/master-user/chat",
+          },
           {
             component: CNavItem,
             name: "Users",
@@ -665,6 +818,8 @@ const _nav = [
           },
         ],
       },
+
+      //Operations
       {
         component: CNavGroup,
         name: "Operations",
@@ -683,13 +838,18 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Service Inventory",
-            to: "/master-user/inventories",
+            name: "Project Handover",
+            to: "/master-user/project-handover",
           },
           {
             component: CNavItem,
-            name: "Project Handover",
-            to: "/master-user/project-handover",
+            name: "Micro Fiber Data",
+            to: "/master-user/micro-fiber-data",
+          },
+          {
+            component: CNavItem,
+            name: "Thermal Image Data",
+            to: "/master-user/thermal-image-data",
           },
         ],
       },
@@ -705,17 +865,24 @@ const _nav = [
           />
         ),
       },
+      //
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/master-user/expenses",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/master-user/expenses",
+          },
+        ],
       },
     ],
   },

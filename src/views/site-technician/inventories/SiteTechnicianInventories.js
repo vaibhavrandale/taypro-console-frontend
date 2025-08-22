@@ -27,21 +27,21 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
-import InventoryOverview from "./InventoryOverview";
+// import InventoryOverview from "./InventoryOverview";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 
 const InventoryTab = () => {
   return (
     <div>
-      <CTabs activeItemKey="inventoryOverview">
+      <CTabs activeItemKey="inventory">
         <CTabList variant="tabs">
-          <CTab itemKey="inventoryOverview">Inventory Overview</CTab>
+          {/* <CTab itemKey="inventoryOverview">Inventory Overview</CTab> */}
           <CTab itemKey="inventory">Service Inventory</CTab>
         </CTabList>
         <CTabContent>
-          <CTabPanel className="p-3" itemKey="inventoryOverview">
+          {/* <CTabPanel className="p-3" itemKey="inventoryOverview">
             <InventoryOverview />
-          </CTabPanel>
+          </CTabPanel> */}
           <CTabPanel className="p-3" itemKey="inventory">
             <SiteTechnicianInventories />
           </CTabPanel>

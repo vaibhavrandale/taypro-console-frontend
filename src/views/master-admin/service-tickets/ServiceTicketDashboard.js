@@ -125,7 +125,12 @@ const ServiceTicketDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
-
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const openViewModal = async (id) => {
     setViewModalVisible(true);
 
@@ -192,15 +197,33 @@ const ServiceTicketDashboard = () => {
     fetchServicetickets();
   }, [authtoken, limit, page]);
 
+  // const filteredData = servicetickets
+  //   ? servicetickets.filter(
+  //       (item) =>
+  //         item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //         item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  //     )
+  //   : [];
+
   const filteredData = servicetickets
-    ? servicetickets.filter(
-        (item) =>
-          item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? servicetickets.filter((item) => {
+        const createdAtDate = new Date(item.createdAt)
+          .toISOString()
+          .split("T")[0]; // format as YYYY-MM-DD
+
+        return (
+          (item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.site_id.toLowerCase().includes(searchTerm.toLowerCase())) &&
+          createdAtDate >= startDate &&
+          createdAtDate <= endDate
+        );
+      })
     : [];
 
   const handlePageInputChange = (e) => {
@@ -283,7 +306,21 @@ const ServiceTicketDashboard = () => {
 
         <CCardBody>
           <CRow className="justify-content-end">
-            <CCol md={5} lg={4}>
+            <CCol md={2} xs={12} className="m-1">
+              <CFormInput
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </CCol>
+            <CCol md={2} xs={12} className="m-1">
+              <CFormInput
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </CCol>
+            <CCol md={3} xs={12} lg={3}>
               <CFormInput
                 type="text"
                 placeholder="Search by Robot No, Deveui, or Site ID"
@@ -350,7 +387,8 @@ const ServiceTicketDashboard = () => {
                       )}
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
-                      <CTooltip
+                      {new Date(ticket.createdAt).toLocaleString()}
+                      {/* <CTooltip
                         content={new Date(ticket.createdAt).toLocaleString()}
                         placement="top"
                       >
@@ -359,7 +397,7 @@ const ServiceTicketDashboard = () => {
                             addSuffix: true,
                           })}
                         </span>
-                      </CTooltip>
+                      </CTooltip> */}
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "210px" }}>
                       <CButton

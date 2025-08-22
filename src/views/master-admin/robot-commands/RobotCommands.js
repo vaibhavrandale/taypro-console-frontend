@@ -69,8 +69,8 @@ const RobotCommands = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const userInfo = useSelector((state) => state.userInfo);
-  const [site_id, setSiteId] = useState(userInfo.assigned_sites[0].site_id);
+  // const userInfo = useSelector((state) => state.userInfo);
+  const [site_id, setSiteId] = useState();
   const [selectedRobots, setSelectedRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -102,7 +102,7 @@ const RobotCommands = () => {
           `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
           { headers: { Authorization: `Bearer ${authtoken}` } }
         );
-        console.log("Fetched robots:", res);
+
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: res.data.data });
       } catch (err) {
         dispatch({
@@ -280,8 +280,10 @@ const RobotCommands = () => {
             <CCol className="text-center py-5">
               <LoadingSpinner />
             </CCol>
-          ) : robotsError ? (
-            <CCol className="text-center text-danger py-5">{robotsError}</CCol>
+          ) : robotsError || sitesError ? (
+            <CBadge color="danger" className="">
+              {robotsError || sitesError}
+            </CBadge>
           ) : filteredRobots.length === 0 ? (
             <CCol className="text-center py-5">No robots found</CCol>
           ) : (

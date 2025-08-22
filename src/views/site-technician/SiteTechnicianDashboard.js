@@ -574,7 +574,6 @@
 // export default SiteTechnicianDashboard;
 
 import {
-  CAlert,
   CBadge,
   CCard,
   CCardBody,
@@ -592,7 +591,7 @@ import { CChartLine, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
-import moment from "moment";
+// import moment from "moment";
 
 const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
 
@@ -1149,10 +1148,7 @@ const SiteTechnicianDashboard = () => {
             <CCardHeader>
               <h5>Battery Status</h5>{" "}
             </CCardHeader>
-            <CCardBody
-              className="d-flex justify-content-center align-items-center"
-              style={{ minHeight: "350px" }}
-            >
+            <CCardBody className="d-flex justify-content-center align-items-center">
               {loadingSiteDetails ? (
                 <LoadingSpinner />
               ) : siteDetailsError ? (
@@ -1167,7 +1163,7 @@ const SiteTechnicianDashboard = () => {
                 <>
                   {robotsData?.length > 0 ? (
                     <CChartLine
-                      style={{ maxHeight: "300px", width: "100%" }}
+                      style={{ height: "300px", width: "100%" }}
                       data={{
                         labels: batteryChartData.map((entry) =>
                           entry.robot.slice(-3)
