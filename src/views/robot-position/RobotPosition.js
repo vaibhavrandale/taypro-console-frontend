@@ -84,6 +84,7 @@ const RobotRow = ({ robot, index }) => {
   const [isFinishTimeExceed, setIsFinishTimeExceed] = useState(false);
   const [stuckLocation, setStuckLocation] = useState(""); // NEW: Track stuck location for status
   const [cancelledLocation, setCancelledLocation] = useState(""); // NEW: Track stuck location for status
+  const [currentLocation, setCurrentLocation] = useState(""); // NEW: Track stuck location for status
   const [sideBarVisible, setsideBarVisible] = useState(false);
   const [selectedRobotNo, setSelectedRobotNo] = useState(null);
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
@@ -243,10 +244,30 @@ const RobotRow = ({ robot, index }) => {
 
       covered = Math.min(covered, oneWayDistance * 2);
 
+      const speedInMetersPerSecond = robot.speed / 60;
+
+      const liveDistanceCovered = Math.min(
+        elapsedTime * speedInMetersPerSecond, // ✅ correct conversion
+        oneWayDistance * 2
+      );
+      let currentLocation;
+      if (liveDistanceCovered < oneWayDistance) {
+        currentLocation = `At ${Math.round(liveDistanceCovered)} m from DS`;
+      } else if (liveDistanceCovered === oneWayDistance) {
+        currentLocation = "At RS";
+      } else {
+        const distanceBack = liveDistanceCovered - oneWayDistance;
+        currentLocation =
+          distanceBack >= oneWayDistance
+            ? "At DS"
+            : `Returning, ${Math.round(distanceBack)} m from RS`;
+      }
+
       setDistance(Math.round(currentDistance));
       setTotalCovered(Math.round(covered));
       setIsStuckNow(false);
       setStuckLocation("");
+      setCurrentLocation(currentLocation);
 
       // 🕒 Format finish time
       if (robot.calculated_finish_timestamp) {
@@ -259,40 +280,12 @@ const RobotRow = ({ robot, index }) => {
       }
     };
 
-    // let animationFrameId;
-    // const loop = () => {
-    //   update();
-    //   animationFrameId = requestAnimationFrame(loop);
-    // };
-    // loop();
-
-    // return () => cancelAnimationFrame(animationFrameId);
-
     let animationFrameId;
-    let startTime;
-
-    const duration = 1000; // 5 seconds (5000 ms)
-
-    const loop = (timestamp) => {
-      if (!startTime) startTime = timestamp; // first frame
-      const elapsed = timestamp - startTime;
-
-      // progress goes from 0 → 1 over 5 seconds
-      let progress = Math.min(elapsed / duration, 1);
-
-      // call your update with smooth progress
-      update(progress);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(loop);
-      } else {
-        // optional: restart if you want continuous loop
-        startTime = null;
-        animationFrameId = requestAnimationFrame(loop);
-      }
+    const loop = () => {
+      update();
+      animationFrameId = requestAnimationFrame(loop);
     };
-
-    animationFrameId = requestAnimationFrame(loop);
+    loop();
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [robot]);
@@ -379,10 +372,10 @@ const RobotRow = ({ robot, index }) => {
         onClick={() => handleRobotClick(robot.robot_no)}
         style={{
           position: "relative",
-          height: "30px",
+          height: "50px",
           borderRadius: "4px",
-          marginBottom: "50px",
-          width: `${robot.row_length * 5}px`,
+          marginBottom: "35px",
+          // width: `${robot.row_length * 5}px`,
 
           backgroundImage: `
       repeating-linear-gradient(
@@ -443,9 +436,9 @@ const RobotRow = ({ robot, index }) => {
           style={{
             position: "absolute",
             left: `calc(${percent}% - 23px)`,
-            top: "-23px",
+            top: "-12px",
             width: "30px",
-            height: "100px",
+            height: "80px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -456,7 +449,7 @@ const RobotRow = ({ robot, index }) => {
             src={RobotImg}
             alt="Robot"
             width="100"
-            height="80"
+            height="78"
             style={{ objectFit: "contain", borderRadius: "5px" }}
           />
         </div>
@@ -552,6 +545,7 @@ const RobotRow = ({ robot, index }) => {
                         at: {formatTime(robot.stuck_at)}
                       </div>
                       <div>📏 Total distance: {totalCovered}m</div>
+                      <div>📌 Location: {stuckLocation}</div>
                     </>
                   ) : isCancelledNow ? (
                     <>
@@ -561,6 +555,7 @@ const RobotRow = ({ robot, index }) => {
                         Cancelled at: {formatTime(robot.cleaning_cancelled_at)}
                       </div>
                       <div>📏 Distance covered: {totalCovered}m</div>
+                      <div>📌 Location: {cancelledLocation}</div>
                     </>
                   ) : isCleaningFinished || isFinishTimeExceed ? (
                     <>
@@ -570,6 +565,7 @@ const RobotRow = ({ robot, index }) => {
                         Finished at: {formatTime(robot.cleaning_finished_at)}
                       </div>
                       <div>📏 Distance covered: {totalCovered}m</div>
+                      <div>📌 Location: At Dock</div>
                     </>
                   ) : (
                     <>
@@ -579,6 +575,7 @@ const RobotRow = ({ robot, index }) => {
                         Finish: {formatTime(robot.calculated_finish_timestamp)}
                       </div>
                       <div>📏 Distance covered: {totalCovered}m</div>
+                      <div>📌 Location: {currentLocation}</div>
                     </>
                   )}
                 </div>
@@ -733,7 +730,7 @@ const RobotPosition = () => {
     fetchRobots();
 
     // Then set interval
-    intervalId = setInterval(fetchRobots, 600000); // every 1 minute
+    intervalId = setInterval(fetchRobots, 60000); // every 1 minute
 
     return () => {
       clearInterval(intervalId); // cleanup on unmount
