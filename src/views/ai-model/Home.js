@@ -47,13 +47,31 @@ const Home = () => {
     error: "danger",
   };
 
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
+
   return (
     <CCard>
       <CCardHeader className="fw-bold">🧾 All AI Model Jobs</CCardHeader>
       <CCardBody>
         <div className="mb-3 d-flex justify-content-end align-items-center">
           <Link
-            to="/master-admin/ai-model/check-micro-fiber"
+            to={`/${adminroute}/ai-model/check-micro-fiber`}
             className="btn btn-primary p-1"
             size="sm"
           >
@@ -112,7 +130,7 @@ const Home = () => {
                     })}
                   </CTableDataCell>
                   <CTableDataCell>
-                    <Link to={`/master-admin/ai-model/view/${job._id}`}>
+                    <Link to={`/${adminroute}/ai-model/view/${job._id}`}>
                       <CButton size="sm" color="info">
                         View
                       </CButton>

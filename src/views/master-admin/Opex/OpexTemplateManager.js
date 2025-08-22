@@ -310,12 +310,16 @@ const OpexTemplateManager = () => {
     <div className="mt-5">
       {!loadingOpex && Object.keys(opexData).length === 0 && (
         <div style={{ minWidth: "160px" }} className="text-end mb-2">
-          <Link
-            to={`/${adminroute}/create-template/${site_id}`}
-            className="btn btn-warning btn-sm"
-          >
-            Create Template
-          </Link>
+          {!["Master User", "Project User", "Service User"].includes(
+            userInfo?.role
+          ) && (
+            <Link
+              to={`/${adminroute}/create-template/${site_id}`}
+              className="btn btn-warning btn-sm"
+            >
+              Create Template
+            </Link>
+          )}
         </div>
       )}
 
@@ -568,24 +572,27 @@ const OpexTemplateManager = () => {
           </div>
 
           <div className="d-flex justify-content-end mb-3">
-            {selectedCycles.length > 0 ? (
-              <CButton
-                color="success"
-                size="sm"
-                onClick={generateCertificate}
-                disabled={generatingCertificate || selectedCycles.length === 0}
-              >
-                {generatingCertificate ? (
-                  <>
-                    Generating Certificate <LoadingSpinner />
-                  </>
-                ) : (
-                  "Generate Certificate"
-                )}
-              </CButton>
-            ) : (
-              ""
-            )}
+            {selectedCycles.length > 0 &&
+              !["Master User", "Project User", "Service User"].includes(
+                userInfo?.role
+              ) && (
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={generateCertificate}
+                  disabled={
+                    generatingCertificate || selectedCycles.length === 0
+                  }
+                >
+                  {generatingCertificate ? (
+                    <>
+                      Generating Certificate <LoadingSpinner />
+                    </>
+                  ) : (
+                    "Generate Certificate"
+                  )}
+                </CButton>
+              )}
           </div>
 
           {/* Cycles Information Card */}
@@ -746,7 +753,12 @@ const OpexTemplateManager = () => {
                               cycle.day_wise_data[
                                 cycle.day_wise_data.length - 1
                               ].date
-                            )) ? (
+                            )) &&
+                          ![
+                            "Master User",
+                            "Project User",
+                            "Service User",
+                          ].includes(userInfo?.role) ? (
                             <Link
                               className="btn btn-primary btn-sm m-1"
                               onClick={() => verifyCycleHandler(cycle._id)}

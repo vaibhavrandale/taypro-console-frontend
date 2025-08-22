@@ -144,8 +144,12 @@ const TimerExecutionNotificationView = () => {
             </CInputGroup>
           </CCol>
         </CRow>
-
-        <CTable striped hover responsive className="text-center shadow-sm">
+        <CTable
+          bordered
+          hover
+          responsive
+          className="text-center shadow-sm bg-important"
+        >
           <CTableHead color="secondary">
             <CTableRow>
               <CTableHeaderCell>#</CTableHeaderCell>

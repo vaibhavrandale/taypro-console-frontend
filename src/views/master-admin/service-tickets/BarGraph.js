@@ -266,34 +266,38 @@ const BarGraph = () => {
                 </CButton>
               </CCol>
             </CRow>
-
-            {fetchserviceticketcountloading ? (
-              <LoadingSpinner />
-            ) : serviceticketcount.length === 0 ? (
-              <div className="text-center">No data available</div>
-            ) : (
-              <>
-                {chartType === "bar" ? (
-                  <CChartBar
-                    style={{ maxHeight: "400px", width: "100%" }}
-                    data={{
-                      labels: chartLabels,
-                      datasets: datasets,
-                    }}
-                    options={options}
-                  />
+            <CRow>
+              <CCol xs={12} md={12} lg={12}>
+                {fetchserviceticketcountloading ? (
+                  <LoadingSpinner />
+                ) : serviceticketcount.length === 0 ? (
+                  <div className="text-center">No data available</div>
                 ) : (
-                  <CChartLine
-                    style={{ maxHeight: "400px", width: "100%" }}
-                    data={{
-                      labels: chartLabels,
-                      datasets: datasets,
-                    }}
-                    options={options}
-                  />
+                  <>
+                    {chartType === "bar" ? (
+                      <CChartBar
+                        className=""
+                        style={{ height: "400px" }}
+                        data={{
+                          labels: chartLabels,
+                          datasets: datasets,
+                        }}
+                        options={options}
+                      />
+                    ) : (
+                      <CChartLine
+                        style={{ height: "400px" }}
+                        data={{
+                          labels: chartLabels,
+                          datasets: datasets,
+                        }}
+                        options={options}
+                      />
+                    )}
+                  </>
                 )}
-              </>
-            )}
+              </CCol>
+            </CRow>
           </CCardBody>
         </CCard>
       </CCol>

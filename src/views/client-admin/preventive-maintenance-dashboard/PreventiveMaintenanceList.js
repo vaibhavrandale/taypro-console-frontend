@@ -207,8 +207,6 @@ const PreventiveMaintenanceList = () => {
           subscriptionStatus={subscriptionStatus}
           error={error}
         />
-      ) : sitesError || error ? (
-        sitesError || error
       ) : (
         <>
           <CRow>

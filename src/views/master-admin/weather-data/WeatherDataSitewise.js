@@ -16,7 +16,6 @@ import {
   CInputGroup,
   CFormSelect,
   CAlert,
-  CSpinner,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -212,7 +211,7 @@ const WeatherDashboard = () => {
       <CRow className="mb-4">
         <CCol md={4}>
           {loadingSites ? (
-            <CSpinner />
+            <LoadingSpinner />
           ) : (
             <CFormSelect
               value={selectedSite}
@@ -294,9 +293,7 @@ const WeatherDashboard = () => {
           ) : (
             <CTableRow>
               <CTableDataCell colSpan="11" className="text-center">
-                {selectedSite
-                  ? "No weather data found"
-                  : "Please select a site"}
+                No weather data found
               </CTableDataCell>
             </CTableRow>
           )}

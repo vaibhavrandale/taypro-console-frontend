@@ -406,8 +406,13 @@ const Clients = () => {
       </CRow>
 
       {/* Clients Table */}
-      <CTable bordered responsive className="text-center bg-important">
-        <CTableHead>
+      <CTable
+        bordered
+        hover
+        responsive
+        className="text-center shadow-sm bg-important"
+      >
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>

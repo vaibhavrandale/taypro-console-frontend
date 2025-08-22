@@ -245,7 +245,7 @@ const RobotData = () => {
             <CCardBody>
               <CChartLine
                 ref={chartRef}
-                style={{ maxHeight: "280px" }}
+                style={{ height: "280px" }}
                 className="p-0"
                 data={{
                   labels: chartLabels,

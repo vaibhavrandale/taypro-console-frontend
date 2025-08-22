@@ -45,6 +45,27 @@ const OpexManageCycle = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
 
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo.role === "Opex Client Admin") {
+    adminroute = "opex-client-admin";
+  } else if (userInfo.role === "Opex Site Technician") {
+    adminroute = "opex-site-technician";
+  }
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -135,14 +156,17 @@ const OpexManageCycle = () => {
               />
             </CCol>
           </CRow>
-
-          <div className="d-flex justify-content-end mb-2">
-            {cycle.modules_remaining > 0 && (
-              <Link className="btn btn-primary btn-sm" to={`/add-day`}>
-                Add Day
-              </Link>
-            )}
-          </div>
+          {!["Master User", "Project User", "Service User"].includes(
+            userInfo?.role
+          ) && (
+            <div className="d-flex justify-content-end mb-2">
+              {cycle.modules_remaining > 0 && (
+                <Link className="btn btn-primary btn-sm" to={`/add-day`}>
+                  Add Day
+                </Link>
+              )}
+            </div>
+          )}
           {/* Daily Progress */}
           <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -274,15 +298,21 @@ const OpexManageCycle = () => {
                           </CBadge>
                         )}
                       </CTableDataCell>
+
                       <CTableDataCell>
-                        {!day.is_verified && (
-                          <Link
-                            to={`verify-day/${day._id}`}
-                            className="btn btn-sm btn-primary  m-1"
-                          >
-                            Verify
-                          </Link>
-                        )}
+                        {!day.is_verified &&
+                          ![
+                            "Master User",
+                            "Project User",
+                            "Service User",
+                          ].includes(userInfo?.role) && (
+                            <Link
+                              to={`verify-day/${day._id}`}
+                              className="btn btn-sm btn-primary  m-1"
+                            >
+                              Verify
+                            </Link>
+                          )}
 
                         <Link
                           to={`day/${day._id}/technician-detials`}

@@ -220,8 +220,7 @@ const ProjectClosureDashboard = () => {
     <div className="p-2">
       <h2 className="text-center mt-4">Project Handover Data</h2>
       <div className="d-flex justify-content-end mb-3">
-        {(userInfo.role === "Master Admin" ||
-          userInfo.role === "Project Admin") && (
+        {["Master Admin", "Project Admin"].includes(userInfo?.role) && (
           <Link
             className="btn btn-sm btn-secondary m-1"
             to={`/${adminroute}/project-handover/add-project-handover`}
@@ -230,6 +229,7 @@ const ProjectClosureDashboard = () => {
           </Link>
         )}
       </div>
+
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
         <CCol md={4}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import { CChartPie } from "@coreui/react-chartjs";
-import { CRow, CCol, CCard, CCardBody, CCardHeader } from "@coreui/react";
+import { CRow, CCol, CCard, CCardHeader } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -271,7 +271,7 @@ const PieChart = () => {
           </CCardHeader>
           <div
             className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "350px" }}
+            style={{ height: "350px" }}
           >
             {loading ? (
               <LoadingSpinner />
@@ -279,6 +279,7 @@ const PieChart = () => {
               <div className="text-center text-danger py-4">{error}</div>
             ) : siteLabels?.length > 0 ? (
               <CChartPie
+                style={{ height: "350px" }}
                 data={{
                   labels: siteLabels.map(
                     (site) =>
@@ -326,7 +327,7 @@ const PieChart = () => {
           </CCardHeader>
           <div
             className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "350px" }}
+            style={{ height: "350px" }}
           >
             {loading ? (
               <LoadingSpinner />
@@ -336,6 +337,7 @@ const PieChart = () => {
               "No data available"
             ) : (
               <CChartPie
+                style={{ height: "350px" }}
                 data={{
                   labels: faultLabels,
                   datasets: [
