@@ -2382,6 +2382,253 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  {
+    path: "/master-user/ai-model",
+    name: "Master User AI Model",
+    element: (
+      <MasterUserRoute>
+        <Home />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/ai-model/check-micro-fiber",
+    name: "Master User AI Model Check Micro Fiber",
+    element: (
+      <MasterUserRoute>
+        <CheckMicroFiber />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/ai-model/view/:id",
+    name: "Master User AI Model View Micro Fiber",
+    element: (
+      <MasterUserRoute>
+        <ViewMicrofiber />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/email-logs",
+    name: "Email Logs",
+    element: (
+      <MasterUserRoute>
+        <EmailLogs />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/email-logs/:id",
+    name: "Email Log",
+    element: (
+      <MasterUserRoute>
+        <ViewEmailLog />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <MasterUserRoute>
+        <OpexDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <MasterUserRoute>
+        <OpexTemplateManager />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <MasterUserRoute>
+        <OpexManageCycle />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <MasterUserRoute>
+        <VerifyCycleDay />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/create-template/:site_id",
+    name: "CreateOpex ",
+    element: (
+      <MasterUserRoute>
+        <OpexTemplateCreate />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <MasterUserRoute>
+        <ViewTechnicianDetails />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
+    name: "Add Day In Cycle ",
+    element: (
+      <MasterUserRoute>
+        <AddDayInCycle />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/opexdata/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <MasterUserRoute>
+        <OpexCertificate />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/customer-feedback",
+    name: "Customer Feedback",
+    element: (
+      <MasterUserRoute>
+        <ClientFeedback />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/fault-analysis-checklist",
+    name: "Fault Analysis Checklist",
+    element: (
+      <MasterUserRoute>
+        <FaultAnalysisChecklist />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/fault-analysis-checklist/add-checklist/:id",
+    name: "Add Fault Analysis Checklist",
+    element: (
+      <MasterUserRoute>
+        <AddFaultAnalysisChecklist />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/fault-analysis-checklist/update-checklist/:id",
+    name: "Update Fault Analysis Checklist",
+    element: (
+      <MasterUserRoute>
+        <UpdateFaultAnalysisChecklist />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/faulty-inventory",
+    name: "Faulty Inventory",
+    element: (
+      <MasterUserRoute>
+        <FaultyInventory />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/client-subscriptions",
+    name: "Client Subscriptions",
+    element: (
+      <MasterUserRoute>
+        <SubscriptionDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/client-subscriptions/create",
+    name: "Create Subscriptions",
+    element: (
+      <MasterUserRoute>
+        <CreateSubscription />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/client-subscriptions/view/:id",
+    name: "View Subscriptions",
+    element: (
+      <MasterUserRoute>
+        <ViewSubscription />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/client-subscriptions/renew/:client_id",
+    name: "Renew Subscriptions",
+    element: (
+      <MasterUserRoute>
+        <RenewSubscription />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/pricing",
+    name: "Pricing",
+    element: (
+      <MasterUserRoute>
+        <Pricing />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/thermal-image-data",
+    name: "Thermal Image Data",
+    element: (
+      <MasterUserRoute>
+        <ThermalImageData />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <MasterUserRoute>
+        <MicrofiberdataAdminWise />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <MasterUserRoute>
+        <WeatherDataSitewise />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/timer-execution-notification-view",
+    name: "Timer Execution Notification View",
+    element: (
+      <MasterUserRoute>
+        <TimerExecutionNotificationView />
+      </MasterUserRoute>
+    ),
+  },
 
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------

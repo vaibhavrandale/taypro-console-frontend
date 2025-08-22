@@ -11,7 +11,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChartBar, CChartLine, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
@@ -472,6 +472,7 @@ const ClientAdminDashboard = () => {
                     <>
                       {blockWiseCleaning?.length > 0 ? (
                         <CChartPie
+                          style={{ height: "300px" }}
                           data={{
                             labels: blockWiseCleaning.map(
                               (block) => block.block
@@ -545,6 +546,7 @@ const ClientAdminDashboard = () => {
                     <>
                       {gateways.length > 0 ? (
                         <CChartPie
+                          style={{ height: "300px" }}
                           data={{
                             labels: gateways.map(
                               (gateway) => gateway.gateway_name
@@ -599,7 +601,7 @@ const ClientAdminDashboard = () => {
             </CCardHeader>
             <CCardBody
               className="d-flex justify-content-center align-items-center"
-              style={{ minHeight: "350px" }}
+              // style={{ minHeight: "350px" }}
             >
               {loadingSiteDetails ? (
                 <LoadingSpinner />
@@ -616,8 +618,31 @@ const ClientAdminDashboard = () => {
               ) : (
                 <>
                   {robotsData?.length > 0 ? (
-                    <CChartLine
-                      style={{ maxHeight: "300px", width: "100%" }}
+                    // <CChartLine
+                    //   style={{ height: "300px", width: "100%" }}
+                    //   data={{
+                    //     labels: batteryChartData.map((entry) =>
+                    //       entry.robot.slice(-3)
+                    //     ),
+                    //     datasets: [
+                    //       {
+                    //         label: "Battery (%)",
+                    //         data: batteryChartData.map((entry) => entry.value),
+                    //         borderColor: "#648DB3",
+                    //         tension: 0.4,
+                    //       },
+                    //     ],
+                    //   }}
+                    //   options={{
+                    //     scales: {
+                    //       y: {
+                    //         beginAtZero: true,
+                    //       },
+                    //     },
+                    //   }}
+                    // />
+                    <CChartBar
+                      style={{ height: "300px", width: "100%" }}
                       data={{
                         labels: batteryChartData.map((entry) =>
                           entry.robot.slice(-3)
@@ -626,12 +651,13 @@ const ClientAdminDashboard = () => {
                           {
                             label: "Battery (%)",
                             data: batteryChartData.map((entry) => entry.value),
-                            borderColor: "#648DB3",
-                            tension: 0.4,
+                            backgroundColor: "#648DB3",
                           },
                         ],
                       }}
                       options={{
+                        maintainAspectRatio: false, // 🔑 let it expand
+                        responsive: true, // 🔑 auto adjust width
                         scales: {
                           y: {
                             beginAtZero: true,

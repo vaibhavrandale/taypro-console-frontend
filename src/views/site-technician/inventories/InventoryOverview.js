@@ -106,6 +106,7 @@ const InventoryOverview = () => {
                 <CCardBody className="d-flex justify-content-center align-items-center">
                   <div style={{ width: "100%", height: "100%" }}>
                     <CChartPie
+                      style={{ height: "350px" }}
                       data={{
                         labels: itemLabels,
                         datasets: [

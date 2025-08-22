@@ -1,6 +1,10 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CBadge,
+  CCol,
+  CFormInput,
+  CInputGroup,
+  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -44,18 +48,29 @@ const SubscriptionDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const {
-    loading,
-    error,
-    subscriptions,
-    totalPages,
-    hasNextPage,
-    hasPrevPage,
-  } = state;
+  const { loading, error, subscriptions } = state;
   const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -100,6 +115,18 @@ const SubscriptionDashboard = () => {
     fetchSubscriptions();
   }, [authtoken, page, limit]);
 
+  // Filter table rows based on search term
+  const filteredData = subscriptions.filter(
+    (subscriptions) =>
+      subscriptions.subscription_status
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      subscriptions.client_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      subscriptions.plan_id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading)
     return (
       <div className="p-4 text-center">
@@ -112,14 +139,37 @@ const SubscriptionDashboard = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Subscription Dashboard</h2>
-      <div className="d-flex justify-content-end my-2">
-        <Link to="create" className="btn btn-sm btn-primary">
-          Create
-        </Link>
-      </div>
 
-      <CTable bordered hover responsive className="text-center bg-important">
-        <CTableHead>
+      <div className="d-flex justify-content-end my-2">
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link to="create" className="btn btn-sm btn-primary">
+            Create
+          </Link>
+        )}
+      </div>
+      {/* Search Input */}
+      <CRow className="justify-content-end">
+        <CCol xs={12} sm={10} md={8} lg={5}>
+          <CInputGroup className="mb-3">
+            <CFormInput
+              type="text"
+              placeholder="Search Site..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </CInputGroup>
+        </CCol>
+      </CRow>
+
+      <CTable
+        bordered
+        hover
+        responsive
+        className="text-center shadow-sm bg-important"
+      >
+        <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell scope="col">Sr</CTableHeaderCell>
             <CTableHeaderCell scope="col" style={{ minWidth: "200px" }}>
@@ -161,12 +211,12 @@ const SubscriptionDashboard = () => {
                 {error}
               </CTableDataCell>
             </CTableRow>
-          ) : subscriptions.length === 0 ? (
+          ) : filteredData.length === 0 ? (
             <CTableDataCell colSpan="7" className="text-center">
               No Subscriptions found.
             </CTableDataCell>
           ) : (
-            subscriptions.map((sub, index) => (
+            filteredData.map((sub, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "250px" }}>
@@ -204,13 +254,16 @@ const SubscriptionDashboard = () => {
                   >
                     View
                   </Link>
-
-                  <Link
-                    className="btn btn-sm btn-warning m-1"
-                    to={`renew/${sub.client_id}`}
-                  >
-                    Renew
-                  </Link>
+                  {!["Master User", "Project User", "Service User"].includes(
+                    userInfo?.role
+                  ) && (
+                    <Link
+                      className="btn btn-sm btn-warning m-1"
+                      to={`renew/${sub.client_id}`}
+                    >
+                      Renew
+                    </Link>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
