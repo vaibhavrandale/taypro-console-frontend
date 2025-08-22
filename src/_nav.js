@@ -24,6 +24,7 @@ import {
   cilBadge,
   cilDiamond,
   cilUser,
+  cilWrapText,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -330,8 +331,26 @@ const _nav = [
           },
         ],
       },
+      //robots-positioning
+      {
+        component: CNavGroup,
+        name: "Robots Position Tracking",
+        icon: (
+          <CIcon
+            icon={cilWrapText}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Robots Position Tracking",
+            to: "/master-admin/robots-position",
+          },
+        ],
+      },
 
-      //Feedback
       {
         component: CNavGroup,
         name: "Feedback",

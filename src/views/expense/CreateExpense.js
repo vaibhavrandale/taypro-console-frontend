@@ -515,10 +515,10 @@ const CreateExpense = () => {
                   <thead className="table-light">
                     <tr>
                       <th>Date</th>
-                      <th>Type</th>
-                      <th>Description</th>
-                      <th>Amount (₹)</th>
-                      <th>Bill Attachment</th>
+                      <th style={{ minWidth: "150px" }}>Type</th>
+                      <th style={{ minWidth: "200px" }}>Description</th>
+                      <th style={{ minWidth: "150px" }}>Amount (₹)</th>
+                      <th style={{ minWidth: "150px" }}>Bill Attachment</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -620,7 +620,7 @@ const CreateExpense = () => {
                               />
                             </td>
                             <td>
-                              <CFormInput
+                              {/* <CFormInput
                                 type="file"
                                 className="form-control form-control-sm"
                                 onChange={(e) =>
@@ -630,6 +630,33 @@ const CreateExpense = () => {
                                     e.target.files[0]
                                   )
                                 }
+                              /> */}
+
+                              <CFormInput
+                                type="file"
+                                className="form-control form-control-sm"
+                                onChange={(e) => {
+                                  const file = e.target.files[0];
+                                  if (file) {
+                                    const maxSize = 1 * 1024 * 1024; // 1 MB in bytes
+                                    if (file.size > maxSize) {
+                                      const fileSizeInMB = (
+                                        file.size /
+                                        (1024 * 1024)
+                                      ).toFixed(2); // convert to MB
+                                      toast.error(
+                                        `File size must be less than 1MB. Your file size is ${fileSizeInMB} MB.`
+                                      );
+                                      e.target.value = ""; // reset input
+                                      return;
+                                    }
+                                    handleExpenseItemChange(
+                                      index,
+                                      "file",
+                                      file
+                                    );
+                                  }
+                                }}
                               />
                             </td>
                             <td className="text-center">
