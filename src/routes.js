@@ -4555,6 +4555,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ServiceAdminRoute>
+        <ViewTechnicianDetails />
+      </ServiceAdminRoute>
+    ),
+  },
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
