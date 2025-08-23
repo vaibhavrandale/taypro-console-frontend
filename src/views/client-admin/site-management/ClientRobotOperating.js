@@ -162,6 +162,8 @@ const ClientRobotOperating = () => {
         dispatch({
           type: "FETCH_ROBOTS_FAIL",
           payload: error.response.data.message || error.response.data.error,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
       }
     };
@@ -277,12 +279,6 @@ const ClientRobotOperating = () => {
   } else if (userInfo?.role === "Client Site Technician") {
     adminroute = "client-site-technician";
   }
-  console.log("robots");
-  console.log(robots);
-  console.log("robots");
-  console.log("robot");
-  console.log(robot);
-  console.log("robot");
 
   return (
     <>
@@ -296,10 +292,11 @@ const ClientRobotOperating = () => {
           subscriptionStatus={subscriptionStatus}
           error={robotError}
         />
-      ) : robotError || robotsError ? (
-        <CBadge color="danger">{robotError || robotsError}</CBadge>
       ) : (
         <div className="">
+          {(robotsError || robotError) && (
+            <CBadge color="danger">{robotsError || robotError}</CBadge>
+          )}
           {/* Page Header */}
           <CRow>
             <CCol>

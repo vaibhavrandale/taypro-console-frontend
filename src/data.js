@@ -550,7 +550,7 @@ export const projects_role_permissions = [
     role: "Site Incharge",
   },
   {
-    role: "Client Technician",
+    role: "Client Site Technician",
   },
 ];
 
@@ -572,7 +572,7 @@ export const service_role_permissions = [
     role: "Site Incharge",
   },
   {
-    role: "Client Technician",
+    role: "Client Site Technician",
   },
 ];
 //done
@@ -647,7 +647,7 @@ export const users = [
     username: "ABD DEF",
     email: "abc@gmail.com",
     password: "client23",
-    role: "Client Technician",
+    role: "Client Site Technician",
     department: "Service",
     type: "External",
     phone: "+91 9012345678",

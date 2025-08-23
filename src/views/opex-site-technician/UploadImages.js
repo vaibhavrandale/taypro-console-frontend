@@ -140,7 +140,7 @@ const UploadImages = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(response.data.data);
+
         dispatch({
           type: "FETCH_ATTACHMENTS_SUCCESS",
           payload: response.data.data,
@@ -193,7 +193,6 @@ const UploadImages = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      console.log(response.data.data);
 
       if (response.status === 201 || response.status === 200) {
         dispatch({

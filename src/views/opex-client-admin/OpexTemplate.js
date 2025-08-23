@@ -207,8 +207,6 @@ const OpexTemplate = () => {
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
 
-      console.log(response.data.data);
-
       dispatch({
         type: "VERIFY_CYCLE_SUCCESS",
         payload: response.data.data,

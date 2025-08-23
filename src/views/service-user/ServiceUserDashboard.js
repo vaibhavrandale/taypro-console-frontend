@@ -22,7 +22,7 @@ const MasterAdminDashboard = () => {
         height="350"
         src="https://www.youtube.com/embed/PiXJhQ_MYgk?si=22r6pGnC1wbewKuy"
         title="YouTube video player"
-        frameborder="0"
+        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen

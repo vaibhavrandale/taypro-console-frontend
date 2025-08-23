@@ -160,7 +160,7 @@ const SiteTechnicianSites = () => {
             </CTableRow>
           ) : filteredData.length > 0 ? (
             filteredData.map((site, index) => (
-              <CTableRow key={site.id}>
+              <CTableRow key={site._id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                 <CTableDataCell>{site.siteName}</CTableDataCell>
                 <CTableDataCell>{site.location}</CTableDataCell>

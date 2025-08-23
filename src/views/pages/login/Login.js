@@ -72,8 +72,8 @@ const Login = () => {
         adminroute = "site-incharge";
       } else if (data.data.user.role === "Site Technician") {
         adminroute = "site-technician";
-      } else if (data.data.user.role === "Client Technician") {
-        adminroute = "client-technician";
+      } else if (data.data.user.role === "Client Site Technician") {
+        adminroute = "client-site-technician";
       } else if (data.data.user.role === "Master User") {
         adminroute = "master-user";
       } else if (data.data.user.role === "Service User") {

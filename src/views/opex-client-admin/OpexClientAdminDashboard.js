@@ -149,8 +149,6 @@ const OpexClientAdminDashboard = () => {
           type: "FETCH_WEATHER_SUCCESS",
           payload: response.data.data,
         });
-
-        console.log(response.data.data);
       } catch (error) {
         dispatch({
           type: "FETCH_WEATHER_FAIL",

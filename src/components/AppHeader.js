@@ -203,7 +203,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           setTimerModal(false); // Hide the modal
         }
       } catch (error) {
-        console.log(error.response?.data.error);
         if (
           error.response?.data.error ===
           "Timer Execution Notifications Not Found"
@@ -418,8 +417,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
     adminroute = "site-technician";
-  } else if (userInfo?.role === "Client Technician") {
-    adminroute = "client-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
   } else if (userInfo?.role === "Master User") {
     adminroute = "master-user";
   } else if (userInfo?.role === "Service User") {
@@ -430,7 +429,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
   //  "Site Incharge",
   //       "Site Technician",
-  //       "Client Technician",
+  //       "Client Site Technician",
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
