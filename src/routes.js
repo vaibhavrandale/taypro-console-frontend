@@ -3972,9 +3972,9 @@ const routes = [
     path: "/service-admin/site-management/block-management/:site_id",
     name: "Block Management",
     element: (
-      <ServiceUserRoute>
+      <ServiceAdminRoute>
         <BlockManagement />
-      </ServiceUserRoute>
+      </ServiceAdminRoute>
     ),
   },
   {
@@ -4552,6 +4552,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <OpexCertificate />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ServiceAdminRoute>
+        <ViewTechnicianDetails />
       </ServiceAdminRoute>
     ),
   },

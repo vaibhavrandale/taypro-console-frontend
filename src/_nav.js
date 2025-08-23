@@ -1420,11 +1420,6 @@ const _nav = [
             name: "Gateways",
             to: "/service-admin/all-site-gateways",
           },
-          {
-            component: CNavItem,
-            name: "Users",
-            to: "/service-admin/users",
-          },
         ],
       },
 
@@ -1629,6 +1624,11 @@ const _nav = [
             component: CNavItem,
             name: "User Performance",
             to: "/service-admin/user-performance-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Users",
+            to: "/service-admin/users",
           },
         ],
       },
