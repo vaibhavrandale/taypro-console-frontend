@@ -244,14 +244,14 @@ const ServiceTicketDashboard = () => {
   };
 
   const exportToExcel = () => {
-    if (servicetickets.length === 0) {
+    if (filteredData.length === 0) {
       toast.error("No data available for export.");
       return;
     }
 
     // Convert JSON to sheet
     const worksheet = XLSX.utils.json_to_sheet(
-      servicetickets.map((item, index) => ({
+      filteredData.map((item, index) => ({
         "#": index + 1,
         "Ticket Id": item.ticket_id,
         "Robot No": item.robot_no,
@@ -265,7 +265,7 @@ const ServiceTicketDashboard = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Service Ticket");
 
     // Trigger download
-    XLSX.writeFile(workbook, "Service Ticket.xlsx");
+    XLSX.writeFile(workbook, `Service-Ticket(${startDate}-${endDate}).xlsx`);
   };
 
   return (
@@ -386,8 +386,16 @@ const ServiceTicketDashboard = () => {
                         <CBadge color="danger">Open</CBadge>
                       )}
                     </CTableDataCell>
-                    <CTableDataCell style={{ minWidth: "150px" }}>
-                      {new Date(ticket.createdAt).toLocaleString()}
+                    <CTableDataCell style={{ minWidth: "190px" }}>
+                      {new Date(ticket.createdAt).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })}
                       {/* <CTooltip
                         content={new Date(ticket.createdAt).toLocaleString()}
                         placement="top"
@@ -403,7 +411,7 @@ const ServiceTicketDashboard = () => {
                       <CButton
                         color="secondary"
                         size="sm"
-                        className="m-1"
+                        className="mx-1"
                         onClick={() => openViewModal(ticket._id)}
                       >
                         View
@@ -413,7 +421,7 @@ const ServiceTicketDashboard = () => {
                         <Link
                           color="primary"
                           size="sm"
-                          className="m-1 btn btn-sm btn-primary text-decoration-none"
+                          className="mx-1 btn btn-sm btn-primary text-decoration-none"
                           to={`update-service-ticket/${ticket._id}`}
                         >
                           Update

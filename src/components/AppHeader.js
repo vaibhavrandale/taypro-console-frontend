@@ -27,7 +27,7 @@ import {
   CButton,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilBell, cilMenu } from "@coreui/icons";
+import { cilBell, cilMenu, cilSearch, cilX } from "@coreui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
@@ -161,6 +161,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
+  const [searchButtonOpen, setSearchButtonOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState({
     robots: [],
@@ -569,6 +570,23 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     );
   };
 
+  const openSearchRobotAndGatewayModal = () => {
+    setSearchButtonOpen(true);
+  };
+
+  const robotLink = (site_id, block, robot_no) => {
+    window.location.href = `/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}`;
+    setSearchButtonOpen(false);
+    setSearchTerm("");
+    // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+  };
+  const gatewayLink = (gatewayid) => {
+    // to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
+    window.location.href = `/${adminroute}/all-site-gateways/view-gateway/${gatewayid}`;
+    setSearchButtonOpen(false);
+    setSearchTerm("");
+    // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+  };
   return (
     <CHeader
       position="sticky"
@@ -596,117 +614,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         <CHeaderNav className="ms-auto"> </CHeaderNav>
 
         <CHeaderNav className="ms-auto  d-flex align-items-center justify-content-end flex-wrap my-2">
-          {[
-            "Master Admin",
-            "Project Admin",
-            "Service Admin",
-            "Service User",
-            "Project User",
-            "Master User",
-            "Site Technician",
-            "Client Admin",
-            "Site Incharge",
-            "Client Site Technician",
-          ].includes(userInfo.role) && (
-            <>
-              <CRow className="">
-                <CCol>
-                  <div className="position-relative responsive-search">
-                    {robotsGatewayLoading ? (
-                      <div className="text-end p-2">
-                        <LoadingSpinner />
-                      </div>
-                    ) : (
-                      <CInputGroup>
-                        <CFormInput
-                          type="text"
-                          placeholder="Search Robot/Gateway"
-                          value={searchTerm}
-                          className="form-control"
-                          onChange={handleSearchChange}
-                          onFocus={() => setShowDropdown(true)}
-                          onBlur={() =>
-                            setTimeout(() => setShowDropdown(false), 200)
-                          } // delay to allow link click
-                        />
-                      </CInputGroup>
-                    )}
-
-                    {showDropdown && searchTerm && (
-                      <div
-                        className="position-absolute border rounded shadow-sm mt-1"
-                        style={{
-                          maxHeight: "200px",
-                          width: "210px",
-                          overflowY: "auto",
-                          zIndex: 10,
-                          backgroundColor: "#101936",
-                        }}
-                      >
-                        {robotsGatewayLoading ? (
-                          <div className="text-center p-2">
-                            <LoadingSpinner />
-                          </div>
-                        ) : robotsGatewayError ? (
-                          <div className="text-center text-danger p-2">
-                            {robotsGatewayError}
-                          </div>
-                        ) : filteredData.robots.length === 0 &&
-                          filteredData.gateways.length === 0 ? (
-                          <div className="text-center  p-2">
-                            No robots or gateways found
-                          </div>
-                        ) : (
-                          <>
-                            {filteredData.robots.length > 0 && (
-                              <>
-                                <div className=" px-2  py-1">Robots</div>
-                                {filteredData.robots.map((robot, index) => (
-                                  <Link
-                                    key={`robot-${index}`}
-                                    to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
-                                    className="text-decoration-none"
-                                  >
-                                    <div className=" px-2 py-1 ">
-                                      {robot.robot_no}
-                                    </div>
-                                  </Link>
-                                ))}
-                              </>
-                            )}
-
-                            {filteredData.gateways.length > 0 && (
-                              <>
-                                <div className=" px-2 pt-2">Gateways</div>
-                                {filteredData.gateways.map((gateway, index) => (
-                                  <Link
-                                    key={`gateway-${index}`}
-                                    to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
-                                    className="text-decoration-none "
-                                  >
-                                    <div className="px-2 py-1 ">
-                                      {gateway.gateway_name}
-                                    </div>
-                                  </Link>
-                                ))}
-                              </>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </CCol>
-              </CRow>
-              <li className="nav-item py-1 mx-2">
-                {/* <div className="vr h-100 mx-2 text-body text-opacity-75"></div> */}
-              </li>
-              <li className="nav-item py-1">
-                <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-              </li>
-            </>
-          )}
-
+          <CIcon
+            icon={cilSearch}
+            size="lg"
+            onClick={openSearchRobotAndGatewayModal}
+            className="cursor-pointer m-1"
+          />{" "}
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
           {[
             "Master Admin",
             "Project Admin",
@@ -840,7 +756,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               </li>
             </>
           )}
-
           {/* ✅ Always show user dropdown */}
           <AppHeaderDropdown />
         </CHeaderNav>
@@ -1022,6 +937,290 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               </CModalBody>
             </>
           )}
+        </CModal>
+      )}
+
+      {/* {searchButtonOpen && (
+        <CModal
+          // className={feedbackModal ? "fade-out" : "fade-in"}
+          // size="m"
+          backdrop="static"
+          alignment="top"
+          // visible={searchButtonOpen}
+          visible={searchButtonOpen}
+          scrollable={true}
+          size="sm"
+          onClose={() => setSearchButtonOpen(false)}
+        >
+          <CModalHeader closeButton={false}>
+            <CModalTitle>
+              <h6>Search Robot And Gateway</h6>
+            </CModalTitle>
+
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setSearchButtonOpen(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+
+          <CModalBody style={{ minHeight: showDropdown ? "280px" : "150px" }}>
+            {[
+              "Master Admin",
+              "Project Admin",
+              "Service Admin",
+              "Service User",
+              "Project User",
+              "Master User",
+              "Site Technician",
+              "Client Admin",
+              "Site Incharge",
+              "Client Site Technician",
+            ].includes(userInfo.role) && (
+              <>
+                <CRow className="justify-content-center">
+                  <CCol>
+                    <div className="position-relative responsive-search">
+                      {robotsGatewayLoading ? (
+                        <div className="text-center p-2">
+                          <LoadingSpinner />
+                        </div>
+                      ) : (
+                        <CInputGroup>
+                          <CFormInput
+                            type="text"
+                            placeholder="Search Robot/Gateway"
+                            value={searchTerm}
+                            className="form-control"
+                            onChange={handleSearchChange}
+                            onFocus={() => setShowDropdown(true)}
+                            onBlur={() =>
+                              setTimeout(() => setShowDropdown(false), 200)
+                            } // delay to allow link click
+                          />
+                        </CInputGroup>
+                      )}
+                    </div>
+                  </CCol>
+                </CRow>
+              </>
+            )}
+            {searchTerm && (
+              <div
+                className="position-absolute  rounded-0 shadow-sm mt-1"
+                style={{
+                  maxHeight: "200px",
+                  width: "260px",
+                  overflowY: "auto",
+                  zIndex: 10,
+                  backgroundColor: "#101936",
+                }}
+              >
+                {robotsGatewayLoading ? (
+                  <div className="text-center p-2">
+                    <LoadingSpinner />
+                  </div>
+                ) : robotsGatewayError ? (
+                  <div className="text-center text-danger p-2">
+                    {robotsGatewayError}
+                  </div>
+                ) : filteredData.robots.length === 0 &&
+                  filteredData.gateways.length === 0 ? (
+                  <div className="text-center  p-2">
+                    No robots or gateways found
+                  </div>
+                ) : (
+                  <>
+                    {filteredData.robots.length > 0 && (
+                      <>
+                        <div className=" px-2  py-1">Robots</div>
+                        {filteredData.robots.map((robot, index) => (
+                          <Link
+                            key={`robot-${index}`}
+                            to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                            className="text-decoration-none"
+                          >
+                            <div className=" px-2 py-1 ">{robot.robot_no}</div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+
+                    {filteredData.gateways.length > 0 && (
+                      <>
+                        <div className=" px-2 pt-2">Gateways</div>
+                        {filteredData.gateways.map((gateway, index) => (
+                          <Link
+                            key={`gateway-${index}`}
+                            to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
+                            className="text-decoration-none "
+                          >
+                            <div className="px-2 py-1 ">
+                              {gateway.gateway_name}
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </CModalBody>
+        </CModal>
+      )} */}
+
+      {searchButtonOpen && (
+        <CModal
+          backdrop="static"
+          alignment="top"
+          visible={searchButtonOpen}
+          scrollable
+          size="sm"
+          className="rounded-0"
+          onClose={() => setSearchButtonOpen(false)}
+        >
+          {/* Header */}
+          <CModalHeader
+            className="border-0 align-items-center py-2"
+            closeButton={false}
+          >
+            <CModalTitle>
+              <h7 className="fw-semibold mb-0">Search Robot And Gateway</h7>
+            </CModalTitle>
+
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setSearchButtonOpen(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+
+          {/* Body */}
+          <CModalBody
+            className="pt-0"
+            style={{ minHeight: searchTerm.length > 0 ? "280px" : "0px" }}
+          >
+            {[
+              "Master Admin",
+              "Project Admin",
+              "Service Admin",
+              "Service User",
+              "Project User",
+              "Master User",
+              "Site Technician",
+              "Client Admin",
+              "Site Incharge",
+              "Client Site Technician",
+            ].includes(userInfo.role) && (
+              <CRow className="justify-content-center">
+                <CCol>
+                  <div className="position-relative responsive-search">
+                    {robotsGatewayLoading ? (
+                      <div className="text-center p-2">
+                        <LoadingSpinner />
+                      </div>
+                    ) : (
+                      <CInputGroup>
+                        <CFormInput
+                          type="text"
+                          placeholder="Search Robot/Gateway"
+                          value={searchTerm}
+                          className="form-control py-2"
+                          onChange={handleSearchChange}
+                          onFocus={() => setShowDropdown(true)}
+                          onBlur={() =>
+                            setTimeout(() => setShowDropdown(false), 200)
+                          }
+                        />
+                      </CInputGroup>
+                    )}
+                  </div>
+                </CCol>
+              </CRow>
+            )}
+
+            {/* Dropdown */}
+            {searchTerm && (
+              <div
+                className="position-absolute mt-2 rounded-2"
+                style={{
+                  maxHeight: "220px",
+                  width: "90%",
+                  overflowY: "auto",
+
+                  // backgroundColor: "#101936",
+                }}
+              >
+                {robotsGatewayLoading ? (
+                  <div className="text-center p-2">
+                    <LoadingSpinner />
+                  </div>
+                ) : robotsGatewayError ? (
+                  <div className="text-center text-danger p-2">
+                    {robotsGatewayError}
+                  </div>
+                ) : filteredData.robots.length === 0 &&
+                  filteredData.gateways.length === 0 ? (
+                  <div className="text-center p-2">
+                    No robots or gateways found
+                  </div>
+                ) : (
+                  <>
+                    {filteredData.robots.length > 0 && (
+                      <>
+                        <div className="px-3 py-2 fw-semibold small">
+                          Robots
+                        </div>
+                        {filteredData.robots.map((robot, index) => (
+                          <Link
+                            key={`robot-${index}`}
+                            onClick={() =>
+                              robotLink(
+                                robot.site_id,
+                                robot.block,
+                                robot.robot_no
+                              )
+                            }
+                            // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                            className="text-decoration-none"
+                          >
+                            <div className="px-3 py-1">{robot.robot_no}</div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+
+                    {filteredData.gateways.length > 0 && (
+                      <>
+                        <div className="px-3 py-2 fw-semibold small">
+                          Gateways
+                        </div>
+                        {filteredData.gateways.map((gateway, index) => (
+                          <Link
+                            key={`gateway-${index}`}
+                            // to={`/${adminroute}/all-site-gateways/view-gateway/${gateway._id}`}
+                            onClick={() => gatewayLink(gateway._id)}
+                            className="text-decoration-none"
+                          >
+                            <div className="px-3 py-2">
+                              {gateway.gateway_name}
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </CModalBody>
         </CModal>
       )}
     </CHeader>
