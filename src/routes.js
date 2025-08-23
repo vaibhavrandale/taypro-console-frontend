@@ -1558,7 +1558,7 @@ const routes = [
   },
 
   {
-    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    path: "/master-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
       <MasterAdminRoute>
@@ -2475,7 +2475,7 @@ const routes = [
   },
 
   {
-    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    path: "/master-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
       <MasterUserRoute>
@@ -4556,7 +4556,7 @@ const routes = [
     ),
   },
   {
-    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    path: "/service-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
       <ServiceAdminRoute>
@@ -5955,7 +5955,7 @@ const routes = [
     ),
   },
   {
-    path: "/opex-client-admin/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    path: "/opex-client-admin/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
       <OpexClientAdmin>
@@ -6031,7 +6031,7 @@ const routes = [
     ),
   },
   {
-    path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-detials",
+    path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
       <OpexSiteTechnicianRoute>
