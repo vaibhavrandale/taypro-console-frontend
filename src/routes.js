@@ -3972,9 +3972,9 @@ const routes = [
     path: "/service-admin/site-management/block-management/:site_id",
     name: "Block Management",
     element: (
-      <ServiceUserRoute>
+      <ServiceAdminRoute>
         <BlockManagement />
-      </ServiceUserRoute>
+      </ServiceAdminRoute>
     ),
   },
   {
