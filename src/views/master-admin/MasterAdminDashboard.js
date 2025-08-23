@@ -39,8 +39,8 @@
 //       return navItem.name === "Client Admin";
 //     if (userInfo.role === "Site Incharge")
 //       return navItem.name === "Site Incharge";
-//     if (userInfo.role === "Client Technician")
-//       return navItem.name === "Client Technician";
+//     if (userInfo.role === "Client Site Technician")
+//       return navItem.name === "Client Site Technician";
 //     return false;
 //   });
 

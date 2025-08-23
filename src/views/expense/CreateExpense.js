@@ -69,8 +69,8 @@ const CreateExpense = () => {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
     adminroute = "site-technician";
-  } else if (userInfo?.role === "Client Technician") {
-    adminroute = "client-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
   } else if (userInfo?.role === "Master User") {
     adminroute = "master-user";
   } else if (userInfo?.role === "Service User") {

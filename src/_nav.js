@@ -3142,7 +3142,7 @@ const _nav = [
 
   // ---------------------site Incharge----------------------------------
 
-  // ---------------------Client Technician----------------------------------
+  // ---------------------Client Site Technician----------------------------------
   {
     component: CNavGroup,
     name: "Client Site Technician",

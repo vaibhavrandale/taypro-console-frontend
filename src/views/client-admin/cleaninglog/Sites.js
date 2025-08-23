@@ -133,8 +133,8 @@ const Sites = () => {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
     adminroute = "site-technician";
-  } else if (userInfo?.role === "Client Technician") {
-    adminroute = "client-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
   } else if (userInfo?.role === "Master User") {
     adminroute = "master-user";
   } else if (userInfo?.role === "Service User") {
@@ -185,7 +185,7 @@ const Sites = () => {
             </CTableRow>
           ) : filteredData.length > 0 ? (
             filteredData.map((site, index) => (
-              <CTableRow key={site.id}>
+              <CTableRow key={site._id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                 <CTableDataCell>{site.siteName}</CTableDataCell>
                 <CTableDataCell>{site.location}</CTableDataCell>
