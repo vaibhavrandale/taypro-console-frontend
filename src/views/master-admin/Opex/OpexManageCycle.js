@@ -315,7 +315,7 @@ const OpexManageCycle = () => {
                           )}
 
                         <Link
-                          to={`day/${day._id}/technician-detials`}
+                          to={`day/${day._id}/technician-details`}
                           className="btn btn-sm btn-primary  m-1"
                         >
                           Cleaning Activity
