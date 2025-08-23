@@ -4,19 +4,54 @@
 }
 
 .profile {
-  height: 40px;
-  width: 40px;
+  height: 37px;
+  width: 37px;
   background: #052638;
-
   border-radius: 50%;
   display: flex;
-  color: #fff;
+  /* color: #fff; */
   justify-content: center;
   align-items: center;
 }
 
 @keyframes fadeIn {
   to {
-    opacity: 4;
+    opacity: 1; /* fixed from 4 → 1 */
   }
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.profile-img {
+  border-radius: 50%;
+  object-fit: cover;
+  transition: 0.2s ease;
+}
+
+.profile-img:hover {
+  opacity: 0.9;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  display: none; /* will only show via JS toggle */
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
 }
