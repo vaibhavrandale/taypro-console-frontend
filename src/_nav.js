@@ -334,7 +334,7 @@ const _nav = [
       //robots-positioning
       {
         component: CNavGroup,
-        name: "Robots Position Tracking",
+        name: "Robots Tracking",
         icon: (
           <CIcon
             icon={cilWrapText}
