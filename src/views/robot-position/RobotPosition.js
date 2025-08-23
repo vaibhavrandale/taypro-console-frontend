@@ -168,7 +168,7 @@ const RobotRow = ({ robot, index }) => {
       }
       // ✅ CASE 3: if cleaning finish is not receivd and calculated finish time is less than current time
       if (
-        robot.isOerationCompleted &&
+        robot.isOperationCompleted &&
         !robot.isCleaningFinishedReceived &&
         !robot.is_cleaning_cancelled
       ) {

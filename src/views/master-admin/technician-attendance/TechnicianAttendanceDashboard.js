@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-
 import {
   CBadge,
   CButton,
@@ -224,7 +223,17 @@ const TechnicianAttendanceDashboard = () => {
         <CTableHead color="dark">
           <CTableRow className="text-center">
             <CTableHeaderCell>Sr</CTableHeaderCell>
-            <CTableHeaderCell>Name</CTableHeaderCell>
+            {/* <CTableHeaderCell>Name</CTableHeaderCell> */}
+            <CTableHeaderCell
+              style={{
+                position: "sticky",
+                left: 0,
+                zIndex: 2,
+                minWidth: "170px",
+              }}
+            >
+              Name
+            </CTableHeaderCell>
             <CTableHeaderCell>Site</CTableHeaderCell>
             {[...Array(daysInMonth)].map((_, i) => (
               <CTableHeaderCell key={i}>{i + 1}</CTableHeaderCell>
@@ -247,7 +256,17 @@ const TechnicianAttendanceDashboard = () => {
               return (
                 <CTableRow key={idx} className="text-center">
                   <CTableDataCell>{idx + 1}</CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "170px" }}>
+                  {/* <CTableDataCell style={{ minWidth: "170px" }}>
+                    {username}
+                  </CTableDataCell> */}
+                  <CTableDataCell
+                    style={{
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 1,
+                      minWidth: "170px",
+                    }}
+                  >
                     {username}
                   </CTableDataCell>
                   <CTableDataCell>{data.site_id}</CTableDataCell>

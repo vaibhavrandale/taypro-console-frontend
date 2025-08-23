@@ -156,17 +156,6 @@ const OpexManageCycle = () => {
               />
             </CCol>
           </CRow>
-          {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role
-          ) && (
-            <div className="d-flex justify-content-end mb-2">
-              {cycle.modules_remaining > 0 && (
-                <Link className="btn btn-primary btn-sm" to={`/add-day`}>
-                  Add Day
-                </Link>
-              )}
-            </div>
-          )}
           {/* Daily Progress */}
           <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -315,7 +304,7 @@ const OpexManageCycle = () => {
                           )}
 
                         <Link
-                          to={`day/${day._id}/technician-detials`}
+                          to={`day/${day._id}/technician-details`}
                           className="btn btn-sm btn-primary  m-1"
                         >
                           Cleaning Activity
