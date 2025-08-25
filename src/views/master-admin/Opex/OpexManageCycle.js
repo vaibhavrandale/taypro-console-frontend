@@ -47,25 +47,6 @@ const OpexManageCycle = () => {
 
   const userInfo = useSelector((state) => state.userInfo);
 
-  let adminroute = "";
-
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo.role === "Opex Client Admin") {
-    adminroute = "opex-client-admin";
-  } else if (userInfo.role === "Opex Site Technician") {
-    adminroute = "opex-site-technician";
-  }
   useEffect(() => {
     const fetchCycle = async () => {
       try {
@@ -227,9 +208,7 @@ const OpexManageCycle = () => {
                           <CBadge color="warning">Labour Absent</CBadge>
                         )}
                         {day.is_other && (
-                          <CBadge color="warning">
-                            Other Reasonis_master_opex_site_technician
-                          </CBadge>
+                          <CBadge color="warning">Other Reason</CBadge>
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
