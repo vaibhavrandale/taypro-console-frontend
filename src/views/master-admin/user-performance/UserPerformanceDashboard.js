@@ -49,14 +49,28 @@ const UserPerformanceDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
-
   let adminroute = "";
-  if (userInfo.role === "Master Admin") {
+
+  if (userInfo?.role === "Master Admin") {
     adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
+  } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
+  } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   }
 
   useEffect(() => {

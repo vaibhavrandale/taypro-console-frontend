@@ -30,8 +30,10 @@ import {
 import {
   departments,
   projects_role_permissions,
+  projects_user_role_permissions,
   role_permissions,
   service_role_permissions,
+  service_user_role_permissions,
 } from "../../../data";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
@@ -198,6 +200,10 @@ const UsersDashboard = () => {
     roles = role_permissions;
   } else if (userInfo.role === "Project Admin") {
     roles = projects_role_permissions;
+  } else if (userInfo.role === "Service User") {
+    roles = service_user_role_permissions;
+  } else if (userInfo.role === "Project User") {
+    roles = projects_user_role_permissions;
   } else {
     roles = service_role_permissions;
   }
@@ -541,7 +547,6 @@ const UsersDashboard = () => {
       <div className="d-flex justify-content-end align-items-center mb-3">
         <div className="d-flex justify-content-between align-items-center">
           {/* External Users link - hidden for restricted roles */}
-
           <Link
             to={`/${adminroute}/external-users`}
             className="btn btn-sm btn-secondary m-1"
@@ -549,21 +554,16 @@ const UsersDashboard = () => {
           >
             External Users
           </Link>
-
           {/* Add User button - hidden for restricted roles */}
-          {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role
-          ) && (
-            <CButton
-              color="success"
-              size="sm"
-              className="text-white m-1"
-              onClick={openAddModal}
-              aria-label="Add new user"
-            >
-              + Add User
-            </CButton>
-          )}
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white m-1"
+            onClick={openAddModal}
+            aria-label="Add new user"
+          >
+            + Add User
+          </CButton>
         </div>
       </div>
       <CRow className="mb-3 justify-content-end">
@@ -661,19 +661,19 @@ const UsersDashboard = () => {
                     View Assigned Sites
                   </CButton>
                   {/* Update button - hidden for restricted roles */}
-                  {!["Master User", "Project User", "Service User"].includes(
+                  {/* {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role
-                  ) && (
-                    <CButton
-                      color="success"
-                      size="sm"
-                      className="m-1"
-                      onClick={() => openModal(user)}
-                      aria-label={`Edit user ${user.username}`}
-                    >
-                      Update
-                    </CButton>
-                  )}
+                  ) && ( */}
+                  <CButton
+                    color="success"
+                    size="sm"
+                    className="m-1"
+                    onClick={() => openModal(user)}
+                    aria-label={`Edit user ${user.username}`}
+                  >
+                    Update
+                  </CButton>
+                  {/* )} */}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -944,8 +944,8 @@ const UsersDashboard = () => {
             value={formData.role}
           >
             <option value="">Select Role</option>
-            {role_permissions?.length > 0 &&
-              role_permissions.map((role, index) => (
+            {roles?.length > 0 &&
+              roles.map((role, index) => (
                 <option key={index} value={role.role}>
                   {role.role}
                 </option>

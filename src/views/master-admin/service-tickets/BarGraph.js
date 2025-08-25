@@ -176,6 +176,7 @@ const BarGraph = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         mode: "index", // Show tooltip for the bar you're hovering over
@@ -208,100 +209,100 @@ const BarGraph = () => {
   };
 
   return (
-    <CRow>
-      <CCol xs={12}></CCol>
-      <CCol xs={12}>
-        <CCard className="my-2">
-          <CCardHeader>
-            {" "}
-            <h5 className="text-center">Month and Year wise Service Tickets</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CRow className="mb-4">
-              <CCol xs={12} md={2} lg={2}>
-                <CFormSelect
-                  label="Select Year"
-                  value={year}
-                  onChange={(e) => setYear(parseInt(e.target.value))}
-                >
-                  {yearOptions.map((y) => (
-                    <option key={y.value} value={y.value}>
-                      {y.label}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
+    // <CRow>
+    //   <CCol xs={12}></CCol>
+    //   <CCol xs={12}>
+    <CCard className="my-2">
+      <CCardHeader>
+        {" "}
+        <h5 className="text-center">Month and Year wise Service Tickets</h5>
+      </CCardHeader>
+      <CCardBody>
+        <CRow className="mb-4">
+          <CCol xs={12} md={2} lg={2}>
+            <CFormSelect
+              label="Select Year"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value))}
+            >
+              {yearOptions.map((y) => (
+                <option key={y.value} value={y.value}>
+                  {y.label}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCol>
 
-              <CCol xs={12} md={2} lg={2}>
-                <CFormSelect
-                  label="Chart Type"
-                  value={chartType}
-                  onChange={(e) => setChartType(e.target.value)}
-                >
-                  <option value="bar">Bar</option>
-                  <option value="line">Line</option>
-                </CFormSelect>
-              </CCol>
+          <CCol xs={12} md={2} lg={2}>
+            <CFormSelect
+              label="Chart Type"
+              value={chartType}
+              onChange={(e) => setChartType(e.target.value)}
+            >
+              <option value="bar">Bar</option>
+              <option value="line">Line</option>
+            </CFormSelect>
+          </CCol>
 
-              <CCol xs={12} md={2} lg={2}>
-                <CFormSelect
-                  label="Select Site"
-                  value={siteId}
-                  onChange={(e) => setSiteId(e.target.value)}
-                >
-                  <option value="">All Sites</option>
-                  {uniqueSites.map((site) => (
-                    <option key={site} value={site}>
-                      {site
-                        .replace(/_/g, " ")
-                        .replace(/\b\w/g, (c) => c.toUpperCase())}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
+          <CCol xs={12} md={2} lg={2}>
+            <CFormSelect
+              label="Select Site"
+              value={siteId}
+              onChange={(e) => setSiteId(e.target.value)}
+            >
+              <option value="">All Sites</option>
+              {uniqueSites.map((site) => (
+                <option key={site} value={site}>
+                  {site
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCol>
 
-              <CCol xs={12} md={2} lg={2}>
-                <CButton size="sm" color="success" onClick={exportToExcel}>
-                  Export
-                </CButton>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol xs={12} md={12} lg={12}>
-                {fetchserviceticketcountloading ? (
-                  <LoadingSpinner />
-                ) : serviceticketcount.length === 0 ? (
-                  <div className="text-center">No data available</div>
+          <CCol xs={12} md={2} lg={2}>
+            <CButton size="sm" color="success" onClick={exportToExcel}>
+              Export
+            </CButton>
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol xs={12} md={12} lg={12}>
+            {fetchserviceticketcountloading ? (
+              <LoadingSpinner />
+            ) : serviceticketcount.length === 0 ? (
+              <div className="text-center">No data available</div>
+            ) : (
+              <>
+                {chartType === "bar" ? (
+                  <CChartBar
+                    className=""
+                    style={{ height: "400px", width: "100%" }}
+                    data={{
+                      labels: chartLabels,
+                      datasets: datasets,
+                    }}
+                    options={options}
+                  />
                 ) : (
-                  <>
-                    {chartType === "bar" ? (
-                      <CChartBar
-                        className=""
-                        style={{ height: "400px" }}
-                        data={{
-                          labels: chartLabels,
-                          datasets: datasets,
-                        }}
-                        options={options}
-                      />
-                    ) : (
-                      <CChartLine
-                        style={{ height: "400px" }}
-                        data={{
-                          labels: chartLabels,
-                          datasets: datasets,
-                        }}
-                        options={options}
-                      />
-                    )}
-                  </>
+                  <CChartLine
+                    style={{ height: "400px", width: "100%" }}
+                    data={{
+                      labels: chartLabels,
+                      datasets: datasets,
+                    }}
+                    options={options}
+                  />
                 )}
-              </CCol>
-            </CRow>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
+              </>
+            )}
+          </CCol>
+        </CRow>
+      </CCardBody>
+    </CCard>
+    //   </CCol>
+    // </CRow>
   );
 };
 

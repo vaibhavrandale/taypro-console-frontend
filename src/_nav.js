@@ -1483,19 +1483,26 @@ const _nav = [
           },
         ],
       },
+
+      //Expense Management
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/service-admin/expenses",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/service-admin/expenses",
+          },
+        ],
       },
-
       // === Project & Maintenance Group ===
       {
         component: CNavGroup,
@@ -2421,6 +2428,34 @@ const _nav = [
             name: "Gateways",
             to: "/service-user/all-site-gateways",
           },
+          // {
+          //   component: CNavItem,
+          //   name: "Users",
+          //   to: "/service-user/users",
+          // },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Users Management",
+        icon: (
+          <CIcon
+            icon={cilGroup}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Technician Attendance",
+            to: "/service-user/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "User Performance",
+            to: "/service-user/user-performance-dashboard",
+          },
           {
             component: CNavItem,
             name: "Users",
@@ -2480,7 +2515,25 @@ const _nav = [
           },
         ],
       },
-
+      //Expense Management
+      {
+        component: CNavGroup,
+        name: "Expense Management",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/service-user/expenses",
+          },
+        ],
+      },
       // === Project & Maintenance Group ===
       {
         component: CNavGroup,
@@ -2520,7 +2573,25 @@ const _nav = [
           />
         ),
       },
-
+      //opex Data
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/service-user/opexdata",
+          },
+        ],
+      },
       // === Tickets ===
       {
         component: CNavGroup,
@@ -2553,18 +2624,18 @@ const _nav = [
       },
 
       // === Attendance ===
-      {
-        component: CNavItem,
-        name: "Technician Attendance",
-        to: "/service-user/technician-attendance",
-        icon: (
-          <CIcon
-            icon={cilTask}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Technician Attendance",
+      //   to: "/service-user/technician-attendance",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilTask}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
 
       {
         component: CNavItem,
@@ -2578,18 +2649,18 @@ const _nav = [
           />
         ),
       },
-      {
-        component: CNavItem,
-        name: "Expense Management",
-        to: "/service-user/expenses",
-        icon: (
-          <CIcon
-            icon={cilDollar}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Expense Management",
+      //   to: "/service-user/expenses",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilDollar}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
     ],
   },
 
