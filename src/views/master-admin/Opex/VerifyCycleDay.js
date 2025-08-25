@@ -149,10 +149,20 @@ const VerifyCycleDay = () => {
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    let newValue = type === "checkbox" ? checked : value;
+
+    let updatedFormData = {
+      ...formData,
+      [name]: newValue,
+    };
+
+    // if Cleaning Done is selected, uncheck Sunday
+    if (name === "is_cleaning_done" && newValue === true) {
+      updatedFormData.is_sunday = false;
+    }
+
+    setFormData(updatedFormData);
   };
 
   return (

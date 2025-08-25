@@ -156,17 +156,6 @@ const OpexManageCycle = () => {
               />
             </CCol>
           </CRow>
-          {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role
-          ) && (
-            <div className="d-flex justify-content-end mb-2">
-              {cycle.modules_remaining > 0 && (
-                <Link className="btn btn-primary btn-sm" to={`/add-day`}>
-                  Add Day
-                </Link>
-              )}
-            </div>
-          )}
           {/* Daily Progress */}
           <CCard className="border-0 shadow-sm">
             <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -181,22 +170,6 @@ const OpexManageCycle = () => {
                 &nbsp;
                 <CBadge color="warning" className="">
                   <span className="">
-                    {/* {new Date(cycle.day_wise_data[0].date).toLocaleDateString(
-                      "en-IN",
-                      {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      }
-                    )}{" "}
-                    -{" "}
-                    {new Date(
-                      cycle.day_wise_data[cycle.day_wise_data.length - 1].date
-                    ).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })} */}
                     {new Date(cycle.start_date).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",

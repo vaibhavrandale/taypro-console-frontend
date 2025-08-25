@@ -17,12 +17,20 @@ import {
   CButton,
   CFormCheck,
   CFormSelect,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CFormInput,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LastActivity from "../../../components/LastActivity";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -121,9 +129,12 @@ const OpexTemplateManager = () => {
   const [selectedCycles, setSelectedCycles] = useState([]);
   const currentMonth = new Date().getMonth() + 1; // 1-12
   const currentYear = new Date().getFullYear();
-
   const [selectedMonth, setSelectedMonth] = useState(String(currentMonth));
   const [selectedYear, setSelectedYear] = useState(String(currentYear));
+  const [modalVisible, setModalVisible] = useState(false);
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
@@ -177,7 +188,7 @@ const OpexTemplateManager = () => {
     try {
       const response = await axios.post(
         `/api/v1/opex/first-cycle/${id}`,
-        {},
+        { start_date: startDate },
         {
           headers: {
             Authorization: `Bearer ${authtoken}`,
@@ -194,6 +205,7 @@ const OpexTemplateManager = () => {
       if (response.status === 201 || response.status === 200) {
         toast.success(response.data.message);
       }
+      setModalVisible(false);
       fetchOpexData();
     } catch (error) {
       dispatch({
@@ -306,6 +318,11 @@ const OpexTemplateManager = () => {
     return d.getDate() === lastDay.getDate();
   };
 
+  const openUploadStartDateModal = () => {
+    setModalVisible(true);
+    setStartDate("");
+  };
+
   return (
     <div className="mt-5">
       {!loadingOpex && Object.keys(opexData).length === 0 && (
@@ -322,7 +339,6 @@ const OpexTemplateManager = () => {
           )}
         </div>
       )}
-
       {loadingOpex ? (
         <LoadingSpinner />
       ) : error || certificateError || verifyCycleError ? (
@@ -552,16 +568,10 @@ const OpexTemplateManager = () => {
               userInfo.role
             ) && (
               <Link
-                onClick={() => handleCreateCycle(opexData._id)}
+                onClick={openUploadStartDateModal}
                 className="btn btn-primary btn-sm"
               >
-                {createLoading ? (
-                  <>
-                    Creating <LoadingSpinner />
-                  </>
-                ) : (
-                  "Create Cycle"
-                )}{" "}
+                Create Cycle
               </Link>
             )}
             {createError ? (
@@ -794,6 +804,55 @@ const OpexTemplateManager = () => {
           <LastActivity lastactivity={opexData.last_activity} />
         </>
       )}
+      {/* add start_date */}
+      <CModal
+        scrollable
+        alignment="center"
+        backdrop="static"
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle id="addStartDateModalTitle">
+            Cycle Start Date
+          </CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setModalVisible(false)}
+            style={{ background: "none" }}
+            aria-label="Close"
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          {/* <CFormLabel htmlFor="start_date">Add Start Date</CFormLabel> */}
+          <CFormInput
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </CModalBody>
+        <CModalFooter>
+          <CButton
+            color="success"
+            size="sm"
+            className="text-white"
+            onClick={() => handleCreateCycle(opexData._id)}
+            disabled={!startDate}
+          >
+            {createLoading ? (
+              <>
+                Saving <LoadingSpinner />
+              </>
+            ) : (
+              "Save"
+            )}
+          </CButton>
+        </CModalFooter>
+      </CModal>
+      ;
     </div>
   );
 };
