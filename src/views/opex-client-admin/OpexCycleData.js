@@ -284,9 +284,7 @@ const OpexCycleData = () => {
                           <CBadge color="warning">Labour Absent</CBadge>
                         )}
                         {day.is_other && (
-                          <CBadge color="warning">
-                            Other Reasonis_master_opex_site_technician
-                          </CBadge>
+                          <CBadge color="warning">Other Reason</CBadge>
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
