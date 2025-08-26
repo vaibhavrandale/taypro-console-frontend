@@ -487,7 +487,7 @@ const PieChart = () => {
         grid: {
           color: "rgba(255,255,255,0.1)", // light white with transparency
         },
-        max: 50,
+        max: 150,
       },
       x: {
         ticks: { display: false },

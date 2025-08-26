@@ -254,6 +254,16 @@ const SitesCoordinates = () => {
           >
             Add
           </Link>
+        )}{" "}
+        {!["Master User", "Project User", "Service User"].includes(
+          userInfo?.role
+        ) && (
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to={`/${adminroute}/sites-coordinates/add-sitescoordinates`}
+          >
+            Add
+          </Link>
         )}
         <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
           Export

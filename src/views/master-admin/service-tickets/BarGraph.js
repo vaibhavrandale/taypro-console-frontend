@@ -251,6 +251,7 @@ const BarGraph = () => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         mode: "index",
@@ -359,7 +360,7 @@ const BarGraph = () => {
                       {chartType === "bar" ? (
                         <CChartBar
                           className=""
-                          style={{ height: "400px" }}
+                          style={{ height: "400px", width: "100%" }}
                           data={{
                             labels: chartLabels,
                             datasets: datasets,
@@ -368,7 +369,7 @@ const BarGraph = () => {
                         />
                       ) : (
                         <CChartLine
-                          style={{ height: "400px" }}
+                          style={{ height: "400px", width: "100%" }}
                           data={{
                             labels: chartLabels,
                             datasets: datasets,
@@ -382,8 +383,8 @@ const BarGraph = () => {
               </CCol>
             </CRow>
           </CCardBody>
-        </CCard>
-      </CCol>
+        </CCard>{" "}
+      </CCol>{" "}
     </CRow>
   );
 };
