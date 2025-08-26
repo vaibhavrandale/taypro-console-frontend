@@ -230,6 +230,7 @@ const BatteryAndTemperature = () => {
               <CAlert color="warning">No battery logs found.</CAlert>
             ) : (
               <CChartLine
+                style={{ height: "400px", width: "100%", margin: "0 auto" }}
                 data={{
                   labels: batteryChartData.map((entry) => entry.time),
                   datasets: [
@@ -248,6 +249,7 @@ const BatteryAndTemperature = () => {
               <CAlert color="warning">No Temperature logs found.</CAlert>
             ) : (
               <CChartLine
+                style={{ height: "400px", width: "100%", margin: "0 auto" }}
                 data={{
                   labels: temperatureChartData.map((entry) => entry.time),
                   datasets: [

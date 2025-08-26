@@ -383,10 +383,8 @@ const BarGraph = () => {
               </CCol>
             </CRow>
           </CCardBody>
-        </CCard>
-        //{" "}
-      </CCol>
-      //{" "}
+        </CCard>{" "}
+      </CCol>{" "}
     </CRow>
   );
 };

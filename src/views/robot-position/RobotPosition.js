@@ -22,7 +22,7 @@ import {
   COffcanvasTitle,
   CRow,
 } from "@coreui/react";
-import RobotImg from "./image.png";
+import RobotImg from "../../assets/images/robot.png";
 
 const reducer = (state, action) => {
   switch (action.type) {

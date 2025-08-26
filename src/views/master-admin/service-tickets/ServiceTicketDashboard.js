@@ -20,7 +20,6 @@ import {
   CRow,
   CCol,
   CImage,
-  CTooltip,
   CCarouselItem,
   CCarousel,
 } from "@coreui/react";
@@ -32,7 +31,6 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LastActivity from "../../../components/LastActivity";
-import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 import BarGraph from "./BarGraph";
 import { cilX } from "@coreui/icons";

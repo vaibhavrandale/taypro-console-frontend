@@ -132,7 +132,6 @@ import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetai
 import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
-// import AddFirstCycle from "./views/master-admin/Opex/CraeteFirstOpexCycle";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -253,123 +252,6 @@ const ServiceTicketsFaultDashboard = React.lazy(() =>
 
 //----------------------------------master admin------------------------------------
 
-// //-----------------------master user----------------------------------
-
-// const ServiceUserDahboard = React.lazy(() =>
-//   import("./views/service-user/ServiceUserDashboard")
-// );
-// const LoraConfiguration = React.lazy(() =>
-//   import("./views/master-user/replace-lora/LoraConfiguration")
-// );
-
-// const ReplaceLora = React.lazy(() =>
-//   import("./views/master-user/replace-lora/ReplaceLora")
-// );
-
-// const ActiveRobots = React.lazy(() =>
-//   import("./views/master-user/replace-lora/ActiveRobots")
-// );
-// const InActiveRobots = React.lazy(() =>
-//   import("./views/master-user/replace-lora/InActiveRobots")
-// );
-
-// const AddRobotUsingLoraNo = React.lazy(() =>
-//   import("./views/master-user/add-robot/AddRobotUsingLoraNo")
-// );
-
-// const ClientsDasboard = React.lazy(() =>
-//   import("./views/master-user/clients-and-sites/Clients")
-// );
-
-// const ClientAssignedSites = React.lazy(() =>
-//   import("./views/master-user/clients-and-sites/ClientAssignedSites")
-// );
-
-// const EditClient = React.lazy(() =>
-//   import("./views/master-user/clients-and-sites/EditClient")
-// );
-
-// const ServiceTicketDashboard = React.lazy(() =>
-//   import("./views/master-user/service-tickets/ServiceTicketDashboard")
-// );
-
-// const UpdateServiceTicket = React.lazy(() =>
-//   import("./views/master-user/service-tickets/UpdateServiceTicket")
-// );
-
-// const CreateNewServiceTicket = React.lazy(() =>
-//   import("./views/master-user/service-tickets/CreateServiceTicket")
-// );
-
-// const InternalTicketsDashboard = React.lazy(() =>
-//   import("./views/master-user/internal-tickets/InternalTicketsDashboard")
-// );
-
-// const CreateNewInternalTicket = React.lazy(() =>
-//   import("./views/master-user/internal-tickets/CreateNewInternalTicket")
-// );
-
-// const UsersDashboard = React.lazy(() =>
-//   import("./views/master-user/users/UsersDashboard")
-// );
-
-// const Notifications = React.lazy(() =>
-//   import("./views/master-user/notifications/Notifications")
-// );
-
-// const AllSiteCleaningLog = React.lazy(() =>
-//   import("./views/master-user/all-site-cleaninglog/AllSiteCleaningLog")
-// );
-
-// const SitewaiseLog = React.lazy(() =>
-//   import("./views/master-user/all-site-cleaninglog/SitewaiseLog")
-// );
-
-// const Gateways = React.lazy(() =>
-//   import("./views/master-user/gateways/Gateways")
-// );
-
-// const UpdateGateway = React.lazy(() =>
-//   import("./views/master-user/gateways/UpdateGateway")
-// );
-
-// const CreateNewGateways = React.lazy(() =>
-//   import("./views/master-user/gateways/CreateNewGateways")
-// );
-
-// const AssignGateway = React.lazy(() =>
-//   import("./views/master-user/gateways/AssignGateway")
-// );
-
-// const AllSiteDpr = React.lazy(() =>
-//   import("./views/master-user/all-site-dpr/AllSiteDpr")
-// );
-
-// // activate mutiple robots
-// const ActivateRobots = React.lazy(() =>
-//   import("./views/master-user/robots/ActivateRobots")
-// );
-
-// const SiteCoordinates = React.lazy(() =>
-//   import("./views/master-user/sites-coordinates/SitesCoordinates")
-// );
-
-// const UpdateSiteCoordinates = React.lazy(() =>
-//   import("./views/master-user/sites-coordinates/UpdateSitesCoordinates")
-// );
-
-// const AddSiteCoordinates = React.lazy(() =>
-//   import("./views/master-user/sites-coordinates/AddSitesCoordinates")
-// );
-
-// const ServiceTicketsFaultDashboard = React.lazy(() =>
-//   import(
-//     "./views/master-user/serviceticket-fault/ServiceTicketsFaultDashboard"
-//   )
-// );
-
-//----------------------------------master user------------------------------------
-
 //----------------------------------client admin------------------------------------
 
 const ClientAdminDashboard = React.lazy(() =>
@@ -432,7 +314,6 @@ const AddInventory = React.lazy(() =>
 const AddDpr = React.lazy(() =>
   import("./views/master-admin/all-site-dpr/AddDpr")
 );
-// const Timers = React.lazy(() => import('./views/pages/timers/Timers'));
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
 
 const UpdateTimer = React.lazy(() =>
@@ -566,7 +447,7 @@ const routes = [
   },
   {
     path: "/master-admin/robots-position",
-    name: "Master Admin Robots Position",
+    name: "Robots Position",
     element: (
       <MasterAdminRoute>
         <RobotPosition />
@@ -1251,15 +1132,6 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-  // {
-  //   path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard",
-  //   name: "service-tickets-fault-dashboard",
-  //   element: (
-  //     <MasterAdminRoute>
-  //       <ServiceTicketsFaultDashboard />
-  //     </MasterAdminRoute>
-  //   ),
-  // },
   {
     path: "/master-admin/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault",
     name: "create serviceticketfault",
@@ -1608,15 +1480,6 @@ const routes = [
     ),
   },
   {
-    path: "/master-user/robots-position",
-    name: "Master User Robots Position",
-    element: (
-      <MasterUserRoute>
-        <RobotPosition />
-      </MasterUserRoute>
-    ),
-  },
-  {
     path: "/master-user/site-management/all-site-data",
     name: "Taypro All Site Data",
     element: (
@@ -1661,15 +1524,6 @@ const routes = [
       </MasterUserRoute>
     ),
   },
-  // {
-  //   path: "/master-user/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <MasterUserRoute>
-  //       <SearchRobot />
-  //     </MasterUserRoute>
-  //   ),
-  // },
   {
     path: "/master-user/robot-commands",
     name: "Robot Commands",
@@ -1841,15 +1695,6 @@ const routes = [
       </MasterUserRoute>
     ),
   },
-  // {
-  //   path: "/master-user/replace-lora/in-active-robots",
-  //   name: "In Active Robots",
-  //   element: (
-  //     <MasterUserRoute>
-  //       <InActiveRobots />
-  //     </MasterUserRoute>
-  //   ),
-  // },
   {
     path: "/master-user/inventories",
     name: "Inventories",
@@ -3254,6 +3099,16 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
+  {
+    path: "/project-admin/robots-position",
+    name: "Robots Position",
+    element: (
+      <ProjectAdminRoute>
+        <RobotPosition />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -3384,15 +3239,6 @@ const routes = [
       </ProjectUserRoute>
     ),
   },
-  // {
-  //   path: "/project-user/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ProjectUserRoute>
-  //       <SearchRobot />
-  //     </ProjectUserRoute>
-  //   ),
-  // },
   {
     path: "/project-user/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
@@ -4565,6 +4411,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/service-admin/robots-position",
+    name: "Robots Position",
+    element: (
+      <ServiceAdminRoute>
+        <RobotPosition />
+      </ServiceAdminRoute>
+    ),
+  },
+
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {
@@ -4687,17 +4543,6 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
-
-  // {
-  //   path: "/service-user/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ServiceUserRoute>
-  //       <SearchRobot />
-  //     </ServiceUserRoute>
-  //   ),
-  // },
-
   {
     path: "/service-user/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
@@ -5265,6 +5110,15 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  {
+    path: "/service-user/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <ServiceUserRoute>
+        <WeatherDataSitewise />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -5766,6 +5620,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/client-admin/robots-position",
+    name: "Robots Position",
+    element: (
+      <ClientAdminRoute>
+        <RobotPosition />
+      </ClientAdminRoute>
+    ),
+  },
+
   // ------------------------client admin---------------------------------
 
   // ---------------------client Site Incharge--------------------------------
@@ -5799,8 +5663,6 @@ const routes = [
   {
     path: "/site-incharge/site-management/all-site-data",
     name: "Your Sites Data",
-    // element: ClientDashboard,
-
     element: (
       <ClientSiteInchargeRoute>
         <ClientDashboard />
@@ -5810,7 +5672,6 @@ const routes = [
   {
     path: "/site-incharge/site-management",
     name: "Site Management",
-    // element: ClientSiteManagement,
     element: (
       <ClientSiteInchargeRoute>
         <ClientSiteManagement />
@@ -5835,16 +5696,6 @@ const routes = [
       </ClientSiteInchargeRoute>
     ),
   },
-  // {
-  //   path: "/site-incharge/search-robot",
-  //   name: "Search Robot",
-  //   element: (
-  //     <ClientSiteInchargeRoute>
-  //       <ClientSearchRobot />
-  //     </ClientSiteInchargeRoute>
-  //   ),
-  // },
-
   {
     path: "/site-incharge/timers",
     name: "Timers",
@@ -5894,7 +5745,6 @@ const routes = [
   },
   // ------------------------client Site Incharge---------------------------------
 
-  // ClientSiteTechnicianDashboard
   // ---------------------client Site Technician--------------------------------
 
   {
@@ -6141,7 +5991,6 @@ const routes = [
     ),
   },
   {
-    // path: "/opex-site-technician/upload-images/:moduleId/:cycleId/:dayId/:site_id",
     path: "/opex-site-technician/my-opex-data/:site_id/:moduleId/cycle/:cycleId/:dayId/upload-images",
     name: "Upload Day Wise Images",
     element: (
@@ -6152,8 +6001,6 @@ const routes = [
   },
 
   // ------------------------opex site technician ----------------------------------
-
-  //common pages
 
   //common pages
 

@@ -272,7 +272,7 @@ const ExpenseDashboard = () => {
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>Enter Remark {expense?.name}</CModalTitle>
-          <button
+          <CButton
             type="button"
             className="border-0 ms-auto py-0 px-1"
             onClick={() => {
@@ -281,7 +281,7 @@ const ExpenseDashboard = () => {
             style={{ background: "none" }}
           >
             <CIcon icon={cilX} size="lg" />
-          </button>
+          </CButton>
         </CModalHeader>
 
         <CModalBody>
@@ -330,7 +330,8 @@ const ExpenseDashboard = () => {
       </CRow>
 
       {/* Expense Claims Table */}
-      <CTable bordered hover responsive className="bg-important">
+      <CTable bordered hover responsive className="text-center bg-important">
+        {/* className="text-center shadow-sm" */}
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell> Sr</CTableHeaderCell>
@@ -454,15 +455,18 @@ const ExpenseDashboard = () => {
                   >
                     View
                   </Link>
-                  {(userInfo.role !== "Site Technician" ||
-                    expense.can_technician_edit) && (
-                    <Link
-                      className="btn btn-sm btn-warning m-1"
-                      to={`/${adminroute}/expenses/update/${expense._id}`}
-                    >
-                      Update
-                    </Link>
-                  )}
+                  {!["Master User", "Service User", "Project User"].includes(
+                    userInfo?.role
+                  ) &&
+                    (userInfo.role !== "Site Technician" ||
+                      expense.can_technician_edit) && (
+                      <Link
+                        className="btn btn-sm btn-warning m-1"
+                        to={`/${adminroute}/expenses/update/${expense._id}`}
+                      >
+                        Update
+                      </Link>
+                    )}
 
                   {(userInfo.role === "Master Admin" ||
                     userInfo.role === "Service Admin" ||
