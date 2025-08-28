@@ -132,6 +132,7 @@ import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetai
 import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
+import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1453,6 +1454,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexCertificate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/esp-firmware",
+    name: "ESP Firmware ",
+    element: (
+      <MasterAdminRoute>
+        <EspFirmwareDataUpload />
       </MasterAdminRoute>
     ),
   },
