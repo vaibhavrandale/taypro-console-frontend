@@ -3119,6 +3119,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectAdminRoute>
+        <ViewTechnicianDetails />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -3707,6 +3716,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <UpdateExpense />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectUserRoute>
+        <ViewTechnicianDetails />
       </ProjectUserRoute>
     ),
   },
@@ -5073,7 +5091,6 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
-
   {
     path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
