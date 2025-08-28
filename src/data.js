@@ -554,10 +554,48 @@ export const projects_role_permissions = [
   },
 ];
 
+export const projects_user_role_permissions = [
+  {
+    role: "Project User",
+  },
+
+  {
+    role: "Site Technician",
+  },
+  {
+    role: "Client Admin",
+  },
+  {
+    role: "Site Incharge",
+  },
+  {
+    role: "Client Site Technician",
+  },
+];
+
 export const service_role_permissions = [
   {
     role: "Service Admin",
   },
+  {
+    role: "Service User",
+  },
+
+  {
+    role: "Site Technician",
+  },
+  {
+    role: "Client Admin",
+  },
+  {
+    role: "Site Incharge",
+  },
+  {
+    role: "Client Site Technician",
+  },
+];
+
+export const service_user_role_permissions = [
   {
     role: "Service User",
   },

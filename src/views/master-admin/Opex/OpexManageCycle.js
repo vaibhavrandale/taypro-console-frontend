@@ -253,11 +253,9 @@ const OpexManageCycle = () => {
 
                       <CTableDataCell>
                         {!day.is_verified &&
-                          ![
-                            "Master User",
-                            "Project User",
-                            "Service User",
-                          ].includes(userInfo?.role) && (
+                          !["Master User", "Project User"].includes(
+                            userInfo?.role
+                          ) && (
                             <Link
                               to={`verify-day/${day._id}`}
                               className="btn btn-sm btn-primary  m-1"

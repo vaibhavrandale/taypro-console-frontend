@@ -704,6 +704,7 @@ const ClientUsersManagement = () => {
           >
             <option value="">Select Role</option>
 
+            <option value="Client Admin">Admin</option>
             <option value="Site Incharge">Site Incharge</option>
             <option value="Client Site Technician">
               Client Site Technician
@@ -849,7 +850,7 @@ const ClientUsersManagement = () => {
             name="role"
             onChange={handleChange}
             value={formData.role}
-            disabled
+            disabled={!userInfo.role === "Client Admin"}
           >
             <option value="">Select Role</option>
             <option value="Client Admin">Client Admin</option>
@@ -861,7 +862,7 @@ const ClientUsersManagement = () => {
             name="department"
             onChange={handleChange} // ✅ Calls the function correctly
             value={formData.department}
-            disabled
+            disabled={!userInfo.role === "Client Admin"}
           >
             <option value="">Select Department</option>
 

@@ -5028,6 +5028,107 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  {
+    path: "/service-user/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <ServiceUserRoute>
+        <OpexDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <ServiceUserRoute>
+        <OpexTemplateManager />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <ServiceUserRoute>
+        <OpexManageCycle />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <ServiceUserRoute>
+        <VerifyCycleDay />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/create-template/:site_id",
+    name: "CreateOpex ",
+    element: (
+      <ServiceUserRoute>
+        <OpexTemplateCreate />
+      </ServiceUserRoute>
+    ),
+  },
+
+  {
+    path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ServiceUserRoute>
+        <ViewTechnicianDetails />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
+    name: "Add Day In Cycle ",
+    element: (
+      <ServiceUserRoute>
+        <AddDayInCycle />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/opexdata/:site_id/opex-certificate/:id",
+    name: "Opex Certificate ",
+    element: (
+      <ServiceUserRoute>
+        <OpexCertificate />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/user-performance-dashboard",
+    name: "User Performance",
+
+    element: (
+      <ServiceUserRoute>
+        <UserPerformanceDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/user-performance-dashboard/user-performance/:id",
+    name: "User Performance",
+    element: (
+      <ServiceUserRoute>
+        <ViewPerformance />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/weather-data-sitewise",
+    name: "Weather Data (Sitewise)",
+    element: (
+      <ServiceUserRoute>
+        <WeatherDataSitewise />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
