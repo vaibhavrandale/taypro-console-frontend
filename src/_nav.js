@@ -262,6 +262,11 @@ const _nav = [
             name: "Thermal Image Data",
             to: "/master-admin/thermal-image-data",
           },
+          {
+            component: CNavItem,
+            name: "ESP Firmware Data",
+            to: "/master-admin/esp-firmware",
+          },
         ],
       },
       {

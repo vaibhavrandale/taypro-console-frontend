@@ -132,6 +132,7 @@ import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetai
 import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
+import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -419,7 +420,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    name: "User Lnks",
+    name: "User Links",
     element: <UserBasedLinkDashboard />,
   },
 
@@ -1453,6 +1454,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexCertificate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/esp-firmware",
+    name: "ESP Firmware ",
+    element: (
+      <MasterAdminRoute>
+        <EspFirmwareDataUpload />
       </MasterAdminRoute>
     ),
   },
@@ -3109,6 +3119,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectAdminRoute>
+        <ViewTechnicianDetails />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -3697,6 +3716,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <UpdateExpense />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectUserRoute>
+        <ViewTechnicianDetails />
       </ProjectUserRoute>
     ),
   },
@@ -5063,7 +5091,6 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
-
   {
     path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",

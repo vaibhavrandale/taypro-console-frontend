@@ -157,6 +157,7 @@ const UploadImages = () => {
     fetchAttachments();
   }, [moduleId, cycleId, dayId, authtoken]);
   console.log(image);
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;

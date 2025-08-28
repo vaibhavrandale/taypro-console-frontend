@@ -267,7 +267,6 @@ const OpexCertificate = () => {
       dispatch({ type: "ADD_CLIENT_SIGN_REQUEST" });
 
       let newdata;
-      console.log(`hihi: ${verificationType}`);
       if (verificationType === "digital") {
         newdata = {
           sign_url: clientImage,
