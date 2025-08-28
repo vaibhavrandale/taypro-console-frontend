@@ -420,7 +420,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    name: "User Lnks",
+    name: "User Links",
     element: <UserBasedLinkDashboard />,
   },
 
