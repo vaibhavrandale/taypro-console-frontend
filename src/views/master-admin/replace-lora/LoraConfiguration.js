@@ -120,7 +120,7 @@ const LoraConfiguration = () => {
     hasPrevPage: false,
   });
   const authtoken = useSelector((state) => state.authtoken);
-
+  const userInfo = useSelector((state) => state.userInfo);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
@@ -320,25 +320,7 @@ const LoraConfiguration = () => {
       handlePageChange(pageNumber);
     }
   };
-  const userInfo = useSelector((state) => state.userInfo);
 
-  let adminroute = "";
-
-  if (userInfo?.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo?.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo?.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Client Admin") {
-    adminroute = "client-admin";
-  } else if (userInfo?.role === "Site Incharge") {
-    adminroute = "site-incharge";
-  } else if (userInfo?.role === "Site Technician") {
-    adminroute = "site-technician";
-  } else if (userInfo?.role === "Client Site Technician") {
-    adminroute = "client-site-technician";
-  }
   return (
     <div className="">
       <div className="d-flex justify-content-between align-items-center">
@@ -425,6 +407,7 @@ const LoraConfiguration = () => {
             <CTableHeaderCell className="sticky-column">
               Lora Sr
             </CTableHeaderCell>
+            <CTableHeaderCell>Status</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
             <CTableHeaderCell>Deveui</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "190px" }}>
@@ -465,6 +448,20 @@ const LoraConfiguration = () => {
               <CTableRow key={index}>
                 <CTableDataCell className="sticky-column">
                   {item.serial}
+                </CTableDataCell>
+                <CTableDataCell className="sticky-column">
+                  <CBadge
+                    color={
+                      item.status === "available"
+                        ? "warning"
+                        : item.status === "in-use"
+                        ? "success"
+                        : "danger"
+                    }
+                  >
+                    {" "}
+                    {item.status}
+                  </CBadge>
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
                   {item.robot_no}
@@ -722,6 +719,27 @@ const LoraConfiguration = () => {
                   />
                 </CCol>
               </CRow>
+
+              {userInfo.role === "Master Admin" && (
+                <CRow className="mt-3">
+                  {" "}
+                  <CCol md={6}>
+                    <CFormLabel>Status</CFormLabel>
+                    <CFormSelect
+                      size="md"
+                      className="mb-3"
+                      aria-label="Large select example"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                    >
+                      <option value="in-use">in use</option>
+                      <option value="available">available</option>
+                      <option value="faulty">faulty</option>
+                    </CFormSelect>
+                  </CCol>
+                </CRow>
+              )}
             </div>
           )}
         </CModalBody>
