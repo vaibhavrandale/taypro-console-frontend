@@ -3147,6 +3147,43 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/external-users",
+    name: "All External Users",
+    element: (
+      <ProjectAdminRoute>
+        <ExternalUsersDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/users",
+    name: "All Internal Users",
+    element: (
+      <ProjectAdminRoute>
+        <UsersDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/user-performance-dashboard",
+    name: "User Performance",
+
+    element: (
+      <ProjectAdminRoute>
+        <UserPerformanceDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/user-performance-dashboard/user-performance/:id",
+    name: "User Performance",
+    element: (
+      <ProjectAdminRoute>
+        <ViewPerformance />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------

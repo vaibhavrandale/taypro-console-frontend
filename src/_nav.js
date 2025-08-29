@@ -1118,6 +1118,16 @@ const _nav = [
             name: "Technician Attendance",
             to: "/project-admin/technician-attendance",
           },
+          {
+            component: CNavItem,
+            name: "Users",
+            to: "/project-admin/users",
+          },
+          {
+            component: CNavItem,
+            name: "User Performance",
+            to: "/project-admin/user-performance-dashboard",
+          },
         ],
       },
 
