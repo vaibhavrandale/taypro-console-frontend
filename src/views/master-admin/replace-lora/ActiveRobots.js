@@ -76,11 +76,12 @@ const ActiveRobots = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
+
   const [formData, setFormData] = useState({
+    _id: "",
     robot_no: "",
     deveui: "",
-    lora_no: "",
-    old_lora_no: "",
+    current_lora_no: "",
     new_lora_no: "",
   });
   const navigate = useNavigate();
@@ -144,14 +145,14 @@ const ActiveRobots = () => {
   const openModal = (robot) => {
     setSelectedRobot(robot);
     setFormData({
-      robot_no: robot.robot_no || "",
-      deveui: robot.deveui || "",
-      lora_no: robot.lora_no || "",
-      old_lora_no: robot.old_lora_no || "",
-      new_lora_no: "",
+      _id: robot._id,
+      current_lora_no: robot.lora_no,
+      robot_no: robot.robot_no,
+      deveui: robot.deveui,
     });
     setModalVisible(true);
   };
+  //lora_no, old_lora_no
 
   // Handle input change
   const handleChange = (e) => {
@@ -162,10 +163,10 @@ const ActiveRobots = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     dispatch({ type: "UPDATE_REQUEST" });
+    console.log("formData updated:", formData);
     try {
       const {
         createdAt,
-        _id,
         last_activity,
         last_uplink,
         manufactured_date,
@@ -351,34 +352,43 @@ const ActiveRobots = () => {
         handleLimitChange={setLimit} // New prop
       />
       {/* Update Modal */}
-      <CModal
-        backdrop="static"
-        size="xl"
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      >
-        <CModalHeader closeButton={false}>
-          <CModalTitle>
-            Deactivate Robot -{" "}
-            <span className="badge bg-success">{formData.robot_no}</span>
-          </CModalTitle>
-          <button
-            type="button"
-            className=" border-0 ms-auto py-0 px-1"
-            onClick={() => setModalVisible(false)}
-            style={{ background: "none" }}
-          >
-            <CIcon icon={cilX} size="lg" />
-          </button>
-        </CModalHeader>
-        <form onSubmit={handleUpdate}>
-          <CModalBody>
-            {selectedRobot && (
+      {selectedRobot && (
+        <CModal
+          backdrop="static"
+          size="lg"
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        >
+          <CModalHeader closeButton={false}>
+            <CModalTitle>
+              Deactivate Robot -{" "}
+              <span className="badge bg-success">{selectedRobot.robot_no}</span>
+            </CModalTitle>
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setModalVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+          <form onSubmit={handleUpdate}>
+            <CModalBody>
               <div>
                 <CFormInput
                   type="text"
+                  name="_id"
+                  value={selectedRobot._id}
+                  label="Robot id"
+                  onChange={handleChange}
+                  className="mb-3"
+                  readOnly
+                />
+                <CFormInput
+                  type="text"
                   name="robot_no"
-                  value={formData.robot_no}
+                  value={selectedRobot.robot_no}
                   label="Robot No"
                   onChange={handleChange}
                   className="mb-3"
@@ -387,7 +397,7 @@ const ActiveRobots = () => {
                 <CFormInput
                   type="text"
                   name="deveui"
-                  value={formData.deveui}
+                  value={selectedRobot.deveui}
                   label="Deveui"
                   readOnly
                   onChange={handleChange}
@@ -395,54 +405,45 @@ const ActiveRobots = () => {
                 />
                 <CFormInput
                   type="text"
-                  name="lora_no"
+                  name="current_lora_no"
                   readOnly
-                  value={formData.lora_no}
+                  value={selectedRobot.lora_no}
                   label="Current Lora No"
                   onChange={handleChange}
                   className="mb-3"
                 />
                 <CFormInput
                   type="text"
-                  name="old_lora_no"
-                  readOnly
-                  value={formData.old_lora_no}
-                  label="Old Lora No"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-                <CFormInput
-                  type="text"
-                  name="newLoraNo"
-                  value={formData.newLoraNo}
+                  name="new_lora_no"
+                  value={formData.new_lora_no}
                   label="New Lora No"
                   onChange={handleChange}
                   className="mb-3"
                 />
               </div>
-            )}
-          </CModalBody>
-          <CModalFooter>
-            <CButton
-              color="secondary"
-              size="sm"
-              onClick={() => setModalVisible(false)}
-            >
-              Cancel
-            </CButton>
-            <CButton color="primary" size="sm" type="submit">
-              {updateloading ? (
-                <>
-                  Deactivating...
-                  <LoadingSpinner />
-                </>
-              ) : (
-                "Deactivate"
-              )}
-            </CButton>
-          </CModalFooter>
-        </form>
-      </CModal>
+            </CModalBody>
+            <CModalFooter>
+              <CButton
+                color="secondary"
+                size="sm"
+                onClick={() => setModalVisible(false)}
+              >
+                Cancel
+              </CButton>
+              <CButton color="primary" size="sm" type="submit">
+                {updateloading ? (
+                  <>
+                    Deactivating...
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "Deactivate"
+                )}
+              </CButton>
+            </CModalFooter>
+          </form>
+        </CModal>
+      )}
     </div>
   );
 };

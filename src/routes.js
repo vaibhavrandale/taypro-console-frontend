@@ -132,6 +132,7 @@ import ViewTechnicianDetails from "./views/opex-client-admin/ViewTechnicianDetai
 import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
+import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -419,7 +420,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    name: "User Lnks",
+    name: "User Links",
     element: <UserBasedLinkDashboard />,
   },
 
@@ -1453,6 +1454,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <OpexCertificate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/esp-firmware",
+    name: "ESP Firmware ",
+    element: (
+      <MasterAdminRoute>
+        <EspFirmwareDataUpload />
       </MasterAdminRoute>
     ),
   },
@@ -3128,6 +3138,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectAdminRoute>
+        <ViewTechnicianDetails />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -3720,70 +3739,6 @@ const routes = [
     ),
   },
   {
-    path: "/project-user/micro-fiber-data",
-    name: "Micro Fiber Data",
-    element: (
-      <ProjectUserRoute>
-        <MicrofiberdataAdminWise />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/robots-position",
-    name: "Robots Position",
-    element: (
-      <ProjectUserRoute>
-        <RobotPosition />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/opexdata",
-    name: "Opex Data Dashboard",
-    element: (
-      <ProjectUserRoute>
-        <OpexDashboard />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/opexdata/:site_id",
-    name: "Opex Template",
-    element: (
-      <ProjectUserRoute>
-        <OpexTemplateManager />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId",
-    name: "Opex Cycle",
-    element: (
-      <ProjectUserRoute>
-        <OpexManageCycle />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
-    name: "Opex Cycle",
-    element: (
-      <ProjectUserRoute>
-        <VerifyCycleDay />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/create-template/:site_id",
-    name: "CreateOpex ",
-    element: (
-      <ProjectUserRoute>
-        <OpexTemplateCreate />
-      </ProjectUserRoute>
-    ),
-  },
-
-  {
     path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
@@ -3792,25 +3747,6 @@ const routes = [
       </ProjectUserRoute>
     ),
   },
-  {
-    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
-    name: "Add Day In Cycle ",
-    element: (
-      <ProjectUserRoute>
-        <AddDayInCycle />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/opexdata/:site_id/opex-certificate/:id",
-    name: "Opex Certificate ",
-    element: (
-      <ProjectUserRoute>
-        <OpexCertificate />
-      </ProjectUserRoute>
-    ),
-  },
-
   //------------------------project user---------------------------------
 
   //------------------------service admin---------------------------------
@@ -5174,7 +5110,6 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
-
   {
     path: "/service-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
