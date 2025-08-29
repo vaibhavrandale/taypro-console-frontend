@@ -1134,16 +1134,22 @@ const _nav = [
         ),
       },
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/project-admin/expenses",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/project-admin/expenses",
+          },
+        ],
       },
     ],
   },
@@ -1283,6 +1289,11 @@ const _nav = [
             name: "Project Handover",
             to: "/project-user/project-handover",
           },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/project-user/micro-fiber-data",
+          },
         ],
       },
 
@@ -1312,6 +1323,11 @@ const _nav = [
             component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/project-user/weather-timer-notifications",
+          },
+          {
+            component: CNavItem,
+            name: "Weather Data ",
+            to: "/project-user/weather-data-sitewise",
           },
         ],
       },
@@ -1353,16 +1369,59 @@ const _nav = [
         ),
       },
       {
-        component: CNavItem,
+        component: CNavGroup,
         name: "Expense Management",
-        to: "/project-user/expenses",
         icon: (
           <CIcon
-            icon={cilDollar}
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/project-user/expenses",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Robots Tracking",
+        icon: (
+          <CIcon
+            icon={cilWrapText}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Robots Position Tracking",
+            to: "/project-user/robots-position",
+          },
+        ],
+      },
+      //Opex Data
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/project-user/opexdata",
+          },
+        ],
       },
     ],
   },

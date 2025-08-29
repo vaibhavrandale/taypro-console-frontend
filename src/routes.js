@@ -3100,6 +3100,25 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
+    name: "Opex Cycle-Day Technician Details",
+    element: (
+      <ProjectAdminRoute>
+        <ViewTechnicianDetails />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/opexdata/:site_id/:moduleId/cycle/:cycleId/add-day",
+    name: "Add Day In Cycle ",
+    element: (
+      <ProjectAdminRoute>
+        <AddDayInCycle />
+      </ProjectAdminRoute>
+    ),
+  },
   {
     path: "/project-admin/opexdata/:site_id/opex-certificate/:id",
     name: "Opex Certificate ",
