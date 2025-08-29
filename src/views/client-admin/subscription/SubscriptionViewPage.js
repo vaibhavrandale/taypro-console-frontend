@@ -5,8 +5,6 @@ import {
   CCardBody,
   CCardTitle,
   CCardText,
-  CListGroup,
-  CListGroupItem,
   CRow,
   CCol,
   CTable,
@@ -25,7 +23,7 @@ import moment from "moment";
 import LastActivity from "../../../components/LastActivity";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
-import { cilCloudDownload } from "@coreui/icons";
+import { cilCloudDownload, cilWarning } from "@coreui/icons";
 import html2pdf from "html2pdf.js";
 import headerImage from "../../../assets/brand/letterheader.png";
 import footerImage from "../../../assets/brand/letterfooter.png";
@@ -38,10 +36,15 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        subscription: action.payload.data[0],
+        subscription: action.payload.data,
       };
     case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        subscription: null,
+      };
     default:
       return state;
   }
@@ -49,14 +52,14 @@ const reducer = (state, action) => {
 
 const SubscriptionViewPage = () => {
   const [{ loading, error, subscription }, dispatch] = useReducer(reducer, {
-    subscriptions: [],
+    subscription: null,
     loading: true,
     error: "",
   });
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const [downloadingInvoiceIds, setDownloadingInvoiceIds] = useState([]);
-
+  const userInfo = useSelector((state) => state.userInfo);
   useEffect(() => {
     const fetchSubscriptions = async () => {
       dispatch({ type: "FETCH_REQUEST" });
@@ -68,11 +71,13 @@ const SubscriptionViewPage = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        const subscriptions = response?.data?.data;
+        console.log(response);
+
+        const result = response.data.data;
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: subscriptions,
+            data: result,
           },
         });
       } catch (error) {
@@ -87,6 +92,55 @@ const SubscriptionViewPage = () => {
     };
     fetchSubscriptions();
   }, [id, authtoken]);
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
+
+  // if (!subscription) {
+  //   return (
+  //     <>
+  //       <CCard className="shadow-lg  border-2 p-5">
+  //         <CCardBody>
+  //           <div className="d-flex align-items-center justify-content-center flex-column">
+  //             <div className="d-flex mb-3 align-items-center">
+  //               <CIcon icon={cilWarning} className="me-2 text-warning" />
+  //               <h5 className="mb-0">
+  //                 You haven't Activated any subscriptions, Please Subscribe !
+  //               </h5>
+  //             </div>
+  //             <Link
+  //               to={`/${adminroute}/pricing`}
+  //               className="btn btn-success btn-sm"
+  //             >
+  //               View Pricing
+  //             </Link>
+  //           </div>
+  //         </CCardBody>
+  //       </CCard>
+  //     </>
+  //   );
+  // }
 
   const getBase64ImageFromURL = async (url) => {
     const res = await fetch(url);
@@ -222,6 +276,25 @@ const SubscriptionViewPage = () => {
     <div className="p-4">
       {loading ? (
         <LoadingSpinner />
+      ) : !subscription ? (
+        <CCard className="shadow-lg  border-2 p-5">
+          <CCardBody>
+            <div className="d-flex align-items-center justify-content-center flex-column">
+              <div className="d-flex mb-3 align-items-center">
+                <CIcon icon={cilWarning} className="me-2 text-warning" />
+                <h5 className="mb-0">
+                  You haven't Activated any subscriptions, Please Subscribe !
+                </h5>
+              </div>
+              <Link
+                to={`/${adminroute}/pricing`}
+                className="btn btn-success btn-sm"
+              >
+                View Pricing
+              </Link>
+            </div>
+          </CCardBody>
+        </CCard>
       ) : error ? (
         <span className="text-center fw-bold">{error}</span>
       ) : (
@@ -234,17 +307,17 @@ const SubscriptionViewPage = () => {
             <CCardBody>
               <CListGroup flush>
                 <CListGroupItem>
-                  <strong>Client ID:</strong> {subscription.client_id}
+                  <strong>Client ID:</strong> {subscription?.client_id}
                 </CListGroupItem>
                 <CListGroupItem>
                   <strong>Client Name:</strong>{" "}
-                  {subscription.client_name || "N/A"}
+                  {subscription?.client_name || "N/A"}
                 </CListGroupItem>
                 <CListGroupItem>
-                  <strong>Plan:</strong> {subscription.plan_id}
+                  <strong>Plan:</strong> {subscription?.plan_id}
                 </CListGroupItem>
                 <CListGroupItem>
-                  <strong>Status:</strong> {subscription.subscription_status}
+                  <strong>Status:</strong> {subscription?.subscription_status}
                 </CListGroupItem>
                 <CListGroupItem>
                   <strong>Start Date:</strong>{" "}
@@ -259,7 +332,7 @@ const SubscriptionViewPage = () => {
                   )}
                 </CListGroupItem>
                 <CListGroupItem>
-                  <strong>Frequency:</strong> {subscription.frequency}
+                  <strong>Frequency:</strong> {subscription?.frequency}
                 </CListGroupItem>
               </CListGroup>
             </CCardBody>
@@ -272,12 +345,12 @@ const SubscriptionViewPage = () => {
               <CRow className="gy-3">
                 <CCol md={6}>
                   <small className="text-muted">Client ID</small>
-                  <div className="fw-bold">{subscription.client_id}</div>
+                  <div className="fw-bold">{subscription?.client_id}</div>
                 </CCol>
                 <CCol md={6}>
                   <small className="text-muted">Client Name</small>
                   <div className="fw-bold">
-                    {subscription.client_name || "N/A"}
+                    {subscription?.client_name || "N/A"}
                   </div>
                 </CCol>
 
@@ -285,7 +358,7 @@ const SubscriptionViewPage = () => {
                   <small className="text-muted">Plan</small>
                   <div>
                     <CBadge color="success" className="px-3 py-1">
-                      {subscription.plan_id.toUpperCase()}
+                      {subscription?.plan_id.toUpperCase()}
                     </CBadge>
                   </div>
                 </CCol>
@@ -302,7 +375,7 @@ const SubscriptionViewPage = () => {
                       }
                       className="px-3 py-1"
                     >
-                      {subscription.subscription_status.toUpperCase()}
+                      {subscription?.subscription_status.toUpperCase()}
                     </CBadge>
                   </div>
                 </CCol>
@@ -326,7 +399,7 @@ const SubscriptionViewPage = () => {
 
                 <CCol md={6}>
                   <small className="text-muted">Frequency</small>
-                  <div className="fw-bold">{subscription.frequency}</div>
+                  <div className="fw-bold">{subscription?.frequency}</div>
                 </CCol>
               </CRow>
             </CCardBody>
@@ -480,8 +553,8 @@ const SubscriptionViewPage = () => {
               )}
             </CCardBody>
           </CCard>
-          {subscription.last_activity && (
-            <LastActivity lastactivity={subscription.last_activity} />
+          {subscription?.last_activity && (
+            <LastActivity lastactivity={subscription?.last_activity} />
           )}
         </>
       )}
