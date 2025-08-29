@@ -24,6 +24,7 @@ import {
   CFormInput,
   CTooltip,
   CBadge,
+  CFormCheck,
 } from "@coreui/react";
 import { FaArrowUp } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6"; // Correct import
@@ -202,12 +203,16 @@ const RobotOperating = () => {
 
   let setTrackerEnable = "KTE";
   let setTrackerDisable = "KTD";
+
+  let newCleaningStart = "01";
+
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
   const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [sent_custom_to_all, setSentCustomToAll] = useState(false);
 
   useEffect(() => {
     const getRobots = async () => {
@@ -368,15 +373,27 @@ const RobotOperating = () => {
     setLoadingRow(null);
     setCommandButton(null);
   };
-  const sendCustomDownlink = async (command) => {
-    //deveui,command,robot_no,site_id,lora_no
-    let robotdownlink = {
-      deveui: robot.deveui,
-      robot_no: robot.robot_no,
-      site_id: site_id,
-      command: command,
-      lora_no: robot.lora_no,
-    };
+  const sendCustomDownlink = async (command, sent_custom_to_all) => {
+    let robotdownlink = {};
+
+    if (sent_custom_to_all) {
+      let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+      robotdownlink = {
+        deveui: alldeveuis,
+        block: block,
+        site_id: site_id,
+        command: command,
+      };
+    } else {
+      //deveui,command,robot_no,site_id,lora_no
+      robotdownlink = {
+        deveui: [robot.deveui],
+        robot_no: robot.robot_no,
+        site_id: site_id,
+        command: command,
+        lora_no: robot.lora_no,
+      };
+    }
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post(
@@ -397,6 +414,8 @@ const RobotOperating = () => {
 
       toast.error(error.response.data.message || error.response?.data?.error);
     }
+    setCustomDownlink("");
+    setSentCustomToAll(false);
     setLoadingRow(null);
     setCommandButton(null);
   };
@@ -478,14 +497,14 @@ const RobotOperating = () => {
     setText("");
     return base64;
   };
+  error && <CBadge color="danger">{error}</CBadge>;
+
   return (
     <>
       {loadingRobots ? (
         <div className="loading-container">
           <LoadingSpinner />
         </div>
-      ) : error ? (
-        <h1>{error}</h1>
       ) : (
         <div className="">
           {/* Page Header */}
@@ -507,25 +526,66 @@ const RobotOperating = () => {
                   className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
                   onClick={() => sendMulticastDownlink(start, 1)}
                 >
-                  START ALL
+                  {commandButton === 1 ? (
+                    <>
+                      START ALL&nbsp;
+                      <LoadingSpinner />
+                    </>
+                  ) : (
+                    "START ALL"
+                  )}
+                </CButton>
+                <CButton
+                  className="btn btn-sm btn-danger me-2 mb-2 shadow-sm"
+                  onClick={() => sendMulticastDownlink(newCleaningStart, 44)}
+                >
+                  {commandButton === 44 ? (
+                    <>
+                      TEST START ALL&nbsp;
+                      <LoadingSpinner />
+                    </>
+                  ) : (
+                    "TEST START ALL"
+                  )}
                 </CButton>
                 <CButton
                   className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
                   onClick={() => sendMulticastDownlink(stop, 2)}
                 >
-                  STOP ALL
+                  {commandButton === 2 ? (
+                    <>
+                      STOP ALL&nbsp;
+                      <LoadingSpinner />
+                    </>
+                  ) : (
+                    "STOP ALL"
+                  )}
                 </CButton>
                 <CButton
                   className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
                   onClick={() => sendMulticastDownlink(returntodock, 3)}
                 >
-                  RETURN TO DOCK ALL
+                  {commandButton === 3 ? (
+                    <>
+                      RETURN TO DOCK ALL&nbsp;
+                      <LoadingSpinner />
+                    </>
+                  ) : (
+                    "RETURN TO DOCK ALL"
+                  )}
                 </CButton>
                 <CButton
                   className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
                   onClick={() => sendMulticastDownlink(removecurrentLimit, 42)}
                 >
-                  REMOVE CURRENT LIMIT ALL
+                  {commandButton === 42 ? (
+                    <>
+                      REMOVE CURRENT LIMIT ALL&nbsp;
+                      <LoadingSpinner />
+                    </>
+                  ) : (
+                    "REMOVE CURRENT LIMIT ALL"
+                  )}
                 </CButton>
                 <Link
                   to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
@@ -810,6 +870,7 @@ const RobotOperating = () => {
                       <CCardBody>
                         <div className="d-flex justify-content-between align-items-center">
                           <h6 className="fw-bold">Custom Downlink</h6>
+
                           <FaCircleInfo
                             className="text-primary"
                             style={{ cursor: "pointer" }}
@@ -817,6 +878,22 @@ const RobotOperating = () => {
                           />
                         </div>
                         <form className="position-relative mt-4">
+                          <CFormCheck
+                            type="checkbox"
+                            className="my-1"
+                            label="Send to all"
+                            id="sent_custom_to_all"
+                            checked={sent_custom_to_all}
+                            onChange={(e) => {
+                              setSentCustomToAll(e.target.checked);
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              transform: "scale(1.1)",
+                              marginBottom: "0",
+                            }}
+                          />
+
                           <input
                             type="text"
                             className="form-control"
@@ -826,9 +903,14 @@ const RobotOperating = () => {
                           />
                           <CButton
                             disabled={!customDownlink}
-                            onClick={() => sendCustomDownlink(customDownlink)}
+                            onClick={() =>
+                              sendCustomDownlink(
+                                customDownlink,
+                                sent_custom_to_all
+                              )
+                            }
                             type="button"
-                            className="d-flex justify-content-center align-items-center btn-sm send-button"
+                            className="d-flex justify-content-center align-items-center btn-sm send-button "
                           >
                             <span className="d-flex justify-content-center align-items-center">
                               {" "}
@@ -1044,6 +1126,19 @@ const RobotOperating = () => {
                           </>
                         ) : (
                           "START"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-warning m-1 shadow"
+                        onClick={() => sendsingleDownlink(newCleaningStart, 43)}
+                      >
+                        {commandButton === 43 ? (
+                          <>
+                            TEST START&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "TEST START"
                         )}
                       </CButton>
                       <CButton

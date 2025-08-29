@@ -5657,6 +5657,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/client-admin/pricing",
+    name: "Pricing",
+    element: (
+      <ClientAdminRoute>
+        <Pricing />
+      </ClientAdminRoute>
+    ),
+  },
+
   // ------------------------client admin---------------------------------
 
   // ---------------------client Site Incharge--------------------------------
