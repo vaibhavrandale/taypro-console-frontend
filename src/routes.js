@@ -3739,6 +3739,70 @@ const routes = [
     ),
   },
   {
+    path: "/project-user/micro-fiber-data",
+    name: "Micro Fiber Data",
+    element: (
+      <ProjectUserRoute>
+        <MicrofiberdataAdminWise />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/robots-position",
+    name: "Robots Position",
+    element: (
+      <ProjectUserRoute>
+        <RobotPosition />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata",
+    name: "Opex Data Dashboard",
+    element: (
+      <ProjectUserRoute>
+        <OpexDashboard />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata/:site_id",
+    name: "Opex Template",
+    element: (
+      <ProjectUserRoute>
+        <OpexTemplateManager />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId",
+    name: "Opex Cycle",
+    element: (
+      <ProjectUserRoute>
+        <OpexManageCycle />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/verify-day/:dayId",
+    name: "Opex Cycle",
+    element: (
+      <ProjectUserRoute>
+        <VerifyCycleDay />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/create-template/:site_id",
+    name: "CreateOpex ",
+    element: (
+      <ProjectUserRoute>
+        <OpexTemplateCreate />
+      </ProjectUserRoute>
+    ),
+  },
+
+  {
     path: "/project-user/opexdata/:site_id/:moduleId/cycle/:cycleId/day/:dayId/technician-details",
     name: "Opex Cycle-Day Technician Details",
     element: (
