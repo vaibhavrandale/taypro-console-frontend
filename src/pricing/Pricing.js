@@ -168,11 +168,11 @@ const Pricing = () => {
                 <h5 className="mb-0 text-center">{plan.name}</h5>
               </CCardHeader>
               <CCardBody>
-                <h5 className="text-center">
+                {/* <h5 className="text-center">
                   ₹{isYearly ? plan.price * 12 : plan.price}/
                   <small>{isYearly ? "year" : "month"}</small>
-                </h5>
-                <p className="text-center text-muted">{plan.description}</p>
+                </h5> */}
+                <p className="text-center fst-italic  ">{plan.description}</p>
                 <CRow>
                   {plan.features.map((feature, idx) => (
                     <CCol xs={6} key={idx} className="mb-2">

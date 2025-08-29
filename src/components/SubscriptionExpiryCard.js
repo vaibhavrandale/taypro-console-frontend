@@ -52,17 +52,12 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
                   Please Subscribe to Unlock this Feature!
                 </h5>
               </div>
-              <CBadge
-                className="d-flex align-items-center p-2"
-                color="success"
-                variant="outline"
-                onClick={() => {
-                  // alert("Renew Subscription Clicked");
-                }}
+              <Link
+                to={`/${adminroute}/pricing`}
+                className="btn btn-success btn-sm"
               >
-                <CIcon icon={cilReload} className="me-2" />
-                Subscribe Now
-              </CBadge>
+                View Pricing
+              </Link>
             </div>
           </CCardBody>
         </CCard>
