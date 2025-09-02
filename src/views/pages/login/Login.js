@@ -100,8 +100,10 @@ const Login = () => {
   return (
     <div
       style={{
+        // backgroundImage:
+        //   "url('https://res.cloudinary.com/di0iwc8ql/image/upload/v1724749800/ium0a01kucfsimtbyesq.jpg')",
         backgroundImage:
-          "url('https://res.cloudinary.com/di0iwc8ql/image/upload/v1724749800/ium0a01kucfsimtbyesq.jpg')",
+          "url('https://res.cloudinary.com/decyim6cd/image/upload/v1756550699/profile-image/zue50f0h9pwdebxd745f.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",

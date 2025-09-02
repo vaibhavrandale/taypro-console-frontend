@@ -31,6 +31,8 @@ import toast from "react-hot-toast";
 import LastActivity from "../../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+// import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -312,6 +314,251 @@ const OpexTemplateManager = () => {
     return monthMatch && yearMatch;
   });
 
+  const exportToExcel = () => {
+    if (!opexData || Object.keys(opexData).length === 0) {
+      toast.error("No data available to export.");
+      return;
+    }
+
+    const mergedData = [];
+
+    // ========================
+    // 1. Site Information
+    // ========================
+    mergedData.push([`Site Information`]);
+    mergedData.push(["Client Name", opexData.client?.client_name || "N/A"]);
+    mergedData.push(["Site Name", opexData.site?.siteName || "N/A"]);
+    mergedData.push(["Location", opexData.site?.location || "N/A"]);
+    mergedData.push(["Site Type", opexData.site?.site_type || "N/A"]);
+    mergedData.push(["Total Modules", opexData.total_modules || "N/A"]);
+    mergedData.push(["Frequency", opexData.cycle_frequency || "N/A"]);
+    mergedData.push([
+      "Daily Target",
+      opexData.modules_cleaned_per_day || "N/A",
+    ]);
+    mergedData.push(["Total Robots", opexData.total_robots || 0]);
+    mergedData.push(["Total Manpower", opexData.total_manpower || 0]);
+    mergedData.push(["Total Trolleys", opexData.total_trolley || 0]);
+    mergedData.push([]);
+    mergedData.push([]); // 2 blank rows for spacing
+
+    // ========================
+    // 2. Cycle-wise Data
+    // ========================
+    if (filteredCycles && filteredCycles.length > 0) {
+      filteredCycles.forEach((cycle, cycleIndex) => {
+        // Cycle Header
+        let cycle_status =
+          cycle?.modules_cleaned === cycle?.modules_planned
+            ? "Completed"
+            : "In Progress";
+        const cycleId =
+          (cycle?._id != null && String(cycle._id)) ||
+          (cycle?.cycle_id != null && String(cycle.cycle_id)) ||
+          "N/A";
+        mergedData.push([`Cycle ${cycleIndex + 1} Information`]);
+
+        // ✅ Keep cycle details grouped clearly
+        mergedData.push(["Field", "Value"]);
+        mergedData.push(["ID", cycleId]);
+        mergedData.push([
+          "Status",
+          cycle.is_cycle_verified ? "Verified" : "Pending",
+        ]);
+        mergedData.push([
+          "Start Date",
+          cycle.start_date
+            ? new Date(cycle.start_date).toLocaleDateString("en-GB")
+            : "N/A",
+        ]);
+        mergedData.push([
+          "End Date",
+          cycle.end_date
+            ? new Date(cycle.end_date).toLocaleDateString("en-GB")
+            : "N/A",
+        ]);
+        mergedData.push(["Planned Modules", cycle.modules_planned || 0]);
+        mergedData.push(["Cleaned Modules", cycle.modules_cleaned || 0]);
+        mergedData.push(["Remaining Modules", cycle.modules_remaining || 0]);
+        mergedData.push(["CLeaning Status", cycle_status]);
+        mergedData.push(["Verified", cycle?.is_cycle_verified ? "Yes" : "No"]);
+        mergedData.push([]);
+        mergedData.push([]);
+
+        // Day-wise Data for this cycle
+        mergedData.push([`Cycle ${cycleIndex + 1} - Day-wise Data`]);
+
+        if (cycle.day_wise_data && cycle.day_wise_data.length > 0) {
+          mergedData.push([
+            "Date",
+            "Planned Modules",
+            "Cleaned Modules",
+            "Remaining Modules",
+            "Cleaning Done",
+            "Verified",
+            "Verified By",
+            "Verified At",
+            "Remarks",
+          ]);
+
+          cycle.day_wise_data.forEach((dayData) => {
+            mergedData.push([
+              dayData.date
+                ? new Date(dayData.date).toLocaleDateString("en-GB")
+                : "N/A",
+              dayData.modules_planned_for_day || 0,
+              dayData.modules_cleaned_for_day || 0,
+              dayData.modules_remaining_for_day || 0,
+              dayData.is_cleaning_done ? "Yes" : "No",
+              dayData.is_verified ? "Yes" : "No",
+              dayData.verified_by?.name || "N/A",
+              dayData.verified_by?.verified_at
+                ? new Date(dayData.verified_by.verified_at).toLocaleString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )
+                : "N/A",
+              dayData.remarks || "N/A",
+            ]);
+          });
+        } else {
+          mergedData.push(["No day-wise data available for this cycle"]);
+        }
+        mergedData.push([]);
+        mergedData.push([]); // 2 blank rows
+      });
+    } else {
+      mergedData.push(["No cycles available"]);
+      mergedData.push([]);
+      mergedData.push([]);
+    }
+
+    // ========================
+    // 3. Summary
+    // ========================
+    mergedData.push(["Summary"]);
+    mergedData.push(["Generated At", new Date().toLocaleString()]);
+    mergedData.push([
+      "Total",
+      filteredCycles ? `${filteredCycles.length} Cycles` : "0 Cycles",
+    ]);
+
+    // ========================
+    // Create Sheet
+    // ========================
+    const ws = XLSX.utils.aoa_to_sheet(mergedData);
+
+    // Merge & Style for section headings
+    if (!ws["!merges"]) ws["!merges"] = [];
+    mergedData.forEach((row, rowIndex) => {
+      if (
+        row[0] &&
+        (row[0].includes("Site Information") ||
+          row[0].includes("Cycle") ||
+          row[0].includes("Summary"))
+      ) {
+        ws["!merges"].push({
+          s: { r: rowIndex, c: 0 },
+          e: { r: rowIndex, c: 8 },
+        });
+        const cellAddr = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
+        ws[cellAddr].s = {
+          font: { bold: true, sz: 14 },
+          alignment: { horizontal: "center", vertical: "center" },
+          fill: { fgColor: { rgb: "F7F700" } }, // highlight headings
+        };
+      }
+    });
+
+    // Style Site Info & Cycle Info tables (2-column)
+    mergedData.forEach((row, rowIndex) => {
+      if (rowIndex > 0 && row.length === 2) {
+        const fieldAddr = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
+        const valueAddr = XLSX.utils.encode_cell({ r: rowIndex, c: 1 });
+
+        if (ws[fieldAddr]) {
+          ws[fieldAddr].s = {
+            font: { bold: true },
+            alignment: { horizontal: "left", vertical: "center" },
+          };
+        }
+        if (ws[valueAddr]) {
+          ws[valueAddr].s = {
+            alignment: { horizontal: "center", vertical: "center" },
+          };
+        }
+      }
+    });
+
+    // Style Day-wise Table Headers
+    mergedData.forEach((row, rowIndex) => {
+      if (
+        row.length > 2 &&
+        row.every((cell) => typeof cell === "string") &&
+        (row.includes("Date") || row.includes("Planned Modules"))
+      ) {
+        row.forEach((_, colIndex) => {
+          const cellAddr = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+          if (ws[cellAddr]) {
+            ws[cellAddr].s = {
+              font: { bold: true, color: { rgb: "000000" } },
+              alignment: { horizontal: "center", vertical: "center" },
+              fill: { fgColor: { rgb: "F7F700" } },
+            };
+          }
+        });
+      }
+    });
+
+    // Style Day-wise Data Content (centered)
+    mergedData.forEach((row, rowIndex) => {
+      if (
+        rowIndex > 0 &&
+        row.length > 2 &&
+        !(row.includes("Date") || row.includes("Planned Modules"))
+      ) {
+        row.forEach((_, colIndex) => {
+          const cellAddr = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+          if (ws[cellAddr]) {
+            ws[cellAddr].s = {
+              alignment: { horizontal: "center", vertical: "center" },
+            };
+          }
+        });
+      }
+    });
+
+    // Column widths
+    ws["!cols"] = Array(10).fill({ wch: 20 });
+
+    // ========================
+    // Create Workbook
+    // ========================
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "OPEX Data");
+
+    try {
+      XLSX.writeFile(
+        wb,
+        `OPEX_${opexData.site?.siteName || "Unknown"}_${
+          new Date().toISOString().split("T")[0]
+        }.xlsx`
+      );
+      toast.success("Excel file downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to export Excel file");
+      console.error("Export error:", error);
+    }
+  };
+
+  //End of Export To Excel
+
   const isLastDayOfMonth = (dateStr) => {
     const d = new Date(dateStr);
     const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
@@ -561,23 +808,36 @@ const OpexTemplateManager = () => {
           )}
 
           <div
-            className="d-flex flex-column align-items-end justify-content-end mb-2"
+            className="d-flex flex-row align-items-end justify-content-end mb-2"
             style={{ minWidth: "150px" }}
           >
+            {/* Export to Excel */}
+            <CButton
+              color="primary"
+              size="sm"
+              onClick={exportToExcel}
+              className="me-2"
+            >
+              Export Cycle
+            </CButton>
+
+            {/* Create Cycle (only for allowed roles) */}
             {!["Master User", "Project User", "Service User"].includes(
               userInfo.role
             ) && (
               <Link
                 onClick={openUploadStartDateModal}
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm me-2"
               >
                 Create Cycle
               </Link>
             )}
-            {createError ? (
-              <span className="text-danger">{createError}</span>
-            ) : (
-              ""
+
+            {/* Error Message */}
+            {createError && (
+              <span className="text-danger align-self-center">
+                {createError}
+              </span>
             )}
           </div>
 
