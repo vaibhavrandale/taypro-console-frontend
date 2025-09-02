@@ -174,7 +174,16 @@ const VerifyCycleDay = () => {
                     className="shadow-sm"
                     color="primary"
                     value={day.modules_planned_for_day}
-                    title="Modules Planned"
+                    title="Actual Modules Planned"
+                    progress={{ value: 0 }}
+                  />
+                </CCol>
+                <CCol xs={12} md={3}>
+                  <CWidgetStatsB
+                    className="shadow-sm"
+                    color="primary"
+                    value={day.modules_revised_planned_for_day}
+                    title="Revised Modules Planned"
                     progress={{ value: 0 }}
                   />
                 </CCol>

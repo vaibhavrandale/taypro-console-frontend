@@ -588,10 +588,10 @@ const OpexTemplateManager = () => {
       )}
       {loadingOpex ? (
         <LoadingSpinner />
-      ) : error || certificateError || verifyCycleError ? (
+      ) : error ? (
         <div className="d-flex justify-content-center">
           <CBadge color="danger" className="my-1">
-            {error || certificateError || verifyCycleError}
+            {error}
           </CBadge>
         </div>
       ) : (
@@ -864,7 +864,13 @@ const OpexTemplateManager = () => {
                 </CButton>
               )}
           </div>
-
+          {(certificateError || verifyCycleError) && (
+            <div className="d-flex justify-content-center">
+              <CBadge color="danger" className="my-1">
+                {certificateError || verifyCycleError}
+              </CBadge>
+            </div>
+          )}
           {/* Cycles Information Card */}
           <CCard className="mb-4">
             <CCardHeader className="bg-light border-bottom py-3">
@@ -917,6 +923,11 @@ const OpexTemplateManager = () => {
                   </div>
                 </CCol>
               </CRow>
+              {error && (
+                <CBadge color="danger" className="p-2">
+                  {error}
+                </CBadge>
+              )}
             </CCardHeader>
 
             <CCardBody>
@@ -933,7 +944,7 @@ const OpexTemplateManager = () => {
                       />
                     </CTableHeaderCell>
                     <CTableHeaderCell>Cycle</CTableHeaderCell>
-                    <CTableHeaderCell>Cycle id</CTableHeaderCell>
+                    {/* <CTableHeaderCell>Cycle id</CTableHeaderCell> */}
                     <CTableHeaderCell>Cycle status</CTableHeaderCell>
                     <CTableHeaderCell>Start Date</CTableHeaderCell>
                     <CTableHeaderCell>End Date</CTableHeaderCell>
@@ -941,7 +952,9 @@ const OpexTemplateManager = () => {
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Actions</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                      Actions
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -975,7 +988,7 @@ const OpexTemplateManager = () => {
                           />
                         </CTableDataCell>
                         <CTableDataCell>Cycle {index + 1}</CTableDataCell>
-                        <CTableDataCell>{cycle._id}</CTableDataCell>
+                        {/* <CTableDataCell>{cycle._id}</CTableDataCell> */}
                         <CTableDataCell>
                           {cycle.is_cycle_verified ? (
                             <CBadge color="success">Verified</CBadge>
@@ -1112,7 +1125,6 @@ const OpexTemplateManager = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-      ;
     </div>
   );
 };
