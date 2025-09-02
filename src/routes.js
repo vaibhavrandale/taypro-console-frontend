@@ -133,6 +133,7 @@ import AddDayInCycle from "./views/master-admin/Opex/AddDayInCycle";
 import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
 import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
+import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1463,6 +1464,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <EspFirmwareDataUpload />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mqtt-dashboard",
+    name: "MQTT Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <MqttDashboard />
       </MasterAdminRoute>
     ),
   },

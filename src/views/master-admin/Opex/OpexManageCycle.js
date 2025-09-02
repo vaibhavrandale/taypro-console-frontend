@@ -87,17 +87,14 @@ const OpexManageCycle = () => {
       {/* Cycle Overview */}
       {loading ? (
         <LoadingSpinner />
-      ) : error ? (
-        <CBadge color="danger" className="p-2">
-          {error}
-        </CBadge>
       ) : (
         <>
           <h5 className="my-2 d-flex justify-content-center align-items-center">
             {new Date(cycle.start_date).toLocaleDateString("en-GB", {
               month: "long",
             })}{" "}
-            - Cycle <span className="text-success ms-1">{cycle.index + 1}</span>
+            - Cycle{" "}
+            <span className="text-success ms-1">{cycle.monthIndex}</span>
           </h5>
           {/* Cycle Overview */}
           <CRow className="mb-2">
@@ -109,7 +106,6 @@ const OpexManageCycle = () => {
                 inverse
                 value={cycle.modules_planned}
                 title="Total Modules Planned"
-                progress="disable"
               />
             </CCol>
 
@@ -167,15 +163,25 @@ const OpexManageCycle = () => {
               </div>
             </CCardHeader>
             <CCardBody>
-              <CTable hover responsive>
-                <CTableHead color="dark">
-                  <CTableRow>
+              <CTable
+                hover
+                responsive
+                bordered
+                className="text-center shadow-sm"
+              >
+                <CTableHead>
+                  <CTableRow className="text-center">
                     <CTableHeaderCell style={{ minWidth: "70px" }}>
                       Day
                     </CTableHeaderCell>
-                    <CTableHeaderCell>ID</CTableHeaderCell>
+
                     <CTableHeaderCell>Date</CTableHeaderCell>
-                    <CTableHeaderCell>Planned</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "120px" }}>
+                      Actual Plan
+                    </CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "120px" }}>
+                      Revised Plan
+                    </CTableHeaderCell>
                     <CTableHeaderCell>Cleaned</CTableHeaderCell>
                     <CTableHeaderCell>Remaining</CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "250px" }}>
@@ -188,91 +194,139 @@ const OpexManageCycle = () => {
                 </CTableHead>
                 <CTableBody>
                   {cycle.day_wise_data.map((day, index) => (
-                    <CTableRow key={day._id} className="align-middle">
-                      <CTableDataCell>Day {index + 1}</CTableDataCell>
-                      <CTableDataCell>{day._id}</CTableDataCell>
-                      <CTableDataCell>
-                        {new Date(day.date).toLocaleDateString("en-GB")}
-                        {day.is_sunday && (
-                          <CBadge color="warning" className="ms-2">
-                            Sunday
-                          </CBadge>
-                        )}
+                    <>
+                      <CTableRow key={day._id} className="text-center ">
+                        <CTableDataCell>Day {index + 1}</CTableDataCell>
 
-                        {day.is_pm && (
-                          <CBadge color="warning" className="ms-2">
-                            Preventive Maintenance Scheduled
-                          </CBadge>
-                        )}
-                        {day.is_labour_absent && (
-                          <CBadge color="warning">Labour Absent</CBadge>
-                        )}
-                        {day.is_other && (
-                          <CBadge color="warning">Other Reason</CBadge>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.modules_planned_for_day}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.modules_cleaned_for_day}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.modules_remaining_for_day}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {day.is_cleaning_done &&
-                        day.modules_remaining_for_day === 0 ? (
-                          <CBadge color="success">Cleaning Completed</CBadge>
-                        ) : (day.modules_cleaned_for_day === 0 &&
-                            day.modules_planned_for_day === 0 &&
-                            day.modules_remaining_for_day === 0) ||
-                          day.is_sunday ||
-                          day.is_pm ||
-                          day.is_labour_absent ||
-                          day.is_other ? (
-                          <CBadge color="danger">Cancelled</CBadge>
-                        ) : (
-                          <CBadge color="warning">Pending</CBadge>
-                        )}
-                        {day.is_verified && (
-                          <CBadge color="success" className="ms-2">
-                            Admin Verified
-                          </CBadge>
-                        )}
-                        {day.is_client_verified ? (
-                          <CBadge color="success" className="ms-2">
-                            client Verified
-                          </CBadge>
-                        ) : (
-                          <CBadge color="danger" className="ms-2">
-                            client verification pending
-                          </CBadge>
-                        )}
-                      </CTableDataCell>
-
-                      <CTableDataCell>
-                        {!day.is_verified &&
-                          !["Master User", "Project User"].includes(
-                            userInfo?.role
-                          ) && (
-                            <Link
-                              to={`verify-day/${day._id}`}
-                              className="btn btn-sm btn-primary  m-1"
-                            >
-                              Verify
-                            </Link>
+                        <CTableDataCell>
+                          {new Date(day.date).toLocaleDateString("en-GB")}
+                          {day.is_sunday && (
+                            <CBadge color="warning" className="ms-2">
+                              Sunday
+                            </CBadge>
                           )}
 
-                        <Link
-                          to={`day/${day._id}/technician-details`}
-                          className="btn btn-sm btn-primary  m-1"
-                        >
-                          Cleaning Activity
-                        </Link>
-                      </CTableDataCell>
-                    </CTableRow>
+                          {day.is_pm && (
+                            <CBadge color="warning" className="ms-2">
+                              Preventive Maintenance Scheduled
+                            </CBadge>
+                          )}
+                          {day.is_labour_absent && (
+                            <CBadge color="warning">Labour Absent</CBadge>
+                          )}
+                          {day.is_other && (
+                            <CBadge color="warning">Other Reason</CBadge>
+                          )}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {day.modules_planned_for_day}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {day.modules_revised_planned_for_day}&nbsp;
+                          {day.modules_revised_planned_for_day >
+                          day.modules_planned_for_day ? (
+                            <CBadge color="success" className="p-1">
+                              +
+                              {day.modules_revised_planned_for_day -
+                                day.modules_planned_for_day}
+                            </CBadge>
+                          ) : day.modules_revised_planned_for_day <
+                            day.modules_planned_for_day ? (
+                            <CBadge color="danger" className="p-1">
+                              -
+                              {day.modules_planned_for_day -
+                                day.modules_revised_planned_for_day}
+                            </CBadge>
+                          ) : (
+                            ""
+                          )}
+                        </CTableDataCell>
+
+                        <CTableDataCell>
+                          {day.modules_cleaned_for_day}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {day.modules_remaining_for_day}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {day.is_cleaning_done &&
+                          day.modules_remaining_for_day === 0 ? (
+                            <CBadge color="success">Cleaning Completed</CBadge>
+                          ) : (day.modules_cleaned_for_day === 0 &&
+                              day.modules_planned_for_day === 0 &&
+                              day.modules_remaining_for_day === 0) ||
+                            day.is_sunday ||
+                            day.is_pm ||
+                            day.is_labour_absent ||
+                            day.is_other ? (
+                            <CBadge color="danger">Cancelled</CBadge>
+                          ) : (
+                            <CBadge color="warning">Pending</CBadge>
+                          )}
+                          {day.is_verified && (
+                            <CBadge color="success" className="ms-2">
+                              Admin Verified
+                            </CBadge>
+                          )}
+                          {day.is_client_verified ? (
+                            <CBadge color="success" className="ms-2">
+                              client Verified
+                            </CBadge>
+                          ) : (
+                            <CBadge color="danger" className="ms-2">
+                              client verification pending
+                            </CBadge>
+                          )}
+                        </CTableDataCell>
+
+                        <CTableDataCell>
+                          {!day.is_verified &&
+                            !["Master User", "Project User"].includes(
+                              userInfo?.role
+                            ) && (
+                              <Link
+                                to={`verify-day/${day._id}`}
+                                className="btn btn-sm btn-primary  m-1"
+                              >
+                                Verify
+                              </Link>
+                            )}
+
+                          <Link
+                            to={`day/${day._id}/technician-details`}
+                            className="btn btn-sm btn-primary  m-1"
+                          >
+                            Cleaning Activity
+                          </Link>
+                        </CTableDataCell>
+                      </CTableRow>
+                    </>
                   ))}
+                  <CTableRow className="text-center table-info">
+                    <CTableDataCell></CTableDataCell>
+                    <CTableDataCell>Total</CTableDataCell>
+                    <CTableDataCell>
+                      {cycle.day_wise_data.reduce(
+                        (acc, d) => acc + d.modules_planned_for_day,
+                        0
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell></CTableDataCell>
+                    <CTableDataCell>
+                      {cycle.day_wise_data.reduce(
+                        (acc, d) => acc + d.modules_cleaned_for_day,
+                        0
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {cycle.day_wise_data.reduce(
+                        (acc, d) => acc + d.modules_remaining_for_day,
+                        0
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell></CTableDataCell>
+                    <CTableDataCell></CTableDataCell>
+                  </CTableRow>
                 </CTableBody>
               </CTable>
             </CCardBody>

@@ -123,6 +123,10 @@ a {
   background: var(--important) !important;
 }
 
+.table-important {
+  background: var(--important) !important;
+}
+
 .bg-secondary,
 .bg-warning {
   font-weight: 600;

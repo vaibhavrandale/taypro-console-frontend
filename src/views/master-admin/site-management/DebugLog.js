@@ -229,6 +229,8 @@ const DebugLog = () => {
           hour12: true,
         }),
         Topic: log.topic || "N/A",
+        SNR: log.snr || "N/A",
+        RSSI: log.rssi || "N/A",
       }))
     );
 
@@ -425,6 +427,12 @@ const DebugLog = () => {
                   <CTableHeaderCell className="text-center">
                     Topic
                   </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    SNR
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    RSSI
+                  </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -466,6 +474,12 @@ const DebugLog = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {log.topic || "N/A"}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.snr}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.rssi}
                       </CTableDataCell>
                     </CTableRow>
                   ))

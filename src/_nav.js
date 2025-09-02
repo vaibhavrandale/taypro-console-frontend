@@ -469,6 +469,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "MQTT",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MQTT Dashboard",
+            to: "/master-admin/mqtt-dashboard",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
