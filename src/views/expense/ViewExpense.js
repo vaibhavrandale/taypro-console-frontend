@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
@@ -12,11 +12,19 @@ import {
   CBadge,
   CTableHead,
   CAlert,
+  CButton,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CFormLabel,
+  CFormInput,
+  CModalFooter,
 } from "@coreui/react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
-import { cilCloudDownload, cilPaperclip } from "@coreui/icons";
+import { cilCloudDownload, cilPaperclip, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -26,6 +34,15 @@ const reducer = (state, action) => {
       return { ...state, loading: false, expense: action.payload };
     case "FETCH_EXPENSE_FAIL":
       return { ...state, loading: false, error: action.payload };
+    case "APPROVE_REQUEST":
+      return { ...state, approveLoading: true, approveError: "" };
+    case "APPROVE_SUCCESS":
+      return {
+        ...state,
+        approveLoading: false,
+      };
+    case "APPROVE_FAIL":
+      return { ...state, approveLoading: false, approveError: action.payload };
     default:
       return state;
   }
@@ -34,30 +51,66 @@ const reducer = (state, action) => {
 const ViewExpenseClaim = () => {
   const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
-  const [{ loading, expense, error }, dispatch] = useReducer(reducer, {
-    loading: false,
-    expense: {},
-    error: "",
-  });
+  const [{ loading, expense, error, approveLoading, approveError }, dispatch] =
+    useReducer(reducer, {
+      loading: false,
+      expense: {},
+      error: "",
+      approveLoading: false,
+      approveError: "",
+    });
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const userInfo = useSelector((state) => state.userInfo);
+  const [uploadingFields, setUploadingFields] = useState({});
+  const [remark, setRemark] = useState("");
+
+  const fetchExpense = async () => {
+    dispatch({ type: "FETCH_EXPENSE_REQUEST" });
+    try {
+      const res = await axios.get(`/api/v1/expenseclaims/${id}`, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
+      dispatch({ type: "FETCH_EXPENSE_SUCCESS", payload: res.data.data });
+    } catch (err) {
+      dispatch({
+        type: "FETCH_EXPENSE_FAIL",
+        payload: err.response?.data?.error || err.response?.data?.message,
+      });
+      toast.error(err.response?.data?.error || err.response?.data?.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchExpense = async () => {
-      dispatch({ type: "FETCH_EXPENSE_REQUEST" });
-      try {
-        const res = await axios.get(`/api/v1/expenseclaims/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-        dispatch({ type: "FETCH_EXPENSE_SUCCESS", payload: res.data.data });
-      } catch (err) {
-        dispatch({
-          type: "FETCH_EXPENSE_FAIL",
-          payload: err.response?.data?.error || err.response?.data?.message,
-        });
-        toast.error(err.response?.data?.error || err.response?.data?.message);
-      }
-    };
     fetchExpense();
   }, [authtoken, id]);
+
+  const handleApproveAndPushToERP = async (id) => {
+    try {
+      setUploadingFields((prev) => ({ ...prev, [id]: true })); // ✅ Set only this field to loading
+
+      dispatch({ type: "APPROVE_REQUEST" });
+
+      const response = await axios.put(
+        `/api/v1/expenseclaims/approve/${id}`,
+        { console_status: "Approved", remark: remark },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      console.log(response.data.frappe_response.data.name);
+
+      dispatch({ type: "APPROVE_SUCCESS" });
+      fetchExpense();
+      toast.success(response.data.frappe_response.data.name);
+      setUploadingFields((prev) => ({ ...prev, [id]: false })); // ✅ Set only this field to loading
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+      dispatch({
+        type: "APPROVE_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      setUploadingFields((prev) => ({ ...prev, [id]: false })); // ✅ Set only this field to loading
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -94,6 +147,31 @@ const ViewExpenseClaim = () => {
         <CAlert color="danger">{error}</CAlert>
       ) : (
         <>
+          <div className="d-flex justify-content-end align-items-center mb-3">
+            {(userInfo.role === "Master Admin" ||
+              userInfo.role === "Service Admin" ||
+              userInfo.role === "Project Admin") &&
+              expense.status === "Draft" && (
+                <CButton
+                  className="btn btn-primary btn-sm m-1"
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                  }}
+                  disabled={
+                    approveLoading || expense.console_status === "Approved"
+                  }
+                >
+                  {uploadingFields[expense._id] ? (
+                    <LoadingSpinner />
+                  ) : expense.console_status === "Approved" ? (
+                    "Approved"
+                  ) : (
+                    "Approve"
+                  )}
+                </CButton>
+              )}
+          </div>
+
           <CTable striped bordered responsive>
             <CTableBody>
               <CTableRow>
@@ -193,7 +271,6 @@ const ViewExpenseClaim = () => {
                   <CTableDataCell>
                     <CBadge color={getStatusBadge(item.is_over_limit)}>
                       ₹{item.amount}{" "}
-                      {/* {item.is_over_limit ? "(Over Limit)" : "(Under Limit)"} */}
                     </CBadge>
                   </CTableDataCell>
                   <CTableDataCell>
@@ -227,8 +304,6 @@ const ViewExpenseClaim = () => {
                       <span className="text-muted">No File</span>
                     )}
                   </CTableDataCell>
-                  {/* <CTableDataCell>{item.cost_center}</CTableDataCell> */}
-                  {/* <CTableDataCell>{item.default_account}</CTableDataCell> */}
                 </CTableRow>
               ))}
 
@@ -253,6 +328,52 @@ const ViewExpenseClaim = () => {
           </div>
         </>
       )}
+      {/* remark modal */}
+      <CModal
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Enter Remark {expense?.name}</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => {
+              setShowDeleteModal(false);
+            }}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <p>Enter Remark before Approving</p>
+
+          <CFormLabel>Remark</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Enter remark..."
+            value={remark}
+            onChange={(e) => setRemark(e.target.value)}
+          />
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="danger"
+            size="sm"
+            onClick={() => {
+              handleApproveAndPushToERP(expense._id);
+              setShowDeleteModal(false);
+              setRemark("");
+            }}
+          >
+            {approveLoading ? <LoadingSpinner size="sm" /> : "Approve"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };
