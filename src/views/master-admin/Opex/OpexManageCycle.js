@@ -87,6 +87,10 @@ const OpexManageCycle = () => {
       {/* Cycle Overview */}
       {loading ? (
         <LoadingSpinner />
+      ) : error ? (
+        <CBadge color="danger" className="p-2">
+          {error}
+        </CBadge>
       ) : (
         <>
           <h5 className="my-2 d-flex justify-content-center align-items-center">
