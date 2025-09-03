@@ -39,7 +39,11 @@ const RobotEventAndFrames = () => {
     socket.on("event", (msg) => {
       // Only add frames matching the current devEui or no-data response
       if (msg.data?.deviceInfo?.devEui === deveui || msg.topic === "no-data") {
-        setFrames((prev) => [msg, ...prev]); // newest on top
+        setFrames((prev) => {
+          const updated = [msg, ...prev].slice(0, 20); // keep latest 20
+          localStorage.setItem("localStorageFrames", JSON.stringify(updated)); // sync with storage
+          return updated;
+        }); // newest on top
       }
     });
 
