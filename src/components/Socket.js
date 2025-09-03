@@ -1,7 +1,7 @@
 // src/socket.js
 import { io } from "socket.io-client";
 
-const backendURL = "http://localhost:5000";
+const backendURL = "http://console.taypro.in";
 
 const socket = io(backendURL, {
   transports: ["websocket"], // force only websocket

@@ -1,6 +1,6 @@
 {
   "name": "taypro-console-frontend",
-  "proxy": "http://console.taypro.in/api",
+  "proxy": "http://console.taypro.in",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
