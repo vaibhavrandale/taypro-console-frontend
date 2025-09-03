@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+
 import {
   CCard,
   CCardBody,
@@ -21,8 +21,9 @@ import {
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { clients } from "../../../data";
+import socket from "../../../components/Socket";
 
-const socket = io(); // backend socket server
+// const socket = io(); // backend socket server
 
 const tabs = [
   // "Dashboard",
@@ -41,6 +42,7 @@ const MqttDashboard = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // const socket = io();
     socket.on("event", (msg) => {
       setFrames((prev) => [msg, ...prev]); // newest on top
     });

@@ -23,8 +23,7 @@ import {
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { Clipboard } from "lucide-react";
-
-const socket = io(); // backend socket server
+import socket from "../../../components/Socket";
 
 const RobotEventAndFrames = () => {
   const { robot_no, deveui } = useParams();
@@ -35,6 +34,7 @@ const RobotEventAndFrames = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // const socket = io(); // backend socket server
     socket.on("event", (msg) => {
       // Only add frames matching the current devEui or no-data response
       if (msg.data?.deviceInfo?.devEui === deveui || msg.topic === "no-data") {
