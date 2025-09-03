@@ -24,7 +24,7 @@ import {
 import CIcon from "@coreui/icons-react";
 import { Clipboard } from "lucide-react";
 
-const socket = io("http://localhost:5000"); // backend socket server
+const socket = io(); // backend socket server
 
 const RobotEventAndFrames = () => {
   const { robot_no, deveui } = useParams();
