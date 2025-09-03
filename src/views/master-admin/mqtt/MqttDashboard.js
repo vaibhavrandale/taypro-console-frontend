@@ -22,7 +22,7 @@ import {
 import CIcon from "@coreui/icons-react";
 import { clients } from "../../../data";
 
-const socket = io("http://localhost:5000"); // backend socket server
+const socket = io(); // backend socket server
 
 const tabs = [
   // "Dashboard",

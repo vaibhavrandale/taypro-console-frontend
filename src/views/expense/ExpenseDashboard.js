@@ -140,6 +140,7 @@ const ExpenseDashboard = () => {
       toast.error(error.response?.data?.message || error.response?.data?.error);
     }
   };
+
   useEffect(() => {
     fetchExpenses();
   }, [authtoken, page, limit]);
@@ -272,7 +273,7 @@ const ExpenseDashboard = () => {
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>Enter Remark {expense?.name}</CModalTitle>
-          <CButton
+          <button
             type="button"
             className="border-0 ms-auto py-0 px-1"
             onClick={() => {
@@ -281,7 +282,7 @@ const ExpenseDashboard = () => {
             style={{ background: "none" }}
           >
             <CIcon icon={cilX} size="lg" />
-          </CButton>
+          </button>
         </CModalHeader>
 
         <CModalBody>
