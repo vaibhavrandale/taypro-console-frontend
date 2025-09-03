@@ -96,6 +96,25 @@ const reducer = (state, action) => {
         verifyCycleLoading: false,
         verifyCycleError: action.payload,
       };
+    case "DELETE_CYCLE_REQUEST":
+      return { ...state, deletingCycleLoading: true, deleteError: "" };
+    case "DELETE_CYCLE_SUCCESS":
+      return {
+        ...state,
+        deletingCycleLoading: false,
+        opexData: {
+          ...state.opexData,
+          cycles: state.opexData.cycles.filter(
+            (cycle) => cycle._id !== action.payload
+          ),
+        },
+      };
+    case "DELETE_CYCLE_FAIL":
+      return {
+        ...state,
+        deletingCycleLoading: false,
+        deleteError: action.payload,
+      };
 
     default:
       return state;
@@ -114,6 +133,8 @@ const OpexTemplateManager = () => {
       certificateError,
       verifyCycleError,
       verifyCycleLoading,
+      deletingCycleLoading,
+      deleteError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -126,6 +147,8 @@ const OpexTemplateManager = () => {
     certificateError: "",
     verifyCycleError: "",
     verifyCycleLoading: false,
+    deletingCycleLoading: false,
+    deleteError: "",
   });
 
   const [selectedCycles, setSelectedCycles] = useState([]);
@@ -137,6 +160,9 @@ const OpexTemplateManager = () => {
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [deleteReason, setDeleteReason] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
@@ -215,6 +241,39 @@ const OpexTemplateManager = () => {
         payload: error.response.data.message || error.response.data.error,
       });
       toast.error(error.response.data.message || error.response.data.error);
+    }
+  };
+
+  const deleteOpexCycle = async (moduleId, cycleId, reason) => {
+    dispatch({ type: "DELETE_CYCLE_REQUEST" });
+
+    try {
+      const { data } = await axios.put(
+        `/api/v1/opex/delete-cycle/${moduleId}/${cycleId}`,
+        { reason }, // ✅ PUT body goes here
+        {
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch({
+        type: "DELETE_CYCLE_SUCCESS",
+        payload: cycleId,
+      });
+
+      toast.success(data.message);
+      setShowDeleteModal(false);
+      setDeleteReason("");
+      fetchOpexData();
+    } catch (error) {
+      dispatch({
+        type: "DELETE_CYCLE_FAIL",
+        payload: error.response?.data?.message || error.message,
+      });
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -1022,6 +1081,7 @@ const OpexTemplateManager = () => {
                             <CBadge color="warning">In Progress</CBadge>
                           )}
                         </CTableDataCell>
+
                         <CTableDataCell>
                           <Link
                             className="btn btn-primary btn-sm m-1"
@@ -1029,6 +1089,16 @@ const OpexTemplateManager = () => {
                           >
                             Manage
                           </Link>
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedItem(cycle); // store cycle info
+                              setShowDeleteModal(true);
+                            }}
+                          >
+                            Delete
+                          </CButton>
 
                           {!cycle.is_cycle_verified &&
                           (cycle.modules_planned === cycle.modules_cleaned ||
@@ -1122,6 +1192,98 @@ const OpexTemplateManager = () => {
             ) : (
               "Save"
             )}
+          </CButton>
+        </CModalFooter>
+      </CModal>
+
+      {/* Delete Cycle Modal */}
+
+      <CModal
+        scrollable
+        alignment="center"
+        backdrop="static"
+        visible={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setDeleteReason("");
+          setSelectedItem(null);
+        }}
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Delete Cycle</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setDeleteReason("");
+              setSelectedItem(null);
+            }}
+            style={{ background: "none" }}
+            aria-label="Close"
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          {selectedItem && (
+            <>
+              <p>
+                Are you sure you want to delete{" "}
+                <strong>
+                  Cycle{" "}
+                  {filteredCycles.findIndex((c) => c._id === selectedItem._id) +
+                    1}{" "}
+                  -{" "}
+                  {new Date(selectedItem.start_date).toLocaleString("default", {
+                    month: "long",
+                  })}{" "}
+                  {new Date(selectedItem.start_date).getFullYear()}
+                </strong>
+                ?
+              </p>
+              {/* <p className="text-muted small">
+                Start Date:{" "}
+                {new Date(selectedItem.start_date).toLocaleDateString()}
+                {selectedItem.end_date &&
+                  ` | End Date: ${new Date(
+                    selectedItem.end_date
+                  ).toLocaleDateString()}`}
+              </p> */}
+            </>
+          )}
+          <CFormInput
+            placeholder="Enter reason for deletion"
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+            disabled={deletingCycleLoading}
+          />
+          {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setDeleteReason("");
+              setSelectedItem(null);
+            }}
+            disabled={deletingCycleLoading}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="danger"
+            size="sm"
+            disabled={!deleteReason || deletingCycleLoading}
+            onClick={() => {
+              deleteOpexCycle(opexData._id, selectedItem._id, deleteReason);
+            }}
+          >
+            {deletingCycleLoading ? <LoadingSpinner size="sm" /> : "Delete"}
           </CButton>
         </CModalFooter>
       </CModal>
