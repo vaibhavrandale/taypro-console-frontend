@@ -134,7 +134,6 @@ import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
 import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
-import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1474,16 +1473,6 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MqttDashboard />
-      </MasterAdminRoute>
-    ),
-  },
-  {
-    // path: "/master-admin/event-and-frames/:deveui",
-    path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/event-and-frames/:deveui",
-    name: "Robot Event and Frames",
-    element: (
-      <MasterAdminRoute>
-        <RobotEventAndFrames />
       </MasterAdminRoute>
     ),
   },

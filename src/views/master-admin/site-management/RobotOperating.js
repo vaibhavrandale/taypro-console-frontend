@@ -710,13 +710,6 @@ const RobotOperating = () => {
                     >
                       Update Robot
                     </Link>
-                    {/* /robot-event-and-frames/:robot_no */}
-                    <Link
-                      to={`event-and-frames/${robot.deveui}`}
-                      className="btn btn-sm btn-outline-info me-2 mb-2"
-                    >
-                      View Robot Events and Frames
-                    </Link>
                   </>
                 )}
               </div>

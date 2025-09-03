@@ -39,7 +39,12 @@ const MqttDashboard = () => {
   const [frames, setFrames] = useState([]);
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
-
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const devices = [
+    { robot_no: "TIMER-TESTING-ROBOT-10", deveui: "2cf7f1205020af0f" },
+    { robot_no: "AKMF-2425036", deveui: "AKMF-2425036" },
+    { robot_no: "AKMF-2425031", deveui: "2cf7f1205260e2c5" },
+  ];
   useEffect(() => {
     socket.on("event", (msg) => {
       setFrames((prev) => [msg, ...prev]); // newest on top
@@ -53,6 +58,12 @@ const MqttDashboard = () => {
   const handleFrameClick = (frame) => {
     setSelectedFrame(frame);
     setVisible(true);
+  };
+
+  const handleDeviceChange = (e) => {
+    const devEUI = e.target.value;
+    setSelectedDevice(devEUI);
+    socket.emit("setDevice", devEUI); // tell backend which device to filter
   };
 
   return (
@@ -75,6 +86,18 @@ const MqttDashboard = () => {
           ))}
         </div>
       </div>
+      <select
+        value={selectedDevice}
+        onChange={handleDeviceChange}
+        className="mb-3 form-select w-auto"
+      >
+        <option value="">All Devices</option>
+        {devices.map((d) => (
+          <option key={d.deveui} value={d.deveui}>
+            {d.robot_no}
+          </option>
+        ))}
+      </select>
 
       {/* LoRaWAN Frames Section */}
       {activeTab === "Events" && (

@@ -590,12 +590,9 @@ const OpexTemplateManager = () => {
         <LoadingSpinner />
       ) : error ? (
         <div className="d-flex justify-content-center">
-          <h4>
-            {" "}
-            <CBadge color="danger" className="my-1 p-2">
-              {error}{" "}
-            </CBadge>
-          </h4>
+          <CBadge color="danger" className="my-1">
+            {error}
+          </CBadge>
         </div>
       ) : (
         <>
