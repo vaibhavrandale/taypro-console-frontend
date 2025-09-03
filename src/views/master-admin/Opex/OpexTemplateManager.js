@@ -1092,16 +1092,22 @@ const OpexTemplateManager = () => {
                           >
                             Manage
                           </Link>
-                          <CButton
-                            color="danger"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedItem(cycle); // store cycle info
-                              setShowDeleteModal(true);
-                            }}
-                          >
-                            Delete
-                          </CButton>
+                          {[
+                            "Master Admin",
+                            "Project Admin",
+                            "Service Admin",
+                          ].includes(userInfo.role) && (
+                            <CButton
+                              color="danger"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedItem(cycle); // store cycle info
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              Delete
+                            </CButton>
+                          )}
 
                           {!cycle.is_cycle_verified &&
                           (cycle.modules_planned === cycle.modules_cleaned ||
