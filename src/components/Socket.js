@@ -5,16 +5,16 @@ import { io } from "socket.io-client";
 const backendURL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000" // local dev
-    : "http://console.taypro.in/api"; // production
+    : "https://console.taypro.in/api"; // production (force HTTPS)
 
 const socket = io(backendURL, {
-  path: "/socket.io", // ✅ important for Nginx proxy
-  transports: ["websocket"], // force websocket
+  path: "/socket.io", // must match Nginx/backend
+  transports: ["websocket"],
   upgrade: false,
   autoConnect: true,
-  secure: backendURL.startsWith("http"),
+  secure: true, // ensure WSS
 });
 
-console.log(backendURL);
+console.log("🔌 Connecting to:", backendURL);
 
 export default socket;
