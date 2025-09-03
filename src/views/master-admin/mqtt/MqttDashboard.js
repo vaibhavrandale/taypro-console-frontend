@@ -47,7 +47,7 @@ const MqttDashboard = () => {
   useEffect(() => {
     socket.on("event", (msg) => {
       setFrames((prev) => {
-        const updated = [msg, ...prev].slice(0, 20); // keep latest 20
+        const updated = [msg, ...prev].slice(0, 40); // keep latest 20
         localStorage.setItem("localStorageFrames", JSON.stringify(updated)); // sync with storage
         return updated;
       });
