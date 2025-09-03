@@ -37,20 +37,18 @@ const tabs = [
 
 const MqttDashboard = () => {
   const [activeTab, setActiveTab] = useState("Events");
-  const [frames, setFrames] = useState([]);
-  const [localStorageFrames, setLocalStorageFrames] = useState([]);
+  const [frames, setFrames] = useState(() => {
+    const saved = localStorage.getItem("localStorageFrames");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     socket.on("event", (msg) => {
-      // Update state with latest 20
       setFrames((prev) => {
-        const updated = [msg, ...prev].slice(0, 20); // keep only latest 20
-        setLocalStorageFrames(updated);
-
-        // Sync with localStorage
-        localStorage.setItem("localStorageFrames", JSON.stringify(updated));
+        const updated = [msg, ...prev].slice(0, 20); // keep latest 20
+        localStorage.setItem("localStorageFrames", JSON.stringify(updated)); // sync with storage
         return updated;
       });
     });
@@ -90,7 +88,7 @@ const MqttDashboard = () => {
       {/* LoRaWAN Frames Section */}
       {activeTab === "Events" && (
         <div className="d-flex flex-column gap-3">
-          {localStorageFrames?.map((frame, idx) => (
+          {frames?.map((frame, idx) => (
             <CCard
               key={idx}
               className="shadow-sm border-0"
@@ -176,7 +174,7 @@ const MqttDashboard = () => {
             </CCard>
           ))}
 
-          {localStorageFrames.length === 0 && (
+          {frames.length === 0 && (
             <p className="text-muted text-center">No frames yet...</p>
           )}
         </div>
