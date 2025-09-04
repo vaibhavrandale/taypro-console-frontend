@@ -55,6 +55,15 @@ const reducer = (state, action) => {
       };
     case "APPROVE_FAIL":
       return { ...state, approveLoading: false, approveError: action.payload };
+    case "DELETE_EXPENSE_REQUEST":
+      return { ...state, deleteLoading: true, deleteError: "" };
+
+    case "DELETE_EXPENSE_SUCCESS":
+      return { ...state, deleteLoading: false };
+
+    case "DELETE_EXPENSE_FAIL":
+      return { ...state, deleteLoading: false, deleteError: action.payload };
+
     default:
       return state;
   }
@@ -70,6 +79,8 @@ const ExpenseDashboard = () => {
       hasNextPage,
       hasPrevPage,
       approveLoading,
+      deleteLoading,
+      deleteError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -81,18 +92,23 @@ const ExpenseDashboard = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    deleteError: "",
+    deleteLoading: false,
   });
 
   const [searchTerm, setSearchTerm] = useState("");
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [pageInput, setPageInput] = useState("");
-  const [remark, setRemark] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [uploadingFields, setUploadingFields] = useState({});
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [expense, setExpense] = useState(null);
+  const [remark, setRemark] = useState("");
+  const [deleteReason, setDeleteReason] = useState("");
+
   const navigate = useNavigate();
 
   const fetchExpenses = async () => {
@@ -137,6 +153,27 @@ const ExpenseDashboard = () => {
         payload: error.response?.data?.message || error.response?.data?.error,
       });
 
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
+
+  const deleteExpense = async (id, reason) => {
+    dispatch({ type: "DELETE_EXPENSE_REQUEST" });
+    try {
+      const result = await axios.put(
+        `/api/v1/expenseclaims/delete-expense/${id}`,
+        { reason },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+
+      dispatch({ type: "DELETE_EXPENSE_SUCCESS", payload: id });
+      toast.success(result?.data?.message);
+      fetchExpenses();
+    } catch (error) {
+      dispatch({
+        type: "DELETE_EXPENSE_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
       toast.error(error.response?.data?.message || error.response?.data?.error);
     }
   };
@@ -267,8 +304,8 @@ const ExpenseDashboard = () => {
 
       {/* remark modal */}
       <CModal
-        visible={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
+        visible={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
         backdrop="static"
       >
         <CModalHeader closeButton={false}>
@@ -277,7 +314,7 @@ const ExpenseDashboard = () => {
             type="button"
             className="border-0 ms-auto py-0 px-1"
             onClick={() => {
-              setShowDeleteModal(false);
+              setShowApproveModal(false);
             }}
             style={{ background: "none" }}
           >
@@ -307,7 +344,7 @@ const ExpenseDashboard = () => {
             size="sm"
             onClick={() => {
               handleApproveAndPushToERP(expense._id);
-              setShowDeleteModal(false);
+              setShowApproveModal(false);
               setRemark("");
             }}
           >
@@ -450,12 +487,15 @@ const ExpenseDashboard = () => {
                   )
                 </CTableDataCell>
                 <CTableDataCell>
+                  {/* View */}
                   <Link
                     to={`/${adminroute}/expenses/view/${expense._id}`}
                     className="btn btn-sm btn-secondary m-1"
                   >
                     View
                   </Link>
+
+                  {/* Update */}
                   {!["Master User", "Service User", "Project User"].includes(
                     userInfo?.role
                   ) &&
@@ -469,13 +509,13 @@ const ExpenseDashboard = () => {
                       </Link>
                     )}
 
-                  {(userInfo.role === "Master Admin" ||
-                    userInfo.role === "Service Admin" ||
-                    userInfo.role === "Project Admin") &&
+                  {/* Approve (only Admins & if Draft) */}
+                  {["Master Admin", "Service Admin", "Project Admin"].includes(
+                    userInfo.role
+                  ) &&
                     expense.status === "Draft" && (
                       <CButton
                         className="btn btn-primary btn-sm m-1"
-                        // onClick={() => handleApproveAndPushToERP(expense._id)}
                         onClick={() => {
                           setShowDeleteModal(true);
                           setExpense(expense);
@@ -494,6 +534,23 @@ const ExpenseDashboard = () => {
                         )}
                       </CButton>
                     )}
+
+                  {/* Delete (only Admins) */}
+                  {["Master Admin", "Service Admin", "Project Admin"].includes(
+                    userInfo.role
+                  ) && (
+                    <CButton
+                      color="danger"
+                      size="sm"
+                      className="m-1"
+                      onClick={() => {
+                        setExpense(expense); // ✅ Set the expense to be deleted
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      Delete
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -518,6 +575,78 @@ const ExpenseDashboard = () => {
         limit={limit}
         handleLimitChange={setLimit} // New prop
       />
+      {/* Delete Expense Modal */}
+      <CModal
+        visible={showDeleteModal && expense}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setExpense(null);
+          setDeleteReason("");
+        }}
+        backdrop="static"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Delete Expense</CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setExpense(null);
+              setDeleteReason("");
+            }}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <p>
+            Are you sure you want to delete{" "}
+            <strong>{expense?.name || expense?._id}</strong>?
+          </p>
+          <CFormLabel>Reason for Deletion</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Enter reason..."
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+          />
+          {deleteError && <p className="text-danger mt-2">{deleteError}</p>}
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            size="sm"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setExpense(null);
+              setDeleteReason("");
+            }}
+            disabled={deleteLoading}
+          >
+            Cancel
+          </CButton>
+          <CButton
+            color="danger"
+            size="sm"
+            onClick={() => {
+              if (!deleteReason.trim()) {
+                toast.error("Please enter a reason for deletion");
+                return;
+              }
+              deleteExpense(expense._id, deleteReason);
+              setShowDeleteModal(false);
+              setDeleteReason("");
+            }}
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? <LoadingSpinner size="sm" /> : "Delete"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };
