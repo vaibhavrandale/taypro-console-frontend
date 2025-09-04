@@ -32,6 +32,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import socket from "../../../components/Socket";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_USER_REQUEST":
@@ -126,6 +128,8 @@ export default function ChatDashboard() {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
+  console.log(socket.id);
+
   const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
     try {
@@ -186,6 +190,20 @@ export default function ChatDashboard() {
     fetchChats();
   }, [authtoken, fetchChats]); // Runs only once on mount
 
+  useEffect(() => {
+    if (userInfo?._id) {
+      socket.emit("join", userInfo._id);
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    if (chats.length > 0) {
+      chats.forEach((chat) => {
+        socket.emit("joinRoom", chat._id);
+      });
+    }
+  }, [chats]);
+
   const renderLastMessage = (chatArray) => {
     const lastMsg = chatArray[chatArray.length - 1];
     return lastMsg ? lastMsg.message : "No messages yet";
@@ -208,10 +226,17 @@ export default function ChatDashboard() {
     });
   };
 
+  // const handleSelectChat = (chat) => {
+  //   setSelectedChat(chat);
+
+  //   localStorage.setItem("selectedChatId", chat._id); // Save selected chat to localStorage
+  // };
+
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
+    localStorage.setItem("selectedChatId", chat._id);
 
-    localStorage.setItem("selectedChatId", chat._id); // Save selected chat to localStorage
+    socket.emit("joinRoom", chat._id);
   };
 
   const CreateChatRoom = async (user) => {
@@ -255,33 +280,87 @@ export default function ChatDashboard() {
       user.designation !== "Site Technician"
   );
 
-  const sendMessage = async (chat) => {
+  // const sendMessage = async (chat) => {
+  //   dispatch({ type: "NEW_CHAT_REQUEST" });
+  //   try {
+  //     const result = await axios.put(
+  //       `/api/v1/chats/${chat._id}`,
+  //       { message: textMessage },
+  //       {
+  //         headers: { authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
+
+  //     dispatch({ type: "NEW_CHAT_SUCCESS" });
+  //     setTextMessage("");
+
+  //     // Option 1: Refetch chats and update selected chat
+  //     // await fetchChats(); // This updates the whole chat list
+
+  //     const updatedChat = result.data.data; // Assuming this is the updated chat object
+  //     setSelectedChat(updatedChat); // Update current chat
+  //   } catch (error) {
+  //     console.error("Error sending message:", error);
+  //     dispatch({
+  //       type: "NEW_CHAT_FAIL",
+  //       payload: "Failed to send message",
+  //     });
+  //   }
+  // };
+
+  const sendMessage = (chat) => {
+    if (!textMessage.trim()) return;
+
     dispatch({ type: "NEW_CHAT_REQUEST" });
-    try {
-      const result = await axios.put(
-        `/api/v1/chats/${chat._id}`,
-        { message: textMessage },
-        {
-          headers: { authorization: `Bearer ${authtoken}` },
-        }
-      );
 
-      dispatch({ type: "NEW_CHAT_SUCCESS" });
-      setTextMessage("");
+    // 1. Optimistic update
+    const newMsg = {
+      send_by: {
+        name: userInfo.username,
+        email: userInfo.email,
+        profile_image: userInfo.profile_image,
+      },
+      message: textMessage,
+      timestamp: new Date(),
+    };
 
-      // Option 1: Refetch chats and update selected chat
-      // await fetchChats(); // This updates the whole chat list
+    setSelectedChat((prev) => ({
+      ...prev,
+      chat: [...prev.chat, newMsg],
+    }));
 
-      const updatedChat = result.data.data; // Assuming this is the updated chat object
-      setSelectedChat(updatedChat); // Update current chat
-    } catch (error) {
-      console.error("Error sending message:", error);
-      dispatch({
-        type: "NEW_CHAT_FAIL",
-        payload: "Failed to send message",
-      });
-    }
+    setTextMessage("");
+
+    // 2. Emit to backend
+    socket.emit("sendMessage", {
+      chatId: chat._id,
+      message: textMessage,
+      user: userInfo,
+    });
+
+    dispatch({ type: "NEW_CHAT_SUCCESS" });
   };
+
+  useEffect(() => {
+    // socket.on("receiveMessage", ({ chatId, message }) => {
+    //   setSelectedChat((prev) => {
+    //     if (!prev || prev._id !== chatId) return prev;
+    //     return { ...prev, chat: [...prev.chat, message] };
+    //   });
+    // });
+
+    socket.on("receiveMessage", ({ chatId, message }) => {
+      if (message.send_by.email === userInfo.email) return; // ignore own message
+      setSelectedChat((prev) => {
+        if (!prev || prev._id !== chatId) return prev;
+        return { ...prev, chat: [...prev.chat, message] };
+      });
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedChat) {
@@ -289,12 +368,6 @@ export default function ChatDashboard() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [selectedChat]);
-
-  // const subscriptionErrors = [
-  //   "Subscription expired. Please renew your subscription.",
-  //   "Please subscribe to use this feature.",
-  //   "Payment for the last invoice is pending. Please complete the payment to continue using the service.",
-  // ];
 
   const checkStatus = [
     "subscriptionSitesAssigned",
@@ -308,10 +381,7 @@ export default function ChatDashboard() {
     <div>
       {chatsloading || newchatloading ? (
         <LoadingSpinner />
-      ) : //  subscriptionErrors.includes(chatError || userError) ? (
-      //   <SubscriptionExpiryCard data={subscriptiondata} subscriptionStatus={subscriptionStatus}  error={chatError} />
-      // )
-      checkStatus.includes(subscriptionStatus) ? (
+      ) : checkStatus.includes(subscriptionStatus) ? (
         <SubscriptionExpiryCard
           data={subscriptiondata}
           subscriptionStatus={subscriptionStatus}
@@ -332,7 +402,6 @@ export default function ChatDashboard() {
                   onClick={() => setShowUserModal(true)}
                 >
                   New Chat{" "}
-                  {/* <CIcon icon={cilPlaylistAdd} className="fw-bold" size="xl" /> */}
                 </CButton>
               </div>
 

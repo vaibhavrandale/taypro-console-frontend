@@ -2505,6 +2505,15 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  {
+    path: "/master-user/chat",
+    name: "Chat with User",
+    element: (
+      <MasterUserRoute>
+        <ChatDashboard />
+      </MasterUserRoute>
+    ),
+  },
 
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
@@ -4616,6 +4625,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/chat",
+    name: "Chat with User",
+    element: (
+      <ServiceAdminRoute>
+        <ChatDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
@@ -5311,6 +5329,15 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <WeatherDataSitewise />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/chat",
+    name: "Chat with User",
+    element: (
+      <ServiceUserRoute>
+        <ChatDashboard />
       </ServiceUserRoute>
     ),
   },

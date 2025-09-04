@@ -16,7 +16,6 @@ import {
   cilListRich,
   cilCheck,
   cilBarChart,
-  cilDollar,
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
@@ -1733,6 +1732,11 @@ const _nav = [
             name: "Users",
             to: "/service-admin/users",
           },
+          {
+            component: CNavItem,
+            name: "Chat",
+            to: "/service-admin/chat",
+          },
         ],
       },
       {
@@ -2551,6 +2555,11 @@ const _nav = [
             component: CNavItem,
             name: "Users",
             to: "/service-user/users",
+          },
+          {
+            component: CNavItem,
+            name: "Chat",
+            to: "/service-user/chat",
           },
         ],
       },
