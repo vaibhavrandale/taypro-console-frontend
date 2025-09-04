@@ -874,7 +874,7 @@ const RobotOperating = () => {
                       className="shadow border-0 "
                       style={{ height: "100%" }}
                     >
-                      <CCardBody>
+                      {/* <CCardBody>
                         <div className="d-flex justify-content-between align-items-center">
                           <h6 className="fw-bold">Custom Downlink</h6>
 
@@ -921,6 +921,70 @@ const RobotOperating = () => {
                           >
                             <span className="d-flex justify-content-center align-items-center">
                               {" "}
+                              {sendingCommandloading ? (
+                                <LoadingSpinner />
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </span>
+                          </CButton>
+                        </form>
+                      </CCardBody> */}
+                      <CCardBody>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className="fw-bold">Custom Downlink</h6>
+
+                          <FaCircleInfo
+                            className="text-primary"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setModalVisible(true)}
+                          />
+                        </div>
+                        <form className="position-relative mt-4">
+                          <CFormCheck
+                            type="checkbox"
+                            className="my-1"
+                            label="Send to all"
+                            id="sent_custom_to_all"
+                            checked={sent_custom_to_all}
+                            onChange={(e) => {
+                              setSentCustomToAll(e.target.checked);
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              transform: "scale(1.1)",
+                              marginBottom: "0",
+                            }}
+                          />
+
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter command"
+                            name={customDownlink}
+                            onChange={(e) => setCustomDownlink(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && customDownlink) {
+                                e.preventDefault(); // Prevent form submission
+                                sendCustomDownlink(
+                                  customDownlink,
+                                  sent_custom_to_all
+                                ); // Trigger the same function as the button
+                              }
+                            }}
+                          />
+                          <CButton
+                            disabled={!customDownlink}
+                            onClick={() =>
+                              sendCustomDownlink(
+                                customDownlink,
+                                sent_custom_to_all
+                              )
+                            }
+                            type="button"
+                            className="d-flex justify-content-center align-items-center btn-sm send-button "
+                          >
+                            <span className="d-flex justify-content-center align-items-center">
                               {sendingCommandloading ? (
                                 <LoadingSpinner />
                               ) : (
