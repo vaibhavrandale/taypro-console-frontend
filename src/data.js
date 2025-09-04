@@ -4956,7 +4956,7 @@ export const customer_feedback = [
 
 export const clientSubscriptionPlans = [
   {
-    plan_id: "basic",
+    plan_id: "Basic",
     name: "Basic Plan",
     description: "Essential features for basic robot operation and monitoring.",
     price: 1000, // Example price in INR/month
@@ -4968,10 +4968,10 @@ export const clientSubscriptionPlans = [
       "Site Management",
       "Only 3 Users",
     ],
-    serviceTier: "basic",
+    serviceTier: "Basic",
   },
   {
-    plan_id: "premium",
+    plan_id: "Premium",
     name: "Premium Plan",
     description:
       "Advanced features including reports, maintenance, and alerts.",
@@ -4979,6 +4979,7 @@ export const clientSubscriptionPlans = [
     frequency: ["monthly", "yearly"],
     features: [
       "Robot Operating",
+      "Robot Position Tracking",
       "Battery Status",
       "Cleaning Log",
       "Site Management",
@@ -4993,10 +4994,10 @@ export const clientSubscriptionPlans = [
       "Grass Cutting Alert",
       "Forecast Weather Alert",
     ],
-    serviceTier: "premium",
+    serviceTier: "Premium",
   },
   {
-    plan_id: "enterprise",
+    plan_id: "Enterprise",
     name: "Enterprise Plan",
     description:
       "Comprehensive features with AI, weather models, and scalability.",
@@ -5004,6 +5005,7 @@ export const clientSubscriptionPlans = [
     frequency: ["monthly", "yearly"],
     features: [
       "Robot Operating",
+      "Robot Position Tracking",
       "Battery Status",
       "Cleaning Log",
       "Site Management",
@@ -5020,10 +5022,10 @@ export const clientSubscriptionPlans = [
       "Weather Model",
       "Scada Integration",
     ],
-    serviceTier: "enterprise",
+    serviceTier: "Enterprise",
   },
   {
-    plan_id: "free",
+    plan_id: "Free",
     name: "Free Trial Plan",
     description: "7-day trial with basic robot operation features.",
     price: 0,
@@ -5034,7 +5036,7 @@ export const clientSubscriptionPlans = [
       "Cleaning log",
       "Site management",
     ],
-    serviceTier: "basic",
+    serviceTier: "Free",
     trialDuration: 7,
   },
 ];

@@ -22,6 +22,7 @@ import {
   cilMoney,
   cilDiamond,
   cilWrapText,
+  cilLocationPin,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 
@@ -339,7 +340,7 @@ const _nav = [
         name: "Robots Tracking",
         icon: (
           <CIcon
-            icon={cilWrapText}
+            icon={cilLocationPin}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
@@ -2905,7 +2906,7 @@ const _nav = [
         name: "Robots Tracking",
         icon: (
           <CIcon
-            icon={cilWrapText}
+            icon={cilLocationPin}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
@@ -2913,8 +2914,18 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Robots Position Tracking",
+            name: "Robots Pos. Tracking",
             to: "/client-admin/robots-position",
+            subscriptionIcon: (
+              <CIcon
+                icon={cilDiamond}
+                style={{
+                  height: "18px",
+                  width: "18px",
+                  color: "yellow",
+                }}
+              />
+            ),
           },
         ],
       },

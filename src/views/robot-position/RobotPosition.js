@@ -23,6 +23,7 @@ import {
   CRow,
 } from "@coreui/react";
 import RobotImg from "../../assets/images/robot.png";
+import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -31,7 +32,13 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return { ...state, loadingRobots: false, robotsData: action.payload };
     case "FETCH_FAIL":
-      return { ...state, loadingRobots: false, error: action.payload };
+      return {
+        ...state,
+        loadingRobots: false,
+        error: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
     case "FETCH_SITES_REQUEST":
       return { ...state, loadingSites: true, siteserror: "" };
     case "FETCH_SITES_SUCCESS":
@@ -686,15 +693,27 @@ const RobotRow = ({ robot, index }) => {
 };
 
 const RobotPosition = () => {
-  const [{ error, robotsData, loadingRobots, sites, loadingSites }, dispatch] =
-    useReducer(reducer, {
-      robotsData: [],
-      loadingRobots: true,
-      loadingSites: false,
-      siteserror: false,
-      sites: [],
-      error: "",
-    });
+  const [
+    {
+      error,
+      robotsData,
+      loadingRobots,
+      sites,
+      loadingSites,
+      subscriptiondata,
+      subscriptionStatus,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robotsData: [],
+    loadingRobots: true,
+    loadingSites: false,
+    siteserror: false,
+    sites: [],
+    error: "",
+    subscriptionStatus: "",
+    subscriptiondata: {},
+  });
   const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("all");
 
@@ -719,6 +738,8 @@ const RobotPosition = () => {
         dispatch({
           type: "FETCH_FAIL",
           payload: error.response?.data?.message || error.response?.data?.error,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(
           error.response?.data?.message || error.response?.data?.error
@@ -765,125 +786,150 @@ const RobotPosition = () => {
     setSiteId(selectedSiteId); // Updates local state
   };
 
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
+  ];
+
   return (
     <div
       style={{
-        padding: "20px",
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      {/* header */}
-      <h2 style={{ marginBottom: "30px", textAlign: "center" }}>
-        <CIcon icon={cilLocationPin} color="primary" size="xl" /> Live Robot
-        Position Tracking -{" "}
-        {new Date().toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-      </h2>
-
-      <CRow className="mb-5">
-        <CCol md={2} xs={12}>
-          <div className="m-1">
-            {loadingSites ? (
-              <LoadingSpinner />
-            ) : (
-              sites?.length > 0 && (
-                <CFormSelect
-                  name="site_id"
-                  value={site_id}
-                  onChange={handleSiteNameChange}
-                >
-                  <option value="all">All Data</option>
-                  {sites.map((item, index) => (
-                    <option key={item.site_id} value={item.site_id}>
-                      {item.site_id}
-                    </option>
-                  ))}
-                </CFormSelect>
-              )
-            )}
-          </div>
-        </CCol>
-      </CRow>
-
-      {/* robots row */}
-      <div
-        style={{
-          flex: 1,
-          overflowX: "auto",
-          padding: "20px 0",
-          minHeight: "350px",
-        }}
-      >
-        {loadingRobots ? (
-          <LoadingSpinner />
-        ) : error ? (
-          <div>{error}</div>
-        ) : robotsData.length > 0 ? (
-          robotsData.map((robot, index) => (
-            <RobotRow key={robot._id} robot={robot} index={index} />
-          ))
-        ) : (
-          <CBadge className="px-5 py-2" color="danger">
-            No robots found for{" "}
+      {loadingRobots || loadingSites ? (
+        <LoadingSpinner />
+      ) : checkStatus.includes(subscriptionStatus) ? (
+        <SubscriptionExpiryCard
+          data={subscriptiondata}
+          subscriptionStatus={subscriptionStatus}
+          error={error}
+        />
+      ) : (
+        <>
+          {/* header */}
+          <h5 className="text-center">
+            <CIcon icon={cilLocationPin} color="primary" size="xl" /> Live Robot
+            Position Tracking -{" "}
             {new Date().toLocaleDateString("en-GB", {
               day: "numeric",
               month: "long",
               year: "numeric",
             })}
-          </CBadge>
-        )}
-      </div>
+          </h5>
 
-      {/*footer */}
-      <div
-        style={{
-          position: "sticky",
-          bottom: 0,
-          padding: "5px 5px",
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: "15px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <CRow className="my-2">
+            <CCol md={4} xs={12}>
+              <div className="m-1">
+                {
+                  // loadingSites ? (
+                  //   <LoadingSpinner />
+                  // ) : (
+
+                  sites?.length > 0 && (
+                    <CFormSelect
+                      name="site_id"
+                      value={site_id}
+                      onChange={handleSiteNameChange}
+                    >
+                      <option value="all">All Data</option>
+                      {sites.map((item, index) => (
+                        <option key={item.site_id} value={item.site_id}>
+                          {item.site_id}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  )
+                }
+              </div>
+            </CCol>
+          </CRow>
+
+          {/* robots row */}
           <div
             style={{
-              width: "10px",
-              height: "10px",
-              backgroundColor: "#FFA000",
+              flex: 1,
+              overflowX: "auto",
+              padding: "20px 0",
+              minHeight: "350px",
             }}
-          ></div>
-          <span>Running</span>
-        </div>
+          >
+            {
+              // loadingRobots ? (
+              //   <LoadingSpinner />
+              // ) :
+              // error ? (
+              //   <div>{error}</div>
+              // ) :
+              robotsData.length > 0 ? (
+                robotsData.map((robot, index) => (
+                  <RobotRow key={robot._id} robot={robot} index={index} />
+                ))
+              ) : (
+                <CBadge className="px-5 py-2" color="danger">
+                  No robots found for{" "}
+                  {new Date().toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </CBadge>
+              )
+            }
+          </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          {/*footer */}
           <div
             style={{
-              width: "10px",
-              height: "10px",
-              backgroundColor: "#4CAF50",
+              position: "sticky",
+              bottom: 0,
+              padding: "5px 5px",
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: "15px",
             }}
-          ></div>
-          <span>At Dock</span>
-        </div>
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  backgroundColor: "#FFA000",
+                }}
+              ></div>
+              <span>Running</span>
+            </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              backgroundColor: "#ff0000ab",
-            }}
-          ></div>
-          <span>Cancelled/Stuck</span>
-        </div>
-      </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  backgroundColor: "#4CAF50",
+                }}
+              ></div>
+              <span>At Dock</span>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  backgroundColor: "#ff0000ab",
+                }}
+              ></div>
+              <span>Cancelled/Stuck</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

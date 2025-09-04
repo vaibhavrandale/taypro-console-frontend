@@ -11,7 +11,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChartBar, CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChartBar, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
@@ -144,7 +144,7 @@ const ClientAdminDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITE_DETAILS_FAIL",
-          payload: error.response?.data?.message || error.message,
+          payload: error.response?.data?.message || error.response?.data?.error,
         });
         // toast.error(error.response?.data?.message || error.message);
       }
@@ -290,14 +290,17 @@ const ClientAdminDashboard = () => {
               <CCard className="h-100 shadow-sm border-0">
                 <CCardHeader className="fw-bold">
                   <CRow className="d-flex justify-content-between align-items-center">
-                    <CCol md={5} className="">
+                    <CCol md={4} className="">
                       Weather Today{" "}
                     </CCol>
 
-                    <CCol md={7} className="m-0">
+                    <CCol md={8} className="">
                       {loadingSiteIds ? (
                         // <LoadingSpinner />
-                        "Fetching"
+                        <span className="d-flex justify-content-center align-items-center">
+                          {" "}
+                          Fetching
+                        </span>
                       ) : errorSiteIds ? (
                         <CBadge color="warning" className="">
                           {errorSiteIds === "Site not found"
@@ -308,7 +311,8 @@ const ClientAdminDashboard = () => {
                         <CFormSelect
                           value={site_id}
                           onChange={handleSiteNameChange}
-                          className="form-select p-1 m-0"
+                          className="form-select p-1 mx-1"
+                          style={{ fontSize: "12px" }}
                           aria-label="Select Site"
                         >
                           <option value="" disabled>
@@ -338,7 +342,7 @@ const ClientAdminDashboard = () => {
                       style={{ minHeight: "350px" }}
                     >
                       {errorWeatherData ===
-                      "Weather data for site: abc not found" ? (
+                      `Weather data for site: ${site_id} not found` ? (
                         <CBadge color="warning" className="p-2">
                           Please contact Admin to view Data
                         </CBadge>
@@ -458,7 +462,8 @@ const ClientAdminDashboard = () => {
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
                     <>
-                      {siteDetailsError === "Site not found" ? (
+                      {siteDetailsError === "Site not found" ||
+                      siteDetailsError === "Site Coordinates not found" ? (
                         <CBadge color="warning" className="p-2">
                           Please contact to Admin to view Data
                         </CBadge>
@@ -530,7 +535,8 @@ const ClientAdminDashboard = () => {
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
                     <>
-                      {siteDetailsError === "Site not found" ? (
+                      {siteDetailsError === "Site not found" ||
+                      siteDetailsError === "Site Coordinates not found" ? (
                         <CBadge color="warning" className="p-2">
                           Please contact to Admin to view Data
                         </CBadge>
@@ -605,7 +611,8 @@ const ClientAdminDashboard = () => {
                 <LoadingSpinner />
               ) : siteDetailsError ? (
                 <>
-                  {siteDetailsError === "Site not found" ? (
+                  {siteDetailsError === "Site not found" ||
+                  siteDetailsError === "Site Coordinates not found" ? (
                     <CBadge color="warning" className="p-2">
                       Please contact to Admin to view Data
                     </CBadge>

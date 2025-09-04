@@ -71,7 +71,6 @@ const SubscriptionViewPage = () => {
             headers: { Authorization: `Bearer ${authtoken}` },
           }
         );
-        console.log(response);
 
         const result = response.data.data;
         dispatch({
@@ -273,7 +272,7 @@ const SubscriptionViewPage = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="">
       {loading ? (
         <LoadingSpinner />
       ) : !subscription ? (
@@ -296,263 +295,250 @@ const SubscriptionViewPage = () => {
           </CCardBody>
         </CCard>
       ) : error ? (
-        <span className="text-center fw-bold">{error}</span>
+        <span className="text-center ">{error}</span>
       ) : (
         <>
-          {" "}
-          {/* <CCard className="mb-4">
-            <CCardHeader className="bg-primary text-white">
-              <CCardTitle className="h4">Subscription Details</CCardTitle>
-            </CCardHeader>
-            <CCardBody>
-              <CListGroup flush>
-                <CListGroupItem>
-                  <strong>Client ID:</strong> {subscription?.client_id}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Client Name:</strong>{" "}
-                  {subscription?.client_name || "N/A"}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Plan:</strong> {subscription?.plan_id}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Status:</strong> {subscription?.subscription_status}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Start Date:</strong>{" "}
-                  {moment(subscription.subscription_start_date).format(
-                    "DD-MM-YYYY HH:mm"
-                  )}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>End Date:</strong>{" "}
-                  {moment(subscription.subscription_end_date).format(
-                    "DD-MM-YYYY HH:mm"
-                  )}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Frequency:</strong> {subscription?.frequency}
-                </CListGroupItem>
-              </CListGroup>
-            </CCardBody>
-          </CCard> */}
-          <CCard className="mb-4 shadow-sm border-0">
-            <CCardHeader className="bg-gradient-primary text-white">
-              <h4 className="mb-0">Subscription Details</h4>
-            </CCardHeader>
-            <CCardBody>
-              <CRow className="gy-3">
-                <CCol md={6}>
-                  <small className="text-muted">Client ID</small>
-                  <div className="fw-bold">{subscription?.client_id}</div>
-                </CCol>
-                <CCol md={6}>
-                  <small className="text-muted">Client Name</small>
-                  <div className="fw-bold">
-                    {subscription?.client_name || "N/A"}
-                  </div>
-                </CCol>
+          <CRow>
+            <CCol md={6}>
+              <CCard className="my-2 shadow-sm border-0">
+                <CCardHeader className="bg-gradient-primary text-white">
+                  <h4 className="mb-0">Subscription Details</h4>
+                </CCardHeader>
+                <CCardBody>
+                  <CRow className="gy-3">
+                    <CCol md={6}>
+                      <small className="text-success">Client ID</small>
+                      <div className="">{subscription?.client_id}</div>
+                    </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">Client Name</small>
+                      <div className="">
+                        {subscription?.client_name || "N/A"}
+                      </div>
+                    </CCol>
 
-                <CCol md={6}>
-                  <small className="text-muted">Plan</small>
-                  <div>
-                    <CBadge color="success" className="px-3 py-1">
-                      {subscription?.plan_id.toUpperCase()}
-                    </CBadge>
-                  </div>
-                </CCol>
-                <CCol md={6}>
-                  <small className="text-muted">Status</small>
-                  <div>
-                    <CBadge
-                      color={
-                        subscription.subscription_status === "subscribed"
-                          ? "success"
-                          : subscription.subscription_status === "expired"
-                          ? "warning"
-                          : "danger"
-                      }
-                      className="px-3 py-1"
-                    >
-                      {subscription?.subscription_status.toUpperCase()}
-                    </CBadge>
-                  </div>
-                </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">Plan</small>
+                      <div>
+                        <CBadge color="success" className="px-2 py-1">
+                          {subscription?.plan_id.toUpperCase()}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">Status</small>
+                      <div>
+                        <CBadge
+                          color={
+                            subscription.subscription_status === "subscribed"
+                              ? "success"
+                              : subscription.subscription_status === "expired"
+                              ? "warning"
+                              : "danger"
+                          }
+                          className="px-2 py-1"
+                        >
+                          {subscription?.subscription_status.toUpperCase()}
+                        </CBadge>
+                      </div>
+                    </CCol>
 
-                <CCol md={6}>
-                  <small className="text-muted">Start Date</small>
-                  <div className="fw-bold">
-                    {moment(subscription.subscription_start_date).format(
-                      "DD-MM-YYYY"
-                    )}
-                  </div>
-                </CCol>
-                <CCol md={6}>
-                  <small className="text-muted">End Date</small>
-                  <div className="fw-bold">
-                    {moment(subscription.subscription_end_date).format(
-                      "DD-MM-YYYY"
-                    )}
-                  </div>
-                </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">Start Date</small>
+                      <div className="">
+                        {moment(subscription.subscription_start_date).format(
+                          "DD-MM-YYYY"
+                        )}
+                      </div>
+                    </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">End Date</small>
+                      <div className="">
+                        {moment(subscription.subscription_end_date).format(
+                          "DD-MM-YYYY"
+                        )}
+                      </div>
+                    </CCol>
 
-                <CCol md={6}>
-                  <small className="text-muted">Frequency</small>
-                  <div className="fw-bold">{subscription?.frequency}</div>
-                </CCol>
-              </CRow>
-            </CCardBody>
-          </CCard>
-          <CCard className="mb-4">
-            <CCardHeader className="bg-primary text-white">
-              <CCardTitle className="h4">Invoice Details</CCardTitle>
-            </CCardHeader>
-            <CCardBody>
-              {subscription?.invoice?.length === 0 ? (
-                <CCardText>No invoices available.</CCardText>
-              ) : (
-                <CTable responsive>
-                  <CTableHead>
-                    <CTableRow>
-                      <CTableHeaderCell style={{ minWidth: "350px" }}>
-                        Invoice ID
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Frequency
-                      </CTableHeaderCell>
+                    <CCol md={6}>
+                      <small className="text-success">Frequency</small>
+                      <div>
+                        <CBadge color="warning">
+                          {subscription?.frequency.toUpperCase()}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+            </CCol>
+            <CCol md={6}>
+              <CCard
+                className="my-2 shadow-sm border-0"
+                style={{ minHeight: "320px" }}
+              >
+                <CCardHeader className="bg-primary text-white">
+                  <CCardTitle className="h4">Invoice Details</CCardTitle>
+                </CCardHeader>
+                <CCardBody>
+                  {subscription?.invoice?.length === 0 ? (
+                    <CCardText>No invoices available.</CCardText>
+                  ) : (
+                    <CTable responsive>
+                      <CTableHead>
+                        <CTableRow>
+                          <CTableHeaderCell style={{ minWidth: "350px" }}>
+                            Invoice ID
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Frequency
+                          </CTableHeaderCell>
 
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Start Date
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        End Date
-                      </CTableHeaderCell>
-                      <CTableHeaderCell
-                        style={{ minWidth: "400px" }}
-                        className="text-center"
-                      >
-                        Tax Details
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Basic Amount (INR)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Total (INR)
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "150px" }}>
-                        Payment Status
-                      </CTableHeaderCell>
-                      <CTableHeaderCell style={{ minWidth: "100px" }}>
-                        Action
-                      </CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    {subscription?.invoice?.map((invoice, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell>{invoice.invoice_id}</CTableDataCell>
-                        <CTableDataCell>
-                          {invoice.frequency === "monthly" ? (
-                            <CBadge color="success text-uppercase">
-                              Monthly
-                            </CBadge>
-                          ) : invoice.frequency === "yearly" ? (
-                            <CBadge color="warning text-uppercase">
-                              Yearly
-                            </CBadge>
-                          ) : (
-                            <CBadge color="warning text-uppercase">FREE</CBadge>
-                          )}
-                        </CTableDataCell>
-
-                        <CTableDataCell>
-                          {moment(invoice.start_date).format("DD-MM-YYYY")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {moment(invoice.end_date).format("DD-MM-YYYY")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <CRow>
-                            <CCol>
-                              <strong>CGST:</strong> {invoice.tax_details.cgst}
-                            </CCol>
-                            <CCol>
-                              <strong>SGST:</strong> {invoice.tax_details.sgst}
-                            </CCol>
-                            <CCol>
-                              <strong>IGST:</strong> {invoice.tax_details.igst}
-                            </CCol>
-                          </CRow>
-                        </CTableDataCell>
-                        <CTableDataCell>{invoice.amount}</CTableDataCell>
-                        <CTableDataCell>
-                          {invoice.amount +
-                            invoice.tax_details.cgst +
-                            invoice.tax_details.sgst +
-                            invoice.tax_details.igst}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {invoice.status === "paid" ? (
-                            <CBadge color="success text-uppercase">Paid</CBadge>
-                          ) : (
-                            <CBadge color="danger text-uppercase">
-                              Pending
-                            </CBadge>
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <Link
-                            className="btn btn-sm btn-secondary m-1"
-                            onClick={async () => {
-                              setDownloadingInvoiceIds((prev) => [
-                                ...prev,
-                                invoice.invoice_id,
-                              ]);
-
-                              await exportToPdf(
-                                subscription._id,
-                                subscription.client_id,
-                                subscription.plan_id,
-                                subscription.client_name,
-                                subscription.client_logo,
-                                invoice.invoice_id,
-                                invoice.frequency,
-                                invoice.amount,
-                                invoice.start_date,
-                                invoice.end_date,
-                                invoice.tax_details.cgst,
-                                invoice.tax_details.sgst,
-                                invoice.tax_details.igst,
-                                invoice.tax_details.place_of_supply,
-                                invoice.status,
-                                invoice.transaction_id
-                              );
-
-                              setDownloadingInvoiceIds((prev) =>
-                                prev.filter((id) => id !== invoice.invoice_id)
-                              );
-                            }}
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Start Date
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            End Date
+                          </CTableHeaderCell>
+                          <CTableHeaderCell
+                            style={{ minWidth: "400px" }}
+                            className="text-center"
                           >
-                            {downloadingInvoiceIds.includes(
-                              invoice.invoice_id
-                            ) ? (
-                              <LoadingSpinner size="sm" />
-                            ) : (
-                              <CIcon
-                                icon={cilCloudDownload}
-                                style={{ color: "white" }}
-                              />
-                            )}
-                          </Link>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                  </CTableBody>
-                </CTable>
-              )}
-            </CCardBody>
-          </CCard>
+                            Tax Details
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Basic Amount (INR)
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Total (INR)
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Payment Status
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "100px" }}>
+                            Action
+                          </CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        {subscription?.invoice?.map((invoice, index) => (
+                          <CTableRow key={index}>
+                            <CTableDataCell>
+                              {invoice.invoice_id}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {invoice.frequency === "monthly" ? (
+                                <CBadge color="warning text-uppercase">
+                                  Monthly
+                                </CBadge>
+                              ) : invoice.frequency === "yearly" ? (
+                                <CBadge color="warning text-uppercase">
+                                  Yearly
+                                </CBadge>
+                              ) : (
+                                <CBadge color="warning text-uppercase">
+                                  FREE
+                                </CBadge>
+                              )}
+                            </CTableDataCell>
+
+                            <CTableDataCell>
+                              {moment(invoice.start_date).format("DD-MM-YYYY")}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {moment(invoice.end_date).format("DD-MM-YYYY")}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              <CRow>
+                                <CCol>
+                                  <strong>CGST:</strong>{" "}
+                                  {invoice.tax_details.cgst}
+                                </CCol>
+                                <CCol>
+                                  <strong>SGST:</strong>{" "}
+                                  {invoice.tax_details.sgst}
+                                </CCol>
+                                <CCol>
+                                  <strong>IGST:</strong>{" "}
+                                  {invoice.tax_details.igst}
+                                </CCol>
+                              </CRow>
+                            </CTableDataCell>
+                            <CTableDataCell>{invoice.amount}</CTableDataCell>
+                            <CTableDataCell>
+                              {invoice.amount +
+                                invoice.tax_details.cgst +
+                                invoice.tax_details.sgst +
+                                invoice.tax_details.igst}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {invoice.status === "paid" ? (
+                                <CBadge color="success text-uppercase">
+                                  Paid
+                                </CBadge>
+                              ) : (
+                                <CBadge color="danger text-uppercase">
+                                  Pending
+                                </CBadge>
+                              )}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              <Link
+                                className="btn btn-sm btn-secondary m-1"
+                                onClick={async () => {
+                                  setDownloadingInvoiceIds((prev) => [
+                                    ...prev,
+                                    invoice.invoice_id,
+                                  ]);
+
+                                  await exportToPdf(
+                                    subscription._id,
+                                    subscription.client_id,
+                                    subscription.plan_id,
+                                    subscription.client_name,
+                                    subscription.client_logo,
+                                    invoice.invoice_id,
+                                    invoice.frequency,
+                                    invoice.amount,
+                                    invoice.start_date,
+                                    invoice.end_date,
+                                    invoice.tax_details.cgst,
+                                    invoice.tax_details.sgst,
+                                    invoice.tax_details.igst,
+                                    invoice.tax_details.place_of_supply,
+                                    invoice.status,
+                                    invoice.transaction_id
+                                  );
+
+                                  setDownloadingInvoiceIds((prev) =>
+                                    prev.filter(
+                                      (id) => id !== invoice.invoice_id
+                                    )
+                                  );
+                                }}
+                              >
+                                {downloadingInvoiceIds.includes(
+                                  invoice.invoice_id
+                                ) ? (
+                                  <LoadingSpinner size="sm" />
+                                ) : (
+                                  <CIcon
+                                    icon={cilCloudDownload}
+                                    style={{ color: "white" }}
+                                  />
+                                )}
+                              </Link>
+                            </CTableDataCell>
+                          </CTableRow>
+                        ))}
+                      </CTableBody>
+                    </CTable>
+                  )}
+                </CCardBody>
+              </CCard>
+            </CCol>
+          </CRow>
+
           {subscription?.last_activity && (
             <LastActivity lastactivity={subscription?.last_activity} />
           )}

@@ -538,22 +538,16 @@ const ClientUsersManagement = () => {
 
   return (
     <div className="">
-      {/* <img src={logo} alt="logo" className="border" /> */}
-      {/* Search & Add User Button */}
-      <div>
-        <h2 className="text-center">External Users </h2>
-      </div>
-      <div className="d-flex justify-content-end align-items-center mb-3">
-        <div className="d-flex justify-content-between align-items-center">
-          <CButton
-            color="success"
-            size="sm"
-            className="text-whit m-1e"
-            onClick={openAddModal}
-          >
-            + Add User
-          </CButton>
-        </div>
+      <div className="d-flex justify-content-between align-items-center">
+        <h4 className="text-center">Manage Users </h4>
+        <CButton
+          color="success"
+          size="sm"
+          className="text-whit m-1e"
+          onClick={openAddModal}
+        >
+          + Add User
+        </CButton>
       </div>
       <CRow className="mb-3 justify-content-end">
         {" "}
@@ -772,14 +766,6 @@ const ClientUsersManagement = () => {
                 height="100"
                 style={{ objectFit: "cover", borderRadius: "5px" }}
               />
-              <CBadge
-                color="primary"
-                position="absolute"
-                top="0"
-                left="0"
-                shape="rounded-pill"
-                className="p-1"
-              ></CBadge>
             </div>
           ) : null}
         </CModalBody>
@@ -853,7 +839,7 @@ const ClientUsersManagement = () => {
             disabled={!userInfo.role === "Client Admin"}
           >
             <option value="">Select Role</option>
-            <option value="Client Admin">Client Admin</option>
+            <option value="Client Admin">Admin</option>
             <option value="Site Incharge">Site Incharge</option>
             <option value="Client Technitian">Technitian</option>
           </CFormSelect>
@@ -866,9 +852,7 @@ const ClientUsersManagement = () => {
           >
             <option value="">Select Department</option>
 
-            <option selected value="Service">
-              Service
-            </option>
+            <option value="Service">Service</option>
           </CFormSelect>
           <CFormLabel>Phone</CFormLabel>
           <CFormInput

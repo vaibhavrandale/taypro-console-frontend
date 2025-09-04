@@ -424,8 +424,11 @@ const ClientCleaningLog = () => {
           {errorLogError || cleaningError || timerLogError}
         </CBadge>
       ) : (
-        <div className="p-4">
+        <div className="">
           <div>
+            <h5 className="text-center mb-3">
+              <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
+            </h5>
             <CRow className="my-3">
               <CCol md={7} xs={12} className="d-flex flex-wrap gap-2">
                 <CCol md={3} xs={12} className="m-1">
@@ -461,10 +464,7 @@ const ClientCleaningLog = () => {
           ) : (
             <>
               {/* Timer Update Notifications Table - Comes First */}
-              <h5 className="mt-3 mb-3">
-                ⏱ Timer Update Notifications -{" "}
-                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
-              </h5>
+              <h5 className="mt-3 mb-3">⏱ Timer Update Notifications</h5>
               <CTable
                 bordered
                 hover
@@ -532,10 +532,7 @@ const ClientCleaningLog = () => {
               </CTable>
 
               {/* Cleaning Logs Table */}
-              <h5 className="mt-5 mb-3">
-                🤖 Cleaning Logs -{" "}
-                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
-              </h5>
+              <h5 className="mt-2 mb-3">🤖 Cleaning Logs</h5>
               <CTable
                 bordered
                 hover
@@ -644,17 +641,14 @@ const ClientCleaningLog = () => {
               />
 
               {/* Error Logs Table */}
-              <h5 className="mt-5 mb-3">
-                🚨 Error Logs for -{" "}
-                <CBadge color="warning">{site_id.toUpperCase()}</CBadge>
-              </h5>
+              <h5 className="mt-5 mb-3">🚨 Error Logs for</h5>
               <CTable
                 bordered
                 hover
                 responsive
                 className="text-center bg-important"
               >
-                <CTableHead color="dark">
+                <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
