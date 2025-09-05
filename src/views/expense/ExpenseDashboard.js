@@ -407,7 +407,7 @@ const ExpenseDashboard = () => {
             <CTableHeaderCell style={{ minWidth: "250px" }}>
               Created At
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "250px" }}>
+            <CTableHeaderCell style={{ minWidth: "280px" }}>
               Actions
             </CTableHeaderCell>
           </CTableRow>
