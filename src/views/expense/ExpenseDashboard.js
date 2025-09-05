@@ -517,7 +517,7 @@ const ExpenseDashboard = () => {
                       <CButton
                         className="btn btn-primary btn-sm m-1"
                         onClick={() => {
-                          setShowDeleteModal(true);
+                          setShowApproveModal(true); // ✅ Correct modal for approve
                           setExpense(expense);
                         }}
                         disabled={
