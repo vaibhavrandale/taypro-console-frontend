@@ -23,8 +23,6 @@ import CIcon from "@coreui/icons-react";
 import { clients } from "../../../data";
 import socket from "../../../components/Socket";
 
-// const socket = io(); // backend socket server
-
 const tabs = [
   // "Dashboard",
   // "Configuration",
@@ -38,7 +36,7 @@ const tabs = [
 const MqttDashboard = () => {
   const [activeTab, setActiveTab] = useState("Events");
   const [frames, setFrames] = useState(() => {
-    const saved = localStorage.getItem("localStorageFrames");
+    const saved = localStorage.getItem("allRobotFrames");
     return saved ? JSON.parse(saved) : [];
   });
   const [selectedFrame, setSelectedFrame] = useState(null);
