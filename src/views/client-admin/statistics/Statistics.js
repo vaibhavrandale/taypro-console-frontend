@@ -230,7 +230,7 @@ const Statistics = () => {
       ) : (
         <>
           <CRow className="my-2">
-            <CCol md={3} className="m-1">
+            <CCol md={4} className="m-1">
               {loadingSiteIds ? (
                 <LoadingSpinner />
               ) : sitesError ? (
@@ -253,7 +253,7 @@ const Statistics = () => {
               )}
             </CCol>
 
-            <CCol md={3} xs={12} className="m-1">
+            <CCol md={2} xs={12} className="m-1">
               <CFormInput
                 label="Start Date"
                 type="date"
@@ -261,7 +261,7 @@ const Statistics = () => {
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </CCol>
-            <CCol md={3} xs={12} className="m-1">
+            <CCol md={2} xs={12} className="m-1">
               <CFormInput
                 label="End Date"
                 type="date"

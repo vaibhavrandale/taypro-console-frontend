@@ -350,6 +350,11 @@ const _nav = [
             name: "Robots Position Tracking",
             to: "/master-admin/robots-position",
           },
+          {
+            component: CNavItem,
+            name: "New Tracking",
+            to: "/master-admin/robots-tracker",
+          },
         ],
       },
 

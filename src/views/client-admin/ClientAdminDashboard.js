@@ -16,7 +16,28 @@ import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
 
-const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
+const chartColors = [
+  "#052638",
+  "#4e73df",
+  "#FFC107",
+  "#17A2B8",
+  "#DC3545",
+  "#6C757D",
+  "#8E44AD",
+  "#3498DB",
+  "#E74C3C",
+  "#2ECC71",
+  "#F39C12",
+  "#D35400",
+  "#C0392B",
+  "#27AE60",
+  "#16A085",
+  "#2980B9",
+  "#2C3E50",
+  "#1ABC9C",
+  "#34495E",
+  "#95A5A6",
+];
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -259,7 +280,7 @@ const ClientAdminDashboard = () => {
         <div className="">
           <CRow className="g-4">
             {/* Map Section */}
-            <CCol xs={12} md={7}>
+            <CCol xs={12} md={6}>
               <CCard className="h-100 border-0 shadow-sm">
                 <CCardHeader className="">
                   Hello {userInfo.username},
@@ -286,7 +307,7 @@ const ClientAdminDashboard = () => {
             </CCol>
 
             {/* Weather Section */}
-            <CCol xs={12} md={5}>
+            <CCol xs={12} md={6}>
               <CCard className="h-100 shadow-sm border-0">
                 <CCardHeader className="fw-bold">
                   <CRow className="d-flex justify-content-between align-items-center">
@@ -442,15 +463,15 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-        <div className="mt-4">
+        <div className="mt-2">
           <CRow className="justify-content-center">
             <CCol xs={12} md={6} className="mt-4">
-              <CCard className="mb-4 shadow">
+              <CCard className=" shadow">
                 <CCardHeader>
                   <h5 className="text-center">
                     Total Area Cleaned:{" "}
                     <span className="text-success fw-bold">
-                      {totalAreaCleaned} m²
+                      {totalAreaCleaned} m
                     </span>
                   </h5>
                 </CCardHeader>
@@ -504,7 +525,7 @@ const ClientAdminDashboard = () => {
                                       blockWiseCleaning[tooltipItem.dataIndex];
                                     return ` ${
                                       block.block || "Unassigned"
-                                    } |  ${block.areaCleaned} m²`;
+                                    } |  ${block.areaCleaned} m`;
                                   },
                                 },
                               },
@@ -598,8 +619,8 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-        <div className="mt-4">
-          <CCard className="mb-4 shadow">
+        <div className="mt-2">
+          <CCard className="shadow">
             <CCardHeader>
               <h5>Battery Status</h5>{" "}
             </CCardHeader>

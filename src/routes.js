@@ -135,6 +135,7 @@ import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSite
 import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
+import RobotTracker from "./views/robot-position/RobotTracker";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -454,6 +455,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotPosition />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <MasterAdminRoute>
+        <RobotTracker />
       </MasterAdminRoute>
     ),
   },

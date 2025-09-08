@@ -275,9 +275,7 @@ export default function ChatDashboard() {
   // Scroll to the bottom when the chat is loaded
 
   const filteredUsers = users.filter(
-    (user) =>
-      (user.department === "Service" || user.department === "Project") &&
-      user.designation !== "Site Technician"
+    (user) => user.designation !== "Site Technician"
   );
 
   // const sendMessage = async (chat) => {

@@ -545,13 +545,13 @@ const ClientCleaningLog = () => {
                     <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Robot No
                     </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "190px" }}>
+                    <CTableHeaderCell style={{ minWidth: "130px" }}>
                       Row Number
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "190px" }}>
                       Row Length (Meters)
                     </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "160px" }}>
+                    <CTableHeaderCell style={{ minWidth: "180px" }}>
                       Cleaning Date
                     </CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "190px" }}>
@@ -581,14 +581,32 @@ const ClientCleaningLog = () => {
                         <CTableDataCell>{log.row_number}</CTableDataCell>
                         <CTableDataCell>{log.row_length}</CTableDataCell>
                         <CTableDataCell>
-                          {
-                            new Date(log.start_timestamp)
-                              .toISOString()
-                              .split("T")[0]
-                          }
+                          {new Date(log.start_timestamp).toLocaleString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            }
+                          )}
                         </CTableDataCell>
                         <CTableDataCell>
-                          {new Date(log.start_timestamp).toLocaleString()}
+                          {new Date(log.start_timestamp).toLocaleString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            }
+                          )}
                         </CTableDataCell>
                         <CTableDataCell>
                           {log.start_battery_percentage}
@@ -602,7 +620,19 @@ const ClientCleaningLog = () => {
                         ) : (
                           <>
                             <CTableDataCell>
-                              {new Date(log.finish_timestamp).toLocaleString()}
+                              {/* {new Date(log.finish_timestamp).toLocaleString()} */}
+                              {new Date(log.finish_timestamp).toLocaleString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  hour12: true,
+                                }
+                              )}
                             </CTableDataCell>
                             <CTableDataCell>
                               {log.finish_battery_percentage}
