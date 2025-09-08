@@ -200,7 +200,8 @@ export default function ChatDashboard() {
     };
   }, []);
 
-  const isUserOnline = (userId) => onlineUsers.some((u) => u.id === userId);
+  const isUserOnline = (userId) =>
+    onlineUsers.some((u) => u.id === userId && u.socketIds.length > 0);
 
   useEffect(() => {
     if (!userInfo?._id) return;
@@ -498,7 +499,7 @@ export default function ChatDashboard() {
               </CModal>
 
               {/* Chats list */}
-              <div className="my-2" style={{ maxHeight: "360px" }}>
+              <div className="" style={{ maxHeight: "360px" }}>
                 {chats
                   .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
                   .map((chat) => {
@@ -563,13 +564,14 @@ export default function ChatDashboard() {
             {/* Chat Window */}
             <CCol
               md={8}
+              // style={{ minHeight: "360px" }}
               className={`d-flex flex-column ${
                 showChatWindow ? "d-block" : "d-none d-md-flex"
               }`}
             >
               {selectedChat ? (
                 <>
-                  <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2">
+                  <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2 ">
                     {/* Back button for mobile */}
                     <button
                       type="button"
@@ -618,16 +620,16 @@ export default function ChatDashboard() {
 
                   {/* Messages */}
                   <div
-                    className="flex-grow-1 overflow-auto p-3"
+                    className="flex-grow-1 overflow-auto"
                     style={
                       window.innerWidth <= 767
                         ? {
-                            minHeight: "calc(100vh - 140px)", // full screen minus header + input
-                            maxHeight: "calc(100vh - 140px)",
+                            // minHeight: "calc(100vh - 240px)", // full screen minus header + input
+                            maxHeight: "550px",
                           }
                         : {
-                            minHeight: "300px",
-                            maxHeight: "300px",
+                            minHeight: "400px",
+                            maxHeight: "400px",
                           }
                     }
                   >
@@ -683,7 +685,7 @@ export default function ChatDashboard() {
 
                   {/* Input */}
                   {/* Input for Desktop/Tablet */}
-                  <div className="border-top p-3 d-none d-md-block">
+                  <div className="border-top p-3 d-none d-md-block border">
                     <CForm>
                       <CInputGroup>
                         <CFormInput
