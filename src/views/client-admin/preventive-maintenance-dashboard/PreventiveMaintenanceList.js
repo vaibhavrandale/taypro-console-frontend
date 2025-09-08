@@ -271,10 +271,10 @@ const PreventiveMaintenanceList = () => {
                   </CRow>
                 </form>
                 <div className="table-responsive">
-                  <CTable bordered hover className="bg-important">
+                  <CTable responsive bordered hover>
                     <CTableHead>
                       {/* Top Row - Branding & Title */}
-                      <CTableRow className="bg-dark text-white">
+                      <CTableRow className=" text-white">
                         <CTableHeaderCell colSpan={1} className="text-center">
                           <CAvatar
                             src={TayproLogo}

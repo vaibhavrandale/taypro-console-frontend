@@ -481,6 +481,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       toast.success(data.data.message);
       dispatch({ type: "SUBMIT_SUCCESS" });
       setFeedbackModal(false); // Hide the modal
+      setFormData({
+        comments: "",
+        rating: "",
+      });
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",

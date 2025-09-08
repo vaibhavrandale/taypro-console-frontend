@@ -13,9 +13,9 @@ import {
   WifiOff,
   AlertTriangle,
   CloudRain,
-  Brain,
   ServerCog,
   Users2,
+  MapPin,
 } from "lucide-react";
 
 const featureIcons = {
@@ -33,6 +33,7 @@ const featureIcons = {
     <AlertTriangle size={16} className="me-2 text-warning" />
   ),
   "Robot Offline Alert": <WifiOff size={16} className="me-2 text-warning" />,
+  "Robot Pos. Tracking": <MapPin size={16} className="me-2 text-warning" />,
   "Major Breakdown": <AlertTriangle size={16} className="me-2 text-warning" />,
   "Grass Cutting Alert": (
     <ClipboardList size={16} className="me-2 text-warning" />
@@ -46,7 +47,7 @@ const featureIcons = {
 
 const plans = [
   {
-    plan_id: "basic",
+    plan_id: "Basic",
     name: "Basic Plan",
     description: "Essential features for basic robot operation and monitoring.",
     price: 1000,
@@ -59,13 +60,14 @@ const plans = [
     ],
   },
   {
-    plan_id: "premium",
+    plan_id: "Premium",
     name: "Premium Plan",
     description:
       "Advanced features including reports, maintenance, and alerts.",
     price: 5000,
     features: [
       "Robot Operating",
+      "Robot Pos. Tracking",
       "Battery Status",
       "Cleaning Log",
       "Site Management",
@@ -82,13 +84,14 @@ const plans = [
     ],
   },
   {
-    plan_id: "enterprise",
+    plan_id: "Enterprise",
     name: "Enterprise Plan",
     description:
       "Comprehensive features with AI, weather models, and scalability.",
     price: 10000,
     features: [
       "Robot Operating",
+      "Robot Pos. Tracking",
       "Battery Status",
       "Cleaning Log",
       "Site Management",
@@ -110,6 +113,7 @@ const plans = [
 const allFeatures = [
   "Robot Operating",
   "Battery Status",
+  "Robot Pos. Tracking",
   "Cleaning Log",
   "Site Management",
   "Only 3 Users",

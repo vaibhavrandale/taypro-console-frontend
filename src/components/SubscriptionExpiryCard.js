@@ -6,10 +6,9 @@ import {
   CRow,
   CCol,
   CBadge,
-  CButton,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilWarning, cilReload, cilExternalLink } from "@coreui/icons";
+import { cilWarning, cilExternalLink } from "@coreui/icons";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -114,101 +113,6 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
   return (
     <CRow className="justify-content-center mb-2">
       <CCol md={10}>
-        {/* <CCard className="shadow-lg rounded-0">
-          <CCardHeader
-            className={`bg-${
-              statusConfig[subscriptionStatus]?.color || "danger"
-            } 
-              text-white d-flex align-items-center justify-content-between`}
-          >
-            <div className="d-flex align-items-center">
-              <CIcon icon={cilWarning} className="me-2" />
-              <h5 className="mb-0">
-                {statusConfig[subscriptionStatus]?.label ||
-                  "Subscription Alert"}
-              </h5>
-            </div>
-            <CBadge color="light" textColor="dark" className="fw-bold p-2">
-              {latestInvoice.status === "pending"
-                ? "Payment Pending"
-                : latestInvoice.status === "paid"
-                ? "Please Upgrade your Plan"
-                : "Please Subscribe"}
-            </CBadge>
-          </CCardHeader>
-
-          <CCardBody>
-            <CRow className="align-items-center mb-1">
-              <CCol sm="auto">
-                <img className="fluid" src={client_logo} alt={data._id} />
-              </CCol>
-              <CCol>
-                <h4 className="mb-1">{client_name}</h4>
-                <div className="text-muted">
-                  Plan :{" "}
-                  <CBadge color="success">{plan_id?.toUpperCase()}</CBadge>
-                </div>
-              </CCol>
-            </CRow>
-
-            <CRow className="mb-4">
-              <CCol md={6} className="mb-2">
-                <strong>Start Date -</strong>{" "}
-                {formatDate(subscription_start_date)}
-              </CCol>
-              <CCol md={6} className="mb-2">
-                <strong>End Date -</strong> {formatDate(subscription_end_date)}
-              </CCol>
-              <CCol md={6} className="mb-2">
-                <strong>Frequency -</strong> {frequency}
-              </CCol>
-            
-              <CCol md={6} className="mb-2">
-                <strong>subscription status -</strong>{" "}
-                <CBadge
-                  color={
-                    subscription_status === "expired" ? "danger" : "success"
-                  }
-                >
-                  {subscription_status.toUpperCase()}
-                </CBadge>{" "}
-                <CBadge color="warning" className="text-uppercase">
-                  {latestInvoice.status === "pending"
-                    ? "Payment Pending"
-                    : latestInvoice.status === "paid"
-                    ? "Please Upgrade your Plan"
-                    : "Please Subscribe"}
-                </CBadge>{" "}
-                <Link to={`/${adminroute}/subscriptions`} className="">
-                  <CIcon icon={cilExternalLink} className="text-info fw-bold" />
-                </Link>
-              </CCol>
-             
-            </CRow>
-
-            <div className="text-warning text-center my-2">{error}</div>
-
-            {clientUser && (
-              <div className="d-flex align-items-center mb-2 ">
-                <img
-                  src={clientUser.profile_image}
-                  alt="Profile"
-                  className="rounded-circle me-3"
-                  width="50"
-                  height="50"
-                  style={{ objectFit: "cover", cursor: "pointer" }}
-                />
-                <div>
-                  <div className="fw-bold">{clientUser.name}</div>
-                  <div className="text-muted small">{clientUser.details}</div>
-                </div>
-              </div>
-            )}
-
-           
-          </CCardBody>
-        </CCard> */}
-
         <CCard className="shadow-lg rounded-3 ">
           <CCardHeader
             className={` bg-${
@@ -251,33 +155,33 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
               <CCol>
                 <h5 className="mb-1">{client_name}</h5>
                 <div className="text-muted">
-                  Plan&nbsp;:{" "}
+                  Current Plan&nbsp;:{" "}
                   <CBadge color="success">{plan_id?.toUpperCase()}</CBadge>
                 </div>
               </CCol>
             </CRow>
             {/* Subscription Details */}
             <CRow className="mb-3">
-              <CCol md={6}>
-                <strong>Start Date&nbsp;:</strong>{" "}
+              <CCol md={3}>
+                <span className="text-success">Start Date&nbsp;:</span>{" "}
                 {formatDate(subscription_start_date)}
               </CCol>
-              <CCol md={6}>
-                <strong>End Date&nbsp;:</strong>{" "}
+              <CCol md={3}>
+                <span className="text-success">End Date&nbsp;:</span>{" "}
                 {formatDate(subscription_end_date)}
               </CCol>
-              <CCol md={6}>
-                <strong>Frequency&nbsp;:</strong>
+              <CCol md={3}>
+                <span className="text-success">Frequency&nbsp;:</span>{" "}
                 <CBadge
-                  shape="rounded-pill"
+                  // shape="rounded-pill"
                   className="text-dark ms-1"
                   color="warning"
                 >
                   {frequency.toUpperCase()}
                 </CBadge>
               </CCol>
-              <CCol md={6}>
-                <strong>Status&nbsp;:</strong>{" "}
+              <CCol md={3}>
+                <span className="text-success">Status&nbsp;:</span>{" "}
                 <CBadge
                   color={
                     subscription_status === "expired" ? "danger" : "success"
@@ -287,40 +191,37 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
                 </CBadge>
               </CCol>
             </CRow>
-            {/* {clientUser && (
-              <div className="d-flex align-items-center mb-3">
-                <img
-                  src={clientUser.profile_image}
-                  alt="Profile"
-                  className="rounded-circle border me-3"
-                  width="60"
-                  height="60"
-                  style={{ objectFit: "cover" }}
-                />
-                <div>
-                  <div className="fw-bold">{clientUser.name}</div>
-                  <div className="text-muted small">{clientUser.details}</div>
-                </div>
-              </div>
-            )} */}
-            {/* Error */}
+
             {error && (
               <div className="text-warning text-center mb-3">{error}</div>
             )}
-            <CRow>
+            {/* <CRow>
               <CCol className="d-flex justify-content-center align-items-center">
-                <CBadge color="warning" className="text-dark  text-uppercase">
+                <CBadge
+                  color="warning"
+                  className="text-dark fs-6 text-uppercase d-flex justify-content-center align-items-center"
+                >
                   {latestInvoice.status === "pending"
                     ? "Payment Pending"
                     : latestInvoice.status === "paid"
                     ? "Please Upgrade your Plan"
                     : "Please Subscribe"}
                 </CBadge>
-                <Link to={`/${adminroute}/subscriptions`} className="ms-1">
-                  <CIcon icon={cilExternalLink} className="text-info fw-bold" />
-                </Link>
               </CCol>
-            </CRow>
+            </CRow> */}
+            <div className="d-flex justify-content-center align-items-center ">
+              <Link to={`/${adminroute}/subscriptions`} className="ms-1">
+                <CBadge color="success" className="m-2 p-2">
+                  View Your current Subscription
+                </CBadge>
+              </Link>
+              <Link to={`/${adminroute}/pricing`}>
+                {" "}
+                <CBadge color="success" className="m-2 p-2">
+                  View Pricing
+                </CBadge>
+              </Link>
+            </div>
           </CCardBody>
         </CCard>
       </CCol>

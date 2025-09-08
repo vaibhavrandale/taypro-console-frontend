@@ -5,6 +5,7 @@ import {
   AppFooter,
   AppHeader,
 } from "../components/index";
+// import ChatWidget from "../components/ChatWidget";
 
 const DefaultLayout = () => {
   const [sidebarShow, setSidebarShow] = useState(true); // Use local state
@@ -18,6 +19,7 @@ const DefaultLayout = () => {
         <AppHeader sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
         <div className="body flex-grow-1">
           <AppContent />
+          {/* <ChatWidget /> */}
         </div>
         <AppFooter />
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { CForm, CFormSelect, CButton, CCol, CRow } from "@coreui/react";
+import { CForm, CFormSelect, CButton, CCol, CRow, CBadge } from "@coreui/react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -160,21 +160,127 @@ const CreateSubscription = () => {
   };
 
   return (
-    <div className="p-5  shadow-lg rounded-3">
-      <h2 className="text-2xl font-bold mb-4 text-primary border-bottom pb-2">
-        Create Subscription
-      </h2>
+    // <div className="  shadow-lg rounded-3">
+    //   <h4 className="text-2xl font-bold mb-4 text-primary border-bottom pb-2">
+    //     Create Subscription
+    //   </h4>
 
-      {error && (
-        <div className="alert alert-danger mb-4 py-2 px-3 rounded-2">
-          {error}
+    //   {clientError && (
+    //     <CBadge color="danger" className="p-3 rounded-2">
+    //       {clientError}
+    //     </CBadge>
+    //   )}
+    //   {error && (
+    //     <CBadge color="danger" className="p-3 rounded-2">
+    //       {error}
+    //     </CBadge>
+    //   )}
+    //   <CForm onSubmit={handleSubmit}>
+    //     <CRow className="g-4 align-items-center">
+    //       {/* Select Client */}
+    //       <CCol md={3}>
+    //         {loadingClient ? (
+    //           <LoadingSpinner />
+    //         ) : clientError ? (
+    //           <div className="text-danger fw-semibold">{clientError}</div>
+    //         ) : clients?.length > 0 ? (
+    //           <CFormSelect
+    //             label={<span className="fw-semibold">Select Client</span>}
+    //             name="client_id"
+    //             value={client_id}
+    //             onChange={handleSiteNameChange}
+    //             className="rounded-2 shadow-sm my-2"
+    //           >
+    //             <option value="" disabled hidden>
+    //               -- Select Client --
+    //             </option>
+    //             {clients.map((item) => (
+    //               <option key={item.client_id} value={item.client_id}>
+    //                 {item.client_id}
+    //               </option>
+    //             ))}
+    //           </CFormSelect>
+    //         ) : (
+    //           <p className="text-muted">No Clients Found</p>
+    //         )}
+
+    //         <CFormSelect
+    //           label={<span className="fw-semibold">Select Plan</span>}
+    //           name="plan_id"
+    //           value={formData.plan_id}
+    //           onChange={handleChange}
+    //           className="rounded-2 shadow-sm my-2"
+    //         >
+    //           <option value="" disabled hidden>
+    //             -- Select Plan --
+    //           </option>
+    //           {clientSubscriptionPlans.map((plan) => (
+    //             <option key={plan.plan_id} value={plan.plan_id}>
+    //               {plan.name}
+    //             </option>
+    //           ))}
+    //         </CFormSelect>
+
+    //         <CFormSelect
+    //           label={<span className="fw-semibold">Select Frequency</span>}
+    //           name="frequency"
+    //           value={formData.frequency}
+    //           onChange={handleChange}
+    //           disabled={formData.plan_id === "free_trial"}
+    //           className="rounded-2 shadow-sm my-2"
+    //         >
+    //           <option value="" disabled hidden>
+    //             -- Select Frequency --
+    //           </option>
+    //           {clientSubscriptionPlans
+    //             .find((p) => p.plan_id === formData.plan_id)
+    //             ?.frequency.map((freq) => (
+    //               <option key={freq} value={freq}>
+    //                 {freq}
+    //               </option>
+    //             ))}
+    //         </CFormSelect>
+
+    //         <CButton
+    //           type="submit"
+    //           size="sm"
+    //           color="primary"
+    //           className="px-4 fw-semibold shadow-sm my-2"
+    //           disabled={loading}
+    //         >
+    //           {loading ? (
+    //             <span>
+    //               <LoadingSpinner />
+    //               Creating...
+    //             </span>
+    //           ) : (
+    //             "Create Subscription"
+    //           )}
+    //         </CButton>
+    //       </CCol>
+    //     </CRow>
+    //   </CForm>
+    // </div>
+
+    <div className="shadow-lg rounded-3">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+        <h4 className="text-2xl  m-0">Create Subscription</h4>
+      </div>
+
+      {/* Error Alerts */}
+      {(clientError || error) && (
+        <div className="mb-3">
+          <CBadge color="danger" className="p-2 fs-6 text-start">
+            {clientError || error}
+          </CBadge>
         </div>
       )}
 
       <CForm onSubmit={handleSubmit}>
-        <CRow className="g-4 align-items-end">
-          {/* Select Client */}
-          <CCol md={3}>
+        <CRow className="g-4">
+          <CCol md={6}>
+            {/* Select Client */}
             {loadingClient ? (
               <LoadingSpinner />
             ) : clientError ? (
@@ -201,8 +307,8 @@ const CreateSubscription = () => {
             )}
           </CCol>
 
-          {/* Select Plan */}
-          <CCol md={3}>
+          <CCol md={6}>
+            {/* Select Plan */}
             <CFormSelect
               label={<span className="fw-semibold">Select Plan</span>}
               name="plan_id"
@@ -221,8 +327,8 @@ const CreateSubscription = () => {
             </CFormSelect>
           </CCol>
 
-          {/* Select Frequency */}
-          <CCol md={3}>
+          <CCol md={6}>
+            {/* Select Frequency */}
             <CFormSelect
               label={<span className="fw-semibold">Select Frequency</span>}
               name="frequency"
@@ -244,22 +350,19 @@ const CreateSubscription = () => {
             </CFormSelect>
           </CCol>
 
-          {/* Submit */}
-          <CCol md={3} className="d-flex justify-content-end">
+          {/* Submit Button */}
+          <CCol xs={12} className="d-flex justify-content-end">
             <CButton
               type="submit"
-              size="md"
               color="primary"
+              size="sm"
               className="px-4 fw-semibold shadow-sm"
               disabled={loading}
             >
               {loading ? (
-                <span>
-                  <span
-                    className="spinner-border spinner-border-sm me-2"
-                    role="status"
-                  ></span>
-                  Creating...
+                <span className="d-flex align-items-center">
+                  <LoadingSpinner />
+                  <span className="ms-2">Creating...</span>
                 </span>
               ) : (
                 "Create Subscription"

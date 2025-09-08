@@ -11,12 +11,33 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CChartBar, CChartLine, CChartPie } from "@coreui/react-chartjs";
+import { CChartBar, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
 import CIcon from "@coreui/icons-react";
 import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
 
-const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
+const chartColors = [
+  "#052638",
+  "#4e73df",
+  "#FFC107",
+  "#17A2B8",
+  "#DC3545",
+  "#6C757D",
+  "#8E44AD",
+  "#3498DB",
+  "#E74C3C",
+  "#2ECC71",
+  "#F39C12",
+  "#D35400",
+  "#C0392B",
+  "#27AE60",
+  "#16A085",
+  "#2980B9",
+  "#2C3E50",
+  "#1ABC9C",
+  "#34495E",
+  "#95A5A6",
+];
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -144,7 +165,7 @@ const ClientAdminDashboard = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_SITE_DETAILS_FAIL",
-          payload: error.response?.data?.message || error.message,
+          payload: error.response?.data?.message || error.response?.data?.error,
         });
         // toast.error(error.response?.data?.message || error.message);
       }
@@ -259,7 +280,7 @@ const ClientAdminDashboard = () => {
         <div className="">
           <CRow className="g-4">
             {/* Map Section */}
-            <CCol xs={12} md={7}>
+            <CCol xs={12} md={6}>
               <CCard className="h-100 border-0 shadow-sm">
                 <CCardHeader className="">
                   Hello {userInfo.username},
@@ -286,18 +307,21 @@ const ClientAdminDashboard = () => {
             </CCol>
 
             {/* Weather Section */}
-            <CCol xs={12} md={5}>
+            <CCol xs={12} md={6}>
               <CCard className="h-100 shadow-sm border-0">
                 <CCardHeader className="fw-bold">
                   <CRow className="d-flex justify-content-between align-items-center">
-                    <CCol md={5} className="">
+                    <CCol md={4} className="">
                       Weather Today{" "}
                     </CCol>
 
-                    <CCol md={7} className="m-0">
+                    <CCol md={8} className="">
                       {loadingSiteIds ? (
                         // <LoadingSpinner />
-                        "Fetching"
+                        <span className="d-flex justify-content-center align-items-center">
+                          {" "}
+                          Fetching
+                        </span>
                       ) : errorSiteIds ? (
                         <CBadge color="warning" className="">
                           {errorSiteIds === "Site not found"
@@ -308,7 +332,8 @@ const ClientAdminDashboard = () => {
                         <CFormSelect
                           value={site_id}
                           onChange={handleSiteNameChange}
-                          className="form-select p-1 m-0"
+                          className="form-select p-1 mx-1"
+                          style={{ fontSize: "12px" }}
                           aria-label="Select Site"
                         >
                           <option value="" disabled>
@@ -338,7 +363,7 @@ const ClientAdminDashboard = () => {
                       style={{ minHeight: "350px" }}
                     >
                       {errorWeatherData ===
-                      "Weather data for site: abc not found" ? (
+                      `Weather data for site: ${site_id} not found` ? (
                         <CBadge color="warning" className="p-2">
                           Please contact Admin to view Data
                         </CBadge>
@@ -438,15 +463,15 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-        <div className="mt-4">
+        <div className="mt-2">
           <CRow className="justify-content-center">
             <CCol xs={12} md={6} className="mt-4">
-              <CCard className="mb-4 shadow">
+              <CCard className=" shadow">
                 <CCardHeader>
                   <h5 className="text-center">
                     Total Area Cleaned:{" "}
                     <span className="text-success fw-bold">
-                      {totalAreaCleaned} m²
+                      {totalAreaCleaned} m
                     </span>
                   </h5>
                 </CCardHeader>
@@ -458,7 +483,8 @@ const ClientAdminDashboard = () => {
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
                     <>
-                      {siteDetailsError === "Site not found" ? (
+                      {siteDetailsError === "Site not found" ||
+                      siteDetailsError === "Site Coordinates not found" ? (
                         <CBadge color="warning" className="p-2">
                           Please contact to Admin to view Data
                         </CBadge>
@@ -499,7 +525,7 @@ const ClientAdminDashboard = () => {
                                       blockWiseCleaning[tooltipItem.dataIndex];
                                     return ` ${
                                       block.block || "Unassigned"
-                                    } |  ${block.areaCleaned} m²`;
+                                    } |  ${block.areaCleaned} m`;
                                   },
                                 },
                               },
@@ -530,7 +556,8 @@ const ClientAdminDashboard = () => {
                     <LoadingSpinner />
                   ) : siteDetailsError ? (
                     <>
-                      {siteDetailsError === "Site not found" ? (
+                      {siteDetailsError === "Site not found" ||
+                      siteDetailsError === "Site Coordinates not found" ? (
                         <CBadge color="warning" className="p-2">
                           Please contact to Admin to view Data
                         </CBadge>
@@ -592,8 +619,8 @@ const ClientAdminDashboard = () => {
             </CCol>
           </CRow>
         </div>
-        <div className="mt-4">
-          <CCard className="mb-4 shadow">
+        <div className="mt-2">
+          <CCard className="shadow">
             <CCardHeader>
               <h5>Battery Status</h5>{" "}
             </CCardHeader>
@@ -605,7 +632,8 @@ const ClientAdminDashboard = () => {
                 <LoadingSpinner />
               ) : siteDetailsError ? (
                 <>
-                  {siteDetailsError === "Site not found" ? (
+                  {siteDetailsError === "Site not found" ||
+                  siteDetailsError === "Site Coordinates not found" ? (
                     <CBadge color="warning" className="p-2">
                       Please contact to Admin to view Data
                     </CBadge>
