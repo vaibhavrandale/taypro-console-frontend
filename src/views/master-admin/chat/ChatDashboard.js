@@ -27,7 +27,7 @@ import {
 import "./chart.css";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
-import { cilChatBubble, cilLoop, cilSend, cilX } from "@coreui/icons";
+import { cilArrowLeft, cilChatBubble, cilSend, cilX } from "@coreui/icons";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -121,14 +121,12 @@ export default function ChatDashboard() {
   });
   const [selectedChat, setSelectedChat] = useState(null);
   const [textMessage, setTextMessage] = useState("");
-  // const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null); // Ref to scroll to the bottom of the chat
-
   const [showUserModal, setShowUserModal] = useState(false);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-
-  console.log(socket.id);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [showChatWindow, setShowChatWindow] = useState(false);
 
   const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
@@ -191,9 +189,46 @@ export default function ChatDashboard() {
   }, [authtoken, fetchChats]); // Runs only once on mount
 
   useEffect(() => {
-    if (userInfo?._id) {
-      socket.emit("join", userInfo._id);
+    socket.on("updateOnlineUsers", (users) => {
+      console.log(users);
+      setOnlineUsers(users);
+    });
+
+    return () => {
+      socket.off("updateOnlineUsers");
+      socket.disconnect();
+    };
+  }, []);
+
+  const isUserOnline = (userId) => onlineUsers.some((u) => u.id === userId);
+
+  useEffect(() => {
+    if (!userInfo?._id) return;
+
+    const user = {
+      _id: userInfo._id,
+      username: userInfo.username,
+      email: userInfo.email,
+      profile_image: userInfo.profile_image,
+    };
+
+    const handleConnect = () => {
+      socket.emit("join", user);
+      console.log("✅ Joined socket as:", user.username);
+    };
+
+    // Always attach listener
+    socket.on("connect", handleConnect);
+
+    if (socket.connected) {
+      handleConnect();
+    } else {
+      socket.connect();
     }
+
+    return () => {
+      socket.off("connect", handleConnect);
+    };
   }, [userInfo]);
 
   useEffect(() => {
@@ -203,6 +238,18 @@ export default function ChatDashboard() {
       });
     }
   }, [chats]);
+
+  const handleChatClick = (chat) => {
+    handleSelectChat(chat);
+    if (window.innerWidth < 768) {
+      setShowChatWindow(true);
+    }
+  };
+
+  // Go back to list on mobile
+  const handleBack = () => {
+    setShowChatWindow(false);
+  };
 
   const renderLastMessage = (chatArray) => {
     const lastMsg = chatArray[chatArray.length - 1];
@@ -225,12 +272,6 @@ export default function ChatDashboard() {
       hour12: true,
     });
   };
-
-  // const handleSelectChat = (chat) => {
-  //   setSelectedChat(chat);
-
-  //   localStorage.setItem("selectedChatId", chat._id); // Save selected chat to localStorage
-  // };
 
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
@@ -280,34 +321,6 @@ export default function ChatDashboard() {
       user.designation !== "Site Technician"
   );
 
-  // const sendMessage = async (chat) => {
-  //   dispatch({ type: "NEW_CHAT_REQUEST" });
-  //   try {
-  //     const result = await axios.put(
-  //       `/api/v1/chats/${chat._id}`,
-  //       { message: textMessage },
-  //       {
-  //         headers: { authorization: `Bearer ${authtoken}` },
-  //       }
-  //     );
-
-  //     dispatch({ type: "NEW_CHAT_SUCCESS" });
-  //     setTextMessage("");
-
-  //     // Option 1: Refetch chats and update selected chat
-  //     // await fetchChats(); // This updates the whole chat list
-
-  //     const updatedChat = result.data.data; // Assuming this is the updated chat object
-  //     setSelectedChat(updatedChat); // Update current chat
-  //   } catch (error) {
-  //     console.error("Error sending message:", error);
-  //     dispatch({
-  //       type: "NEW_CHAT_FAIL",
-  //       payload: "Failed to send message",
-  //     });
-  //   }
-  // };
-
   const sendMessage = (chat) => {
     if (!textMessage.trim()) return;
 
@@ -342,13 +355,6 @@ export default function ChatDashboard() {
   };
 
   useEffect(() => {
-    // socket.on("receiveMessage", ({ chatId, message }) => {
-    //   setSelectedChat((prev) => {
-    //     if (!prev || prev._id !== chatId) return prev;
-    //     return { ...prev, chat: [...prev.chat, message] };
-    //   });
-    // });
-
     socket.on("receiveMessage", ({ chatId, message }) => {
       if (message.send_by.email === userInfo.email) return; // ignore own message
       setSelectedChat((prev) => {
@@ -391,8 +397,15 @@ export default function ChatDashboard() {
         <>
           {(createError || userError || chatError) &&
             (createError || userError || chatError)}
+
           <CRow>
-            <CCol md={4} className="border-end p-3 overflow-auto">
+            {/* Chat List */}
+            <CCol
+              md={4}
+              className={`border-end p-3 overflow-auto ${
+                showChatWindow ? "d-none d-md-block" : "d-block"
+              }`}
+            >
               <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
                 <h5>Chats</h5>
                 <CButton
@@ -405,6 +418,7 @@ export default function ChatDashboard() {
                 </CButton>
               </div>
 
+              {/* User Modal */}
               <CModal
                 size="lg"
                 scrollable
@@ -431,12 +445,7 @@ export default function ChatDashboard() {
                       <LoadingSpinner />
                     </div>
                   ) : (
-                    <CTable
-                      bordered
-                      hover
-                      responsive
-                      className="text-center bg-important"
-                    >
+                    <CTable bordered hover responsive className="text-center">
                       <CTableHead>
                         <CTableRow>
                           <CTableHeaderCell>#</CTableHeaderCell>
@@ -490,6 +499,7 @@ export default function ChatDashboard() {
                 </CModalBody>
               </CModal>
 
+              {/* Chats list */}
               <div className="my-2" style={{ maxHeight: "360px" }}>
                 {chats
                   .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
@@ -503,23 +513,38 @@ export default function ChatDashboard() {
                     return (
                       <div
                         key={chat._id}
-                        id="chat"
-                        className={`p-2 d-flex align-items-center gap-3 cursor-pointer ${
+                        className={`p-2 d-flex align-items-center gap-3 ${
                           selectedChat?._id === chat._id
-                            ? "bg-body-secondary rounded text-body-emphasis"
+                            ? "bg-body-secondary rounded"
                             : ""
                         }`}
-                        onClick={() => handleSelectChat(chat)}
+                        onClick={() => handleChatClick(chat)}
                         style={{ cursor: "pointer" }}
                       >
-                        <img
-                          src={otherUser.profile_image}
-                          alt="Profile"
-                          className="rounded-circle"
-                          width="30"
-                          height="30"
-                          style={{ objectFit: "cover" }}
-                        />
+                        <div className="position-relative">
+                          <img
+                            src={otherUser.profile_image}
+                            alt="Profile"
+                            className="rounded-circle"
+                            width="30"
+                            height="30"
+                            style={{ objectFit: "cover" }}
+                          />
+                          {isUserOnline(otherUser.user_id) && (
+                            <span
+                              style={{
+                                position: "absolute",
+                                bottom: 0,
+                                right: 0,
+                                width: "10px",
+                                height: "10px",
+                                backgroundColor: "green",
+                                borderRadius: "50%",
+                                border: "2px solid white",
+                              }}
+                            />
+                          )}
+                        </div>
                         <div className="flex-grow-1">
                           <div className="fw-semibold text-truncate">
                             {otherUser.name}
@@ -537,10 +562,26 @@ export default function ChatDashboard() {
               </div>
             </CCol>
 
-            <CCol md={8} className="d-flex flex-column">
+            {/* Chat Window */}
+            <CCol
+              md={8}
+              className={`d-flex flex-column ${
+                showChatWindow ? "d-block" : "d-none d-md-flex"
+              }`}
+            >
               {selectedChat ? (
                 <>
                   <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2">
+                    {/* Back button for mobile */}
+                    <button
+                      type="button"
+                      className="border-0 d-md-none p-0 me-2"
+                      onClick={handleBack}
+                      style={{ background: "none" }}
+                    >
+                      <CIcon icon={cilArrowLeft} size="lg" />
+                    </button>
+
                     {(() => {
                       const isSender =
                         selectedChat.send_user.user_id === userInfo._id;
@@ -558,17 +599,39 @@ export default function ChatDashboard() {
                             height="30"
                             style={{ objectFit: "cover" }}
                           />
-                          <span>{otherUser.name}</span>
+                          <div>
+                            <div>{otherUser.name}</div>
+                            <small
+                              className={`${
+                                isUserOnline(otherUser.user_id)
+                                  ? "text-success"
+                                  : "text-muted"
+                              }`}
+                            >
+                              {isUserOnline(otherUser.user_id)
+                                ? "Online"
+                                : "Offline"}
+                            </small>
+                          </div>
                         </>
                       );
                     })()}
                   </div>
 
-                  {/* Add chat messages / input section here */}
-
+                  {/* Messages */}
                   <div
                     className="flex-grow-1 overflow-auto p-3"
-                    style={{ maxHeight: "300px", minHeight: "300px" }}
+                    style={
+                      window.innerWidth <= 767
+                        ? {
+                            minHeight: "calc(100vh - 140px)", // full screen minus header + input
+                            maxHeight: "calc(100vh - 140px)",
+                          }
+                        : {
+                            minHeight: "300px",
+                            maxHeight: "300px",
+                          }
+                    }
                   >
                     {selectedChat.chat
                       .sort(
@@ -579,11 +642,10 @@ export default function ChatDashboard() {
                           key={idx}
                           className={`d-flex mb-2 ${
                             msg.send_by.email === userInfo.email
-                              ? "justify-content-end align-items-end" // Logged-in user's message to the right
-                              : "justify-content-start align-items-start" // Other user's message to the left
+                              ? "justify-content-end"
+                              : "justify-content-start"
                           }`}
                         >
-                          {/* <CAvatar src={msg.send_by.profile_image} /> */}
                           <img
                             src={msg.send_by.profile_image}
                             alt="Profile"
@@ -599,12 +661,12 @@ export default function ChatDashboard() {
                               maxWidth: "55%",
                               backgroundColor:
                                 msg.send_by.email === userInfo.email
-                                  ? "var(--cui-primary-color)" // Right-aligned messages (logged-in user)
-                                  : "var(--cui-body-bg)", // Left-aligned messages (other user)
+                                  ? "var(--cui-primary-color)"
+                                  : "var(--cui-body-bg)",
                               color:
                                 msg.send_by.email === userInfo.email
-                                  ? "var(--cui-primary-color)" // Right-aligned messages (logged-in user)
-                                  : "var(--cui-body-color)", // Left-aligned messages (other user)
+                                  ? "#fff"
+                                  : "var(--cui-body-color)",
                             }}
                           >
                             <div>{msg.message}</div>
@@ -615,18 +677,15 @@ export default function ChatDashboard() {
                               {formatTime(msg.timestamp)}
                             </small>
                           </div>
-                          <div className="d-flex justify-content-end align-items-end">
-                            {msg.read ? (
-                              <span className="text-success">✔</span>
-                            ) : null}
-                          </div>
                         </div>
                       ))}
 
                     <div ref={messagesEndRef} />
                   </div>
 
-                  <div className="border-top p-3">
+                  {/* Input */}
+                  {/* Input for Desktop/Tablet */}
+                  <div className="border-top p-3 d-none d-md-block">
                     <CForm>
                       <CInputGroup>
                         <CFormInput
@@ -636,7 +695,7 @@ export default function ChatDashboard() {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
-                              if (!textMessage.trim()) return; // block empty Enter sends
+                              if (!textMessage.trim()) return;
                               sendMessage(selectedChat);
                             }
                           }}
@@ -646,9 +705,7 @@ export default function ChatDashboard() {
                           disabled={sendMessageLoading || !textMessage.trim()}
                         >
                           {sendMessageLoading ? (
-                            <>
-                              <LoadingSpinner />
-                            </>
+                            <LoadingSpinner />
                           ) : (
                             <CIcon
                               icon={cilSend}
@@ -656,20 +713,48 @@ export default function ChatDashboard() {
                             />
                           )}
                         </CButton>
-                        &nbsp;{" "}
+                      </CInputGroup>
+                    </CForm>
+                  </div>
+
+                  {/* Input for Mobile (fixed at bottom) */}
+                  <div
+                    className="d-md-none position-fixed start-0 end-0 bg-dark border-top p-2"
+                    style={{
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      zIndex: 1030,
+                      margin: 0,
+                      paddingBottom: "env(safe-area-inset-bottom, 0px)", // handles iOS notch too
+                    }}
+                  >
+                    <CForm style={{ margin: 0 }}>
+                      <CInputGroup>
+                        <CFormInput
+                          placeholder="Type a message..."
+                          value={textMessage}
+                          onChange={(e) => setTextMessage(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (!textMessage.trim()) return;
+                              sendMessage(selectedChat);
+                            }
+                          }}
+                          style={{ margin: 0 }}
+                        />
                         <CButton
-                          color="info"
-                          onClick={fetchChats}
-                          disabled={chatsloading}
+                          color="success"
+                          disabled={sendMessageLoading || !textMessage.trim()}
                         >
-                          {chatsloading ? (
-                            <span
-                              className="spinner-border spinner-border-sm"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
+                          {sendMessageLoading ? (
+                            <LoadingSpinner />
                           ) : (
-                            <CIcon icon={cilLoop}></CIcon>
+                            <CIcon
+                              icon={cilSend}
+                              onClick={() => sendMessage(selectedChat)}
+                            />
                           )}
                         </CButton>
                       </CInputGroup>
