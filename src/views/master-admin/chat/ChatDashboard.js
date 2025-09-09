@@ -127,6 +127,9 @@ export default function ChatDashboard() {
   const userInfo = useSelector((state) => state.userInfo);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showChatWindow, setShowChatWindow] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherTyping, setOtherTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
 
   // function to count unread messages for a specific chat
   const getUnreadMessageCount = useCallback(
@@ -495,6 +498,38 @@ export default function ChatDashboard() {
     return () => socket.off("messagesRead", handleMessagesRead);
   }, []);
 
+  const handleTyping = (e) => {
+    setTextMessage(e.target.value);
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", { chatId: selectedChat._id, user: userInfo });
+    }
+
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      socket.emit("stopTyping", { chatId: selectedChat._id, user: userInfo });
+    }, 1000); // user stopped typing after 1 second of inactivity
+  };
+
+  useEffect(() => {
+    socket.on("userTyping", ({ chatId, user }) => {
+      if (selectedChat?._id === chatId && user.email !== userInfo.email) {
+        setOtherTyping(true);
+      }
+    });
+    socket.on("userStopTyping", ({ chatId, user }) => {
+      if (selectedChat?._id === chatId && user.email !== userInfo.email) {
+        setOtherTyping(false);
+      }
+    });
+    return () => {
+      socket.off("userTyping");
+      socket.off("userStopTyping");
+    };
+  }, [selectedChat, userInfo.email]);
+
   useEffect(() => {
     if (!selectedChat) return;
 
@@ -799,7 +834,7 @@ export default function ChatDashboard() {
                           />
                           <div>
                             <div>{otherUser.name}</div>
-                            <small
+                            {/* <small
                               className={`${
                                 isUserOnline(otherUser.user_id)
                                   ? "text-success"
@@ -807,6 +842,19 @@ export default function ChatDashboard() {
                               }`}
                             >
                               {isUserOnline(otherUser.user_id)
+                                ? "Online"
+                                : "Offline"}
+                            </small> */}
+                            <small
+                              className={`${
+                                isUserOnline(otherUser.user_id)
+                                  ? "text-success"
+                                  : "text-muted"
+                              }`}
+                            >
+                              {otherTyping
+                                ? "typing..."
+                                : isUserOnline(otherUser.user_id)
                                 ? "Online"
                                 : "Offline"}
                             </small>
@@ -910,7 +958,7 @@ export default function ChatDashboard() {
                         <CFormInput
                           placeholder="Type a message..."
                           value={textMessage}
-                          onChange={(e) => setTextMessage(e.target.value)}
+                          onChange={handleTyping}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -953,7 +1001,7 @@ export default function ChatDashboard() {
                         <CFormInput
                           placeholder="Type a message..."
                           value={textMessage}
-                          onChange={(e) => setTextMessage(e.target.value)}
+                          onChange={handleTyping}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
