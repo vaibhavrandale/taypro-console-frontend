@@ -781,7 +781,6 @@ export default function ChatDashboard() {
                                 justifyContent: "center",
                                 border: "none",
                                 boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
-                                // Animation for new messages
                                 animation: "pulse 0.5s ease-in-out",
                               }}
                             >
@@ -834,17 +833,6 @@ export default function ChatDashboard() {
                           />
                           <div>
                             <div>{otherUser.name}</div>
-                            {/* <small
-                              className={`${
-                                isUserOnline(otherUser.user_id)
-                                  ? "text-success"
-                                  : "text-muted"
-                              }`}
-                            >
-                              {isUserOnline(otherUser.user_id)
-                                ? "Online"
-                                : "Offline"}
-                            </small> */}
                             <small
                               className={`${
                                 isUserOnline(otherUser.user_id)
