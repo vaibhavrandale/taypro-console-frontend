@@ -128,6 +128,21 @@ export default function ChatDashboard() {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showChatWindow, setShowChatWindow] = useState(false);
 
+  // function to count unread messages for a specific chat
+  const getUnreadMessageCount = useCallback(
+    (chat) => {
+      if (!chat || !chat.chat) return 0;
+
+      return chat.chat.filter(
+        (message) =>
+          message.send_by.email !== userInfo.email &&
+          !message.read_status &&
+          message._id
+      ).length;
+    },
+    [userInfo.email]
+  );
+
   const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
     try {
@@ -190,7 +205,6 @@ export default function ChatDashboard() {
 
   useEffect(() => {
     socket.on("updateOnlineUsers", (users) => {
-      console.log(users);
       setOnlineUsers(users);
     });
 
@@ -320,11 +334,10 @@ export default function ChatDashboard() {
 
   const sendMessage = (chat) => {
     if (!textMessage.trim()) return;
-
     dispatch({ type: "NEW_CHAT_REQUEST" });
-    // 1. Optimistically add to UI
-    const newMsgId = `tmp-${Date.now()}`; // Make it clearly temporary
 
+    // 1. Optimistically add to UI
+    const newMsgId = `tmp-${Date.now()}`;
     const newMsg = {
       _id: newMsgId,
       send_by: {
@@ -343,6 +356,20 @@ export default function ChatDashboard() {
       chat: [...prev.chat, newMsg],
     }));
 
+    // **ADD THIS**: Also update the chats array optimistically
+    dispatch({
+      type: "FETCH_CHAT_SUCCESS",
+      payload: chatsRef.current.map((c) =>
+        c._id === chat._id
+          ? {
+              ...c,
+              chat: [...c.chat, newMsg],
+              updatedAt: new Date(),
+            }
+          : c
+      ),
+    });
+
     setTextMessage("");
 
     // 2. Emit to backend
@@ -358,37 +385,69 @@ export default function ChatDashboard() {
   useEffect(() => {
     socket.on("receiveMessage", ({ chatId, message }) => {
       if (message.send_by.email === userInfo.email) {
-        // Match and replace optimistic message by content and timestamp
+        // Handle own messages (optimistic updates)
         setSelectedChat((prev) => {
           if (!prev || prev._id !== chatId) return prev;
-
           const updatedChat = prev.chat.map((msg) => {
             const isOptimistic =
               msg.send_by.email === userInfo.email &&
               msg.message === message.message &&
               Math.abs(new Date(msg.timestamp) - new Date(message.timestamp)) <
                 2000;
-
             return isOptimistic ? message : msg;
           });
-
           return { ...prev, chat: updatedChat };
         });
 
+        // ipdate chats array for own messages
+        dispatch({
+          type: "FETCH_CHAT_SUCCESS",
+          payload: chatsRef.current.map((chat) =>
+            chat._id === chatId
+              ? {
+                  ...chat,
+                  chat: chat.chat.map((msg) => {
+                    const isOptimistic =
+                      msg.send_by.email === userInfo.email &&
+                      msg.message === message.message &&
+                      Math.abs(
+                        new Date(msg.timestamp) - new Date(message.timestamp)
+                      ) < 2000;
+                    return isOptimistic ? message : msg;
+                  }),
+                  updatedAt: message.timestamp,
+                }
+              : chat
+          ),
+        });
         return;
       }
 
-      // Normal message from other user
+      // handle messages from other users
       setSelectedChat((prev) => {
         if (!prev || prev._id !== chatId) return prev;
         return { ...prev, chat: [...prev.chat, message] };
+      });
+
+      // update chats array for messages from other users
+      dispatch({
+        type: "FETCH_CHAT_SUCCESS",
+        payload: chatsRef.current.map((chat) =>
+          chat._id === chatId
+            ? {
+                ...chat,
+                chat: [...chat.chat, message],
+                updatedAt: message.timestamp,
+              }
+            : chat
+        ),
       });
     });
 
     return () => {
       socket.off("receiveMessage");
     };
-  }, [userInfo]);
+  }, [userInfo, dispatch]);
 
   const chatsRef = useRef(chats);
   useEffect(() => {
@@ -439,24 +498,26 @@ export default function ChatDashboard() {
   useEffect(() => {
     if (!selectedChat) return;
 
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const shouldMarkAsRead = window.innerWidth >= 768 || showChatWindow;
 
-    const unreadIds = selectedChat.chat
-      .filter(
-        (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id
-      )
-      .map((m) => m._id);
-    console.log("unread messages", unreadIds);
+    if (shouldMarkAsRead) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
-    if (unreadIds.length > 0) {
-      socket.emit("markMessagesRead", {
-        chatId: selectedChat._id,
-        messageIds: unreadIds,
-        user: userInfo,
-      });
+      const unreadIds = selectedChat.chat
+        .filter(
+          (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id
+        )
+        .map((m) => m._id);
+
+      if (unreadIds.length > 0) {
+        socket.emit("markMessagesRead", {
+          chatId: selectedChat._id,
+          messageIds: unreadIds,
+          user: userInfo,
+        });
+      }
     }
-    console.log("markMessagesRead reference called.");
-  }, [selectedChat, userInfo]);
+  }, [selectedChat, userInfo, showChatWindow]); // Add showChatWindow to dependencies
 
   const checkStatus = [
     "subscriptionSitesAssigned",
@@ -490,14 +551,16 @@ export default function ChatDashboard() {
               }`}
             >
               <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
-                <h5>Chats</h5>
+                <div className="d-flex align-items-center gap-2">
+                  <h5 className="mb-0">Chats</h5>
+                </div>
                 <CButton
                   className="my-2"
                   size="sm"
                   color="primary"
                   onClick={() => setShowUserModal(true)}
                 >
-                  New Chat{" "}
+                  New Chat
                 </CButton>
               </div>
 
@@ -593,6 +656,9 @@ export default function ChatDashboard() {
                       ? chat.receiver_user
                       : chat.send_user;
 
+                    // Get unread message count for this chat
+                    const unreadCount = getUnreadMessageCount(chat);
+
                     return (
                       <div
                         key={chat._id}
@@ -602,7 +668,13 @@ export default function ChatDashboard() {
                             : ""
                         }`}
                         onClick={() => handleChatClick(chat)}
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                          backgroundColor:
+                            unreadCount > 0 && selectedChat?._id !== chat._id
+                              ? "rgba(37, 211, 102, 0.05)"
+                              : "",
+                        }}
                       >
                         <div className="position-relative">
                           <img
@@ -621,7 +693,7 @@ export default function ChatDashboard() {
                                 right: 0,
                                 width: "10px",
                                 height: "10px",
-                                backgroundColor: "green",
+                                backgroundColor: "#25d366",
                                 borderRadius: "50%",
                                 border: "2px solid white",
                               }}
@@ -629,16 +701,59 @@ export default function ChatDashboard() {
                           )}
                         </div>
                         <div className="flex-grow-1">
-                          <div className="fw-semibold text-truncate">
+                          <div
+                            className="fw-semibold text-truncate"
+                            style={{
+                              fontWeight: unreadCount > 0 ? "600" : "500",
+                            }}
+                          >
                             {otherUser.name}
                           </div>
-                          <div className="text-truncate small">
+                          <div
+                            className="text-truncate small"
+                            style={{
+                              color: unreadCount > 0 ? "#667781" : "#8696a0",
+                              fontWeight: unreadCount > 0 ? "500" : "400",
+                            }}
+                          >
                             {renderLastMessage(chat.chat)}
                           </div>
                         </div>
-                        <small className="text-nowrap">
-                          {formatTimeinUserlist(chat.updatedAt)}
-                        </small>
+                        <div className="d-flex flex-column align-items-end">
+                          <small
+                            className="text-nowrap"
+                            style={{
+                              color: unreadCount > 0 ? "#25d366" : "#8696a0",
+                              fontWeight: unreadCount > 0 ? "600" : "400",
+                            }}
+                          >
+                            {formatTimeinUserlist(chat.updatedAt)}
+                          </small>
+                          {/* Unread message count badge */}
+                          {unreadCount > 0 && (
+                            <CBadge
+                              shape="rounded-pill"
+                              className="mt-1"
+                              style={{
+                                backgroundColor: "#25d366",
+                                color: "white",
+                                fontSize: "0.75rem",
+                                fontWeight: "600",
+                                minWidth: "20px",
+                                height: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                border: "none",
+                                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+                                // Animation for new messages
+                                animation: "pulse 0.5s ease-in-out",
+                              }}
+                            >
+                              {unreadCount > 99 ? "99+" : unreadCount}
+                            </CBadge>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -710,8 +825,8 @@ export default function ChatDashboard() {
                             maxHeight: "560px",
                           }
                         : {
-                            minHeight: "400px",
-                            maxHeight: "400px",
+                            minHeight: "350px",
+                            maxHeight: "350px",
                           }
                     }
                   >
