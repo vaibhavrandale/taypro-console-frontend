@@ -314,8 +314,6 @@ export default function ChatDashboard() {
     }
   };
 
-  // Scroll to the bottom when the chat is loaded
-
   const filteredUsers = users.filter(
     (user) => user.designation !== "Site Technician"
   );
@@ -324,9 +322,11 @@ export default function ChatDashboard() {
     if (!textMessage.trim()) return;
 
     dispatch({ type: "NEW_CHAT_REQUEST" });
+    // 1. Optimistically add to UI
+    const newMsgId = `tmp-${Date.now()}`; // Make it clearly temporary
 
-    // 1. Optimistic update
     const newMsg = {
+      _id: newMsgId,
       send_by: {
         name: userInfo.username,
         email: userInfo.email,
@@ -334,6 +334,8 @@ export default function ChatDashboard() {
       },
       message: textMessage,
       timestamp: new Date(),
+      read_status: false,
+      read_by: null,
     };
 
     setSelectedChat((prev) => ({
@@ -355,7 +357,28 @@ export default function ChatDashboard() {
 
   useEffect(() => {
     socket.on("receiveMessage", ({ chatId, message }) => {
-      if (message.send_by.email === userInfo.email) return; // ignore own message
+      if (message.send_by.email === userInfo.email) {
+        // Match and replace optimistic message by content and timestamp
+        setSelectedChat((prev) => {
+          if (!prev || prev._id !== chatId) return prev;
+
+          const updatedChat = prev.chat.map((msg) => {
+            const isOptimistic =
+              msg.send_by.email === userInfo.email &&
+              msg.message === message.message &&
+              Math.abs(new Date(msg.timestamp) - new Date(message.timestamp)) <
+                2000;
+
+            return isOptimistic ? message : msg;
+          });
+
+          return { ...prev, chat: updatedChat };
+        });
+
+        return;
+      }
+
+      // Normal message from other user
       setSelectedChat((prev) => {
         if (!prev || prev._id !== chatId) return prev;
         return { ...prev, chat: [...prev.chat, message] };
@@ -365,14 +388,75 @@ export default function ChatDashboard() {
     return () => {
       socket.off("receiveMessage");
     };
+  }, [userInfo]);
+
+  const chatsRef = useRef(chats);
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
+
+  const handleMessagesRead = ({ chatId, updates }) => {
+    setSelectedChat((prev) => {
+      if (!prev || prev._id !== chatId) return prev;
+      const updatedChat = prev.chat.map((m) => {
+        const update = updates.find(
+          (u) => String(u.messageId) === String(m._id)
+        );
+        return update
+          ? { ...m, read_status: true, read_by: update.read_by }
+          : m;
+      });
+      return { ...prev, chat: updatedChat };
+    });
+
+    const updatedChats = chatsRef.current.map((c) =>
+      c._id === chatId
+        ? {
+            ...c,
+            chat: c.chat.map((m) => {
+              const update = updates.find(
+                (u) => String(u.messageId) === String(m._id)
+              );
+              return update
+                ? { ...m, read_status: true, read_by: update.read_by }
+                : m;
+            }),
+          }
+        : c
+    );
+
+    dispatch({
+      type: "FETCH_CHAT_SUCCESS",
+      payload: updatedChats,
+    });
+  };
+
+  useEffect(() => {
+    socket.on("messagesRead", handleMessagesRead);
+    return () => socket.off("messagesRead", handleMessagesRead);
   }, []);
 
   useEffect(() => {
-    if (selectedChat) {
-      // Scroll to the bottom when the chat is selected
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!selectedChat) return;
+
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    const unreadIds = selectedChat.chat
+      .filter(
+        (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id
+      )
+      .map((m) => m._id);
+    console.log("unread messages", unreadIds);
+
+    if (unreadIds.length > 0) {
+      socket.emit("markMessagesRead", {
+        chatId: selectedChat._id,
+        messageIds: unreadIds,
+        user: userInfo,
+      });
     }
-  }, [selectedChat]);
+    console.log("markMessagesRead reference called.");
+  }, [selectedChat, userInfo]);
 
   const checkStatus = [
     "subscriptionSitesAssigned",
@@ -564,7 +648,6 @@ export default function ChatDashboard() {
             {/* Chat Window */}
             <CCol
               md={8}
-              // style={{ minHeight: "360px" }}
               className={`d-flex flex-column ${
                 showChatWindow ? "d-block" : "d-none d-md-flex"
               }`}
@@ -620,12 +703,11 @@ export default function ChatDashboard() {
 
                   {/* Messages */}
                   <div
-                    className="flex-grow-1 overflow-auto"
+                    className="flex-grow-1 overflow-auto mt-2"
                     style={
                       window.innerWidth <= 767
                         ? {
-                            // minHeight: "calc(100vh - 240px)", // full screen minus header + input
-                            maxHeight: "550px",
+                            maxHeight: "560px",
                           }
                         : {
                             minHeight: "400px",
@@ -671,10 +753,32 @@ export default function ChatDashboard() {
                           >
                             <div>{msg.message}</div>
                             <small
-                              className="text-muted d-block text-end"
-                              style={{ fontSize: "12px" }}
+                              className="d-block text-end"
+                              style={{
+                                fontSize: "12px",
+                                color: "rgba(255,255,255,0.7)",
+                              }}
                             >
                               {formatTime(msg.timestamp)}
+                              {msg.send_by.email === userInfo.email && (
+                                <span
+                                  className="ms-2"
+                                  style={{ fontSize: "0.75rem", lineHeight: 1 }}
+                                >
+                                  {msg.read_status ? (
+                                    <span
+                                      style={{
+                                        color: "#0d6efd",
+                                        letterSpacing: "-3px",
+                                      }}
+                                    >
+                                      ✓✓
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: "gray" }}>✓</span>
+                                  )}
+                                </span>
+                              )}
                             </small>
                           </div>
                         </div>
