@@ -369,14 +369,69 @@ export default function ChatDashboard() {
     (user) => user.designation !== "Site Technician"
   );
 
+  // const sendMessage = (chat) => {
+  //   if (!textMessage.trim()) return;
+  //   dispatch({ type: "NEW_CHAT_REQUEST" });
+
+  //   // 1. Optimistically add to UI
+  //   const newMsgId = `tmp-${Date.now()}`;
+  //   let newMsg = {};
+
+  //   newMsg = {
+  //     _id: newMsgId,
+  //     send_by: {
+  //       name: userInfo.username,
+  //       email: userInfo.email,
+  //       profile_image: userInfo.profile_image,
+  //     },
+  //     message: textMessage,
+  //     timestamp: new Date(),
+  //     read_status: false,
+  //     read_by: null,
+  //   };
+
+  //   setSelectedChat((prev) => ({
+  //     ...prev,
+  //     chat: [...prev.chat, newMsg],
+  //   }));
+
+  //   // **ADD THIS**: Also update the chats array optimistically
+  //   dispatch({
+  //     type: "FETCH_CHAT_SUCCESS",
+  //     payload: chatsRef.current.map((c) =>
+  //       c._id === chat._id
+  //         ? {
+  //             ...c,
+  //             chat: [...c.chat, newMsg],
+  //             updatedAt: new Date(),
+  //           }
+  //         : c
+  //     ),
+  //   });
+
+  //   setTextMessage("");
+
+  //   // 2. Emit to backend
+
+  //   socket.emit("sendMessage", {
+  //     chatId: chat._id,
+  //     message: textMessage,
+  //     attachment: { file: "", type: "" },
+  //     user: userInfo,
+  //   });
+
+  //   dispatch({ type: "NEW_CHAT_SUCCESS" });
+  // };
+
   const sendMessage = (chat) => {
-    if (!textMessage.trim()) return;
+    if (!textMessage.trim() && !chatAttachment.file) return;
     dispatch({ type: "NEW_CHAT_REQUEST" });
 
     // 1. Optimistically add to UI
     const newMsgId = `tmp-${Date.now()}`;
     let newMsg = {};
 
+    // Create message structure that matches both text and attachments
     newMsg = {
       _id: newMsgId,
       send_by: {
@@ -385,6 +440,7 @@ export default function ChatDashboard() {
         profile_image: userInfo.profile_image,
       },
       message: textMessage,
+      attachment: chatAttachment.file ? chatAttachment : { file: "", type: "" },
       timestamp: new Date(),
       read_status: false,
       read_by: null,
@@ -395,7 +451,7 @@ export default function ChatDashboard() {
       chat: [...prev.chat, newMsg],
     }));
 
-    // **ADD THIS**: Also update the chats array optimistically
+    // Update chats array optimistically
     dispatch({
       type: "FETCH_CHAT_SUCCESS",
       payload: chatsRef.current.map((c) =>
@@ -410,13 +466,13 @@ export default function ChatDashboard() {
     });
 
     setTextMessage("");
+    setChatAttachment({ file: "", type: "" });
 
     // 2. Emit to backend
-
     socket.emit("sendMessage", {
       chatId: chat._id,
       message: textMessage,
-      attachment: { file: "", type: "" },
+      attachment: chatAttachment,
       user: userInfo,
     });
 
@@ -632,6 +688,98 @@ export default function ChatDashboard() {
     }
   }, [selectedChat, userInfo, showChatWindow]); // Add showChatWindow to dependencies
 
+  // const handleChatAttachment = async (e, chat) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   try {
+  //     dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_REQUEST" });
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/chat-attachment",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_SUCCESS" });
+
+  //     // Create the new attachment object
+  //     const newAttachment = { file: data.url, type: file.type };
+  //     setChatAttachment(newAttachment);
+
+  //     toast.success("The file uploaded successfully");
+
+  //     if (!newAttachment) return;
+
+  //     dispatch({ type: "NEW_CHAT_REQUEST" });
+
+  //     const newMsgId = `tmp-${Date.now()}`;
+  //     let newMsg = {};
+
+  //     newMsg = {
+  //       _id: newMsgId,
+  //       send_by: {
+  //         name: userInfo.username,
+  //         email: userInfo.email,
+  //         profile_image: userInfo.profile_image,
+  //       },
+  //       attachment: newAttachment,
+  //       timestamp: new Date(),
+  //       read_status: false,
+  //       read_by: null,
+  //     };
+  //     console.log(newMsg);
+  //     setSelectedChat((prev) => ({
+  //       ...prev,
+  //       chat: [...prev.chat, newMsg],
+  //     }));
+
+  //     // **ADD THIS**: Also update the chats array optimistically
+  //     dispatch({
+  //       type: "FETCH_CHAT_SUCCESS",
+  //       payload: chatsRef.current.map((c) =>
+  //         c._id === chat._id
+  //           ? {
+  //               ...c,
+  //               chat: [...c.chat, newMsg],
+  //               updatedAt: new Date(),
+  //             }
+  //           : c
+  //       ),
+  //     });
+
+  //     console.log(newMsg);
+  //     console.log(chat);
+  //     // setTextMessage("");
+  //     setChatAttachment({ file: "", type: "" }); // Reset attachment after sending
+
+  //     // Use newAttachment instead of chatAttachment
+  //     socket.emit("sendMessage", {
+  //       chatId: chat._id,
+  //       message: "",
+  //       attachment: newAttachment, // Use the fresh value
+  //       user: userInfo,
+  //     });
+  //     console.log("new1:", newMsg);
+  //     console.log("new2 :", chat);
+
+  //     dispatch({ type: "NEW_CHAT_SUCCESS" });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "FETCH_CHAT_FAIL",
+  //       payload: error.response.data.error || error.response.data.message,
+  //     });
+  //     console.error(error);
+  //   }
+  // };
+
   const handleChatAttachment = async (e, chat) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -660,8 +808,7 @@ export default function ChatDashboard() {
 
       toast.success("The file uploaded successfully");
 
-      if (!newAttachment) return;
-
+      // Send the message with attachment immediately after upload
       dispatch({ type: "NEW_CHAT_REQUEST" });
 
       const newMsgId = `tmp-${Date.now()}`;
@@ -674,18 +821,19 @@ export default function ChatDashboard() {
           email: userInfo.email,
           profile_image: userInfo.profile_image,
         },
+        message: "", // Empty message for attachment-only
         attachment: newAttachment,
         timestamp: new Date(),
         read_status: false,
         read_by: null,
       };
-      console.log(newMsg);
+
       setSelectedChat((prev) => ({
         ...prev,
         chat: [...prev.chat, newMsg],
       }));
 
-      // **ADD THIS**: Also update the chats array optimistically
+      // Update chats array optimistically
       dispatch({
         type: "FETCH_CHAT_SUCCESS",
         payload: chatsRef.current.map((c) =>
@@ -699,26 +847,19 @@ export default function ChatDashboard() {
         ),
       });
 
-      console.log(newMsg);
-      console.log(chat);
-      // setTextMessage("");
-      setChatAttachment({ file: "", type: "" }); // Reset attachment after sending
-
-      // Use newAttachment instead of chatAttachment
+      // Emit the message with attachment
       socket.emit("sendMessage", {
         chatId: chat._id,
         message: "",
-        attachment: newAttachment, // Use the fresh value
+        attachment: newAttachment,
         user: userInfo,
       });
-      console.log("new1:", newMsg);
-      console.log("new2 :", chat);
 
       dispatch({ type: "NEW_CHAT_SUCCESS" });
     } catch (error) {
       dispatch({
-        type: "FETCH_CHAT_FAIL",
-        payload: error.response.data.error || error.response.data.message,
+        type: "UPLOAD_CHAT_ATTACHMENT_FAIL",
+        payload: error.response?.data?.error || error.response?.data?.message,
       });
       console.error(error);
     }

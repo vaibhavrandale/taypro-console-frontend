@@ -151,6 +151,7 @@ const OpexTemplateManager = () => {
     deleteError: "",
   });
 
+  const { site_id } = useParams();
   const [selectedCycles, setSelectedCycles] = useState([]);
   const currentMonth = new Date().getMonth() + 1; // 1-12
   const currentYear = new Date().getFullYear();
@@ -165,7 +166,6 @@ const OpexTemplateManager = () => {
   const [deleteReason, setDeleteReason] = useState("");
 
   const authtoken = useSelector((state) => state.authtoken);
-  const { site_id } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
   if (userInfo.role === "Master Admin") {
@@ -306,7 +306,7 @@ const OpexTemplateManager = () => {
 
     try {
       const response = await axios.put(
-        `/api/v1/opex/generate-certificate/${opexData._id}`,
+        `/api/v1/opex/generate-certificate/${opexData._id}/${site_id}`,
         { cyclesArray: selectedCycles.map((cycle) => cycle._id) },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
