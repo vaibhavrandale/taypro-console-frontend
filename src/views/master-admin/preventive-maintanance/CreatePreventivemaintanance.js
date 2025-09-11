@@ -14,6 +14,11 @@ import {
   CCol,
   CButton,
   CFormSelect,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,8 +36,12 @@ const initialState = {
   physical_condition_of_transPipe_image: "",
   physical_condition_of_channel_condition: "",
   physical_condition_of_channel_image: "",
+  physical_condition_of_top_bottom_cover_condition: "",
+  physical_condition_of_top_bottom_cover_image: "",
   oiling_need_for_bearing_condition: "",
   oiling_need_for_bearing_condition_image: "",
+  oiling_need_for_coupling_condition: "",
+  oiling_need_for_coupling_image: "",
   oiling_need_for_motors_condition: "",
   oiling_need_for_motors_image: "",
   mf_clothes_alignment: "",
@@ -117,6 +126,14 @@ const CreatePreventiveMaintenance = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Camera states
+  const [cameraModalVisible, setCameraModalVisible] = useState(false);
+  const [currentImageField, setCurrentImageField] = useState("");
+  const [cameraAppUrl] = useState(
+    "https://play.google.com/store/apps/details?id=com.gpsmapcamera.geotagginglocationonphoto"
+  ); // Replace with your actual camera app URL
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -146,6 +163,122 @@ const CreatePreventiveMaintenance = () => {
     };
     fetchRobots();
   }, [authtoken]);
+
+  // Listen for messages from the camera app
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Security check - validate the origin if possible
+      // if (event.origin !== "https://your-camera-app-domain.com") return;
+
+      if (event.data.type === "CAMERA_APP_IMAGE_CAPTURED") {
+        const imageData = event.data.imageData;
+        handleImageFromCameraApp(imageData);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  const handleImageFromCameraApp = async (imageData) => {
+    if (!currentImageField) return;
+
+    try {
+      // Convert base64 to blob
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+
+      await uploadImage(blob, currentImageField);
+      setCameraModalVisible(false);
+    } catch (error) {
+      toast.error("Failed to process image from camera app");
+      console.error("Camera app error:", error);
+    }
+  };
+
+  const uploadImage = async (blob, fieldName) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", blob, `camera-capture-${Date.now()}.jpg`);
+
+    dispatch({ type: "UPLOAD_REQUEST", field: fieldName });
+
+    try {
+      const { data } = await axios.post(
+        "/api/v1/image-upload/preventive-maintanance",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      if (data?.url) {
+        dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
+      }
+
+      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName });
+      toast.success("Image uploaded successfully.");
+    } catch (err) {
+      dispatch({
+        type: "UPLOAD_FAIL",
+        field: fieldName,
+        payload: "Upload failed",
+      });
+      toast.error("Image upload failed.");
+    }
+  };
+
+  const openCameraApp = (fieldName) => {
+    setCurrentImageField(fieldName);
+
+    // Option 1: Open camera app in a new window
+    window.open(
+      cameraAppUrl,
+      "CameraApp",
+      "width=600,height=800,left=200,top=200"
+    );
+
+    // Option 2: Show a modal with iframe (uncomment below if you prefer this approach)
+    // setCameraModalVisible(true);
+  };
+
+  const handleFileUpload = (event, fieldName) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.match("image.*")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    uploadImage(file, fieldName);
+    event.target.value = ""; // Reset the input
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    const requiredFields = [
+      "physical_condition_of_transPipe_condition",
+      "physical_condition_of_channel_condition",
+      "oiling_need_for_bearing_condition",
+      "client_id",
+      "site_name",
+      "site_location",
+      "start_date",
+      "end_date",
+    ];
+
+    requiredFields.forEach((field) => {
+      if (!state[field] || state[field].trim() === "") {
+        errors[field] = `${field.replace(/_/g, " ")} is required`;
+      }
+    });
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -179,43 +312,6 @@ const CreatePreventiveMaintenance = () => {
     setFilteredRobots([]);
   };
 
-  const handleImageUpload = async (e, fieldName) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const bodyFormData = new FormData();
-    bodyFormData.append("file", file);
-
-    dispatch({ type: "UPLOAD_REQUEST", field: fieldName }); // Set loading for this specific field
-
-    try {
-      const { data } = await axios.post(
-        "/api/v1/image-upload/preventive-maintanance",
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
-
-      if (data?.url) {
-        dispatch({ type: "SET_IMAGE", field: fieldName, url: data.url });
-      }
-
-      dispatch({ type: "UPLOAD_SUCCESS", field: fieldName }); // Stop loading for this field
-      toast.success("Image uploaded successfully.");
-    } catch (err) {
-      dispatch({
-        type: "UPLOAD_FAIL",
-        field: fieldName,
-        payload: "Upload failed",
-      });
-      toast.error("Image upload failed.");
-    }
-  };
-
   const handleChange = (e) => {
     dispatch({
       type: "UPDATE_FIELD",
@@ -226,6 +322,13 @@ const CreatePreventiveMaintenance = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form before submitting
+    if (!validateForm()) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     setLoading(true);
     try {
       dispatch({ type: "ADD_PM_REQUEST" });
@@ -235,8 +338,6 @@ const CreatePreventiveMaintenance = () => {
       });
       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
       toast.success("Preventive Maintenance Created Successfully!");
-
-      // toast.success("Preventive Maintenance Created!");
       navigate("/master-admin/preventive-maintanance-dashboard");
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong");
@@ -246,136 +347,224 @@ const CreatePreventiveMaintenance = () => {
   };
 
   return (
-    <CCard className="max-w-3xl mx-auto p-4 shadow-lg rounded-lg">
-      <CCardHeader>
-        <h2>Create Preventive Maintenance</h2>
-      </CCardHeader>
-      <CCardBody>
-        <CForm onSubmit={handleSubmit}>
-          <CRow className="gy-3">
-            <CCol md={12}>
-              handleSearchChange
-              <CFormLabel>
-                Search Robot {state.loadingRobots && <LoadingSpinner />}{" "}
-              </CFormLabel>
-              <CFormInput
-                type="text"
-                placeholder="Search Robot No or Site ID..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-              <CListGroup className="mb-3">
-                {searchTerm && filteredRobots.length === 0 ? (
-                  <CListGroupItem>No robots found</CListGroupItem>
-                ) : (
-                  filteredRobots.map((robot, index) => (
-                    <CListGroupItem
-                      key={index}
-                      action
-                      onClick={() => selectRobotFromSearch(robot)}
-                    >
-                      {robot.robot_no} - {robot.site_id}
-                    </CListGroupItem>
-                  ))
-                )}
-              </CListGroup>
-            </CCol>
-
-            {["robot_no", "robot_type", "site_id"].map((field) => (
-              <CCol md={6} key={field}>
-                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+    <>
+      <CCard className="max-w-3xl mx-auto p-4 shadow-lg rounded-lg">
+        <CCardHeader>
+          <h2>Create Preventive Maintenance</h2>
+        </CCardHeader>
+        <CCardBody>
+          <CForm onSubmit={handleSubmit}>
+            <CRow className="gy-3">
+              <CCol md={12}>
+                <CFormLabel>
+                  Search Robot {state.loadingRobots && <LoadingSpinner />}{" "}
+                </CFormLabel>
                 <CFormInput
                   type="text"
-                  name={field}
-                  value={state[field]}
-                  readOnly
+                  placeholder="Search Robot No or Site ID..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
                 />
+                <CListGroup className="mb-3">
+                  {searchTerm && filteredRobots.length === 0 ? (
+                    <CListGroupItem>No robots found</CListGroupItem>
+                  ) : (
+                    filteredRobots.map((robot, index) => (
+                      <CListGroupItem
+                        key={index}
+                        action
+                        onClick={() => selectRobotFromSearch(robot)}
+                      >
+                        {robot.robot_no} - {robot.site_id}
+                      </CListGroupItem>
+                    ))
+                  )}
+                </CListGroup>
               </CCol>
-            ))}
 
-            {[
-              "physical_condition_of_transPipe_condition",
-              "physical_condition_of_channel_condition",
-              "physical_condition_of_top_bottom_cover_condition",
-              "oiling_need_for_bearing_condition",
-              "oiling_need_for_coupling_condition",
-              "oiling_need_for_motors_condition",
-              "mf_clothes_alignment",
-              "wheels_alignment",
-              "is_wheels_loose",
-              "is_nutbolt_loose",
-            ].map((field) => (
-              <CCol md={6} key={field}>
-                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+              {["robot_no", "robot_type", "site_id"].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name={field}
+                    value={state[field]}
+                    readOnly
+                  />
+                </CCol>
+              ))}
 
-                <CFormSelect
-                  name={field}
-                  value={state[field]}
-                  onChange={handleChange}
-                >
-                  {[
-                    "mf_clothes_alignment",
-                    "wheels_alignment",
-                    "physical_condition_of_transPipe_condition",
-                    "physical_condition_of_channel_condition",
-                    "physical_condition_of_top_bottom_cover_condition",
-                  ].includes(field) ? (
+              {["start_date", "end_date"].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                  <CFormInput
+                    type="date"
+                    name={field}
+                    value={state[field]}
+                    onChange={handleChange}
+                    required
+                  />
+                  {validationErrors[field] && (
+                    <div className="text-danger small">
+                      {validationErrors[field]}
+                    </div>
+                  )}
+                </CCol>
+              ))}
+
+              {[
+                "physical_condition_of_transPipe_condition",
+                "physical_condition_of_channel_condition",
+                "physical_condition_of_top_bottom_cover_condition",
+                "oiling_need_for_bearing_condition",
+                "oiling_need_for_coupling_condition",
+                "oiling_need_for_motors_condition",
+                "mf_clothes_alignment",
+                "wheels_alignment",
+                "is_wheels_loose",
+                "is_nutbolt_loose",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+
+                  <CFormSelect
+                    name={field}
+                    value={state[field]}
+                    onChange={handleChange}
+                    required={[
+                      "physical_condition_of_transPipe_condition",
+                      "physical_condition_of_channel_condition",
+                      "oiling_need_for_bearing_condition",
+                    ].includes(field)}
+                  >
+                    <option value="">Select</option>
+                    {[
+                      "mf_clothes_alignment",
+                      "wheels_alignment",
+                      "physical_condition_of_transPipe_condition",
+                      "physical_condition_of_channel_condition",
+                      "physical_condition_of_top_bottom_cover_condition",
+                    ].includes(field) ? (
+                      <>
+                        <option value="OK">OK</option>
+                        <option value="Not OK">Not OK</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </>
+                    )}
+                  </CFormSelect>
+                  {validationErrors[field] && (
+                    <div className="text-danger small">
+                      {validationErrors[field]}
+                    </div>
+                  )}
+                </CCol>
+              ))}
+
+              {[
+                "physical_condition_of_transPipe_image",
+                "physical_condition_of_channel_image",
+                "physical_condition_of_top_bottom_cover_image",
+                "oiling_need_for_bearing_condition_image",
+                "oiling_need_for_coupling_image",
+                "oiling_need_for_motors_image",
+              ].map((field) => (
+                <CCol md={6} key={field}>
+                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+
+                  {state.loadingUpload[field] ? (
+                    <LoadingSpinner />
+                  ) : state[field] ? (
                     <>
-                      <option value="">Select</option>
-                      <option value="OK">OK</option>
-                      <option value="Not OK">Not OK</option>
+                      <Link
+                        to={state[field]}
+                        target="_blank"
+                        className="d-block mb-2"
+                      >
+                        View Image
+                      </Link>
+                      <div className="d-flex gap-2">
+                        <CButton
+                          color="secondary"
+                          size="sm"
+                          onClick={() => openCameraApp(field)}
+                        >
+                          Retake with Camera App
+                        </CButton>
+                        <CButton
+                          color="secondary"
+                          size="sm"
+                          onClick={() =>
+                            document.getElementById(`${field}-file`).click()
+                          }
+                        >
+                          Upload Different
+                        </CButton>
+                      </div>
                     </>
                   ) : (
-                    <>
-                      <option value="">Select</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </>
+                    <div className="d-flex gap-2">
+                      <CButton
+                        color="primary"
+                        onClick={() => openCameraApp(field)}
+                      >
+                        Use Camera App
+                      </CButton>
+
+                      <input
+                        type="file"
+                        id={`${field}-file`}
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={(e) => handleFileUpload(e, field)}
+                      />
+                    </div>
                   )}
-                </CFormSelect>
-              </CCol>
-            ))}
+                </CCol>
+              ))}
+            </CRow>
 
-            {[
-              "physical_condition_of_transPipe_image",
-              "physical_condition_of_channel_image",
-              "physical_condition_of_top_bottom_cover_image",
-              "oiling_need_for_bearing_condition_image",
-              "oiling_need_for_coupling_image",
-              "oiling_need_for_motors_image",
-            ].map((field) => (
-              <CCol md={6} key={field}>
-                <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+            <CButton
+              color="primary"
+              type="submit"
+              className="mt-4"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </CButton>
+          </CForm>
+        </CCardBody>
+      </CCard>
 
-                {state.loadingUpload[field] ? ( // Show spinner while uploading
-                  <LoadingSpinner />
-                ) : state[field] ? ( // Show View link only if image exists
-                  <Link to={state[field]} target="_blank">
-                    View
-                  </Link>
-                ) : (
-                  <p>No Image Available</p> // Show this only when no image is uploaded
-                )}
-
-                <CFormInput
-                  type="file"
-                  onChange={(e) => handleImageUpload(e, field)}
-                />
-              </CCol>
-            ))}
-          </CRow>
-
+      {/* Camera App Modal (iframe approach) - Optional */}
+      <CModal
+        visible={cameraModalVisible}
+        onClose={() => setCameraModalVisible(false)}
+        size="lg"
+      >
+        <CModalHeader>
+          <CModalTitle>Camera App</CModalTitle>
+        </CModalHeader>
+        <CModalBody className="p-0" style={{ height: "70vh" }}>
+          <iframe
+            src={cameraAppUrl}
+            style={{ width: "100%", height: "100%", border: "none" }}
+            title="Camera App"
+          />
+        </CModalBody>
+        <CModalFooter>
           <CButton
-            color="primary"
-            type="submit"
-            className="mt-4"
-            disabled={loading}
+            color="secondary"
+            onClick={() => setCameraModalVisible(false)}
           >
-            {loading ? "Submitting..." : "Submit"}
+            Cancel
           </CButton>
-        </CForm>
-      </CCardBody>
-    </CCard>
+        </CModalFooter>
+      </CModal>
+    </>
   );
 };
 
