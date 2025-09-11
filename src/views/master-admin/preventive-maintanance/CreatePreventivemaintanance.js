@@ -1620,14 +1620,12 @@ const CreatePreventiveMaintenance = () => {
           {/* Overlay Location & Address */}
           <div
             style={{
-              display: "flex",
-              alignItems: "left",
               position: "absolute",
               bottom: "10px",
               left: "10px",
               color: "white",
               backgroundColor: "rgba(0,0,0,0.5)",
-              padding: "5px 10px",
+              padding: "6px 10px",
               borderRadius: "5px",
               fontSize: "14px",
               maxWidth: "90%",
