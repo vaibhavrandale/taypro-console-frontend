@@ -66,7 +66,12 @@ const RobotEventAndFrames = () => {
     "Events",
     // "LoRaWAN frames",
   ];
-
+  function base64ToHex(base64Str) {
+    const binaryString = atob(base64Str);
+    return Array.from(binaryString, (char) => {
+      return char.charCodeAt(0).toString(16).padStart(2, "0");
+    }).join("");
+  }
   return (
     <div>
       <div className="">
@@ -90,7 +95,7 @@ const RobotEventAndFrames = () => {
 
         {/* LoRaWAN Frames Section */}
         {activeTab === "Events" && (
-          <div className="d-flex flex-column gap-3">
+          <div className="d-flex flex-column gap-2">
             {frames?.map((frame, idx) => (
               <CCard
                 key={idx}
@@ -157,7 +162,7 @@ const RobotEventAndFrames = () => {
                         {/* Data */}
                         <CCol xs={6} sm={2} md={3} className="text-truncate">
                           <span className="text-success">Data:</span>&nbsp;
-                          {frame.data?.data}
+                          {base64ToHex(frame.data?.data)}
                         </CCol>
 
                         {/* FCnt */}
@@ -328,11 +333,21 @@ const RobotEventAndFrames = () => {
                         <span>Confirmed:</span>{" "}
                         {String(selectedFrame.data?.confirmed)}
                       </div>
-                      <div>
-                        <span>Payload:</span>{" "}
-                        <CBadge color="success">
-                          {selectedFrame.data?.data}
-                        </CBadge>
+                      <div className="d-flex justify-content-start align-items-start">
+                        <span className="text-success me-2">Payload -</span>
+                        <p>
+                          Base64(original) :
+                          <CBadge color="warning" className="ms-2">
+                            {selectedFrame.data?.data}
+                          </CBadge>
+                        </p>
+
+                        <p className="ms-2">
+                          HEX :
+                          <CBadge color="success" className="ms-2">
+                            {base64ToHex(selectedFrame.data?.data)}
+                          </CBadge>
+                        </p>
                       </div>
                     </div>
                   </CCardBody>

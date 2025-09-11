@@ -136,6 +136,7 @@ import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmware
 import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
+import Dummy from "./views/robot-position/Dummy";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -464,6 +465,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotTracker />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robots-tracker/dummy",
+    name: "Robots Dummy",
+    element: (
+      <MasterAdminRoute>
+        <Dummy />
       </MasterAdminRoute>
     ),
   },
