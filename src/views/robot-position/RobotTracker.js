@@ -724,7 +724,6 @@ const RobotTracker = () => {
                     </CButton>
                   </div>
                 </div>
-
                 <div
                   style={{
                     // margin: "0px 0px 0px 10px",
