@@ -571,19 +571,24 @@ const OpexCertificate = () => {
                         MONTHLY CLEANING CYCLE CERTIFICATION
                       </td>
                       <td
+                        className=""
+                        colSpan={2}
                         style={{
                           border: "0.5px solid white",
 
                           padding: "5px",
                         }}
                       >
-                        Doc. No.
+                        Doc. No.:{" "}
+                        <span className="text-success ms-2">
+                          {certificate.invoice_no.toUpperCase() || "N/A"}
+                        </span>
                       </td>
-                      <td
+                      {/* <td
                         style={{ border: "0.5px solid white", padding: "5px" }}
                       >
                         {certificate.doc_no || "N/A"}
-                      </td>
+                      </td> */}
                     </tr>
 
                     <tr>

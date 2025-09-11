@@ -23,16 +23,24 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
+  CImage,
 } from "@coreui/react";
 import "./chart.css";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
-import { cilArrowLeft, cilChatBubble, cilSend, cilX } from "@coreui/icons";
+import {
+  cilArrowLeft,
+  cilChatBubble,
+  cilPaperclip,
+  cilSend,
+  cilX,
+} from "@coreui/icons";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import socket from "../../../components/Socket";
+import PdfIcon from "../../../assets/images/pdf.png";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -87,6 +95,24 @@ const reducer = (state, action) => {
       };
     case "NEW_CHAT_FAIL":
       return { ...state, sendMessageLoading: false, error: "" };
+    case "UPLOAD_CHAT_ATTACHMENT_REQUEST":
+      return {
+        ...state,
+        chatAttachmentUploadLoading: true,
+        chatAttachmentUploadError: "",
+      };
+    case "UPLOAD_CHAT_ATTACHMENT_SUCCESS":
+      return {
+        ...state,
+        chatAttachmentUploadLoading: false,
+        chatAttachmentUploadError: "",
+      };
+    case "UPLOAD_CHAT_ATTACHMENT_FAIL":
+      return {
+        ...state,
+        chatAttachmentUploadLoading: false,
+        chatAttachmentUploadError: action.payload,
+      };
     default:
       return state;
   }
@@ -105,6 +131,8 @@ export default function ChatDashboard() {
       createError,
       subscriptiondata,
       subscriptionStatus,
+      chatAttachmentUploadLoading,
+      chatAttachmentUploadError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -118,6 +146,8 @@ export default function ChatDashboard() {
     userError: "",
     subscriptiondata: {},
     subscriptionStatus: "",
+    chatAttachmentUploadLoading: false,
+    chatAttachmentUploadError: "",
   });
   const [selectedChat, setSelectedChat] = useState(null);
   const [textMessage, setTextMessage] = useState("");
@@ -127,6 +157,28 @@ export default function ChatDashboard() {
   const userInfo = useSelector((state) => state.userInfo);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showChatWindow, setShowChatWindow] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherTyping, setOtherTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
+  const [chatAttachment, setChatAttachment] = useState({
+    file: "", //url
+    type: "", //pdf,img,other
+  });
+
+  // function to count unread messages for a specific chat
+  const getUnreadMessageCount = useCallback(
+    (chat) => {
+      if (!chat || !chat.chat) return 0;
+
+      return chat.chat.filter(
+        (message) =>
+          message.send_by.email !== userInfo.email &&
+          !message.read_status &&
+          message._id
+      ).length;
+    },
+    [userInfo.email]
+  );
 
   const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
@@ -190,7 +242,6 @@ export default function ChatDashboard() {
 
   useEffect(() => {
     socket.on("updateOnlineUsers", (users) => {
-      console.log(users);
       setOnlineUsers(users);
     });
 
@@ -200,7 +251,8 @@ export default function ChatDashboard() {
     };
   }, []);
 
-  const isUserOnline = (userId) => onlineUsers.some((u) => u.id === userId);
+  const isUserOnline = (userId) =>
+    onlineUsers.some((u) => u.id === userId && u.socketIds.length > 0);
 
   useEffect(() => {
     if (!userInfo?._id) return;
@@ -313,26 +365,85 @@ export default function ChatDashboard() {
     }
   };
 
-  // Scroll to the bottom when the chat is loaded
-
   const filteredUsers = users.filter(
     (user) => user.designation !== "Site Technician"
   );
 
-  const sendMessage = (chat) => {
-    if (!textMessage.trim()) return;
+  // const sendMessage = (chat) => {
+  //   if (!textMessage.trim()) return;
+  //   dispatch({ type: "NEW_CHAT_REQUEST" });
 
+  //   // 1. Optimistically add to UI
+  //   const newMsgId = `tmp-${Date.now()}`;
+  //   let newMsg = {};
+
+  //   newMsg = {
+  //     _id: newMsgId,
+  //     send_by: {
+  //       name: userInfo.username,
+  //       email: userInfo.email,
+  //       profile_image: userInfo.profile_image,
+  //     },
+  //     message: textMessage,
+  //     timestamp: new Date(),
+  //     read_status: false,
+  //     read_by: null,
+  //   };
+
+  //   setSelectedChat((prev) => ({
+  //     ...prev,
+  //     chat: [...prev.chat, newMsg],
+  //   }));
+
+  //   // **ADD THIS**: Also update the chats array optimistically
+  //   dispatch({
+  //     type: "FETCH_CHAT_SUCCESS",
+  //     payload: chatsRef.current.map((c) =>
+  //       c._id === chat._id
+  //         ? {
+  //             ...c,
+  //             chat: [...c.chat, newMsg],
+  //             updatedAt: new Date(),
+  //           }
+  //         : c
+  //     ),
+  //   });
+
+  //   setTextMessage("");
+
+  //   // 2. Emit to backend
+
+  //   socket.emit("sendMessage", {
+  //     chatId: chat._id,
+  //     message: textMessage,
+  //     attachment: { file: "", type: "" },
+  //     user: userInfo,
+  //   });
+
+  //   dispatch({ type: "NEW_CHAT_SUCCESS" });
+  // };
+
+  const sendMessage = (chat) => {
+    if (!textMessage.trim() && !chatAttachment.file) return;
     dispatch({ type: "NEW_CHAT_REQUEST" });
 
-    // 1. Optimistic update
-    const newMsg = {
+    // 1. Optimistically add to UI
+    const newMsgId = `tmp-${Date.now()}`;
+    let newMsg = {};
+
+    // Create message structure that matches both text and attachments
+    newMsg = {
+      _id: newMsgId,
       send_by: {
         name: userInfo.username,
         email: userInfo.email,
         profile_image: userInfo.profile_image,
       },
       message: textMessage,
+      attachment: chatAttachment.file ? chatAttachment : { file: "", type: "" },
       timestamp: new Date(),
+      read_status: false,
+      read_by: null,
     };
 
     setSelectedChat((prev) => ({
@@ -340,12 +451,28 @@ export default function ChatDashboard() {
       chat: [...prev.chat, newMsg],
     }));
 
+    // Update chats array optimistically
+    dispatch({
+      type: "FETCH_CHAT_SUCCESS",
+      payload: chatsRef.current.map((c) =>
+        c._id === chat._id
+          ? {
+              ...c,
+              chat: [...c.chat, newMsg],
+              updatedAt: new Date(),
+            }
+          : c
+      ),
+    });
+
     setTextMessage("");
+    setChatAttachment({ file: "", type: "" });
 
     // 2. Emit to backend
     socket.emit("sendMessage", {
       chatId: chat._id,
       message: textMessage,
+      attachment: chatAttachment,
       user: userInfo,
     });
 
@@ -354,24 +481,389 @@ export default function ChatDashboard() {
 
   useEffect(() => {
     socket.on("receiveMessage", ({ chatId, message }) => {
-      if (message.send_by.email === userInfo.email) return; // ignore own message
+      if (message.send_by.email === userInfo.email) {
+        // Handle own messages (optimistic updates)
+        setSelectedChat((prev) => {
+          if (!prev || prev._id !== chatId) return prev;
+          const updatedChat = prev.chat.map((msg) => {
+            const isOptimistic =
+              msg.send_by.email === userInfo.email &&
+              msg.message === message.message &&
+              Math.abs(new Date(msg.timestamp) - new Date(message.timestamp)) <
+                2000;
+            return isOptimistic ? message : msg;
+          });
+          return { ...prev, chat: updatedChat };
+        });
+
+        // ipdate chats array for own messages
+        dispatch({
+          type: "FETCH_CHAT_SUCCESS",
+          payload: chatsRef.current.map((chat) =>
+            chat._id === chatId
+              ? {
+                  ...chat,
+                  chat: chat.chat.map((msg) => {
+                    const isOptimistic =
+                      msg.send_by.email === userInfo.email &&
+                      msg.message === message.message &&
+                      Math.abs(
+                        new Date(msg.timestamp) - new Date(message.timestamp)
+                      ) < 2000;
+                    return isOptimistic ? message : msg;
+                  }),
+                  updatedAt: message.timestamp,
+                }
+              : chat
+          ),
+        });
+        return;
+      }
+
+      // handle messages from other users
       setSelectedChat((prev) => {
         if (!prev || prev._id !== chatId) return prev;
         return { ...prev, chat: [...prev.chat, message] };
+      });
+
+      // update chats array for messages from other users
+      dispatch({
+        type: "FETCH_CHAT_SUCCESS",
+        payload: chatsRef.current.map((chat) =>
+          chat._id === chatId
+            ? {
+                ...chat,
+                chat: [...chat.chat, message],
+                updatedAt: message.timestamp,
+              }
+            : chat
+        ),
       });
     });
 
     return () => {
       socket.off("receiveMessage");
     };
-  }, []);
+  }, [userInfo, dispatch]);
+
+  const chatsRef = useRef(chats);
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
+
+  // const handleMessagesRead = ({ chatId, updates }) => {
+  //   setSelectedChat((prev) => {
+  //     if (!prev || prev._id !== chatId) return prev;
+  //     const updatedChat = prev.chat.map((m) => {
+  //       const update = updates.find(
+  //         (u) => String(u.messageId) === String(m._id)
+  //       );
+  //       return update
+  //         ? { ...m, read_status: true, read_by: update.read_by }
+  //         : m;
+  //     });
+  //     return { ...prev, chat: updatedChat };
+  //   });
+
+  //   const updatedChats = chatsRef.current.map((c) =>
+  //     c._id === chatId
+  //       ? {
+  //           ...c,
+  //           chat: c.chat.map((m) => {
+  //             const update = updates.find(
+  //               (u) => String(u.messageId) === String(m._id)
+  //             );
+  //             return update
+  //               ? { ...m, read_status: true, read_by: update.read_by }
+  //               : m;
+  //           }),
+  //         }
+  //       : c
+  //   );
+
+  //   dispatch({
+  //     type: "FETCH_CHAT_SUCCESS",
+  //     payload: updatedChats,
+  //   });
+  // };
+
+  const handleMessagesRead = useCallback(
+    ({ chatId, updates }) => {
+      console.log("📨 Received messagesRead event:", { chatId, updates });
+
+      setSelectedChat((prev) => {
+        if (!prev || prev._id !== chatId) return prev;
+        const updatedChat = prev.chat.map((m) => {
+          const update = updates.find(
+            (u) => String(u.messageId) === String(m._id)
+          );
+          return update
+            ? { ...m, read_status: true, read_by: update.read_by }
+            : m;
+        });
+        return { ...prev, chat: updatedChat };
+      });
+
+      // Update the chats array using functional update
+      dispatch((prevState) => ({
+        type: "FETCH_CHAT_SUCCESS",
+        payload: prevState.chats.map((c) =>
+          c._id === chatId
+            ? {
+                ...c,
+                chat: c.chat.map((m) => {
+                  const update = updates.find(
+                    (u) => String(u.messageId) === String(m._id)
+                  );
+                  return update
+                    ? { ...m, read_status: true, read_by: update.read_by }
+                    : m;
+                }),
+              }
+            : c
+        ),
+      }));
+    },
+    [dispatch]
+  ); // Add dispatch as dependency
 
   useEffect(() => {
-    if (selectedChat) {
-      // Scroll to the bottom when the chat is selected
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    socket.on("messagesRead", handleMessagesRead);
+    return () => socket.off("messagesRead", handleMessagesRead);
+  }, [handleMessagesRead]); // Include handleMessagesRead as dependency
+
+  const handleTyping = (e) => {
+    setTextMessage(e.target.value);
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", { chatId: selectedChat._id, user: userInfo });
     }
-  }, [selectedChat]);
+
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      socket.emit("stopTyping", { chatId: selectedChat._id, user: userInfo });
+    }, 1000); // user stopped typing after 1 second of inactivity
+  };
+
+  useEffect(() => {
+    socket.on("userTyping", ({ chatId, user }) => {
+      if (selectedChat?._id === chatId && user.email !== userInfo.email) {
+        setOtherTyping(true);
+      }
+    });
+    socket.on("userStopTyping", ({ chatId, user }) => {
+      if (selectedChat?._id === chatId && user.email !== userInfo.email) {
+        setOtherTyping(false);
+      }
+    });
+    return () => {
+      socket.off("userTyping");
+      socket.off("userStopTyping");
+    };
+  }, [selectedChat, userInfo.email]);
+
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const shouldMarkAsRead = window.innerWidth >= 768 || showChatWindow;
+
+    if (shouldMarkAsRead) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+      const unreadIds = selectedChat.chat
+        .filter(
+          (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id
+        )
+        .map((m) => m._id);
+
+      if (unreadIds.length > 0) {
+        socket.emit("markMessagesRead", {
+          chatId: selectedChat._id,
+          messageIds: unreadIds,
+          user: userInfo,
+        });
+      }
+    }
+  }, [selectedChat, userInfo, showChatWindow]); // Add showChatWindow to dependencies
+
+  // const handleChatAttachment = async (e, chat) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("file", file);
+
+  //   try {
+  //     dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_REQUEST" });
+  //     const { data } = await axios.post(
+  //       "/api/v1/image-upload/chat-attachment",
+  //       bodyFormData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
+
+  //     dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_SUCCESS" });
+
+  //     // Create the new attachment object
+  //     const newAttachment = { file: data.url, type: file.type };
+  //     setChatAttachment(newAttachment);
+
+  //     toast.success("The file uploaded successfully");
+
+  //     if (!newAttachment) return;
+
+  //     dispatch({ type: "NEW_CHAT_REQUEST" });
+
+  //     const newMsgId = `tmp-${Date.now()}`;
+  //     let newMsg = {};
+
+  //     newMsg = {
+  //       _id: newMsgId,
+  //       send_by: {
+  //         name: userInfo.username,
+  //         email: userInfo.email,
+  //         profile_image: userInfo.profile_image,
+  //       },
+  //       attachment: newAttachment,
+  //       timestamp: new Date(),
+  //       read_status: false,
+  //       read_by: null,
+  //     };
+  //     console.log(newMsg);
+  //     setSelectedChat((prev) => ({
+  //       ...prev,
+  //       chat: [...prev.chat, newMsg],
+  //     }));
+
+  //     // **ADD THIS**: Also update the chats array optimistically
+  //     dispatch({
+  //       type: "FETCH_CHAT_SUCCESS",
+  //       payload: chatsRef.current.map((c) =>
+  //         c._id === chat._id
+  //           ? {
+  //               ...c,
+  //               chat: [...c.chat, newMsg],
+  //               updatedAt: new Date(),
+  //             }
+  //           : c
+  //       ),
+  //     });
+
+  //     console.log(newMsg);
+  //     console.log(chat);
+  //     // setTextMessage("");
+  //     setChatAttachment({ file: "", type: "" }); // Reset attachment after sending
+
+  //     // Use newAttachment instead of chatAttachment
+  //     socket.emit("sendMessage", {
+  //       chatId: chat._id,
+  //       message: "",
+  //       attachment: newAttachment, // Use the fresh value
+  //       user: userInfo,
+  //     });
+  //     console.log("new1:", newMsg);
+  //     console.log("new2 :", chat);
+
+  //     dispatch({ type: "NEW_CHAT_SUCCESS" });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "FETCH_CHAT_FAIL",
+  //       payload: error.response.data.error || error.response.data.message,
+  //     });
+  //     console.error(error);
+  //   }
+  // };
+
+  const handleChatAttachment = async (e, chat) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+
+    try {
+      dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/chat-attachment",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_SUCCESS" });
+
+      // Create the new attachment object
+      const newAttachment = { file: data.url, type: file.type };
+      setChatAttachment(newAttachment);
+
+      toast.success("The file uploaded successfully");
+
+      // Send the message with attachment immediately after upload
+      dispatch({ type: "NEW_CHAT_REQUEST" });
+
+      const newMsgId = `tmp-${Date.now()}`;
+      let newMsg = {};
+
+      newMsg = {
+        _id: newMsgId,
+        send_by: {
+          name: userInfo.username,
+          email: userInfo.email,
+          profile_image: userInfo.profile_image,
+        },
+        message: "", // Empty message for attachment-only
+        attachment: newAttachment,
+        timestamp: new Date(),
+        read_status: false,
+        read_by: null,
+      };
+
+      setSelectedChat((prev) => ({
+        ...prev,
+        chat: [...prev.chat, newMsg],
+      }));
+
+      // Update chats array optimistically
+      dispatch({
+        type: "FETCH_CHAT_SUCCESS",
+        payload: chatsRef.current.map((c) =>
+          c._id === chat._id
+            ? {
+                ...c,
+                chat: [...c.chat, newMsg],
+                updatedAt: new Date(),
+              }
+            : c
+        ),
+      });
+
+      // Emit the message with attachment
+      socket.emit("sendMessage", {
+        chatId: chat._id,
+        message: "",
+        attachment: newAttachment,
+        user: userInfo,
+      });
+
+      dispatch({ type: "NEW_CHAT_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_CHAT_ATTACHMENT_FAIL",
+        payload: error.response?.data?.error || error.response?.data?.message,
+      });
+      console.error(error);
+    }
+  };
 
   const checkStatus = [
     "subscriptionSitesAssigned",
@@ -405,14 +897,16 @@ export default function ChatDashboard() {
               }`}
             >
               <div className="border-bottom mx-3 d-flex justify-content-between align-items-center">
-                <h5>Chats</h5>
+                <div className="d-flex align-items-center gap-2">
+                  <h5 className="mb-0">Chats</h5>
+                </div>
                 <CButton
                   className="my-2"
                   size="sm"
                   color="primary"
                   onClick={() => setShowUserModal(true)}
                 >
-                  New Chat{" "}
+                  New Chat
                 </CButton>
               </div>
 
@@ -498,7 +992,7 @@ export default function ChatDashboard() {
               </CModal>
 
               {/* Chats list */}
-              <div className="my-2" style={{ maxHeight: "360px" }}>
+              <div className="" style={{ maxHeight: "360px" }}>
                 {chats
                   .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
                   .map((chat) => {
@@ -507,6 +1001,9 @@ export default function ChatDashboard() {
                     const otherUser = isLoggedInUserSender
                       ? chat.receiver_user
                       : chat.send_user;
+
+                    // Get unread message count for this chat
+                    const unreadCount = getUnreadMessageCount(chat);
 
                     return (
                       <div
@@ -517,7 +1014,13 @@ export default function ChatDashboard() {
                             : ""
                         }`}
                         onClick={() => handleChatClick(chat)}
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                          backgroundColor:
+                            unreadCount > 0 && selectedChat?._id !== chat._id
+                              ? "rgba(37, 211, 102, 0.05)"
+                              : "",
+                        }}
                       >
                         <div className="position-relative">
                           <img
@@ -536,7 +1039,7 @@ export default function ChatDashboard() {
                                 right: 0,
                                 width: "10px",
                                 height: "10px",
-                                backgroundColor: "green",
+                                backgroundColor: "#25d366",
                                 borderRadius: "50%",
                                 border: "2px solid white",
                               }}
@@ -544,16 +1047,58 @@ export default function ChatDashboard() {
                           )}
                         </div>
                         <div className="flex-grow-1">
-                          <div className="fw-semibold text-truncate">
+                          <div
+                            className="fw-semibold text-truncate"
+                            style={{
+                              fontWeight: unreadCount > 0 ? "600" : "500",
+                            }}
+                          >
                             {otherUser.name}
                           </div>
-                          <div className="text-truncate small">
+                          <div
+                            className="text-truncate small"
+                            style={{
+                              color: unreadCount > 0 ? "#667781" : "#8696a0",
+                              fontWeight: unreadCount > 0 ? "500" : "400",
+                            }}
+                          >
                             {renderLastMessage(chat.chat)}
                           </div>
                         </div>
-                        <small className="text-nowrap">
-                          {formatTimeinUserlist(chat.updatedAt)}
-                        </small>
+                        <div className="d-flex flex-column align-items-end">
+                          <small
+                            className="text-nowrap"
+                            style={{
+                              color: unreadCount > 0 ? "#25d366" : "#8696a0",
+                              fontWeight: unreadCount > 0 ? "600" : "400",
+                            }}
+                          >
+                            {formatTimeinUserlist(chat.updatedAt)}
+                          </small>
+                          {/* Unread message count badge */}
+                          {unreadCount > 0 && (
+                            <CBadge
+                              shape="rounded-pill"
+                              className="mt-1"
+                              style={{
+                                backgroundColor: "#25d366",
+                                color: "white",
+                                fontSize: "0.75rem",
+                                fontWeight: "600",
+                                minWidth: "20px",
+                                height: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                border: "none",
+                                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+                                animation: "pulse 0.5s ease-in-out",
+                              }}
+                            >
+                              {unreadCount > 99 ? "99+" : unreadCount}
+                            </CBadge>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -569,7 +1114,7 @@ export default function ChatDashboard() {
             >
               {selectedChat ? (
                 <>
-                  <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2">
+                  <div className="border-bottom p-3 fw-semibold d-flex align-items-center gap-2 ">
                     {/* Back button for mobile */}
                     <button
                       type="button"
@@ -606,7 +1151,9 @@ export default function ChatDashboard() {
                                   : "text-muted"
                               }`}
                             >
-                              {isUserOnline(otherUser.user_id)
+                              {otherTyping
+                                ? "typing..."
+                                : isUserOnline(otherUser.user_id)
                                 ? "Online"
                                 : "Offline"}
                             </small>
@@ -618,16 +1165,15 @@ export default function ChatDashboard() {
 
                   {/* Messages */}
                   <div
-                    className="flex-grow-1 overflow-auto p-3"
+                    className="flex-grow-1 overflow-auto mt-2"
                     style={
                       window.innerWidth <= 767
                         ? {
-                            minHeight: "calc(100vh - 140px)", // full screen minus header + input
-                            maxHeight: "calc(100vh - 140px)",
+                            maxHeight: "550px",
                           }
                         : {
-                            minHeight: "300px",
-                            maxHeight: "300px",
+                            minHeight: "350px",
+                            maxHeight: "350px",
                           }
                     }
                   >
@@ -667,12 +1213,79 @@ export default function ChatDashboard() {
                                   : "var(--cui-body-color)",
                             }}
                           >
-                            <div>{msg.message}</div>
+                            <div>
+                              {msg.message ? (
+                                msg.message
+                              ) : (
+                                <>
+                                  {msg.attachment.type.startsWith("image/") ? (
+                                    <img
+                                      src={msg.attachment.file}
+                                      alt="Attachment"
+                                      className="img-fluid rounded"
+                                      style={{ maxWidth: "200px" }}
+                                    />
+                                  ) : msg.attachment.type ===
+                                    "application/pdf" ? (
+                                    <a
+                                      href={msg.attachment.file}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ textDecoration: "none" }}
+                                    >
+                                      <CImage
+                                        src={PdfIcon}
+                                        style={{
+                                          width: "20px",
+                                          height: "20px",
+                                          objectFit: "contain",
+                                        }}
+                                        alt="PDF Icon"
+                                      />
+                                    </a>
+                                  ) : msg.attachment.type === "" ? (
+                                    "No Attachment"
+                                  ) : (
+                                    <a
+                                      href={msg.attachment.file}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ textDecoration: "none" }}
+                                    >
+                                      <CIcon icon={cilPaperclip} size="lg" />{" "}
+                                      View Attachment
+                                    </a>
+                                  )}
+                                </>
+                              )}
+                            </div>
                             <small
-                              className="text-muted d-block text-end"
-                              style={{ fontSize: "12px" }}
+                              className="d-block text-end"
+                              style={{
+                                fontSize: "12px",
+                                color: "rgba(255,255,255,0.7)",
+                              }}
                             >
                               {formatTime(msg.timestamp)}
+                              {msg.send_by.email === userInfo.email && (
+                                <span
+                                  className="ms-2"
+                                  style={{ fontSize: "0.75rem", lineHeight: 1 }}
+                                >
+                                  {msg.read_status ? (
+                                    <span
+                                      style={{
+                                        color: "#0d6efd",
+                                        letterSpacing: "-3px",
+                                      }}
+                                    >
+                                      ✓✓
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: "gray" }}>✓</span>
+                                  )}
+                                </span>
+                              )}
                             </small>
                           </div>
                         </div>
@@ -683,13 +1296,13 @@ export default function ChatDashboard() {
 
                   {/* Input */}
                   {/* Input for Desktop/Tablet */}
-                  <div className="border-top p-3 d-none d-md-block">
+                  <div className="border-top p-3 d-none d-md-block border">
                     <CForm>
                       <CInputGroup>
                         <CFormInput
                           placeholder="Type a message..."
                           value={textMessage}
-                          onChange={(e) => setTextMessage(e.target.value)}
+                          onChange={handleTyping}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -698,6 +1311,28 @@ export default function ChatDashboard() {
                             }
                           }}
                         />
+                        {/* File input button */}
+                        <label
+                          htmlFor="file-upload"
+                          className="btn btn-light"
+                          style={{ cursor: "pointer" }}
+                          title="Attach file"
+                        >
+                          {chatAttachmentUploadLoading ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <CIcon icon={cilPaperclip} />
+                          )}
+                        </label>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          style={{ display: "none" }}
+                          onChange={(e) =>
+                            handleChatAttachment(e, selectedChat)
+                          }
+                        />
+
                         <CButton
                           color="success"
                           disabled={sendMessageLoading || !textMessage.trim()}
@@ -732,7 +1367,7 @@ export default function ChatDashboard() {
                         <CFormInput
                           placeholder="Type a message..."
                           value={textMessage}
-                          onChange={(e) => setTextMessage(e.target.value)}
+                          onChange={handleTyping}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -741,6 +1376,27 @@ export default function ChatDashboard() {
                             }
                           }}
                           style={{ margin: 0 }}
+                        />
+                        {/* File input button */}
+                        <label
+                          htmlFor="file-upload"
+                          className="btn btn-light"
+                          style={{ cursor: "pointer" }}
+                          title="Attach file"
+                        >
+                          {chatAttachmentUploadLoading ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <CIcon icon={cilPaperclip} />
+                          )}
+                        </label>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          style={{ display: "none" }}
+                          onChange={(e) =>
+                            handleChatAttachment(e, selectedChat)
+                          }
                         />
                         <CButton
                           color="success"

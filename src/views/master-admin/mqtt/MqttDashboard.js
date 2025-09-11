@@ -491,7 +491,7 @@ const MqttDashboard = () => {
     socket.on("event", (msg) => {
       setFrames((prev) => {
         const updated = [msg, ...prev].slice(0, 40); // keep latest 40
-        localStorage.setItem("allRobotFrames", JSON.stringify(updated));
+        localStorage.setItem("allRobotFrames", JSON.stringify(updated)); // sync with storage
         return updated;
       });
     });

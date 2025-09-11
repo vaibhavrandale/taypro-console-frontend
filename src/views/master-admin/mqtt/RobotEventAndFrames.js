@@ -26,9 +26,11 @@ import socket from "../../../components/Socket";
 
 const RobotEventAndFrames = () => {
   const { robot_no, deveui } = useParams();
-
   const [activeTab, setActiveTab] = useState("Events");
-  const [frames, setFrames] = useState([]);
+  const [frames, setFrames] = useState(() => {
+    const saved = localStorage.getItem("robotFrames");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
 
