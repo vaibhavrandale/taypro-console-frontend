@@ -1086,6 +1086,7 @@ const CreatePreventiveMaintenance = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
+  const [loadingCamera, setLoadingCamera] = useState(false);
 
   // Camera states
   const [cameraModalVisible, setCameraModalVisible] = useState(false);
@@ -1137,6 +1138,7 @@ const CreatePreventiveMaintenance = () => {
           const lng = pos.coords.longitude.toFixed(6);
 
           try {
+            setLoadingCamera(true);
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
             );
@@ -1147,9 +1149,11 @@ const CreatePreventiveMaintenance = () => {
               lng,
               name: data.display_name || "Unknown location",
             });
+            setLoadingCamera(false);
           } catch (err) {
             console.error("Error fetching address:", err);
             setLocation({ lat, lng, name: "Location not available" });
+            setLoading(false);
           }
         },
         (err) => {
@@ -1175,8 +1179,15 @@ const CreatePreventiveMaintenance = () => {
 
   const startCamera = async () => {
     try {
+      // const mediaStream = await navigator.mediaDevices.getUserMedia({
+      //   video: { facingMode: "environment" },
+      // });
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
       });
       console.log(navigator.mediaDevices.enumerateDevices());
 
@@ -1231,6 +1242,7 @@ const CreatePreventiveMaintenance = () => {
   useEffect(() => {
     if (cameraModalVisible) getLocation();
   }, [cameraModalVisible]);
+
   const captureImage = () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
@@ -1244,21 +1256,32 @@ const CreatePreventiveMaintenance = () => {
       // Draw current frame
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // === Add watermark (lat, lng, timestamp, address) ===
-      const timestamp = new Date().toLocaleString();
-      const coords = `Lat: ${location.lat}, Lng: ${location.lng} | ${timestamp}`;
-      const address = location.name || "Fetching address...";
+      // === Prepare watermark data ===
+      const timestamp = new Date().toLocaleString("en-IN", {
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
+      const coords = `Coordinates: ${location.lat}, ${location.lng}`;
+      const address = `Address: ${location.name || "Fetching address..."}`;
+      const timeLabel = `Timestamp: ${timestamp}`;
 
       // Semi-transparent background
+      const boxHeight = 90;
       context.fillStyle = "rgba(0, 0, 0, 0.5)";
-      context.fillRect(0, canvas.height - 70, canvas.width, 70);
+      context.fillRect(0, canvas.height - boxHeight, canvas.width, boxHeight);
 
       // White text
       context.fillStyle = "white";
       context.font = "16px Arial";
       context.textAlign = "left";
-      context.fillText(coords, 10, canvas.height - 45);
-      context.fillText(address, 10, canvas.height - 20);
+
+      // Draw rows (like in modal)
+      let y = canvas.height - boxHeight + 25;
+      context.fillText(coords, 10, y);
+      y += 20;
+      context.fillText(address, 10, y);
+      y += 20;
+      context.fillText(timeLabel, 10, y);
 
       // Convert to blob & upload
       canvas.toBlob(
@@ -1399,11 +1422,9 @@ const CreatePreventiveMaintenance = () => {
       toast.success(data.data.message);
       navigate("/master-admin/preventive-maintanance-dashboard");
     } catch (error) {
-      const errorMsg = error.response?.data?.error || "Something went wrong";
-      toast.error(errorMsg);
-      dispatch({ type: "ADD_PM_FAIL", payload: errorMsg });
-    } finally {
-      setLoading(false);
+      toast.error(error.response?.data?.error || "Something went wrong");
+      dispatch({ type: "ADD_PM_FAIL", payload: error.message });
+      toast.error(error.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -1571,19 +1592,21 @@ const CreatePreventiveMaintenance = () => {
               ))}
             </CRow>
 
-            <CButton
-              type="submit"
-              className="btn btn-success btn-sm"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  Submitting... <LoadingSpinner />
-                </>
-              ) : (
-                "Submit"
-              )}
-            </CButton>
+            <div className="d-flex justify-content-end mt-4 gap-2">
+              <CButton
+                type="submit"
+                className=" d-flex justify-content-end align-items-center btn btn-success btn-sm"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    Submitting... <LoadingSpinner />
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </CButton>
+            </div>
           </CForm>
         </CCardBody>
       </CCard>
@@ -1607,41 +1630,143 @@ const CreatePreventiveMaintenance = () => {
           </button>
         </CModalHeader>
 
-        <CModalBody className="text-center position-relative">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-100"
-            style={{ maxHeight: "70vh" }}
-          />
-          <canvas ref={canvasRef} style={{ display: "none" }} />
+        {/* <CModalBody className="text-center position-relative">
+          {loadingCamera ? (
+            <span>
+              Loading Camera ... <LoadingSpinner />{" "}
+            </span>
+          ) : (
+            <>
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-100"
+                style={{ maxHeight: "70vh" }}
+              />
+              <canvas ref={canvasRef} style={{ display: "none" }} />
+             
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "10px",
+                  color: "white",
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  maxWidth: "95%",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "start" }}>
+                  <strong>Coordinates:</strong>{" "}
+                  <span>
+                    {location.lat},{location.lng}
+                  </span>
+                </div>
 
-          {/* Overlay Location & Address */}
+                <div style={{ display: "flex", justifyContent: "start" }}>
+                  <strong>Address:</strong>{" "}
+                  <span>{location.name || "Fetching address..."}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "start" }}>
+                  <strong>Timestamp:</strong>{" "}
+                  <span>
+                    {new Date().toLocaleString("en-IN", {
+                      hour12: true,
+                      timeZone: "Asia/Kolkata",
+                    })}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+        </CModalBody> */}
+
+        <CModalBody
+          className="text-center position-relative"
+          style={{ height: "70vh", padding: 0 }} // force modal body height
+        >
+          {/* Video container */}
           <div
             style={{
-              position: "absolute",
-              bottom: "10px",
-              left: "10px",
-              color: "white",
-              backgroundColor: "rgba(0,0,0,0.5)",
-              padding: "6px 10px",
-              borderRadius: "5px",
-              fontSize: "14px",
-              maxWidth: "90%",
-              wordWrap: "break-word",
+              width: "100%",
+              height: "100%",
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "black", // in case video not loaded
             }}
           >
-            <div>
-              <strong>Lat:</strong> {location.lat} <strong>Lng:</strong>{" "}
-              {location.lng}
-              {new Date().toLocaleString("en-IN", {
-                hour12: true,
-                timeZone: "Asia/Kolkata",
-              })}
-            </div>
-            <div>
-              <strong>Address:</strong> {location.name || "Fetching address..."}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-100 h-100"
+              style={{ objectFit: "contain" }}
+              onCanPlay={() => setLoadingCamera(false)}
+            />
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+
+            {/* Loading overlay */}
+            {loadingCamera && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 5,
+                }}
+              >
+                <span style={{ color: "white" }}>
+                  Loading Camera... <LoadingSpinner />
+                </span>
+              </div>
+            )}
+
+            {/* Overlay Location, Address & Timestamp */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "10px",
+                left: "10px",
+                color: "white",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                fontSize: "14px",
+                maxWidth: "95%",
+              }}
+            >
+              <div style={{ display: "flex", gap: "5px" }}>
+                <strong>Coordinates:</strong>
+                <span>
+                  {location.lat},{location.lng}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", gap: "5px" }}>
+                <strong>Address:</strong>
+                <span>{location.name || "Fetching address..."}</span>
+              </div>
+
+              <div style={{ display: "flex", gap: "5px" }}>
+                <strong>Timestamp:</strong>
+                <span>
+                  {new Date().toLocaleString("en-IN", {
+                    hour12: true,
+                    timeZone: "Asia/Kolkata",
+                  })}
+                </span>
+              </div>
             </div>
           </div>
         </CModalBody>
