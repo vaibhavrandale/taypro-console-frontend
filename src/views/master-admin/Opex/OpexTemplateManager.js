@@ -785,7 +785,7 @@ const OpexTemplateManager = () => {
                 <CTable bordered hover responsive>
                   <CTableHead color="secondary">
                     <CTableRow>
-                      <CTableHeaderCell>Month</CTableHeaderCell>
+                      <CTableHeaderCell>Date</CTableHeaderCell>
                       <CTableHeaderCell>Certificate ID</CTableHeaderCell>
                       <CTableHeaderCell>Verified By</CTableHeaderCell>
                       <CTableHeaderCell>Verified At</CTableHeaderCell>
@@ -813,23 +813,18 @@ const OpexTemplateManager = () => {
                         </CTableDataCell>
                       </CTableRow>
                     ) : opexData.certificates.length > 0 ? (
-                      opexData.certificates.map((block, index) => (
+                      opexData.certificates.map((certificate, index) => (
                         <CTableRow key={index}>
                           <CTableDataCell>
-                            {new Date(
-                              block.verified_by.timestamp
-                            ).toLocaleString("en-GB", {
-                              month: "long",
-                              year: "numeric",
-                            })}
+                            {certificate.month}/{certificate.year}
                           </CTableDataCell>
-                          <CTableDataCell>{block._id}</CTableDataCell>
+                          <CTableDataCell>{certificate._id}</CTableDataCell>
                           <CTableDataCell>
-                            {block.verified_by.name}
+                            {certificate.verified_by.name}
                           </CTableDataCell>
                           <CTableDataCell>
                             {new Date(
-                              block.verified_by.timestamp
+                              certificate.verified_by.timestamp
                             ).toLocaleString("en-GB", {
                               day: "2-digit",
                               month: "2-digit",
@@ -843,7 +838,7 @@ const OpexTemplateManager = () => {
                           <CTableDataCell>
                             <Link
                               className="btn btn-primary btn-sm m-1"
-                              to={`/${adminroute}/opexdata/${site_id}/opex-certificate/${block._id}`}
+                              to={`/${adminroute}/opexdata/${site_id}/opex-certificate/${certificate._id}`}
                             >
                               View
                             </Link>

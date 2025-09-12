@@ -499,6 +499,24 @@ const OpexCertificate = () => {
       setLoadingPdf(false);
     }
   };
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // assuming certificate_month = 8 and certificate_year = 2025
+  const monthName = monthNames[certificate.certificate_month - 1];
+  const year = certificate.certificate_year;
 
   return (
     <div>
@@ -511,13 +529,9 @@ const OpexCertificate = () => {
           <CCol>
             <h4 className="text-center my-1">
               <span className="text-success">
-                {new Date(certificate.certificate_month - 1).toLocaleString(
-                  "en-US",
-                  { month: "long" }
-                )}
-                &nbsp;{certificate.certificate_year}&nbsp;
+                {monthName}&nbsp;-&nbsp;{year}
               </span>
-              - Cleaning Certificate
+              &nbsp;- Cleaning Certificate
             </h4>
 
             <>
