@@ -106,7 +106,7 @@ const Profile = () => {
   const videoConstraints = {
     width: 640,
     height: 480,
-    facingMode: "user",
+    facingMode: "user", //"user" for front camera, "environment" for back camera
   };
 
   const captureImage = useCallback(() => {
@@ -141,7 +141,6 @@ const Profile = () => {
       );
       dispatch({ type: "UPLOAD_USER_IMAGE_SUCCESS" });
       setUploadedImageUrl(data.url);
-      // toast.success("Image uploaded");
     } catch (err) {
       dispatch({
         type: "UPLOAD_USER_IMAGE_FAIL",
@@ -399,14 +398,6 @@ const Profile = () => {
               Capture
             </CButton>
           )}
-          {/* <CButton
-            color="secondary"
-            size="sm"
-            onClick={handleClose}
-            disabled={isProcessing}
-          >
-            Cancel
-          </CButton> */}
         </CModalFooter>
       </CModal>
     </div>

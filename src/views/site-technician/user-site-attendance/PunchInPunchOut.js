@@ -103,7 +103,7 @@ const PunchInPunchOut = () => {
     selectedSiteData,
   } = state;
   const [geoLoading, setGeoLoading] = useState(true); // ⬅️ add this
-
+  const [canPunchIn, setCanPunchIn] = useState(false);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
@@ -181,44 +181,6 @@ const PunchInPunchOut = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!userInfo) return; // ⛔️
-  //   const userSites = userInfo.assigned_sites || [];
-  //   setSites(userSites);
-
-  //   if (userSites.length === 1) {
-  //     const siteId = userSites[0].site_id;
-  //     dispatch({ type: "SET_FIELD", name: "site_id", value: siteId });
-  //     fetchCoordinates(siteId);
-  //   }
-
-  //   fetchPunchStatus();
-
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       setLiveLocation({
-  //         lat: position.coords.latitude,
-  //         lng: position.coords.longitude,
-  //       });
-  //       if (!punchedIn) {
-  //         dispatch({
-  //           type: "SET_LOCATION_FIELD",
-  //           locationType: "punchin_location",
-  //           field: "lat",
-  //           value: position.coords.latitude.toString(),
-  //         });
-  //         dispatch({
-  //           type: "SET_LOCATION_FIELD",
-  //           locationType: "punchin_location",
-  //           field: "lng",
-  //           value: position.coords.longitude.toString(),
-  //         });
-  //       }
-  //     },
-  //     (err) => console.error("Geolocation error:", err)
-  //   );
-  // }, [punchedIn, userInfo]);
-
   useEffect(() => {
     if (!userInfo) return;
 
@@ -273,6 +235,21 @@ const PunchInPunchOut = () => {
 
     return R * c <= radius;
   };
+
+  useEffect(() => {
+    if (!liveLocation || !selectedSiteData) {
+      setCanPunchIn(false);
+      return;
+    }
+    const within = isInsideRadius(
+      liveLocation.lat,
+      liveLocation.lng,
+      selectedSiteData.latitude,
+      selectedSiteData.longitude,
+      selectedSiteData.radius
+    );
+    setCanPunchIn(within);
+  }, [liveLocation, selectedSiteData]);
 
   const handlePunchIn = async (e) => {
     e.preventDefault();
@@ -451,15 +428,22 @@ const PunchInPunchOut = () => {
                       </CFormSelect>
                     </CCol>
                   </CRow>
-                  <CButton
-                    type="submit"
-                    color="success"
-                    size="sm"
-                    className="mt-3"
-                    disabled={loading}
-                  >
-                    {loading ? "Punching In..." : "Punch In"}
-                  </CButton>
+
+                  {canPunchIn ? (
+                    <CButton
+                      type="submit"
+                      color="success"
+                      size="sm"
+                      className="mt-3"
+                      disabled={loading}
+                    >
+                      {loading ? "Punching In..." : "Punch In"}
+                    </CButton>
+                  ) : (
+                    <div className="mt-3 text-danger">
+                      You are outside the allotted area.
+                    </div>
+                  )}
                 </CForm>
               ) : (
                 <CForm onSubmit={handlePunchOut}>
@@ -563,4 +547,3 @@ const PunchInPunchOut = () => {
 };
 
 export default PunchInPunchOut;
-// import
