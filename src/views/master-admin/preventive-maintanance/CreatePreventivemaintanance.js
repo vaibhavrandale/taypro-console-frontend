@@ -1097,9 +1097,9 @@ const CreatePreventiveMaintenance = () => {
   const [location, setLocation] = useState({ lat: null, lng: null });
 
   // === Add watermark (lat, lng, address, timestamp) ===
-  const timestamp = new Date().toLocaleString();
-  const text = `Lat: ${location.lat}, Lng: ${location.lng} | ${timestamp}`;
-  const address = location.name ? location.name : "";
+  // const timestamp = new Date().toLocaleString();
+  // const text = `Lat: ${location.lat}, Lng: ${location.lng} | ${timestamp}`;
+  // const address = location.name ? location.name : "";
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -1336,28 +1336,28 @@ const CreatePreventiveMaintenance = () => {
     setCameraModalVisible(true);
   };
 
-  const validateForm = () => {
-    const errors = {};
-    const requiredFields = [
-      "physical_condition_of_transPipe_condition",
-      "physical_condition_of_channel_condition",
-      "oiling_need_for_bearing_condition",
-      "client_id",
-      "site_name",
-      "site_location",
-      "start_date",
-      "end_date",
-    ];
+  // const validateForm = () => {
+  //   const errors = {};
+  //   const requiredFields = [
+  //     "physical_condition_of_transPipe_condition",
+  //     "physical_condition_of_channel_condition",
+  //     "oiling_need_for_bearing_condition",
+  //     "client_id",
+  //     "site_name",
+  //     "site_location",
+  //     "start_date",
+  //     "end_date",
+  //   ];
 
-    requiredFields.forEach((field) => {
-      if (!state[field] || state[field].trim() === "") {
-        errors[field] = `${field.replace(/_/g, " ")} is required`;
-      }
-    });
+  //   requiredFields.forEach((field) => {
+  //     if (!state[field] || state[field].trim() === "") {
+  //       errors[field] = `${field.replace(/_/g, " ")} is required`;
+  //     }
+  //   });
 
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  //   setValidationErrors(errors);
+  //   return Object.keys(errors).length === 0;
+  // };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -1431,7 +1431,6 @@ const CreatePreventiveMaintenance = () => {
   return (
     <>
       <CCard className="max-w-3xl mx-auto p-4 shadow-lg rounded-lg">
-        <CameraList />
         <CCardHeader>
           <h2>Create Preventive Maintenance</h2>
         </CCardHeader>
@@ -1799,39 +1798,39 @@ const CreatePreventiveMaintenance = () => {
 
 export default CreatePreventiveMaintenance;
 
-const CameraList = () => {
-  const [cameras, setCameras] = useState([]);
+// const CameraList = () => {
+//   const [cameras, setCameras] = useState([]);
 
-  useEffect(() => {
-    async function getCameras() {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
-        setCameras(videoDevices);
-      } catch (err) {
-        console.error("Error fetching cameras:", err);
-      }
-    }
+//   useEffect(() => {
+//     async function getCameras() {
+//       try {
+//         const devices = await navigator.mediaDevices.enumerateDevices();
+//         const videoDevices = devices.filter(
+//           (device) => device.kind === "videoinput"
+//         );
+//         setCameras(videoDevices);
+//       } catch (err) {
+//         console.error("Error fetching cameras:", err);
+//       }
+//     }
 
-    getCameras();
-  }, []);
+//     getCameras();
+//   }, []);
 
-  return (
-    <div>
-      <h2>Available Cameras</h2>
-      {cameras.length > 0 ? (
-        <ul>
-          {cameras.map((cam, index) => (
-            <li key={cam.deviceId}>
-              Camera {index + 1}: {cam.label || "Unnamed camera"}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No cameras found</p>
-      )}
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <h2>Available Cameras</h2>
+//       {cameras.length > 0 ? (
+//         <ul>
+//           {cameras.map((cam, index) => (
+//             <li key={cam.deviceId}>
+//               Camera {index + 1}: {cam.label || "Unnamed camera"}
+//             </li>
+//           ))}
+//         </ul>
+//       ) : (
+//         <p>No cameras found</p>
+//       )}
+//     </div>
+//   );
+// };

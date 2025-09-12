@@ -1194,39 +1194,39 @@ const CreateTechnicianPreventivemaintanance = () => {
 
 export default CreateTechnicianPreventivemaintanance;
 
-const CameraList = () => {
-  const [cameras, setCameras] = useState([]);
+// const CameraList = () => {
+//   const [cameras, setCameras] = useState([]);
 
-  useEffect(() => {
-    async function getCameras() {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
-        setCameras(videoDevices);
-      } catch (err) {
-        console.error("Error fetching cameras:", err);
-      }
-    }
+//   useEffect(() => {
+//     async function getCameras() {
+//       try {
+//         const devices = await navigator.mediaDevices.enumerateDevices();
+//         const videoDevices = devices.filter(
+//           (device) => device.kind === "videoinput"
+//         );
+//         setCameras(videoDevices);
+//       } catch (err) {
+//         console.error("Error fetching cameras:", err);
+//       }
+//     }
 
-    getCameras();
-  }, []);
+//     getCameras();
+//   }, []);
 
-  return (
-    <div>
-      <h2>Available Cameras</h2>
-      {cameras.length > 0 ? (
-        <ul>
-          {cameras.map((cam, index) => (
-            <li key={cam.deviceId}>
-              Camera {index + 1}: {cam.label || "Unnamed camera"}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No cameras found</p>
-      )}
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <h2>Available Cameras</h2>
+//       {cameras.length > 0 ? (
+//         <ul>
+//           {cameras.map((cam, index) => (
+//             <li key={cam.deviceId}>
+//               Camera {index + 1}: {cam.label || "Unnamed camera"}
+//             </li>
+//           ))}
+//         </ul>
+//       ) : (
+//         <p>No cameras found</p>
+//       )}
+//     </div>
+//   );
+// };
