@@ -1,4 +1,10 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import {
   CCard,
   CCardHeader,
@@ -11,6 +17,11 @@ import {
   CButton,
   CAlert,
   CBadge,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -20,7 +31,10 @@ import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
 import toast from "react-hot-toast";
-delete L.Icon.Default.prototype._getIconUrl;
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
+import Webcam from "react-webcam";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -66,6 +80,18 @@ function reducer(state, action) {
       };
     case "SET_SITE_COORDINATES":
       return { ...state, selectedSiteData: action.payload };
+    case "UPLOAD_USER_IMAGE_REQUEST":
+      return { ...state, uploadingImage: true, uploadError: null };
+    case "UPLOAD_USER_IMAGE_SUCCESS":
+      return { ...state, uploadingImage: false };
+    case "UPLOAD_USER_IMAGE_FAIL":
+      return { ...state, uploadingImage: false, uploadError: action.payload };
+    case "SAVE_USER_IMAGE_REQUEST":
+      return { ...state, savingImage: true, saveError: null };
+    case "SAVE_USER_IMAGE_SUCCESS":
+      return { ...state, savingImage: false };
+    case "SAVE_USER_IMAGE_FAIL":
+      return { ...state, savingImage: false, saveError: action.payload };
     case "PUNCH_REQUEST":
       return { ...state, loading: true, error: null, success: false };
     case "PUNCH_SUCCESS":
@@ -84,6 +110,7 @@ function reducer(state, action) {
         success: false,
         error: action.payload,
       };
+
     default:
       return state;
   }
@@ -101,17 +128,25 @@ const PunchInPunchOut = () => {
     punchedIn,
     punchedOut,
     selectedSiteData,
+    uploadingImage,
+    savingImage,
+    uploadError,
   } = state;
-  const [geoLoading, setGeoLoading] = useState(true); // ⬅️ add this
+  const [geoLoading, setGeoLoading] = useState(true);
   const [canPunchIn, setCanPunchIn] = useState(false);
+  const [canPunchOut, setCanPunchOut] = useState(false);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
-
   const [inTime, setinTime] = useState(new Date());
   const [currentTime, setcurrentTime] = useState(new Date());
-
   const [liveLocation, setLiveLocation] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [showPunchInModal, setShowPunchInModal] = useState(false);
+  const [showPunchOutModal, setShowPunchOutModal] = useState(false);
+  const isProcessing = uploadingImage || savingImage;
+  const webcamRef = useRef(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const fetchPunchStatus = async () => {
     try {
@@ -142,6 +177,7 @@ const PunchInPunchOut = () => {
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
+      console.log(res);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLiveLocation({
@@ -164,12 +200,13 @@ const PunchInPunchOut = () => {
             });
           }
 
-          setGeoLoading(false); // ✅ stop loading
+          setGeoLoading(false);
         },
         (err) => {
           console.error("Geolocation error:", err);
           toast.error("Unable to access location");
-          setGeoLoading(false); // ✅ stop loading even on error
+          console.log(err);
+          setGeoLoading(false);
         }
       );
     } catch (error) {
@@ -195,7 +232,7 @@ const PunchInPunchOut = () => {
 
     fetchPunchStatus();
 
-    setGeoLoading(true); // ⬅️ start loading
+    setGeoLoading(true);
   }, [punchedIn, userInfo]);
 
   useEffect(() => {
@@ -236,6 +273,7 @@ const PunchInPunchOut = () => {
     return R * c <= radius;
   };
 
+  // Check if user is inside radius for punch in
   useEffect(() => {
     if (!liveLocation || !selectedSiteData) {
       setCanPunchIn(false);
@@ -251,7 +289,24 @@ const PunchInPunchOut = () => {
     setCanPunchIn(within);
   }, [liveLocation, selectedSiteData]);
 
-  const handlePunchIn = async (e) => {
+  // Check if user is inside radius for punch out
+  useEffect(() => {
+    if (!liveLocation || !selectedSiteData || !punchedIn || punchedOut) {
+      setCanPunchOut(false);
+      return;
+    }
+    const within = isInsideRadius(
+      liveLocation.lat,
+      liveLocation.lng,
+      selectedSiteData.latitude,
+      selectedSiteData.longitude,
+      selectedSiteData.radius
+    );
+    setCanPunchOut(within);
+  }, [liveLocation, selectedSiteData, punchedIn, punchedOut]);
+
+  // Modified to open camera modal instead of direct punch in
+  const handlePunchInClick = (e) => {
     e.preventDefault();
 
     if (!site_id) {
@@ -279,34 +334,12 @@ const PunchInPunchOut = () => {
       return;
     }
 
-    dispatch({ type: "PUNCH_REQUEST" });
-
-    try {
-      const res = await axios.post(
-        "/api/v1/technician-attendance/punchin",
-        {
-          site_id,
-
-          punchin_location: {
-            lat: parseFloat(punchin_location.lat),
-            lng: parseFloat(punchin_location.lng),
-          },
-        },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
-      );
-
-      dispatch({ type: "PUNCH_SUCCESS", isPunchIn: true });
-      toast.success("Punched in successfully");
-    } catch (error) {
-      dispatch({
-        type: "PUNCH_FAIL",
-        payload: error.response?.data?.message || "Punch in failed",
-      });
-      toast.error(error.response?.data?.message || "Punch in failed");
-    }
+    // Open camera modal instead of direct punch in
+    setShowPunchInModal(true);
   };
 
-  const handlePunchOut = async (e) => {
+  // Modified to open camera modal instead of direct punch out
+  const handlePunchOutClick = (e) => {
     e.preventDefault();
 
     if (!selectedSiteData) {
@@ -329,12 +362,49 @@ const PunchInPunchOut = () => {
       return;
     }
 
+    // Open camera modal instead of direct punch out
+    setShowPunchOutModal(true);
+  };
+
+  // Actual punch in function that will be called from modal
+  const handlePunchIn = async () => {
+    dispatch({ type: "PUNCH_REQUEST" });
+
+    try {
+      const res = await axios.post(
+        "/api/v1/technician-attendance/punchin",
+        {
+          site_id,
+          punch_in_image: uploadedImageUrl,
+          punchin_location: {
+            lat: parseFloat(punchin_location.lat),
+            lng: parseFloat(punchin_location.lng),
+          },
+        },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+
+      dispatch({ type: "PUNCH_SUCCESS", isPunchIn: true });
+      toast.success("Punched in successfully");
+      handleClosePunchInModal(); // Close modal after successful punch in
+    } catch (error) {
+      dispatch({
+        type: "PUNCH_FAIL",
+        payload: error.response?.data?.message || "Punch in failed",
+      });
+      toast.error(error.response?.data?.message || "Punch in failed");
+    }
+  };
+
+  // Actual punch out function that will be called from modal
+  const handlePunchOut = async () => {
     dispatch({ type: "PUNCH_REQUEST" });
 
     try {
       await axios.put(
         "/api/v1/technician-attendance/punchout",
         {
+          punch_out_image: uploadedImageUrl,
           punchout_location: {
             lat: parseFloat(punchout_location.lat),
             lng: parseFloat(punchout_location.lng),
@@ -345,6 +415,7 @@ const PunchInPunchOut = () => {
 
       dispatch({ type: "PUNCH_SUCCESS", isPunchIn: false });
       toast.success("Punched out successfully");
+      handleClosePunchOutModal(); // Close modal after successful punch out
     } catch (err) {
       dispatch({
         type: "PUNCH_FAIL",
@@ -353,6 +424,31 @@ const PunchInPunchOut = () => {
       toast.error(err.response?.data?.message || "Punch out failed");
     }
   };
+
+  const videoConstraints = {
+    width: 640,
+    height: 480,
+    facingMode: "user", //"user" for front camera, "environment" for back camera
+  };
+
+  const captureImage = useCallback(() => {
+    const src = webcamRef.current.getScreenshot();
+    setCapturedImage(src);
+  }, []);
+
+  const handleClosePunchInModal = () => {
+    setShowPunchInModal(false);
+    setCapturedImage(null);
+    setUploadedImageUrl("");
+  };
+
+  const handleClosePunchOutModal = () => {
+    setShowPunchOutModal(false);
+    setCapturedImage(null);
+    setUploadedImageUrl("");
+  };
+
+  const retake = () => setCapturedImage(null);
 
   const isAfterFiveHours = () => {
     const current = new Date(currentTime);
@@ -380,6 +476,46 @@ const PunchInPunchOut = () => {
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
+  const handleUploadAndSave = async () => {
+    await handleImageUpload();
+  };
+
+  const base64ToBlob = (base64, mimeType) => {
+    const bytes = atob(base64.split(",")[1]);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return new Blob([arr], { type: mimeType });
+  };
+
+  const handleImageUpload = useCallback(async () => {
+    if (!capturedImage) return;
+    const blob = base64ToBlob(capturedImage, "image/jpeg");
+    const form = new FormData();
+    form.append("file", blob, "captured.jpg");
+
+    try {
+      dispatch({ type: "UPLOAD_USER_IMAGE_REQUEST" });
+      const { data } = await axios.post(
+        "/api/v1/image-upload/user-images",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      dispatch({ type: "UPLOAD_USER_IMAGE_SUCCESS" });
+      setUploadedImageUrl(data.url);
+    } catch (err) {
+      dispatch({
+        type: "UPLOAD_USER_IMAGE_FAIL",
+        payload: err.response?.data?.error || "Upload failed",
+      });
+      toast.error("Upload failed");
+    }
+  }, [capturedImage, authtoken]);
+
   return (
     <div className="my-2">
       <CRow>
@@ -400,7 +536,7 @@ const PunchInPunchOut = () => {
                 </CAlert>
               ) : !punchedIn ? (
                 <CForm
-                  onSubmit={handlePunchIn}
+                  onSubmit={handlePunchInClick} // Changed to handlePunchInClick
                   className="needs-validation"
                   noValidate
                 >
@@ -437,7 +573,7 @@ const PunchInPunchOut = () => {
                       className="mt-3"
                       disabled={loading}
                     >
-                      {loading ? "Punching In..." : "Punch In"}
+                      {loading ? "Processing..." : "Punch In"}
                     </CButton>
                   ) : (
                     <div className="mt-3 text-danger">
@@ -446,7 +582,7 @@ const PunchInPunchOut = () => {
                   )}
                 </CForm>
               ) : (
-                <CForm onSubmit={handlePunchOut}>
+                <CForm onSubmit={handlePunchOutClick}>
                   <CRow>
                     <CCol md={6}>
                       <CFormLabel>Select Site</CFormLabel>
@@ -471,7 +607,7 @@ const PunchInPunchOut = () => {
                       </CFormSelect>
                     </CCol>
                   </CRow>{" "}
-                  {isAfterFiveHours() ? (
+                  {isAfterFiveHours() && canPunchOut ? (
                     <CButton
                       type="submit"
                       color="warning"
@@ -479,8 +615,12 @@ const PunchInPunchOut = () => {
                       className="mt-3"
                       disabled={loading}
                     >
-                      {loading ? "Punching Out..." : "Punch Out"}
+                      {loading ? "Processing..." : "Punch Out"}
                     </CButton>
+                  ) : !canPunchOut ? (
+                    <div className="mt-3 text-danger">
+                      You are outside the allotted area for punch out.
+                    </div>
                   ) : (
                     <div className="my-3 d-flex align-items-start">
                       <CBadge className="" color="danger">
@@ -542,6 +682,208 @@ const PunchInPunchOut = () => {
           </CCard>
         </CCol>
       </CRow>
+
+      {/* Punch In Camera Modal */}
+      <CModal
+        visible={showPunchInModal}
+        onClose={handleClosePunchInModal}
+        size="lg"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Capture Photo for Punch In</CModalTitle>
+          <span>(with white bg)</span>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={handleClosePunchInModal}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody className="text-center">
+          {capturedImage ? (
+            <>
+              <img
+                src={capturedImage}
+                alt="Captured"
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
+                  border: "2px solid #ccc",
+                }}
+              />
+              {uploadedImageUrl && (
+                <div className="mt-2 text-success">✓ uploaded successfully</div>
+              )}
+            </>
+          ) : (
+            <Webcam
+              audio={false}
+              height={480}
+              width={640}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              videoConstraints={videoConstraints}
+              mirrored
+              style={{
+                borderRadius: "8px",
+                border: "2px solid #ccc",
+                maxWidth: "100%",
+                height: "auto",
+              }}
+            />
+          )}
+        </CModalBody>
+        <CModalFooter className="d-flex justify-content-center gap-2">
+          {capturedImage ? (
+            <>
+              {uploadedImageUrl ? (
+                // show Punch In button after image is uploaded
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handlePunchIn}
+                  disabled={loading}
+                >
+                  {loading ? "Punching In..." : "Punch In"}
+                </CButton>
+              ) : (
+                // show Save Photo button if image not yet uploaded
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handleUploadAndSave}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <LoadingSpinner />
+                      {uploadingImage ? "Uploading..." : "Saving..."}
+                    </>
+                  ) : (
+                    "Save Photo"
+                  )}
+                </CButton>
+              )}
+              <CButton
+                color="warning"
+                size="sm"
+                onClick={retake}
+                disabled={isProcessing || loading}
+              >
+                Retake
+              </CButton>
+            </>
+          ) : (
+            <CButton color="primary" size="sm" onClick={captureImage}>
+              Capture
+            </CButton>
+          )}
+        </CModalFooter>
+      </CModal>
+
+      {/* Punch Out Camera Modal */}
+      <CModal
+        visible={showPunchOutModal}
+        onClose={handleClosePunchOutModal}
+        size="lg"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Capture Photo for Punch Out</CModalTitle>
+          <span>(with white bg)</span>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={handleClosePunchOutModal}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody className="text-center">
+          {capturedImage ? (
+            <>
+              <img
+                src={capturedImage}
+                alt="Captured"
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
+                  border: "2px solid #ccc",
+                }}
+              />
+              {uploadedImageUrl && (
+                <div className="mt-2 text-success">✓ uploaded successfully</div>
+              )}
+            </>
+          ) : (
+            <Webcam
+              audio={false}
+              height={480}
+              width={640}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              videoConstraints={videoConstraints}
+              mirrored
+              style={{
+                borderRadius: "8px",
+                border: "2px solid #ccc",
+                maxWidth: "100%",
+                height: "auto",
+              }}
+            />
+          )}
+        </CModalBody>
+        <CModalFooter className="d-flex justify-content-center gap-2">
+          {capturedImage ? (
+            <>
+              {uploadedImageUrl ? (
+                // show Punch Out button after image is uploaded
+                <CButton
+                  color="warning"
+                  size="sm"
+                  onClick={handlePunchOut}
+                  disabled={loading}
+                >
+                  {loading ? "Punching Out..." : "Punch Out"}
+                </CButton>
+              ) : (
+                // show Save Photo button if image not yet uploaded
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handleUploadAndSave}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <LoadingSpinner />
+                      {uploadingImage ? "Uploading..." : "Saving..."}
+                    </>
+                  ) : (
+                    "Save Photo"
+                  )}
+                </CButton>
+              )}
+              <CButton
+                color="warning"
+                size="sm"
+                onClick={retake}
+                disabled={isProcessing || loading}
+              >
+                Retake
+              </CButton>
+            </>
+          ) : (
+            <CButton color="primary" size="sm" onClick={captureImage}>
+              Capture
+            </CButton>
+          )}
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };
