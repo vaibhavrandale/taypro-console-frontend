@@ -579,7 +579,6 @@ const PunchInPunchOut = () => {
                         onChange={handleSiteChange}
                         required
                       >
-                        <option value="">-- Select Site --</option>
                         {sites.map((site, index) => (
                           <option key={index} value={site.site_id}>
                             {site.site_id}
@@ -615,7 +614,6 @@ const PunchInPunchOut = () => {
                         onChange={handleSiteChange}
                         required
                       >
-                        <option value="">-- Select Site --</option>
                         {sites.map((site, index) => (
                           <option key={index} value={site.site_id}>
                             {site.site_id}
