@@ -1696,6 +1696,7 @@ const CreatePreventiveMaintenance = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+
               backgroundColor: "black", // in case video not loaded
             }}
           >
@@ -1704,7 +1705,7 @@ const CreatePreventiveMaintenance = () => {
               autoPlay
               playsInline
               className="w-100 h-100"
-              style={{ objectFit: "contain" }}
+              style={{ objectFit: "contain", transform: "scaleX(-1)" }} // mirror
               onCanPlay={() => setLoadingCamera(false)}
             />
             <canvas ref={canvasRef} style={{ display: "none" }} />
@@ -1780,7 +1781,12 @@ const CreatePreventiveMaintenance = () => {
           <CButton
             className="btn btn-success btn-sm"
             onClick={captureImage}
-            disabled={state.loadingUpload[currentImageField]}
+            disabled={
+              state.loadingUpload[currentImageField] ||
+              loadingCamera ||
+              !location.lat ||
+              !location.lng
+            }
           >
             {state.loadingUpload[currentImageField] ? (
               <>
