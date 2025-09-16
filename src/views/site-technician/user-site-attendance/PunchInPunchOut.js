@@ -57,6 +57,7 @@ const initialState = {
   punchedIn: false,
   punchedOut: false,
   selectedSiteData: null,
+  mapReady: false, // New state for map readiness
 };
 
 function reducer(state, action) {
@@ -80,6 +81,8 @@ function reducer(state, action) {
       };
     case "SET_SITE_COORDINATES":
       return { ...state, selectedSiteData: action.payload };
+    case "SET_MAP_READY":
+      return { ...state, mapReady: action.payload };
     case "UPLOAD_USER_IMAGE_REQUEST":
       return { ...state, uploadingImage: true, uploadError: null };
     case "UPLOAD_USER_IMAGE_SUCCESS":
@@ -131,7 +134,9 @@ const PunchInPunchOut = () => {
     uploadingImage,
     savingImage,
     uploadError,
+    mapReady,
   } = state;
+
   const [geoLoading, setGeoLoading] = useState(true);
   const [canPunchIn, setCanPunchIn] = useState(false);
   const [canPunchOut, setCanPunchOut] = useState(false);
@@ -177,7 +182,7 @@ const PunchInPunchOut = () => {
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
-      console.log(res);
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLiveLocation({
@@ -201,12 +206,16 @@ const PunchInPunchOut = () => {
           }
 
           setGeoLoading(false);
+          // Set map ready after location is obtained
+          dispatch({ type: "SET_MAP_READY", payload: true });
         },
         (err) => {
           console.error("Geolocation error:", err);
           toast.error("Unable to access location");
           console.log(err);
           setGeoLoading(false);
+          // Even if geolocation fails, show the map
+          dispatch({ type: "SET_MAP_READY", payload: true });
         }
       );
     } catch (error) {
@@ -215,25 +224,31 @@ const PunchInPunchOut = () => {
         type: "PUNCH_FAIL",
         payload: error.response.data.message || error.response.data.error,
       });
+      setGeoLoading(false);
+      dispatch({ type: "SET_MAP_READY", payload: true });
     }
   };
 
+  // Initialize sites and auto-select first site
   useEffect(() => {
     if (!userInfo) return;
 
     const userSites = userInfo.assigned_sites || [];
     setSites(userSites);
 
-    if (userSites && userSites.length > 1) {
-      const siteId = userSites[0].site_id;
-      dispatch({ type: "SET_FIELD", name: "site_id", value: siteId });
-      fetchCoordinates(siteId);
+    // Auto-select first site if available
+    if (userSites && userSites.length > 0) {
+      const firstSiteId = userSites[0].site_id;
+      dispatch({ type: "SET_FIELD", name: "site_id", value: firstSiteId });
+      fetchCoordinates(firstSiteId);
+    } else {
+      // No sites available, stop loading
+      setGeoLoading(false);
+      dispatch({ type: "SET_MAP_READY", payload: true });
     }
 
     fetchPunchStatus();
-
-    setGeoLoading(true);
-  }, [punchedIn, userInfo]);
+  }, [userInfo]);
 
   useEffect(() => {
     if (punchedIn && !punchedOut) {
@@ -364,6 +379,22 @@ const PunchInPunchOut = () => {
 
     // Open camera modal instead of direct punch out
     setShowPunchOutModal(true);
+  };
+
+  // Handle site selection change
+  const handleSiteChange = (e) => {
+    const selectedSiteId = e.target.value;
+    dispatch({
+      type: "SET_FIELD",
+      name: "site_id",
+      value: selectedSiteId,
+    });
+
+    if (selectedSiteId) {
+      setGeoLoading(true);
+      dispatch({ type: "SET_MAP_READY", payload: false });
+      fetchCoordinates(selectedSiteId);
+    }
   };
 
   // Actual punch in function that will be called from modal
@@ -536,7 +567,7 @@ const PunchInPunchOut = () => {
                 </CAlert>
               ) : !punchedIn ? (
                 <CForm
-                  onSubmit={handlePunchInClick} // Changed to handlePunchInClick
+                  onSubmit={handlePunchInClick}
                   className="needs-validation"
                   noValidate
                 >
@@ -545,14 +576,7 @@ const PunchInPunchOut = () => {
                       <CFormLabel>Select Site</CFormLabel>
                       <CFormSelect
                         value={site_id}
-                        onChange={(e) => {
-                          dispatch({
-                            type: "SET_FIELD",
-                            name: "site_id",
-                            value: e.target.value,
-                          });
-                          fetchCoordinates(e.target.value);
-                        }}
+                        onChange={handleSiteChange}
                         required
                       >
                         <option value="">-- Select Site --</option>
@@ -588,14 +612,7 @@ const PunchInPunchOut = () => {
                       <CFormLabel>Select Site</CFormLabel>
                       <CFormSelect
                         value={site_id}
-                        onChange={(e) => {
-                          dispatch({
-                            type: "SET_FIELD",
-                            name: "site_id",
-                            value: e.target.value,
-                          });
-                          fetchCoordinates(e.target.value);
-                        }}
+                        onChange={handleSiteChange}
                         required
                       >
                         <option value="">-- Select Site --</option>
@@ -606,7 +623,8 @@ const PunchInPunchOut = () => {
                         ))}
                       </CFormSelect>
                     </CCol>
-                  </CRow>{" "}
+                  </CRow>
+
                   {isAfterFiveHours() && canPunchOut ? (
                     <CButton
                       type="submit"
@@ -637,10 +655,15 @@ const PunchInPunchOut = () => {
 
               {/* Map Section */}
               <div className="mt-4" style={{ height: "400px" }}>
-                {geoLoading ? (
-                  <CAlert color="info">
-                    📍 Fetching your current location...
-                  </CAlert>
+                {geoLoading || !mapReady ? (
+                  <div className="d-flex justify-content-center align-items-center h-100">
+                    <div className="text-center">
+                      <LoadingSpinner />
+                      <div className="mt-2">
+                        📍 Loading location and map data...
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <MapContainer
                     center={
@@ -651,7 +674,7 @@ const PunchInPunchOut = () => {
                             selectedSiteData.latitude,
                             selectedSiteData.longitude,
                           ]
-                        : ["", ""]
+                        : [0, 0]
                     }
                     zoom={14}
                     scrollWheelZoom={false}
