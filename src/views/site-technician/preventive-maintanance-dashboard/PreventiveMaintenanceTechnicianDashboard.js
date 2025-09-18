@@ -216,7 +216,9 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>Sr</CTableHeaderCell>
-            <CTableHeaderCell>PM ID</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "150px" }}>
+              PM ID
+            </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Robot No
             </CTableHeaderCell>

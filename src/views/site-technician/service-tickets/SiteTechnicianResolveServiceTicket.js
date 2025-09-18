@@ -846,7 +846,7 @@
 
 // export default SiteTechnicianResolveServiceTicket;
 
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -971,6 +971,14 @@ const SiteTechnicianResolveServiceTicket = () => {
   // New state for saved checklist management
   const [savedChecklist, setSavedChecklist] = useState(null);
   const [isChecklistSaved, setIsChecklistSaved] = useState(false);
+
+  const [cameraModalVisible, setCameraModalVisible] = useState(false);
+  const [currentImageField, setCurrentImageField] = useState("");
+  const [loadingCamera, setLoadingCamera] = useState(false);
+  const [location, setLocation] = useState({ lat: null, lng: null });
+  const [stream, setStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -1136,39 +1144,39 @@ const SiteTechnicianResolveServiceTicket = () => {
     }));
   };
 
-  const handleFileChange = async (event) => {
-    const { name, files } = event.target;
-    if (files.length === 0) return;
+  // const handleFileChange = async (event) => {
+  //   const { name, files } = event.target;
+  //   if (files.length === 0) return;
 
-    const file = files[0];
-    const formData = new FormData();
-    formData.append("file", file);
+  //   const file = files[0];
+  //   const formData = new FormData();
+  //   formData.append("file", file);
 
-    try {
-      setUploadingFields((prev) => ({ ...prev, [name]: true }));
+  //   try {
+  //     setUploadingFields((prev) => ({ ...prev, [name]: true }));
 
-      const response = await axios.post(
-        "/api/v1/image-upload/service-tickets",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
+  //     const response = await axios.post(
+  //       "/api/v1/image-upload/service-tickets",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${authtoken}`,
+  //         },
+  //       }
+  //     );
 
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: response.data.url,
-      }));
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       [name]: response.data.url,
+  //     }));
 
-      setUploadingFields((prev) => ({ ...prev, [name]: false }));
-    } catch (error) {
-      setUploadingFields((prev) => ({ ...prev, [name]: false }));
-      console.error("File upload error:", error);
-    }
-  };
+  //     setUploadingFields((prev) => ({ ...prev, [name]: false }));
+  //   } catch (error) {
+  //     setUploadingFields((prev) => ({ ...prev, [name]: false }));
+  //     console.error("File upload error:", error);
+  //   }
+  // };
 
   const [searchInventoryTerm, setSearchInventoryTerm] = useState("");
 
@@ -1194,8 +1202,155 @@ const SiteTechnicianResolveServiceTicket = () => {
         isQuantityValid &&
         isChecklistSaved));
 
+  const openCamera = (fieldName) => {
+    setCurrentImageField(fieldName);
+    setCameraModalVisible(true);
+  };
+
+  useEffect(() => {
+    if (cameraModalVisible) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            setLoadingCamera(true);
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+            );
+            const data = await response.json();
+            setLocation({
+              lat,
+              lng,
+              name: data.display_name || "Unknown location",
+            });
+            setLoadingCamera(false);
+          } catch {
+            setLocation({
+              lat: null,
+              lng: null,
+              name: "Location not available",
+            });
+            setLoadingCamera(false);
+          }
+        },
+        () => {
+          setLocation({
+            lat: null,
+            lng: null,
+            name: "Location not available",
+          });
+        }
+      );
+    }
+  }, [cameraModalVisible]);
+
+  useEffect(() => {
+    if (cameraModalVisible) startCamera();
+    else stopCamera();
+  }, [cameraModalVisible]);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        setStream(mediaStream);
+      }
+    } catch (err) {
+      toast.error("Could not access camera: " + err.message);
+      setCameraModalVisible(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  };
+
+  const captureImage = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw flipped image
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    // Overlay text
+    const timestamp = new Date().toLocaleString("en-IN", {
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.textAlign = "left";
+
+    let y = canvas.height - 65;
+    ctx.fillText(`Coordinates: ${location.lat}, ${location.lng}`, 10, y);
+    y += 20;
+    ctx.fillText(`Address: ${location.name || "Fetching address..."}`, 10, y);
+    y += 20;
+    ctx.fillText(`Timestamp: ${timestamp}`, 10, y);
+
+    // Upload blob
+    canvas.toBlob(
+      async (blob) => {
+        if (blob) {
+          await uploadImage(blob, currentImageField);
+          setCameraModalVisible(false);
+        }
+      },
+      "image/jpeg",
+      0.8
+    );
+  };
+
+  const uploadImage = async (blob, fieldName) => {
+    setUploadingFields((prev) => ({ ...prev, [fieldName]: true }));
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", blob, `camera-capture-${Date.now()}.jpg`);
+      const response = await axios.post(
+        "/api/v1/image-upload/service-tickets",
+        formDataUpload,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: response.data.url,
+      }));
+    } catch (error) {
+      toast.error("Image upload failed.");
+    } finally {
+      setUploadingFields((prev) => ({ ...prev, [fieldName]: false }));
+    }
+  };
+
+  console.log(checklistFieldLoading);
+
   return (
-    <div>
+    <div className="z-1">
       <CCard>
         <CCardHeader>
           Resolve Service Ticket -
@@ -1404,9 +1559,18 @@ const SiteTechnicianResolveServiceTicket = () => {
                       <br />
                       {formData.service_part_replaced && (
                         <>
-                          <CFormLabel htmlFor="inventorySearch">
-                            Select a part
-                          </CFormLabel>
+                          {checklistFieldLoading ? (
+                            <div className="d-flex align-items-center mb-2">
+                              <LoadingSpinner /> {/* show spinner */}
+                              <span className="ms-2">Loading checklist...</span>
+                            </div>
+                          ) : (
+                            <CFormLabel htmlFor="inventorySearch">
+                              Select a part{" "}
+                              {searchInventoryTerm &&
+                                searchInventoryTerm.quantity}
+                            </CFormLabel>
+                          )}
                           <CInputGroup className="mb-2">
                             <CFormInput
                               type="text"
@@ -1430,6 +1594,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                 setPartChecklist([]);
                               }}
                             />
+
                             {/* Show checklist icon if checklist is saved */}
                             {isChecklistSaved && formData.part_replaced_id && (
                               <CButton
@@ -1457,9 +1622,9 @@ const SiteTechnicianResolveServiceTicket = () => {
                                 overflowY: "auto",
                                 width: "100%",
                                 padding: "8px",
-                                border: "1px solid #ccc",
+                                // border: "1px solid #ccc",
                                 borderRadius: "0.375rem",
-                                backgroundColor: "#fff",
+                                // backgroundColor: "#fff",
                               }}
                             >
                               {filteredInventories.length === 0 ? (
@@ -1490,14 +1655,174 @@ const SiteTechnicianResolveServiceTicket = () => {
                                   >
                                     {inventory.item_name} -{" "}
                                     {inventory.item_code} ({inventory.site_id})
+                                    (
+                                    <span className="text-success">
+                                      Remaining Quantity {inventory.quantity}
+                                    </span>
+                                    )
                                   </CListGroupItem>
                                 ))
                               )}
                             </CListGroup>
                           )}
+
+                          <CModal
+                            scrollable
+                            visible={showChecklistModal}
+                            onClose={() => setShowChecklistModal(false)}
+                            size="lg"
+                            backdrop="static"
+                          >
+                            <CModalHeader closeButton={false}>
+                              <CModalTitle>
+                                Part Replacement Checklist for:{" "}
+                                {formData.part_replaced || "N/A"}
+                              </CModalTitle>
+                              {/* Only show close button if there are no checklist items */}
+                              {checklistFields.length === 0 && (
+                                <button
+                                  type="button"
+                                  className="border-0 ms-auto py-0 px-1"
+                                  onClick={() => setShowChecklistModal(false)}
+                                  style={{ background: "none" }}
+                                >
+                                  <CIcon icon={cilX} size="lg" />
+                                </button>
+                              )}
+                            </CModalHeader>
+                            <CModalBody>
+                              {checklistFieldLoading ? (
+                                <LoadingSpinner />
+                              ) : checklistFields.length === 0 ? (
+                                <p className="text-muted">
+                                  No checklist items found for this part.
+                                </p>
+                              ) : (
+                                checklistFields.map((field, index) => (
+                                  <div className="mb-3" key={index}>
+                                    {field.input_type !== "checkbox" && (
+                                      <CFormLabel className="fw-semibold">
+                                        {field.field_name
+                                          .replace(/_/g, " ")
+                                          .split(" ")
+                                          .map(
+                                            (word) =>
+                                              word.charAt(0).toUpperCase() +
+                                              word.slice(1)
+                                          )
+                                          .join(" ")}
+                                        :
+                                      </CFormLabel>
+                                    )}
+
+                                    {field.input_type === "text" && (
+                                      <CFormInput
+                                        type="text"
+                                        value={
+                                          checklistResponses[
+                                            field.field_name
+                                          ] || ""
+                                        }
+                                        onChange={(e) =>
+                                          updateChecklistResponse(
+                                            field.field_name,
+                                            e.target.value
+                                          )
+                                        }
+                                      />
+                                    )}
+
+                                    {field.input_type === "checkbox" && (
+                                      <div className="form-check form-switch">
+                                        <input
+                                          className="form-check-input"
+                                          type="checkbox"
+                                          checked={
+                                            checklistResponses[
+                                              field.field_name
+                                            ] === "Yes"
+                                          }
+                                          id={`check-${index}`}
+                                          onChange={(e) =>
+                                            updateChecklistResponse(
+                                              field.field_name,
+                                              e.target.checked ? "Yes" : "No"
+                                            )
+                                          }
+                                        />
+                                        <CFormLabel
+                                          htmlFor={`check-${index}`}
+                                          className="ms-2"
+                                        >
+                                          {field.field_name
+                                            .replace(/_/g, " ")
+                                            .split(" ")
+                                            .map(
+                                              (word) =>
+                                                word.charAt(0).toUpperCase() +
+                                                word.slice(1)
+                                            )
+                                            .join(" ")}
+                                        </CFormLabel>
+                                      </div>
+                                    )}
+
+                                    {field.input_type === "select" && (
+                                      <CFormSelect
+                                        value={
+                                          checklistResponses[
+                                            field.field_name
+                                          ] || ""
+                                        }
+                                        onChange={(e) =>
+                                          updateChecklistResponse(
+                                            field.field_name,
+                                            e.target.value
+                                          )
+                                        }
+                                      >
+                                        <option value="">-- Select --</option>
+                                        {field.input_options.map((opt, i) => (
+                                          <option key={i} value={opt}>
+                                            {opt}
+                                          </option>
+                                        ))}
+                                      </CFormSelect>
+                                    )}
+                                  </div>
+                                ))
+                              )}
+                            </CModalBody>
+
+                            <CModalFooter>
+                              <CButton
+                                color="primary"
+                                size="sm"
+                                onClick={handleSaveChecklist}
+                                disabled={
+                                  checklistFields.length === 0 || // no fields at all
+                                  Object.values(checklistResponses).every(
+                                    (val) => !val || val.trim() === ""
+                                  )
+                                }
+                              >
+                                Save Checklist
+                              </CButton>
+                            </CModalFooter>
+                          </CModal>
+
                           <CCol md={6}>
+                            {formData.service_part_replaced &&
+                            formData.service_part_replaced &&
+                            !formData.replaced_part_quantity ? (
+                              <span className="text-danger">
+                                Kindly enter the Part Replaced Quantity
+                              </span>
+                            ) : (
+                              <span className="">Part Replaced Quantity</span>
+                            )}
                             <CFormInput
-                              label="Part Replaced Quantity"
+                              // label=""
                               name="replaced_part_quantity"
                               type="number"
                               className="form-control-lg"
@@ -1523,7 +1848,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                     </CCol>
                   </>
                 )}
-
+                {/* 
                 {[1, 2, 3, 4, 5].map((num, index) => (
                   <CRow key={index}>
                     <CCol md={2} xs={5}>
@@ -1573,7 +1898,236 @@ const SiteTechnicianResolveServiceTicket = () => {
                       ) : null}
                     </CCol>
                   </CRow>
+                ))} */}
+                <p className="my-2">Ticket Generating Images</p>
+                {[1, 2, 3, 4, 5].map((num, index) => (
+                  <CRow key={index} className="align-items-center">
+                    <CCol md={2}>
+                      <div
+                        className="container-btn-file p-2 m-2 w-80"
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          openCamera(`ticket_generated_images${num}`)
+                        }
+                        title={
+                          formData[`ticket_generated_images${num}`]
+                            ? "Retake Photo"
+                            : "Take Photo"
+                        }
+                      >
+                        <CIcon icon={cilCloudUpload} className="upload-icon" />
+                        {`Image ${num}`}
+                      </div>
+                    </CCol>
+
+                    <CCol md={3}>
+                      {uploadingFields[`ticket_generated_images${num}`] ? (
+                        <div className="mt-2 d-flex justify-content-center">
+                          <LoadingSpinner />
+                        </div>
+                      ) : formData[`ticket_generated_images${num}`] ? (
+                        <div className="my-2 position-relative">
+                          <img
+                            src={formData[`ticket_generated_images${num}`]}
+                            alt={`Ticket generated img ${num}`}
+                            width="80"
+                            height="80"
+                            style={{ objectFit: "cover", borderRadius: "5px" }}
+                          />
+                          <CBadge
+                            color="primary"
+                            shape="rounded-pill"
+                            className="position-absolute top-0 start-0 p-1"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => deleteFileHandler(num)}
+                          >
+                            <CIcon icon={cilX} title="Remove file" />
+                          </CBadge>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </CCol>
+                  </CRow>
                 ))}
+                <p className="my-2">Ticket Resolving Images</p>
+                {[1, 2, 3, 4, 5].map((num, index) => (
+                  <CRow key={index} className="align-items-center">
+                    <CCol md={2}>
+                      <div
+                        className="container-btn-file p-2 m-2 w-80"
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          openCamera(`ticket_resolved_images${num}`)
+                        }
+                        title={
+                          formData[`ticket_resolved_images${num}`]
+                            ? "Retake Photo"
+                            : "Take Photo"
+                        }
+                      >
+                        <CIcon icon={cilCloudUpload} className="upload-icon" />
+                        {`Image ${num}`}
+                      </div>
+                    </CCol>
+
+                    <CCol md={3}>
+                      {uploadingFields[`ticket_resolved_images${num}`] ? (
+                        <div className="mt-2 d-flex justify-content-center">
+                          <LoadingSpinner />
+                        </div>
+                      ) : formData[`ticket_resolved_images${num}`] ? (
+                        <div className="my-2 position-relative">
+                          <img
+                            src={formData[`ticket_resolved_images${num}`]}
+                            alt={`Ticket Resolved img ${num}`}
+                            width="80"
+                            height="80"
+                            style={{ objectFit: "cover", borderRadius: "5px" }}
+                          />
+                          <CBadge
+                            color="primary"
+                            shape="rounded-pill"
+                            className="position-absolute top-0 start-0 p-1"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => deleteFileHandler(num)}
+                          >
+                            <CIcon icon={cilX} title="Remove file" />
+                          </CBadge>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </CCol>
+                  </CRow>
+                ))}
+
+                <CModal
+                  visible={cameraModalVisible}
+                  onClose={() => setCameraModalVisible(false)}
+                  size="xl"
+                  scrollable
+                >
+                  <CModalHeader closeButton={false}>
+                    <CModalTitle>Take Photo</CModalTitle>
+                    <button
+                      type="button"
+                      className="border-0 ms-auto py-0 px-1"
+                      onClick={() => setCameraModalVisible(false)}
+                      style={{ background: "none" }}
+                    >
+                      <CIcon icon={cilX} size="lg" />
+                    </button>
+                  </CModalHeader>
+                  <CModalBody
+                    className="text-center position-relative"
+                    style={{ height: "70vh", padding: 0 }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        position: "relative",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "black",
+                      }}
+                    >
+                      <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        className="w-100 h-100"
+                        style={{
+                          objectFit: "contain",
+                          transform: "scaleX(-1)",
+                        }}
+                        onCanPlay={() => setLoadingCamera(false)}
+                      />
+                      <canvas ref={canvasRef} style={{ display: "none" }} />
+                      {loadingCamera && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 5,
+                          }}
+                        >
+                          <span style={{ color: "white" }}>
+                            Loading Camera... <LoadingSpinner />
+                          </span>
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "10px",
+                          left: "10px",
+                          color: "white",
+                          backgroundColor: "rgba(0,0,0,0.5)",
+                          padding: "8px 12px",
+                          borderRadius: "6px",
+                          fontSize: "14px",
+                          maxWidth: "95%",
+                        }}
+                      >
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          <strong>Coordinates:</strong>
+                          <span>
+                            {location.lat},{location.lng}
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          <strong>Address:</strong>
+                          <span>{location.name || "Fetching address..."}</span>
+                        </div>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          <strong>Timestamp:</strong>
+                          <span>
+                            {new Date().toLocaleString("en-IN", {
+                              hour12: true,
+                              timeZone: "Asia/Kolkata",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CModalBody>
+                  <CModalFooter>
+                    <CButton
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setCameraModalVisible(false)}
+                    >
+                      Cancel
+                    </CButton>
+                    <CButton
+                      className="btn btn-success btn-sm"
+                      onClick={captureImage}
+                      disabled={
+                        uploadingFields[currentImageField] ||
+                        loadingCamera ||
+                        !location.lat ||
+                        !location.lng
+                      }
+                    >
+                      {uploadingFields[currentImageField] ? (
+                        <>
+                          Capturing... <LoadingSpinner />
+                        </>
+                      ) : (
+                        "Capture"
+                      )}
+                    </CButton>
+                  </CModalFooter>
+                </CModal>
               </CRow>
               {state.error && (
                 <div className="d-flex justify-content-center align-items-center w-100 ">
@@ -1603,118 +2157,6 @@ const SiteTechnicianResolveServiceTicket = () => {
           )}
         </CCardBody>
       </CCard>
-      <CModal
-        scrollable
-        visible={showChecklistModal}
-        onClose={() => setShowChecklistModal(false)}
-        size="lg"
-      >
-        <CModalHeader closeButton={false}>
-          <CModalTitle>
-            Part Replacement Checklist for: {formData.part_replaced || "N/A"}
-          </CModalTitle>
-          {/* Only show close button if there are no checklist items */}
-          {checklistFields.length === 0 && (
-            <button
-              type="button"
-              className="border-0 ms-auto py-0 px-1"
-              onClick={() => setShowChecklistModal(false)}
-              style={{ background: "none" }}
-            >
-              <CIcon icon={cilX} size="lg" />
-            </button>
-          )}
-        </CModalHeader>
-        <CModalBody>
-          {checklistFieldLoading ? (
-            <LoadingSpinner />
-          ) : checklistFields.length === 0 ? (
-            <p className="text-muted">
-              No checklist items found for this part.
-            </p>
-          ) : (
-            checklistFields.map((field, index) => (
-              <div className="mb-3" key={index}>
-                {field.input_type !== "checkbox" && (
-                  <CFormLabel className="fw-semibold">
-                    {field.field_name
-                      .replace(/_/g, " ")
-                      .split(" ")
-                      .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                      )
-                      .join(" ")}
-                    :
-                  </CFormLabel>
-                )}
-
-                {field.input_type === "text" && (
-                  <CFormInput
-                    type="text"
-                    value={checklistResponses[field.field_name] || ""}
-                    onChange={(e) =>
-                      updateChecklistResponse(field.field_name, e.target.value)
-                    }
-                  />
-                )}
-
-                {field.input_type === "checkbox" && (
-                  <div className="form-check form-switch">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={checklistResponses[field.field_name] === "Yes"}
-                      id={`check-${index}`}
-                      onChange={(e) =>
-                        updateChecklistResponse(
-                          field.field_name,
-                          e.target.checked ? "Yes" : "No"
-                        )
-                      }
-                    />
-                    <CFormLabel htmlFor={`check-${index}`} className="ms-2">
-                      {field.field_name
-                        .replace(/_/g, " ")
-                        .split(" ")
-                        .map(
-                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ")}
-                    </CFormLabel>
-                  </div>
-                )}
-
-                {field.input_type === "select" && (
-                  <CFormSelect
-                    value={checklistResponses[field.field_name] || ""}
-                    onChange={(e) =>
-                      updateChecklistResponse(field.field_name, e.target.value)
-                    }
-                  >
-                    <option value="">-- Select --</option>
-                    {field.input_options.map((opt, i) => (
-                      <option key={i} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                )}
-              </div>
-            ))
-          )}
-        </CModalBody>
-
-        <CModalFooter>
-          <CButton
-            color="primary"
-            size="sm"
-            onClick={handleSaveChecklist}
-            disabled={checklistFields.length === 0}
-          >
-            Save Checklist
-          </CButton>
-        </CModalFooter>
-      </CModal>
     </div>
   );
 };

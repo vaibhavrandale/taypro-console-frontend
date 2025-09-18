@@ -144,7 +144,8 @@ const PunchInPunchOut = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
   const [inTime, setinTime] = useState(new Date());
-  const [currentTime, setcurrentTime] = useState(new Date());
+  // const [currentTime, setcurrentTime] = useState(new Date());
+  const currentTime = new Date(); // get current time on each render
   const [liveLocation, setLiveLocation] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showPunchInModal, setShowPunchInModal] = useState(false);
@@ -248,6 +249,7 @@ const PunchInPunchOut = () => {
     }
 
     fetchPunchStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfo]);
 
   useEffect(() => {
@@ -402,7 +404,7 @@ const PunchInPunchOut = () => {
     dispatch({ type: "PUNCH_REQUEST" });
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "/api/v1/technician-attendance/punchin",
         {
           site_id,
@@ -778,7 +780,9 @@ const PunchInPunchOut = () => {
                   onClick={handleUploadAndSave}
                   disabled={isProcessing}
                 >
-                  {isProcessing ? (
+                  {uploadError ? (
+                    { uploadError }
+                  ) : isProcessing ? (
                     <>
                       <LoadingSpinner />
                       {uploadingImage ? "Uploading..." : "Saving..."}
