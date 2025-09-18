@@ -1506,8 +1506,10 @@ const CreatePreventiveMaintenance = () => {
                 "is_wheels_loose",
                 "is_nutbolt_loose",
               ].map((field) => (
-                <CCol md={6} key={field}>
-                  <CFormLabel>{field.replace(/_/g, " ")}</CFormLabel>
+                <CCol md={6} key={field} className="mb-4">
+                  <CFormLabel className="fw-bold d-block mb-3">
+                    {field.replace(/_/g, " ")}
+                  </CFormLabel>
 
                   <CFormSelect
                     name={field}
