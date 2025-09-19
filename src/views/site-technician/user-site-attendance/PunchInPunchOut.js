@@ -402,7 +402,7 @@ const PunchInPunchOut = () => {
     dispatch({ type: "PUNCH_REQUEST" });
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "/api/v1/technician-attendance/punchin",
         {
           site_id,
