@@ -169,7 +169,7 @@ const AllSiteDpr = () => {
         };
 
         const result = await axios.post(
-          `/api/v1/techniciandprs/site_date_wise`,
+          `/api/v1/techniciandprs/site-date-wise`,
           data,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
