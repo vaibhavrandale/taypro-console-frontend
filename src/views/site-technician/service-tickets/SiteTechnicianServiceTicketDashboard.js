@@ -613,6 +613,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
                       controls={generatedImages.length > 1}
                       indicators={generatedImages.length > 1}
                       dark
+                      interval={generatedImages.length > 1 ? 3000 : false} // ✅ Stop auto-slide if only 1
                     >
                       {generatedImages.map((img, index) => (
                         <CCarouselItem key={index}>
