@@ -7,6 +7,10 @@ import {
   CButton,
   CCol,
   CFormSelect,
+  CImage,
+  CModal,
+  CModalBody,
+  CModalHeader,
   CRow,
   CTable,
   CTableBody,
@@ -18,6 +22,9 @@ import {
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -53,7 +60,10 @@ const TechnicianAttendanceDashboard = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
-  const [pageInput, setPageInput] = useState("");
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState(null);
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [searchText, setSearchText] = useState("");
@@ -124,8 +134,26 @@ const TechnicianAttendanceDashboard = () => {
 
   // Grouping logic
   const groupedData = {};
+  // technicians.forEach((record) => {
+  //   const date = new Date(record.punchin_time).toISOString().split("T")[0];
+  //   if (!groupedData[record.username]) {
+  //     groupedData[record.username] = {
+  //       site_id: record.site_id,
+  //       profile_image: record.profile_image,
+  //       attendance: {},
+  //     };
+  //   }
+  //   groupedData[record.username].attendance[date] = {
+  //     in: record.punchin_time,
+  //     out: record.punchout_time || null,
+  //   };
+  // });
+
+  // Grouping logic
+
   technicians.forEach((record) => {
     const date = new Date(record.punchin_time).toISOString().split("T")[0];
+
     if (!groupedData[record.username]) {
       groupedData[record.username] = {
         site_id: record.site_id,
@@ -133,9 +161,26 @@ const TechnicianAttendanceDashboard = () => {
         attendance: {},
       };
     }
+
     groupedData[record.username].attendance[date] = {
+      _id: record._id,
+      user_id: record.user_id,
+      username: record.username,
+      site_id: record.site_id,
+      profile_image: record.profile_image,
+
       in: record.punchin_time,
       out: record.punchout_time || null,
+
+      punchin_location: record.punchin_location,
+      punchout_location: record.punchout_location || null,
+
+      punch_in_image: record.punch_in_image,
+      punch_out_image: record.punch_out_image || null,
+
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      __v: record.__v,
     };
   });
 
@@ -173,6 +218,13 @@ const TechnicianAttendanceDashboard = () => {
       username.toLowerCase().includes(searchText) ||
       data.site_id.toLowerCase().includes(searchText)
   );
+
+  const openModal = (log) => {
+    setModalVisible(true);
+    setModalData(log);
+  };
+
+  console.log(modalData);
 
   return (
     <div>
@@ -223,6 +275,7 @@ const TechnicianAttendanceDashboard = () => {
         <CTableHead color="dark">
           <CTableRow className="text-center">
             <CTableHeaderCell>Sr</CTableHeaderCell>
+            <CTableHeaderCell>Profile</CTableHeaderCell>
             {/* <CTableHeaderCell>Name</CTableHeaderCell> */}
             <CTableHeaderCell
               style={{
@@ -245,7 +298,7 @@ const TechnicianAttendanceDashboard = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableDataCell colSpan={daysInMonth + 4}>
+              <CTableDataCell colSpan={daysInMonth + 5}>
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -256,6 +309,17 @@ const TechnicianAttendanceDashboard = () => {
               return (
                 <CTableRow key={idx} className="text-center">
                   <CTableDataCell>{idx + 1}</CTableDataCell>
+                  <CTableDataCell>
+                    <CImage
+                      src={data.profile_image}
+                      style={{
+                        height: "50px",
+                        width: "50x",
+                        borderRadius: "50%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </CTableDataCell>
                   {/* <CTableDataCell style={{ minWidth: "170px" }}>
                     {username}
                   </CTableDataCell> */}
@@ -282,23 +346,33 @@ const TechnicianAttendanceDashboard = () => {
                       <CTableDataCell key={dayIdx}>
                         {log ? (
                           log.in && log.out ? (
-                            <CBadge color="success">
-                              P
-                              <br />
-                              {new Date(log.in).toLocaleTimeString("en-IN", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
-                              <br />
-                              {new Date(log.out).toLocaleTimeString("en-IN", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
-                            </CBadge>
+                            <>
+                              <CBadge
+                                color="success"
+                                className="cursor-pointer"
+                                onClick={() => openModal(log)}
+                              >
+                                P
+                                <br />
+                                {new Date(log.in).toLocaleTimeString("en-IN", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })}
+                                <br />
+                                {new Date(log.out).toLocaleTimeString("en-IN", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })}
+                              </CBadge>
+                            </>
                           ) : log.in && !log.out ? (
-                            <CBadge color="warning">
+                            <CBadge
+                              color="warning"
+                              className="cursor-pointer"
+                              onClick={() => openModal(log)}
+                            >
                               P*
                               <br />
                               {new Date(log.in).toLocaleTimeString("en-IN", {
@@ -332,6 +406,170 @@ const TechnicianAttendanceDashboard = () => {
           )}
         </CTableBody>
       </CTable>
+      {modalData && (
+        <CModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          size="lg"
+          alignment="center"
+          backdrop="static"
+        >
+          {/* Header */}
+          <CModalHeader
+            className="d-flex justify-content-between align-items-center"
+            closeButton={false}
+          >
+            <div className="d-flex align-items-center">
+              <img
+                src={modalData.profile_image}
+                alt={modalData.username}
+                className="rounded-circle me-2"
+                style={{ width: "40px", height: "40px", objectFit: "cover" }}
+              />
+              <div>
+                <h5 className="mb-0">{modalData.username}</h5>
+                <small className="text-muted">{modalData.site_id}</small>
+              </div>
+            </div>
+
+            {/* Close Button */}
+            <button
+              type="button"
+              className="border-0 bg-transparent p-0"
+              onClick={() => setModalVisible(false)}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+
+          {/* Body */}
+          <CModalBody>
+            <div className="row g-3">
+              {/* Date */}
+              <div className="d-flex justify-content-center align-items-center fw-semibold">
+                {new Date(modalData.createdAt).toLocaleString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </div>
+              {/* Punch In Section */}
+              <div className="col-md-6">
+                <div className="card shadow-sm border-0 h-100">
+                  <div className="card-header bg-success text-white py-2">
+                    Punch In
+                  </div>
+                  <div className="card-body text-center">
+                    {modalData.punch_in_image ? (
+                      <img
+                        src={modalData.punch_in_image}
+                        alt="Punch In"
+                        className="img-fluid rounded mb-2"
+                        style={{ maxHeight: "200px", objectFit: "contain" }}
+                      />
+                    ) : (
+                      <img
+                        src={modalData.profile_image}
+                        alt="Punch In"
+                        className="img-fluid rounded mb-2"
+                        style={{ maxHeight: "200px", objectFit: "contain" }}
+                      />
+                    )}
+                    <p className="mb-1">
+                      <strong>Time:</strong>{" "}
+                      {new Date(modalData.in).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
+                    <p className="mb-0">
+                      <strong>Location :</strong>
+                      <Link
+                        className="ms-3"
+                        target="blank"
+                        to={`https://www.google.com/maps?q=${modalData.punchin_location.lat},${modalData.punchin_location.lng}`}
+                      >
+                        View
+                      </Link>
+                      {/* {modalData.punchin_location?.lat},{" "}
+                      {modalData.punchin_location?.lng} */}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {modalData.out ? (
+                <div className="col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-header bg-danger text-white py-2">
+                      Punch Out
+                    </div>
+                    <div className="card-body text-center">
+                      {modalData.punch_out_image ? (
+                        <img
+                          src={modalData.punch_out_image}
+                          alt="Punch Out"
+                          className="img-fluid rounded mb-2"
+                          style={{ maxHeight: "200px", objectFit: "contain" }}
+                        />
+                      ) : (
+                        <img
+                          src={modalData.profile_image}
+                          alt="Punch In"
+                          className="img-fluid rounded mb-2"
+                          style={{ maxHeight: "200px", objectFit: "contain" }}
+                        />
+                      )}
+                      <p className="mb-1">
+                        <strong>Time:</strong>{" "}
+                        {modalData.out
+                          ? new Date(modalData.out).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })
+                          : "Not Available"}
+                      </p>
+                      <p className="mb-0">
+                        <strong>Location :</strong>{" "}
+                        <Link
+                          target="blank"
+                          className="ms-3"
+                          to={`https://www.google.com/maps?q=${modalData.punchout_location.lat},${modalData.punchout_location.lng}`}
+                        >
+                          View
+                        </Link>
+                        {/* {modalData.punchout_location?.lat},{" "}
+                        {modalData.punchout_location?.lng} */}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="col-md-6">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-header bg-danger text-white py-2">
+                      Punch Out
+                    </div>
+                    <div className="card-body d-flex justify-content-center align-items-center">
+                      No Punch Out Data Available
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CModalBody>
+        </CModal>
+      )}
     </div>
   );
 };
