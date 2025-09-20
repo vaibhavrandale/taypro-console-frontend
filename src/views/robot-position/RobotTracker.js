@@ -483,14 +483,24 @@
 
 // export default RobotTracker;
 
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import socket from "../../components/Socket";
 import RobotImg from "../../assets/images/robot.png";
-import { CBadge, CButton, CImage } from "@coreui/react";
+import {
+  CBadge,
+  CButton,
+  CImage,
+  COffcanvas,
+  COffcanvasBody,
+  COffcanvasHeader,
+  COffcanvasTitle,
+} from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -506,26 +516,59 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false };
     case "DELETE_FAIL":
       return { ...state, loadingDelete: false };
+    case "FETCH_ROBOT_REQUEST":
+      return {
+        ...state,
+        loadingRobot: true,
+        loadingRobotError: "",
+        robotDetails: {},
+      };
+    case "FETCH_ROBOT_SUCCESS":
+      return {
+        ...state,
+        loadingRobot: false,
+        robotDetails: action.payload,
+      };
+    case "FETCH_ROBOT_FAIL":
+      return {
+        ...state,
+        loadingRobot: false,
+        loadingRobotError: action.payload,
+      };
     default:
       return state;
   }
 };
 
 const RobotTracker = () => {
-  const [{ error, robots, loading, loadingDelete }, dispatch] = useReducer(
-    reducer,
+  const [
     {
-      robots: [],
-      loading: true,
-      error: "",
-      loadingDelete: false,
-    }
-  );
+      error,
+      robots,
+      loading,
+      loadingDelete,
+      loadingRobot,
+      robotDetails,
+      loadingRobotError,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    robots: [],
+    loading: true,
+    error: "",
+    loadingDelete: false,
+    loadingRobot: false,
+    robotDetails: {},
+    loadingRobotError: "",
+  });
 
   const authtoken = useSelector((state) => state.authtoken);
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
   robotsRef.current = robots;
+  const [selectedRobotNo, setSelectedRobotNo] = useState(null);
+
+  const [sideBarVisible, setsideBarVisible] = useState(false);
 
   // Fetch robot tracking data
   useEffect(() => {
@@ -547,40 +590,76 @@ const RobotTracker = () => {
     fetchRobotTracking();
   }, [authtoken]);
 
-  // Socket: update robots instantly without animation
-  useEffect(() => {
-    const handleUpdate = ({ _id, point }) => {
-      const newPoint = parseInt(point, 10);
+  // helper function outside component
+  const smoothScroll = (element, target, duration = 400) => {
+    const start = element.scrollLeft;
+    const change = target - start;
+    const startTime = performance.now();
 
-      // Update robot state immediately
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      element.scrollLeft = start + change * progress;
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
+  };
+
+  useEffect(() => {
+    const handleUpdate = ({ tracking }) => {
+      console.log(tracking.robot_no, tracking.uplink.data);
+
+      const newPoint = parseInt(tracking.uplink.data, 10);
+
+      // Update robot state
       dispatch({
         type: "FETCH_SUCCESS",
         payload: robotsRef.current.map((r) =>
-          r._id === _id
-            ? { ...r, uplink: { ...r.uplink, data: newPoint.toString() } }
+          r._id === tracking._id
+            ? {
+                ...r,
+                uplink: { ...r.uplink, ...tracking.uplink },
+                cleaning: { ...r.cleaning, ...tracking.cleaning },
+                track_details: [
+                  ...r.track_details,
+                  ...(tracking.track_details || []),
+                ],
+                updatedAt: new Date().toISOString(),
+              }
             : r
         ),
       });
 
-      // Update scroll
-      const robot = robotsRef.current.find((r) => r._id === _id);
-      const el = scrollRefs.current[_id];
+      // Smooth scroll update
+      const robot = robotsRef.current.find((r) => r._id === tracking._id);
+
+      const el = scrollRefs.current[tracking._id];
       if (robot && el) {
         const L = robot.row_length || 1;
         let segmentPct = 0;
 
-        if (newPoint >= 19 && newPoint <= 29)
+        // forward movement 19–29
+        if (newPoint >= 19 && newPoint <= 29) {
           segmentPct = (newPoint - 19) / (29 - 19);
-        else if (newPoint >= 29 && newPoint <= 40)
-          segmentPct = (newPoint - 29) / (40 - 29);
-        else segmentPct = newPoint / L;
+        }
+        // reverse movement 31–40
+        else if (newPoint >= 31 && newPoint <= 40) {
+          segmentPct = (newPoint - 31) / (40 - 31);
+        } else {
+          segmentPct = newPoint / L;
+        }
 
-        const iconOffsetPx = segmentPct * L * 25;
+        const iconOffsetPx = segmentPct * L * 25; // 25px per point
         const halfWidth = el.clientWidth / 2;
+
         let targetScroll =
           newPoint >= 19 && newPoint <= 29
             ? iconOffsetPx - el.clientWidth * 0.25
-            : newPoint >= 29 && newPoint <= 40
+            : newPoint >= 31 && newPoint <= 40
             ? iconOffsetPx - el.clientWidth * 0.75
             : iconOffsetPx - halfWidth;
 
@@ -588,10 +667,13 @@ const RobotTracker = () => {
           0,
           Math.min(targetScroll, el.scrollWidth - el.clientWidth)
         );
-        el.scrollTo({ left: targetScroll, behavior: "auto" });
+
+        // smooth instead of instant
+        smoothScroll(el, targetScroll, 400);
       }
     };
-
+    // Remove before adding (ensures no duplicates)
+    socket.off("robotPositionUpdate", handleUpdate);
     socket.on("robotPositionUpdate", handleUpdate);
     return () => {
       socket.off("robotPositionUpdate", handleUpdate);
@@ -620,35 +702,155 @@ const RobotTracker = () => {
   };
 
   // Helper: get robot phase & segment
-  const getRobotPhase = (pt, L) => {
-    let phase, badgeColor, iconBorder, segmentPct;
-    if (pt === 40 || pt === 11) {
+  // const getRobotPhase = (pt, L) => {
+  //   let phase, badgeColor, iconBorder, segmentPct;
+  //   if (pt === 40 || pt === 11) {
+  //     phase = "At Dock";
+  //     badgeColor = "success";
+  //     iconBorder = "#343a40";
+  //     segmentPct = 0;
+  //   } else if (pt === 29 || pt === 30) {
+  //     phase = "At Reverse Station";
+  //     badgeColor = "warning";
+  //     iconBorder = "#ffc107";
+  //     segmentPct = 1;
+  //   } else if (pt >= 19 && pt <= 29) {
+  //     phase = "Forward Cleaning";
+  //     badgeColor = "success";
+  //     iconBorder = "#2eb85c";
+  //     segmentPct = (pt - 19) / (29 - 19);
+  //   } else if (pt >= 31 && pt <= 40) {
+  //     phase = "Reverse Cleaning";
+  //     badgeColor = "primary";
+  //     iconBorder = "#0d6efd";
+  //     segmentPct = (pt - 29) / (40 - 29);
+  //   } else {
+  //     phase = "At Dock";
+  //     badgeColor = "secondary";
+  //     iconBorder = "#6c757d";
+  //     segmentPct = pt / L;
+  //   }
+  //   return { phase, badgeColor, iconBorder, segmentPct };
+  // };
+
+  const getRobotPhase = (pt, L, cleaning) => {
+    let phase,
+      badgeColor,
+      iconBorder,
+      segmentPct = 0;
+
+    // 🚩 Case 1: At Dock (point 11 only)
+    if (pt === 11) {
       phase = "At Dock";
       badgeColor = "success";
       iconBorder = "#343a40";
       segmentPct = 0;
-    } else if (pt === 29) {
+    }
+
+    // 🚩 Case 2: Cleaning Completed & At Dock (point 40 + finished)
+    else if (pt === 40 && cleaning?.finish) {
+      phase = "Cleaning Completed & At Dock";
+      badgeColor = "dark";
+      iconBorder = "#000";
+      segmentPct = 0; // Dock position
+    }
+
+    // 🚩 Case 3: At Reverse Station (point 29)
+    else if (pt === 29) {
       phase = "At Reverse Station";
       badgeColor = "warning";
       iconBorder = "#ffc107";
-      segmentPct = 1;
-    } else if (pt >= 19 && pt <= 29) {
+      segmentPct = 1; // End of forward
+    }
+
+    // 🚩 Case 4: Ready for Reverse Cleaning (point 30)
+    else if (pt === 30) {
+      phase = "At Reverse Station (Ready for Reverse Cleaning)";
+      badgeColor = "info";
+      iconBorder = "#17a2b8";
+      segmentPct = 1; // Still at reverse station
+    }
+
+    // 🚩 Case 5: Forward Cleaning (points 20–28)
+    else if (pt >= 20 && pt <= 28) {
       phase = "Forward Cleaning";
       badgeColor = "success";
       iconBorder = "#2eb85c";
-      segmentPct = (pt - 19) / (29 - 19);
-    } else if (pt >= 29 && pt <= 40) {
+      segmentPct = (pt - 19) / (29 - 19); // Smooth placement
+    }
+
+    // 🚩 Case 6: Reverse Cleaning (points 31–39)
+    else if (pt >= 31 && pt <= 39) {
       phase = "Reverse Cleaning";
       badgeColor = "primary";
       iconBorder = "#0d6efd";
-      segmentPct = (pt - 29) / (40 - 29);
-    } else {
+      segmentPct = (pt - 29) / (40 - 29); // Smooth placement
+    }
+
+    // 🚩 Case 7: At Dock (point 40 but not finished, or unknown)
+    else if (pt === 40) {
+      phase = "At Dock";
+      badgeColor = "success";
+      iconBorder = "#343a40";
+      segmentPct = 0;
+    }
+
+    // 🚩 Default
+    else {
       phase = "At Dock";
       badgeColor = "secondary";
       iconBorder = "#6c757d";
       segmentPct = pt / L;
     }
+
     return { phase, badgeColor, iconBorder, segmentPct };
+  };
+
+  function getCleaningPercentage(pt) {
+    let percentage = 0;
+    let distance = 0;
+    const totalSteps = 20; // 10 forward + 10 reverse
+
+    // 🚩 Forward cleaning (20–29 → 10 steps)
+    if (pt >= 20 && pt <= 29) {
+      distance = pt - 19; // 20 → 1, 29 → 10
+      percentage = (distance / totalSteps) * 100;
+    }
+
+    // 🚩 Reverse cleaning (31–40 → 10 steps)
+    else if (pt >= 31 && pt <= 40) {
+      distance = 10 + (pt - 30); // 31 → 11, 40 → 20
+      percentage = (distance / totalSteps) * 100;
+    }
+
+    return {
+      point: pt,
+      distanceCovered: distance,
+      totalDistance: totalSteps,
+      percentage: Math.round(percentage),
+    };
+  }
+
+  const handleRobotClick = async (robot_no) => {
+    setSelectedRobotNo(robot_no);
+    setsideBarVisible(true);
+    try {
+      dispatch({ type: "FETCH_ROBOT_REQUEST" });
+      const response = await axios.get(
+        `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+      dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
+    } catch (error) {
+      dispatch({
+        type: "FETCH_ROBOT_FAIL",
+        payload: error.response
+          ? error.response.data.message
+          : "Failed to fetch robot details.",
+      });
+    }
   };
 
   return (
@@ -663,13 +865,22 @@ const RobotTracker = () => {
       ) : (
         robots.map((item) => {
           const pt = parseInt(item.uplink?.data || "0", 10);
+          const lastreeivedPointInTracking =
+            item.track_details[item.track_details.length - 1].point;
+          console.log(lastreeivedPointInTracking);
+
           const L = item.row_length || 1;
-          const progressPercent = (pt / L) * 100;
-          const distanceCovered = pt;
+          // const progressPercent = (pt / L) * 100;
+
+          // const distanceCovered = pt;
           const { phase, badgeColor, iconBorder, segmentPct } = getRobotPhase(
-            pt,
-            L
+            lastreeivedPointInTracking,
+            L,
+            item
           );
+
+          const { distanceCovered, totalDistance, percentage } =
+            getCleaningPercentage(lastreeivedPointInTracking);
 
           const iconOffsetPx = segmentPct * L * 25;
           const iconStyle =
@@ -688,14 +899,15 @@ const RobotTracker = () => {
                     </CBadge>
                   </span>
                   <span style={{ fontSize: "12px" }}>
-                    📍 Current Point: {pt}
+                    📍 Current Point: {lastreeivedPointInTracking}
                   </span>
                   <span style={{ fontSize: "12px" }}>
-                    📏 Distance Covered: {distanceCovered} m / {L * 2} m
+                    📏 Distance Covered: {distanceCovered} m / {totalDistance} m
                   </span>
                   <span style={{ fontSize: "12px" }}>
-                    📊 Progress: {progressPercent.toFixed(1)}%
+                    📊 Progress: {percentage}%
                   </span>
+
                   {item.uplink?.timestamp && (
                     <span style={{ fontSize: "12px" }}>
                       ⏱️ Last Update:{" "}
@@ -716,6 +928,13 @@ const RobotTracker = () => {
                   )}
                   <div className="d-flex justify-content-end align-items-center">
                     <CButton
+                      onClick={() => handleRobotClick(item.robot_no)}
+                      size="sm"
+                      color="danger"
+                    >
+                      View
+                    </CButton>
+                    <CButton
                       onClick={(e) => deleteHandler(e, item._id)}
                       size="sm"
                       color="danger"
@@ -731,6 +950,7 @@ const RobotTracker = () => {
                     height: "150px",
                     overflowX: "auto",
                   }}
+                  ref={(el) => (scrollRefs.current[item._id] = el)}
                 >
                   <div
                     style={{
@@ -823,6 +1043,113 @@ const RobotTracker = () => {
           );
         })
       )}
+
+      {/* === Offcanvas with Robot Details === */}
+      <COffcanvas
+        style={{ backgroundColor: "#080f25" }}
+        placement="end"
+        visible={sideBarVisible}
+        onHide={() => setsideBarVisible(false)}
+      >
+        <COffcanvasHeader>
+          <COffcanvasTitle>Robot Details</COffcanvasTitle>
+          <button
+            type="button"
+            className=" border-0 ms-auto py-0 px-1"
+            onClick={() => setsideBarVisible(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </COffcanvasHeader>
+        <COffcanvasBody>
+          {loadingRobot ? (
+            <div className="h-75 d-flex justify-content-center align-items-center">
+              <LoadingSpinner />
+            </div>
+          ) : loadingRobotError ? (
+            <div style={{ color: "red" }}>{loadingRobotError}</div>
+          ) : (
+            <div style={{ fontSize: "14px" }}>
+              <div className="mb-4">
+                {" "}
+                {/* <CRow className="d-flex justify-content-between text-center mb-2">
+                        <CCol>
+                          {commandButton === 1 ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <CIcon
+                              icon={cilMediaPlay}
+                              className="me-2 cursor-pointer"
+                              onClick={() => sendsingleDownlink("11", 1)}
+                              size="xl"
+                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+                            />
+                          )}
+                          <p>Start</p>
+                        </CCol>
+      
+                        <CCol>
+                          {commandButton === 2 ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <CIcon
+                              icon={cilMediaPause}
+                              className="me-2 cursor-pointer"
+                              onClick={() => sendsingleDownlink("12", 2)}
+                              size="xl"
+                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+                            />
+                          )}
+      
+                          <p>Stop</p>
+                        </CCol>
+      
+                        <CCol>
+                          {commandButton === 3 ? (
+                            <LoadingSpinner />
+                          ) : (
+                            <CIcon
+                              icon={cilExitToApp}
+                              className="me-2 cursor-pointer"
+                              size="xl"
+                              onClick={() => sendsingleDownlink("15", 3)}
+                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+                            />
+                          )}
+      
+                          <p>Return</p>
+                        </CCol>
+                      </CRow> */}
+                <h6 className="text-success">Cleaning Record</h6>
+                <h6 className="text-success mt-4">Robot Information</h6>
+                <span>
+                  {" "}
+                  <strong>Robot No:</strong> {robotDetails.robot_no}
+                  <br />
+                </span>
+                <span>
+                  {" "}
+                  <strong>Block:</strong> {robotDetails.block}
+                  <br />
+                </span>
+                <span>
+                  <strong>Type:</strong> {robotDetails.robot_type}
+                  <br />
+                </span>
+                <span>
+                  <strong>Site:</strong> {robotDetails.site_id}
+                  <br />
+                </span>
+                <span>
+                  <strong>Lora No:</strong> {robotDetails.lora_no}
+                  <br />
+                </span>
+              </div>
+            </div>
+          )}
+        </COffcanvasBody>
+      </COffcanvas>
     </div>
   );
 };
