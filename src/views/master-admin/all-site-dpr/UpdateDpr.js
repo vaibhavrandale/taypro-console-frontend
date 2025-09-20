@@ -291,15 +291,14 @@ const UpdateDpr = () => {
                         type="date"
                         className="form-control"
                         name="report_date"
-                        value={state.dprData.report_date}
+                        value={state.dprData.report_date.split("T")[0]}
                         onChange={handleChange}
-                        max={new Date().toISOString().split("T")[0]} // Optional: restrict to past dates
                       />
                     ) : (
                       <input
                         type="text"
                         className="form-control"
-                        value={state.dprData.report_date}
+                        value={state.dprData.report_date.split("T")[0]}
                         readOnly
                         disabled
                       />

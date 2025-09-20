@@ -447,13 +447,6 @@ const PieChart = () => {
   const siteData = data.sitewise?.map((s) => s.total_tickets) || [];
 
   // Keep open and closed values accessible for tooltips
-
-  // const site = siteLabels[tooltipItem.dataIndex];
-  // return [
-  //   `📍 ${site.replace(/_/g, " ")}`,
-  //   `🛠 Open: ${siteTicketData[site].open}`,
-  //   `✅ Resolved: ${siteTicketData[site].resolved}`,
-  // ];
   const siteTicketData =
     data.sitewise?.reduce((acc, s) => {
       acc[s.site_id] = {
@@ -541,6 +534,20 @@ const PieChart = () => {
     },
   };
 
+  const maxDataValue = Math.max(...siteData);
+  const adjustedMax = Math.ceil(maxDataValue / 10) * 10 + 10; // round up to next 10 + padding
+
+  const dynamicSiteOptions = {
+    ...siteOptions,
+    scales: {
+      ...siteOptions.scales,
+      y: {
+        ...siteOptions.scales.y,
+        max: adjustedMax,
+      },
+    },
+  };
+
   // Fault chart options → legend OFF
   const faultOptions = {
     ...baseOptions,
@@ -557,6 +564,17 @@ const PieChart = () => {
           font: { size: 11 },
         },
         grid: { color: "rgba(255,255,255,0.1)" },
+      },
+    },
+  };
+
+  const dynamicfaultOptions = {
+    ...faultOptions,
+    scales: {
+      ...faultOptions.scales,
+      y: {
+        ...faultOptions.scales.y,
+        max: adjustedMax,
       },
     },
   };
@@ -676,7 +694,7 @@ const PieChart = () => {
                     borderWidth: 1,
                   },
                 ]}
-                options={siteOptions}
+                options={dynamicSiteOptions}
               />
             ) : (
               <div className="text-center py-5 text-muted">
@@ -724,7 +742,7 @@ const PieChart = () => {
                     borderWidth: 1,
                   },
                 ]}
-                options={faultOptions}
+                options={dynamicfaultOptions}
               />
             )}
           </div>

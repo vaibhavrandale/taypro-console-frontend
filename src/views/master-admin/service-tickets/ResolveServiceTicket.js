@@ -802,12 +802,17 @@ const ResolveServiceTicket = () => {
               setPartChecklist([
                 {
                   part_id: formData.part_replaced_id,
-                  checklist: checklistObject,
+                  checklist: checklistResponses,
                 },
               ]);
-
               setShowChecklistModal(false);
             }}
+            disabled={
+              checklistFields.length === 0 ||
+              Object.values(checklistResponses).every(
+                (val) => !val || String(val).trim() === ""
+              )
+            }
           >
             Save Checklist
           </CButton>

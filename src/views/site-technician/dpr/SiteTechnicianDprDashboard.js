@@ -66,17 +66,6 @@ const reducer = (state, action) => {
     case "SELECT_SITENAME_FAIL":
       return { ...state, loadingFields: false };
 
-    case "DELETE_REQUEST":
-      return { ...state, loadingDelete: true, successDelete: false };
-
-    case "DELETE_SUCCESS":
-      return { ...state, loadingDelete: false, successDelete: true };
-
-    case "DELETE_FAIL":
-      return { ...state, loadingDelete: false, successDelete: false };
-
-    case "DELETE_RESET":
-      return { ...state, successDelete: false };
     default:
       return state;
   }
@@ -165,7 +154,7 @@ const SiteTechnicianDprDashboard = () => {
         };
 
         const result = await axios.post(
-          `/api/v1/techniciandprs/site_date_wise`,
+          `/api/v1/techniciandprs/site-date-wise`,
           data,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
@@ -250,30 +239,6 @@ const SiteTechnicianDprDashboard = () => {
       dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
     } else {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
-    }
-  };
-
-  const deleteDpr = async (dpr) => {
-    if (dpr.is_delete) {
-      toast.error("This DPR is already deleted.");
-      return;
-    }
-    if (
-      window.confirm(
-        `Are you sure you want to delete DPR of site - ${dpr.site_id}`
-      )
-    ) {
-      try {
-        await axios.delete(`/api/v1/techniciandprs/${dpr._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-
-        toast.success("DPR deleted successfully");
-        dispatch({ type: "DELETE_SUCCESS" });
-      } catch (err) {
-        toast.error(err.response ? err.response.data.message : err.message);
-        dispatch({ type: "DELETE_FAIL" });
-      }
     }
   };
 
