@@ -171,7 +171,7 @@ const SiteTechnicianDprDashboard = () => {
         dispatch({
           type: "FETCH_DPRBYDATE_SUCCESS",
           payload: {
-            data: result.data.data.data,
+            data: result.data.data,
             totalPages: total,
             hasNextPage: next,
             hasPrevPage: prev,
@@ -197,8 +197,8 @@ const SiteTechnicianDprDashboard = () => {
     fetchSiteIds();
   }, [successDelete, authtoken, limit, page, fromDate, toDate, site_id]);
 
-  const filteredInventories = dprs.filter((dpr) =>
-    dpr.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredInventories = (dprs || []).filter((dpr) =>
+    dpr.site_id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Open modal and load robot data
@@ -241,6 +241,13 @@ const SiteTechnicianDprDashboard = () => {
       dispatch({ type: "SELECT_SITENAME_FAIL" });
     }
   };
+  const allDates = Array.from(
+    new Set(
+      filteredInventories.flatMap((site) =>
+        (site.day_wise_data || []).map((day) => day.date)
+      )
+    )
+  ).sort((a, b) => new Date(a) - new Date(b));
 
   const exportToExcel = () => {
     if (filteredInventories.length === 0) {
@@ -322,91 +329,81 @@ const SiteTechnicianDprDashboard = () => {
         </CCol>
       </CRow>
 
-      {/* Inventories Table */}
-      <CTable bordered hover responsive className="text-center shadow-sm">
+      <CTable bordered hover responsive className="text-center shadow-sm mb-4">
         <CTableHead color="secondary">
           <CTableRow>
-            <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "200px" }}>
-              Site Id
+            <CTableHeaderCell rowSpan={2} style={{ minWidth: "150px" }}>
+              Site Name
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Running Robots
+            <CTableHeaderCell rowSpan={2} style={{ minWidth: "200px" }}>
+              Robot Details
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "140px" }}>
-              Failed Robots
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "140px" }}>
-              Total Robots
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Run by
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Comments
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Date
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Action
-            </CTableHeaderCell>
+            <CTableHeaderCell rowSpan={2}>Robots Qty</CTableHeaderCell>
+            {allDates.map((date, idx) => (
+              <CTableHeaderCell key={date}>{date}</CTableHeaderCell>
+            ))}
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          {loadingDprs ? (
-            <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
-                <LoadingSpinner />
-              </CTableDataCell>
-            </CTableRow>
-          ) : error ? (
-            <CTableRow>
-              {" "}
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
-                {error}
-              </CTableDataCell>
-            </CTableRow>
-          ) : filteredInventories.length > 0 ? (
-            filteredInventories.map((dpr, index) => (
-              <CTableRow
-                key={index}
-                className={dpr.is_delete ? "table-danger" : ""}
-              >
-                <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{dpr.site_id}</CTableDataCell>
-                <CTableDataCell>{dpr.total_running_robots}</CTableDataCell>
-                <CTableDataCell>{dpr.total_failed_robots}</CTableDataCell>
-                <CTableDataCell>{dpr.total_robots}</CTableDataCell>
-                <CTableDataCell>
-                  {dpr.robots_run_by.toUpperCase()}
-                </CTableDataCell>
-                <CTableDataCell>
-                  {dpr.comments.length > 30
-                    ? `${dpr.comments.slice(0, 30)}...`
-                    : dpr.comments}
-                </CTableDataCell>
-
-                <CTableDataCell>
-                  {new Date(dpr.createdAt)
-                    .toLocaleDateString("en-GB")
-                    .replace(/\//g, "-")}
-                </CTableDataCell>
-                <CTableDataCell>
-                  <Link
-                    className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
-                    onClick={() => openModal(dpr)}
-                  >
-                    View
-                  </Link>
-                </CTableDataCell>
-              </CTableRow>
-            ))
+          {filteredInventories.length > 0 ? (
+            filteredInventories.map((site, siteIndex) =>
+              [
+                { label: "Robots Uptime", field: "robots_uptime" },
+                { label: "Robots Availability", field: "robots_availability" },
+                { label: "Due to Oxidation", field: "due_to_oxidation" },
+                { label: "Due to Offline", field: "due_to_offline" },
+                {
+                  label: "Battery issue (Battery Backup)",
+                  field: "due_to_battery_issue",
+                },
+                { label: "Due to Vegetation", field: "due_to_vegetation" },
+                {
+                  label: "Due to Client (abnormality at plant)",
+                  field: "due_to_client",
+                },
+                {
+                  label: "Due to Service (Tech. absent)",
+                  field: "due_to_service",
+                },
+                { label: "Due to Timer", field: "due_to_timer" },
+                { label: "Due to Breakdown", field: "due_to_breakdown" },
+                {
+                  label: "Due to material Unavailability",
+                  field: "due_to_material_unavailability",
+                },
+              ].map((row, rowIndex) => {
+                // Lookup for each date value per site per row
+                const dateMap = {};
+                (site.day_wise_data || []).forEach((day) => {
+                  dateMap[day.date] = day[row.field];
+                });
+                return (
+                  <CTableRow key={site.site_id + "-" + row.field}>
+                    {rowIndex === 0 && (
+                      <CTableDataCell
+                        rowSpan={11}
+                        style={{ verticalAlign: "middle", fontWeight: "bold" }}
+                      >
+                        {site.site_id.replace(/_/g, " ")}
+                      </CTableDataCell>
+                    )}
+                    <CTableDataCell>{row.label}</CTableDataCell>
+                    <CTableDataCell>{site.total_robots}</CTableDataCell>
+                    {allDates.map((date) => (
+                      <CTableDataCell key={date}>
+                        {dateMap[date] ?? ""}
+                      </CTableDataCell>
+                    ))}
+                  </CTableRow>
+                );
+              })
+            )
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
+              <CTableDataCell
+                colSpan={allDates.length + 3}
+                className="text-center fw-bold"
+              >
                 No matching DPR found.
               </CTableDataCell>
             </CTableRow>
@@ -425,7 +422,6 @@ const SiteTechnicianDprDashboard = () => {
         limit={limit}
         handleLimitChange={setLimit} // New prop
       />
-
       {/* view Modal */}
       <CModal
         size="xl"
