@@ -359,11 +359,12 @@ const SiteTechnicianCreateServiceTicket = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: "environment",
+          facingMode: { ideal: "environment" }, // 👈 prefer back camera
           width: { ideal: 1920 },
           height: { ideal: 1080 },
         },
       });
+
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         setStream(mediaStream);
@@ -391,15 +392,18 @@ const SiteTechnicianCreateServiceTicket = () => {
       const video = videoRef.current;
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      context.save();
-      // Mirror only if using user-facing camera
 
+      context.save();
+
+      // ✅ Always draw directly (no mirror)
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       context.restore();
 
+      // ✅ Add timestamp + address as before
       const timestamp = new Date().toLocaleString("en-IN", {
         hour12: true,
         timeZone: "Asia/Kolkata",
@@ -407,6 +411,7 @@ const SiteTechnicianCreateServiceTicket = () => {
       const coords = `Coordinates: ${location.lat}, ${location.lng}`;
       const address = `Address: ${location.name || "Fetching address..."}`;
       const timeLabel = `Timestamp: ${timestamp}`;
+
       const boxHeight = 90;
       context.fillStyle = "rgba(0,0,0,0.5)";
       context.fillRect(0, canvas.height - boxHeight, canvas.width, boxHeight);
@@ -419,6 +424,7 @@ const SiteTechnicianCreateServiceTicket = () => {
       context.fillText(address, 10, y);
       y += 20;
       context.fillText(timeLabel, 10, y);
+
       canvas.toBlob(
         async (blob) => {
           if (blob) {
@@ -778,9 +784,10 @@ const SiteTechnicianCreateServiceTicket = () => {
                       autoPlay
                       playsInline
                       className="w-100 h-100"
-                      style={{ objectFit: "contain", transform: "none" }}
+                      style={{ objectFit: "contain", transform: "none" }} // 👈 no flip
                       onCanPlay={() => setLoadingCamera(false)}
                     />
+
                     <canvas ref={canvasRef} style={{ display: "none" }} />
                     {loadingCamera && (
                       <div
