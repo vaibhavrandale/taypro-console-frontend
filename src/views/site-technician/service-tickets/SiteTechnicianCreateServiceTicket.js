@@ -394,9 +394,20 @@ const SiteTechnicianCreateServiceTicket = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.save();
-      context.scale(-1, 1);
-      context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+      // Mirror only if using user-facing camera
+      const track =
+        video.srcObject && video.srcObject.getVideoTracks
+          ? video.srcObject.getVideoTracks()[0]
+          : null;
+      const settings = track ? track.getSettings() : {};
+      if (settings.facingMode === "user") {
+        context.scale(-1, 1);
+        context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+      } else {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      }
       context.restore();
+
       const timestamp = new Date().toLocaleString("en-IN", {
         hour12: true,
         timeZone: "Asia/Kolkata",
