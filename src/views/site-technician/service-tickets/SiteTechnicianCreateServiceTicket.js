@@ -395,11 +395,7 @@ const SiteTechnicianCreateServiceTicket = () => {
       canvas.height = video.videoHeight;
       context.save();
       // Mirror only if using user-facing camera
-      const track =
-        video.srcObject && video.srcObject.getVideoTracks
-          ? video.srcObject.getVideoTracks()[0]
-          : null;
-      const settings = track ? track.getSettings() : {};
+
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       context.restore();
