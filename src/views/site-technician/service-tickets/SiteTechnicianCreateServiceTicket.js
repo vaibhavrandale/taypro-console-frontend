@@ -400,12 +400,8 @@ const SiteTechnicianCreateServiceTicket = () => {
           ? video.srcObject.getVideoTracks()[0]
           : null;
       const settings = track ? track.getSettings() : {};
-      if (settings.facingMode === "user") {
-        context.scale(-1, 1);
-        context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-      } else {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      }
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
       context.restore();
 
       const timestamp = new Date().toLocaleString("en-IN", {
@@ -786,7 +782,7 @@ const SiteTechnicianCreateServiceTicket = () => {
                       autoPlay
                       playsInline
                       className="w-100 h-100"
-                      style={{ objectFit: "contain", transform: "scaleX(-1)" }}
+                      style={{ objectFit: "contain", transform: "none" }}
                       onCanPlay={() => setLoadingCamera(false)}
                     />
                     <canvas ref={canvasRef} style={{ display: "none" }} />
