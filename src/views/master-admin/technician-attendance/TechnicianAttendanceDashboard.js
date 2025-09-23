@@ -47,10 +47,7 @@ const reducer = (state, action) => {
 };
 
 const TechnicianAttendanceDashboard = () => {
-  const [
-    { loading, technicians, totalPages, hasNextPage, hasPrevPage },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ loading, technicians }, dispatch] = useReducer(reducer, {
     technicians: [],
     loading: true,
     error: "",
@@ -64,8 +61,8 @@ const TechnicianAttendanceDashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const page = 1;
+  const limit = 10;
   const [searchText, setSearchText] = useState("");
 
   const currentDate = new Date();
@@ -109,46 +106,13 @@ const TechnicianAttendanceDashboard = () => {
     fetchAttendance();
   }, [authtoken, limit, month, page, year]);
 
-  // const handlePageInputChange = (e) => {
-  //   setPageInput(e.target.value);
-  // };
-
-  // const handlePageChange = (newPage) => {
-  //   if (newPage >= 1 && newPage <= totalPages) {
-  //     setPage(newPage);
-  //   }
-  // };
-
-  // const handlePageInputSubmit = () => {
-  //   const pageNumber = parseInt(pageInput);
-  //   if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-  //     handlePageChange(pageNumber);
-  //   }
-  // };
-
   const getDaysInMonth = (month, year) => {
     return new Date(year, month, 0).getDate();
   };
 
   const daysInMonth = getDaysInMonth(month, year);
 
-  // Grouping logic
   const groupedData = {};
-  // technicians.forEach((record) => {
-  //   const date = new Date(record.punchin_time).toISOString().split("T")[0];
-  //   if (!groupedData[record.username]) {
-  //     groupedData[record.username] = {
-  //       site_id: record.site_id,
-  //       profile_image: record.profile_image,
-  //       attendance: {},
-  //     };
-  //   }
-  //   groupedData[record.username].attendance[date] = {
-  //     in: record.punchin_time,
-  //     out: record.punchout_time || null,
-  //   };
-  // });
-
   // Grouping logic
 
   technicians.forEach((record) => {
