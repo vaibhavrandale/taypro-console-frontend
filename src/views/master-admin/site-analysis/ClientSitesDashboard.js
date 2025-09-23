@@ -18,7 +18,7 @@ import { useParams } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_START":
+    case "FETCH_REQUEST":
       return { ...state, loading: true, error: null };
     case "FETCH_SUCCESS":
       return {
@@ -29,7 +29,7 @@ const reducer = (state, action) => {
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
       };
-    case "FETCH_ERROR":
+    case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
@@ -53,7 +53,7 @@ const ClientSitesDashboard = () => {
 
   useEffect(() => {
     const fetchClientSites = async () => {
-      dispatch({ type: "FETCH_START" });
+      dispatch({ type: "FETCH_REQUEST" });
       try {
         const response = await axios.post(
           `/api/v1/sites/get-sites/${clientId}`,
@@ -76,7 +76,7 @@ const ClientSitesDashboard = () => {
         });
       } catch (error) {
         dispatch({
-          type: "FETCH_ERROR",
+          type: "FETCH_FAIL",
           payload: error.response?.data?.error || error.response.data.message,
         });
         toast.error(error.response?.data?.error || error.response.data.message);
