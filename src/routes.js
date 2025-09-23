@@ -137,6 +137,9 @@ import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
 import Dummy from "./views/robot-position/Dummy";
+import SiteAnalysisDashboard from "./views/master-admin/site-analysis/SiteAnalysisDashboard";
+import AllClientsDashboard from "./views/master-admin/site-analysis/AllClientsDashboard";
+import ClientSitesDashboard from "./views/master-admin/site-analysis/ClientSitesDashboard";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1504,6 +1507,36 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotEventAndFrames />
+      </MasterAdminRoute>
+    ),
+  },
+
+  //Site Analysis Routes
+
+  {
+    path: "/master-admin/site-analysis-dashboard",
+    name: "Site Analysis Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <SiteAnalysisDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard",
+    name: "All Clients Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <AllClientsDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId",
+    name: "Client Sites Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <ClientSitesDashboard />
       </MasterAdminRoute>
     ),
   },
