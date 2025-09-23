@@ -1254,7 +1254,7 @@ const SiteTechnicianResolveServiceTicket = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: "environment",
+          facingMode: { ideal: "environment" }, // 👈 prefer back camera
           width: { ideal: 1920 },
           height: { ideal: 1080 },
         },
@@ -1277,48 +1277,54 @@ const SiteTechnicianResolveServiceTicket = () => {
   };
 
   const captureImage = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
 
-    // Draw flipped image
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-    ctx.restore();
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-    // Overlay text
-    const timestamp = new Date().toLocaleString("en-IN", {
-      hour12: true,
-      timeZone: "Asia/Kolkata",
-    });
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
-    ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
-    ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
-    ctx.textAlign = "left";
+      context.save();
 
-    let y = canvas.height - 65;
-    ctx.fillText(`Coordinates: ${location.lat}, ${location.lng}`, 10, y);
-    y += 20;
-    ctx.fillText(`Address: ${location.name || "Fetching address..."}`, 10, y);
-    y += 20;
-    ctx.fillText(`Timestamp: ${timestamp}`, 10, y);
+      // ✅ Always draw directly (no mirror)
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Upload blob
-    canvas.toBlob(
-      async (blob) => {
-        if (blob) {
-          await uploadImage(blob, currentImageField);
-          setCameraModalVisible(false);
-        }
-      },
-      "image/jpeg",
-      0.8
-    );
+      context.restore();
+
+      // ✅ Add timestamp + address as before
+      const timestamp = new Date().toLocaleString("en-IN", {
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
+      const coords = `Coordinates: ${location.lat}, ${location.lng}`;
+      const address = `Address: ${location.name || "Fetching address..."}`;
+      const timeLabel = `Timestamp: ${timestamp}`;
+
+      const boxHeight = 90;
+      context.fillStyle = "rgba(0,0,0,0.5)";
+      context.fillRect(0, canvas.height - boxHeight, canvas.width, boxHeight);
+      context.fillStyle = "white";
+      context.font = "16px Arial";
+      context.textAlign = "left";
+      let y = canvas.height - boxHeight + 25;
+      context.fillText(coords, 10, y);
+      y += 20;
+      context.fillText(address, 10, y);
+      y += 20;
+      context.fillText(timeLabel, 10, y);
+
+      canvas.toBlob(
+        async (blob) => {
+          if (blob) {
+            await uploadImage(blob, currentImageField);
+            setCameraModalVisible(false);
+          }
+        },
+        "image/jpeg",
+        0.8
+      );
+    }
   };
 
   const uploadImage = async (blob, fieldName) => {
@@ -2039,10 +2045,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                         autoPlay
                         playsInline
                         className="w-100 h-100"
-                        style={{
-                          objectFit: "contain",
-                          transform: "scaleX(-1)",
-                        }}
+                        style={{ objectFit: "contain", transform: "none" }} // 👈 no flip
                         onCanPlay={() => setLoadingCamera(false)}
                       />
                       <canvas ref={canvasRef} style={{ display: "none" }} />
