@@ -494,13 +494,15 @@ import {
   COffcanvasBody,
   COffcanvasHeader,
   COffcanvasTitle,
+  CProgress,
+  CProgressBar,
 } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
-import { cilX } from "@coreui/icons";
+import { cilTrash, cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -566,7 +568,8 @@ const RobotTracker = () => {
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
   robotsRef.current = robots;
-  const [selectedRobotNo, setSelectedRobotNo] = useState(null);
+  // const [selectedRobotNo, setSelectedRobotNo] = useState(null);
+  const [selectedRobotId, setSelectedRobotId] = useState(null);
 
   const [sideBarVisible, setsideBarVisible] = useState(false);
 
@@ -701,38 +704,6 @@ const RobotTracker = () => {
     }
   };
 
-  // Helper: get robot phase & segment
-  // const getRobotPhase = (pt, L) => {
-  //   let phase, badgeColor, iconBorder, segmentPct;
-  //   if (pt === 40 || pt === 11) {
-  //     phase = "At Dock";
-  //     badgeColor = "success";
-  //     iconBorder = "#343a40";
-  //     segmentPct = 0;
-  //   } else if (pt === 29 || pt === 30) {
-  //     phase = "At Reverse Station";
-  //     badgeColor = "warning";
-  //     iconBorder = "#ffc107";
-  //     segmentPct = 1;
-  //   } else if (pt >= 19 && pt <= 29) {
-  //     phase = "Forward Cleaning";
-  //     badgeColor = "success";
-  //     iconBorder = "#2eb85c";
-  //     segmentPct = (pt - 19) / (29 - 19);
-  //   } else if (pt >= 31 && pt <= 40) {
-  //     phase = "Reverse Cleaning";
-  //     badgeColor = "primary";
-  //     iconBorder = "#0d6efd";
-  //     segmentPct = (pt - 29) / (40 - 29);
-  //   } else {
-  //     phase = "At Dock";
-  //     badgeColor = "secondary";
-  //     iconBorder = "#6c757d";
-  //     segmentPct = pt / L;
-  //   }
-  //   return { phase, badgeColor, iconBorder, segmentPct };
-  // };
-
   const getRobotPhase = (pt, L, cleaning) => {
     let phase,
       badgeColor,
@@ -815,8 +786,10 @@ const RobotTracker = () => {
     if (pt >= 20 && pt <= 29) {
       distance = pt - 19; // 20 → 1, 29 → 10
       percentage = (distance / totalSteps) * 100;
+    } else if (pt === 30) {
+      distance = 10; // 20 → 1, 29 → 10 30-19=11-1
+      percentage = (distance / totalSteps) * 100;
     }
-
     // 🚩 Reverse cleaning (31–40 → 10 steps)
     else if (pt >= 31 && pt <= 40) {
       distance = 10 + (pt - 30); // 31 → 11, 40 → 20
@@ -831,27 +804,19 @@ const RobotTracker = () => {
     };
   }
 
-  const handleRobotClick = async (robot_no) => {
-    setSelectedRobotNo(robot_no);
+  // const handleRobotClick = async (robot_no) => {
+  //   setSelectedRobotNo(robot_no);
+  //   setsideBarVisible(true);
+
+  // };
+  // State
+
+  // When clicking "View Tracking" (or similar button)
+  const handleRobotClick = (robot) => {
+    setSelectedRobotId(robot._id);
     setsideBarVisible(true);
-    try {
-      dispatch({ type: "FETCH_ROBOT_REQUEST" });
-      const response = await axios.get(
-        `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
-      dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
-    } catch (error) {
-      dispatch({
-        type: "FETCH_ROBOT_FAIL",
-        payload: error.response
-          ? error.response.data.message
-          : "Failed to fetch robot details.",
-      });
-    }
   };
+  const selectedRobot = robots.find((r) => r._id === selectedRobotId);
 
   return (
     <div>
@@ -864,10 +829,9 @@ const RobotTracker = () => {
         <div>No Robots Found</div>
       ) : (
         robots.map((item) => {
-          const pt = parseInt(item.uplink?.data || "0", 10);
+          // const pt = parseInt(item.uplink?.data || "0", 10);
           const lastreeivedPointInTracking =
-            item.track_details[item.track_details.length - 1].point;
-          console.log(lastreeivedPointInTracking);
+            item.track_details?.[item.track_details.length - 1]?.point || 0;
 
           const L = item.row_length || 1;
           // const progressPercent = (pt / L) * 100;
@@ -879,8 +843,8 @@ const RobotTracker = () => {
             item
           );
 
-          const { distanceCovered, totalDistance, percentage } =
-            getCleaningPercentage(lastreeivedPointInTracking);
+          // const { distanceCovered, totalDistance, percentage } =
+          //   getCleaningPercentage(lastreeivedPointInTracking);
 
           const iconOffsetPx = segmentPct * L * 25;
           const iconStyle =
@@ -898,10 +862,8 @@ const RobotTracker = () => {
                       {phase}
                     </CBadge>
                   </span>
-                  <span style={{ fontSize: "12px" }}>
-                    📍 Current Point: {lastreeivedPointInTracking}
-                  </span>
-                  <span style={{ fontSize: "12px" }}>
+
+                  {/* <span style={{ fontSize: "12px" }}>
                     📏 Distance Covered: {distanceCovered} m / {totalDistance} m
                   </span>
                   <span style={{ fontSize: "12px" }}>
@@ -925,21 +887,30 @@ const RobotTracker = () => {
                       Finish At:{" "}
                       {new Date(item.cleaning.finishAt).toLocaleString()}
                     </span>
-                  )}
+                  )} */}
                   <div className="d-flex justify-content-end align-items-center">
+                    <CBadge color="success" style={{ fontSize: "12px" }}>
+                      📍 Current Point: {lastreeivedPointInTracking}
+                    </CBadge>
                     <CButton
-                      onClick={() => handleRobotClick(item.robot_no)}
+                      onClick={() => handleRobotClick(item)}
                       size="sm"
                       color="danger"
+                      className="ms-2"
                     >
-                      View
+                      View Tracking
                     </CButton>
                     <CButton
                       onClick={(e) => deleteHandler(e, item._id)}
                       size="sm"
-                      color="danger"
+                      color="secondary"
+                      className="ms-2"
                     >
-                      {loadingDelete ? "Deleting..." : "Delete"}
+                      {loadingDelete ? (
+                        <LoadingSpinner />
+                      ) : (
+                        <CIcon icon={cilTrash} color="danger" />
+                      )}
                     </CButton>
                   </div>
                 </div>
@@ -1045,111 +1016,359 @@ const RobotTracker = () => {
       )}
 
       {/* === Offcanvas with Robot Details === */}
-      <COffcanvas
-        style={{ backgroundColor: "#080f25" }}
-        placement="end"
-        visible={sideBarVisible}
-        onHide={() => setsideBarVisible(false)}
-      >
-        <COffcanvasHeader>
-          <COffcanvasTitle>Robot Details</COffcanvasTitle>
-          <button
-            type="button"
-            className=" border-0 ms-auto py-0 px-1"
-            onClick={() => setsideBarVisible(false)}
-            style={{ background: "none" }}
-          >
-            <CIcon icon={cilX} size="lg" />
-          </button>
-        </COffcanvasHeader>
-        <COffcanvasBody>
-          {loadingRobot ? (
-            <div className="h-75 d-flex justify-content-center align-items-center">
-              <LoadingSpinner />
-            </div>
-          ) : loadingRobotError ? (
-            <div style={{ color: "red" }}>{loadingRobotError}</div>
-          ) : (
-            <div style={{ fontSize: "14px" }}>
-              <div className="mb-4">
+      {selectedRobot && (
+        <COffcanvas
+          style={{ backgroundColor: "#080f25" }}
+          placement="end"
+          visible={sideBarVisible}
+          onHide={() => setsideBarVisible(false)}
+        >
+          <COffcanvasHeader className="border">
+            <COffcanvasTitle className="d-flex justify-content-between align-items-center">
+              <span style={{ fontSize: "15px" }}>
                 {" "}
-                {/* <CRow className="d-flex justify-content-between text-center mb-2">
-                        <CCol>
-                          {commandButton === 1 ? (
-                            <LoadingSpinner />
-                          ) : (
-                            <CIcon
-                              icon={cilMediaPlay}
-                              className="me-2 cursor-pointer"
-                              onClick={() => sendsingleDownlink("11", 1)}
-                              size="xl"
-                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-                            />
-                          )}
-                          <p>Start</p>
-                        </CCol>
-      
-                        <CCol>
-                          {commandButton === 2 ? (
-                            <LoadingSpinner />
-                          ) : (
-                            <CIcon
-                              icon={cilMediaPause}
-                              className="me-2 cursor-pointer"
-                              onClick={() => sendsingleDownlink("12", 2)}
-                              size="xl"
-                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-                            />
-                          )}
-      
-                          <p>Stop</p>
-                        </CCol>
-      
-                        <CCol>
-                          {commandButton === 3 ? (
-                            <LoadingSpinner />
-                          ) : (
-                            <CIcon
-                              icon={cilExitToApp}
-                              className="me-2 cursor-pointer"
-                              size="xl"
-                              onClick={() => sendsingleDownlink("15", 3)}
-                              style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-                            />
-                          )}
-      
-                          <p>Return</p>
-                        </CCol>
-                      </CRow> */}
-                <h6 className="text-success">Cleaning Record</h6>
-                <h6 className="text-success mt-4">Robot Information</h6>
-                <span>
-                  {" "}
-                  <strong>Robot No:</strong> {robotDetails.robot_no}
-                  <br />
-                </span>
-                <span>
-                  {" "}
-                  <strong>Block:</strong> {robotDetails.block}
-                  <br />
-                </span>
-                <span>
-                  <strong>Type:</strong> {robotDetails.robot_type}
-                  <br />
-                </span>
-                <span>
-                  <strong>Site:</strong> {robotDetails.site_id}
-                  <br />
-                </span>
-                <span>
-                  <strong>Lora No:</strong> {robotDetails.lora_no}
-                  <br />
-                </span>
+                Robot Details - {selectedRobot._id}
+              </span>
+            </COffcanvasTitle>
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setsideBarVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="xl" />
+            </button>
+          </COffcanvasHeader>
+          <COffcanvasBody>
+            {loadingRobot ? (
+              <div className="h-75 d-flex justify-content-center align-items-center">
+                <LoadingSpinner />
               </div>
-            </div>
-          )}
-        </COffcanvasBody>
-      </COffcanvas>
+            ) : loadingRobotError ? (
+              <CBadge color="danger">{loadingRobotError}</CBadge>
+            ) : (
+              <div>
+                {/* === Cleaning Record === */}
+                <div className="mb-2 p-1 rounded">
+                  <h5 className="text-success mb-3">Cleaning Record</h5>
+
+                  <div className="card shadow-sm rounded-3 m-0">
+                    <div className="card-body d-flex flex-column ">
+                      {/* Cleaning Start */}
+                      <div>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <>Start:</>{" "}
+                          {selectedRobot.cleaning?.start ? (
+                            <span className="text-success">
+                              {new Date(
+                                selectedRobot.cleaning.startAt
+                              ).toLocaleString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              })}
+                            </span>
+                          ) : (
+                            <span className="badge bg-secondary">
+                              Not Started
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Cleaning Finish */}
+                      <div>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <>Finish:</>{" "}
+                          {selectedRobot.cleaning?.finish ? (
+                            <span className="text-success">
+                              {new Date(
+                                selectedRobot.cleaning.finishAt
+                              ).toLocaleString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              })}
+                            </span>
+                          ) : (
+                            <span className="badge bg-warning text-dark">
+                              Not Finished
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Cleaning Cancelled */}
+                      {selectedRobot.cleaning?.cleaning_cancelled && (
+                        <div>
+                          <div className="d-flex justify-content-between align-items-center">
+                            {" "}
+                            <>Status:</>{" "}
+                            <span className="badge bg-danger">
+                              Cleaning Cancelled
+                            </span>{" "}
+                          </div>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <span>Cleaning Cancelled At</span>
+                            <span className="text-muted">
+                              <span className="badge bg-danger">
+                                at{" "}
+                                {new Date(
+                                  selectedRobot.cleaning.cleaning_cancelled_at
+                                ).toLocaleString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  hour12: true,
+                                })}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      {/* Battery Dead */}
+                      {selectedRobot.cleaning?.battery_dead && (
+                        <div>
+                          <strong>Status:</strong>{" "}
+                          <span className="badge bg-danger">Battery Dead</span>{" "}
+                          <small className="text-muted">
+                            at{" "}
+                            {new Date(
+                              selectedRobot.cleaning.battery_dead_at
+                            ).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })}
+                          </small>
+                        </div>
+                      )}
+
+                      {/* Cleaning Progress */}
+                      {/* {(() => {
+                        const lastPoint = selectedRobot.track_details?.length
+                          ? selectedRobot.track_details[
+                              selectedRobot.track_details.length - 1
+                            ].point
+                          : 0;
+
+                        const { distanceCovered, totalDistance, percentage } =
+                          getCleaningPercentage(lastPoint);
+
+                        // Determine bar styling based on status
+                        let progressClass = "progress-bar";
+                        if (selectedRobot.cleaning?.finish) {
+                          progressClass += " bg-success"; // ✅ Completed
+                        } else if (selectedRobot.cleaning?.cleaning_cancelled) {
+                          progressClass += " bg-danger"; // ❌ Cancelled
+                        } else if (selectedRobot.battery_dead) {
+                          progressClass += " bg-dark"; // 🔋 Battery Dead
+                        } else if (percentage > 0) {
+                          progressClass +=
+                            " progress-bar-striped progress-bar-animated bg-info"; // 🚀 In Progress
+                        } else {
+                          progressClass += " bg-secondary"; // ⏸ Not started
+                        }
+
+                        return (
+                          <div>
+                            <div className="d-flex justify-content-between align-items-center mb-1">
+                              <strong>Progress:</strong>
+                              <small>
+                                {distanceCovered} / {totalDistance} (
+                                {percentage}%)
+                              </small>
+                            </div>
+                            <div
+                              className="progress"
+                              style={{ height: "12px", borderRadius: "6px" }}
+                            >
+                              <div
+                                className={progressClass}
+                                role="progressbar"
+                                style={{ width: `${percentage}%` }}
+                                aria-valuenow={percentage}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              ></div>
+                            </div>
+                          </div>
+                        );
+                      })()} */}
+                      {/* Cleaning Progress */}
+                      {(() => {
+                        const lastPoint = selectedRobot.track_details?.length
+                          ? selectedRobot.track_details[
+                              selectedRobot.track_details.length - 1
+                            ].point
+                          : 0;
+
+                        const { distanceCovered, totalDistance, percentage } =
+                          getCleaningPercentage(lastPoint);
+
+                        // Determine bar color/status
+                        let color = "";
+                        let animated = false;
+                        let striped = false;
+
+                        if (selectedRobot.cleaning?.finish) {
+                          color = "success"; // ✅ Completed
+                        } else if (selectedRobot.cleaning?.cleaning_cancelled) {
+                          color = "danger"; // ❌ Cancelled
+                        } else if (selectedRobot.battery_dead) {
+                          color = "dark"; // 🔋 Battery Dead
+                        } else if (percentage > 0) {
+                          color = "info"; // 🚀 In Progress
+                          animated = true;
+                          striped = true;
+                        }
+
+                        return (
+                          <div>
+                            <div className="d-flex justify-content-between align-items-center mb-1">
+                              <strong>Progress:</strong>
+                              <small>
+                                {distanceCovered} / {totalDistance} (
+                                {percentage}%)
+                              </small>
+                            </div>
+
+                            <CProgress
+                              height={16}
+                              className="mb-2 rounded-pill"
+                            >
+                              <CProgressBar
+                                className="z-3"
+                                value={percentage}
+                                color={color}
+                                animated={animated}
+                                striped={striped}
+                              />
+                            </CProgress>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Optional Comments */}
+                      {selectedRobot.comments && (
+                        <div className="mt-2">
+                          <strong>Comments:</strong>{" "}
+                          <span className="text-muted">
+                            {selectedRobot.comments}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedRobot.track_details?.length > 0 && (
+                    <div className="mt-3">
+                      <h6 className="text-info mb-2">Track Details:</h6>
+                      <div
+                        style={{
+                          maxHeight: "200px",
+                          overflowY: "auto",
+                        }}
+                      >
+                        <table
+                          className="table table-sm mb-0 "
+                          style={{ minWidth: "100%" }}
+                        >
+                          <thead
+                            style={{
+                              position: "sticky",
+                              top: 0,
+                              backgroundColor: "#fff",
+                            }}
+                          >
+                            <tr>
+                              <th className="text-center">#</th>
+                              <th className="text-center">Point</th>
+                              <th className="text-start">Timestamp</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ...new Map(
+                                selectedRobot.track_details.map((t) => [
+                                  t.point,
+                                  t,
+                                ])
+                              ).values(),
+                            ]
+                              .map((t, idx) => (
+                                <tr
+                                  key={idx}
+                                  className={`${
+                                    t.point === 30 ? "table-warning" : ""
+                                  }`}
+                                >
+                                  <td className="text-center">{idx + 1}</td>
+                                  <td className="text-center">{t.point}</td>
+                                  <td className="text-start">
+                                    {new Date(t.timestamp).toLocaleString(
+                                      "en-GB",
+                                      {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      }
+                                    )}
+                                  </td>
+                                </tr>
+                              ))
+                              .reverse()}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* === Robot Information === */}
+                <div
+                  className="mb-4 p-3 rounded"
+                  style={{ backgroundColor: "#1b2a4b" }}
+                >
+                  <h5 className="text-success mb-3">Robot Information</h5>
+                  <div className="d-flex flex-column gap-2">
+                    <span>
+                      <strong>Robot No:</strong> {selectedRobot.robot_no}
+                    </span>
+                    <span>
+                      <strong>Block:</strong> {selectedRobot.block}
+                    </span>
+                    <span>
+                      <strong>Type:</strong> {selectedRobot.robot_type}
+                    </span>
+                    <span>
+                      <strong>Site:</strong> {selectedRobot.site_id}
+                    </span>
+                    <span>
+                      <strong>Lora No:</strong> {selectedRobot.lora_no}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </COffcanvasBody>
+        </COffcanvas>
+      )}
     </div>
   );
 };
