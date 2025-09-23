@@ -1100,7 +1100,7 @@ const CreateTechnicianPreventivemaintanance = () => {
               autoPlay
               playsInline
               className="w-100 h-100"
-              style={{ objectFit: "contain", transform: "scaleX(-1)" }} // mirror
+              style={{ objectFit: "contain", transform: "none" }} // 👈 no flip
               onCanPlay={() => setLoadingCamera(false)}
             />
             <canvas ref={canvasRef} style={{ display: "none" }} />

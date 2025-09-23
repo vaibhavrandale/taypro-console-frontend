@@ -268,29 +268,29 @@ const SiteTechnicianAddDpr = () => {
       total_robots: 0,
       comments: "",
       robots_operational_details: {
-        ready_for_operational: 0,
-        online_operational: 0,
-        manual_operational: 0,
-        unoperational: 0,
-        robots_uptime: 0,
+        ready_for_operational: null,
+        online_operational: null,
+        manual_operational: null,
+        unoperational: null,
+        robots_uptime: null,
       },
       preventive_maintenance_status: {
         automatic: {
-          attempted: 0,
-          completed: 0,
+          attempted: null,
+          completed: null,
           robots: [],
         },
         semi_automatic: {
-          attempted: 0,
-          completed: 0,
+          attempted: null,
+          completed: null,
           robots: [],
         },
-        total_pm_done: 0,
+        total_pm_done: null,
       },
       ticket_details: {
-        total_raised: 0,
-        total_closed: 0,
-        total_pending: 0,
+        total_raised: null,
+        total_closed: null,
+        total_pending: null,
       },
       breakdown_reasons: [],
       technician_present: [],
@@ -430,7 +430,7 @@ const SiteTechnicianAddDpr = () => {
     };
 
     fetchSiteIds();
-    // 🚨 remove site_id from dependency to avoid re-triggering infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authtoken]);
 
   // Calculate total operational robots when operational details change
@@ -608,12 +608,10 @@ const SiteTechnicianAddDpr = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "SUBMIT_REQUEST" });
-    if (state.dprData.site_id === "") {
-      toast.error("Site Id is required!");
-    }
+
     const newdata = {
       ...state.dprData,
-      site_id: state.dprData.site_id, // Use the correct state variable
+      site_id: state.dprData.site_id,
     };
 
     try {
@@ -625,12 +623,26 @@ const SiteTechnicianAddDpr = () => {
 
       navigate(`/site-technician/dpr`);
     } catch (error) {
-      dispatch({
-        type: "SUBMIT_FAIL",
-        payload: error.response?.data?.error || error.response?.data?.message,
-      });
+      if (
+        error.response?.data?.error ===
+        "You have already submitted a DPR for this site today."
+      ) {
+        dispatch({
+          type: "SUBMIT_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
 
-      toast.error(error.response?.data?.error || error.response?.data?.message);
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
+      } else {
+        dispatch({
+          type: "SUBMIT_FAIL",
+          payload: "Please fill all the required fields!",
+        });
+
+        toast.error("Please fill all the required fields!");
+      }
     }
   };
 
@@ -820,7 +832,10 @@ const SiteTechnicianAddDpr = () => {
                     type="number"
                     className="form-control"
                     value={
-                      state.dprData.robots_operational_details.unoperational
+                      // state.dprData.robots_operational_details.unoperational
+                      state.dprData.robots_operational_details
+                        .ready_for_operational -
+                      state.dprData.robots_operational_details.robots_uptime
                     }
                     onChange={(e) =>
                       handleNestedChange(
@@ -1143,7 +1158,7 @@ const SiteTechnicianAddDpr = () => {
                     </div>
                     <div className="card-body">
                       <CRow>
-                        <CCol md="6">
+                        {/* <CCol md="6">
                           <div className="mb-3">
                             <label className="form-label">Reason</label>
                             <CFormSelect
@@ -1163,7 +1178,30 @@ const SiteTechnicianAddDpr = () => {
                               ))}
                             </CFormSelect>
                           </div>
+                        </CCol> */}
+                        <CCol xs="12" sm="6" md="6">
+                          <div className="mb-3">
+                            <label className="form-label">Reason</label>
+                            <CFormSelect
+                              value={breakdown.reason}
+                              onChange={(e) =>
+                                updateBreakdownReason(
+                                  index,
+                                  "reason",
+                                  e.target.value
+                                )
+                              }
+                              className="w-50"
+                            >
+                              {breakdownReasons.map((reason) => (
+                                <option key={reason} value={reason}>
+                                  {reason}
+                                </option>
+                              ))}
+                            </CFormSelect>
+                          </div>
                         </CCol>
+
                         <CCol md="3">
                           <div className="mb-3">
                             <label className="form-label">Count</label>
@@ -1274,85 +1312,68 @@ const SiteTechnicianAddDpr = () => {
                     <p>Loading technicians...</p>
                   </div>
                 ) : (
-                  <CTable striped bordered className="mt-2">
-                    <CTableHead color="secondary">
-                      <CTableRow>
-                        <CTableHeaderCell>#</CTableHeaderCell>
-                        <CTableHeaderCell>Image</CTableHeaderCell>
-                        <CTableHeaderCell>Name</CTableHeaderCell>
-                        <CTableHeaderCell style={{ width: "80px" }}>
-                          Present
-                        </CTableHeaderCell>
-                      </CTableRow>
-                    </CTableHead>
-                    <CTableBody>
-                      {state.technicians.map((tech, index) => (
-                        <CTableRow key={index}>
-                          <CTableHeaderCell>{index + 1}</CTableHeaderCell>
-                          <CTableDataCell>
-                            <CAvatar
-                              src={tech.profile_image}
-                              className="me-2"
-                            />
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            {tech.username} - {tech.email}
-                          </CTableDataCell>
-                          <CTableDataCell>
-                            <CFormCheck
-                              checked={state.dprData.technician_present.some(
-                                (t) => t.technician_id === tech._id
-                              )}
-                              onChange={(e) => {
-                                const updatedList = e.target.checked
-                                  ? [
-                                      ...state.dprData.technician_present,
-                                      {
-                                        name: tech.username,
-                                        email: tech.email,
-                                        technician_id: tech._id,
-                                        _id: tech._id,
-                                        role: tech.role,
-                                        profile_image: tech.profile_image,
-                                      },
-                                    ]
-                                  : state.dprData.technician_present.filter(
-                                      (t) => t.technician_id !== tech._id
-                                    );
-                                dispatch({
-                                  type: "SET_FIELD",
-                                  name: "technician_present",
-                                  value: updatedList,
-                                });
-                              }}
-                            />
-                          </CTableDataCell>
+                  <div className="table-responsive">
+                    <CTable striped bordered className="mt-2">
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell style={{ width: "50px" }}>
+                            Present
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>Image</CTableHeaderCell>
+                          <CTableHeaderCell>Name</CTableHeaderCell>
                         </CTableRow>
-                      ))}
-                    </CTableBody>
-                  </CTable>
+                      </CTableHead>
+                      <CTableBody>
+                        {state.technicians.map((tech, index) => (
+                          <CTableRow key={index}>
+                            <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                            <CTableDataCell>
+                              <CFormCheck
+                                checked={state.dprData.technician_present.some(
+                                  (t) => t.technician_id === tech._id
+                                )}
+                                onChange={(e) => {
+                                  const updatedList = e.target.checked
+                                    ? [
+                                        ...state.dprData.technician_present,
+                                        {
+                                          name: tech.username,
+                                          email: tech.email,
+                                          technician_id: tech._id,
+                                          _id: tech._id,
+                                          role: tech.role,
+                                          profile_image: tech.profile_image,
+                                        },
+                                      ]
+                                    : state.dprData.technician_present.filter(
+                                        (t) => t.technician_id !== tech._id
+                                      );
+                                  dispatch({
+                                    type: "SET_FIELD",
+                                    name: "technician_present",
+                                    value: updatedList,
+                                  });
+                                }}
+                              />
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              <CAvatar
+                                src={tech.profile_image}
+                                className="me-2"
+                              />
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {tech.username} - {tech.email}
+                            </CTableDataCell>
+                          </CTableRow>
+                        ))}
+                      </CTableBody>
+                    </CTable>
+                  </div>
                 )}
               </CCol>
             </CRow>
-
-            {/* <CButton
-              disabled={
-                !state.dprData.total_running_robots ||
-                !state.dprData.total_failed_robots ||
-                !state.dprData.robots_run_by
-              }
-              onClick={handleSubmit}
-              className="btn btn-warning btn-sm"
-            >
-              {state.loading ? (
-                <>
-                  Adding..
-                  <LoadingSpinner />
-                </>
-              ) : (
-                "Add"
-              )}
-            </CButton> */}
             <CRow>
               <CCol
                 md="12"
@@ -1467,6 +1488,7 @@ const SiteTechnicianAddDpr = () => {
         visible={showBreakdownModal}
         onClose={() => setShowBreakdownModal(false)}
         size="lg"
+        fullscreen="sm-down"
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>Select Robots for Breakdown</CModalTitle>
@@ -1486,60 +1508,62 @@ const SiteTechnicianAddDpr = () => {
               <p>Loading robots...</p>
             </div>
           ) : (
-            <CTable striped>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell>Robot No</CTableHeaderCell>
-                  <CTableHeaderCell>Block</CTableHeaderCell>
-                  <CTableHeaderCell>DevEUI</CTableHeaderCell>
-                  <CTableHeaderCell>Status</CTableHeaderCell>
-                  <CTableHeaderCell>Action</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {state.availableRobots.map((robot, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{robot.robot_no}</CTableDataCell>
-                    <CTableDataCell>{robot.block}</CTableDataCell>
-                    <CTableDataCell>{robot.deveui}</CTableDataCell>
-                    <CTableDataCell>
-                      <CBadge
-                        color={
-                          robot.lora_state === "online" ? "success" : "danger"
-                        }
-                      >
-                        {robot.lora_state || "Unknown"}
-                      </CBadge>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        onClick={() => {
-                          addRobotToBreakdown(selectedBreakdownIndex, robot);
-                          toast.success(
-                            `Added ${robot.robot_no} to breakdown reason`
-                          );
-                        }}
-                        disabled={
-                          selectedBreakdownIndex >= 0 &&
+            <div className="table-responsive">
+              <CTable striped>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>DevEUI</CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
+                    <CTableHeaderCell>Action</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {state.availableRobots.map((robot, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell>{robot.block}</CTableDataCell>
+                      <CTableDataCell>{robot.deveui}</CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge
+                          color={
+                            robot.lora_state === "online" ? "success" : "danger"
+                          }
+                        >
+                          {robot.lora_state || "Unknown"}
+                        </CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CButton
+                          color="danger"
+                          size="sm"
+                          onClick={() => {
+                            addRobotToBreakdown(selectedBreakdownIndex, robot);
+                            toast.success(
+                              `Added ${robot.robot_no} to breakdown reason`
+                            );
+                          }}
+                          disabled={
+                            selectedBreakdownIndex >= 0 &&
+                            state.dprData.breakdown_reasons[
+                              selectedBreakdownIndex
+                            ]?.robots?.some((r) => r.robot_id === robot._id)
+                          }
+                        >
+                          {selectedBreakdownIndex >= 0 &&
                           state.dprData.breakdown_reasons[
                             selectedBreakdownIndex
                           ]?.robots?.some((r) => r.robot_id === robot._id)
-                        }
-                      >
-                        {selectedBreakdownIndex >= 0 &&
-                        state.dprData.breakdown_reasons[
-                          selectedBreakdownIndex
-                        ]?.robots?.some((r) => r.robot_id === robot._id)
-                          ? "Added"
-                          : "Add"}
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+                            ? "Added"
+                            : "Add"}
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </div>
           )}
         </CModalBody>
         <CModalFooter>
