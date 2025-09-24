@@ -819,6 +819,23 @@ const AddDpr = () => {
     state.dprData.ticket_details.total_closed,
   ]);
 
+  // Calculate unoperational robots
+  useEffect(() => {
+    const totalUnoperational =
+      state.dprData.robots_operational_details.ready_for_operational -
+      state.dprData.robots_operational_details.robots_uptime;
+
+    dispatch({
+      type: "SET_NESTED_FIELD",
+      section: "robots_operational_details",
+      name: "unoperational",
+      value: Math.max(0, totalUnoperational),
+    });
+  }, [
+    state.dprData.robots_operational_details.ready_for_operational,
+    state.dprData.robots_operational_details.robots_uptime,
+  ]);
+
   const handleChange = (e) => {
     dispatch({
       type: "SET_FIELD",
@@ -1230,9 +1247,7 @@ const AddDpr = () => {
                     type="number"
                     className="form-control"
                     value={
-                      state.dprData.robots_operational_details
-                        .ready_for_operational -
-                      state.dprData.robots_operational_details.robots_uptime
+                      state.dprData.robots_operational_details.unoperational
                     }
                     onChange={(e) =>
                       handleNestedChange(
