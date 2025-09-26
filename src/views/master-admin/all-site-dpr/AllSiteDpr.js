@@ -406,9 +406,10 @@ const AllSiteDpr = () => {
                 style={{
                   position: "sticky",
                   top: 0,
-                  zIndex: 5,
+                  left: 0,
+                  zIndex: 6,
                   background: "#f8f9fa",
-                  minWidth: "100px",
+                  minWidth: "120px",
                 }}
               >
                 Site Name
@@ -419,10 +420,10 @@ const AllSiteDpr = () => {
                 style={{
                   position: "sticky",
                   top: 0,
-                  left: 0,
+                  left: 120,
                   zIndex: 6,
                   background: "#f8f9fa",
-                  minWidth: "120px",
+                  minWidth: "140px",
                 }}
               >
                 Robots Details
@@ -525,12 +526,23 @@ const AllSiteDpr = () => {
                       </CTableDataCell>
                     )}
                     {rowIndex === 0 && (
-                      <CTableDataCell rowSpan={arr.length}>
+                      <CTableDataCell
+                        rowSpan={arr.length}
+                        style={{
+                          position: "sticky",
+                          left: 0,
+                          zIndex: 3,
+                        }}
+                      >
                         {site.site_id}
                       </CTableDataCell>
                     )}
                     <CTableDataCell
-                      style={{ position: "sticky", left: 0, zIndex: 2 }}
+                      style={{
+                        position: "sticky",
+                        left: 140,
+                        zIndex: 3,
+                      }}
                     >
                       {row.label}
                     </CTableDataCell>
