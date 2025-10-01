@@ -8,7 +8,6 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
-  CFormLabel,
   CFormSelect,
   CRow,
 } from "@coreui/react";
@@ -214,43 +213,8 @@ const BarGraph = () => {
     XLSX.writeFile(workbook, `Service_Tickets_${year}.xlsx`);
   };
 
-  // const options = {
-  //   responsive: true,
-  //   maintainAspectRatio: false, // ✅ lets chart grow/shrink properly
-  //   plugins: {
-  //     tooltip: {
-  //       mode: "index", // Show tooltip for the bar you're hovering over
-  //       intersect: false, // Make sure the tooltip only appears for the hovered bar
-  //       callbacks: {
-  //         label: function (tooltipItem) {
-  //           const siteName = tooltipItem.dataset.label; // Get the site name (dataset label)
-  //           const count = tooltipItem.raw; // Get the count for this specific bar
-
-  //           return `${siteName}: ${count}`;
-  //         },
-  //       },
-  //     },
-  //     legend: {
-  //       position: "bottom",
-  //     },
-  //   },
-  //   scales: {
-  //     x: {
-  //       stacked: false, // Ensure bars are side by side, not stacked
-  //     },
-  //     y: {
-  //       ticks: {
-  //         stepSize: 1, // This ensures y-axis increases by whole numbers
-  //         beginAtZero: true,
-  //         precision: 0, // Prevent decimal points
-  //       },
-  //       // max: 50,
-  //     },
-  //   },
-  // };
   const options = {
     responsive: true,
-    maintainAspectRatio: false,
     maintainAspectRatio: false,
     plugins: {
       tooltip: {
@@ -341,7 +305,6 @@ const BarGraph = () => {
               </CCol>
 
               <CCol xs={12} md={3} lg={2}>
-                <CFormLabel>Export</CFormLabel>
                 <CButton size="sm" color="success" onClick={exportToExcel}>
                   Export to Excel
                 </CButton>

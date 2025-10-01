@@ -4654,6 +4654,33 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/client-tickets",
+    name: "Client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <ClientTicketsDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-tickets/create-new-client-ticket",
+    name: "Create New client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewClientTicket />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-tickets/update-client-ticket/:id",
+    name: "Update client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateClientTicket />
+      </ServiceAdminRoute>
+    ),
+  },
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
