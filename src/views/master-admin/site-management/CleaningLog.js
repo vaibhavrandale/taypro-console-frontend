@@ -428,17 +428,17 @@ const CleaningLog = () => {
                   <CTableHeaderCell className="text-center">
                     Robot No
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  {/* <CTableHeaderCell className="text-center">
                     Deveui
-                  </CTableHeaderCell>
+                  </CTableHeaderCell> */}
                   <CTableHeaderCell className="text-center">
                     Data
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
-                    Timestamp
+                    Topic
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
-                    Topic
+                    Timestamp
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -468,17 +468,17 @@ const CleaningLog = () => {
                       <CTableDataCell className="text-center">
                         {log.robot_no}
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
+                      {/* <CTableDataCell className="text-center">
                         {log.deveui}
-                      </CTableDataCell>
+                      </CTableDataCell> */}
                       <CTableDataCell className="text-center">
                         {log.data}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {new Date(log.createdAt).toLocaleString("en-GB")}
+                        {log.topic}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {log.topic}
+                        {new Date(log.createdAt).toLocaleString("en-GB")}
                       </CTableDataCell>
                     </CTableRow>
                   ))

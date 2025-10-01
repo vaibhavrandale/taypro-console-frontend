@@ -145,9 +145,10 @@ const RobotOperating = () => {
   const [wheelSpeedValue, setWheelSpeedValue] = useState("");
   const [brushSpeedValue, setBrushSpeedValue] = useState("");
 
-  let start = "C1";
-  let stop = "CC";
-  let returntodock = "D1";
+  let start = "11";
+  let partialStart = "12";
+  let stop = "14";
+  let returntodock = "15";
   let removecurrentLimit = "HCD";
   let setWheelPwm100 = "W1";
   let setWheelPwm200 = "W2";
@@ -347,21 +348,26 @@ const RobotOperating = () => {
     setLoadingRow(index);
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no......
-    let robotdownlink = {
-      deveui: robot.deveui,
-      robot_no: robot.robot_no,
-      site_id: site_id,
-      command: command,
-      lora_no: robot.lora_no,
-    };
+    // let robotdownlink =;
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
+      const data = await axios.post(
+        // "/api/v1/robots/downlink",
+        "/api/v1/robots/send-mqtt-downlink",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
 
-      toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -434,15 +440,18 @@ const RobotOperating = () => {
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post(
-        "/api/v1/robots/multicast-downlink",
+        // "/api/v1/robots/multicast-downlink",
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
 
-      toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+
+      toast.success(data.data.message);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -1201,15 +1210,15 @@ const RobotOperating = () => {
                       </CButton>
                       <CButton
                         className="btn btn-sm btn-warning m-1 shadow"
-                        onClick={() => sendsingleDownlink(newCleaningStart, 43)}
+                        onClick={() => sendsingleDownlink(partialStart, 43)}
                       >
                         {commandButton === 43 ? (
                           <>
-                            TEST START&nbsp;
+                            Partial Start&nbsp;
                             <LoadingSpinner />
                           </>
                         ) : (
-                          "TEST START"
+                          "Partial Start"
                         )}
                       </CButton>
                       <CButton
