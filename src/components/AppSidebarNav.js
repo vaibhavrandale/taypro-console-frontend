@@ -307,13 +307,20 @@ export const AppSidebarNav = () => {
   return (
     <CSidebarNav as={SimpleBar}>
       <CFormInput
-        className="px-3 py-2 my-2"
+        className="px-3 py-2 my-2 border-0"
         placeholder="Search links..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      {filteredNav.map((item, index) =>
+      {/* {filteredNav.map((item, index) =>
         item.items ? navGroup(item, index) : navItem(item, index)
+      )} */}
+      {filteredNav.flatMap((item) =>
+        item.items
+          ? item.items.map((child, idx) =>
+              child.items ? navGroup(child, idx) : navItem(child, idx)
+            )
+          : [navItem(item)]
       )}
     </CSidebarNav>
   );

@@ -1,5 +1,14 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { CRow, CCol, CFormSelect, CFormInput, CBadge } from "@coreui/react";
+import {
+  CRow,
+  CCol,
+  CFormSelect,
+  CFormInput,
+  CBadge,
+  CCard,
+  CCardHeader,
+  CCardBody,
+} from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -282,6 +291,16 @@ const Statistics = () => {
             loading={cleaningLoading}
             error={cleaningError}
           />
+          {/* <CCol xs={12} className="mb-4 shadow">
+            <CCard>
+              <CCardHeader>More Statistics Coming Soon...</CCardHeader>
+              <CCardBody className="text-center">
+                <CBadge color="warning p-3 fs-5">
+                  Stay tuned for more updates!
+                </CBadge>
+              </CCardBody>
+            </CCard>
+          </CCol> */}
         </>
       )}
     </div>

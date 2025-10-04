@@ -921,6 +921,7 @@ import { smoothScroll } from "./helpers";
 import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CBadge, CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
+import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -929,7 +930,13 @@ const reducer = (state, action) => {
     case "FETCH_SUCCESS":
       return { ...state, loading: false, robots: action.payload };
     case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true };
     case "DELETE_SUCCESS":
@@ -955,7 +962,17 @@ const reducer = (state, action) => {
 
 const RobotTracker = () => {
   const [
-    { error, robots, loading, loadingDelete, loadingSites, sites, sitesError },
+    {
+      error,
+      robots,
+      loading,
+      loadingDelete,
+      loadingSites,
+      sites,
+      sitesError,
+      subscriptiondata,
+      subscriptionStatus,
+    },
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
@@ -965,12 +982,15 @@ const RobotTracker = () => {
     sites: [],
     loadingSites: true,
     sitesError: "",
+    subscriptiondata: {},
+    subscriptionStatus: "",
   });
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
-  const [site_id, setSiteId] = useState("taypro_office");
+  const [site_id, setSiteId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [selectedRobotId, setSelectedRobotId] = useState(null);
   // const [selectedRobot, setSelectedRobot] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -1003,9 +1023,13 @@ const RobotTracker = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: error.response?.data?.error || error.message,
+          payload: error.response?.data?.error || error.response?.data?.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
-        toast.error(error.response?.data?.error || error.message);
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message
+        );
       }
     };
     fetchRobotTracking();
@@ -1166,10 +1190,17 @@ const RobotTracker = () => {
       toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
+
+  const checkStatus = [
+    "subscriptionSitesAssigned",
+    "subscriptionFound",
+    "subscriptionaRenewStatus",
+    "subscriptionPaymentStatus",
+    "subscriptionPlanAccess",
+  ];
   return (
     <div className="custom-scrollbar">
       <h3 className="text-light text-center">Live Robot Tracking</h3>
-
       {loadingSites ? (
         <LoadingSpinner />
       ) : sitesError ? (
@@ -1177,17 +1208,17 @@ const RobotTracker = () => {
           {sitesError}
         </CBadge>
       ) : (
-        <CRow className="mb-3 justify-content-start align-items-center">
-          <CCol md={2}>
+        <CRow className="mb-3 justify-content-end align-items-center">
+          <CCol md={3}>
             <CFormSelect
               id="siteSelect"
+              className="p-1"
               value={site_id}
               onChange={(e) => {
                 setSiteId(e.target.value);
               }}
             >
-              <option value="all">All Sites</option>
-              <option disabled>────────────</option>
+              <option value="">Select Site</option>
               {sites?.map((site, index) => (
                 <option key={index} value={site.site_id}>
                   {site.site_id}
@@ -1198,6 +1229,7 @@ const RobotTracker = () => {
           <CCol md={2}>
             <CFormInput
               type="date"
+              className="p-1"
               placeholder="Search by Category..."
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -1205,41 +1237,39 @@ const RobotTracker = () => {
           </CCol>
         </CRow>
       )}
-
       <div
         className=" custom-scrollbar"
         style={{
           // overflowY: "auto",
           overflowX: "auto",
-          minHeight: "60vh",
+          minHeight: "50vh",
         }}
       >
         {loading ? (
           <LoadingSpinner />
-        ) : error ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "60vh",
-            }}
-          >
-            <div className="alert alert-danger p-2">{error}</div>{" "}
-          </div>
-        ) : robots.length > 0 ? (
-          robots.map((robot) => (
-            <div className="col-md-12 mb-3" key={robot._id}>
-              <Robot
-                robot={robot}
-                handleRobotClick={handleRobotClick} // ✅ pass function
-                deleteHandler={(e) => deleteHandler(e, robot._id)}
-                loadingDelete={loadingDelete}
-              />
-            </div>
-          ))
+        ) : checkStatus.includes(subscriptionStatus) ? (
+          <SubscriptionExpiryCard
+            data={subscriptiondata}
+            subscriptionStatus={subscriptionStatus}
+            error={sitesError}
+          />
         ) : (
-          <div>No Robots Found</div>
+          <>
+            {robots.length > 0 ? (
+              robots.map((robot) => (
+                <div className="col-md-12 my-3" key={robot._id}>
+                  <Robot
+                    robot={robot}
+                    handleRobotClick={handleRobotClick} // ✅ pass function
+                    deleteHandler={(e) => deleteHandler(e, robot._id)}
+                    loadingDelete={loadingDelete}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="alert alert-danger w-50">No Robots Found</div>
+            )}
+          </>
         )}
       </div>
 
@@ -1250,6 +1280,7 @@ const RobotTracker = () => {
           robot={selectedRobot}
           visible={sidebarVisible}
           onClose={handleSidebarClose}
+          userInfo={userInfo}
         />
       )}
       {/*footer */}
@@ -1275,7 +1306,7 @@ const RobotTracker = () => {
           ></div>
           <span>Running</span>
         </div>
-
+        |
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div
             style={{
@@ -1284,9 +1315,9 @@ const RobotTracker = () => {
               backgroundColor: "#4CAF50",
             }}
           ></div>
-          <span>At Dock</span>
+          <span>At Dock/Cleaning Completed</span>
         </div>
-
+        |
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div
             style={{

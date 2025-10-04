@@ -21,6 +21,7 @@ import {
   CCardHeader,
   CCardBody,
   CTooltip,
+  CBadge,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -147,13 +148,13 @@ const ClientBlockManagement = () => {
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
-      <h4 className="p-2 text-center text-primary">
+      <h4 className="p-2 text-center">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
-          <h4>{error}</h4>
+          <span className="text-danger">{error}</span>
         ) : (
-          <span>
+          <span className="text-success">
             {sitename}, {sitelocation}
           </span>
         )}
@@ -185,7 +186,7 @@ const ClientBlockManagement = () => {
         >
           <CModalHeader closeButton={false}>
             <CModalTitle>
-              <span className="text-primary">
+              <span className="text-success">
                 {sitename}, {sitelocation}
               </span>{" "}
               - Robots Details
@@ -230,6 +231,9 @@ const ClientBlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Block
                   </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Last Update
+                  </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -246,10 +250,25 @@ const ClientBlockManagement = () => {
                         {robot.deveui}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.lora_state === 1 ? "Online" : "Offline"}
+                        {robot.lora_state === 1 ? (
+                          <CBadge color="success">Online</CBadge>
+                        ) : (
+                          <CBadge color="danger">Offline</CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.block}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {new Date(robot.last_uplink).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -272,8 +291,8 @@ const ClientBlockManagement = () => {
 
             return (
               <CCol md={4} className="my-2" key={index}>
-                <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                  <CCardHeader className="text-center fw-bold border">
+                <CCard className="h-100 d-flex flex-column shadow-sm border border-primary">
+                  <CCardHeader className="text-center fw-bold border-bottom border-primary">
                     {block.block_name}
                   </CCardHeader>
                   <CCardBody className="d-flex flex-column flex-grow-1">
@@ -304,7 +323,7 @@ const ClientBlockManagement = () => {
                       </CCol>
                     </div>
 
-                    <div className="d-flex justify-content-center flex-wrap align-items-center flex-grow-1 mx-3">
+                    <div className="d-flex justify-content-center flex-wrap align-items-center mx-3">
                       {robot.map((item, index) => (
                         <CTooltip
                           key={index}
