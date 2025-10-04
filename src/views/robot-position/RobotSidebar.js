@@ -28,6 +28,7 @@ const RobotSidebar = ({
   loadingDelete,
   visible,
   onClose,
+  userInfo,
 }) => {
   const lastreeivedPointInTracking =
     robot.track_details?.slice(-1)[0]?.point || 0;
@@ -40,6 +41,23 @@ const RobotSidebar = ({
     item,
     robot.track_details
   );
+
+  // 🔹 Utility function (can put this in a utils.js file or above your component)
+  const formatTime = (totalSec) => {
+    if (!totalSec || isNaN(totalSec)) return "N/A";
+
+    const hours = Math.floor(totalSec / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+
+    let result = "";
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0) result += `${minutes}m `;
+    if (seconds > 0) result += `${seconds}s`;
+
+    return result.trim();
+  };
+
   return (
     <COffcanvas
       placement="end"
@@ -87,7 +105,9 @@ const RobotSidebar = ({
         </CCard>
         <CleaningStatusCard robot={robot} />
         <BatteryStatusCard cleaning={robot.cleaning} />
-        <TrackingDetailsTable trackDetails={robot.track_details} />
+        {userInfo.type === "Internal" && (
+          <TrackingDetailsTable trackDetails={robot.track_details} />
+        )}
         <CCard className="border-0 my-3 shadow-sm bg-secondary text-light">
           <CCardBody>
             <h5 className="text-light mb-3">🤖 Robot Information</h5>
@@ -194,77 +214,83 @@ const RobotSidebar = ({
                   >
                     Value
                   </CTableHeaderCell>
-                  <CTableHeaderCell>Time</CTableHeaderCell>
-                </CTableRow>
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Forward Cleaning Time
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.forward_cleaning_time ? (
-                      <>{robot.cleaning.forward_cleaning_time} Sec.</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.forward_cleaning_time_received_at ? (
-                      <>
-                        {new Date(
-                          robot.cleaning.forward_cleaning_time_received_at
-                        ).toLocaleString("en-GB", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}{" "}
-                      </>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
+                  <CTableHeaderCell>Received At</CTableHeaderCell>
                 </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Reverse Cleaning Time
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.reverse_cleaning_time ? (
-                      <>{robot.cleaning.reverse_cleaning_time} Sec.</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.reverse_cleaning_time_received_at ? (
-                      new Date(
-                        robot.cleaning.reverse_cleaning_time_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                {userInfo.type === "Internal" && (
+                  <>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Forward Cleaning Time
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.forward_cleaning_time ? (
+                          <>{robot.cleaning.forward_cleaning_time} Sec.</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.forward_cleaning_time_received_at ? (
+                          <>
+                            {new Date(
+                              robot.cleaning.forward_cleaning_time_received_at
+                            ).toLocaleString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })}{" "}
+                          </>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
+
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Reverse Cleaning Time
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.reverse_cleaning_time ? (
+                          <>{robot.cleaning.reverse_cleaning_time} Sec.</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.reverse_cleaning_time_received_at ? (
+                          new Date(
+                            robot.cleaning.reverse_cleaning_time_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
+                  </>
+                )}
 
                 <CTableRow>
                   <CTableHeaderCell
@@ -277,7 +303,7 @@ const RobotSidebar = ({
                     style={{ minWidth: "100px", fontSize: "13px" }}
                   >
                     {robot.cleaning.total_cleaning_time ? (
-                      <> {robot.cleaning.total_cleaning_time} Sec.</>
+                      <> {formatTime(robot.cleaning.total_cleaning_time)} </> // Use the utility function here
                     ) : (
                       <CBadge color="warning">N/A</CBadge>
                     )}
@@ -339,40 +365,6 @@ const RobotSidebar = ({
                     scope="row"
                     style={{ minWidth: "170px", fontSize: "14px" }}
                   >
-                    Battery At Reverse Station
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.battery_at_reverse_station ? (
-                      <>{robot.cleaning.battery_at_reverse_station} %</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.battery_at_reverse_station_received_at ? (
-                      new Date(
-                        robot.cleaning.battery_at_reverse_station_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
-
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
                     Battery After Cleaning
                   </CTableHeaderCell>
                   <CTableDataCell
@@ -401,284 +393,328 @@ const RobotSidebar = ({
                     )}
                   </CTableDataCell>
                 </CTableRow>
+                {userInfo.type === "Internal" && (
+                  <>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Battery At Reverse Station
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.battery_at_reverse_station ? (
+                          <>{robot.cleaning.battery_at_reverse_station} %</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .battery_at_reverse_station_received_at ? (
+                          new Date(
+                            robot.cleaning.battery_at_reverse_station_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Temp. Before Cleaning
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.temperature_before_cleaning ? (
-                      <>{robot.cleaning.temperature_before_cleaning} °C</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.temperature_before_cleaning_received_at ? (
-                      new Date(
-                        robot.cleaning.temperature_before_cleaning_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Temp. Before Cleaning
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.temperature_before_cleaning ? (
+                          <>{robot.cleaning.temperature_before_cleaning} °C</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .temperature_before_cleaning_received_at ? (
+                          new Date(
+                            robot.cleaning.temperature_before_cleaning_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Temp. At Reverse Station
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.temperature_at_reverse_station ? (
-                      <>{robot.cleaning.temperature_at_reverse_station} °C</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning
-                      .temperature_at_reverse_station_received_at ? (
-                      new Date(
-                        robot.cleaning.temperature_at_reverse_station_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Temp. At Reverse Station
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.temperature_at_reverse_station ? (
+                          <>
+                            {robot.cleaning.temperature_at_reverse_station} °C
+                          </>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .temperature_at_reverse_station_received_at ? (
+                          new Date(
+                            robot.cleaning.temperature_at_reverse_station_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Temp. After Cleaning
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.temperature_after_cleaning ? (
-                      <>{robot.cleaning.temperature_after_cleaning} °C</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.temperature_after_cleaning_received_at ? (
-                      new Date(
-                        robot.cleaning.temperature_after_cleaning_received_at
-                      ).toLocaleString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Temp. After Cleaning
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.temperature_after_cleaning ? (
+                          <>{robot.cleaning.temperature_after_cleaning} °C</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .temperature_after_cleaning_received_at ? (
+                          new Date(
+                            robot.cleaning.temperature_after_cleaning_received_at
+                          ).toLocaleString("en-IN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Average Brush Current
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_average_brush_current ? (
-                      <>{robot.cleaning.cycle_average_brush_current} A</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_average_brush_current_received_at ? (
-                      new Date(
-                        robot.cleaning.cycle_average_brush_current_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Average Brush Current
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_average_brush_current ? (
+                          <>{robot.cleaning.cycle_average_brush_current} A</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .cycle_average_brush_current_received_at ? (
+                          new Date(
+                            robot.cleaning.cycle_average_brush_current_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Average Wheel Current
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_average_wheel_current ? (
-                      <>{robot.cleaning.cycle_average_wheel_current} A</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_average_wheel_current_received_at ? (
-                      new Date(
-                        robot.cleaning.cycle_average_wheel_current_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Average Wheel Current
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_average_wheel_current ? (
+                          <>{robot.cleaning.cycle_average_wheel_current} A</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning
+                          .cycle_average_wheel_current_received_at ? (
+                          new Date(
+                            robot.cleaning.cycle_average_wheel_current_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Max Brush Current
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_max_brush_current ? (
-                      <>{robot.cleaning.cycle_max_brush_current} A</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_max_brush_current_received_at ? (
-                      new Date(
-                        robot.cleaning.cycle_max_brush_current_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Max Brush Current
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_max_brush_current ? (
+                          <>{robot.cleaning.cycle_max_brush_current} A</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_max_brush_current_received_at ? (
+                          new Date(
+                            robot.cleaning.cycle_max_brush_current_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Max Wheel Current
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_max_wheel_current ? (
-                      <>{robot.cleaning.cycle_max_wheel_current} A</>
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_max_wheel_current_received_at ? (
-                      new Date(
-                        robot.cleaning.cycle_max_wheel_current_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Max Wheel Current
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_max_wheel_current ? (
+                          <>{robot.cleaning.cycle_max_wheel_current} A</>
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_max_wheel_current_received_at ? (
+                          new Date(
+                            robot.cleaning.cycle_max_wheel_current_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
 
-                <CTableRow>
-                  <CTableHeaderCell
-                    scope="row"
-                    style={{ minWidth: "170px", fontSize: "14px" }}
-                  >
-                    Cycle Number
-                  </CTableHeaderCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_count ? (
-                      robot.cleaning.cycle_count
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                  <CTableDataCell
-                    style={{ minWidth: "100px", fontSize: "13px" }}
-                  >
-                    {robot.cleaning.cycle_count_received_at ? (
-                      new Date(
-                        robot.cleaning.cycle_count_received_at
-                      ).toLocaleString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })
-                    ) : (
-                      <CBadge color="warning">N/A</CBadge>
-                    )}
-                  </CTableDataCell>
-                </CTableRow>
+                    <CTableRow>
+                      <CTableHeaderCell
+                        scope="row"
+                        style={{ minWidth: "170px", fontSize: "14px" }}
+                      >
+                        Cycle Number
+                      </CTableHeaderCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_count ? (
+                          robot.cleaning.cycle_count
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell
+                        style={{ minWidth: "100px", fontSize: "13px" }}
+                      >
+                        {robot.cleaning.cycle_count_received_at ? (
+                          new Date(
+                            robot.cleaning.cycle_count_received_at
+                          ).toLocaleString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })
+                        ) : (
+                          <CBadge color="warning">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                    </CTableRow>
+                  </>
+                )}
               </CTableBody>
             </CTable>
           </CCardBody>
         </CCard>
-        {robot.last_activity && (
+        {userInfo.type === "Internal" && robot.last_activity && (
           <RobotLastActivity last_activity={robot.last_activity} />
         )}
 

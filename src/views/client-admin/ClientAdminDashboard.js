@@ -469,8 +469,8 @@ const ClientAdminDashboard = () => {
               <CCard className=" shadow">
                 <CCardHeader>
                   <h5 className="text-center">
-                    Total Area Cleaned:{" "}
-                    <span className="text-success fw-bold">
+                    Total Area Cleaned
+                    <span className="text-success fw-bold ms-2">
                       {totalAreaCleaned} m
                     </span>
                   </h5>
@@ -538,6 +538,11 @@ const ClientAdminDashboard = () => {
                         </CBadge>
                       )}
                     </>
+                    // <div>
+                    //   <CBadge color="warning fs-5">
+                    //     Stay tuned for more updates!
+                    //   </CBadge>
+                    // </div>
                   )}
                 </div>
               </CCard>
@@ -677,7 +682,12 @@ const ClientAdminDashboard = () => {
                           {
                             label: "Battery (%)",
                             data: batteryChartData.map((entry) => entry.value),
-                            backgroundColor: "#648DB3",
+                            backgroundColor: chartColors[1],
+                            borderWidth: 1,
+                            barThickness: 20, // 👈 Fixed width for each bar (in pixels)
+                            maxBarThickness: 20, // 👈 Optional: max limit for bar width
+                            categoryPercentage: 0.8, // 👈 Optional: % of available space per category
+                            barPercentage: 0.9, // 👈 Optional: % of space inside each category
                           },
                         ],
                       }}

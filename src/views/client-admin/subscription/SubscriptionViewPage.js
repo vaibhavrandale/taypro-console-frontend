@@ -400,13 +400,13 @@ const SubscriptionViewPage = () => {
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
                             End Date
                           </CTableHeaderCell>
-                          <CTableHeaderCell
+                          {/* <CTableHeaderCell
                             style={{ minWidth: "400px" }}
                             className="text-center"
                           >
                             Tax Details
-                          </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                          </CTableHeaderCell> */}
+                          {/* <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Basic Amount (INR)
                           </CTableHeaderCell>
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -414,10 +414,10 @@ const SubscriptionViewPage = () => {
                           </CTableHeaderCell>
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Payment Status
-                          </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: "100px" }}>
+                          </CTableHeaderCell> */}
+                          {/* <CTableHeaderCell style={{ minWidth: "100px" }}>
                             Action
-                          </CTableHeaderCell>
+                          </CTableHeaderCell> */}
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
@@ -448,7 +448,7 @@ const SubscriptionViewPage = () => {
                             <CTableDataCell>
                               {moment(invoice.end_date).format("DD-MM-YYYY")}
                             </CTableDataCell>
-                            <CTableDataCell>
+                            {/* <CTableDataCell>
                               <CRow>
                                 <CCol>
                                   <strong>CGST:</strong>{" "}
@@ -470,8 +470,8 @@ const SubscriptionViewPage = () => {
                                 invoice.tax_details.cgst +
                                 invoice.tax_details.sgst +
                                 invoice.tax_details.igst}
-                            </CTableDataCell>
-                            <CTableDataCell>
+                            </CTableDataCell> */}
+                            {/* <CTableDataCell>
                               {invoice.status === "paid" ? (
                                 <CBadge color="success text-uppercase">
                                   Paid
@@ -481,8 +481,8 @@ const SubscriptionViewPage = () => {
                                   Pending
                                 </CBadge>
                               )}
-                            </CTableDataCell>
-                            <CTableDataCell>
+                            </CTableDataCell> */}
+                            {/* <CTableDataCell>
                               <Link
                                 className="btn btn-sm btn-secondary m-1"
                                 onClick={async () => {
@@ -528,7 +528,7 @@ const SubscriptionViewPage = () => {
                                   />
                                 )}
                               </Link>
-                            </CTableDataCell>
+                            </CTableDataCell> */}
                           </CTableRow>
                         ))}
                       </CTableBody>

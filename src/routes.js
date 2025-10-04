@@ -5898,6 +5898,15 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
+  {
+    path: "/client-admin/robots-tracking",
+    name: "Robots Tracking",
+    element: (
+      <ClientAdminRoute>
+        <RobotTracker />
+      </ClientAdminRoute>
+    ),
+  },
 
   {
     path: "/client-admin/pricing",

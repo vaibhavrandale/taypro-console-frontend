@@ -2926,10 +2926,25 @@ const _nav = [
           />
         ),
         items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots Pos. Tracking",
+          //   to: "/client-admin/robots-position",
+          //   subscriptionIcon: (
+          //     <CIcon
+          //       icon={cilDiamond}
+          //       style={{
+          //         height: "18px",
+          //         width: "18px",
+          //         color: "yellow",
+          //       }}
+          //     />
+          //   ),
+          // },
           {
             component: CNavItem,
-            name: "Robots Pos. Tracking",
-            to: "/client-admin/robots-position",
+            name: "Robots Tracking",
+            to: "/client-admin/robots-tracking",
             subscriptionIcon: (
               <CIcon
                 icon={cilDiamond}
@@ -2997,28 +3012,28 @@ const _nav = [
       //   ],
       // },
 
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/client-admin/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        subscriptionIcon: (
-          <CIcon
-            icon={cilDiamond}
-            style={{
-              height: "18px",
-              width: "18px",
-              color: "yellow",
-            }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/client-admin/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   subscriptionIcon: (
+      //     <CIcon
+      //       icon={cilDiamond}
+      //       style={{
+      //         height: "18px",
+      //         width: "18px",
+      //         color: "yellow",
+      //       }}
+      //     />
+      //   ),
+      // },
     ],
   },
 

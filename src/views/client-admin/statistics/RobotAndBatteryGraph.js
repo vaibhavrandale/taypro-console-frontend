@@ -82,11 +82,60 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                     labels: batteryrobots.map((robot) =>
                       robot.robot_no.slice(-4)
                     ),
+                    //   datasets: [
+                    //     {
+                    //       label: "Battery Voltage (V)",
+                    //       data: batteryrobots.map(
+                    //         (robot) => robot.battery_voltage
+                    //       ),
+                    //       backgroundColor: chartColors[1],
+                    //       // borderWidth: 1,
+                    //       // barThickness: 20, // 👈 Fixed width for each bar (in pixels)
+                    //       // maxBarThickness: 20, // 👈 Optional: max limit for bar width
+                    //       // categoryPercentage: 0.6, // 👈 creates more gap
+                    //       // barPercentage: 0.6, // 👈 controls bar size inside slot
+                    //     },
+                    //   ],
+                    // }}
+                    // options={{
+                    //   responsive: true,
+                    //   maintainAspectRatio: false,
+                    //   layout: {
+                    //     padding: 0,
+                    //   },
+                    //   plugins: {
+                    //     legend: { display: false },
+                    //     tooltip: {
+                    //       callbacks: {
+                    //         label: function (context) {
+                    //           return `🔋 ${context.parsed.y} V`;
+                    //         },
+                    //       },
+                    //     },
+                    //   },
+                    //   scales: {
+                    //     y: {
+                    //       beginAtZero: true,
+                    //       title: {
+                    //         display: true,
+                    //         text: "Battery Voltage (V)",
+                    //         font: { size: 12 },
+                    //       },
+                    //     },
+                    //     x: {
+                    //       title: {
+                    //         display: true,
+                    //         text: "Robot Number",
+                    //         font: { size: 8 },
+                    //       },
+                    //     },
+                    //   },
+                    // }}
                     datasets: [
                       {
-                        label: "Battery Voltage (V)",
+                        label: "Battery (%)",
                         data: batteryrobots.map(
-                          (robot) => robot.battery_voltage
+                          (entry) => entry.battery_voltage
                         ),
                         backgroundColor: chartColors[1],
                         borderWidth: 1,
@@ -98,36 +147,11 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                     ],
                   }}
                   options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                      padding: 0,
-                    },
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        callbacks: {
-                          label: function (context) {
-                            return `🔋 ${context.parsed.y} V`;
-                          },
-                        },
-                      },
-                    },
+                    maintainAspectRatio: false, // 🔑 let it expand
+                    responsive: true, // 🔑 auto adjust width
                     scales: {
                       y: {
                         beginAtZero: true,
-                        title: {
-                          display: true,
-                          text: "Battery Voltage (V)",
-                          font: { size: 12 },
-                        },
-                      },
-                      x: {
-                        title: {
-                          display: true,
-                          text: "Robot Number",
-                          font: { size: 8 },
-                        },
                       },
                     },
                   }}

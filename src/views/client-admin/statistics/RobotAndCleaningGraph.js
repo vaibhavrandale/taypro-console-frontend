@@ -78,7 +78,9 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
                 <CChartBar
                   style={{ height: "350px", width: "100%" }}
                   data={{
-                    labels: cleaningrobots.map((robot) => robot.robot_no),
+                    labels: cleaningrobots.map((robot) =>
+                      robot.robot_no.slice(-4)
+                    ),
                     datasets: [
                       {
                         label: "Calculated Distance (M)",
