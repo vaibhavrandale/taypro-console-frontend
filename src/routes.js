@@ -137,6 +137,10 @@ import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
 import Dummy from "./views/robot-position/Dummy";
+import SprintDashboard from "./views/sprints/SprintDashboard";
+import ViewSprint from "./views/sprints/ViewSprint";
+import CreateSprint from "./views/sprints/CreateSprint";
+import GenerateReport from "./views/sprints/GenerateReport";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1504,6 +1508,43 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotEventAndFrames />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/sprints-dashboard",
+    name: "Sprints",
+    element: (
+      <MasterAdminRoute>
+        <SprintDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/:id",
+    name: "View Sprint",
+    element: (
+      <MasterAdminRoute>
+        <ViewSprint />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/create-sprint",
+    name: "Create Sprint",
+    element: (
+      <MasterAdminRoute>
+        <CreateSprint />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/generate-report",
+    name: "Generate Sprint Report",
+    element: (
+      <MasterAdminRoute>
+        <GenerateReport />
       </MasterAdminRoute>
     ),
   },
