@@ -492,6 +492,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Sprints",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Sprints Dashboard",
+            to: "/master-admin/sprints-dashboard",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
