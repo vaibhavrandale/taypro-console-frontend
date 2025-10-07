@@ -103,9 +103,61 @@ const CleaningStatusCard = ({ robot }) => {
               </CTableRow>
             </CTableBody>
           </CTable>
-          {robot.comments && (
-            <div className="alert alert-warning p-1 my-2">
-              <small>{robot.comments}</small>
+          {(robot.comments ||
+            robot.cleaning.cleaning_cancelled ||
+            robot.cleaning.battery_dead) && (
+            <div className="shadow-sm border-0 p-2">
+              <div className="">
+                {/* Robot comment */}
+                {robot.comments && (
+                  <div>
+                    <strong>Comment: </strong>
+                    <span>{robot.comments}</span>
+                  </div>
+                )}
+
+                {/* Status badges */}
+                <div className="d-flex gap-2 flex-wrap my-2">
+                  {robot.cleaning.cleaning_cancelled && (
+                    <span className="badge bg-warning text-dark">
+                      Cleaning Cancelled
+                    </span>
+                  )}
+                  {robot.cleaning.battery_dead && (
+                    <span className="badge bg-danger">Battery Dead</span>
+                  )}
+                  {/* Timestamp */}
+                  {robot.cleaning.cleaning_cancelled_at && (
+                    <small className="text-muted">
+                      {new Date(
+                        robot.cleaning.cleaning_cancelled_at
+                      ).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </small>
+                  )}
+                  {robot.cleaning.battery_dead_at && (
+                    <small className="text-muted">
+                      {new Date(robot.cleaning.battery_dead_at).toLocaleString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        }
+                      )}
+                    </small>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>

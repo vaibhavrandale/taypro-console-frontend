@@ -124,9 +124,12 @@ const RobotCommands = () => {
   };
 
   const COMMAND_CODES = {
-    START: "C1",
-    STOP: "CC",
-    RETURN_TO_DOCK: "D1",
+    // START: "11",
+    // STOP: "CC",
+    // RETURN_TO_DOCK: "D1",
+    START: "11",
+    STOP: "14",
+    RETURN_TO_DOCK: "15",
   };
 
   const sendMulticastDownlink = async (commandCode) => {
@@ -139,11 +142,16 @@ const RobotCommands = () => {
 
     const deveuiList = selectedRobots.map((r) => r.deveui);
     const robotNoList = selectedRobots.map((r) => r.robot_no);
-
+    //  let robotdownlink = {
+    //     deveui: deveuiList,
+    //     block: block,
+    //     site_id: site_id,
+    //     command: command,
+    //   };
     try {
       await axios.post(
-        "/api/v1/robots/send-downlink-in-bulk",
-
+        // "/api/v1/robots/send-downlink-in-bulk",
+        "/api/v1/robots/send-mqtt-multicast-downlink",
         { deveui: deveuiList, command: commandCode },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
@@ -289,7 +297,11 @@ const RobotCommands = () => {
           ) : (
             filteredRobots.map((robot) => (
               <CCol md={3} sm={4} xs={6} key={robot.deveui}>
-                <CCard className="h-100">
+                <CCard
+                  className={`h-100 ${
+                    robot.lora_state === 1 ? `bg-success` : `bg-danger`
+                  }`}
+                >
                   <CCardBody className="d-flex align-items-center p-2">
                     <CFormCheck
                       checked={selectedRobots.some(

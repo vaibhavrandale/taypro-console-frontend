@@ -623,16 +623,16 @@ const reducer = (state, action) => {
       return state;
   }
 };
-
 const SiteTechnicianRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [siteRobots, setSiteRobots] = useState([]);
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
-  let start = "C1";
-  let stop = "CC";
-  let returntodock = "D1";
+  let start = "11";
+
+  let stop = "14";
+  let returntodock = "15";
   // const [LoadingRow,setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
 
@@ -728,36 +728,45 @@ const SiteTechnicianRobotOperating = () => {
   }, [block, site_id, authtoken, robot_no]);
 
   // ✅ Ensure robots exist before filtering
-  const Robotdata =
-    robots?.length > 0
-      ? robots.filter(
-          (robot) =>
-            robot.site_id === site_id &&
-            robot.block === block &&
-            robot.robot_no === robot_no
-        )
-      : [];
+  // const Robotdata =
+  //   robots?.length > 0
+  //     ? robots.filter(
+  //         (robot) =>
+  //           robot.site_id === site_id &&
+  //           robot.block === block &&
+  //           robot.robot_no === robot_no
+  //       )
+  //     : [];
   const blockwiserobots =
     robots?.length > 0 ? robots.filter((robot) => robot.block === block) : [];
 
   const sendsingleDownlink = async (command, index) => {
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no
-    let robotdownlink = {
-      deveui: robot.deveui,
-      robot_no: robot.robot_no,
-      site_id: site_id,
-      command: command,
-      lora_no: robot.lora_no,
-    };
+    // let robotdownlink = {
+    //   deveui: robot.deveui,
+    //   robot_no: robot.robot_no,
+    //   site_id: site_id,
+    //   command: command,
+    //   lora_no: robot.lora_no,
+    // };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-
-      toast.success(data.data.message);
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-downlink",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -784,7 +793,7 @@ const SiteTechnicianRobotOperating = () => {
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post(
-        "/api/v1/robots/multicast-downlink",
+        "/api/v1/robots/send-mqtt-multicast-downlink",
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
@@ -893,7 +902,17 @@ const SiteTechnicianRobotOperating = () => {
                             item.lora_state === 1 ? `online` : `offline`
                           }`}
                         >
-                          {item.robot_no}
+                          <Link
+                            key={index}
+                            to={
+                              item.robot_no === robot_no
+                                ? `#`
+                                : `/${adminroute}/site-management/block-management/${site_id}/${block}/${item.robot_no}`
+                            }
+                            className="dopdown-item-robot text-dark"
+                          >
+                            {item.robot_no}
+                          </Link>
                         </CDropdownItem>
                       ))}
                 </CDropdownMenu>
