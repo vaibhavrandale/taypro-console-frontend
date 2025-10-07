@@ -5443,6 +5443,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-technician/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <SiteTechnicianRoute>
+        <RobotTracker />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
     path: "/site-technician/punch-in-punch-out",
     name: "Punch In / Punch Out",
     element: (

@@ -1970,6 +1970,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Robots Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Tracking",
+            to: "/site-technician/robots-tracker",
+          },
+        ],
+      },
     ],
   },
 

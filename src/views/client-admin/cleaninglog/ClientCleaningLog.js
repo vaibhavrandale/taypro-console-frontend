@@ -334,9 +334,8 @@ const ClientCleaningLog = () => {
         "Row Length (Meters)",
         "Start Time",
         "Start Battery (%)",
-        "Finish Time",
         "Finish Battery (%)",
-
+        "Finish Time",
         "Status",
       ]);
       cleaninglogs.forEach((log, index) => {
