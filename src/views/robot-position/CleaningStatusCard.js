@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { getCleaningPercentage } from "./helpers";
 
-const CleaningStatusCard = ({ robot }) => {
+const CleaningStatusCard = ({ robot, userInfo }) => {
   const lastPoint = robot.track_details?.length
     ? robot.track_details[robot.track_details.length - 1].point
     : 0;
@@ -24,12 +24,22 @@ const CleaningStatusCard = ({ robot }) => {
         <div className="card-body  p-2">
           <div className="border-bottom">
             <small className="my-2 text-end">
-              Distance covered: {distanceCovered} / {totalDistance}
+              Distance covered:{" "}
+              {userInfo.type === "Internal" ? (
+                <span>
+                  {" "}
+                  {distanceCovered} / {totalDistance}
+                </span>
+              ) : (
+                ""
+              )}
             </small>
+
             <CProgress className="mb-2 ">
               <CProgressBar value={percentage}>{percentage}%</CProgressBar>
             </CProgress>
           </div>
+
           <div className="d-flex justify-content-between align-items-center my-2">
             <span className="mb-0 ">Cleaning Status</span>
             {robot.cleaning?.finish ? (
@@ -45,7 +55,7 @@ const CleaningStatusCard = ({ robot }) => {
                 🔋 Battery Issue
               </CBadge>
             ) : (
-              <CBadge color="info" className="fw-normal">
+              <CBadge color="warning" className="fw-normal">
                 ⏳ In Progress
               </CBadge>
             )}

@@ -14,6 +14,7 @@ import {
   CRow,
   CCol,
   CInputGroup,
+  CAvatar,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -149,10 +150,10 @@ const RobotActivity = () => {
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Robot No</CTableHeaderCell>
             <CTableHeaderCell>Command</CTableHeaderCell>
-            <CTableHeaderCell>DevEUI</CTableHeaderCell>
+            {/* <CTableHeaderCell>DevEUI</CTableHeaderCell> */}
             <CTableHeaderCell>Site ID</CTableHeaderCell>
             <CTableHeaderCell>Sent By</CTableHeaderCell>
-            <CTableHeaderCell>Email</CTableHeaderCell>
+            <CTableHeaderCell>Details</CTableHeaderCell>{" "}
             <CTableHeaderCell>Timestamp</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -169,13 +170,42 @@ const RobotActivity = () => {
                 <CTableDataCell>
                   {(page - 1) * limit + index + 1}
                 </CTableDataCell>
-                <CTableDataCell>{item.robot_no}</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
+                  {item.robot_no}
+                  <br />
+                  <small className="text-muted">{item.deveui}</small>
+                </CTableDataCell>
                 <CTableDataCell>{item.command}</CTableDataCell>
-                <CTableDataCell>{item.deveui}</CTableDataCell>
+                {/* <CTableDataCell></CTableDataCell> */}
                 <CTableDataCell>{item.site_id}</CTableDataCell>
-                <CTableDataCell>{item.last_activity?.name}</CTableDataCell>
-                <CTableDataCell>{item.last_activity?.email}</CTableDataCell>
+                {/* <CTableDataCell>{item.last_activity?.name}</CTableDataCell> */}
+
                 <CTableDataCell>
+                  <div className="d-flex justify-content-start align-items-center">
+                    <CAvatar
+                      src={item.last_activity.profile_image}
+                      style={{
+                        maxHeight: "40px",
+                        maxWidth: "40px",
+                        objectFit: "contain",
+                      }}
+                    />
+                    <div className="ms-2 d-flex flex-column justify-content-start align-items-start">
+                      <div>{item.last_activity?.name}</div>
+                      <small className="text-muted">
+                        {item.last_activity?.email}
+                      </small>
+                    </div>
+                  </div>
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "300px" }}>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: item.last_activity?.details,
+                    }}
+                  ></span>
+                </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "200px" }}>
                   {new Date(item.createdAt).toLocaleString("en-IN", {
                     year: "numeric",
                     month: "short",

@@ -160,7 +160,7 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
   } else {
     // default fallback
     phase = "At Dock";
-    badgeColor = "secondary";
+    badgeColor = "primary";
     iconBorder = "#6c757d";
     segmentPct = pt / L;
   }

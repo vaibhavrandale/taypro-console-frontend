@@ -103,7 +103,7 @@ const RobotSidebar = ({
             </CBadge>
           </CCardBody>
         </CCard>
-        <CleaningStatusCard robot={robot} />
+        <CleaningStatusCard robot={robot} userInfo={userInfo} />
         <BatteryStatusCard cleaning={robot.cleaning} />
         {userInfo.type === "Internal" && (
           <TrackingDetailsTable trackDetails={robot.track_details} />
@@ -617,12 +617,15 @@ const RobotSidebar = ({
                         <CTableDataCell
                           style={{ minWidth: "100px", fontSize: "13px" }}
                         >
-                          {robot.cleaning.cycle_max_brush_current ? (
+                          {robot.cleaning.cycle_max_brush_current !== null &&
+                          robot.cleaning.cycle_max_brush_current !==
+                            undefined ? (
                             <>{robot.cleaning.cycle_max_brush_current} A</>
                           ) : (
                             <CBadge color="warning">N/A</CBadge>
                           )}
                         </CTableDataCell>
+
                         <CTableDataCell
                           style={{ minWidth: "100px", fontSize: "13px" }}
                         >

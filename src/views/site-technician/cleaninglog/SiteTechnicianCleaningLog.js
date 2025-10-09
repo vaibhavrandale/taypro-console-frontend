@@ -12,6 +12,7 @@ import {
   CSpinner,
   CButton,
   CBadge,
+  CAlert,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -600,7 +601,7 @@ const SiteTechnicianCleaningLog = () => {
           </CCol>
         </CRow>
       </form>
-
+      {error && <CAlert color="danger">{error}</CAlert>}
       {/* Timer Update Notifications Table - Comes First */}
       <h5 className="mt-3 mb-3">
         ⏱ Timer Update Notifications -{" "}
