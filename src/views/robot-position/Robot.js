@@ -6,7 +6,7 @@ const Robot = ({ robot, handleRobotClick, deleteHandler, loadingDelete }) => {
   const scrollRefs = useRef({});
 
   return (
-    <div className="mx-2" key={robot._id}>
+    <div className={`mx-2`} key={robot._id}>
       <div className="">
         {/* <RobotHeader
           robot={robot}

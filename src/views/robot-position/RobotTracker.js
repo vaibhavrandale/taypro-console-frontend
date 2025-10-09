@@ -9,6 +9,7 @@ import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CBadge, CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
+// import bgImage from "../../assets/brand/solapannelbg.avif";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -30,7 +31,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingDelete: false,
-        robots: state.robots.filter((r) => r._id !== action.payload), // remove deleted robot
+        deleteSuccess: true,
+        // robots: state.robots.filter((r) => r._id !== action.payload), // remove deleted robot
       };
 
     case "FETCH_SITES_REQUEST":
@@ -42,6 +44,9 @@ const reducer = (state, action) => {
 
     case "DELETE_FAIL":
       return { ...state, loadingDelete: false };
+    case "DELETE_RESET":
+      return { ...state, deleteSuccess: false };
+
     default:
       return state;
   }
@@ -59,6 +64,7 @@ const RobotTracker = () => {
       sitesError,
       subscriptiondata,
       subscriptionStatus,
+      deleteSuccess,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -71,6 +77,7 @@ const RobotTracker = () => {
     sitesError: "",
     subscriptiondata: {},
     subscriptionStatus: "",
+    deleteSuccess: false,
   });
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
@@ -79,6 +86,8 @@ const RobotTracker = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [selectedRobotId, setSelectedRobotId] = useState(null);
+  const [selectedBlock, setSelectedBlock] = useState("");
+
   // const [selectedRobot, setSelectedRobot] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const mergeLastActivity = (existing, incoming) => {
@@ -141,6 +150,7 @@ const RobotTracker = () => {
           }
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
+        dispatch({ type: "DELETE_RESET" }); // 👈 reset flag
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -153,8 +163,12 @@ const RobotTracker = () => {
         );
       }
     };
-    fetchRobotTracking();
-  }, [authtoken, date, site_id]);
+    if (deleteSuccess) {
+      fetchRobotTracking();
+    } else {
+      fetchRobotTracking();
+    }
+  }, [authtoken, date, site_id, deleteSuccess]);
 
   // useEffect(() => {
   //   const fetchSites = async () => {
@@ -183,7 +197,7 @@ const RobotTracker = () => {
   useEffect(() => {
     const handleUpdate = ({ tracking }) => {
       const newPoint = parseInt(tracking.uplink.data, 10);
-      toast.success(`${tracking.robot_no}'s Update Sent!`, {
+      toast.success(`${tracking.block} - ${tracking.robot_no}'s Update Sent!`, {
         position: "top-right",
       });
 
@@ -215,12 +229,13 @@ const RobotTracker = () => {
                       ...(tracking.track_details || []),
                     ],
                     updatedAt: new Date().toISOString(),
+                    is_delete: tracking.is_delete,
                   }
                 : r
             );
           } else {
-            // Push new robot into array
-            return [...robotsRef.current, tracking];
+            // Push/pop new robot into array
+            return [tracking, ...robotsRef.current];
           }
         })(),
       });
@@ -230,7 +245,7 @@ const RobotTracker = () => {
       const el = scrollRefs.current[tracking._id];
 
       if (robot && el) {
-        const L = robot.row_length || 1;
+        const L = robot.row_length || 100;
         let segmentPct = 0;
 
         if (newPoint >= 19 && newPoint <= 29) {
@@ -287,7 +302,7 @@ const RobotTracker = () => {
       const response = await axios.delete(`/api/v1/robot-tracking/${id}`, {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
-      dispatch({ type: "DELETE_SUCCESS", payload: id });
+      dispatch({ type: "DELETE_SUCCESS", deleteSuccess: true });
       toast.success(response.data.message);
     } catch (error) {
       dispatch({ type: "DELETE_FAIL" });
@@ -302,8 +317,17 @@ const RobotTracker = () => {
     "subscriptionPaymentStatus",
     "subscriptionPlanAccess",
   ];
+
+  const uniqueBlocks = [...new Set(robots.map((r) => r.block).filter(Boolean))];
+
   return (
-    <div className="custom-scrollbar">
+    <div
+      className=""
+      style={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {(loadingSites || loading) && (
         <div
           style={{
@@ -330,7 +354,22 @@ const RobotTracker = () => {
                   Live Robot Tracking
                 </h4>
               </CCol>
-              <CCol md={3}></CCol>
+              <CCol md={3}>
+                <CFormSelect
+                  id="blockSelect"
+                  className="p-2"
+                  value={selectedBlock}
+                  onChange={(e) => setSelectedBlock(e.target.value)}
+                  disabled={uniqueBlocks.length === 0}
+                >
+                  <option value="">All Blocks</option>
+                  {uniqueBlocks.map((b, idx) => (
+                    <option key={idx} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
               <CCol md={3}>
                 <CFormSelect
                   id="siteSelect"
@@ -371,19 +410,23 @@ const RobotTracker = () => {
                   overflowX: "auto",
                   height: "auto",
                   overflowY: "hidden",
+                  position: "relative",
+                  zIndex: 1,
                 }}
               >
                 {robots.length > 0 ? (
-                  robots.map((robot) => (
-                    <div className="col-md-12 my-3" key={robot._id}>
-                      <Robot
-                        robot={robot}
-                        handleRobotClick={handleRobotClick}
-                        deleteHandler={(e) => deleteHandler(e, robot._id)}
-                        loadingDelete={loadingDelete}
-                      />
-                    </div>
-                  ))
+                  robots
+                    .filter((r) => !selectedBlock || r.block === selectedBlock)
+                    .map((robot) => (
+                      <div className="col-md-12 my-3" key={robot._id}>
+                        <Robot
+                          robot={robot}
+                          handleRobotClick={handleRobotClick}
+                          deleteHandler={(e) => deleteHandler(e, robot._id)}
+                          loadingDelete={loadingDelete}
+                        />
+                      </div>
+                    ))
                 ) : (
                   <div
                     style={{

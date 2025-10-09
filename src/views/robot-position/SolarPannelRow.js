@@ -118,12 +118,15 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
         <span
           style={{
             position: "relative",
-            top: "-6px",
+            top: "-2px",
             left: "5px",
             fontSize: "13px",
             width: "400px",
-            backgroundColor: "white",
-            color: "#000",
+            backgroundColor: `${robot.is_delete ? `red` : `white`}`,
+            color: `${robot.is_delete ? `white` : `black`}`,
+            padding: "2px",
+            borderRadius: "5px",
+            fontWeight: "600",
           }}
         >
           {" "}
@@ -149,7 +152,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
             height="62"
             style={{ objectFit: "contain", borderRadius: "5px" }}
           />
-          <CSpinner color="success" variant="grow" />
+          {/* <CSpinner color="success" variant="grow" /> */}
         </div>
       </div>
     </div>
