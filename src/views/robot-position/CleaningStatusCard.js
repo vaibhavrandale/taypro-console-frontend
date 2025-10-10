@@ -16,15 +16,17 @@ const CleaningStatusCard = ({ robot, userInfo }) => {
     ? robot.track_details[robot.track_details.length - 1].point
     : 0;
 
-  const { distanceCovered, totalDistance, percentage } =
-    getCleaningPercentage(lastPoint);
+  const { distanceCovered, totalDistance, percentage } = getCleaningPercentage(
+    lastPoint,
+    robot
+  );
   return (
     <>
       <div className="card border-0 shadow-sm my-2 bg-dark text-light ">
         <div className="card-body  p-2">
           <div className="border-bottom">
             <small className="my-2 text-end">
-              Distance covered:{" "}
+              Distance covered&nbsp;
               {userInfo.type === "Internal" ? (
                 <span>
                   {" "}
@@ -54,6 +56,8 @@ const CleaningStatusCard = ({ robot, userInfo }) => {
               <CBadge color="danger" className="fw-normal">
                 🔋 Battery Issue
               </CBadge>
+            ) : !robot.cleaning?.start && !robot.cleaning?.finish ? (
+              <CBadge color="primary">At Dock</CBadge>
             ) : (
               <CBadge color="warning" className="fw-normal">
                 ⏳ In Progress
@@ -81,7 +85,7 @@ const CleaningStatusCard = ({ robot, userInfo }) => {
                       )}
                     </span>
                   ) : (
-                    <span className="badge bg-secondary">Not Started</span>
+                    <span className="badge bg-warning">Not Started</span>
                   )}
                 </CTableDataCell>
               </CTableRow>

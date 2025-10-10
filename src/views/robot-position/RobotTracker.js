@@ -7,8 +7,9 @@ import RobotSidebar from "./RobotSidebar";
 import { smoothScroll } from "./helpers";
 import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CBadge, CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
+import { CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
+import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
 const reducer = (state, action) => {
@@ -24,6 +25,7 @@ const reducer = (state, action) => {
         error: action.payload,
         subscriptiondata: action.subscriptiondata,
         subscriptionStatus: action.subscriptionStatus,
+        robots: [], // 🔥 clear previous robots on error
       };
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true };
@@ -170,29 +172,6 @@ const RobotTracker = () => {
     }
   }, [authtoken, date, site_id, deleteSuccess]);
 
-  // useEffect(() => {
-  //   const fetchSites = async () => {
-  //     dispatch({ type: "FETCH_SITES_REQUEST" });
-  //     try {
-  //       const res = await axios.get(
-  //         `/api/v1/sites`,
-
-  //         {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
-  //         }
-  //       );
-  //       dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
-  //     } catch (err) {
-  //       dispatch({
-  //         type: "FETCH_SITES_FAIL",
-  //         payload: err.response?.data?.error || err.response?.data?.message,
-  //       });
-  //       toast.error(err.response?.data?.error || err.response?.data?.message);
-  //     }
-  //   };
-  //   fetchSites();
-  // }, [authtoken]);
-
   robotsRef.current = robots;
   useEffect(() => {
     const handleUpdate = ({ tracking }) => {
@@ -202,39 +181,71 @@ const RobotTracker = () => {
       });
 
       // Update robot state and add new robot if not exists
+      // dispatch({
+      //   type: "FETCH_SUCCESS",
+      //   payload: (() => {
+      //     const exists = robotsRef.current.some((r) => r._id === tracking._id);
+      //     if (exists) {
+      //       // Update existing robot
+      //       return robotsRef.current.map((r) =>
+      //         r._id === tracking._id
+      //           ? {
+      //               ...r,
+      //               uplink: { ...r.uplink, ...tracking.uplink },
+      //               // last_activity: [
+      //               //   ...r.last_activity,
+      //               //   ...(tracking.last_activity || []),
+      //               // ],
+      //               last_activity: mergeLastActivity(
+      //                 r.last_activity,
+      //                 tracking.last_activity
+      //               ),
+
+      //               comments: tracking.comments,
+      //               cleaning: { ...r.cleaning, ...tracking.cleaning },
+      //               track_details: [
+      //                 ...r.track_details,
+      //                 ...(tracking.track_details || []),
+      //               ],
+      //               updatedAt: new Date().toISOString(),
+      //               is_delete: tracking.is_delete,
+      //             }
+      //           : r
+      //       );
+      //     } else {
+      //       // Push/pop new robot into array
+      //       return [tracking, ...robotsRef.current];
+      //     }
+      //   })(),
+      // });
+
       dispatch({
         type: "FETCH_SUCCESS",
         payload: (() => {
-          const exists = robotsRef.current.some((r) => r._id === tracking._id);
-          if (exists) {
-            // Update existing robot
-            return robotsRef.current.map((r) =>
-              r._id === tracking._id
-                ? {
-                    ...r,
-                    uplink: { ...r.uplink, ...tracking.uplink },
-                    // last_activity: [
-                    //   ...r.last_activity,
-                    //   ...(tracking.last_activity || []),
-                    // ],
-                    last_activity: mergeLastActivity(
-                      r.last_activity,
-                      tracking.last_activity
-                    ),
+          const index = robotsRef.current.findIndex(
+            (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
+          );
 
-                    comments: tracking.comments,
-                    cleaning: { ...r.cleaning, ...tracking.cleaning },
-                    track_details: [
-                      ...r.track_details,
-                      ...(tracking.track_details || []),
-                    ],
-                    updatedAt: new Date().toISOString(),
-                    is_delete: tracking.is_delete,
-                  }
-                : r
-            );
+          if (index !== -1) {
+            // replace existing robot (static or real)
+            const updated = [...robotsRef.current];
+            updated[index] = {
+              ...updated[index],
+              ...tracking,
+              last_activity: mergeLastActivity(
+                updated[index].last_activity,
+                tracking.last_activity
+              ),
+              track_details: [
+                ...updated[index].track_details,
+                ...(tracking.track_details || []),
+              ],
+              cleaning: { ...updated[index].cleaning, ...tracking.cleaning },
+              updatedAt: new Date().toISOString(),
+            };
+            return updated;
           } else {
-            // Push/pop new robot into array
+            // push as new robot if truly new
             return [tracking, ...robotsRef.current];
           }
         })(),
@@ -319,6 +330,63 @@ const RobotTracker = () => {
   ];
 
   const uniqueBlocks = [...new Set(robots.map((r) => r.block).filter(Boolean))];
+  // const successFullCleaningCount = robotsRef.current.reduce((count, robot) => {
+  //   if (robot.cleaning?.start && robot.cleaning?.finish && !robot.is_delete) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+
+  // const CleaninginProgressCount = robotsRef.current.reduce((count, robot) => {
+  //   if (robot.cleaning?.start && !robot.cleaning?.finish && !robot.is_delete) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+  // const BatteryDeadCount = robotsRef.current.reduce((count, robot) => {
+  //   if (
+  //     robot.cleaning?.start &&
+  //     robot.cleaning?.battery_dead &&
+  //     !robot.cleaning?.finish &&
+  //     !robot.is_delete
+  //   ) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+
+  // const CleaningCancelCount = robotsRef.current.reduce((count, robot) => {
+  //   if (
+  //     robot.cleaning?.start &&
+  //     robot.cleaning?.cleaning_cancelled &&
+  //     !robot.cleaning?.finish &&
+  //     !robot.is_delete
+  //   ) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+
+  // const noCleaningCount = robotsRef.current.reduce((count, robot) => {
+  //   if (!robot.cleaning?.start && !robot.cleaning?.finish && !robot.is_delete) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+
+  // const totalCount = robotsRef.current.reduce((unique, robot) => {
+  //   if (!robot.is_delete) {
+  //     unique.add(robot.robot_no);
+  //   }
+  //   return unique;
+  // }, new Set()).size;
+
+  // const totalDeleted = robotsRef.current.reduce((count, robot) => {
+  //   if (robot.is_delete) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
 
   return (
     <div
@@ -343,60 +411,77 @@ const RobotTracker = () => {
 
       {!loadingSites && !loading && (
         <>
-          {sitesError || error ? (
-            <CBadge color="danger" className="p-2">
-              {sitesError || error}
-            </CBadge>
-          ) : (
-            <CRow className="m-2 align-items-center">
-              <CCol md={4}>
-                <h4 className="text-light text-center text-success">
-                  Live Robot Tracking
-                </h4>
-              </CCol>
-              <CCol md={3}>
-                <CFormSelect
-                  id="blockSelect"
-                  className="p-2"
-                  value={selectedBlock}
-                  onChange={(e) => setSelectedBlock(e.target.value)}
-                  disabled={uniqueBlocks.length === 0}
-                >
-                  <option value="">All Blocks</option>
-                  {uniqueBlocks.map((b, idx) => (
-                    <option key={idx} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-              <CCol md={3}>
-                <CFormSelect
-                  id="siteSelect"
-                  className="p-2"
-                  value={site_id}
-                  onChange={(e) => setSiteId(e.target.value)}
-                >
-                  <option value="">Select Site</option>
-                  {sites?.map((site, index) => (
-                    <option key={index} value={site.site_id}>
-                      {site.site_id}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-              <CCol md={2}>
-                <CFormInput
-                  type="date"
-                  className="p-1"
-                  placeholder="Search by Category..."
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              </CCol>
-            </CRow>
+          <CRow className="m-2 align-items-center">
+            <CCol md={4}>
+              <h4 className="text-light text-center text-success">
+                Live Robot Tracking
+              </h4>
+            </CCol>
+            <CCol md={3}>
+              <CFormSelect
+                id="blockSelect"
+                className="p-2"
+                value={selectedBlock}
+                onChange={(e) => setSelectedBlock(e.target.value)}
+                disabled={uniqueBlocks.length === 0}
+              >
+                <option value="">All Blocks</option>
+                {uniqueBlocks.map((b, idx) => (
+                  <option key={idx} value={b}>
+                    {b}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+            <CCol md={3}>
+              <CFormSelect
+                id="siteSelect"
+                className="p-2"
+                value={site_id}
+                onChange={(e) => setSiteId(e.target.value)}
+              >
+                <option value="">Select Site</option>
+                {sites?.map((site, index) => (
+                  <option key={index} value={site.site_id}>
+                    {site.site_id}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+            <CCol md={2}>
+              <CFormInput
+                type="date"
+                className="p-2"
+                placeholder="Search by Category..."
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </CCol>
+          </CRow>
+          {/* <CleaningSummary
+            successFullCleaningCount={successFullCleaningCount}
+            CleaninginProgressCount={CleaninginProgressCount}
+            BatteryDeadCount={BatteryDeadCount}
+            CleaningCancelCount={CleaningCancelCount}
+            noCleaningCount={noCleaningCount}
+            totalCount={totalCount}
+            totalDeleted={totalDeleted}
+            userInfo={userInfo}
+          /> */}
+          {(sitesError || error) && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                // height: "0vh", // centers spinner vertically
+              }}
+            >
+              <div className="alert alert-danger w-50 text-center">
+                {sitesError || error}
+              </div>
+            </div>
           )}
-
           <div className="custom-scrollbar">
             {checkStatus.includes(subscriptionStatus) ? (
               <SubscriptionExpiryCard
@@ -417,8 +502,8 @@ const RobotTracker = () => {
                 {robots.length > 0 ? (
                   robots
                     .filter((r) => !selectedBlock || r.block === selectedBlock)
-                    .map((robot) => (
-                      <div className="col-md-12 my-3" key={robot._id}>
+                    .map((robot, index) => (
+                      <div className="col-md-12 my-3" key={index}>
                         <Robot
                           robot={robot}
                           handleRobotClick={handleRobotClick}
@@ -433,11 +518,11 @@ const RobotTracker = () => {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      height: "50vh", // centers spinner vertically
+                      // height: "50vh", // centers spinner vertically
                     }}
                   >
                     <div className="alert alert-danger w-50 text-center">
-                      No Robots Tracking Found Today
+                      No Robots Tracking Found on {date}
                     </div>
                   </div>
                 )}
@@ -469,6 +554,7 @@ const RobotTracker = () => {
           alignItems: "center",
           gap: "15px",
           backgroundColor: "#080f25",
+          zIndex: 50,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -502,6 +588,17 @@ const RobotTracker = () => {
             }}
           ></div>
           <span>Cancelled/Stuck/Battery Dead</span>
+        </div>
+        |
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#ffffff",
+            }}
+          ></div>
+          <span>No Cleaning</span>
         </div>
       </div>
     </div>

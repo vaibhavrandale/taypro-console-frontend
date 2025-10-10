@@ -11,6 +11,7 @@ import {
   CCol,
   CButton,
   CBadge,
+  CAlert,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -170,7 +171,7 @@ const ClientCleaningLog = () => {
       try {
         dispatch({ type: "FETCH_CLEANING_REQUEST" });
         const result = await axios.post(
-          `/api/v1/robot-tracking/sitewise/fetch-by-sites-and-date`,
+          `/api/v1/robot-tracking/sitewise/fetch-cleaninglog/-by-sites-and-date`,
           {
             site_id,
             date: startDate,
@@ -476,9 +477,9 @@ const ClientCleaningLog = () => {
           error={errorLogError || cleaningError || timerLogError}
         />
       ) : errorLogError || cleaningError || timerLogError ? (
-        <CBadge color="danger">
+        <CAlert className="p-2 w-50" color="danger">
           {errorLogError || cleaningError || timerLogError}
-        </CBadge>
+        </CAlert>
       ) : (
         <div className="">
           <div>
