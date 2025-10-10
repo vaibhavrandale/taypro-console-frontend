@@ -36,6 +36,8 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
     className = "cleaning-cancelled";
   } else if (robot.cleaning.battery_dead) {
     className = "battery-dead";
+  } else if (!robot.cleaning.start && !robot.cleaning.finish) {
+    className = "no-cleaning-today";
   } else {
     className = "unknown-status";
   }

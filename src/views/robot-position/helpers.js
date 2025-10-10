@@ -91,14 +91,28 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
     segmentPct = 0;
 
   // --- 1. Handle exceptional states ---
-  if (cleaning.cleaning?.battery_dead) {
+  if (cleaning?.battery_dead && !cleaning.finish) {
     return {
       phase: "Battery Dead",
       badgeColor: "danger",
       iconBorder: "#dc3545",
       segmentPct: pt / L,
     };
-  } else if (cleaning.cleaning?.cleaning_cancelled) {
+  } else if (cleaning?.battery_dead && cleaning.finish) {
+    return {
+      phase: "Battery Dead",
+      badgeColor: "danger",
+      iconBorder: "#dc3545",
+      segmentPct: 0,
+    };
+  } else if (pt !== 40 && cleaning.finish) {
+    return {
+      phase: "Cleaning Completed & At Dock",
+      badgeColor: "success",
+      iconBorder: "#dc3545",
+      segmentPct: 0,
+    };
+  } else if (cleaning?.cleaning_cancelled) {
     return {
       phase: "Cleaning Cancelled",
       badgeColor: "danger",
@@ -106,6 +120,14 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
       segmentPct: pt / L,
     };
   }
+  // else if (!cleaning.cleaning?.start && !cleaning.cleaning?.finish) {
+  //   return {
+  //     phase: "At Dock",
+  //     badgeColor: "primary",
+  //     iconBorder: "#6c757d",
+  //     segmentPct: pt / L,
+  //   };
+  // }
 
   // --- 2. Get last known continuous phase point ---
   const points = trackDetails.map((t) => t.point).sort((a, b) => a - b);
@@ -127,7 +149,7 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
     badgeColor = "success";
     iconBorder = "#343a40";
     segmentPct = 0;
-  } else if (effectivePoint === 40 && cleaning.cleaning?.finish) {
+  } else if (effectivePoint === 40 && cleaning?.finish) {
     phase = "Cleaning Completed & At Dock";
     badgeColor = "success";
     iconBorder = "#000";
@@ -169,12 +191,14 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
 };
 // ---------------------new phase -----------------------
 
-export const getCleaningPercentage = (pt) => {
+export const getCleaningPercentage = (pt, robot) => {
   let percentage = 0;
   let distance = 0;
   const totalSteps = 20;
-
-  if (pt >= 20 && pt <= 29) {
+  if (robot.cleaning.start && robot.cleaning.finish && pt !== 40) {
+    distance = pt - 19;
+    percentage = 100;
+  } else if (pt >= 20 && pt <= 29) {
     distance = pt - 19;
     percentage = (distance / totalSteps) * 100;
   } else if (pt === 30) {

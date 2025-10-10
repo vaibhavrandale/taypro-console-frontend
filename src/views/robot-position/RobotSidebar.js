@@ -80,6 +80,32 @@ const RobotSidebar = ({
             </CBadge>
           </span>
           <span style={{ fontSize: "15px" }}>Doc id- {robot._id}</span>
+          <span style={{ fontSize: "15px" }}>
+            Robot Current State -{" "}
+            {robot.lora_state === 1 ? (
+              <CBadge color="success" className="p-2">
+                ONLINE{" "}
+              </CBadge>
+            ) : (
+              <CBadge color="danger" className="p-2">
+                OFFLINE
+              </CBadge>
+            )}
+          </span>
+          {robot.last_uplink && (
+            <span style={{ fontSize: "15px" }}>
+              Robot Last Update -{" "}
+              {new Date(robot.last_uplink).toLocaleString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+              })}
+            </span>
+          )}
         </COffcanvasTitle>
         <button
           type="button"

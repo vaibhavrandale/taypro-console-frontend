@@ -37,3 +37,7 @@
 .unknown-status {
   border: 2px solid rgb(83, 247, 247) !important;
 }
+
+.no-cleaning-today {
+  border: 2px solid #ffffff !important;
+}

@@ -475,6 +475,7 @@ const getFrameType = (topic) => {
   if (topic?.endsWith("/txack")) return "txack";
   if (topic?.endsWith("/status")) return "status";
   if (topic?.endsWith("/error")) return "error";
+  if (topic?.endsWith("/down")) return "down";
   return "unknown";
 };
 
