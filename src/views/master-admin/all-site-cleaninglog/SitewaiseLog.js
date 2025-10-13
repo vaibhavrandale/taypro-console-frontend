@@ -137,7 +137,8 @@ const SitewaiseLog = () => {
       try {
         dispatch({ type: "FETCH_CLEANING_REQUEST" });
         const result = await axios.post(
-          `/api/v1/robot-tracking/sitewise/fetch-by-sites-and-date`,
+          `/api/v1/robot-tracking/sitewise/fetch-cleaninglog/-by-sites-and-date`,
+
           {
             site_id,
             date: startDate,

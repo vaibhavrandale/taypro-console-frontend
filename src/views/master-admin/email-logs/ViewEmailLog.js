@@ -82,6 +82,7 @@ const ViewEmailLog = () => {
               .replace(/color:\s?#333/gi, "color:#fff") // Replace dark gray with white
               .replace(/color:\s?#000/gi, "color:#fff") // Replace dark gray with white
               .replace(/color:\s?#050505/gi, "color:#fff") // Replace dark gray with white
+              .replace(/color:\s?#f9f9f9/gi, "color:#000") // Replace dark gray with white
               .replace(/<th([^>]*)style="([^"]*)"/gi, (match, p1, p2) => {
                 // Inject color:#000 into existing th styles if not already there
                 let newStyle = p2;
