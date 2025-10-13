@@ -483,7 +483,12 @@ const ViewSprint = () => {
           <>
             <div className="mb-4 text-center p-3 rounded shadow-sm bg-dark text-light">
               <h2 className="text-success  mb-2">{sprint.name}</h2>
-              <p className="text-white mb-1">{sprint.goal}</p>
+              <p
+                className="text-white mb-1"
+                dangerouslySetInnerHTML={{
+                  __html: sprint.goal,
+                }}
+              ></p>
               <div className="d-flex justify-content-center align-items-center gap-2 mt-2">
                 <span className="badge bg-success text-dark px-3 py-2">
                   {new Date(sprint.startDate).toLocaleDateString("en-GB", {

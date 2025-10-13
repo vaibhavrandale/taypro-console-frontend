@@ -9,7 +9,7 @@ import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
-import CleaningSummary from "./CleaningSummary";
+// import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
 const reducer = (state, action) => {
@@ -219,6 +219,38 @@ const RobotTracker = () => {
       //   })(),
       // });
 
+      // dispatch({
+      //   type: "FETCH_SUCCESS",
+      //   payload: (() => {
+      //     const index = robotsRef.current.findIndex(
+      //       (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
+      //     );
+
+      //     if (index !== -1) {
+      //       // replace existing robot (static or real)
+      //       const updated = [...robotsRef.current];
+      //       updated[index] = {
+      //         ...updated[index],
+      //         ...tracking,
+      //         last_activity: mergeLastActivity(
+      //           updated[index].last_activity,
+      //           tracking.last_activity
+      //         ),
+      //         track_details: [
+      //           ...updated[index].track_details,
+      //           ...(tracking.track_details || []),
+      //         ],
+      //         cleaning: { ...updated[index].cleaning, ...tracking.cleaning },
+      //         updatedAt: new Date().toISOString(),
+      //       };
+      //       return updated;
+      //     } else {
+      //       // push as new robot if truly new
+      //       return [tracking, ...robotsRef.current];
+      //     }
+      //   })(),
+      // });
+
       dispatch({
         type: "FETCH_SUCCESS",
         payload: (() => {
@@ -226,28 +258,40 @@ const RobotTracker = () => {
             (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
           );
 
+          // ✅ Case 1: Robot already exists
           if (index !== -1) {
-            // replace existing robot (static or real)
-            const updated = [...robotsRef.current];
-            updated[index] = {
-              ...updated[index],
-              ...tracking,
-              last_activity: mergeLastActivity(
-                updated[index].last_activity,
-                tracking.last_activity
-              ),
-              track_details: [
-                ...updated[index].track_details,
-                ...(tracking.track_details || []),
-              ],
-              cleaning: { ...updated[index].cleaning, ...tracking.cleaning },
-              updatedAt: new Date().toISOString(),
-            };
-            return updated;
-          } else {
-            // push as new robot if truly new
+            const existing = robotsRef.current[index];
+
+            // ✅ Check if cleaning.start = true, cleaning_cancelled = false, battery_dead = false
+            if (
+              existing.cleaning?.start === true &&
+              existing.cleaning?.cleaning_cancelled === false &&
+              existing.cleaning?.battery_dead === false
+            ) {
+              const updated = [...robotsRef.current];
+              updated[index] = {
+                ...existing,
+                ...tracking,
+                last_activity: mergeLastActivity(
+                  existing.last_activity,
+                  tracking.last_activity
+                ),
+                track_details: [
+                  ...existing.track_details,
+                  ...(tracking.track_details || []),
+                ],
+                cleaning: { ...existing.cleaning, ...tracking.cleaning },
+                updatedAt: new Date().toISOString(),
+              };
+              return updated;
+            }
+
+            // ❌ Conditions not met → return unchanged list
             return [tracking, ...robotsRef.current];
           }
+
+          // ✅ Case 2: Robot not found → add as new
+          return [tracking, ...robotsRef.current];
         })(),
       });
 

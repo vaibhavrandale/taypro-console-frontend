@@ -602,6 +602,7 @@ const ClientCleaningLog = () => {
                     <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Robot No
                     </CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
                     <CTableHeaderCell style={{ minWidth: "130px" }}>
                       Row Number
                     </CTableHeaderCell>
@@ -625,7 +626,6 @@ const ClientCleaningLog = () => {
                     {/* <CTableHeaderCell style={{ minWidth: "190px" }}>
                       Distance Covered (Meters)
                     </CTableHeaderCell> */}
-                    <CTableHeaderCell>Status</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
@@ -634,6 +634,17 @@ const ClientCleaningLog = () => {
                       <CTableRow key={index}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
                         <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>
+                          {log.cleaning.finish ? (
+                            <CBadge color="success">Completed</CBadge>
+                          ) : log.cleaning.battery_dead ? (
+                            <CBadge color="danger">Battery Dead</CBadge>
+                          ) : log.cleaning.cleaning_cancelled ? (
+                            <CBadge color="danger">Cleaning Cancelled</CBadge>
+                          ) : (
+                            <CBadge color="info">In Progress</CBadge>
+                          )}
+                        </CTableDataCell>
                         <CTableDataCell>{log.row_no}</CTableDataCell>
                         <CTableDataCell>{log.row_length}</CTableDataCell>
                         <CTableDataCell>
@@ -682,17 +693,6 @@ const ClientCleaningLog = () => {
                           {log.cleaning.battery_after_cleaning
                             ? log.cleaning.battery_after_cleaning
                             : "N/A"}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {log.cleaning.finish ? (
-                            <CBadge color="success">Completed</CBadge>
-                          ) : log.cleaning.battery_dead ? (
-                            <CBadge color="danger">Battery Dead</CBadge>
-                          ) : log.cleaning.cleaning_cancelled ? (
-                            <CBadge color="danger">Cleaning Cancelled</CBadge>
-                          ) : (
-                            <CBadge color="info">In Progress</CBadge>
-                          )}
                         </CTableDataCell>
                       </CTableRow>
                     ))

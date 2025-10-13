@@ -103,7 +103,12 @@ const SprintDashboard = () => {
           sprints.map((sprint, index) => (
             <CCol md={4} className="mb-3 " key={index}>
               <CCard className=" shadow-sm ">
-                <CCardHeader>{sprint.name}</CCardHeader>
+                <CCardHeader className="d-flex justify-content-between align-items-center">
+                  <span> {sprint.name} </span>
+                  <Link className="btn btn-sm" to={`${sprint._id}`}>
+                    view
+                  </Link>
+                </CCardHeader>{" "}
                 <CCardBody>
                   <p>
                     {new Date(sprint.startDate).toLocaleDateString("en-GB", {
@@ -118,7 +123,11 @@ const SprintDashboard = () => {
                       year: "numeric",
                     })}
                   </p>
-                  <p>{sprint.goal}</p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: sprint.goal,
+                    }}
+                  ></p>
                   <Link className="btn btn-sm" to={`${sprint._id}`}>
                     View Sprint
                   </Link>
