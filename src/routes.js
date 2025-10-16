@@ -140,6 +140,14 @@ import Dummy from "./views/robot-position/Dummy";
 import SiteAnalysisDashboard from "./views/master-admin/site-analysis/SiteAnalysisDashboard";
 import AllClientsDashboard from "./views/master-admin/site-analysis/AllClientsDashboard";
 import ClientSitesDashboard from "./views/master-admin/site-analysis/ClientSitesDashboard";
+import RssiSnrGraph from "./views/master-admin/site-analysis/RssiSnrGraph";
+import RobotDataGraphs from "./views/master-admin/site-analysis/RobotDataGraphs";
+import RobotTrackingBatteryGraph from "./views/master-admin/site-analysis/RobotTrackingBatteryGraph";
+import RobotTrackingLog from "./views/master-admin/site-analysis/RobotTrackingLog";
+import RobotTrackingCurrentGraph from "./views/master-admin/site-analysis/RobotTrackingCurrentGraph";
+import RobotTrackingCurrentTable from "./views/master-admin/site-analysis/RobotTrackingCurrentTable";
+import RobotTrackingBatteryTable from "./views/master-admin/site-analysis/RobotTrackingBatteryTable";
+import RssiSnrTable from "./views/master-admin/site-analysis/RssiSnrTable";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1510,9 +1518,7 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-
-  //Site Analysis Routes
-
+  // Site Analysis Routes
   {
     path: "/master-admin/site-analysis-dashboard",
     name: "Site Analysis Dashboard",
@@ -1540,7 +1546,79 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id",
+    name: "Robot Data Graphs",
+    element: (
+      <MasterAdminRoute>
+        <RobotDataGraphs />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/rssi-snr",
+    name: "Rssi & Snr Graph",
+    element: (
+      <MasterAdminRoute>
+        <RssiSnrGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/battery",
+    name: "Battery Graph",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingBatteryGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/current",
+    name: "Current Graph",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingCurrentGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/rssi-snr",
+    name: "Rssi & Snr Table",
+    element: (
+      <MasterAdminRoute>
+        <RssiSnrTable />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/battery",
+    name: "Battery Table",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingBatteryTable />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/current",
+    name: "Current Table",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingCurrentTable />
+      </MasterAdminRoute>
+    ),
+  },
 
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotTrackingLog/:site_id/",
+    name: "Robot Tracking Log",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingLog />
+      </MasterAdminRoute>
+    ),
+  },
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------

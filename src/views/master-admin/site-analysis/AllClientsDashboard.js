@@ -35,7 +35,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Clients = () => {
+const AllClientDashboard = () => {
   const [
     { loadingClients, error, clients, totalPages, hasNextPage, hasPrevPage },
     dispatch,
@@ -148,19 +148,22 @@ const Clients = () => {
                       alt={`${client.client_name} logo`}
                       style={{
                         width: "120px",
-                        height: "80px",
+                        height: "70px",
                         objectFit: "contain",
                       }}
                       className="mb-3"
                     />
-                    <CCardTitle className="mb-3 text-center">
+                    <CCardTitle
+                      className="mb-3 text-center"
+                      style={{ fontSize: "16px", fontWeight: "bold" }}
+                    >
                       {client.client_name}
                     </CCardTitle>
                   </div>
                   <CButton
                     color="primary"
-                    size="sm"
-                    className="w-100 mt-auto"
+                    // size="sm"
+                    className="btn btn-sm w-70 mt-auto"
                     as={Link}
                     to={`/${adminroute}/all-clients-dashboard/${client.client_id}`}
                   >
@@ -200,4 +203,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default AllClientDashboard;
