@@ -180,7 +180,7 @@ const CreateNewClientTicketClient = () => {
           <CCardBody>
             <CForm onSubmit={handleSubmit}>
               <CRow>
-                <CCol md="6">
+                <CCol md="3">
                   <div className="mb-3">
                     <label className="form-label">
                       Site Id {loadingSiteIds && <LoadingSpinner />}
@@ -201,7 +201,7 @@ const CreateNewClientTicketClient = () => {
                   </div>
                 </CCol>
                 {/* Subject */}
-                <CCol md={6}>
+                <CCol md={12}>
                   <CFormInput
                     type="text"
                     name="subject"

@@ -475,6 +475,7 @@ const getFrameType = (topic) => {
   if (topic?.endsWith("/txack")) return "txack";
   if (topic?.endsWith("/status")) return "status";
   if (topic?.endsWith("/error")) return "error";
+  if (topic?.endsWith("/down")) return "down";
   return "unknown";
 };
 
@@ -511,6 +512,14 @@ const MqttDashboard = () => {
     return Array.from(binaryString, (char) => {
       return char.charCodeAt(0).toString(16).padStart(2, "0");
     }).join("");
+  }
+
+  function base64ToAscii(base64Str) {
+    const binaryString = atob(base64Str); // decode Base64 to binary string
+    return Array.from(binaryString, (char) =>
+      // replace non-printable characters with "."
+      char.charCodeAt(0) >= 32 && char.charCodeAt(0) <= 126 ? char : "."
+    ).join("");
   }
 
   return (
@@ -593,16 +602,20 @@ const MqttDashboard = () => {
                     {/* Extra info only for Uplink */}
                     {type === "up" && (
                       <>
+                        {/* Data */}
+                        <CCol xs={6} sm={2} md={2} className="text-truncate">
+                          <span className="text-success">HEX:</span>&nbsp;
+                          {base64ToHex(frame.data?.data)}
+                        </CCol>
+                        {/* Data */}
+                        <CCol xs={6} sm={2} md={2} className="text-truncate">
+                          <span className="text-success">ASCII:</span>&nbsp;
+                          {base64ToAscii(frame.data?.data)}
+                        </CCol>
                         {/* DR */}
                         <CCol xs={6} sm={2} md={1} className="text-truncate">
                           <span className="text-success">DR:</span>{" "}
                           {frame.data?.dr}
-                        </CCol>
-
-                        {/* Data */}
-                        <CCol xs={6} sm={2} md={3} className="text-truncate">
-                          <span className="text-success">Data:</span>&nbsp;
-                          {base64ToHex(frame.data?.data)}
                         </CCol>
 
                         {/* FCnt */}
@@ -748,21 +761,38 @@ const MqttDashboard = () => {
                       </CBadge>
                     </div> */}
 
-                      <div className="d-flex justify-content-start align-items-start">
-                        <span className="text-success me-2">Payload -</span>
-                        <p>
-                          Base64(original) :
-                          <CBadge color="warning" className="ms-2">
-                            {selectedFrame.data?.data}
-                          </CBadge>
-                        </p>
+                      <div className="card shadow-sm p-3 mb-3 rounded-3">
+                        <h6 className="text-success mb-3">
+                          📦 Payload Details
+                        </h6>
 
-                        <p className="ms-2">
-                          HEX :
-                          <CBadge color="success" className="ms-2">
-                            {base64ToHex(selectedFrame.data?.data)}
-                          </CBadge>
-                        </p>
+                        <div className="row">
+                          {/* Base64 */}
+                          <div className="col-md-4 mb-2">
+                            <span className="fw-bold text-success">
+                              Base64 (original):
+                            </span>
+                            <div className="bg-dark text-warning rounded p-2 mt-1 small">
+                              {selectedFrame.data?.data || "-"}
+                            </div>
+                          </div>
+
+                          {/* HEX */}
+                          <div className="col-md-4 mb-2">
+                            <span className="fw-bold text-success">HEX:</span>
+                            <div className="bg-dark text-light rounded p-2 mt-1 small">
+                              {base64ToHex(selectedFrame.data?.data) || "-"}
+                            </div>
+                          </div>
+
+                          {/* ASCII */}
+                          <div className="col-md-4 mb-2">
+                            <span className="fw-bold text-success">ASCII:</span>
+                            <div className="bg-dark text-info rounded p-2 mt-1 small">
+                              {base64ToAscii(selectedFrame.data?.data) || "-"}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CCardBody>

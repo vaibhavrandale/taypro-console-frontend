@@ -510,6 +510,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Sprints",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Sprints Dashboard",
+            to: "/master-admin/sprints-dashboard",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -1970,6 +1988,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Robots Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Tracking",
+            to: "/site-technician/robots-tracker",
+          },
+        ],
+      },
     ],
   },
 
@@ -2944,10 +2980,25 @@ const _nav = [
           />
         ),
         items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots Pos. Tracking",
+          //   to: "/client-admin/robots-position",
+          //   subscriptionIcon: (
+          //     <CIcon
+          //       icon={cilDiamond}
+          //       style={{
+          //         height: "18px",
+          //         width: "18px",
+          //         color: "yellow",
+          //       }}
+          //     />
+          //   ),
+          // },
           {
             component: CNavItem,
-            name: "Robots Pos. Tracking",
-            to: "/client-admin/robots-position",
+            name: "Robots Tracking",
+            to: "/client-admin/robots-tracking",
             subscriptionIcon: (
               <CIcon
                 icon={cilDiamond}
@@ -3015,28 +3066,28 @@ const _nav = [
       //   ],
       // },
 
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/client-admin/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        subscriptionIcon: (
-          <CIcon
-            icon={cilDiamond}
-            style={{
-              height: "18px",
-              width: "18px",
-              color: "yellow",
-            }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/client-admin/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   subscriptionIcon: (
+      //     <CIcon
+      //       icon={cilDiamond}
+      //       style={{
+      //         height: "18px",
+      //         width: "18px",
+      //         color: "yellow",
+      //       }}
+      //     />
+      //   ),
+      // },
     ],
   },
 

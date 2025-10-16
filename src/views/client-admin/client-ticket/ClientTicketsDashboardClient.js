@@ -188,17 +188,25 @@ const ClientTicketsDashboardClient = () => {
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell>Ticket ID</CTableHeaderCell>
-            <CTableHeaderCell>Site Id</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "150px" }}>
+              Ticket ID
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "150px" }}>
+              Site Id
+            </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "300px" }}>
               Subject
             </CTableHeaderCell>
-            <CTableHeaderCell>Status</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Status
+            </CTableHeaderCell>
 
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Created By
             </CTableHeaderCell>
-            <CTableHeaderCell>Created Time</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "150px" }}>
+              Created At
+            </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Action
             </CTableHeaderCell>
@@ -244,18 +252,15 @@ const ClientTicketsDashboardClient = () => {
                 </CTableDataCell>
                 <CTableDataCell>{ticket.created_by.name}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  <span className="">
-                    <CTooltip
-                      content={new Date(ticket.createdAt).toLocaleString()}
-                      placement="top"
-                    >
-                      <span>
-                        {formatDistanceToNow(new Date(ticket.createdAt), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    </CTooltip>
-                  </span>
+                  {ticket.createdAt.toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true,
+                  })}
                 </CTableDataCell>
                 <CTableDataCell>
                   <Link

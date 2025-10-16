@@ -148,6 +148,10 @@ import RobotTrackingCurrentGraph from "./views/master-admin/site-analysis/RobotT
 import RobotTrackingCurrentTable from "./views/master-admin/site-analysis/RobotTrackingCurrentTable";
 import RobotTrackingBatteryTable from "./views/master-admin/site-analysis/RobotTrackingBatteryTable";
 import RssiSnrTable from "./views/master-admin/site-analysis/RssiSnrTable";
+import SprintDashboard from "./views/sprints/SprintDashboard";
+import ViewSprint from "./views/sprints/ViewSprint";
+import CreateSprint from "./views/sprints/CreateSprint";
+import GenerateReport from "./views/sprints/GenerateReport";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1619,6 +1623,43 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/sprints-dashboard",
+    name: "Sprints",
+    element: (
+      <MasterAdminRoute>
+        <SprintDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/:id",
+    name: "View Sprint",
+    element: (
+      <MasterAdminRoute>
+        <ViewSprint />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/create-sprint",
+    name: "Create Sprint",
+    element: (
+      <MasterAdminRoute>
+        <CreateSprint />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/sprints-dashboard/generate-report",
+    name: "Generate Sprint Report",
+    element: (
+      <MasterAdminRoute>
+        <GenerateReport />
+      </MasterAdminRoute>
+    ),
+  },
+
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
@@ -4765,6 +4806,33 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/client-tickets",
+    name: "Client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <ClientTicketsDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-tickets/create-new-client-ticket",
+    name: "Create New client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <CreateNewClientTicket />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/client-tickets/update-client-ticket/:id",
+    name: "Update client Tickets",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateClientTicket />
+      </ServiceAdminRoute>
+    ),
+  },
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
@@ -5486,6 +5554,15 @@ const routes = [
     ),
   },
   {
+    path: "/site-technician/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <SiteTechnicianRoute>
+        <RobotTracker />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
     path: "/site-technician/punch-in-punch-out",
     name: "Punch In / Punch Out",
     element: (
@@ -5979,6 +6056,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <RobotPosition />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/robots-tracking",
+    name: "Robots Tracking",
+    element: (
+      <ClientAdminRoute>
+        <RobotTracker />
       </ClientAdminRoute>
     ),
   },

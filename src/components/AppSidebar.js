@@ -10,7 +10,6 @@ import {
 import { AppSidebarNav } from "./AppSidebarNav";
 import TayproLogo from "../assets/brand/logofordarkbg.png"; // Import the image
 import navigation from "../_nav";
-import { Link } from "react-router-dom";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 

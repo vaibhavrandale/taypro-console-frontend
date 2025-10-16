@@ -145,9 +145,10 @@ const RobotOperating = () => {
   const [wheelSpeedValue, setWheelSpeedValue] = useState("");
   const [brushSpeedValue, setBrushSpeedValue] = useState("");
 
-  let start = "C1";
-  let stop = "CC";
-  let returntodock = "D1";
+  let start = "11";
+  let partialStart = "12";
+  let stop = "14";
+  let returntodock = "15";
   let removecurrentLimit = "HCD";
   let setWheelPwm100 = "W1";
   let setWheelPwm200 = "W2";
@@ -347,21 +348,26 @@ const RobotOperating = () => {
     setLoadingRow(index);
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no......
-    let robotdownlink = {
-      deveui: robot.deveui,
-      robot_no: robot.robot_no,
-      site_id: site_id,
-      command: command,
-      lora_no: robot.lora_no,
-    };
+    // let robotdownlink =;
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
+      const data = await axios.post(
+        // "/api/v1/robots/downlink",
+        "/api/v1/robots/send-mqtt-downlink",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
 
-      toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -434,15 +440,18 @@ const RobotOperating = () => {
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post(
-        "/api/v1/robots/multicast-downlink",
+        // "/api/v1/robots/multicast-downlink",
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
 
-      toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+
+      toast.success(data.data.message);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -734,7 +743,7 @@ const RobotOperating = () => {
                 {/* First Card */}
                 <CCol md={5} className="mt-2">
                   {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
-                  <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
+                  {/* <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
                     <CCardBody className="d-flex flex-column flex-grow-1">
                       <div className="d-flex flex-row justify-content-between p-1">
                         <CRow
@@ -748,8 +757,16 @@ const RobotOperating = () => {
                           </CCol>
                           <CCol>🔋: {robot.battery_voltage}%</CCol>
                           <CCol>
-                            <span className="badge bg-success">
-                              {robot.version}
+                            <span className="text-success">
+                              PCB:
+                              <span className="text-warning ms-2">
+                                {robot.pcb_version}
+                              </span>
+                              <span className="mx-2">|</span>
+                              F:
+                              <span className="text-warning ms-2">
+                                {robot.version}
+                              </span>{" "}
                             </span>
                           </CCol>
                         </CRow>
@@ -758,11 +775,11 @@ const RobotOperating = () => {
                           className="d-flex flex-column"
                           style={{ gap: "10px" }}
                         >
-                          <CCol>
+                         <CCol>
                             <span style={{ fontSize: "13px" }}>
                               {robot.deveui}
                             </span>
-                          </CCol>
+                          </CCol> 
                           <CCol>Wheel Speed</CCol>
                           <CCol>
                             <CBadge
@@ -796,72 +813,136 @@ const RobotOperating = () => {
                         </CRow>
                       </div>
                     </CCardBody>
+                  </CCard> */}
+
+                  <CCard className="h-100 border-0 shadow-sm rounded-3">
+                    <CCardBody className="p-3">
+                      {/* Top Section: Robot No + Battery */}
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h6 className=" mb-0">{robot.robot_no}</h6>
+                        <span className="px-2 py-1">
+                          🔋 {robot.battery_voltage}
+                          <span className="mx-1">%</span>
+                        </span>
+                      </div>
+
+                      {/* Info Grid */}
+                      <CRow className="text-center mb-2">
+                        <CCol>
+                          <small className="text-muted">PCB</small>
+                          <div className="fw-semibold">{robot.pcb_version}</div>
+                        </CCol>
+                        <CCol>
+                          <small className="text-muted">Firmware</small>
+                          <div className="fw-semibold">{robot.version}</div>
+                        </CCol>
+                        <CCol>
+                          <small className="text-muted">LoRa</small>
+                          <CTooltip content={robot.deveui} placement="top">
+                            <div
+                              className="fw-semibold text-success"
+                              style={{ cursor: "pointer" }}
+                            >
+                              {robot.lora_no}
+                            </div>
+                          </CTooltip>
+                        </CCol>
+                      </CRow>
+
+                      <hr className="my-2" />
+
+                      {/* Speeds */}
+                      <CRow className="text-center">
+                        <CCol>
+                          <small className="text-muted">Wheel Speed</small>
+                          <div>
+                            <CBadge
+                              color="danger"
+                              className="px-3 py-2 rounded-pill"
+                            >
+                              {robot.wheel_motor_speed}
+                            </CBadge>
+                          </div>
+                        </CCol>
+                        <CCol>
+                          <small className="text-muted">Brush Speed</small>
+                          <div>
+                            <CBadge
+                              color="danger"
+                              className="px-3 py-2 rounded-pill"
+                            >
+                              {robot.brush_motor_speed}
+                            </CBadge>
+                          </div>
+                        </CCol>
+                      </CRow>
+                    </CCardBody>
                   </CCard>
                 </CCol>
 
                 {/* Second Card */}
-                <CCol md={4} className="mt-2">
-                  <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                    <CCardBody className="d-flex flex-column flex-grow-1">
-                      <div className="d-flex flex-row justify-content-between p-1">
-                        <CRow
-                          className="d-flex flex-column"
-                          style={{ gap: "10px" }}
-                        >
-                          <CCol>
+                <CCol md={4} className="mt-3">
+                  <CCard className="h-100 border-0 shadow-sm">
+                    <CCardBody className="d-flex flex-column justify-content-start p-3">
+                      {/* Top Row: Status */}
+                      <div className="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                          <span
+                            className={`fw-bold text-${
+                              robot.lora_state === 1 ? "success" : "danger"
+                            }`}
+                            style={{ fontSize: "16px" }}
+                          >
+                            {robot.lora_state === 1 ? "Online" : "Offline"}
+                          </span>
+                        </div>
+                        {/* Middle Row: Stuck Count */}
+                        <div className="">
+                          <span className="text-danger fw-semibold">
+                            SC: {robot.stuck_count}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Bottom Row: Last Uplink */}
+                      <div className="d-flex flex-column">
+                        {!robot.last_uplink ||
+                        isNaN(new Date(robot.last_uplink).getTime()) ? (
+                          <CBadge color="danger" shape="rounded-pill">
+                            Robot is not activated
+                          </CBadge>
+                        ) : (
+                          <>
                             <span
-                              className={`text-${
-                                robot.lora_state === 1 ? `success` : `danger`
-                              }`}
+                              className="text-success "
+                              style={{ cursor: "pointer" }}
                             >
-                              {robot.lora_state === 1 ? `online` : `offline`}
-                            </span>
-                          </CCol>
-                          <CCol>
-                            {" "}
-                            <span className=" ">{robot.last_status}</span>
-                          </CCol>
-                        </CRow>
-                        <CRow
-                          className="d-flex flex-column"
-                          style={{ gap: "10px" }}
-                        >
-                          <CCol>
-                            <span className="text-danger">
-                              SC : {robot.stuck_count}
-                            </span>
-                          </CCol>
-                          <CCol>
-                            {" "}
-                            {!robot.last_uplink ||
-                            isNaN(new Date(robot.last_uplink).getTime()) ? (
-                              <CBadge
-                                className="badge bg-danger"
-                                shape="rounded-pill"
-                              >
-                                Robot is not activated
-                              </CBadge>
-                            ) : (
-                              <span>
-                                <CTooltip
-                                  content={new Date(
-                                    robot.last_uplink
-                                  ).toLocaleString()}
-                                  placement="top"
-                                >
-                                  <span>
-                                    {formatDistanceToNow(
-                                      new Date(robot.last_uplink),
-                                      {
-                                        addSuffix: true,
-                                      }
-                                    )}
-                                  </span>
-                                </CTooltip>
+                              <span className="me-2">Last Uplink</span>:
+                              <span className="text-white mx-2">
+                                {formatDistanceToNow(
+                                  new Date(robot.last_uplink),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
                               </span>
-                            )}
-                          </CCol>
-                        </CRow>
+                            </span>
+
+                            <div className="">
+                              <span className="me-2 text-success">
+                                Last Status
+                              </span>
+                              :
+                              <span className="ms-2">
+                                {" "}
+                                {robot.last_status || "-"}
+                              </span>
+                            </div>
+                            <span className="">
+                              ({new Date(robot.last_uplink).toLocaleString()})
+                            </span>
+                          </>
+                        )}
                       </div>
                     </CCardBody>
                   </CCard>
@@ -1201,15 +1282,15 @@ const RobotOperating = () => {
                       </CButton>
                       <CButton
                         className="btn btn-sm btn-warning m-1 shadow"
-                        onClick={() => sendsingleDownlink(newCleaningStart, 43)}
+                        onClick={() => sendsingleDownlink(partialStart, 43)}
                       >
                         {commandButton === 43 ? (
                           <>
-                            TEST START&nbsp;
+                            Partial Start&nbsp;
                             <LoadingSpinner />
                           </>
                         ) : (
-                          "TEST START"
+                          "Partial Start"
                         )}
                       </CButton>
                       <CButton

@@ -215,7 +215,7 @@ export const role_permissions = [
     ],
   },
   {
-    role: "Project User",
+    role: "Project Engineer",
     permissions: [
       {
         id: "P08",
@@ -377,35 +377,6 @@ export const role_permissions = [
     ],
   },
   {
-    role: "Site Incharge",
-    permissions: [
-      {
-        id: "P022",
-        description: "Perform robot operations",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P023",
-        description: "Monitor robot status",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P024",
-        description: "Perform site-specific tasks",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-    ],
-  },
-  {
     role: "Client Site Technician",
     permissions: [
       {
@@ -434,95 +405,26 @@ export const role_permissions = [
       },
     ],
   },
+
   {
-    role: "Opex Client Admin",
-    permissions: [
-      {
-        id: "P08",
-        description: "View and manage assigned sites and robots",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P09",
-        description: "Commission robots",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P010",
-        description: "Oversee service operations",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P011",
-        description: "Analyze trends for robot failures",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P012",
-        description: "Send notifications",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-    ],
+    role: "Sales Admin",
+    permissions: [],
   },
   {
-    role: "Opex Site Technician",
-    permissions: [
-      {
-        id: "P08",
-        description: "View and manage assigned sites and robots",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P09",
-        description: "Commission robots",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P010",
-        description: "Oversee service operations",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P011",
-        description: "Analyze trends for robot failures",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-      {
-        id: "P012",
-        description: "Send notifications",
-        read: true,
-        create: true,
-        delete: true,
-        update: true,
-      },
-    ],
+    role: "Production And Operations Admin",
+    permissions: [],
+  },
+  {
+    role: "Quality Admin",
+    permissions: [],
+  },
+  {
+    role: "Supply Chain And Logistics Admin",
+    permissions: [],
+  },
+  {
+    role: "Research And Development And Product Development Admin",
+    permissions: [],
   },
 ];
 
@@ -866,11 +768,13 @@ export const users = [
 
 export const departments = [
   {
-    id: "D001",
+    department_id: "D1",
     department: "Management",
     email: "management@taypro.in",
-    added_by: "vaibhav.randale.in",
-    added_at: "2025-01-30 11:38:00",
+    // added_by_email: "vaibhav.randale@taypro.in",
+    // added_by_id: "djkvbdsvhj",
+    // added_by_name: "Vaibhav Randale",
+    // added_at: "2025-01-30 11:38:00",
   },
   {
     id: "D002",
@@ -886,16 +790,16 @@ export const departments = [
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
   },
-  // {
-  //   id: "D004",
-  //   department: "Operations",
-  //   email: "operations@taypro.in",
-  //   added_by: "vaibhav.randale.in",
-  //   added_at: "2025-01-30 11:38:00",
-  // },
+  {
+    id: "D004",
+    department: "Operations",
+    email: "operations@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
   {
     id: "D005",
-    department: "Hardware Development",
+    department: "Hardware Devlopment",
     email: "hardwaredev@taypro.in",
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
@@ -903,32 +807,53 @@ export const departments = [
   {
     id: "D006",
     department: "IT",
-    email: "it@taypro.in",
+    email: "software.development@taypro.in",
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
   },
 
-  // {
-  //   id: "D009",
-  //   department: "Accounts",
-  //   email: "accounts@taypro.in",
-  //   added_by: "vaibhav.randale.in",
-  //   added_at: "2025-01-30 11:38:00",
-  // },
-  // {
-  //   id: "D010",
-  //   department: "HR",
-  //   email: "hr@taypro.in",
-  //   added_by: "vaibhav.randale.in",
-  //   added_at: "2025-01-30 11:38:00",
-  // },
-  // {
-  //   id: "D011",
-  //   department: "Procurement",
-  //   email: "procurement@taypro.in",
-  //   added_by: "vaibhav.randale.in",
-  //   added_at: "2025-01-30 11:38:00",
-  // },
+  {
+    id: "D009",
+    department: "Accounts",
+    email: "accounts@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D010",
+    department: "Hr_and_admin",
+    email: "hr_and_admin@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D011",
+    department: "Supply_chain_and_logistics",
+    email: "supply_chain_and_logistics@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D012",
+    department: "Research_and_development_and_product_development",
+    email: "research_and_development_and_product_development@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D013",
+    department: "Quality",
+    email: "quality@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D014",
+    department: "Production_and_operations",
+    email: "quality@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
 ];
 
 export const clients = [
