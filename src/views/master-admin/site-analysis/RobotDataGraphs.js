@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CRow, CCol, CCard, CCardBody, CButton } from "@coreui/react";
+import { Activity, BatteryFull, Signal } from "lucide-react";
 
 const RobotDataGraphs = () => {
   const navigate = useNavigate();
@@ -35,12 +36,15 @@ const RobotDataGraphs = () => {
   return (
     <div className="align-items-center mt-5">
       <CRow className="justify-content-center">
-        {/* RSSI & SNR Graph */}
+        {/* RSSI & SNR */}
         <CCol md={4} className="mb-3">
           <CCard className="shadow-sm border-0 text-center">
             <CCardBody>
-              <h5 className="fw-bold mb-3">Rssi & Snr</h5>
-              <div className="d-flex justify-content-center gap-2">
+              <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+                <Signal size={22} className="text-primary" />
+                <h5 className="mb-0">Rssi & Snr</h5>
+              </div>
+              <div className="d-flex justify-content-center gap-2 mt-2">
                 <CButton
                   size="sm"
                   color="primary"
@@ -68,12 +72,15 @@ const RobotDataGraphs = () => {
           </CCard>
         </CCol>
 
-        {/* Battery Graph */}
+        {/* Battery */}
         <CCol md={4} className="mb-3">
           <CCard className="shadow-sm border-0 text-center">
             <CCardBody>
-              <h5 className="fw-bold mb-3">Battery Percentage</h5>
-              <div className="d-flex justify-content-center gap-2">
+              <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+                <BatteryFull size={22} className="text-success" />
+                <h5 className="mb-0">Battery Percentage</h5>
+              </div>
+              <div className="d-flex justify-content-center gap-2 mt-2">
                 <CButton
                   size="sm"
                   color="primary"
@@ -101,12 +108,15 @@ const RobotDataGraphs = () => {
           </CCard>
         </CCol>
 
-        {/* Current Graph */}
+        {/* Current */}
         <CCol md={4} className="mb-3">
           <CCard className="shadow-sm border-0 text-center">
             <CCardBody>
-              <h5 className="fw-bold mb-3">Current</h5>
-              <div className="d-flex justify-content-center gap-2">
+              <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+                <Activity size={22} className="text-warning" />
+                <h5 className="mb-0">Current</h5>
+              </div>
+              <div className="d-flex justify-content-center gap-2 mt-2">
                 <CButton
                   size="sm"
                   color="primary"

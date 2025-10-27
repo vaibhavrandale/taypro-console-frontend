@@ -146,6 +146,13 @@ const ClientBlockManagement = () => {
     adminroute = "project-user";
   }
 
+  // const CleaninginProgressCount = robots.reduce((count, robot) => {
+  //   if (robot.cleaning?.start && !robot.cleaning?.finish && !robot.is_delete) {
+  //     count++;
+  //   }
+  //   return count;
+  // }, 0);
+
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
       <h4 className="p-2 text-center">
@@ -159,10 +166,12 @@ const ClientBlockManagement = () => {
           </span>
         )}
       </h4>
-      <div className="p-2 d-flex justify-content-center">
-        <div className="d-flex">
+
+      <div className="d-flex flex-column align-items-center my-3">
+        {/* === BUTTONS ROW === */}
+        <div className="d-flex justify-content-center gap-2 mb-3">
           <CButton
-            className="btn btn-secondary btn-sm me-2"
+            className="btn btn-secondary btn-sm"
             size="sm"
             onClick={() => setVisible(!visible)}
           >
@@ -177,113 +186,36 @@ const ClientBlockManagement = () => {
           </CButton>
         </div>
 
-        <CModal
-          backdrop="static"
-          size="xl"
-          scrollable
-          visible={visible}
-          onClose={() => setVisible(false)}
-        >
-          <CModalHeader closeButton={false}>
-            <CModalTitle>
-              <span className="text-success">
-                {sitename}, {sitelocation}
-              </span>{" "}
-              - Robots Details
-            </CModalTitle>
-            <button
-              type="button"
-              className=" border-0 ms-auto py-0 px-1"
-              onClick={() => setVisible(false)}
-              style={{ background: "none" }}
-            >
-              <CIcon icon={cilX} size="lg" />
-            </button>
-          </CModalHeader>
-          <CModalBody>
-            <CRow className="justify-content-end">
-              <CCol xs={12} sm={10} md={6} lg={4}>
-                <CInputGroup className="mb-3">
-                  <CFormInput
-                    type="text"
-                    placeholder="Search Robot..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </CInputGroup>
-              </CCol>
-            </CRow>
-            <CTable responsive hover bordered className="bg-important">
-              <CTableHead color="secondary">
-                <CTableRow>
-                  <CTableHeaderCell className="text-center">
-                    Sr
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Robot No
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Deveui
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Status
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Block
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Last Update
-                  </CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {filteredRobots.length > 0 ? (
-                  filteredRobots.map((robot, index) => (
-                    <CTableRow key={index}>
-                      <CTableDataCell className="text-center">
-                        {index + 1}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {robot.robot_no}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {robot.deveui}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {robot.lora_state === 1 ? (
-                          <CBadge color="success">Online</CBadge>
-                        ) : (
-                          <CBadge color="danger">Offline</CBadge>
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {robot.block}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        {new Date(robot.last_uplink).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))
-                ) : (
-                  <CTableRow>
-                    <CTableDataCell colSpan="5" className="text-center">
-                      No matching robots found
-                    </CTableDataCell>
-                  </CTableRow>
-                )}
-              </CTableBody>
-            </CTable>
-          </CModalBody>
-        </CModal>
+        {/* === BADGES ROW === */}
+        <div className="d-flex justify-content-center align-items-center flex-wrap gap-3">
+          <CBadge color="success" className="px-3 py-2" shape="rounded-pill">
+            Online:{" "}
+            <strong>{robots.filter((r) => r.lora_state === 1).length}</strong>
+          </CBadge>
+
+          <CBadge color="danger" className="px-3 py-2" shape="rounded-pill">
+            Offline:{" "}
+            <strong>{robots.filter((r) => r.lora_state === 0).length}</strong>
+          </CBadge>
+          <CBadge color="warning" className="px-3 py-2" shape="rounded-pill">
+            Cleaning In Progress:{" "}
+            <strong>
+              {
+                robots.filter(
+                  (r) =>
+                    r.last_status?.toLowerCase() === "online" &&
+                    r.lora_state === 1
+                ).length
+              }
+            </strong>
+          </CBadge>
+
+          <CBadge color="primary" className="px-3 py-2" shape="rounded-pill">
+            Total Robots: <strong>{robots.length}</strong>
+          </CBadge>
+        </div>
       </div>
+
       <CContainer>
         <CRow className="mt-4 justify-content-center">
           {blocks.map((block, index) => {

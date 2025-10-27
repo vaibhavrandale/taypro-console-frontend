@@ -172,7 +172,7 @@ const ClientSitesDashboard = () => {
                     className="text-center mb-3"
                     style={{ fontSize: "16px", fontWeight: "bold" }}
                   >
-                    {site.siteName}
+                    {site.location}
                   </CCardTitle>
                   {/* Button Container - All buttons in single line */}
                   <div className="w-100 mt-auto">
@@ -197,6 +197,8 @@ const ClientSitesDashboard = () => {
                       <CButton
                         color="primary"
                         className="btn btn-sm w-70 text-nowrap"
+                        as={Link}
+                        to={`/${adminroute}/all-clients-dashboard/${clientId}/sitewise-timer/${site.site_id}`}
                       >
                         Timer
                       </CButton>

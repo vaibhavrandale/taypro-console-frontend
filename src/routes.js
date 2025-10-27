@@ -152,6 +152,8 @@ import SprintDashboard from "./views/sprints/SprintDashboard";
 import ViewSprint from "./views/sprints/ViewSprint";
 import CreateSprint from "./views/sprints/CreateSprint";
 import GenerateReport from "./views/sprints/GenerateReport";
+import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
+import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1623,6 +1625,25 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/sitewise-timer/:site_id/",
+    name: "Sitewise Timer",
+    element: (
+      <MasterAdminRoute>
+        <SitewiseTimer />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/sitewise-timer/:block/:site_id",
+    name: "Sitewise Timer Update",
+    element: (
+      <MasterAdminRoute>
+        <SiteTimerUpdate />
+      </MasterAdminRoute>
+    ),
+  },
+
   {
     path: "/master-admin/sprints-dashboard",
     name: "Sprints",
