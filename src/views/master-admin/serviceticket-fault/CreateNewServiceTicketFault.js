@@ -51,10 +51,8 @@ const CreateNewServiceTicketFault = () => {
     },
     loading: false,
     success: false,
-
     error: "",
   });
-
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
