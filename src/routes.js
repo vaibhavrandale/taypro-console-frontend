@@ -137,10 +137,23 @@ import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
 import Dummy from "./views/robot-position/Dummy";
+import SiteAnalysisDashboard from "./views/master-admin/site-analysis/SiteAnalysisDashboard";
+import AllClientsDashboard from "./views/master-admin/site-analysis/AllClientsDashboard";
+import ClientSitesDashboard from "./views/master-admin/site-analysis/ClientSitesDashboard";
+import RssiSnrGraph from "./views/master-admin/site-analysis/RssiSnrGraph";
+import RobotDataGraphs from "./views/master-admin/site-analysis/RobotDataGraphs";
+import RobotTrackingBatteryGraph from "./views/master-admin/site-analysis/RobotTrackingBatteryGraph";
+import RobotTrackingLog from "./views/master-admin/site-analysis/RobotTrackingLog";
+import RobotTrackingCurrentGraph from "./views/master-admin/site-analysis/RobotTrackingCurrentGraph";
+import RobotTrackingCurrentTable from "./views/master-admin/site-analysis/RobotTrackingCurrentTable";
+import RobotTrackingBatteryTable from "./views/master-admin/site-analysis/RobotTrackingBatteryTable";
+import RssiSnrTable from "./views/master-admin/site-analysis/RssiSnrTable";
 import SprintDashboard from "./views/sprints/SprintDashboard";
 import ViewSprint from "./views/sprints/ViewSprint";
 import CreateSprint from "./views/sprints/CreateSprint";
 import GenerateReport from "./views/sprints/GenerateReport";
+import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
+import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1508,6 +1521,125 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotEventAndFrames />
+      </MasterAdminRoute>
+    ),
+  },
+  // Site Analysis Routes
+  {
+    path: "/master-admin/site-analysis-dashboard",
+    name: "Site Analysis Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <SiteAnalysisDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard",
+    name: "All Clients Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <AllClientsDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId",
+    name: "Client Sites Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <ClientSitesDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id",
+    name: "Robot Data Graphs",
+    element: (
+      <MasterAdminRoute>
+        <RobotDataGraphs />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/rssi-snr",
+    name: "Rssi & Snr Graph",
+    element: (
+      <MasterAdminRoute>
+        <RssiSnrGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/battery",
+    name: "Battery Graph",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingBatteryGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataGraphs/:site_id/current",
+    name: "Current Graph",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingCurrentGraph />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/rssi-snr",
+    name: "Rssi & Snr Table",
+    element: (
+      <MasterAdminRoute>
+        <RssiSnrTable />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/battery",
+    name: "Battery Table",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingBatteryTable />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotDataTable/:site_id/current",
+    name: "Current Table",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingCurrentTable />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/RobotTrackingLog/:site_id/",
+    name: "Robot Tracking Log",
+    element: (
+      <MasterAdminRoute>
+        <RobotTrackingLog />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/:clientId/sitewise-timer/:site_id/",
+    name: "Sitewise Timer",
+    element: (
+      <MasterAdminRoute>
+        <SitewiseTimer />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-clients-dashboard/sitewise-timer/:block/:site_id",
+    name: "Sitewise Timer Update",
+    element: (
+      <MasterAdminRoute>
+        <SiteTimerUpdate />
       </MasterAdminRoute>
     ),
   },
