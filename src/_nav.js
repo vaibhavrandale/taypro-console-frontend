@@ -360,6 +360,25 @@ const _nav = [
 
       {
         component: CNavGroup,
+        name: "MDS Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/master-admin/mds-tracker",
+          },
+        ],
+      },
+
+      {
+        component: CNavGroup,
         name: "Feedback",
         icon: (
           <CIcon
