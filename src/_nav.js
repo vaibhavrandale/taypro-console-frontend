@@ -513,6 +513,24 @@ const _nav = [
       },
       {
         component: CNavGroup,
+        name: "Site Analysis",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Site Analysis Dashboard",
+            to: "/master-admin/site-analysis-dashboard",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
         name: "Sprints",
         icon: (
           <CIcon
