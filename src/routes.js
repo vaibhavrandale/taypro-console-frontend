@@ -141,6 +141,7 @@ import SprintDashboard from "./views/sprints/SprintDashboard";
 import ViewSprint from "./views/sprints/ViewSprint";
 import CreateSprint from "./views/sprints/CreateSprint";
 import GenerateReport from "./views/sprints/GenerateReport";
+import MdsDashboard from "./views/mds-tracking/MdsDashboard";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -2573,6 +2574,16 @@ const routes = [
       <MasterUserRoute>
         <ChatDashboard />
       </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <MasterAdminRoute>
+        <MdsDashboard />
+      </MasterAdminRoute>
     ),
   },
 
