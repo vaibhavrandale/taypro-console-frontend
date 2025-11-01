@@ -528,6 +528,61 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/master-admin/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/master-admin/replace-mds-lora/active-mdss",
+          },
+
+          // {
+          //   component: CNavItem,
+          //   name: "Robot Battery Temperature",
+          //   to: "/master-admin/robot-battery-temperature",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Robot Commands",
+          //   to: "/master-admin/robot-commands",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Robot Log Details",
+          //   to: "/master-admin/robot-log-details",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Weather Timer Notifications",
+          //   to: "/master-admin/weather-timer-notifications",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Timer Execution Notification View",
+          //   to: "/master-admin/timer-execution-notification-view",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Weather Data ",
+          //   to: "/master-admin/weather-data-sitewise",
+          // },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------

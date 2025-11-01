@@ -154,6 +154,17 @@ import CreateSprint from "./views/sprints/CreateSprint";
 import GenerateReport from "./views/sprints/GenerateReport";
 import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
 import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
+import Mds from "./views/master-admin/mds/Mds";
+import AddMdsUsingLoraNo from "./views/master-admin/mds/AddMdsUsingLoraNo";
+import ShiftBlockwiseMds from "./views/master-admin/mds/ShiftBlockwiseMds";
+import ActivateMds from "./views/master-admin/mds/ActivateMds";
+import ViewMds from "./views/master-admin/mds/ViewMds";
+import UpdateMds from "./views/master-admin/mds/UpdateMds";
+import ActiveMds from "./views/master-admin/replace-mds-lora/ActiveMds";
+import InActiveMds from "./views/master-admin/replace-mds-lora/InActiveMds";
+import ReplaceMdsLora from "./views/master-admin/replace-mds-lora/ReplaceMdsLora";
+import MdsOperating from "./views/master-admin/mds/MdsOperating";
+import MdsEventAndFrames from "./views/master-admin/mds/MdsEventAndFrames";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1677,6 +1688,109 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <GenerateReport />
+      </MasterAdminRoute>
+    ),
+  },
+
+  //MDS Devices
+  {
+    path: "/master-admin/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <Mds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <AddMdsUsingLoraNo />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds-devices/shift-block-wise",
+    name: "Shift Block Wise MDS",
+    element: (
+      <MasterAdminRoute>
+        <ShiftBlockwiseMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <MasterAdminRoute>
+        <ActivateMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <ViewMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <UpdateMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <ActiveMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <InActiveMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <MasterAdminRoute>
+        <ReplaceMdsLora />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <MasterAdminRoute>
+        <MdsOperating />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <MasterAdminRoute>
+        <MdsEventAndFrames />
       </MasterAdminRoute>
     ),
   },
