@@ -16,9 +16,7 @@ import {
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
-  cilWrapText,
   cilLocationPin,
-  cilChartPie,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 import {
