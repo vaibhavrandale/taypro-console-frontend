@@ -58,6 +58,13 @@ import {
   SiteTechnicianRoute,
   OpexClientAdmin,
   OpexSiteTechnicianRoute,
+  SalesAdminRoute,
+  ProductionAndOperationsAdminRoute,
+  AccountAdminRoute,
+  QualityAdminRoute,
+  SupplyChainAndLogisticsAdminRoute,
+  ResearchAndDevelopmentAndProductDevelopmentAdminRoute,
+  HRAndAdminRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -155,6 +162,15 @@ import GenerateReport from "./views/sprints/GenerateReport";
 import MdsDashboard from "./views/mds-tracking/MdsDashboard";
 import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
 import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
+import MisDashboard from "./views/mis-report/MisDashboard";
+import SalesAdminDashboard from "./views/sales-admin/SalesAdminDashboard";
+import ProductionAndOperationsDashboard from "./views/production-and-operations-admin/ProductionAndOperationsDashboard";
+import AccountAdminDashboard from "./views/account-admin/AccountAdminDashboard";
+import QualityAdminDashboard from "./views/quality-admin/QualityAdminDashboard";
+import SupplyChainAndLogisticsDashboard from "./views/supply-chain-and-logistics-admin/SupplyChainAndLogisticsDashboard";
+import ResearchAndDevelopmentAndProductDevelopmentAdminDashboard from "./views/research-and-development-and-product-development-admin/ResearchAndDevelopmentAndProductDevelopmentAdminDashboard";
+import HrAdminDashboard from "./views/hr-admin/HrAdminDashboard";
+import Summary from "./views/mis-report/Summary";
 import Mds from "./views/master-admin/mds/Mds";
 import AddMdsUsingLoraNo from "./views/master-admin/mds/AddMdsUsingLoraNo";
 // import ShiftBlockwiseMds from "./views/master-admin/mds/ShiftBlockwiseMds";
@@ -2824,6 +2840,25 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <MasterAdminRoute>
+        <MisDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mis-report/summary",
+    name: "MIS Report Summary",
+    element: (
+      <MasterAdminRoute>
+        <Summary />
+      </MasterAdminRoute>
+    ),
+  },
+
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
   {
@@ -3529,6 +3564,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <ViewPerformance />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <ProjectAdminRoute>
+        <MisDashboard />
       </ProjectAdminRoute>
     ),
   },
@@ -4976,6 +5020,16 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <UpdateClientTicket />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <ServiceAdminRoute>
+        <MisDashboard />
       </ServiceAdminRoute>
     ),
   },
@@ -6604,6 +6658,160 @@ const routes = [
   },
 
   // ------------------------opex site technician ----------------------------------
+
+  // ------------------------------sales admin-----------------------------
+  {
+    path: "/sales-admin/dashboard",
+    name: "Sales Admin Dashboard",
+    element: (
+      <SalesAdminRoute>
+        <SalesAdminDashboard />
+      </SalesAdminRoute>
+    ),
+  },
+
+  {
+    path: "/sales-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <SalesAdminRoute>
+        <MisDashboard />
+      </SalesAdminRoute>
+    ),
+  },
+  // ------------------------------sales admin-----------------------------
+
+  // ------------------------------Production And Operations Admin----------------------------
+  {
+    path: "/production-and-operations-admin/dashboard",
+    name: "Production And Operations Admin Dashboard",
+    element: (
+      <ProductionAndOperationsAdminRoute>
+        <ProductionAndOperationsDashboard />
+      </ProductionAndOperationsAdminRoute>
+    ),
+  },
+
+  {
+    path: "/production-and-operations-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <ProductionAndOperationsAdminRoute>
+        <MisDashboard />
+      </ProductionAndOperationsAdminRoute>
+    ),
+  },
+  // -----------------------------Production And Operations Admin----------------------------
+
+  // ------------------------------Quality Admin----------------------------
+  {
+    path: "/quality-admin/dashboard",
+    name: "Quality Admin Dashboard",
+    element: (
+      <QualityAdminRoute>
+        <QualityAdminDashboard />
+      </QualityAdminRoute>
+    ),
+  },
+
+  {
+    path: "/quality-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <QualityAdminRoute>
+        <MisDashboard />
+      </QualityAdminRoute>
+    ),
+  },
+  // -----------------------------Quality Admin----------------------------
+
+  // ------------------------------Supply Chain Admin----------------------------
+  {
+    path: "/supply-chain-and-logistics-admin/dashboard",
+    name: "Supply Chain Admin Dashboard",
+    element: (
+      <SupplyChainAndLogisticsAdminRoute>
+        <SupplyChainAndLogisticsDashboard />
+      </SupplyChainAndLogisticsAdminRoute>
+    ),
+  },
+
+  {
+    path: "/supply-chain-and-logistics-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <SupplyChainAndLogisticsAdminRoute>
+        <MisDashboard />
+      </SupplyChainAndLogisticsAdminRoute>
+    ),
+  },
+  // -----------------------------Supply Chain Admin----------------------------
+
+  // ------------------------------Accounts Admin----------------------------
+  {
+    path: "/accounts-admin/dashboard",
+    name: "Accounts Admin Dashboard",
+    element: (
+      <AccountAdminRoute>
+        <AccountAdminDashboard />
+      </AccountAdminRoute>
+    ),
+  },
+
+  {
+    path: "/accounts-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <AccountAdminRoute>
+        <MisDashboard />
+      </AccountAdminRoute>
+    ),
+  },
+  // -----------------------------Accounts Admin----------------------------
+
+  // ------------------------------research-and-development-and-product-development-admin----------------------------
+  {
+    path: "/research-and-development-and-product-development-admin/dashboard",
+    name: "Research And Development Admin Dashboard",
+    element: (
+      <ResearchAndDevelopmentAndProductDevelopmentAdminRoute>
+        <ResearchAndDevelopmentAndProductDevelopmentAdminDashboard />
+      </ResearchAndDevelopmentAndProductDevelopmentAdminRoute>
+    ),
+  },
+
+  {
+    path: "/research-and-development-and-product-development-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <ResearchAndDevelopmentAndProductDevelopmentAdminRoute>
+        <MisDashboard />
+      </ResearchAndDevelopmentAndProductDevelopmentAdminRoute>
+    ),
+  },
+  // ----------------------------research-and-development-and-product-development-admin------------------------------------
+
+  // ------------------------------HR and admin----------------------------
+  {
+    path: "/hr-admin/dashboard",
+    name: "HR Admin Dashboard",
+    element: (
+      <HRAndAdminRoute>
+        <HrAdminDashboard />
+      </HRAndAdminRoute>
+    ),
+  },
+
+  {
+    path: "/hr-admin/mis-report",
+    name: "MIS Report",
+    element: (
+      <HRAndAdminRoute>
+        <MisDashboard />
+      </HRAndAdminRoute>
+    ),
+  },
+  // ----------------------------HR and admin------------------------------------
 
   //common pages
 

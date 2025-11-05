@@ -84,6 +84,23 @@ const Login = () => {
         adminroute = "opex-client-admin";
       } else if (data.data.user.role === "Opex Site Technician") {
         adminroute = "opex-site-technician";
+      } else if (data.data.user.role === "Sales Admin") {
+        adminroute = "sales-admin";
+      } else if (data.data.user.role === "Hr Admin") {
+        adminroute = "hr-admin";
+      } else if (data.data.user.role === "Accounts Admin") {
+        adminroute = "accounts-admin";
+      } else if (
+        data.data.user.role ===
+        "Research And Development And Product Development Admin"
+      ) {
+        adminroute = "research-and-development-and-product-development-admin";
+      } else if (data.data.user.role === "Supply Chain And Logistics Admin") {
+        adminroute = "supply-chain-and-logistics-admin";
+      } else if (data.data.user.role === "Production And Operations Admin") {
+        adminroute = "production-and-operations-admin";
+      } else if (data.data.user.role === "Quality Admin") {
+        adminroute = "quality-admin";
       }
 
       // "Opex Client Admin", "Opex Site Technician"

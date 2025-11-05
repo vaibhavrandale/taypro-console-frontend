@@ -138,7 +138,7 @@ const ClientDashboard = () => {
                   </div>
 
                   {/* Client Name */}
-                  <h6 className="text-center fw-bold mt-3">
+                  <h6 className="text-center mt-3">
                     {site.siteName}, {site.location}
                   </h6>
 

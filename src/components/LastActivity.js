@@ -76,18 +76,19 @@ const LastActivity = ({ lastactivity }) => {
                       </span>
                     </span>
                   </p>
-
-                  <p
-                    className=" maxw-75 mw-75"
-                    style={{
-                      fontSize: "14px",
-                      lineHeight: "1.5",
-                      textAlign: "start",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: activity.details.replace(/, /g, ",<br>"),
-                    }}
-                  ></p>
+                  {activity.details && (
+                    <p
+                      className=" maxw-75 mw-75"
+                      style={{
+                        fontSize: "14px",
+                        lineHeight: "1.5",
+                        textAlign: "start",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: activity.details.replace(/, /g, ",<br>"),
+                      }}
+                    ></p>
+                  )}
                 </div>
               </div>
             ))
