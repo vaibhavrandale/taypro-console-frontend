@@ -166,9 +166,13 @@ const ActiveMds = () => {
         ...filteredFormData
       } = formData;
 
-      await axios.put(`/api/v1/mds-device/deactivate`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
+      await axios.put(
+        `/api/v1/mds-device/delete-from-lns-and-deactivate`,
+        filteredFormData,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(`${filteredFormData.mds_no} deactivated successfully!`);

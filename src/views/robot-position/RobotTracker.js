@@ -7,8 +7,15 @@ import RobotSidebar from "./RobotSidebar";
 import { smoothScroll } from "./helpers";
 import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
+import {
+  CCol,
+  CFormInput,
+  CFormSelect,
+  CInputGroup,
+  CRow,
+} from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
+import SearchRobot from "./SearchRobot";
 // import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
@@ -432,6 +439,22 @@ const RobotTracker = () => {
   //   return count;
   // }, 0);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRobot, setFilteredRobot] = useState([]);
+
+  const handleSearchChange = async (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (value.length > 0) {
+      const filtered = robots.filter((robot) =>
+        robot.robot_no.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredRobot(filtered);
+    } else {
+      setFilteredRobot(robots);
+    }
+  };
+
   return (
     <div
       className=""
@@ -502,6 +525,19 @@ const RobotTracker = () => {
               />
             </CCol>
           </CRow>
+          <CRow className="justify-content-end my-1">
+            <CCol md={4}>
+              <CInputGroup className="">
+                <CFormInput
+                  type="text"
+                  placeholder="Search Robot No..."
+                  value={searchTerm}
+                  className="form-control"
+                  onChange={handleSearchChange}
+                />
+              </CInputGroup>
+            </CCol>
+          </CRow>
           {/* <CleaningSummary
             successFullCleaningCount={successFullCleaningCount}
             CleaninginProgressCount={CleaninginProgressCount}
@@ -543,8 +579,8 @@ const RobotTracker = () => {
                   zIndex: 1,
                 }}
               >
-                {robots.length > 0 ? (
-                  robots
+                {filteredRobot.length > 0 ? (
+                  filteredRobot
                     .filter((r) => !selectedBlock || r.block === selectedBlock)
                     .map((robot, index) => (
                       <div className="col-md-12 my-3" key={index}>

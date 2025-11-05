@@ -156,7 +156,7 @@ import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
 import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
 import Mds from "./views/master-admin/mds/Mds";
 import AddMdsUsingLoraNo from "./views/master-admin/mds/AddMdsUsingLoraNo";
-import ShiftBlockwiseMds from "./views/master-admin/mds/ShiftBlockwiseMds";
+// import ShiftBlockwiseMds from "./views/master-admin/mds/ShiftBlockwiseMds";
 import ActivateMds from "./views/master-admin/mds/ActivateMds";
 import ViewMds from "./views/master-admin/mds/ViewMds";
 import UpdateMds from "./views/master-admin/mds/UpdateMds";
@@ -1713,15 +1713,6 @@ const routes = [
   },
 
   {
-    path: "/master-admin/mds-devices/shift-block-wise",
-    name: "Shift Block Wise MDS",
-    element: (
-      <MasterAdminRoute>
-        <ShiftBlockwiseMds />
-      </MasterAdminRoute>
-    ),
-  },
-  {
     path: "/master-admin/mds-devices/activate-mds-devices",
     name: "All Inactivate MDS",
     element: (
@@ -2834,6 +2825,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <ProjectAdminRoute>
+        <RobotTracker />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/profile-tab",
     name: "Profile Details",
     element: (
@@ -3832,7 +3832,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
     name: "Master Admin Sitewise Cleaning Log",
     element: (
       <ProjectUserRoute>
@@ -4968,7 +4968,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
-
+  {
+    path: "/service-admin/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <ServiceAdminRoute>
+        <RobotTracker />
+      </ServiceAdminRoute>
+    ),
+  },
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {

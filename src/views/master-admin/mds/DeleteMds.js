@@ -1,40 +1,73 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-// 🔹 Delete from LNS server
-export const deleteMdsFromLns = async (mds_id, deveui, authtoken, reason) => {
+/**
+ * 🔹 Delete MDS Device from LNS Server
+ */
+export const deleteMdsFromLns = async (mds_no, deveui, authtoken, reason) => {
+  if (!reason || reason.trim() === "") {
+    toast.error("Please provide a reason for deletion.");
+    return false;
+  }
+
   try {
-    const res = await axios.delete(
+    const response = await axios.delete(
       `/api/v1/mds-device/delete-from-lns/${deveui}`,
       {
-        headers: { Authorization: `Bearer ${authtoken}` },
-        data: { reason, mds_id },
+        headers: {
+          Authorization: `Bearer ${authtoken}`,
+          "Content-Type": "application/json",
+        },
+        data: { reason, mds_no },
       }
     );
 
-    toast.success(res.data.message || `MDS ${mds_id} deleted from LNS.`);
+    toast.success(
+      response.data?.message ||
+        `✅ MDS ${mds_no} deleted from LNS successfully.`
+    );
     return true;
   } catch (error) {
+    console.error("Error deleting MDS from LNS:", error);
     toast.error(
-      error.response?.data?.message || "Error deleting MDS from LNS."
+      error.response?.data?.message ||
+        `❌ Failed to delete MDS ${mds_no} from LNS.`
     );
     return false;
   }
 };
 
-// 🔹 Delete from Database
-export const deleteMdsFromDatabase = async (mds_id, authtoken, reason) => {
-  try {
-    const res = await axios.delete(`/api/v1/mds-device/delete-mds/${mds_id}`, {
-      headers: { Authorization: `Bearer ${authtoken}` },
-      data: { reason },
-    });
+/**
+ * 🔹 Delete MDS Device from Database
+ */
+export const deleteMdsFromDatabase = async (mds_no, authtoken, reason) => {
+  if (!reason || reason.trim() === "") {
+    toast.error("Please provide a reason for deletion.");
+    return false;
+  }
 
-    toast.success(res.data.message || `MDS ${mds_id} deleted from Database.`);
+  try {
+    const response = await axios.delete(
+      `/api/v1/mds-device/delete-mds/${mds_no}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authtoken}`,
+          "Content-Type": "application/json",
+        },
+        data: { reason },
+      }
+    );
+
+    toast.success(
+      response.data?.message ||
+        `✅ MDS ${mds_no} deleted from Database successfully.`
+    );
     return true;
   } catch (error) {
+    console.error("Error deleting MDS from Database:", error);
     toast.error(
-      error.response?.data?.message || "Error deleting MDS from Database."
+      error.response?.data?.message ||
+        `❌ Failed to delete MDS ${mds_no} from Database.`
     );
     return false;
   }

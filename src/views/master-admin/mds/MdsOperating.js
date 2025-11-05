@@ -104,10 +104,9 @@ const MdsOperating = () => {
   });
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-
+  const [loadingRow, setLoadingRow] = useState(null);
   const { site_id, block, mds_no } = useParams();
 
-  const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null);
   const [customDownlink, setCustomDownlink] = useState("");
 
@@ -475,7 +474,6 @@ const MdsOperating = () => {
                               color="danger"
                               className="px-3 py-2 rounded-pill"
                             >
-                              {mdsDevice.wheel_motor_speed}
                               {mdsDevice.speed}
                             </CBadge>
                           </div>
@@ -594,6 +592,72 @@ const MdsOperating = () => {
 
               {/* Forth Card - Cleaning Cycle */}
               <CRow className="my-2">
+                {mdsDevice.robot && (
+                  <CCol md={5} className="mt-2">
+                    <CCard className="h-100 border-0 shadow-sm rounded-3">
+                      <CCardBody className="p-3">
+                        {/* Top Section: Robot No + Battery */}
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <h6 className=" mb-0">
+                            Robot No: {mdsDevice.robot.robot_no}
+                          </h6>
+                          <span className="px-2 py-1">
+                            🔋 {mdsDevice.robot.battery_voltage}
+                            <span className="mx-1">%</span>
+                          </span>
+                        </div>
+
+                        {/* Info Grid */}
+                        <CRow className="text-center mb-2">
+                          <CCol>
+                            <small className="text-muted">PCB</small>
+                            <div className="fw-semibold">
+                              {mdsDevice.robot.pcb_version}
+                            </div>
+                          </CCol>
+                          <CCol>
+                            <small className="text-muted">Firmware</small>
+                            <div className="fw-semibold">
+                              {mdsDevice.robot.version}
+                            </div>
+                          </CCol>
+                          <CCol>
+                            <small className="text-muted">LoRa</small>
+                            <CTooltip
+                              content={mdsDevice.deveui}
+                              placement="top"
+                            >
+                              <div
+                                className="fw-semibold text-success"
+                                style={{ cursor: "pointer" }}
+                              >
+                                {mdsDevice.robot.lora_no}
+                              </div>
+                            </CTooltip>
+                          </CCol>
+                        </CRow>
+
+                        <hr className="my-2" />
+
+                        {/* Speeds */}
+                        <CRow className="text-center">
+                          <CCol>
+                            <small className="text-muted">Wheel Speed</small>
+                            <div>
+                              <CBadge
+                                color="danger"
+                                className="px-3 py-2 rounded-pill"
+                              >
+                                {mdsDevice.robot.wheel_motor_speed}
+                              </CBadge>
+                            </div>
+                          </CCol>
+                        </CRow>
+                      </CCardBody>
+                    </CCard>
+                  </CCol>
+                )}
+
                 <CCol md={3} className="mt-2">
                   <CCard
                     className="shadow border-0 "

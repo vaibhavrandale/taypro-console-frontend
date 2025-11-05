@@ -197,7 +197,10 @@ const ActivateMds = () => {
 
       <CCardBody>
         <div className="d-flex justify-content-end align-items-center">
-          <Link className="btn btn-sm btn-secondary m-1" to="/master-admin/mds">
+          <Link
+            className="btn btn-sm btn-secondary m-1"
+            to="/master-admin/mds-devices"
+          >
             All MDS
           </Link>
           <CButton

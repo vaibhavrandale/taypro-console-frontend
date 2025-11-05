@@ -15,6 +15,12 @@ import {
   CRow,
   CTab,
   CTabContent,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
   CTabList,
   CTabPanel,
   CTabs,
@@ -78,10 +84,32 @@ const UpdateMds = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const val = type === "checkbox" ? checked : value;
+
+    if (name === "no_of_rows") {
+      const count = parseInt(val) || 0;
+      const rows = Array.from({ length: count }, (_, index) => ({
+        row_no: index + 1, // Auto 1 → n
+        row_length: "",
+      }));
+
+      setFormData({
+        ...formData,
+        [name]: val,
+        rows: rows, // ✅ replaced rows_data with rows
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: val,
+      });
+    }
+  };
+
+  const handleRowChange = (index, field, value) => {
+    const updatedRows = [...formData.rows]; // ✅ use rows
+    updatedRows[index][field] = value;
+    setFormData({ ...formData, rows: updatedRows }); // ✅ use rows
   };
 
   const handleSubmit = async (e) => {
@@ -103,7 +131,7 @@ const UpdateMds = () => {
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(`${filteredFormData.mds_no} updated successfully!`);
-      navigate("/master-admin/mds-device");
+      navigate("/master-admin/mds-devices");
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
@@ -195,6 +223,48 @@ const UpdateMds = () => {
                       </CCol>
                     ))}
                   </CRow>
+
+                  {/* ✅ Rows Configuration section */}
+                  {formData.no_of_rows > 0 && (
+                    <>
+                      <h5 className="mt-4">Rows Configuration</h5>
+                      <CTable
+                        bordered
+                        hover
+                        responsive
+                        className="mt-3 text-center"
+                      >
+                        <CTableHead color="secondary">
+                          <CTableRow>
+                            <CTableHeaderCell>Row No</CTableHeaderCell>
+                            <CTableHeaderCell>Row Length (m)</CTableHeaderCell>
+                          </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                          {formData.rows?.map((row, index) => (
+                            <CTableRow key={index}>
+                              <CTableDataCell>{row.row_no}</CTableDataCell>
+                              <CTableDataCell>
+                                <CFormInput
+                                  type="number"
+                                  value={row.row_length}
+                                  onChange={(e) =>
+                                    handleRowChange(
+                                      index,
+                                      "row_length",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Enter row length"
+                                  min="0"
+                                />
+                              </CTableDataCell>
+                            </CTableRow>
+                          ))}
+                        </CTableBody>
+                      </CTable>
+                    </>
+                  )}
                 </CTabPanel>
 
                 {/* FLAGS TAB */}
@@ -219,6 +289,48 @@ const UpdateMds = () => {
                 </CTabPanel>
               </CTabContent>
             </CTabs>
+
+            {/* ROW CONFIGURATION TABLE */}
+            {/* {formData.no_of_rows > 0 && (
+              <>
+                <h5 className="mt-4">Rows Configuration</h5>
+                <CTable bordered hover responsive className="mt-3 text-center">
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>Row No</CTableHeaderCell>
+                      <CTableHeaderCell>Row Length (m)</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {formData.rows?.map(
+                      (
+                        row,
+                        index // ✅ use rows
+                      ) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell>{row.row_no}</CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type="number"
+                              value={row.row_length}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  index,
+                                  "row_length",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Enter row length"
+                              min="0"
+                            />
+                          </CTableDataCell>
+                        </CTableRow>
+                      )
+                    )}
+                  </CTableBody>
+                </CTable>
+              </>
+            )} */}
 
             <div className="d-flex justify-content-end mt-4">
               <CButton type="submit" color="warning" size="sm" className="w-25">

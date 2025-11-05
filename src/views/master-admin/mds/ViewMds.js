@@ -141,7 +141,16 @@ const ViewMds = () => {
     },
     {
       title: "Linked Robot Info",
-      fields: ["robot"],
+      base: "robot",
+      fields: [
+        "robot_no",
+        "deveui",
+        "block",
+        "lora_no",
+        "old_lora_no",
+        "version",
+        "pcb_version",
+      ],
     },
   ];
 
@@ -163,7 +172,7 @@ const ViewMds = () => {
             Mds Operation
           </Link>
           <Link
-            to={`/${adminroute}/mds/update/${mds._id}`}
+            to={`/${adminroute}/mds-devices/update/${mds._id}`}
             className="btn btn-outline-warning btn-sm"
           >
             Update MDS
@@ -194,25 +203,32 @@ const ViewMds = () => {
             style={{ fontSize: "0.9rem" }}
           >
             <CTableBody>
-              {section.fields.map((field) => (
-                <CTableRow key={field}>
-                  <CTableDataCell
-                    className="fw-semibold text-uppercase"
-                    style={{
-                      color: "white",
-                      backgroundColor: "#343a40",
-                      width: "35%",
-                    }}
-                  >
-                    {field
-                      .replace(/_/g, " ")
-                      .replace(/\b\w/g, (char) => char.toUpperCase())}
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    {formatValue(field, mds[field])}
-                  </CTableDataCell>
-                </CTableRow>
-              ))}
+              {section.fields.map((field) => {
+                const fullPath = section.base
+                  ? `${section.base}.${field}`
+                  : field;
+                const value = fullPath
+                  .split(".")
+                  .reduce((obj, key) => obj?.[key], mds);
+
+                return (
+                  <CTableRow key={field}>
+                    <CTableDataCell
+                      className="fw-semibold text-uppercase"
+                      style={{
+                        color: "white",
+                        backgroundColor: "#343a40",
+                        width: "35%",
+                      }}
+                    >
+                      {field
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    </CTableDataCell>
+                    <CTableDataCell>{formatValue(field, value)}</CTableDataCell>
+                  </CTableRow>
+                );
+              })}
             </CTableBody>
           </CTable>
         </div>

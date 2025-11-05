@@ -17,6 +17,13 @@ import {
   CButton,
   CModalFooter,
   CFormLabel,
+  CTabList,
+  CTab,
+  CTabContent,
+  CTabPanel,
+  CForm,
+  CFormSelect,
+  CTabs,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -25,7 +32,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
-import { cilX } from "@coreui/icons";
+import { cilTrash, cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { deleteMdsFromDatabase, deleteMdsFromLns } from "./DeleteMds";
 
@@ -44,6 +51,34 @@ const reducer = (state, action) => {
       };
     case "FETCH_MDS_FAIL":
       return { ...state, loadingMds: false, error: action.payload };
+    case "FETCH_ROBOTS_REQUEST":
+      return { ...state, loadingRobots: true, robotError: "" };
+    case "FETCH_ROBOTS_SUCCESS":
+      return {
+        ...state,
+        loadingRobots: false,
+        robots: action.payload,
+      };
+    case "FETCH_ROBOTS_FAIL":
+      return { ...state, loadingRobots: false, robotError: action.payload };
+    // case "ASSIGN_ROBOT_REQUEST":
+    //   return { ...state, assignRobotLoading: true, assignRobotError: "" };
+
+    // case "ASSIGN_ROBOT_SUCCESS":
+    //   return {
+    //     ...state,
+    //     assignRobotLoading: false,
+    //     assigned_robots: state.assigned_robots
+    //       ? [...state.assigned_robots, action.payload]
+    //       : [action.payload],
+    //   };
+
+    // case "ASSIGN_ROBOT_FAIL":
+    //   return {
+    //     ...state,
+    //     assignRobotLoading: false,
+    //     assignRobotError: action.payload,
+    //   };
     default:
       return state;
   }
@@ -51,7 +86,15 @@ const reducer = (state, action) => {
 
 const Mds = () => {
   const [
-    { error, mdsDevices, loadingMds, totalPages, hasNextPage, hasPrevPage },
+    {
+      error,
+      mdsDevices,
+      loadingMds,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      robots,
+    },
     dispatch,
   ] = useReducer(reducer, {
     mdsDevices: [],
@@ -60,6 +103,7 @@ const Mds = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    robots: [],
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -75,6 +119,14 @@ const Mds = () => {
   const [selectedMds, setSelectedMds] = useState(null);
   const [deleteReason, setDeleteReason] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // --- Add these new states after your delete-related useStates ---
+  const [assignModalVisible, setAssignModalVisible] = useState(false);
+  // const [robots, setRobots] = useState([]);
+  const [selectedRobot, setSelectedRobot] = useState("");
+  // const [assignedRobots, setAssignedRobots] = useState([]);
+  const [assignRobotLoading, setAssignRobotLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("assigned");
 
   const [formData, setFormData] = useState({
     mds_no: "",
@@ -138,6 +190,68 @@ const Mds = () => {
     fetchMds();
   }, [authtoken, limit, page]);
 
+  useEffect(() => {
+    const fetchRobotsBySite = async () => {
+      dispatch({ type: "FETCH_ROBOTS_REQUEST" });
+      try {
+        const result = await axios.get(
+          `/api/v1/robots/get-all-robots-sitewise/${selectedMds.site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+        dispatch({
+          type: "FETCH_ROBOTS_SUCCESS",
+          payload: result.data.data,
+        });
+        console.log("Fetched Robots:", result.data.data);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_ROBOTS_FAIL",
+          payload: error.response?.data?.error || "Error fetching robots",
+        });
+        toast.error(error.response.data.error || "Error fetching robots");
+      }
+    };
+    if (assignModalVisible && selectedMds?.site_id) {
+      fetchRobotsBySite();
+    }
+  }, [assignModalVisible, selectedMds, authtoken]);
+  // ---------------------------------------------------------------------------------
+
+  // --- Add this function for assigning robot to selected MDS ---
+  const handleAssignRobotToMds = async (mds, robotNo) => {
+    if (!mds || !robotNo) {
+      toast.error("Please select both MDS and Robot.");
+      return;
+    }
+
+    setAssignRobotLoading(true);
+    try {
+      const response = await axios.post(
+        `/api/v1/mds-device/assign-robot-to-mds`,
+        {
+          mds_id: mds._id,
+          robot_no: robotNo,
+        },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+
+      toast.success(response.data?.message || "Robot assigned successfully!");
+      setAssignModalVisible(false);
+      setSelectedRobot("");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to assign robot."
+      );
+    } finally {
+      setAssignRobotLoading(false);
+    }
+  };
+  // ---------------------------------------------------------------------------------
+
   const filteredMds = mdsDevices.filter((mds) =>
     ["mds_no", "deveui", "site_id", "version", "lora_no"].some((field) =>
       (mds?.[field] ?? "")
@@ -186,7 +300,7 @@ const Mds = () => {
             Add MDS
           </Link>
         )}
-        {[
+        {/* {[
           "Master Admin",
           "Master User",
           "Project User",
@@ -198,7 +312,7 @@ const Mds = () => {
           >
             Shift Block Wise
           </Link>
-        )}
+        )} */}
 
         {userInfo?.role === "Master Admin" && (
           <Link
@@ -250,7 +364,7 @@ const Mds = () => {
               Block
             </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "340px" }}>
+            <CTableHeaderCell style={{ minWidth: "480px" }}>
               Actions
             </CTableHeaderCell>{" "}
           </CTableRow>
@@ -311,6 +425,17 @@ const Mds = () => {
                 <CTableDataCell>{mds.block}</CTableDataCell>
                 <CTableDataCell>{mds.site_id}</CTableDataCell>
                 <CTableDataCell>
+                  <CButton
+                    color="info"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedMds(mds);
+                      setAssignModalVisible(true);
+                    }}
+                  >
+                    Assign Robot
+                  </CButton>
+
                   <Link
                     className="btn btn-sm btn-secondary m-1"
                     to={`/${adminroute}/mds-devices/view/${mds._id}`}
@@ -320,6 +445,12 @@ const Mds = () => {
 
                   {userInfo?.role === "Master Admin" && (
                     <>
+                      <Link
+                        className="btn btn-sm btn-warning m-1"
+                        to={`/${adminroute}/mds-devices/update/${mds._id}`}
+                      >
+                        Update
+                      </Link>
                       <button
                         className="btn btn-sm btn-danger m-1"
                         onClick={() => {
@@ -340,12 +471,6 @@ const Mds = () => {
                       >
                         Delete-DB
                       </button>
-                      <Link
-                        className="btn btn-sm btn-warning m-1"
-                        to={`/${adminroute}/mds-devices/update/${mds._id}`}
-                      >
-                        Update
-                      </Link>
                     </>
                   )}
                 </CTableDataCell>
@@ -423,18 +548,31 @@ const Mds = () => {
               try {
                 if (deleteType === "lns") {
                   await deleteMdsFromLns(
+                    selectedMds.mds_no,
                     selectedMds.deveui,
                     authtoken,
-                    deleteReason,
-                    selectedMds._id
+                    deleteReason
                   );
-                } else {
+                } else if (deleteType === "db") {
                   await deleteMdsFromDatabase(
-                    selectedMds._id,
+                    selectedMds.mds_no,
                     authtoken,
                     deleteReason
                   );
                 }
+
+                // Optional: Remove deleted MDS from state instantly
+                dispatch({
+                  type: "FETCH_MDS_SUCCESS",
+                  payload: {
+                    data: mdsDevices.filter(
+                      (d) => d.mds_no !== selectedMds.mds_no
+                    ),
+                    totalPages,
+                    hasNextPage,
+                    hasPrevPage,
+                  },
+                });
               } finally {
                 setIsDeleting(false);
                 setShowDeleteModal(false);
@@ -513,6 +651,120 @@ const Mds = () => {
               )}
             </>
           )}
+        </CModalBody>
+      </CModal>
+
+      {/* Assign Robot Modal */}
+      <CModal
+        size="xl"
+        visible={assignModalVisible}
+        onClose={() => setAssignModalVisible(false)}
+        backdrop="static"
+        scrollable
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>
+            Assign Robot to MDS:{" "}
+            <span className=" badge bg-primary">{selectedMds?.mds_no}</span>
+          </CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => {
+              setAssignModalVisible(false);
+              setSelectedRobot("");
+            }}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <CTabs activeItemKey={activeTab} onActiveItemChange={setActiveTab}>
+            <CTabList variant="tabs">
+              <CTab itemKey="assigned">Assigned Robots</CTab>
+              <CTab itemKey="assign">Assign New Robot</CTab>
+            </CTabList>
+
+            <CTabContent>
+              {/* ---------- ASSIGNED ROBOTS ---------- */}
+              <CTabPanel className="p-3" itemKey="assigned">
+                <CTable bordered hover responsive className="text-center mt-3">
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>#</CTableHeaderCell>
+                      <CTableHeaderCell>Robot No</CTableHeaderCell>
+                      <CTableHeaderCell>Site ID</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {selectedMds?.robot ? (
+                      <CTableRow>
+                        <CTableDataCell>1</CTableDataCell>
+                        <CTableDataCell>
+                          {selectedMds.robot.robot_no}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {selectedMds.robot.site_id}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell
+                          colSpan="3"
+                          className="text-center text-danger"
+                        >
+                          No assigned robots found.
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+              </CTabPanel>
+
+              {/* ---------- ASSIGN NEW ROBOT ---------- */}
+              <CTabPanel className="p-3" itemKey="assign">
+                <CForm className="mt-3">
+                  <div className="mb-3">
+                    <CFormLabel htmlFor="robot-select">Select Robot</CFormLabel>
+                    <CFormSelect
+                      id="robot-select"
+                      name="item-name"
+                      value={selectedRobot}
+                      onChange={(e) => setSelectedRobot(e.target.value)}
+                    >
+                      <option value="">Assign Robot</option>
+                      {robots?.length > 0 &&
+                        robots.map((item, index) => (
+                          <option key={index} value={item.robot_no}>
+                            {item.robot_no}-({item.site_id})
+                          </option>
+                        ))}
+                    </CFormSelect>
+                  </div>
+
+                  <CButton
+                    color="primary"
+                    size="sm"
+                    onClick={() =>
+                      handleAssignRobotToMds(selectedMds, selectedRobot)
+                    }
+                    disabled={!selectedRobot || assignRobotLoading}
+                  >
+                    {assignRobotLoading ? (
+                      <>
+                        Assigning...
+                        <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Assign Robot"
+                    )}
+                  </CButton>
+                </CForm>
+              </CTabPanel>
+            </CTabContent>
+          </CTabs>
         </CModalBody>
       </CModal>
     </div>

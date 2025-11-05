@@ -1025,7 +1025,24 @@ const _nav = [
           />
         ),
       },
-
+      {
+        component: CNavGroup,
+        name: "Robots Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Robots Tracking",
+            to: "/project-admin/robots-tracker",
+          },
+        ],
+      },
       // ✅ GROUP 1: Site Data
       {
         component: CNavGroup,
@@ -1142,24 +1159,24 @@ const _nav = [
       },
 
       //robots-positioning
-      {
-        component: CNavGroup,
-        name: "Robots Tracking",
-        icon: (
-          <CIcon
-            icon={cilWrapText}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Robots Position Tracking",
-            to: "/project-admin/robots-position",
-          },
-        ],
-      },
+      // {
+      //   component: CNavGroup,
+      //   name: "Robots Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilWrapText}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "Robots Position Tracking",
+      //       to: "/project-admin/robots-position",
+      //     },
+      //   ],
+      // },
 
       // ✅ GROUP 4: Robots
       {
@@ -1510,24 +1527,24 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavGroup,
-        name: "Robots Tracking",
-        icon: (
-          <CIcon
-            icon={cilWrapText}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Robots Position Tracking",
-            to: "/project-user/robots-position",
-          },
-        ],
-      },
+      // {
+      //   component: CNavGroup,
+      //   name: "Robots Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilWrapText}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "Robots Position Tracking",
+      //       to: "/project-user/robots-position",
+      //     },
+      //   ],
+      // },
       //Opex Data
       {
         component: CNavGroup,
@@ -1576,6 +1593,25 @@ const _nav = [
           />
         ),
       },
+      //robots-positioning
+      {
+        component: CNavGroup,
+        name: "Robots Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Robots Tracking",
+            to: "/service-admin/robots-tracker",
+          },
+        ],
+      },
 
       // === Site Management Group ===
       {
@@ -1614,24 +1650,24 @@ const _nav = [
       },
 
       //robots-positioning
-      {
-        component: CNavGroup,
-        name: "Robots Tracking",
-        icon: (
-          <CIcon
-            icon={cilWrapText}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Robots Position Tracking",
-            to: "/service-admin/robots-position",
-          },
-        ],
-      },
+      // {
+      //   component: CNavGroup,
+      //   name: "Robots Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilWrapText}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "Robots Position Tracking",
+      //       to: "/service-admin/robots-position",
+      //     },
+      //   ],
+      // },
 
       // === Robot Management Group ===
       {
