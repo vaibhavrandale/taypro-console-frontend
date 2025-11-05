@@ -272,6 +272,12 @@ const RobotTracker = () => {
 
     return () => socket.off("robotPositionUpdate", handleUpdate);
   }, [dispatch]);
+  useEffect(() => {
+    // When robots are fetched, sync filtered list
+    if (robots.length > 0) {
+      setFilteredRobot(robots);
+    }
+  }, [robots]);
 
   const handleRobotClick = (robot) => {
     setSelectedRobotId(robot._id);
@@ -310,63 +316,6 @@ const RobotTracker = () => {
   ];
 
   const uniqueBlocks = [...new Set(robots.map((r) => r.block).filter(Boolean))];
-  // const successFullCleaningCount = robotsRef.current.reduce((count, robot) => {
-  //   if (robot.cleaning?.start && robot.cleaning?.finish && !robot.is_delete) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
-
-  // const CleaninginProgressCount = robotsRef.current.reduce((count, robot) => {
-  //   if (robot.cleaning?.start && !robot.cleaning?.finish && !robot.is_delete) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
-  // const BatteryDeadCount = robotsRef.current.reduce((count, robot) => {
-  //   if (
-  //     robot.cleaning?.start &&
-  //     robot.cleaning?.battery_dead &&
-  //     !robot.cleaning?.finish &&
-  //     !robot.is_delete
-  //   ) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
-
-  // const CleaningCancelCount = robotsRef.current.reduce((count, robot) => {
-  //   if (
-  //     robot.cleaning?.start &&
-  //     robot.cleaning?.cleaning_cancelled &&
-  //     !robot.cleaning?.finish &&
-  //     !robot.is_delete
-  //   ) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
-
-  // const noCleaningCount = robotsRef.current.reduce((count, robot) => {
-  //   if (!robot.cleaning?.start && !robot.cleaning?.finish && !robot.is_delete) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
-
-  // const totalCount = robotsRef.current.reduce((unique, robot) => {
-  //   if (!robot.is_delete) {
-  //     unique.add(robot.robot_no);
-  //   }
-  //   return unique;
-  // }, new Set()).size;
-
-  // const totalDeleted = robotsRef.current.reduce((count, robot) => {
-  //   if (robot.is_delete) {
-  //     count++;
-  //   }
-  //   return count;
-  // }, 0);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
