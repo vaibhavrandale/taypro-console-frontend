@@ -279,7 +279,7 @@ const ViewSprint = () => {
   };
 
   const handleAddTask = async () => {
-    if (!title) {
+    if (!Addtitle) {
       toast.error("Please enter a task title.");
       return;
     }

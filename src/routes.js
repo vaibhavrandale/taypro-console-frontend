@@ -152,6 +152,7 @@ import SprintDashboard from "./views/sprints/SprintDashboard";
 import ViewSprint from "./views/sprints/ViewSprint";
 import CreateSprint from "./views/sprints/CreateSprint";
 import GenerateReport from "./views/sprints/GenerateReport";
+import MdsDashboard from "./views/mds-tracking/MdsDashboard";
 import SitewiseTimer from "./views/master-admin/site-analysis/SitewiseTimer";
 import SiteTimerUpdate from "./views/master-admin/site-analysis/SiteTimerUpdate";
 import Mds from "./views/master-admin/mds/Mds";
@@ -2810,6 +2811,16 @@ const routes = [
       <MasterUserRoute>
         <ChatDashboard />
       </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <MasterAdminRoute>
+        <MdsDashboard />
+      </MasterAdminRoute>
     ),
   },
 
