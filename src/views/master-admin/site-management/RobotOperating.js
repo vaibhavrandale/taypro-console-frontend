@@ -17,7 +17,6 @@ import {
   CTableBody,
   CTableDataCell,
   CDropdownMenu,
-  CDropdownItem,
   CDropdown,
   CDropdownToggle,
   CInputGroup,
@@ -379,6 +378,7 @@ const RobotOperating = () => {
     setLoadingRow(null);
     setCommandButton(null);
   };
+
   const sendCustomDownlink = async (command, sent_custom_to_all) => {
     let robotdownlink = {};
 
@@ -608,57 +608,7 @@ const RobotOperating = () => {
                 >
                   CLEANING LOG
                 </Link>
-                {/* <Link
-                  to={`/${adminroute}/site-management/robot-activity`}
-                  className="btn btn-sm btn-secondary me-2 mb-2 shadow-sm"
-                >
-                  Robot Activity
-                </Link> */}
 
-                {/* <CDropdown className="dropdown me-2 mb-2">
-                  {robots.length > 1 ? (
-                    <CDropdownToggle
-                      size="sm"
-                      className="shadow-sm"
-                      color={`${robot.lora_state === 1 ? `success` : `danger`}`}
-                    >
-                      {robot.robot_no}
-                    </CDropdownToggle>
-                  ) : (
-                    <Link
-                      className={`${
-                        robot.lora_state === 1 ? `` : `text-white`
-                      } shadow-sm`}
-                      color={`${robot.lora_state === 1 ? `success` : `danger`}`}
-                      size="sm"
-                      to={`${
-                        robot.robot_no === robot_no ? `#` : `${robot.robot_no}`
-                      }`}
-                    >
-                      {robot.robot_no}
-                    </Link>
-                  )}
-
-                  <CDropdownMenu className="z-3 px-2 py-1 dropdown-menu-robot border">
-                    {robots.length === 1
-                      ? ""
-                      : robots.map((item, index) => (
-                          <CDropdownItem
-                            key={index}
-                            to={`${
-                              item.robot_no === robot_no
-                                ? `#`
-                                : `${item.robot_no}`
-                            }`}
-                            className={`dopdown-item ${
-                              item.lora_state === 1 ? `online` : `offline`
-                            }`}
-                          >
-                            {item.robot_no}
-                          </CDropdownItem>
-                        ))}
-                  </CDropdownMenu>
-                </CDropdown> */}
                 <CDropdown className="dropdown me-2 mb-2">
                   {robots.length > 1 ? (
                     <CDropdownToggle
@@ -742,79 +692,6 @@ const RobotOperating = () => {
               <CRow>
                 {/* First Card */}
                 <CCol md={5} className="mt-2">
-                  {/* <CCard className="shadow border-0" style={{ height: "100%" }}> */}
-                  {/* <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                    <CCardBody className="d-flex flex-column flex-grow-1">
-                      <div className="d-flex flex-row justify-content-between p-1">
-                        <CRow
-                          className="d-flex flex-column"
-                          style={{ gap: "10px" }}
-                        >
-                          <CCol>
-                            <span style={{ fontSize: "15px" }}>
-                              {robot.robot_no}
-                            </span>
-                          </CCol>
-                          <CCol>🔋: {robot.battery_voltage}%</CCol>
-                          <CCol>
-                            <span className="text-success">
-                              PCB:
-                              <span className="text-warning ms-2">
-                                {robot.pcb_version}
-                              </span>
-                              <span className="mx-2">|</span>
-                              F:
-                              <span className="text-warning ms-2">
-                                {robot.version}
-                              </span>{" "}
-                            </span>
-                          </CCol>
-                        </CRow>
-
-                        <CRow
-                          className="d-flex flex-column"
-                          style={{ gap: "10px" }}
-                        >
-                         <CCol>
-                            <span style={{ fontSize: "13px" }}>
-                              {robot.deveui}
-                            </span>
-                          </CCol> 
-                          <CCol>Wheel Speed</CCol>
-                          <CCol>
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
-                            >
-                              {robot.wheel_motor_speed}
-                            </CBadge>
-                          </CCol>
-                        </CRow>
-
-                        <CRow
-                          className="d-flex flex-column"
-                          style={{ gap: "10px" }}
-                        >
-                          <CCol>
-                            Lora:{" "}
-                            <span className="text-success">
-                              {robot.lora_no}
-                            </span>
-                          </CCol>
-                          <CCol>Brush Speed</CCol>
-                          <CCol>
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
-                            >
-                              {robot.brush_motor_speed}
-                            </CBadge>
-                          </CCol>
-                        </CRow>
-                      </div>
-                    </CCardBody>
-                  </CCard> */}
-
                   <CCard className="h-100 border-0 shadow-sm rounded-3">
                     <CCardBody className="p-3">
                       {/* Top Section: Robot No + Battery */}

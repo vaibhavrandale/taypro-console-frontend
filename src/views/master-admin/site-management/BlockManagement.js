@@ -259,6 +259,7 @@ const BlockManagement = () => {
       </div>
       <CContainer>
         <CRow className="mt-4 justify-content-center">
+          {/* mapping blocks */}
           {blocks.map((block, index) => {
             const robot = block.blockrobots ? block.blockrobots : null; // Handle single robot object
 

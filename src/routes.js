@@ -171,6 +171,17 @@ import SupplyChainAndLogisticsDashboard from "./views/supply-chain-and-logistics
 import ResearchAndDevelopmentAndProductDevelopmentAdminDashboard from "./views/research-and-development-and-product-development-admin/ResearchAndDevelopmentAndProductDevelopmentAdminDashboard";
 import HrAdminDashboard from "./views/hr-admin/HrAdminDashboard";
 import Summary from "./views/mis-report/Summary";
+import Mds from "./views/master-admin/mds/Mds";
+import AddMdsUsingLoraNo from "./views/master-admin/mds/AddMdsUsingLoraNo";
+// import ShiftBlockwiseMds from "./views/master-admin/mds/ShiftBlockwiseMds";
+import ActivateMds from "./views/master-admin/mds/ActivateMds";
+import ViewMds from "./views/master-admin/mds/ViewMds";
+import UpdateMds from "./views/master-admin/mds/UpdateMds";
+import ActiveMds from "./views/master-admin/replace-mds-lora/ActiveMds";
+import InActiveMds from "./views/master-admin/replace-mds-lora/InActiveMds";
+import ReplaceMdsLora from "./views/master-admin/replace-mds-lora/ReplaceMdsLora";
+import MdsOperating from "./views/master-admin/mds/MdsOperating";
+import MdsEventAndFrames from "./views/master-admin/mds/MdsEventAndFrames";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1698,6 +1709,100 @@ const routes = [
     ),
   },
 
+  //MDS Devices
+  {
+    path: "/master-admin/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <Mds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <AddMdsUsingLoraNo />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <MasterAdminRoute>
+        <ActivateMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <ViewMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <MasterAdminRoute>
+        <UpdateMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <ActiveMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <MasterAdminRoute>
+        <InActiveMds />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <MasterAdminRoute>
+        <ReplaceMdsLora />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <MasterAdminRoute>
+        <MdsOperating />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <MasterAdminRoute>
+        <MdsEventAndFrames />
+      </MasterAdminRoute>
+    ),
+  },
+
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
@@ -2766,6 +2871,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <ProjectAdminRoute>
+        <RobotTracker />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/profile-tab",
     name: "Profile Details",
     element: (
@@ -3773,7 +3887,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
     name: "Master Admin Sitewise Cleaning Log",
     element: (
       <ProjectUserRoute>
@@ -4919,7 +5033,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
-
+  {
+    path: "/service-admin/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <ServiceAdminRoute>
+        <RobotTracker />
+      </ServiceAdminRoute>
+    ),
+  },
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {

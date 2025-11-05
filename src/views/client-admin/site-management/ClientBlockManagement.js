@@ -105,20 +105,36 @@ const ClientBlockManagement = () => {
           robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
-  const stopCommand = async () => {
+
+  const sendMulticastDownlink = async () => {
+    let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
+
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: alldeveuis,
+      block: "All",
+      site_id: site_id,
+      command: "14",
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const response = await axios.post(
-        `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
-        {},
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+        robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      toast.success(
-        response.data.message || "Stop Command sent to all Robots successfully"
-      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
     } catch (error) {
-      toast.error(error.message || "Failed to send stop command");
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response.data.error,
+      });
+
+      toast.error(error.response.data.message || error.response.data.error);
     }
   };
 
@@ -154,8 +170,8 @@ const ClientBlockManagement = () => {
   // }, 0);
 
   return (
-    <div className="min-vh-90 d-flex flex-column align-items-center">
-      <h4 className="p-2 text-center">
+    <div className=" d-flex flex-column align-items-center">
+      <h4 className=" text-center">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -167,7 +183,7 @@ const ClientBlockManagement = () => {
         )}
       </h4>
 
-      <div className="d-flex flex-column align-items-center my-3">
+      <div className="d-flex flex-column align-items-center my-1">
         {/* === BUTTONS ROW === */}
         <div className="d-flex justify-content-center gap-2 mb-3">
           <CButton
@@ -180,12 +196,117 @@ const ClientBlockManagement = () => {
           <CButton
             className="btn btn-secondary btn-sm"
             size="sm"
-            onClick={() => stopCommand()}
+            onClick={() => sendMulticastDownlink()}
           >
             Stop Cleaning
           </CButton>
         </div>
-
+        <CModal
+          backdrop="static"
+          size="xl"
+          scrollable
+          visible={visible}
+          onClose={() => setVisible(false)}
+        >
+          <CModalHeader closeButton={false}>
+            <CModalTitle>
+              <span className="text-success">
+                {sitename}, {sitelocation}
+              </span>{" "}
+              - Robots Details
+            </CModalTitle>
+            <button
+              type="button"
+              className=" border-0 ms-auto py-0 px-1"
+              onClick={() => setVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+          <CModalBody>
+            <CRow className="justify-content-end">
+              <CCol xs={12} sm={10} md={6} lg={4}>
+                <CInputGroup className="mb-3">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search Robot..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </CInputGroup>
+              </CCol>
+            </CRow>
+            <CTable responsive hover bordered className="bg-important">
+              <CTableHead color="secondary">
+                <CTableRow>
+                  <CTableHeaderCell className="text-center">
+                    Sr
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Robot No
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Deveui
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Status
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Block
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Last Update
+                  </CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {filteredRobots.length > 0 ? (
+                  filteredRobots.map((robot, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell className="text-center">
+                        {index + 1}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.robot_no}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.deveui}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.lora_state === 1 ? (
+                          <CBadge color="success">Online</CBadge>
+                        ) : (
+                          <CBadge color="danger">Offline</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.block}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {new Date(robot.last_uplink).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan="5" className="text-center">
+                      No matching robots found
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
+          </CModalBody>
+        </CModal>
         {/* === BADGES ROW === */}
         <div className="d-flex justify-content-center align-items-center flex-wrap gap-3">
           <CBadge color="success" className="px-3 py-2" shape="rounded-pill">

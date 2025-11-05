@@ -12,6 +12,8 @@ import {
   CButton,
   CBadge,
   CAlert,
+  CCard,
+  CCardBody,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -31,6 +33,9 @@ const reducer = (state, action) => {
         ...state,
         cleaningLoading: false,
         cleaninglogs: action.payload.cleaninglogs,
+        cleaningCompleted: action.payload.cleaningCompleted,
+        cleaningInProgress: action.payload.cleaningInProgress,
+        failureLogs: action.payload.failureLogs,
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
@@ -81,6 +86,9 @@ const ClientCleaningLog = () => {
       cleaningLoading,
       cleaningError,
       cleaninglogs,
+      cleaningCompleted,
+      cleaningInProgress,
+      failureLogs,
       errLogloading,
       errorLogError,
       errorLogs,
@@ -96,6 +104,9 @@ const ClientCleaningLog = () => {
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
+    cleaningCompleted: [],
+    cleaningInProgress: [],
+    failureLogs: [],
     cleaningLoading: false,
     cleaningError: "",
 
@@ -118,55 +129,8 @@ const ClientCleaningLog = () => {
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  // const [startDate, setEndDate] = useState(
-  //   new Date().toISOString().split("T")[0]
-  // );
-  // const [pageInput, setPageInput] = useState("");
-  // const [page, setPage] = useState(1);
-  // const [limit, setLimit] = useState(10);
 
   useEffect(() => {
-    // const fetchCleaningLogs = async () => {
-    //   let pagination = {
-    //     pg: page,
-    //     limit: limit,
-    //   };
-    //   try {
-    //     dispatch({ type: "FETCH_CLEANING_REQUEST" });
-    //     const result = await axios.post(
-    //       `/api/v1/cleaninglogs/${startDate}/${startDate}/${site_id}`,
-    //       pagination,
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${authtoken}`,
-    //         },
-    //       }
-    //     );
-    //     let total = Math.ceil(
-    //       Number(result.data.total) / Number(result.data.limit)
-    //     );
-    //     let next = result.data.hasNextPage;
-    //     let prev = result.data.hasPrevPage;
-    //     const data = result.data.data;
-    //     dispatch({
-    //       type: "FETCH_CLEANING_SUCCESS",
-    //       payload: {
-    //         cleaninglogs: data,
-    //         totalPages: total,
-    //         hasNextPage: next,
-    //         hasPrevPage: prev,
-    //       },
-    //     });
-    //   } catch (error) {
-    //     dispatch({
-    //       type: "FETCH_FAIL",
-    //       payload: error.response?.data?.error || error.message,
-    //       subscriptiondata: error.response?.data?.data,
-    //       subscriptionStatus: error.response?.data.subscriptionStatus,
-    //     });
-    //     toast.error(error.response?.data?.error || error.message);
-    //   }
-    // };
     const fetchCleaningLogs = async () => {
       try {
         dispatch({ type: "FETCH_CLEANING_REQUEST" });
@@ -187,7 +151,13 @@ const ClientCleaningLog = () => {
         dispatch({
           type: "FETCH_CLEANING_SUCCESS",
           payload: {
-            cleaninglogs: data,
+            cleaninglogs: data.cleaninglogs || [],
+            cleaningCompleted: data.cleaningCompleted || [],
+            cleaningInProgress: data.cleaningInProgress || [],
+            failureLogs: data.failureLogs || [],
+            totalPages: data.totalPages || 1,
+            hasNextPage: data.hasNextPage || false,
+            hasPrevPage: data.hasPrevPage || false,
           },
         });
       } catch (error) {
@@ -203,131 +173,20 @@ const ClientCleaningLog = () => {
       }
     };
 
-    const fetchErrorLogs = async () => {
-      try {
-        dispatch({ type: "FETCH_ERROR_LOGS_REQUEST" });
-        const response = await axios.get(
-          `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
-        );
-        dispatch({
-          type: "FETCH_ERROR_LOGS_SUCCESS",
-          payload: response.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_ERROR_LOGS_FAIL",
-          payload: error.response?.data?.error || error.response?.data?.message,
-          subscriptiondata: error.response?.data?.data,
-          subscriptionStatus: error.response?.data.subscriptionStatus,
-        });
-        toast.error(
-          error.response?.data?.error || error.response?.data?.message
-        );
-      }
-    };
-
-    const fetchTimerLogs = async () => {
-      try {
-        dispatch({ type: "FETCH_TIMER_LOGS_REQUEST" });
-        const response = await axios.get(
-          `/api/v1/weathertimerupdatenotification/get-weather-timer-update-notification/${site_id}/${startDate}/${startDate}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
-        );
-        dispatch({
-          type: "FETCH_TIMER_LOGS_SUCCESS",
-          payload: response.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_TIMER_LOGS_FAIL",
-          payload: error.response?.data?.error || error.response?.data?.message,
-          subscriptiondata: error.response?.data?.data,
-          subscriptionStatus: error.response?.data.subscriptionStatus,
-        });
-        toast.error(
-          error.response?.data?.error || error.response?.data?.message
-        );
-      }
-    };
-
     fetchCleaningLogs();
-    fetchErrorLogs();
-    fetchTimerLogs();
   }, [site_id, startDate, authtoken]);
 
   const exportToExcel = () => {
-    const hasCleaningLogs =
-      Array.isArray(cleaninglogs) && cleaninglogs.length > 0;
-    const hasErrorLogs = Array.isArray(errorLogs) && errorLogs.length > 0;
-    const hasTimerLogs = Array.isArray(timerLogs) && timerLogs.length > 0;
-
-    if (!hasCleaningLogs && !hasErrorLogs && !hasTimerLogs) {
+    if (!cleaningCompleted) {
       toast.error("No data available to export.");
       return;
     }
 
     const mergedData = [];
 
-    // 1. Timer Logs
-    mergedData.push(["Timer Logs"]);
-    if (hasTimerLogs) {
-      mergedData.push([
-        "Site ID",
-        "Block",
-        "Timer Update",
-        "Last Updated",
-        "Created At",
-      ]);
-      timerLogs.forEach((siteData) => {
-        if (!siteData || !Array.isArray(siteData.last_activity)) return;
-        siteData.last_activity.forEach((blockData) => {
-          if (!blockData) return;
-          if (blockData.detail) {
-            mergedData.push([
-              siteData.site_id || "N/A",
-              blockData.block || "N/A",
-              blockData.detail || "N/A",
-              siteData.updatedAt
-                ? new Date(siteData.updatedAt).toLocaleString()
-                : "N/A",
-              siteData.createdAt
-                ? new Date(siteData.createdAt).toLocaleString()
-                : "N/A",
-            ]);
-          } else if (Array.isArray(blockData.details)) {
-            blockData.details.forEach((detail) => {
-              mergedData.push([
-                siteData.site_id || "N/A",
-                blockData.block || "N/A",
-                detail || "N/A",
-                siteData.updatedAt
-                  ? new Date(siteData.updatedAt).toLocaleString()
-                  : "N/A",
-                siteData.createdAt
-                  ? new Date(siteData.createdAt).toLocaleString()
-                  : "N/A",
-              ]);
-            });
-          }
-        });
-      });
-    } else {
-      mergedData.push(["No timer logs data available"]);
-    }
-    mergedData.push([]);
-
     // 2. Cleaning Logs
     mergedData.push(["Cleaning Logs"]);
-    if (hasCleaningLogs) {
+    if (cleaningCompleted) {
       mergedData.push([
         "Sr No",
         "Robot No",
@@ -339,7 +198,7 @@ const ClientCleaningLog = () => {
         "Finish Time",
         "Status",
       ]);
-      cleaninglogs.forEach((log, index) => {
+      cleaningCompleted.forEach((log, index) => {
         mergedData.push([
           index + 1,
           log.robot_no || "N/A",
@@ -388,23 +247,6 @@ const ClientCleaningLog = () => {
     }
     mergedData.push([]);
 
-    // 3. Error Logs
-    // mergedData.push(["Error Logs"]);
-    // if (hasErrorLogs) {
-    //   mergedData.push(["Sr No", "Robot No", "Block", "Error Type", "Date"]);
-    //   errorLogs.forEach((log, index) => {
-    //     const errorDate = log.date ? new Date(log.date) : null;
-    //     mergedData.push([
-    //       index + 1,
-    //       log.robot_no || "N/A",
-    //       log.block || "N/A",
-    //       log.error_type || "N/A",
-    //       errorDate ? errorDate.toLocaleDateString() : "N/A",
-    //     ]);
-    //   });
-    // } else {
-    //   mergedData.push(["No error logs data available"]);
-    // }
     mergedData.push([]);
 
     // 4. Summary
@@ -419,10 +261,8 @@ const ClientCleaningLog = () => {
     mergedData.push(["Data Summary"]);
     mergedData.push([
       "Cleaning Logs",
-      hasCleaningLogs ? cleaninglogs.length : 0,
+      cleaningCompleted ? cleaningCompleted.length : 0,
     ]);
-    mergedData.push(["Error Logs", hasErrorLogs ? errorLogs.length : 0]);
-    mergedData.push(["Timer Updates", hasTimerLogs ? timerLogs.length : 0]);
 
     const ws = XLSX.utils.aoa_to_sheet(mergedData);
     const wb = XLSX.utils.book_new();
@@ -520,76 +360,53 @@ const ClientCleaningLog = () => {
             </div>
           ) : (
             <>
-              {/* Timer Update Notifications Table - Comes First */}
-              <h5 className="mt-3 mb-3">⏱ Timer Update Notifications</h5>
-              <CTable
-                bordered
-                hover
-                responsive
-                className="text-center bg-important"
-              >
-                <CTableHead color="info">
-                  <CTableRow>
-                    <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Block</CTableHeaderCell>
-                    <CTableHeaderCell>Timer Updates</CTableHeaderCell>
-                    <CTableHeaderCell>Last Updated</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {Array.isArray(timerLogs) && timerLogs.length > 0 ? (
-                    timerLogs.flatMap(
-                      (siteData, siteIndex) =>
-                        Array.isArray(siteData.last_activity)
-                          ? siteData.last_activity.map(
-                              (blockData, blockIndex) => (
-                                <CTableRow key={`${siteIndex}-${blockIndex}`}>
-                                  <CTableDataCell>
-                                    {siteIndex * siteData.last_activity.length +
-                                      blockIndex +
-                                      1}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {blockData.block}
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    <ul
-                                      className="text-start"
-                                      style={{
-                                        listStyleType: "none",
-                                        paddingLeft: 0,
-                                      }}
-                                    >
-                                      {blockData.details?.map(
-                                        (detail, detailIndex) => (
-                                          <li key={detailIndex}>{detail}</li>
-                                        )
-                                      )}
-                                    </ul>
-                                  </CTableDataCell>
-                                  <CTableDataCell>
-                                    {new Date(
-                                      siteData.updatedAt
-                                    ).toLocaleString()}
-                                  </CTableDataCell>
-                                </CTableRow>
-                              )
-                            )
-                          : [] // fallback if last_activity is not an array
-                    )
-                  ) : (
-                    <CTableRow>
-                      <CTableDataCell colSpan={4} className="  text-start ">
-                        No timer update notifications found for the selected
-                        date.
-                      </CTableDataCell>
-                    </CTableRow>
-                  )}
-                </CTableBody>
-              </CTable>
-
               {/* Cleaning Logs Table */}
-              <h5 className="mt-2 mb-3">🤖 Cleaning Logs</h5>
+              <div className="mb-3">
+                <CCard className="shadow-sm border-0">
+                  <CCardBody className="py-3">
+                    <CRow className="align-items-center">
+                      <CCol xs="12" md="3" className="mb-2 mb-md-0">
+                        <h5 className="fw-bold mb-0">🤖 Cleaning Logs</h5>
+                      </CCol>
+
+                      <CCol xs="12" md="9">
+                        <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
+                          <CBadge
+                            color="secondary"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Total:{" "}
+                            {cleaningCompleted.length +
+                              cleaningInProgress.length +
+                              failureLogs.length}
+                          </CBadge>
+
+                          <CBadge
+                            color="info"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            In Progress: {cleaningInProgress.length}
+                          </CBadge>
+
+                          <CBadge
+                            color="success"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Completed: {cleaningCompleted.length}
+                          </CBadge>
+
+                          <CBadge
+                            color="danger"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Failure: {failureLogs.length}
+                          </CBadge>
+                        </div>
+                      </CCol>
+                    </CRow>
+                  </CCardBody>
+                </CCard>
+              </div>
               <CTable
                 bordered
                 hover
@@ -629,8 +446,8 @@ const ClientCleaningLog = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {cleaninglogs.length > 0 ? (
-                    cleaninglogs.map((log, index) => (
+                  {cleaningCompleted.length > 0 ? (
+                    cleaningCompleted.map((log, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
                         <CTableDataCell>{log.robot_no}</CTableDataCell>
@@ -720,8 +537,64 @@ const ClientCleaningLog = () => {
               /> */}
 
               {/* Error Logs Table */}
-              {/* <h5 className="mt-5 mb-3">🚨 Error Logs for</h5> */}
-              {/* <CTable
+              <h5 className="mt-5 mb-3">Cleaning In Progress</h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableHeaderCell>Started At</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {cleaningInProgress?.length > 0 ? (
+                    cleaningInProgress.map((log, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>
+                          {" "}
+                          {log.cleaning.start &&
+                            new Date(log.cleaning.startAt).toLocaleString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              }
+                            )}
+                        </CTableDataCell>
+                        <CTableDataCell>{log.block}</CTableDataCell>
+                        <CTableDataCell>
+                          <CBadge color="info">In Progress</CBadge>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5} className=" text-start ">
+                        No Cleaning In Progress logs found for the selected
+                        date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+
+              {/* Error Logs Table */}
+              <h5 className="mt-5 mb-3">🚨 Error Logs for</h5>
+              <CTable
                 bordered
                 hover
                 responsive
@@ -733,19 +606,19 @@ const ClientCleaningLog = () => {
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
                     <CTableHeaderCell>Block</CTableHeaderCell>
                     <CTableHeaderCell>Error Type</CTableHeaderCell>
-                    <CTableHeaderCell>Date</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {errorLogs?.length > 0 ? (
-                    errorLogs.map((log, index) => (
+                  {failureLogs?.length > 0 ? (
+                    failureLogs.map((log, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
                         <CTableDataCell>{log.robot_no}</CTableDataCell>
                         <CTableDataCell>{log.block}</CTableDataCell>
-                        <CTableDataCell>{log.error_type}</CTableDataCell>
                         <CTableDataCell>
-                          {new Date(log.date).toLocaleDateString()}{" "}
+                          {log.cleaning.battery_dead
+                            ? "In Complete"
+                            : "Cleaning Cancelled"}
                         </CTableDataCell>
                       </CTableRow>
                     ))
@@ -757,7 +630,7 @@ const ClientCleaningLog = () => {
                     </CTableRow>
                   )}
                 </CTableBody>
-              </CTable> */}
+              </CTable>
             </>
           )}
         </div>
