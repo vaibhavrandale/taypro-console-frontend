@@ -426,6 +426,14 @@ export const role_permissions = [
     role: "Research And Development And Product Development Admin",
     permissions: [],
   },
+  {
+    role: "Hr Admin",
+    permissions: [],
+  },
+  {
+    role: "Accounts Admin",
+    permissions: [],
+  },
 ];
 
 export const projects_role_permissions = [
@@ -851,6 +859,13 @@ export const departments = [
     id: "D014",
     department: "Production_and_operations",
     email: "quality@taypro.in",
+    added_by: "vaibhav.randale.in",
+    added_at: "2025-01-30 11:38:00",
+  },
+  {
+    id: "D015",
+    department: "Sales",
+    email: "sales@taypro.in",
     added_by: "vaibhav.randale.in",
     added_at: "2025-01-30 11:38:00",
   },

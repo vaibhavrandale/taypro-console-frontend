@@ -42,7 +42,7 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Cleaning Log per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">
@@ -56,7 +56,7 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Cleaning Log per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">
@@ -70,7 +70,7 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Cleaning Log per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">
@@ -90,15 +90,15 @@ const RobotAndCleaningGraph = ({ cleaningrobots, loading, site_id, error }) => {
                         backgroundColor: chartColors[0],
                         borderWidth: 1,
                         barThickness: 20, // 👈 Fixed width for each bar (in pixels)
-                        maxBarThickness: 20, // 👈 Optional: max limit for bar width
-                        categoryPercentage: 0.8, // 👈 Optional: % of available space per category
-                        barPercentage: 0.9, // 👈 Optional: % of space inside each category
+                        // maxBarThickness: 20, // 👈 Optional: max limit for bar width
+                        // categoryPercentage: 0.8, // 👈 Optional: % of available space per category
+                        // barPercentage: 0.9, // 👈 Optional: % of space inside each category
                       },
                     ],
                   }}
                   options={{
                     responsive: true,
-
+                    maintainAspectRatio: false, // 🔑 let it expand
                     plugins: {
                       legend: { display: false },
                       tooltip: {

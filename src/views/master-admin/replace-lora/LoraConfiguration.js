@@ -236,17 +236,17 @@ const LoraConfiguration = () => {
       // Update robots state with new data
       dispatch({
         type: "ADD_LORA_SUCCESS",
-        payload: [...lora_configuration, response.data.data], // Append instead of replace
+        payload: [response.data.data, ...lora_configuration], // Append instead of replace
       });
 
       setDeveuiObj({});
 
       setAddModalVisible(false);
     } catch (error) {
-      toast.error(error.response.data.error);
+      toast.error(error.response.data.error || error.response.data.message);
       dispatch({
         type: "ADD_LORA_FAIL",
-        payload: error.response.data.error,
+        payload: error.response.data.error || error.response.data.message,
       });
       setAddModalVisible(false);
     }

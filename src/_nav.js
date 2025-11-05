@@ -7,23 +7,29 @@ import {
   cilSpeedometer,
   cilFactory,
   cilBuilding,
-  cilCalendarCheck,
   cilTask,
-  cilNoteAdd,
   cilStorage,
   cilCheckCircle,
   cilGroup,
   cilListRich,
   cilCheck,
-  cilBarChart,
   cilLan,
   cilEnvelopeOpen,
   cilMoney,
-  cilDiamond,
   cilWrapText,
   cilLocationPin,
+  cilChartPie,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
+import {
+  ChartNoAxesCombined,
+  CircleGauge,
+  Crown,
+  Proportions,
+  SquareTerminal,
+  Tags,
+  Wrench,
+} from "lucide-react";
 
 const _nav = [
   // -----------------------------------master admin----------------------------------------
@@ -544,6 +550,28 @@ const _nav = [
             component: CNavItem,
             name: "Sprints Dashboard",
             to: "/master-admin/sprints-dashboard",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "MIS Report",
+        icon: (
+          // <CIcon
+          //   icon={cilMoney}
+          // customClassName="nav-icon"
+          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          // />
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MIS Report",
+            to: "/master-admin/mis-report",
           },
         ],
       },
@@ -1239,6 +1267,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "MIS Report",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MIS Report",
+            to: "/project-admin/mis-report",
+          },
+        ],
+      },
     ],
   },
 
@@ -1803,6 +1849,18 @@ const _nav = [
         component: CNavItem,
         name: "Monthly Sites Report",
         to: "/service-admin/monthlyreport",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/service-admin/mis-report",
         icon: (
           <CIcon
             icon={cilFactory}
@@ -2868,10 +2926,14 @@ const _nav = [
         name: "Dashboard",
         to: "/client-admin/dashboard",
         icon: (
-          <CIcon
-            icon={cilSpeedometer}
+          // <CIcon
+          //   icon={<Gauge />}
+          // customClassName="nav-icon"
+          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          // />
+          <CircleGauge
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2880,15 +2942,26 @@ const _nav = [
         name: "Statistics",
         to: "/client-admin/statistics",
         icon: (
-          <CIcon
-            icon={cilBarChart}
+          // <CIcon
+          //   icon={cilBarChart}
+          // customClassName="nav-icon"
+          // style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          // />
+          <ChartNoAxesCombined
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
         subscriptionIcon: (
-          <CIcon
-            icon={cilDiamond}
+          // <CIcon
+          //   icon={cilDiamond}
+          //   style={{
+          //     height: "18px",
+          //     width: "18px",
+          //     color: "yellow",
+          //   }}
+          // />
+          <Crown
             style={{
               height: "18px",
               width: "18px",
@@ -2902,10 +2975,14 @@ const _nav = [
         name: "Robot Commands",
         to: "/client-admin/robot-commands",
         icon: (
-          <CIcon
-            icon={cilCursor}
+          // <CIcon
+          //   icon={cilCursor}
+          // customClassName="nav-icon"
+          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          // />
+          <SquareTerminal
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2914,10 +2991,14 @@ const _nav = [
         name: "Tickets",
         to: "/client-admin/clientadmin-client-ticket",
         icon: (
-          <CIcon
-            icon={cilNoteAdd}
+          // <CIcon
+          //   icon={cilNoteAdd}
+          // customClassName="nav-icon"
+          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          // />
+          <Tags
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
@@ -2957,10 +3038,15 @@ const _nav = [
         component: CNavGroup,
         name: "Maintenance & Logs",
         icon: (
-          <CIcon
-            icon={cilCalendarCheck}
+          // <CIcon
+          // icon={cilCalendarCheck}
+          // customClassName="nav-icon"
+          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+
+          // />
+          <Wrench
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
         items: [
@@ -2969,8 +3055,15 @@ const _nav = [
             name: "Prev. Maintenance",
             to: "/client-admin/preventive-maintenance-dashboard",
             subscriptionIcon: (
-              <CIcon
-                icon={cilDiamond}
+              // <CIcon
+              //   icon={cilDiamond}
+              //   style={{
+              //     height: "18px",
+              //     width: "18px",
+              //     color: "yellow",
+              //   }}
+              // />
+              <Crown
                 style={{
                   height: "18px",
                   width: "18px",
@@ -3019,8 +3112,15 @@ const _nav = [
             name: "Robots Tracking",
             to: "/client-admin/robots-tracking",
             subscriptionIcon: (
-              <CIcon
-                icon={cilDiamond}
+              // <CIcon
+              //   icon={cilDiamond}
+              //   style={{
+              //     height: "18px",
+              //     width: "18px",
+              //     color: "yellow",
+              //   }}
+              // />
+              <Crown
                 style={{
                   height: "18px",
                   width: "18px",
@@ -3039,7 +3139,7 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilGroup}
-            customClassName="nav-icon"
+            // customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -3054,8 +3154,15 @@ const _nav = [
             name: "Live Chat",
             to: "/client-admin/chat",
             subscriptionIcon: (
-              <CIcon
-                icon={cilDiamond}
+              // <CIcon
+              //   icon={cilDiamond}
+              //   style={{
+              //     height: "18px",
+              //     width: "18px",
+              //     color: "yellow",
+              //   }}
+              // />
+              <Crown
                 style={{
                   height: "18px",
                   width: "18px",
@@ -3465,6 +3572,289 @@ const _nav = [
   },
 
   // -----------------------------Opex Site Technician----------------------------
+
+  // -----------------------sales admin--------------------------------------------------
+  //
+
+  {
+    component: CNavGroup,
+    name: "Sales Admin",
+    to: "/sales-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/sales-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/sales-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+
+  // -----------------------sales admin--------------------------------------------------
+
+  // -----------------------Account Admin--------------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Accounts Admin",
+    to: "/accounts-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/accounts-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/accounts-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // -----------------------Account Admin--------------------------------------------------
+
+  // -----------------------Supply Chain Admin--------------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Supply Chain And Logistics Admin",
+    to: "/supply-chain-and-logistics-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/supply-chain-and-logistics-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/supply-chain-and-logistics-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // ---------------------Supply Chain Admin--------------------------------------------------
+
+  // -----------------------Research And Development And Product Development Admin-------------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Research And Development And Product Development Admin",
+    to: "/research-and-development-and-product-development-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/research-and-development-and-product-development-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/research-and-development-and-product-development-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // ------------------Research And Development And Product Development Admin-------------------------------------------
+
+  // -----------------------HR and Admin-------------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Hr Admin",
+    to: "/hr-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/hr-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/hr-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // ------------------hr Admin-------------------------------------------
+
+  // ---------------------Quality admin-------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Quality Admin",
+    to: "/quality-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/quality-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/quality-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // -----------------Quality Admin-------------------------------------------
+
+  // --------------------production-and-operations admin-------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Production And Operations Admin",
+    to: "/production-and-operations-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/production-and-operations-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "MIS Report",
+        to: "/production-and-operations-admin/mis-report",
+        icon: (
+          <Proportions
+            customClassName="nav-icon"
+            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+  // ----------------production-and-operations-admin Admin-------------------------------------------
 ];
 
 export default _nav;

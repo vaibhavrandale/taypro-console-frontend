@@ -43,7 +43,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Battery Voltage per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">
@@ -57,7 +57,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Battery Voltage per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">
@@ -71,7 +71,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
             <CCardHeader>
               <h5 className="text-start">
                 Battery Voltage per Robot of &nbsp;
-                <span className="text-primary">{site_id}</span>
+                <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
             <CCardBody className="">

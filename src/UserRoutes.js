@@ -83,3 +83,56 @@ export function OpexSiteTechnicianRoute({ children }) {
     <Page404 />
   );
 }
+export function SalesAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Sales Admin" ? children : <Page404 />;
+}
+
+export function HRAndAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Hr Admin" ? children : <Page404 />;
+}
+
+export function AccountAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Accounts Admin" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}
+
+export function QualityAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Quality Admin" ? children : <Page404 />;
+}
+
+export function SupplyChainAndLogisticsAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Supply Chain And Logistics Admin" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}
+export function ResearchAndDevelopmentAndProductDevelopmentAdminRoute({
+  children,
+}) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo &&
+    userInfo.role ===
+      "Research And Development And Product Development Admin" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}
+
+export function ProductionAndOperationsAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Production And Operations Admin" ? (
+    children
+  ) : (
+    <Page404 />
+  );
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import { CImage, CSpinner } from "@coreui/react";
+import { CImage } from "@coreui/react";
 import RobotImg from "../../assets/images/robot.png";
 import { getRobotPhase } from "./helpers";
 import "./tracking.css";
