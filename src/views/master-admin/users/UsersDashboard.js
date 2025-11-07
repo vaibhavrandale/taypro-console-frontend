@@ -1127,6 +1127,10 @@ const UsersDashboard = () => {
                     <CTableDataCell>{selectedItem.email}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
+                    <CTableHeaderCell>Password</CTableHeaderCell>
+                    <CTableDataCell>{selectedItem.password}</CTableDataCell>
+                  </CTableRow>
+                  <CTableRow>
                     <CTableHeaderCell>Employee ID</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.employee_id}</CTableDataCell>
                   </CTableRow>
