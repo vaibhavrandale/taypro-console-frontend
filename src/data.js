@@ -434,6 +434,14 @@ export const role_permissions = [
     role: "Accounts Admin",
     permissions: [],
   },
+  {
+    role: "Opex Client Admin",
+    permissions: [],
+  },
+  {
+    role: "Opex Site Technician",
+    permissions: [],
+  },
 ];
 
 export const projects_role_permissions = [

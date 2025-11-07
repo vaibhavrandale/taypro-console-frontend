@@ -21,6 +21,7 @@ import {
   CCardHeader,
   CCardBody,
   CTooltip,
+  CBadge,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -42,16 +43,31 @@ const reducer = (state, action) => {
       };
     case "FETCH_BLOCKDATA_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "SEND_DOWNLINK_REQUEST":
+      return { ...state, Commandloading: true, commandError: "" };
+    case "SEND_DOWNLINK_SUCCESS":
+      return {
+        ...state,
+        Commandloading: false,
+      };
+    case "SEND_DOWNLINK_FAIL":
+      return { ...state, Commandloading: false, commandError: action.payload };
     default:
       return state;
   }
 };
 
 const BlockManagement = () => {
-  const [{ error, robots, blocks, loading }, dispatch] = useReducer(reducer, {
+  const [
+    { error, robots, blocks, loading, commandError, Commandloading },
+    dispatch,
+  ] = useReducer(reducer, {
     robots: [],
     blocks: [],
     loading: false,
+    Commandloading: false,
+    commandError: "",
   });
 
   const navigate = useNavigate();
@@ -95,20 +111,35 @@ const BlockManagement = () => {
     fetchData();
   }, [authtoken, site_id]);
 
-  const stopCommand = async () => {
+  const sendMulticastDownlink = async () => {
+    let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
+
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: alldeveuis,
+      block: "All",
+      site_id: site_id,
+      command: "14",
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const response = await axios.post(
-        `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
-        {},
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+        robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
       );
-      toast.success(
-        response.data.message || "Stop Command sent to all Robots successfully"
-      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
     } catch (error) {
-      toast.error(error.message || "Failed to send stop command");
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response.data.error,
+      });
+
+      toast.error(error.response.data.message || error.response.data.error);
     }
   };
 
@@ -139,7 +170,7 @@ const BlockManagement = () => {
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
-      <h4 className="p-2 text-center text-primary">
+      <h4 className="p-2 text-center text-success">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -162,9 +193,10 @@ const BlockManagement = () => {
           <CButton
             className="btn btn-secondary btn-sm"
             size="sm"
-            onClick={() => stopCommand()}
+            disabled={robots.length === 0 || Commandloading}
+            onClick={() => sendMulticastDownlink()}
           >
-            Stop Cleaning
+            {Commandloading ? "Sending..." : "Stop All"}
           </CButton>
         </div>
 
@@ -257,6 +289,33 @@ const BlockManagement = () => {
           </CModalBody>
         </CModal>
       </div>
+      {/* === BADGES ROW === */}
+      <div className="d-flex justify-content-center align-items-center flex-wrap gap-3">
+        <CBadge color="success" className="px-3 py-2" shape="rounded-pill">
+          Online: <span>{robots.filter((r) => r.lora_state === 1).length}</span>
+        </CBadge>
+
+        <CBadge color="danger" className="px-3 py-2" shape="rounded-pill">
+          Offline:{" "}
+          <span>{robots.filter((r) => r.lora_state === 0).length}</span>
+        </CBadge>
+        <CBadge color="warning" className="px-3 py-2" shape="rounded-pill">
+          Cleaning In Progress:{" "}
+          <span>
+            {
+              robots.filter(
+                (r) =>
+                  r.last_status?.toLowerCase() === "online" &&
+                  r.lora_state === 1
+              ).length
+            }
+          </span>
+        </CBadge>
+
+        <CBadge color="primary" className="px-3 py-2" shape="rounded-pill">
+          Total Robots: <span>{robots.length}</span>
+        </CBadge>
+      </div>
       <CContainer>
         <CRow className="mt-4 justify-content-center">
           {/* mapping blocks */}
@@ -265,8 +324,8 @@ const BlockManagement = () => {
 
             return (
               <CCol md={4} className="my-2" key={index}>
-                <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                  <CCardHeader className="text-center fw-bold border">
+                <CCard className="h-100 d-flex flex-column border border-primary shadow-sm rounded-0">
+                  <CCardHeader className="text-center fw-bold border-bottom border-primary rounded-0">
                     {block.block_name}
                   </CCardHeader>
                   <CCardBody className="d-flex flex-column flex-grow-1">

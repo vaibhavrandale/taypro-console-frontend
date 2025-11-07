@@ -310,10 +310,10 @@ const OpexManageCycle = () => {
                     <CTableDataCell></CTableDataCell>
                     <CTableDataCell>Total</CTableDataCell>
                     <CTableDataCell>
-                      {cycle.day_wise_data.reduce(
+                      {/* {cycle.day_wise_data.reduce(
                         (acc, d) => acc + d.modules_planned_for_day,
                         0
-                      )}
+                      )} */}
                     </CTableDataCell>
                     <CTableDataCell></CTableDataCell>
                     <CTableDataCell>
@@ -323,10 +323,10 @@ const OpexManageCycle = () => {
                       )}
                     </CTableDataCell>
                     <CTableDataCell>
-                      {cycle.day_wise_data.reduce(
+                      {/* {cycle.day_wise_data.reduce(
                         (acc, d) => acc + d.modules_remaining_for_day,
                         0
-                      )}
+                      )} */}
                     </CTableDataCell>
                     <CTableDataCell></CTableDataCell>
                     <CTableDataCell></CTableDataCell>

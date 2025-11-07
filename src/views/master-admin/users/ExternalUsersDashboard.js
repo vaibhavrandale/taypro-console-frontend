@@ -301,6 +301,7 @@ const ExternalUsersDashboard = () => {
       phone: "",
       type: "External",
       profile_image: "",
+      employee_id: "",
       is_master_opex_site_technician: false,
     });
     setAddModalVisible(true);
