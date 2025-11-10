@@ -78,6 +78,9 @@ const BlockManagement = () => {
   const [visible, setVisible] = useState(false);
   const [sitename, setSitename] = useState("");
   const [sitelocation, setSitLocation] = useState("");
+  // NEW STATES for block-level modal
+  const [blockModalVisible, setBlockModalVisible] = useState(false);
+  const [selectedBlock, setSelectedBlock] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,7 +170,8 @@ const BlockManagement = () => {
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
   }
-
+  // const getRobotsByBlock = (blockName) =>
+  //   robots.filter((robot) => robot.block === blockName);
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
       <h4 className="p-2 text-center text-success">
@@ -254,6 +258,9 @@ const BlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Block
                   </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Battery (%)
+                  </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -274,6 +281,23 @@ const BlockManagement = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.block}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.battery_voltage !== undefined ? (
+                          <span
+                            className={`fw-bold ${
+                              robot.battery_voltage < 20
+                                ? "text-danger"
+                                : robot.battery_voltage < 50
+                                ? "text-warning"
+                                : "text-success"
+                            }`}
+                          >
+                            {robot.battery_voltage}%
+                          </span>
+                        ) : (
+                          "-"
+                        )}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -382,20 +406,132 @@ const BlockManagement = () => {
                       ))}
                     </div>
                   </CCardBody>
-                  <div className="p-2 d-flex justify-content-center">
+                  <div className="p-2 d-flex justify-content-center gap-2">
                     {robot ? (
-                      <Link
-                        to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
-                        className="btn btn-sm btn-secondary"
-                      >
-                        MANAGE
-                      </Link>
+                      <>
+                        <Link
+                          to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
+                          className="btn btn-sm btn-secondary"
+                        >
+                          MANAGE
+                        </Link>
+
+                        <CButton
+                          color="info"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedBlock(block); // choose block
+                            setBlockModalVisible(true); // open single modal
+                          }}
+                        >
+                          View Details
+                        </CButton>
+                      </>
                     ) : (
                       <CButton disabled className="btn-sm btn-secondary">
                         No Robots
                       </CButton>
                     )}
                   </div>
+
+                  {/* 🔹 Single Global Block Modal */}
+                  <CModal
+                    backdrop="static"
+                    size="lg"
+                    scrollable
+                    visible={blockModalVisible}
+                    onClose={() => setBlockModalVisible(false)}
+                  >
+                    <CModalHeader closeButton={false}>
+                      <CModalTitle>
+                        <span className="text-primary">
+                          {selectedBlock?.block_name}
+                        </span>{" "}
+                        - Robots
+                      </CModalTitle>
+                      <button
+                        type="button"
+                        className="border-0 ms-auto py-0 px-1 bg-transparent"
+                        onClick={() => setBlockModalVisible(false)}
+                      >
+                        <CIcon icon={cilX} size="lg" />
+                      </button>
+                    </CModalHeader>
+
+                    <CModalBody>
+                      <CTable responsive bordered hover>
+                        <CTableHead color="secondary">
+                          <CTableRow>
+                            <CTableHeaderCell className="text-center">
+                              Sr
+                            </CTableHeaderCell>
+                            <CTableHeaderCell className="text-center">
+                              Robot No
+                            </CTableHeaderCell>
+                            <CTableHeaderCell className="text-center">
+                              Status
+                            </CTableHeaderCell>
+                            <CTableHeaderCell className="text-center">
+                              Battery (%)
+                            </CTableHeaderCell>
+                          </CTableRow>
+                        </CTableHead>
+
+                        <CTableBody>
+                          {selectedBlock?.blockrobots &&
+                          selectedBlock.blockrobots.length > 0 ? (
+                            selectedBlock.blockrobots.map((r, index) => (
+                              <CTableRow key={index}>
+                                <CTableDataCell className="text-center">
+                                  {index + 1}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-center">
+                                  {r.robot_no}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-center">
+                                  {r.lora_state === 1 ? (
+                                    <span className="text-success fw-bold">
+                                      Online
+                                    </span>
+                                  ) : (
+                                    <span className="text-danger fw-bold">
+                                      Offline
+                                    </span>
+                                  )}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-center">
+                                  {r.battery_voltage !== undefined ? (
+                                    <span
+                                      className={`fw-bold ${
+                                        r.battery_voltage < 20
+                                          ? "text-danger"
+                                          : r.battery_voltage < 50
+                                          ? "text-warning"
+                                          : "text-success"
+                                      }`}
+                                    >
+                                      {r.battery_voltage}%
+                                    </span>
+                                  ) : (
+                                    "-"
+                                  )}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ))
+                          ) : (
+                            <CTableRow>
+                              <CTableDataCell
+                                colSpan="4"
+                                className="text-center text-muted"
+                              >
+                                No Robots Found
+                              </CTableDataCell>
+                            </CTableRow>
+                          )}
+                        </CTableBody>
+                      </CTable>
+                    </CModalBody>
+                  </CModal>
                 </CCard>
               </CCol>
             );
