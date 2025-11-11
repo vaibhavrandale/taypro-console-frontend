@@ -213,7 +213,7 @@ const BlockManagement = () => {
         >
           <CModalHeader closeButton={false}>
             <CModalTitle>
-              <span className="text-primary">
+              <span className="text-success">
                 {sitename}, {sitelocation}
               </span>{" "}
               - Robots Details
@@ -253,13 +253,19 @@ const BlockManagement = () => {
                     Deveui
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
+                    Battery
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
                     Status
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     Block
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
-                    Battery (%)
+                    Last Status
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Last Uplink
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -277,27 +283,36 @@ const BlockManagement = () => {
                         {robot.deveui}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.lora_state === 1 ? "Online" : "Offline"}
+                        {robot.battery_voltage} %
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.lora_state === 1 ? (
+                          <CBadge color="success">Online</CBadge>
+                        ) : (
+                          <CBadge color="danger">Offline</CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.block}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.battery_voltage !== undefined ? (
-                          <span
-                            className={`fw-bold ${
-                              robot.battery_voltage < 20
-                                ? "text-danger"
-                                : robot.battery_voltage < 50
-                                ? "text-warning"
-                                : "text-success"
-                            }`}
-                          >
-                            {robot.battery_voltage}%
-                          </span>
-                        ) : (
-                          "-"
-                        )}
+                        {robot.last_status}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.last_uplink
+                          ? new Date(robot.last_uplink).toLocaleString(
+                              "en-GB",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              }
+                            )
+                          : "N/A"}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -329,8 +344,7 @@ const BlockManagement = () => {
             {
               robots.filter(
                 (r) =>
-                  r.last_status?.toLowerCase() === "online" &&
-                  r.lora_state === 1
+                  r.last_status === "Cleaning Started" && r.lora_state === 1
               ).length
             }
           </span>

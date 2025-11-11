@@ -255,7 +255,10 @@ const Robots = () => {
         <CTableHead color="secondary">
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "200px" }}>
+            <CTableHeaderCell
+              style={{ minWidth: "200px" }}
+              className="sticky-column"
+            >
               Robot No
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
@@ -288,7 +291,7 @@ const Robots = () => {
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell colSpan="10" className="text-start fw-bold">
+              <CTableDataCell colSpan="10" className="text-center ">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -303,7 +306,7 @@ const Robots = () => {
             filteredRobots.map((robot, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>
+                <CTableDataCell className="sticky-column">
                   <Link
                     className="text-decoration-none m-1"
                     to={`/${adminroute}/robots/view/${robot._id}`}

@@ -295,7 +295,8 @@ const LoraConfiguration = () => {
       item.deveui?.toLowerCase().includes(term) ||
       item.site_id?.toLowerCase().includes(term) ||
       item.serial?.toString().toLowerCase().includes(term) ||
-      item.formatted_deveui?.toLowerCase().includes(term)
+      item.formatted_deveui?.toLowerCase().includes(term) ||
+      item.status?.toLowerCase().includes(term)
     );
   });
 
@@ -449,7 +450,7 @@ const LoraConfiguration = () => {
                 <CTableDataCell className="sticky-column">
                   {item.serial}
                 </CTableDataCell>
-                <CTableDataCell className="sticky-column">
+                <CTableDataCell>
                   <CBadge
                     color={
                       item.status === "available"

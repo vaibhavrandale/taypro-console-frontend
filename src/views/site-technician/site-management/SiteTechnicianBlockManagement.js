@@ -21,6 +21,7 @@ import {
   CCardHeader,
   CCardBody,
   CTooltip,
+  CBadge,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -123,7 +124,7 @@ const SiteTechnicianBlockManagement = () => {
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
-      <h4 className="p-2 text-center text-primary">
+      <h4 className="p-2 text-center text-success">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -161,7 +162,7 @@ const SiteTechnicianBlockManagement = () => {
         >
           <CModalHeader closeButton={false}>
             <CModalTitle>
-              <span className="text-primary">
+              <span className="text-success">
                 {sitename}, {sitelocation}
               </span>{" "}
               - Robots Details
@@ -194,17 +195,29 @@ const SiteTechnicianBlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Sr
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    className="text-center"
+                    style={{ maxWidth: "100px" }}
+                  >
                     Robot No
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  {/* <CTableHeaderCell className="text-center">
                     Deveui
+                  </CTableHeaderCell> */}
+                  <CTableHeaderCell className="text-center">
+                    Battery
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     Status
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     Block
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Last Status
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Last Uplink
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -218,14 +231,40 @@ const SiteTechnicianBlockManagement = () => {
                       <CTableDataCell className="text-center">
                         {robot.robot_no}
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
+                      {/* <CTableDataCell className="text-center">
                         {robot.deveui}
+                      </CTableDataCell> */}
+                      <CTableDataCell className="text-center">
+                        {robot.battery_voltage} %
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.lora_state === 1 ? "Online" : "Offline"}
+                        {robot.lora_state === 1 ? (
+                          <CBadge color="success">Online</CBadge>
+                        ) : (
+                          <CBadge color="danger">Offline</CBadge>
+                        )}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.block}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.last_status}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.last_uplink
+                          ? new Date(robot.last_uplink).toLocaleString(
+                              "en-GB",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              }
+                            )
+                          : "N/A"}
                       </CTableDataCell>
                     </CTableRow>
                   ))
@@ -240,6 +279,32 @@ const SiteTechnicianBlockManagement = () => {
             </CTable>
           </CModalBody>
         </CModal>
+        {/* === BADGES ROW === */}
+      </div>
+      <div className="d-flex justify-content-center align-items-center flex-wrap gap-3">
+        <CBadge color="success" className="px-3 py-2" shape="rounded-pill">
+          Online: <span>{robots.filter((r) => r.lora_state === 1).length}</span>
+        </CBadge>
+
+        <CBadge color="danger" className="px-3 py-2" shape="rounded-pill">
+          Offline:{" "}
+          <span>{robots.filter((r) => r.lora_state === 0).length}</span>
+        </CBadge>
+        <CBadge color="warning" className="px-3 py-2" shape="rounded-pill">
+          Cleaning In Progress:{" "}
+          <span>
+            {
+              robots.filter(
+                (r) =>
+                  r?.last_status === "Cleaning Started" && r.lora_state === 1
+              ).length
+            }
+          </span>
+        </CBadge>
+
+        <CBadge color="primary" className="px-3 py-2" shape="rounded-pill">
+          Total Robots: <span>{robots.length}</span>
+        </CBadge>
       </div>
       <CContainer>
         <CRow className="mt-4 justify-content-center">
@@ -248,8 +313,8 @@ const SiteTechnicianBlockManagement = () => {
 
             return (
               <CCol md={4} className="my-2" key={index}>
-                <CCard className="h-100 d-flex flex-column border-0 shadow-sm">
-                  <CCardHeader className="text-center fw-bold border">
+                <CCard className="h-100 d-flex flex-column border border-primary rounded-0 shadow-sm">
+                  <CCardHeader className="text-center fw-bold  border-bottom border-primary">
                     {block.block_name}
                   </CCardHeader>
                   <CCardBody className="d-flex flex-column flex-grow-1">

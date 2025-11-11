@@ -343,6 +343,9 @@ const ClientDashboard = () => {
                               Status
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
+                              Battery
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ minWidth: "150px" }}>
                               Lora No
                             </CTableHeaderCell>
                             <CTableHeaderCell style={{ minWidth: "150px" }}>
@@ -417,6 +420,9 @@ const ClientDashboard = () => {
                                         ? "Online"
                                         : "Offline"}
                                     </CBadge>
+                                  </CTableDataCell>
+                                  <CTableDataCell>
+                                    {robot.battery_voltage} %
                                   </CTableDataCell>
                                   <CTableDataCell>
                                     {robot.lora_no}

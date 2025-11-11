@@ -605,6 +605,10 @@ const ClientAdminDashboard = () => {
                                       gateway.gateway_status
                                         ? "Online"
                                         : "Offline"
+                                    }${
+                                      gateway.battery_voltage
+                                        ? `| Battery:  ${gateway.battery_voltage} %`
+                                        : ""
                                     }`;
                                   },
                                 },

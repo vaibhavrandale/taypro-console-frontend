@@ -224,7 +224,7 @@ const ClientDashboard = () => {
                     </CRow>
                     <CTable responsive hover bordered>
                       <CTableHead color="secondary">
-                        <CTableRow>
+                        <CTableRow className="text-center">
                           <CTableHeaderCell style={{ minWidth: "20px" }}>
                             #
                           </CTableHeaderCell>
@@ -235,14 +235,15 @@ const ClientDashboard = () => {
                             Status
                           </CTableHeaderCell>
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Battery
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Lora No
                           </CTableHeaderCell>
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Version
                           </CTableHeaderCell>
-                          <CTableHeaderCell style={{ minWidth: "150px" }}>
-                            Deveui
-                          </CTableHeaderCell>
+
                           <CTableHeaderCell style={{ minWidth: "150px" }}>
                             Block
                           </CTableHeaderCell>
@@ -288,7 +289,10 @@ const ClientDashboard = () => {
                                     .includes(searchTerm.toLowerCase()))
                             )
                             .map((robot, index) => (
-                              <CTableRow key={robot.robot_no}>
+                              <CTableRow
+                                key={robot.robot_no}
+                                className="text-center"
+                              >
                                 <CTableHeaderCell style={{ minWidth: "20px" }}>
                                   {index + 1}
                                 </CTableHeaderCell>
@@ -308,9 +312,12 @@ const ClientDashboard = () => {
                                       : "Offline"}
                                   </CBadge>
                                 </CTableDataCell>
+                                <CTableDataCell className="text-center">
+                                  {robot.battery_voltage} %
+                                </CTableDataCell>
                                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
                                 <CTableDataCell>{robot.version}</CTableDataCell>
-                                <CTableDataCell>{robot.deveui}</CTableDataCell>
+
                                 <CTableDataCell>{robot.block}</CTableDataCell>
                                 <CTableDataCell>
                                   {robot.last_status}
