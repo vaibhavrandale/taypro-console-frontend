@@ -195,9 +195,9 @@ const ClientBlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Robot No
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
-                    Deveui
-                  </CTableHeaderCell>
+                  <CTableDataCell className="text-center">
+                    Battery
+                  </CTableDataCell>
                   <CTableHeaderCell className="text-center">
                     Status
                   </CTableHeaderCell>
@@ -217,7 +217,7 @@ const ClientBlockManagement = () => {
                         {robot.robot_no}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.deveui}
+                        {robot.battery_voltage} %
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.lora_state === 1 ? "Online" : "Offline"}

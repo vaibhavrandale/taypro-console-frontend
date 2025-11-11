@@ -960,7 +960,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             closeButton={false}
           >
             <CModalTitle>
-              <h7 className="fw-semibold mb-0">Search Robot And Gateway</h7>
+              <h6 className="fw-semibold mb-0">Search Robot And Gateway</h6>
             </CModalTitle>
 
             <button

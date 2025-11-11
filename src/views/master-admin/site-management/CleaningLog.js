@@ -14,6 +14,7 @@ import {
   CButton,
   CFormCheck,
   CFormLabel,
+  CBadge,
 } from "@coreui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
@@ -440,18 +441,24 @@ const CleaningLog = () => {
                   <CTableHeaderCell className="text-center">
                     Timestamp
                   </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Is Added in Tracking
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Added in Tracking At
+                  </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={6} className="text-center">
+                    <CTableHeaderCell colSpan={7} className="text-center">
                       <LoadingSpinner />
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={6} className="text-center">
+                    <CTableHeaderCell colSpan={7} className="text-center">
                       {error}
                     </CTableHeaderCell>
                   </CTableRow>
@@ -478,7 +485,33 @@ const CleaningLog = () => {
                         {log.topic}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {new Date(log.createdAt).toLocaleString("en-GB")}
+                        {new Date(log.createdAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.is_added_in_robot_position_tracking ? (
+                          <CBadge color="success">Yes</CBadge>
+                        ) : (
+                          <CBadge color="danger">No</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {new Date(log.updatedAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
                       </CTableDataCell>
                     </CTableRow>
                   ))
