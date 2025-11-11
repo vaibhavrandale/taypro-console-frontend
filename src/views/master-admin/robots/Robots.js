@@ -262,7 +262,7 @@ const Robots = () => {
               Robot No
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
-              Firmwaere Version
+              Firmware Version
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Deveui
@@ -271,7 +271,7 @@ const Robots = () => {
               Lora No
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Version
+              PCB Version
             </CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "140px" }}>
               Connection Status
@@ -321,7 +321,7 @@ const Robots = () => {
                 </CTableDataCell>
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
-                <CTableDataCell>{robot.version}</CTableDataCell>
+                <CTableDataCell>{robot.pcb_version}</CTableDataCell>
                 <CTableDataCell>
                   {robot.lora_state === 1 ? (
                     <CBadge color="success" shape="rounded-pill">
