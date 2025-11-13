@@ -182,6 +182,7 @@ import InActiveMds from "./views/master-admin/replace-mds-lora/InActiveMds";
 import ReplaceMdsLora from "./views/master-admin/replace-mds-lora/ReplaceMdsLora";
 import MdsOperating from "./views/master-admin/mds/MdsOperating";
 import MdsEventAndFrames from "./views/master-admin/mds/MdsEventAndFrames";
+import UpdateRobotRowData from "./views/master-admin/robots/UpdateRobotRowData";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1799,6 +1800,16 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MdsEventAndFrames />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/update-row-data",
+    name: "Update Robot Row Data",
+    element: (
+      <MasterAdminRoute>
+        <UpdateRobotRowData />
       </MasterAdminRoute>
     ),
   },
@@ -5758,6 +5769,15 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <SiteTechnicianDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/update-row-data",
+    name: "Update Robot Row Data",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdateRobotRowData />
       </SiteTechnicianRoute>
     ),
   },

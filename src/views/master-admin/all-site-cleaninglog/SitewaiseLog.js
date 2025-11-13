@@ -1061,6 +1061,7 @@ const reducer = (state, action) => {
         ...state,
         cleaningLoading: false,
         cleaninglogs: action.payload.cleaninglogs,
+        totalAssignedRobots: action.payload.totalAssignedRobots,
         cleaningCompleted: action.payload.cleaningCompleted,
         cleaningInProgress: action.payload.cleaningInProgress,
         failureLogs: action.payload.failureLogs,
@@ -1116,6 +1117,7 @@ const SitewaiseLog = () => {
       cleaninglogs,
       cleaningCompleted,
       cleaningInProgress,
+      totalAssignedRobots,
       failureLogs,
       errLogloading,
       errorLogError,
@@ -1132,6 +1134,7 @@ const SitewaiseLog = () => {
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
+    totalAssignedRobots: 0,
     cleaningCompleted: [],
     cleaningInProgress: [],
     failureLogs: [],
@@ -1176,9 +1179,11 @@ const SitewaiseLog = () => {
         );
 
         const data = result.data.data;
+
         dispatch({
           type: "FETCH_CLEANING_SUCCESS",
           payload: {
+            totalAssignedRobots: data.totalAssignedRobots || 0,
             cleaninglogs: data.cleaninglogs || [],
             cleaningCompleted: data.cleaningCompleted || [],
             cleaningInProgress: data.cleaningInProgress || [],
@@ -1400,27 +1405,32 @@ const SitewaiseLog = () => {
                       <CCol xs="12" md="9">
                         <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
                           <CBadge
+                            color="primary"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Total Assigned Robots: {totalAssignedRobots}
+                          </CBadge>
+                          <CBadge
                             color="secondary"
                             className="px-3 py-2 rounded-pill"
                           >
-                            Total:{" "}
+                            Total Logs:{" "}
                             {cleaningCompleted.length +
                               cleaningInProgress.length +
                               failureLogs.length}
                           </CBadge>
-
-                          <CBadge
-                            color="info"
-                            className="px-3 py-2 rounded-pill"
-                          >
-                            In Progress: {cleaningInProgress.length}
-                          </CBadge>
-
                           <CBadge
                             color="success"
                             className="px-3 py-2 rounded-pill"
                           >
                             Completed: {cleaningCompleted.length}
+                          </CBadge>
+
+                          <CBadge
+                            color="warning"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            In Progress: {cleaningInProgress.length}
                           </CBadge>
 
                           <CBadge
@@ -1631,6 +1641,7 @@ const SitewaiseLog = () => {
                 <CTableHead color="secondary">
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Is Duplicate Record</CTableHeaderCell>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
                     <CTableHeaderCell>Block</CTableHeaderCell>
                     <CTableHeaderCell>Error Type</CTableHeaderCell>
@@ -1641,6 +1652,13 @@ const SitewaiseLog = () => {
                     failureLogs.map((log, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>
+                          {log.is_delete ? (
+                            <CBadge color="danger">Yes</CBadge>
+                          ) : (
+                            <CBadge color="success">No</CBadge>
+                          )}
+                        </CTableDataCell>
                         <CTableDataCell>{log.robot_no}</CTableDataCell>
                         <CTableDataCell>{log.block}</CTableDataCell>
                         <CTableDataCell>

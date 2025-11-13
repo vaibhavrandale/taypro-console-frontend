@@ -33,6 +33,7 @@ const reducer = (state, action) => {
         ...state,
         cleaningLoading: false,
         cleaninglogs: action.payload.cleaninglogs,
+        totalAssignedRobots: action.payload.totalAssignedRobots,
         cleaningCompleted: action.payload.cleaningCompleted,
         cleaningInProgress: action.payload.cleaningInProgress,
         failureLogs: action.payload.failureLogs,
@@ -87,6 +88,7 @@ const ClientCleaningLog = () => {
       cleaningError,
       cleaninglogs,
       cleaningCompleted,
+      totalAssignedRobots,
       cleaningInProgress,
       failureLogs,
       errLogloading,
@@ -104,6 +106,7 @@ const ClientCleaningLog = () => {
     dispatch,
   ] = useReducer(reducer, {
     cleaninglogs: [],
+    totalAssignedRobots: 0,
     cleaningCompleted: [],
     cleaningInProgress: [],
     failureLogs: [],
@@ -151,6 +154,8 @@ const ClientCleaningLog = () => {
         dispatch({
           type: "FETCH_CLEANING_SUCCESS",
           payload: {
+            totalAssignedRobots: data.totalAssignedRobots || 0,
+
             cleaninglogs: data.cleaninglogs || [],
             cleaningCompleted: data.cleaningCompleted || [],
             cleaningInProgress: data.cleaningInProgress || [],
@@ -369,7 +374,7 @@ const ClientCleaningLog = () => {
                         <h5 className="fw-bold mb-0">🤖 Cleaning Logs</h5>
                       </CCol>
 
-                      <CCol xs="12" md="9">
+                      {/* <CCol xs="12" md="9">
                         <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
                           <CBadge
                             color="secondary"
@@ -393,6 +398,44 @@ const ClientCleaningLog = () => {
                             className="px-3 py-2 rounded-pill"
                           >
                             Completed: {cleaningCompleted.length}
+                          </CBadge>
+
+                          <CBadge
+                            color="danger"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Failure: {failureLogs.length}
+                          </CBadge>
+                        </div>
+                      </CCol> */}
+                      <CCol xs="12" md="9">
+                        <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
+                          <CBadge
+                            color="primary"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Total Assigned Robots: {totalAssignedRobots}
+                          </CBadge>
+                          <CBadge
+                            color="secondary"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Total Logs:{" "}
+                            {cleaningCompleted.length +
+                              cleaningInProgress.length +
+                              failureLogs.length}
+                          </CBadge>
+                          <CBadge
+                            color="success"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            Completed: {cleaningCompleted.length}
+                          </CBadge>
+                          <CBadge
+                            color="warning"
+                            className="px-3 py-2 rounded-pill"
+                          >
+                            In Progress: {cleaningInProgress.length}
                           </CBadge>
 
                           <CBadge
