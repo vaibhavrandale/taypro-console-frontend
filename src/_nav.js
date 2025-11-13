@@ -628,6 +628,25 @@ const _nav = [
           // },
         ],
       },
+
+      {
+        component: CNavGroup,
+        name: "Robot Row Data",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Row Data",
+            to: "/master-admin/update-row-data",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -2169,6 +2188,24 @@ const _nav = [
             component: CNavItem,
             name: "Tracking",
             to: "/site-technician/robots-tracker",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Row Data",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Row Data",
+            to: "/site-technician/update-row-data",
           },
         ],
       },

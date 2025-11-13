@@ -115,6 +115,14 @@ const BlockManagement = () => {
   }, [authtoken, site_id]);
 
   const sendMulticastDownlink = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want Stop All Robots at ${sitename}, ${sitelocation}?`
+      )
+    ) {
+      return;
+    }
+
     let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
 
     //deveui,command,robot_no,site_id,lora_no
