@@ -319,7 +319,7 @@ const CreateExpense = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className=" py-4">
       <CModal
         visible={visible}
         onClose={() => setVisible(false)}
