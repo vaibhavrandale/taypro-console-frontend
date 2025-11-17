@@ -447,24 +447,27 @@ const CleaningLog = () => {
                   <CTableHeaderCell className="text-center">
                     Added in Tracking At
                   </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    comments
+                  </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={7} className="text-center">
+                    <CTableHeaderCell colSpan={8} className="text-center">
                       <LoadingSpinner />
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={7} className="text-center">
+                    <CTableHeaderCell colSpan={8} className="text-center">
                       {error}
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : filteredLogs.length === 0 ? (
                   <CTableRow>
-                    <CTableDataCell colSpan="6" className="text-center">
+                    <CTableDataCell colSpan={8} className="text-center">
                       No data found
                     </CTableDataCell>
                   </CTableRow>
@@ -512,6 +515,13 @@ const CleaningLog = () => {
                           second: "2-digit",
                           hour12: true,
                         })}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.comments ? (
+                          log.comments
+                        ) : (
+                          <CBadge color="secondary">N/A</CBadge>
+                        )}
                       </CTableDataCell>
                     </CTableRow>
                   ))
