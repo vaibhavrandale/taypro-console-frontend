@@ -129,8 +129,11 @@ const RobotSidebar = ({
             </CBadge>
           </CCardBody>
         </CCard>
+
         <CleaningStatusCard robot={robot} userInfo={userInfo} />
+
         <BatteryStatusCard cleaning={robot.cleaning} />
+
         {userInfo.type === "Internal" && (
           <TrackingDetailsTable trackDetails={robot.track_details} />
         )}

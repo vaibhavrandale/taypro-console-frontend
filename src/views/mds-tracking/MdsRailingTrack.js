@@ -1,4 +1,4 @@
-export const MdsRailingTrack = ({ totalRows, activeRow }) => {
+const MdsRailingTrack = ({ totalRows, activeRow }) => {
   const ROW_HEIGHT = 60; // updated to match actual row height + margin
 
   return (
@@ -16,3 +16,5 @@ export const MdsRailingTrack = ({ totalRows, activeRow }) => {
     </div>
   );
 };
+
+export default MdsRailingTrack;
