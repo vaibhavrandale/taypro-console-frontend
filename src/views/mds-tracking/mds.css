@@ -1,4 +1,4 @@
-@keyframes moveForward {
+/* @keyframes moveForward {
   0% {
     transform: translateX(0);
   }
@@ -36,4 +36,66 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+} */
+
+/* ==================== ANIMATIONS ==================== */
+
+@keyframes moveForward {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(250px);
+  }
+}
+
+/* ==================== CLEANING STATUS COLORS ==================== */
+
+.cleaning-finished {
+  border: 2px solid limegreen !important;
+}
+
+.cleaning-cancelled,
+.battery-dead {
+  border: 2px solid rgb(250, 28, 28) !important;
+}
+
+.cleaning-in-progress {
+  border: 2px solid rgb(255, 187, 61) !important;
+}
+
+.unknown-status {
+  border: 2px solid rgb(83, 247, 247) !important;
+}
+
+.no-cleaning-today {
+  border: 2px solid #ffffff !important;
+}
+
+/* ==================== COMMAND BUTTON ==================== */
+
+.send-custom-button {
+  background: #17db17;
+  color: white;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.send-custom-button:hover {
+  background: #12a312;
+}
+
+.send-custom-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }

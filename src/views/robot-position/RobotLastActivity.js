@@ -16,7 +16,11 @@ const RobotLastActivity = ({ last_activity }) => {
       <CCard className="border-0 my-3 shadow-sm ">
         <CCardBody>
           <CTable bordered hover responsive>
-            <CTableRow>No activity found</CTableRow>
+            <CTableBody>
+              <CTableRow>
+                <CTableDataCell>No activity found</CTableDataCell>
+              </CTableRow>
+            </CTableBody>
           </CTable>
         </CCardBody>
       </CCard>
@@ -30,7 +34,6 @@ const RobotLastActivity = ({ last_activity }) => {
           <CTableHead color="dark">
             <CTableRow>
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
-
               <CTableHeaderCell scope="col">Data</CTableHeaderCell>
               <CTableHeaderCell scope="col">Topic</CTableHeaderCell>
               <CTableHeaderCell scope="col">Details</CTableHeaderCell>
@@ -42,7 +45,7 @@ const RobotLastActivity = ({ last_activity }) => {
               last_activity
                 .map((activity, index) => (
                   <CTableRow key={index}>
-                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                    <CTableDataCell scope="row">{index + 1}</CTableDataCell>
 
                     <CTableDataCell>
                       <span color="info">{activity.data}</span>

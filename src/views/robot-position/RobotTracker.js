@@ -133,6 +133,7 @@ const RobotTracker = () => {
     };
     fetchSites();
   }, [authtoken]);
+
   useEffect(() => {
     if (site_id) {
       socket.emit("join_site_id_room", site_id);
