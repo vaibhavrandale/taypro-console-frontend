@@ -89,6 +89,49 @@ const UpdateRobotTracking = () => {
   // Utility: convert datetime-local → ISO
   const convertLocalToISO = (dateStr) =>
     dateStr ? new Date(dateStr).toISOString() : null;
+  // Describe the fields with type
+  const cleaningFields = [
+    { key: "start", type: "boolean" },
+    { key: "startAt", type: "date" },
+    { key: "finish", type: "boolean" },
+    { key: "finishAt", type: "date" },
+    { key: "cleaning_cancelled", type: "boolean" },
+    { key: "cleaning_cancelled_at", type: "date" },
+    { key: "battery_dead", type: "boolean" },
+    { key: "battery_dead_at", type: "date" },
+    { key: "battery_health_status", type: "text" },
+    { key: "battery_health_status_updated_at", type: "date" },
+    { key: "forward_cleaning_time", type: "number" },
+    { key: "forward_cleaning_time_received_at", type: "date" },
+    { key: "reverse_cleaning_time", type: "number" },
+    { key: "reverse_cleaning_time_received_at", type: "date" },
+    { key: "total_cleaning_time", type: "number" },
+    { key: "total_cleaning_time_received_at", type: "date" },
+    { key: "battery_before_cleaning", type: "number" },
+    { key: "battery_before_cleaning_received_at", type: "date" },
+    { key: "battery_at_reverse_station", type: "number" },
+    { key: "battery_at_reverse_station_received_at", type: "date" },
+    { key: "battery_after_cleaning", type: "number" },
+    { key: "battery_after_cleaning_received_at", type: "date" },
+    { key: "temperature_before_cleaning", type: "number" },
+    { key: "temperature_before_cleaning_received_at", type: "date" },
+    { key: "temperature_at_reverse_station", type: "number" },
+    { key: "temperature_at_reverse_station_received_at", type: "date" },
+    { key: "temperature_after_cleaning", type: "number" },
+    { key: "temperature_after_cleaning_received_at", type: "date" },
+    { key: "cycle_average_brush_current", type: "number" },
+    { key: "cycle_average_brush_current_received_at", type: "date" },
+    { key: "cycle_average_wheel_current", type: "number" },
+    { key: "cycle_average_wheel_current_received_at", type: "date" },
+    { key: "cycle_max_wheel_current", type: "number" },
+    { key: "cycle_max_wheel_current_received_at", type: "date" },
+    { key: "cycle_max_brush_current", type: "number" },
+    { key: "cycle_max_brush_current_received_at", type: "date" },
+    { key: "cycle_count", type: "number" },
+    { key: "cycle_count_received_at", type: "date" },
+    { key: "cleaning_mertic", type: "boolean" },
+    { key: "cleaning_metric_recievet_at", type: "date" },
+  ];
 
   // Fetch robot data
   useEffect(() => {
@@ -272,51 +315,107 @@ const UpdateRobotTracking = () => {
                 </CTabPanel>
 
                 {/* Cleaning */}
+                {/* // Render dynamically in Cleaning section */}
                 <CTabPanel itemKey="cleaning" className="p-3">
-                  <CRow>
-                    {[
-                      "start",
-                      "finish",
-                      "cleaning_cancelled",
-                      "battery_dead",
-                    ].map((f) => (
-                      <CCol md={4} className="mb-3" key={f}>
-                        <CFormCheck
-                          label={f.replace(/_/g, " ").toUpperCase()}
-                          checked={formData.cleaning?.[f] || false}
-                          onChange={(e) =>
-                            handleCleaningChange(f, e.target.checked)
-                          }
-                        />
-                      </CCol>
-                    ))}
+                  <h5 className="mb-3">Cleaning Status</h5>
 
-                    <CCol md={6} className="mb-3">
-                      <CFormLabel>Battery Health Status</CFormLabel>
-                      <CFormInput
-                        value={formData.cleaning?.battery_health_status || ""}
+                  <CTable bordered hover responsive className="text-center">
+                    <CTableHead color="light">
+                      <CTableRow>
+                        <CTableHeaderCell>Field</CTableHeaderCell>
+                        <CTableHeaderCell>Value</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+
+                    <CTableBody>
+                      {cleaningFields.map(({ key, type }) => (
+                        <CTableRow key={key}>
+                          <CTableDataCell>
+                            {key.replace(/_/g, " ").toUpperCase()}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {type === "boolean" ? (
+                              <CFormCheck
+                                checked={!!formData.cleaning[key]}
+                                onChange={(e) =>
+                                  handleCleaningChange(key, e.target.checked)
+                                }
+                              />
+                            ) : type === "date" ? (
+                              <CFormInput
+                                type="datetime-local"
+                                value={convertISOtoLocalInput(
+                                  formData.cleaning[key]
+                                )}
+                                onChange={(e) =>
+                                  handleCleaningChange(key, e.target.value)
+                                }
+                              />
+                            ) : (
+                              <CFormInput
+                                type={type}
+                                value={formData.cleaning[key] || ""}
+                                onChange={(e) =>
+                                  handleCleaningChange(key, e.target.value)
+                                }
+                              />
+                            )}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))}
+                    </CTableBody>
+                  </CTable>
+                </CTabPanel>
+
+                {/* Uplink */}
+                <CTabPanel itemKey="uplink" className="p-3">
+                  <CRow>
+                    {/* Received */}
+                    <CCol md={4} className="mb-3 d-flex align-items-center">
+                      <CFormCheck
+                        type="checkbox"
+                        id="uplink-received"
+                        label="Received"
+                        checked={formData.uplink?.received || false}
                         onChange={(e) =>
-                          handleCleaningChange(
-                            "battery_health_status",
-                            e.target.value
+                          handleUplinkChange("received", e.target.checked)
+                        }
+                      />
+                    </CCol>
+
+                    {/* Data */}
+                    <CCol md={4} className="mb-3">
+                      <CFormLabel>Data</CFormLabel>
+                      <CFormInput
+                        value={formData.uplink?.data || ""}
+                        onChange={(e) =>
+                          handleUplinkChange("data", e.target.value)
+                        }
+                      />
+                    </CCol>
+
+                    {/* Timestamp */}
+                    <CCol md={4} className="mb-3">
+                      <CFormLabel>Timestamp</CFormLabel>
+                      <CFormInput
+                        type="datetime-local"
+                        value={
+                          formData.uplink?.timestamp
+                            ? new Date(formData.uplink.timestamp)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e) =>
+                          handleUplinkChange(
+                            "timestamp",
+                            new Date(e.target.value)
                           )
                         }
                       />
                     </CCol>
                   </CRow>
-                </CTabPanel>
-
-                {/* Uplink */}
-                <CTabPanel itemKey="uplink" className="p-3">
-                  <CCol md={4} className="mb-3">
-                    <CFormLabel>Uplink Data</CFormLabel>
-                    <CFormInput
-                      value={formData.uplink?.data || ""}
-                      onChange={(e) =>
-                        handleUplinkChange("data", e.target.value)
-                      }
-                    />
-                  </CCol>
                 </CTabPanel>
 
                 {/* Track Details */}
@@ -398,7 +497,6 @@ const UpdateRobotTracking = () => {
                     </>
                   )}
                 </CTabPanel>
-
                 {/* Last Activity */}
                 <CTabPanel itemKey="last-activity" className="p-3">
                   {formData.last_activity.length > 0 && (
