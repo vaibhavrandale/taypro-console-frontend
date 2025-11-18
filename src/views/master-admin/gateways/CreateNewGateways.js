@@ -147,6 +147,7 @@ const CreateGateway = () => {
                     onChange={handleChange}
                     label="Gateway ID"
                     required
+                    placeholder="Enter Gateway id in as eg . Avaada_agar"
                     className="mb-3"
                   />
                 </CCol>
@@ -158,6 +159,7 @@ const CreateGateway = () => {
                     value={gatewayData.gateway_name}
                     onChange={handleChange}
                     label="Gateway Name"
+                    placeholder="Enter Gateway name in as eg . Avaada_agar"
                     required
                     className="mb-3"
                   />
@@ -205,6 +207,7 @@ const CreateGateway = () => {
                     value={gatewayData.gateway_lattitude}
                     onChange={handleChange}
                     label="Latitude"
+                    placeholder="Enter Gateway latitude"
                     className="mb-3"
                   />
                 </CCol>
@@ -216,6 +219,7 @@ const CreateGateway = () => {
                     value={gatewayData.gateway_longitude}
                     onChange={handleChange}
                     label="Longitude"
+                    placeholder="Enter Gateway longitude"
                     className="mb-3"
                   />
                 </CCol>
@@ -226,6 +230,7 @@ const CreateGateway = () => {
                     name="gateway_simnumber"
                     value={gatewayData.gateway_simnumber}
                     onChange={handleChange}
+                    placeholder="Enter Gateway SIM Number"
                     label="SIM Number"
                     className="mb-3"
                   />
@@ -237,7 +242,8 @@ const CreateGateway = () => {
                     name="gateway_id_in_lns_server"
                     value={gatewayData.gateway_id_in_lns_server}
                     onChange={handleChange}
-                    label="Gateway ID in LNS Server"
+                    label="Gateway EUI in LNS Server"
+                    placeholder="Enter Gateway EUI in LNS Server"
                     required
                     className="mb-3"
                   />
@@ -249,6 +255,7 @@ const CreateGateway = () => {
                     value={gatewayData.gateway_name_in_lns_server}
                     onChange={handleChange}
                     label="Gateway Name in LNS Server"
+                    placeholder="Enter Gateway name in as eg . Avaada_agar"
                     required
                     className="mb-3"
                   />

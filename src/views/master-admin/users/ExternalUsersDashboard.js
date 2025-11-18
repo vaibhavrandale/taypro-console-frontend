@@ -299,6 +299,8 @@ const ExternalUsersDashboard = () => {
       role: "",
       department: "",
       phone: "",
+      designation: "",
+
       type: "External",
       profile_image: "",
       employee_id: "",
@@ -731,6 +733,14 @@ const ExternalUsersDashboard = () => {
             value={formData.phone}
             onChange={handleChange}
           />
+          <CFormLabel htmlFor="designation">Designation</CFormLabel>
+          <CFormInput
+            id="designation"
+            type="text"
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+          />
           <CFormLabel>Password</CFormLabel>
           <CFormInput
             type="text"
@@ -883,6 +893,14 @@ const ExternalUsersDashboard = () => {
             type="text"
             name="phone"
             value={formData.phone}
+            onChange={handleChange}
+          />
+          <CFormLabel htmlFor="update-designation">Designation</CFormLabel>
+          <CFormInput
+            id="update-designation"
+            type="text"
+            name="designation"
+            value={formData.designation}
             onChange={handleChange}
           />
           <br />

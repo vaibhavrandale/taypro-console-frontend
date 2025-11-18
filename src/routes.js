@@ -183,6 +183,7 @@ import ReplaceMdsLora from "./views/master-admin/replace-mds-lora/ReplaceMdsLora
 import MdsOperating from "./views/master-admin/mds/MdsOperating";
 import MdsEventAndFrames from "./views/master-admin/mds/MdsEventAndFrames";
 import UpdateRobotRowData from "./views/master-admin/robots/UpdateRobotRowData";
+import UpdateRobotTracking from "./views/robot-position/UpdateRobotTracking";
 const App = React.lazy(() => import("./views/pages/app/App"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -520,6 +521,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <Dummy />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robots-tracker/update/:id",
+    name: "Update Robots Tracker",
+    element: (
+      <MasterAdminRoute>
+        <UpdateRobotTracking />
       </MasterAdminRoute>
     ),
   },
