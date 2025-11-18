@@ -168,9 +168,41 @@ const MdsOperating = () => {
 
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
+      let mdsdownlink = {
+        deveui: mdsDevice.deveui,
+        payload: command,
+      };
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-downlink",
+        mdsdownlink,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response.data.error,
+      });
+
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+    setLoadingRow(null);
+    setCommandButton(null);
+  };
+
+  const sendsingleDownlinkToRobot = async (command, index) => {
+    setLoadingRow(index);
+    setCommandButton(index);
+
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
       let robotdownlink = {
-        deveui: mds.deveui,
-        command: command,
+        deveui: mdsDevice.robot.deveui,
+        payload: command,
       };
       const data = await axios.post(
         "/api/v1/robots/send-mqtt-downlink",
@@ -196,8 +228,8 @@ const MdsOperating = () => {
 
   const sendCustomDownlink = async (command) => {
     let robotdownlink = {
-      deveui: mds.deveui,
-      command: command,
+      deveui: mdsDevice.deveui,
+      payload: command,
     };
 
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
@@ -590,9 +622,9 @@ const MdsOperating = () => {
                 )}
               </CRow>
 
-              {/* Forth Card - Cleaning Cycle */}
               <CRow className="my-2">
                 {mdsDevice.robot && (
+                  // 4th card->Robot details
                   <CCol md={5} className="mt-2">
                     <CCard className="h-100 border-0 shadow-sm rounded-3">
                       <CCardBody className="p-3">
@@ -658,13 +690,14 @@ const MdsOperating = () => {
                   </CCol>
                 )}
 
+                {/* 5th card -> mds cycle  */}
                 <CCol md={3} className="mt-2">
                   <CCard
                     className="shadow border-0 "
                     style={{ height: "100%" }}
                   >
                     <CCardBody>
-                      <p>Cleaning Cycle</p>
+                      <p>MDS Cycle</p>
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow"
                         onClick={() => sendsingleDownlink("42", 1)}
@@ -681,9 +714,22 @@ const MdsOperating = () => {
 
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink("09", 2)}
+                        onClick={() => sendsingleDownlink("41", 2)}
                       >
                         {commandButton === 2 ? (
+                          <>
+                            MOVE TO NEXT&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "MOVE TO NEXT"
+                        )}
+                      </CButton>
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlink("09", 3)}
+                      >
+                        {commandButton === 3 ? (
                           <>
                             RETURN&nbsp;
                             <LoadingSpinner />
@@ -696,51 +742,52 @@ const MdsOperating = () => {
                   </CCard>
                 </CCol>
 
-                {/* Fifth Card - Set Wheel Speed */}
+                {/* 6th card->robot cleaning cycle */}
                 <CCol md={3} className="mt-2">
                   <CCard
                     className="shadow border-0 "
                     style={{ height: "100%" }}
                   >
                     <CCardBody>
-                      <p>Set Wheel Speed</p>
+                      <p>Robot Cleaning Cycle</p>
                       <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink("", 4)}
+                        className="btn btn-sm btn-secondary m-1 shadow"
+                        onClick={() => sendsingleDownlinkToRobot("11", 1)}
                       >
-                        {commandButton === 4 ? (
+                        {commandButton === 1 ? (
                           <>
-                            LOW&nbsp;
+                            START&nbsp;
                             <LoadingSpinner />
                           </>
                         ) : (
-                          "LOW"
+                          "START"
+                        )}
+                      </CButton>
+
+                      <CButton
+                        className="btn btn-sm btn-secondary m-1 shadow-sm"
+                        onClick={() => sendsingleDownlinkToRobot("14", 2)}
+                      >
+                        {commandButton === 2 ? (
+                          <>
+                            STOP&nbsp;
+                            <LoadingSpinner />
+                          </>
+                        ) : (
+                          "STOP"
                         )}
                       </CButton>
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink("", 5)}
+                        onClick={() => sendsingleDownlinkToRobot("15", 3)}
                       >
-                        {commandButton === 5 ? (
+                        {commandButton === 3 ? (
                           <>
-                            MEDIUM&nbsp;
+                            RETURN&nbsp;
                             <LoadingSpinner />
                           </>
                         ) : (
-                          "MEDIUM"
-                        )}
-                      </CButton>
-                      <CButton
-                        className="btn btn-sm btn-secondary m-1 shadow-sm"
-                        onClick={() => sendsingleDownlink("", 6)}
-                      >
-                        {commandButton === 6 ? (
-                          <>
-                            HIGH&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "HIGH"
+                          "RETURN"
                         )}
                       </CButton>
                     </CCardBody>

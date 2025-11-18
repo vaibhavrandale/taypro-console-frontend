@@ -64,6 +64,7 @@ const CleaningStatusCard = ({ robot, userInfo }) => {
               </CBadge>
             )}
           </div>
+
           <CTable bordered small hover responsive className="mb-3">
             <CTableBody>
               {/* Start Time */}

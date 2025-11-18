@@ -157,7 +157,7 @@ const RobotOperating = () => {
   let setBrushPwm250 = "R3";
   let setWheelCurrent = "GWC";
   let setBrushCurrent = "GBC";
-  let batteryVoltage = "BV";
+  let batteryVoltage = "63";
   let temp = "TP";
   let cleanRight = "C3";
   let cleanLeft = "C2";
@@ -170,8 +170,8 @@ const RobotOperating = () => {
   let weatherLockDisable = "WD";
   let testModeOn = "TS";
   let testModeOff = "TC";
-  let setDockAtLeft = "D2";
-  let setDockAtRight = "D3";
+  let setDockAtLeft = "65"; //D@
+  let setDockAtRight = "64";
 
   let setWheelSpeed = "RWS";
   let setBrushSpeed = "RBS";
@@ -195,8 +195,8 @@ const RobotOperating = () => {
   let checkBrushSpeed = "PB";
   let checkTracker = "KE";
 
-  let setManualEnable = "NE";
-  let setManualDisable = "YD";
+  let setManualEnable = "62";
+  let setManualDisable = "61";
 
   let setActuatorEnable = "ILE";
   let setActuatorDisable = "ILD";
@@ -1327,9 +1327,11 @@ const RobotOperating = () => {
                           <CButton
                             onClick={() => TextToBase64(text)}
                             type="button"
-                            className="d-flex justify-content-between align-items-center btn-sm position-absolute send-button"
+                            className="d-flex justify-content-center align-items-center btn-sm send-button "
                           >
-                            <FaArrowUp />
+                            <span className="d-flex justify-content-center align-items-center">
+                              <FaArrowUp />
+                            </span>
                           </CButton>
                         </form>
                       </CCardBody>
@@ -1357,7 +1359,7 @@ const RobotOperating = () => {
                           </div>
 
                           {/* Wheel Current */}
-                          <div className="position-relative mb-3">
+                          <div className="position-relative mb-3 mt-4">
                             <input
                               type="text"
                               className="form-control"
@@ -1375,7 +1377,7 @@ const RobotOperating = () => {
                                 )
                               }
                               type="button"
-                              className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
+                              className="d-flex justify-content-center align-items-center btn-sm send-button shadow-sm position-absolute"
                             >
                               {commandButton === 10 ? (
                                 <>

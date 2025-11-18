@@ -24,7 +24,7 @@ const Robot = ({ rowLength, duration = 3 }) => {
         style={{
           position: "absolute",
           top: "-10px",
-
+          left: "-21px",
           width: "20px",
           height: "80px",
           display: "flex",

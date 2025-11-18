@@ -160,6 +160,14 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
       segmentPct: 0,
       effectivePoint,
     };
+  } else if (
+    effectivePoint === 40 &&
+    (cleaning?.cleaning_cancelled || cleaning?.battery_dead)
+  ) {
+    phase = "Cleaning Completed & At Dock";
+    badgeColor = "success";
+    iconBorder = "#000";
+    segmentPct = 0;
   } else if (cleaning?.cleaning_cancelled) {
     return {
       phase: "Cleaning Cancelled",

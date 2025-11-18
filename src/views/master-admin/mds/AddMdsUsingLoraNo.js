@@ -282,7 +282,7 @@ const AddMdsUsingLoraNo = () => {
     dispatch({ type: "SELECT_LORA_REQUEST" });
     setFormData({
       lora_no: lora.serial,
-      mds_no: lora.mds_no,
+      mds_no: lora.robot_no,
       deveui: lora.formatted_deveui,
       site_id: lora.site_id,
     });
@@ -347,7 +347,7 @@ const AddMdsUsingLoraNo = () => {
                               style={{ cursor: "pointer" }}
                               onClick={() => handleLoraSelect(lora)}
                             >
-                              {lora.serial} - {lora.mds_no}
+                              {lora.serial} - {lora.robot_no}
                             </div>
                           ))
                         )}
