@@ -284,39 +284,41 @@ const Profile = () => {
                   </ol>
                 </>
               )}
-              <LastActivity lastactivity={userInfo.last_activity} />
+              {/* <LastActivity lastactivity={userInfo.last_activity} /> */}
             </CCardBody>
           </CCol>
         </CRow>
       </CCard>
-
-      <CCard className="shadow-lg w-100 w-md-75 mt-4">
-        <CCardHeader>
-          <h4 className="mb-0">Capture Self Profile Photos</h4>
-        </CCardHeader>
-        <CCardBody className="text-center">
-          <CButton
-            color="primary"
-            size="sm"
-            onClick={() => setShowCameraModal(true)}
-            disabled={isProcessing}
-          >
-            Open Camera
-          </CButton>
-          {usersLoading ? (
-            <LoadingSpinner />
-          ) : userError ? (
-            <div className="text-danger mt-2">{userError}</div>
-          ) : null}
-          {user.user_images?.length > 0 && (
-            <div className="mt-3">
-              <small className="text-muted">
-                You have {user.user_images.length} images
-              </small>
-            </div>
-          )}
-        </CCardBody>
-      </CCard>
+      {(userInfo.role === "Site Technician" ||
+        userInfo.role === "Master Admin") && (
+        <CCard className="shadow-lg w-100 w-md-75 mt-4">
+          <CCardHeader>
+            <h4 className="mb-0">Capture Self Profile Photos</h4>
+          </CCardHeader>
+          <CCardBody className="text-center">
+            <CButton
+              color="primary"
+              size="sm"
+              onClick={() => setShowCameraModal(true)}
+              disabled={isProcessing}
+            >
+              Open Camera
+            </CButton>
+            {usersLoading ? (
+              <LoadingSpinner />
+            ) : userError ? (
+              <div className="text-danger mt-2">{userError}</div>
+            ) : null}
+            {user.user_images?.length > 0 && (
+              <div className="mt-3">
+                <small className="text-muted">
+                  You have {user.user_images.length} images
+                </small>
+              </div>
+            )}
+          </CCardBody>
+        </CCard>
+      )}
 
       <CModal visible={showCameraModal} onClose={handleClose} size="lg">
         <CModalHeader closeButton={false}>

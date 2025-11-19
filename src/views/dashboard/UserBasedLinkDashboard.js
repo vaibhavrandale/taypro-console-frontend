@@ -263,6 +263,11 @@ const UserBasedLinkDashboard = () => {
       dept: "Client Management",
       icon: faBuilding,
     },
+    "Factory Admin": {
+      path: "/factory-admin/dashboard",
+      dept: "Factory Management",
+      icon: faBuilding,
+    },
   };
 
   // Get dashboard details for the logged-in user's role

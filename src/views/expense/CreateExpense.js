@@ -150,22 +150,22 @@ const CreateExpense = () => {
     });
   };
 
-  const getDefaultAccount = (expenseType) => {
-    switch (expenseType) {
-      case "Food":
-        return "Food Expenses - TPL";
-      case "Travel":
-        return "Travel Expenses - TPL";
-      case "Stay":
-        return "Hotel Expenses - TPL";
-      case "Communication":
-        return "Communication Expenses - TPL";
-      case "Office":
-        return "Office Expenses - TPL";
-      default:
-        return "Miscellaneous Expenses - TPL";
-    }
-  };
+  // const getDefaultAccount = (expenseType) => {
+  //   switch (expenseType) {
+  //     case "Food":
+  //       return "Food Expenses - TPL";
+  //     case "Travel":
+  //       return "Travel Expenses - TPL";
+  //     case "Stay":
+  //       return "Hotel Expenses - TPL";
+  //     case "Communication":
+  //       return "Communication Expenses - TPL";
+  //     case "Office":
+  //       return "Office Expenses - TPL";
+  //     default:
+  //       return "Miscellaneous Expenses - TPL";
+  //   }
+  // };
 
   const addExpenseItem = () => {
     setExpenseItems([

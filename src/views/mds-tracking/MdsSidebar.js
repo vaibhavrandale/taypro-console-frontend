@@ -12,25 +12,17 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CTabs,
-  CTab,
-  CTabList,
-  CTabContent,
-  CTabPanel,
   CTableHead,
 } from "@coreui/react";
-import {
-  cilCheckCircle,
-  cilInfo,
-  cilLocationPin,
-  cilX,
-  cilXCircle,
-} from "@coreui/icons";
+import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
-import RobotLastActivity from "../robot-position/RobotLastActivity";
-import CleaningStatusCard from "../robot-position/CleaningStatusCard";
-import BatteryStatusCard from "../robot-position/BatteryStatusCard";
-import { getRobotPhase, RowsTabs } from "./mdsTrackingHelper";
+// import RobotLastActivity from "../robot-position/RobotLastActivity";
+// import CleaningStatusCard from "../robot-position/CleaningStatusCard";
+// import BatteryStatusCard from "../robot-position/BatteryStatusCard";
+import {
+  // getRobotPhase,
+  RowsTabs,
+} from "./mdsTrackingHelper";
 import MdsStatusOverviewCard from "./MdsStatusOverviewCard";
 import MdsPositionInformationCard from "./MdsPositionInformationCard";
 
@@ -175,7 +167,7 @@ const MdsSideBar = ({
         <MdsPositionInformationCard mds={mds} formatDateTime={formatDateTime} />
 
         {/* MDS Position Details */}
-        <CCard className="border-0 mb-3 shadow-sm bg-secondary">
+        {/* <CCard className="border-0 mb-3 shadow-sm bg-secondary">
           <CCardBody>
             <h5 className="text-light mb-3">
               <CIcon icon={cilLocationPin} className="me-2" />
@@ -263,7 +255,7 @@ const MdsSideBar = ({
               </CTableBody>
             </CTable>
           </CCardBody>
-        </CCard>
+        </CCard> */}
 
         <CCard style={{ fontSize: "14px" }} className="border-0">
           <CCardBody className="d-flex justify-content-between">
@@ -539,12 +531,12 @@ const MdsSideBar = ({
           mds={mds}
         />
 
-        <div className="mx-3">
+        {/* <div className="mx-3">
           <h4>MDS Last Activity</h4>
         </div>
         {userInfo.type === "Internal" && mds.last_activity && (
           <RobotLastActivity last_activity={mds.last_activity} />
-        )}
+        )} */}
       </COffcanvasBody>
     </COffcanvas>
   );

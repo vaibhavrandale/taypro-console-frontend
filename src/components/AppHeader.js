@@ -426,6 +426,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
 
   //  "Site Incharge",
@@ -989,6 +991,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               "Client Admin",
               "Site Incharge",
               "Client Site Technician",
+              "Factory Admin",
             ].includes(userInfo.role) && (
               <CRow className="justify-content-center">
                 <CCol>

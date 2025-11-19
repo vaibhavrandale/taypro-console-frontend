@@ -442,6 +442,11 @@ export const role_permissions = [
     role: "Opex Site Technician",
     permissions: [],
   },
+
+  {
+    role: "Factory Admin",
+    permissions: [],
+  },
 ];
 
 export const projects_role_permissions = [
@@ -4914,7 +4919,7 @@ export const clientSubscriptionPlans = [
       "Battery Status",
       "Cleaning Log",
       "Site Management",
-      "Only 3 Users",
+      // "Only 3 Users",
     ],
     serviceTier: "Basic",
   },

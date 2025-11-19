@@ -55,18 +55,6 @@ const reducer = (state, action) => {
       return { ...state, loadingSites: false, sites: action.payload };
     case "FETCH_SITES_FAIL":
       return { ...state, loadingSites: false, sitesError: action.payload };
-    case "SEND_DOWNLINK_REQUEST":
-      return { ...state, sendingCommandloading: true, error: "" };
-
-    case "SEND_DOWNLINK_SUCCESS":
-      return { ...state, sendingCommandloading: false };
-
-    case "SEND_DOWNLINK_FAIL":
-      return {
-        ...state,
-        sendingCommandloading: false,
-        sendCommandError: action.payload,
-      };
     default:
       return state;
   }
@@ -78,8 +66,7 @@ const MdsDashboard = () => {
       error,
       mdsdevices,
       loading,
-      sendingCommandloading,
-      sendCommandError,
+
       loadingSites,
       sites,
       sitesError,
@@ -234,7 +221,7 @@ const MdsDashboard = () => {
   const selectedMDS = mdsdevices.find((r) => r._id === selectedMdsDeviceId);
 
   return (
-    <div className="p-4" style={{ display: "flex", flexDirection: "column" }}>
+    <div className="p-2" style={{ display: "flex", flexDirection: "column" }}>
       {(loadingSites || loading) && (
         <div
           style={{
@@ -247,10 +234,22 @@ const MdsDashboard = () => {
           <LoadingSpinner />
         </div>
       )}
-
+      {sitesError ||
+        (error && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "70vh",
+            }}
+          >
+            <h5 className="text-light">{sitesError || error}</h5>
+          </div>
+        ))}
       {!loadingSites && !loading && (
         <>
-          <CRow className="m-2 align-items-center">
+          <CRow className="m-1 d-flex justify-content-between align-items-center">
             <CCol md={4}>
               <h4 className="text-light text-center text-success">
                 MDS And Robot Tracking
@@ -283,169 +282,182 @@ const MdsDashboard = () => {
             </CCol>
           </CRow>
 
-          {mdsdevices.map((data, index) => {
-            const totalRows = data?.no_of_rows;
+          {mdsdevices.length > 0 ? (
+            mdsdevices.map((data, index) => {
+              const totalRows = data?.no_of_rows;
 
-            //getMdsStatus helper usage
-            const { allMdsInactive, isDocked, isMoving } = getMdsStatus(data);
+              //getMdsStatus helper usage
+              const { isDocked, isMoving } = getMdsStatus(data);
 
-            const activeMdsPosition = data?.mds_positions.find(
-              (p) => p.active || (p.robot_released && !p.robot_returned)
-            );
+              const activeMdsPosition = data?.mds_positions.find(
+                (p) => p.active || (p.robot_released && !p.robot_returned)
+              );
 
-            const activeRowNumber = isDocked
-              ? 1
-              : activeMdsPosition?.row_number || 1;
+              const activeRowNumber = isDocked
+                ? 1
+                : activeMdsPosition?.row_number || 1;
 
-            return (
-              <div
-                key={index}
-                onClick={() => handleOpenSidebar(data)}
-                className="mb-5 border p-3 rounded cursor-pointer"
-              >
-                <h6 className="mb-3">{data.mds_no}</h6>
-                <div className="d-flex justify-content-end align-items-center">
-                  <Link
-                    to={`/master-admin/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
-                    className="btn btn-primary btn-sm mb-2 d-flex align-items-center"
-                  >
-                    Command
-                    <FaArrowUp />
-                  </Link>
-                </div>
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleOpenSidebar(data)}
+                  className="mb-5 border p-3 rounded cursor-pointer"
+                >
+                  <h6 className="mb-3">{data.mds_no}</h6>
+                  <div className="d-flex justify-content-end align-items-center">
+                    <Link
+                      to={`/master-admin/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
+                      className="btn btn-primary btn-sm mb-2 d-flex align-items-center"
+                    >
+                      Command
+                      <FaArrowUp />
+                    </Link>
+                  </div>
 
-                <div className="d-flex align-items-start">
-                  <MdsRailingTrack
-                    totalRows={totalRows}
-                    activeRow={activeRowNumber}
-                  />
+                  <div className="d-flex align-items-start">
+                    <MdsRailingTrack
+                      totalRows={totalRows}
+                      activeRow={activeRowNumber}
+                    />
 
-                  <div className="d-flex flex-column ms-4">
-                    {data.rows.map((row, index) => {
-                      // helper functions to calculate robot position
-                      const { robotPos, showRobotOnMds } =
-                        calculateRobotPosition(
-                          row,
-                          activeRowNumber,
-                          isDocked,
-                          data
+                    <div className="d-flex flex-column ms-4">
+                      {data.rows.map((row, index) => {
+                        // helper functions to calculate robot position
+                        const { robotPos, showRobotOnMds } =
+                          calculateRobotPosition(
+                            row,
+                            activeRowNumber,
+                            isDocked,
+                            data
+                          );
+
+                        const mdsPosition = data?.mds_positions.find(
+                          (p) => p.row_number === row.row_no
                         );
 
-                      const mdsPosition = data?.mds_positions.find(
-                        (p) => p.row_number === row.row_no
-                      );
+                        const showMdsBridge =
+                          mdsPosition?.active ||
+                          (isDocked && row.row_no === 1) ||
+                          (isMoving && row.row_no === activeRowNumber);
 
-                      const showMdsBridge =
-                        mdsPosition?.active ||
-                        (isDocked && row.row_no === 1) ||
-                        (isMoving && row.row_no === activeRowNumber);
+                        return (
+                          <div
+                            key={index}
+                            style={{ position: "relative", height: "70px" }}
+                          >
+                            <MdsRowTrack row={row} />
 
-                      return (
-                        <div
-                          key={index}
-                          style={{ position: "relative", height: "70px" }}
-                        >
-                          <MdsRowTrack row={row} />
-
-                          {/* Bridge */}
-                          {showMdsBridge && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                left: "-71px",
-                                top: "0px",
-                                width: "70px",
-                                height: "39px",
-                                borderRadius: "1px",
-                                border: "1px solid grey",
-                                transition: "width 0.5s linear",
-                              }}
-                            >
-                              <span
-                                className="d-flex justify-content-center align-items-center ms-4"
-                                style={{ height: "100%" }}
+                            {/* Bridge */}
+                            {showMdsBridge && (
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  left: "-71px",
+                                  top: "0px",
+                                  width: "70px",
+                                  height: "39px",
+                                  borderRadius: "1px",
+                                  border: "1px solid grey",
+                                  transition: "width 0.5s linear",
+                                }}
                               >
-                                {row.row_no}
-                              </span>
-                            </div>
-                          )}
+                                <span
+                                  className="d-flex justify-content-center align-items-center ms-4"
+                                  style={{ height: "100%" }}
+                                >
+                                  {row.row_no}
+                                </span>
+                              </div>
+                            )}
 
-                          {/* Robot */}
-                          {row.row_no === activeRowNumber &&
-                            (isMoving || activeMdsPosition || isDocked) && (
+                            {/* Robot */}
+                            {row.row_no === activeRowNumber &&
+                              (isMoving || activeMdsPosition || isDocked) && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    top: "0px",
+                                    left: `${
+                                      showRobotOnMds ? -75 : robotPos * 5
+                                    }px`,
+                                    transition: "left 0.2s linear",
+                                    zIndex: 10,
+                                  }}
+                                >
+                                  <Robot />
+                                </div>
+                              )}
+
+                            {/* MDS visual */}
+                            {showMdsBridge && (
                               <div
                                 style={{
                                   position: "absolute",
                                   top: "0px",
-                                  left: `${
-                                    showRobotOnMds ? -75 : robotPos * 5
-                                  }px`,
-                                  transition: "left 0.2s linear",
-                                  zIndex: 10,
+                                  left: "-71px",
+                                  width: "30px",
+                                  height: "39px",
+                                  background:
+                                    "linear-gradient(to bottom, #263238, #455A64, #263238)",
+                                  borderRadius: "1px",
+                                  boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+                                  color: "#fff",
+                                  textAlign: "center",
+                                  fontSize: "12px",
+                                  lineHeight: "25px",
                                 }}
                               >
-                                <Robot />
+                                <span className="d-flex flex-column justify-content-start align-items-center">
+                                  MDS{" "}
+                                  <span className="d-flex">
+                                    {isDocked ? (
+                                      <span
+                                        style={{
+                                          color: "lime",
+                                          fontSize: "12px",
+                                          position: "relative",
+                                          top: "15px",
+                                        }}
+                                      >
+                                        Docked
+                                      </span>
+                                    ) : (
+                                      <span
+                                        style={{
+                                          width: "10px",
+                                          height: "10px",
+                                          backgroundColor: isMoving
+                                            ? "orange"
+                                            : "lime",
+                                          borderRadius: "50%",
+                                          display: "inline-block",
+                                        }}
+                                      />
+                                    )}
+                                  </span>
+                                </span>
                               </div>
                             )}
-
-                          {/* MDS visual */}
-                          {showMdsBridge && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: "0px",
-                                left: "-71px",
-                                width: "30px",
-                                height: "39px",
-                                background:
-                                  "linear-gradient(to bottom, #263238, #455A64, #263238)",
-                                borderRadius: "1px",
-                                boxShadow: "0 0 10px rgba(0,0,0,0.5)",
-                                color: "#fff",
-                                textAlign: "center",
-                                fontSize: "12px",
-                                lineHeight: "25px",
-                              }}
-                            >
-                              <span className="d-flex flex-column justify-content-start align-items-center">
-                                MDS{" "}
-                                <span className="d-flex">
-                                  {isDocked ? (
-                                    <span
-                                      style={{
-                                        color: "lime",
-                                        fontSize: "12px",
-                                        position: "relative",
-                                        top: "15px",
-                                      }}
-                                    >
-                                      Docked
-                                    </span>
-                                  ) : (
-                                    <span
-                                      style={{
-                                        width: "10px",
-                                        height: "10px",
-                                        backgroundColor: isMoving
-                                          ? "orange"
-                                          : "lime",
-                                        borderRadius: "50%",
-                                        display: "inline-block",
-                                      }}
-                                    />
-                                  )}
-                                </span>
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div
+              style={{
+                minHeight: "50vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <h5 className="text-light">No MDS Tracking Found at {date}</h5>
+            </div>
+          )}
         </>
       )}
       {/* Sidebar component */}

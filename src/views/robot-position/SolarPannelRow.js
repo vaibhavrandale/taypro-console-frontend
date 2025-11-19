@@ -44,7 +44,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
 
   return (
     <div
-      className=" cursor-pointer"
+      className=" cursor-pointer  "
       style={{
         paddingLeft: "25px",
         paddingRight: "25px",
@@ -56,7 +56,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
       <div
         style={{
           position: "relative",
-          top: "20px",
+          // top: "20px",
           height: "40px",
           borderRadius: "4px",
           width: `${L * 25}px`,
@@ -132,6 +132,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
           }}
         >
           {" "}
+          {robot?.row_no !== 0 && <>Row: {robot.row_no} |</>}
           {robot.robot_no}
         </span>
         <div

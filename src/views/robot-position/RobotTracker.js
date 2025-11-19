@@ -357,13 +357,11 @@ const RobotTracker = () => {
 
       {!loadingSites && !loading && (
         <>
-          <CRow className="m-2 align-items-center">
-            <CCol md={4}>
-              <h4 className="text-light text-center text-success">
-                Live Robot Tracking
-              </h4>
-            </CCol>
+          <CRow className="my-3 justify-content-end align-items-center">
             <CCol md={3}>
+              <h4 className=" text-center text-success">Live Robot Tracking</h4>
+            </CCol>
+            <CCol md={2}>
               <CFormSelect
                 id="blockSelect"
                 className="p-2"
@@ -379,7 +377,7 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={3}>
+            <CCol md={2}>
               <CFormSelect
                 id="siteSelect"
                 className="p-2"
@@ -403,9 +401,8 @@ const RobotTracker = () => {
                 onChange={(e) => setDate(e.target.value)}
               />
             </CCol>
-          </CRow>
-          <CRow className="justify-content-end my-1">
-            <CCol md={4}>
+
+            <CCol md={2}>
               <CInputGroup className="">
                 <CFormInput
                   type="text"
@@ -462,7 +459,7 @@ const RobotTracker = () => {
                   filteredRobot
                     .filter((r) => !selectedBlock || r.block === selectedBlock)
                     .map((robot, index) => (
-                      <div className="col-md-12 my-3" key={index}>
+                      <div className="col-md-12 my-1" key={index}>
                         <Robot
                           robot={robot}
                           handleRobotClick={handleRobotClick}

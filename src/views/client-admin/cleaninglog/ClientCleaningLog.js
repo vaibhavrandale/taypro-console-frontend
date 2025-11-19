@@ -76,6 +76,23 @@ const reducer = (state, action) => {
         subscriptionStatus: action.subscriptionStatus,
       };
 
+    case "FETCH_OFFLINE_LOGS_REQUEST":
+      return { ...state, offlineLogsloading: true, offlineLogError: "" };
+    case "FETCH_OFFLINE_LOGS_SUCCESS":
+      return {
+        ...state,
+        offlineLogs: action.payload,
+        offlineLogsloading: false,
+      };
+    case "FETCH_OFFLINE_LOGS_FAIL":
+      return {
+        ...state,
+        offlineLogsloading: false,
+        offlineLogError: action.payload,
+        subscriptiondata: action.subscriptiondata,
+        subscriptionStatus: action.subscriptionStatus,
+      };
+
     default:
       return state;
   }
@@ -86,7 +103,7 @@ const ClientCleaningLog = () => {
     {
       cleaningLoading,
       cleaningError,
-      cleaninglogs,
+
       cleaningCompleted,
       totalAssignedRobots,
       cleaningInProgress,
@@ -102,6 +119,9 @@ const ClientCleaningLog = () => {
       // hasPrevPage,
       subscriptiondata,
       subscriptionStatus,
+      offlineLogError,
+      offlineLogsloading,
+      offlineLogs,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -124,6 +144,9 @@ const ClientCleaningLog = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    offlineLogError: "",
+    offlineLogsloading: false,
+    offlineLogs: [],
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -177,8 +200,33 @@ const ClientCleaningLog = () => {
         );
       }
     };
-
+    const fetchErrorLogs = async () => {
+      try {
+        dispatch({
+          type: "FETCH_OFFLINE_LOGS_REQUEST",
+        });
+        const response = await axios.get(
+          `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authtoken}`,
+            },
+          }
+        );
+        dispatch({
+          type: "FETCH_OFFLINE_LOGS_SUCCESS",
+          payload: response.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_OFFLINE_LOGS_FAIL",
+          payload: error.response.data.error || error.response.data.message,
+        });
+        toast.error(error.response.data.error || error.response.data.message);
+      }
+    };
     fetchCleaningLogs();
+    fetchErrorLogs();
   }, [site_id, startDate, authtoken]);
 
   const exportToExcel = () => {
@@ -359,7 +407,7 @@ const ClientCleaningLog = () => {
               </CCol>
             </CRow>
           </div>
-          {timerLogLoading ? (
+          {timerLogLoading || offlineLogsloading ? (
             <div className="text-center my-4">
               <LoadingSpinner />
             </div>
@@ -636,7 +684,7 @@ const ClientCleaningLog = () => {
               </CTable>
 
               {/* Error Logs Table */}
-              <h5 className="mt-5 mb-3">🚨 Error Logs for</h5>
+              <h5 className="mt-5 mb-3">🚨 Error Logs</h5>
               <CTable
                 bordered
                 hover
@@ -669,6 +717,56 @@ const ClientCleaningLog = () => {
                     <CTableRow>
                       <CTableDataCell colSpan={5} className=" text-start ">
                         No error logs found for the selected date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+
+              {/* Error Logs Table */}
+              <h5 className="mt-5 mb-3">
+                🚨 Offline Robots At the time of cleaning
+              </h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Error Type</CTableHeaderCell>
+                    {/* <CTableHeaderCell>Date</CTableHeaderCell> */}
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {offlineLogsloading ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5}>
+                        <LoadingSpinner />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ) : offlineLogError ? (
+                    <CBadge color="danger">{offlineLogError}</CBadge>
+                  ) : offlineLogs?.length > 0 ? (
+                    offlineLogs.map((log, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>{log.block}</CTableDataCell>
+                        <CTableDataCell>{log.error_type}</CTableDataCell>
+                        {/* <CTableDataCell>
+                          {new Date(log.date).toLocaleDateString()}
+                        </CTableDataCell> */}
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5} className="text-start">
+                        No offline Robots found for the selected date.
                       </CTableDataCell>
                     </CTableRow>
                   )}

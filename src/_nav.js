@@ -100,6 +100,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Timer Logs",
+            to: "/master-admin/timer-logs",
+          },
+          {
+            component: CNavItem,
             name: "All Sites Gateways",
             to: "/master-admin/all-site-gateways",
           },
@@ -3981,6 +3986,54 @@ const _nav = [
     ],
   },
   // ----------------production-and-operations-admin Admin-------------------------------------------
+
+  // --------------------factory admin-------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Factory Admin",
+    to: "factory-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/factory-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/factory-admin/mds-devices",
+          },
+        ],
+      },
+    ],
+  },
+
+  // ------------------factory admin--------------------------------------------
 ];
 
 export default _nav;

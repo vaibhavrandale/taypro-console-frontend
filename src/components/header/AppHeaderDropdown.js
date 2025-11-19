@@ -50,6 +50,7 @@ const AppHeaderDropdown = () => {
     adminroute = "opex-site-technician";
   else if (userInfo?.role === "Opex Client Admin")
     adminroute = "opex-client-admin";
+  else if (userInfo?.role === "Factory Admin") adminroute = "factory-admin";
 
   const navigate = useNavigate();
 

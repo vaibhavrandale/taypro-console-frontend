@@ -36,14 +36,14 @@
 //         cleaningLoading: false,
 //         cleaningError: action.payload,
 //       };
-//     case "FETCH_ERROR_LOGS_SUCCESS":
-//       return { ...state, errorLogs: action.payload };
-//     case "FETCH_TIMER_LOGS_SUCCESS":
-//       return { ...state, timerLogs: action.payload };
-//     case "FETCH_TIMER_LOGS_FAIL":
-//       return { ...state, error: action.payload };
-//     case "FETCH_DPR_SUCCESS":
-//       return { ...state, dprLogs: action.payload };
+// case "FETCH_ERROR_LOGS_SUCCESS":
+//   return { ...state, errorLogs: action.payload };
+// case "FETCH_TIMER_LOGS_SUCCESS":
+//   return { ...state, timerLogs: action.payload };
+// case "FETCH_TIMER_LOGS_FAIL":
+//   return { ...state, error: action.payload };
+// case "FETCH_DPR_SUCCESS":
+//   return { ...state, dprLogs: action.payload };
 
 //     default:
 //       return state;
@@ -167,24 +167,24 @@
 //         );
 //       }
 //     };
-//     const fetchErrorLogs = async () => {
-//       try {
-//         const response = await axios.get(
-//           `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
-//           {
-//             headers: {
-//               Authorization: `Bearer ${authtoken}`,
-//             },
-//           }
-//         );
-//         dispatch({
-//           type: "FETCH_ERROR_LOGS_SUCCESS",
-//           payload: response.data.data,
-//         });
-//       } catch (error) {
-//         toast.error("Failed to fetch error logs");
+// const fetchErrorLogs = async () => {
+//   try {
+//     const response = await axios.get(
+//       `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authtoken}`,
+//         },
 //       }
-//     };
+//     );
+//     dispatch({
+//       type: "FETCH_ERROR_LOGS_SUCCESS",
+//       payload: response.data.data,
+//     });
+//   } catch (error) {
+//     toast.error("Failed to fetch error logs");
+//   }
+// };
 
 //     const fetchTimerLogs = async () => {
 //       try {
@@ -216,34 +216,34 @@
 //       }
 //     };
 
-//     const fetchDprLogs = async () => {
-//       try {
-//         const { data } = await axios.get(
-//           `/api/v1/techniciandprs/techniciandpr/${site_id}/${startDate}/${startDate}`,
-//           {
-//             headers: {
-//               Authorization: `Bearer ${authtoken}`,
-//             },
-//           }
-//         );
-//         console.log(data.data);
-
-//         if (data.success) {
-//           dispatch({
-//             type: "FETCH_DPR_SUCCESS",
-//             payload: data.data,
-//           });
-//         } else {
-//           throw new Error(data.message || "Failed to fetch DPR logs");
-//         }
-//       } catch (err) {
-//         dispatch({
-//           type: "FETCH_FAIL",
-//           payload: err.response?.data?.error || err.message,
-//         });
-//         toast.error(err.response?.data?.error || err.message);
+// const fetchDprLogs = async () => {
+//   try {
+//     const { data } = await axios.get(
+//       `/api/v1/techniciandprs/techniciandpr/${site_id}/${startDate}/${startDate}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authtoken}`,
+//         },
 //       }
-//     };
+//     );
+//     console.log(data.data);
+
+//     if (data.success) {
+//       dispatch({
+//         type: "FETCH_DPR_SUCCESS",
+//         payload: data.data,
+//       });
+//     } else {
+//       throw new Error(data.message || "Failed to fetch DPR logs");
+//     }
+//   } catch (err) {
+//     dispatch({
+//       type: "FETCH_FAIL",
+//       payload: err.response?.data?.error || err.message,
+//     });
+//     toast.error(err.response?.data?.error || err.message);
+//   }
+// };
 
 //     fetchCleaningLogs();
 //     fetchErrorLogs();
@@ -896,127 +896,127 @@
 //             handleLimitChange={setLimit}
 //           /> */}
 
-//           {/* Error Logs Table */}
-//           <h5 className="mt-5 mb-3">
-//             🚨 Error Logs for - <span className="text-danger">{site_id}</span>
-//           </h5>
-//           <CTable
-//             bordered
-//             hover
-//             responsive
-//             className="text-center bg-important"
+// {/* Error Logs Table */}
+// <h5 className="mt-5 mb-3">
+//   🚨 Error Logs for - <span className="text-danger">{site_id}</span>
+// </h5>
+// <CTable
+//   bordered
+//   hover
+//   responsive
+//   className="text-center bg-important"
+// >
+//   <CTableHead color="dark">
+//     <CTableRow>
+//       <CTableHeaderCell>#</CTableHeaderCell>
+//       <CTableHeaderCell>Robot No</CTableHeaderCell>
+//       <CTableHeaderCell>Block</CTableHeaderCell>
+//       <CTableHeaderCell>Error Type</CTableHeaderCell>
+//       <CTableHeaderCell>Date</CTableHeaderCell>
+//     </CTableRow>
+//   </CTableHead>
+//   <CTableBody>
+//     {errorLogs?.length > 0 ? (
+//       errorLogs.map((log, index) => (
+//         <CTableRow key={index}>
+//           <CTableDataCell>{index + 1}</CTableDataCell>
+//           <CTableDataCell>{log.robot_no}</CTableDataCell>
+//           <CTableDataCell>{log.block}</CTableDataCell>
+//           <CTableDataCell>{log.error_type}</CTableDataCell>
+//           <CTableDataCell>
+//             {new Date(log.date).toLocaleDateString()}{" "}
+//           </CTableDataCell>
+//         </CTableRow>
+//       ))
+//     ) : (
+//       <CTableRow>
+//         <CTableDataCell
+//           colSpan={5}
+//           className="text-danger text-center"
+//         >
+//           No error logs found for the selected date.
+//         </CTableDataCell>
+//       </CTableRow>
+//     )}
+//   </CTableBody>
+// </CTable>
+
+// {/* DPR Summary Table */}
+// {/* DPR Summary Table */}
+// <>
+//   <h5 className="mt-5 mb-3">
+//     📋 Daily Progress Report -{" "}
+//     <span className="text-danger">{site_id}</span>
+//   </h5>
+
+//   <CTable
+//     bordered
+//     hover
+//     responsive
+//     className="text-center bg-important"
+//   >
+//     <CTableHead color="success">
+//       <CTableRow>
+//         <CTableHeaderCell>Sr</CTableHeaderCell>
+//         <CTableHeaderCell>Date</CTableHeaderCell>
+//         <CTableHeaderCell>Site</CTableHeaderCell>
+//         <CTableHeaderCell>Operational Robots</CTableHeaderCell>
+//         <CTableHeaderCell>Failed Robots</CTableHeaderCell>
+//         <CTableHeaderCell>Total Robots</CTableHeaderCell>
+//         <CTableHeaderCell>FromLog (Success)</CTableHeaderCell>
+//         <CTableHeaderCell>Remarks</CTableHeaderCell>
+//         <CTableHeaderCell>Technician</CTableHeaderCell>
+//       </CTableRow>
+//     </CTableHead>
+
+//     <CTableBody>
+//       {dprLogs?.length > 0 ? (
+//         dprLogs.map((log, index) => {
+//           const technician = log.technician_present?.[0]?.name || "-";
+//           const reportDate = log.report_date
+//             ? new Date(log.report_date).toLocaleDateString()
+//             : "-";
+
+//           return (
+//             <CTableRow key={index}>
+//               <CTableDataCell>{index + 1}</CTableDataCell>
+//               <CTableDataCell>{reportDate}</CTableDataCell>
+//               <CTableDataCell>{log.site_id}</CTableDataCell>
+//               <CTableDataCell>
+//                 {log.total_running_robots}
+//               </CTableDataCell>
+//               <CTableDataCell>
+//                 {log.total_failed_robots}
+//               </CTableDataCell>
+//               <CTableDataCell>{log.total_robots}</CTableDataCell>
+//               <CTableDataCell>
+//                 <span
+//                   className={`badge ${
+//                     cleaningSuccessMap?.[log.site_id]
+//                       ? "bg-success"
+//                       : "bg-danger"
+//                   }`}
+//                 >
+//                   {cleaningSuccessMap?.[log.site_id] || 0}
+//                 </span>
+//               </CTableDataCell>
+//               <CTableDataCell>{log.comments || "-"}</CTableDataCell>
+//               <CTableDataCell>{technician}</CTableDataCell>
+//             </CTableRow>
+//           );
+//         })
+//       ) : (
+//         <CTableRow>
+//           <CTableDataCell
+//             colSpan={9}
+//             className="text-center text-danger"
 //           >
-//             <CTableHead color="dark">
-//               <CTableRow>
-//                 <CTableHeaderCell>#</CTableHeaderCell>
-//                 <CTableHeaderCell>Robot No</CTableHeaderCell>
-//                 <CTableHeaderCell>Block</CTableHeaderCell>
-//                 <CTableHeaderCell>Error Type</CTableHeaderCell>
-//                 <CTableHeaderCell>Date</CTableHeaderCell>
-//               </CTableRow>
-//             </CTableHead>
-//             <CTableBody>
-//               {errorLogs?.length > 0 ? (
-//                 errorLogs.map((log, index) => (
-//                   <CTableRow key={index}>
-//                     <CTableDataCell>{index + 1}</CTableDataCell>
-//                     <CTableDataCell>{log.robot_no}</CTableDataCell>
-//                     <CTableDataCell>{log.block}</CTableDataCell>
-//                     <CTableDataCell>{log.error_type}</CTableDataCell>
-//                     <CTableDataCell>
-//                       {new Date(log.date).toLocaleDateString()}{" "}
-//                     </CTableDataCell>
-//                   </CTableRow>
-//                 ))
-//               ) : (
-//                 <CTableRow>
-//                   <CTableDataCell
-//                     colSpan={5}
-//                     className="text-danger text-center"
-//                   >
-//                     No error logs found for the selected date.
-//                   </CTableDataCell>
-//                 </CTableRow>
-//               )}
-//             </CTableBody>
-//           </CTable>
-
-//           {/* DPR Summary Table */}
-//           {/* DPR Summary Table */}
-//           <>
-//             <h5 className="mt-5 mb-3">
-//               📋 Daily Progress Report -{" "}
-//               <span className="text-danger">{site_id}</span>
-//             </h5>
-
-//             <CTable
-//               bordered
-//               hover
-//               responsive
-//               className="text-center bg-important"
-//             >
-//               <CTableHead color="success">
-//                 <CTableRow>
-//                   <CTableHeaderCell>Sr</CTableHeaderCell>
-//                   <CTableHeaderCell>Date</CTableHeaderCell>
-//                   <CTableHeaderCell>Site</CTableHeaderCell>
-//                   <CTableHeaderCell>Operational Robots</CTableHeaderCell>
-//                   <CTableHeaderCell>Failed Robots</CTableHeaderCell>
-//                   <CTableHeaderCell>Total Robots</CTableHeaderCell>
-//                   <CTableHeaderCell>FromLog (Success)</CTableHeaderCell>
-//                   <CTableHeaderCell>Remarks</CTableHeaderCell>
-//                   <CTableHeaderCell>Technician</CTableHeaderCell>
-//                 </CTableRow>
-//               </CTableHead>
-
-//               <CTableBody>
-//                 {dprLogs?.length > 0 ? (
-//                   dprLogs.map((log, index) => {
-//                     const technician = log.technician_present?.[0]?.name || "-";
-//                     const reportDate = log.report_date
-//                       ? new Date(log.report_date).toLocaleDateString()
-//                       : "-";
-
-//                     return (
-//                       <CTableRow key={index}>
-//                         <CTableDataCell>{index + 1}</CTableDataCell>
-//                         <CTableDataCell>{reportDate}</CTableDataCell>
-//                         <CTableDataCell>{log.site_id}</CTableDataCell>
-//                         <CTableDataCell>
-//                           {log.total_running_robots}
-//                         </CTableDataCell>
-//                         <CTableDataCell>
-//                           {log.total_failed_robots}
-//                         </CTableDataCell>
-//                         <CTableDataCell>{log.total_robots}</CTableDataCell>
-//                         <CTableDataCell>
-//                           <span
-//                             className={`badge ${
-//                               cleaningSuccessMap?.[log.site_id]
-//                                 ? "bg-success"
-//                                 : "bg-danger"
-//                             }`}
-//                           >
-//                             {cleaningSuccessMap?.[log.site_id] || 0}
-//                           </span>
-//                         </CTableDataCell>
-//                         <CTableDataCell>{log.comments || "-"}</CTableDataCell>
-//                         <CTableDataCell>{technician}</CTableDataCell>
-//                       </CTableRow>
-//                     );
-//                   })
-//                 ) : (
-//                   <CTableRow>
-//                     <CTableDataCell
-//                       colSpan={9}
-//                       className="text-center text-danger"
-//                     >
-//                       No DPR logs found for the selected date.
-//                     </CTableDataCell>
-//                   </CTableRow>
-//                 )}
-//               </CTableBody>
-//             </CTable>
+//             No DPR logs found for the selected date.
+//           </CTableDataCell>
+//         </CTableRow>
+//       )}
+//     </CTableBody>
+//   </CTable>
 //           </>
 //         </>
 //       )}
@@ -1104,6 +1104,32 @@ const reducer = (state, action) => {
         subscriptionStatus: action.subscriptionStatus,
       };
 
+    case "FETCH_OFFLINE_REQUEST":
+      return { ...state, offlineRobotLoading: true, offlineRobotError: "" };
+    case "FETCH_OFFLINE_SUCCESS":
+      return {
+        ...state,
+        offlineRobots: action.payload,
+        offlineRobotLoading: false,
+      };
+    case "FETCH_OFFLINE_FAIL":
+      return {
+        ...state,
+        offlineRobotError: action.payload,
+        offlineRobotLoading: false,
+      };
+
+    case "FETCH_DPR_REQUEST":
+      return { ...state, dprLoading: true, dprError: "" };
+    case "FETCH_DPR_SUCCESS":
+      return { ...state, dprLogs: action.payload, dprLoading: false };
+    case "FETCH_DPR_FAIL":
+      return {
+        ...state,
+        dprError: action.payload,
+        dprLoading: false,
+      };
+
     default:
       return state;
   }
@@ -1114,7 +1140,7 @@ const SitewaiseLog = () => {
     {
       cleaningLoading,
       cleaningError,
-      cleaninglogs,
+
       cleaningCompleted,
       cleaningInProgress,
       totalAssignedRobots,
@@ -1130,6 +1156,12 @@ const SitewaiseLog = () => {
       // hasPrevPage,
       subscriptiondata,
       subscriptionStatus,
+      offlineRobotLoading,
+      offlineRobotError,
+      offlineRobots,
+      dprError,
+      dprLogs,
+      dprLoading,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -1152,6 +1184,12 @@ const SitewaiseLog = () => {
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    offlineRobotLoading: false,
+    offlineRobotError: "",
+    offlineRobots: [],
+    dprError: "",
+    dprLogs: [],
+    dprLoading: false,
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -1206,6 +1244,58 @@ const SitewaiseLog = () => {
       }
     };
 
+    const fetchDprLogs = async () => {
+      try {
+        const { data } = await axios.get(
+          `/api/v1/techniciandprs/techniciandpr/${site_id}/${startDate}/${startDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authtoken}`,
+            },
+          }
+        );
+        console.log(data.data);
+
+        dispatch({
+          type: "FETCH_DPR_SUCCESS",
+          payload: data.data,
+        });
+      } catch (err) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: err.response?.data?.error || err.response?.data?.message,
+        });
+        toast.error(err.response?.data?.error || err.response?.data?.message);
+      }
+    };
+
+    const fetchOfflineLogs = async () => {
+      try {
+        dispatch({
+          type: "FETCH_OFFLINE_SUCCESS",
+        });
+        const response = await axios.get(
+          `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authtoken}`,
+            },
+          }
+        );
+        dispatch({
+          type: "FETCH_OFFLINE_SUCCESS",
+          payload: response.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_OFFLINE_SUCCESS",
+          payload: error.response.data.data || error.response.data.error,
+        });
+        toast.error(error.response.data.data || error.response.data.error);
+      }
+    };
+    fetchOfflineLogs();
+    fetchDprLogs();
     fetchCleaningLogs();
   }, [site_id, startDate, authtoken]);
 
@@ -1561,19 +1651,6 @@ const SitewaiseLog = () => {
                 </CTableBody>
               </CTable>
 
-              {/* <PaginateInput
-                page={page}
-                totalPages={totalPages}
-                hasPrevPage={hasPrevPage}
-                hasNextPage={hasNextPage}
-                pageInput={pageInput}
-                handlePageChange={handlePageChange}
-                handlePageInputChange={handlePageInputChange}
-                handlePageInputSubmit={handlePageInputSubmit}
-                limit={limit}
-                handleLimitChange={setLimit}
-              /> */}
-
               {/* Error Logs Table */}
               <h5 className="mt-5 mb-3">Cleaning In Progress</h5>
               <CTable
@@ -1672,6 +1749,137 @@ const SitewaiseLog = () => {
                     <CTableRow>
                       <CTableDataCell colSpan={5} className=" text-start ">
                         No error logs found for the selected date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+
+              {/* Error Logs Table */}
+              <h5 className="mt-5 mb-3">
+                🚨 Offline Robots At the time of cleaning
+              </h5>
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>#</CTableHeaderCell>
+                    <CTableHeaderCell>Robot No</CTableHeaderCell>
+                    <CTableHeaderCell>Block</CTableHeaderCell>
+                    <CTableHeaderCell>Error Type</CTableHeaderCell>
+                    <CTableHeaderCell>Date</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {offlineRobotLoading ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5}>
+                        <LoadingSpinner />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ) : offlineRobotError ? (
+                    <CBadge color="danger">{offlineRobotError}</CBadge>
+                  ) : offlineRobots?.length > 0 ? (
+                    offlineRobots.map((log, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>{index + 1}</CTableDataCell>
+                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell>{log.block}</CTableDataCell>
+                        <CTableDataCell>{log.error_type}</CTableDataCell>
+                        <CTableDataCell>
+                          {new Date(log.date).toLocaleDateString()}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5} className="text-start">
+                        No offline Robots found for the selected date.
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+
+              <h5 className="mt-5 mb-3">
+                📋 Site Technician Daily Progress Report
+              </h5>
+
+              <CTable
+                bordered
+                hover
+                responsive
+                className="text-center bg-important"
+              >
+                <CTableHead color="secondary">
+                  <CTableRow>
+                    <CTableHeaderCell>Sr</CTableHeaderCell>
+                    <CTableHeaderCell>Date</CTableHeaderCell>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Operational Robots</CTableHeaderCell>
+                    <CTableHeaderCell>Failed Robots</CTableHeaderCell>
+                    <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                    <CTableHeaderCell>FromLog (Success)</CTableHeaderCell>
+                    <CTableHeaderCell>Remarks</CTableHeaderCell>
+                    <CTableHeaderCell>Technician</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+
+                <CTableBody>
+                  {dprLoading ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5}>
+                        <LoadingSpinner />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ) : dprError ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={5}>{dprError}</CTableDataCell>
+                    </CTableRow>
+                  ) : dprLogs?.length > 0 ? (
+                    dprLogs.map((log, index) => {
+                      const technician =
+                        log.technician_present?.[0]?.name || "-";
+                      const reportDate = log.report_date
+                        ? new Date(log.report_date).toLocaleDateString()
+                        : "-";
+
+                      return (
+                        <CTableRow key={index}>
+                          <CTableDataCell>{index + 1}</CTableDataCell>
+                          <CTableDataCell>{reportDate}</CTableDataCell>
+                          <CTableDataCell>{log.site_id}</CTableDataCell>
+                          <CTableDataCell>
+                            {log.total_running_robots}
+                          </CTableDataCell>
+                          <CTableDataCell>
+                            {log.total_failed_robots}
+                          </CTableDataCell>
+                          <CTableDataCell>{log.total_robots}</CTableDataCell>
+                          <CTableDataCell>
+                            {/* <span
+                            className={`badge ${
+                              cleaningSuccessMap?.[log.site_id]
+                                ? "bg-success"
+                                : "bg-danger"
+                            }`}
+                          >
+                            {cleaningSuccessMap?.[log.site_id] || 0}
+                          </span> */}
+                          </CTableDataCell>
+                          <CTableDataCell>{log.comments || "-"}</CTableDataCell>
+                          <CTableDataCell>{technician}</CTableDataCell>
+                        </CTableRow>
+                      );
+                    })
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={9} className="text-start">
+                        No DPR logs found for the selected date.
                       </CTableDataCell>
                     </CTableRow>
                   )}
