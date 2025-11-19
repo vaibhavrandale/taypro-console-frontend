@@ -21,6 +21,7 @@ import { cilCheckCircle, cilX, cilXCircle } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { getRobotPhase } from "./helpers";
 import RobotLastActivity from "./RobotLastActivity";
+import { useNavigate } from "react-router-dom";
 
 const RobotSidebar = ({
   robot,
@@ -41,6 +42,7 @@ const RobotSidebar = ({
     item,
     robot.track_details
   );
+  const navigate = useNavigate();
 
   // 🔹 Utility function (can put this in a utils.js file or above your component)
   const formatTime = (totalSec) => {
@@ -70,21 +72,23 @@ const RobotSidebar = ({
         maxWidth: window.innerWidth < 768 ? "100%" : "42%",
       }}
     >
-      <COffcanvasHeader className="">
-        <COffcanvasTitle className="d-flex flex-column justify-content-start">
+      <COffcanvasHeader className="d-flex justify-content-between align-items-start">
+        {/* LEFT SIDE CONTENT */}
+        <div className="d-flex flex-column">
           <span style={{ fontSize: "15px" }}>
-            {" "}
-            Robot Details -{" "}
+            Robot Details –{" "}
             <CBadge color="warning" className="px-2 py-2">
               {robot.robot_no}
             </CBadge>
           </span>
-          <span style={{ fontSize: "15px" }}>Doc id- {robot._id}</span>
+
+          <span style={{ fontSize: "15px" }}>Doc id – {robot._id}</span>
+
           <span style={{ fontSize: "15px" }}>
-            Robot Current State -{" "}
+            Robot Current State –{" "}
             {robot.lora_state === 1 ? (
               <CBadge color="success" className="p-2">
-                ONLINE{" "}
+                ONLINE
               </CBadge>
             ) : (
               <CBadge color="danger" className="p-2">
@@ -92,30 +96,34 @@ const RobotSidebar = ({
               </CBadge>
             )}
           </span>
-          {robot.last_uplink && (
-            <span style={{ fontSize: "15px" }}>
-              Robot Last Update -{" "}
-              {new Date(robot.last_uplink).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              })}
-            </span>
+        </div>
+
+        {/* RIGHT SIDE BUTTONS */}
+        <div className="d-flex align-items-center">
+          {userInfo.role === "Master Admin" && (
+            <CButton
+              color="primary"
+              variant="ghost"
+              className="me-2 px-3 py-1 btn-sm"
+              onClick={() =>
+                navigate(`/master-admin/robots-tracker/update/${robot._id}`)
+              }
+            >
+              Update
+            </CButton>
           )}
-        </COffcanvasTitle>
-        <button
-          type="button"
-          className=" border-0 ms-auto py-0 px-1"
-          onClick={onClose}
-          style={{ background: "none" }}
-        >
-          <CIcon icon={cilX} size="xl" />
-        </button>
+
+          <button
+            type="button"
+            className="border-0 p-0"
+            onClick={onClose}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="xl" />
+          </button>
+        </div>
       </COffcanvasHeader>
+
       <COffcanvasBody className=" p-1">
         <CCard style={{ fontSize: "14px" }} className="border-0">
           <CCardBody className="d-flex justify-content-between">

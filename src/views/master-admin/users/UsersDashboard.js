@@ -1144,7 +1144,7 @@ const UsersDashboard = () => {
                     <CTableHeaderCell>Role</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.role}</CTableDataCell>
                   </CTableRow>
-                  <CTableRow>
+                  <CTableRow>  
                     <CTableHeaderCell>Department</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.department}</CTableDataCell>
                   </CTableRow>
