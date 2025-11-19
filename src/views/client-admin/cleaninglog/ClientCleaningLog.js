@@ -23,7 +23,6 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_CLEANING_REQUEST":

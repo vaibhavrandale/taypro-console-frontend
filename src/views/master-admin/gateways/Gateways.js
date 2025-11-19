@@ -178,7 +178,10 @@ const Gateways = () => {
       gateway.gateway_name_in_lns_server
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase())
+      gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      gateway.gateway_id_in_lns_server
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   const handlePageInputChange = (e) => {
@@ -231,7 +234,8 @@ const Gateways = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Gateway Name</CTableHeaderCell>
-            <CTableHeaderCell>Gateway ID</CTableHeaderCell>
+            <CTableHeaderCell>Gateway ID in Console</CTableHeaderCell>
+            <CTableHeaderCell>Gateway EUI</CTableHeaderCell>
             <CTableHeaderCell>Type</CTableHeaderCell>
             <CTableHeaderCell>Latitude</CTableHeaderCell>
             <CTableHeaderCell>Longitude</CTableHeaderCell>
@@ -266,6 +270,9 @@ const Gateways = () => {
                 <CTableRow key={index}>
                   <CTableHeaderCell>{index + 1}</CTableHeaderCell>
                   <CTableDataCell>{gateway.gateway_id}</CTableDataCell>
+                  <CTableDataCell>
+                    {gateway.gateway_id_in_lns_server}
+                  </CTableDataCell>
                   <CTableDataCell>{gateway.gateway_name}</CTableDataCell>
                   <CTableDataCell>
                     {gateway.gateway_type.toUpperCase()}

@@ -210,7 +210,7 @@ const AddMdsUsingLoraNo = () => {
     dispatch({ type: "ADD_MDS_AUTO_REQUEST" });
     try {
       const response = await axios.post(
-        "/api/v1/mds-device/create-mds-using-lora",
+        "/api/v1/mds-device/create-mds",
         { ...formData, block: "Block-1" },
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
@@ -222,8 +222,11 @@ const AddMdsUsingLoraNo = () => {
       setFormData({ lora_no: "", mds_no: "", deveui: "", site_id: "" });
       setSearchTerm("");
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to Add MDS");
-      dispatch({ type: "ADD_MDS_AUTO_FAIL", payload: "Failed to Add MDS" });
+      dispatch({
+        type: "ADD_MDS_AUTO_FAIL",
+        payload: error.response?.data?.error || error.response?.data?.message,
+      });
+      toast.error(error.response?.data?.error || error.response?.data?.message);
     }
   };
 
@@ -298,7 +301,7 @@ const AddMdsUsingLoraNo = () => {
           <h4>Add MDS</h4>
           <Link
             className="btn btn-sm btn-secondary m-1"
-            to="/master-admin/activate-mds"
+            to="/master-admin/mds-devices/activate-mds-devices"
           >
             Activate MDS
           </Link>
