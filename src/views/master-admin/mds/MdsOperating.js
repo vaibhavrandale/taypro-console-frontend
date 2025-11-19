@@ -87,7 +87,7 @@ const MdsOperating = () => {
   const [
     {
       error,
-      mds,
+
       sendingCommandloading,
       mdsDevices,
       mdsDevice,
@@ -95,7 +95,6 @@ const MdsOperating = () => {
     },
     dispatch,
   ] = useReducer(reducer, {
-    mds: {},
     downlinks: [],
     sendingCommandloading: false,
     mdsDevices: [],
@@ -104,7 +103,7 @@ const MdsOperating = () => {
   });
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  const [loadingRow, setLoadingRow] = useState(null);
+  // const [loadingRow, setLoadingRow] = useState(null);
   const { site_id, block, mds_no } = useParams();
 
   const [commandButton, setCommandButton] = useState(null);
@@ -163,7 +162,7 @@ const MdsOperating = () => {
   }, [authtoken, mds_no]);
 
   const sendsingleDownlink = async (command, index) => {
-    setLoadingRow(index);
+    // setLoadingRow(index);
     setCommandButton(index);
 
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
@@ -190,12 +189,12 @@ const MdsOperating = () => {
 
       toast.error(error.response.data.message || error.response.data.error);
     }
-    setLoadingRow(null);
+    // setLoadingRow(null);
     setCommandButton(null);
   };
 
   const sendsingleDownlinkToRobot = async (command, index) => {
-    setLoadingRow(index);
+    // setLoadingRow(index);
     setCommandButton(index);
 
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
@@ -222,7 +221,7 @@ const MdsOperating = () => {
 
       toast.error(error.response.data.message || error.response.data.error);
     }
-    setLoadingRow(null);
+    // setLoadingRow(null);
     setCommandButton(null);
   };
 
@@ -253,7 +252,7 @@ const MdsOperating = () => {
       toast.error(error.response.data.message || error.response?.data?.error);
     }
     setCustomDownlink("");
-    setLoadingRow(null);
+    // setLoadingRow(null);
     setCommandButton(null);
   };
 
@@ -271,6 +270,8 @@ const MdsOperating = () => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
   error && <CBadge color="danger">{error}</CBadge>;
 

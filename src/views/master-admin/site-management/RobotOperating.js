@@ -495,6 +495,8 @@ const RobotOperating = () => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
 
   const TextToBase64 = (text) => {
@@ -519,9 +521,9 @@ const RobotOperating = () => {
           {/* Page Header */}
           <CRow>
             <CCol>
-              <h4 className="fw-bold text-center">
-                <span className="">{site_id} -&nbsp;</span>
-                <span className="text-primary">{block}</span>
+              <h4 className=" text-center">
+                <span className="text-success">{site_id} -&nbsp;</span>
+                <span className="text-warning">{block}</span>
                 &nbsp;-&nbsp;Robot's Configuration
               </h4>
             </CCol>
@@ -1157,19 +1159,21 @@ const RobotOperating = () => {
                           "START"
                         )}
                       </CButton>
-                      <CButton
-                        className="btn btn-sm btn-warning m-1 shadow"
-                        onClick={() => sendsingleDownlink(partialStart, 43)}
-                      >
-                        {commandButton === 43 ? (
-                          <>
-                            Partial Start&nbsp;
-                            <LoadingSpinner />
-                          </>
-                        ) : (
-                          "Partial Start"
-                        )}
-                      </CButton>
+                      {userInfo.role === "Master Admin" && (
+                        <CButton
+                          className="btn btn-sm btn-warning m-1 shadow"
+                          onClick={() => sendsingleDownlink(partialStart, 43)}
+                        >
+                          {commandButton === 43 ? (
+                            <>
+                              Partial Start&nbsp;
+                              <LoadingSpinner />
+                            </>
+                          ) : (
+                            "Partial Start"
+                          )}
+                        </CButton>
+                      )}
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow-sm"
                         onClick={() => sendsingleDownlink(stop, 2)}

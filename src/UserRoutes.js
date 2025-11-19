@@ -136,3 +136,8 @@ export function ProductionAndOperationsAdminRoute({ children }) {
     <Page404 />
   );
 }
+
+export function FactoryAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Factory Admin" ? children : <Page404 />;
+}

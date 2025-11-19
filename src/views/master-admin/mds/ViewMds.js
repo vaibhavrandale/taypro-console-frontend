@@ -51,6 +51,8 @@ const ViewMds = () => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
 
   useEffect(() => {
@@ -158,7 +160,8 @@ const ViewMds = () => {
     <LoadingSpinner />
   ) : (
     <>
-      {userInfo?.role === "Master Admin" && (
+      {(userInfo?.role === "Master Admin" ||
+        userInfo?.role === "Factory Admin") && (
         <div
           className="d-flex justify-content-end gap-2 mx-auto mb-3"
           style={{ maxWidth: "900px" }}

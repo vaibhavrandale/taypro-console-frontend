@@ -56,7 +56,7 @@ const plans = [
       "Battery Status",
       "Cleaning Log",
       "Site Management",
-      "Only 3 Users",
+      // "Only 3 Users",
     ],
   },
   {
@@ -116,7 +116,7 @@ const allFeatures = [
   "Robot Pos. Tracking",
   "Cleaning Log",
   "Site Management",
-  "Only 3 Users",
+  // "Only 3 Users",
   "Statistics/Reports",
   "Prev. Maintenance",
   "Live Chat",

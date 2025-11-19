@@ -286,6 +286,8 @@ const Mds = () => {
     adminroute = "service-admin";
   } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
 
   return (

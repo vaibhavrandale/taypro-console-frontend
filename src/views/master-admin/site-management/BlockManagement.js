@@ -177,6 +177,8 @@ const BlockManagement = () => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
   }
   // const getRobotsByBlock = (blockName) =>
   //   robots.filter((robot) => robot.block === blockName);

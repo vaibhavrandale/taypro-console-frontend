@@ -101,6 +101,8 @@ const Login = () => {
         adminroute = "production-and-operations-admin";
       } else if (data.data.user.role === "Quality Admin") {
         adminroute = "quality-admin";
+      } else if (data.data.user.role === "Factory Admin") {
+        adminroute = "factory-admin";
       }
 
       // "Opex Client Admin", "Opex Site Technician"
