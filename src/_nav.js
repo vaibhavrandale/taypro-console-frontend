@@ -449,7 +449,7 @@ const _nav = [
 
       {
         component: CNavGroup,
-        name: "Auto Email Logs",
+        name: "System Logs",
         icon: (
           <CIcon
             icon={cilEnvelopeOpen}
@@ -460,8 +460,18 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Email Logs",
+            name: "Email Activity Logs",
             to: "/master-admin/email-logs",
+          },
+          {
+            component: CNavItem,
+            name: "API Logs",
+            to: "/master-admin/api-logger",
+          },
+          {
+            component: CNavItem,
+            name: "Database Status",
+            to: "/master-admin/db-dashboard",
           },
         ],
       },

@@ -479,6 +479,7 @@ const CreateExpense = () => {
                     value={formData.expense_approver}
                     onChange={handleFormChange}
                     required
+                    readOnly
                     placeholder="Enter approver's email"
                   />
                 </div>
@@ -516,7 +517,7 @@ const CreateExpense = () => {
                     <tr>
                       <th>Date</th>
                       <th style={{ minWidth: "150px" }}>Type</th>
-                      <th style={{ minWidth: "200px" }}>Description</th>
+                      <th style={{ minWidth: "300px" }}>Description</th>
                       <th style={{ minWidth: "150px" }}>Amount (₹)</th>
                       <th style={{ minWidth: "150px" }}>Bill Attachment</th>
                       <th>Actions</th>
@@ -590,7 +591,7 @@ const CreateExpense = () => {
                             <td>
                               <textarea
                                 className="form-control form-control-sm"
-                                rows={2}
+                                rows={3}
                                 value={item.description}
                                 onChange={(e) =>
                                   handleExpenseItemChange(
