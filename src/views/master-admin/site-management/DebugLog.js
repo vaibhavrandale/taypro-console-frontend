@@ -299,8 +299,8 @@ const DebugLog = () => {
           </CRow>
 
           {/* Second line: Checkbox left, Export button right */}
-          <CRow className="align-items-center justify-content-between my-2">
-            <CCol md={6}>
+          {/* <CRow className=" d-flex justify-content-between align-items-center flex-wrap ">
+            <CCol md={3} sm={12} className=" my-2">
               <CFormCheck
                 type="checkbox"
                 id="fetchBySite"
@@ -317,7 +317,7 @@ const DebugLog = () => {
                 }}
               />
             </CCol>
-            <CCol md={6} className="text-end">
+            <CCol md={3} sm={12} className="text-end my-2">
               <CButton
                 color="success"
                 className="btn-sm shadow-sm text-white"
@@ -328,8 +328,8 @@ const DebugLog = () => {
             </CCol>
           </CRow>
 
-          {/* Third line: Date filters left, search bar right */}
-          <CRow className="align-items-center justify-content-between my-2">
+     
+          <CRow className=" my-2">
             <CCol md={6} className="d-flex gap-3">
               <div
                 className="d-flex flex-column position-relative"
@@ -370,7 +370,7 @@ const DebugLog = () => {
                   </ul>
                 )}
               </div>
-              {/* Start Date */}
+         
               <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
                 <label htmlFor="startDate" className="mb-1 fw-semibold">
                   Start Date
@@ -383,7 +383,7 @@ const DebugLog = () => {
                 />
               </div>
 
-              {/* End Date */}
+            
               <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
                 <label htmlFor="endDate" className="mb-1 fw-semibold">
                   End Date
@@ -405,6 +405,118 @@ const DebugLog = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </CCol>
+          </CRow> */}
+
+          {/* Row: Checkbox Left | Export Button Right */}
+          <CRow className="align-items-center gy-2">
+            <CCol xs={12} md={6}>
+              <CFormCheck
+                id="fetchBySite"
+                label="Fetch Site Logs"
+                checked={fetchBySite}
+                onChange={(e) => {
+                  setFetchBySite(e.target.checked);
+                  setPage(1);
+                }}
+                className="fw-semibold"
+                style={{ cursor: "pointer", transform: "scale(1.05)" }}
+              />
+            </CCol>
+
+            <CCol xs={12} md={6} className="text-md-end text-start">
+              <CButton
+                color="success"
+                size="sm"
+                className="shadow-sm text-white px-4"
+                onClick={exportToExcel}
+              >
+                Export to Excel
+              </CButton>
+            </CCol>
+          </CRow>
+
+          {/* Row: Robot Search + Date Filters + Main Search */}
+          <CRow className="gy-3 mt-2">
+            {/* Left 3 fields */}
+            <CCol md={8}>
+              <CRow className="g-3">
+                {/* Robot Search with dropdown */}
+                <CCol xs={12} md={4}>
+                  <label htmlFor="robotInput" className="fw-semibold mb-1">
+                    Robot No
+                  </label>
+                  <div className="position-relative">
+                    <CFormInput
+                      id="robotInput"
+                      type="text"
+                      placeholder="Search by Robot No..."
+                      value={robot_number}
+                      onChange={handleSearchChange}
+                    />
+
+                    {robot_number && filteredRobot.length > 0 && (
+                      <ul
+                        className="position-absolute shadow border bg-white rounded mt-1 p-0"
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          overflowY: "auto",
+                          zIndex: 5000,
+                        }}
+                      >
+                        {filteredRobot.map((robot, index) => (
+                          <li
+                            key={index}
+                            className="px-3 py-2 border-bottom"
+                            style={{ cursor: "pointer", listStyle: "none" }}
+                            onClick={() => handleSelectRobot(robot)}
+                          >
+                            {robot.robot_no}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </CCol>
+
+                {/* Start Date */}
+                <CCol xs={12} md={4}>
+                  <label htmlFor="startDate" className="fw-semibold mb-1">
+                    Start Date
+                  </label>
+                  <CFormInput
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </CCol>
+
+                {/* End Date */}
+                <CCol xs={12} md={4}>
+                  <label htmlFor="endDate" className="fw-semibold mb-1">
+                    End Date
+                  </label>
+                  <CFormInput
+                    id="endDate"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </CCol>
+              </CRow>
+            </CCol>
+
+            {/* Right side general search */}
+            <CCol md={4} className="my-2">
+              <label className="fw-semibold mb-1">Search</label>
+              <CFormInput
+                type="text"
+                placeholder="Search by Robot No, Topic or Data..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </CCol>
           </CRow>
 
           <div className="table-responsive">
@@ -412,25 +524,46 @@ const DebugLog = () => {
               <CTableHead color="secondary">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "200px" }}
+                    className="text-center"
+                  >
                     Robot No
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "200px" }}
+                    className="text-center"
+                  >
                     Deveui
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "200px" }}
+                    className="text-center"
+                  >
                     Data
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "200px" }}
+                    className="text-center"
+                  >
                     Timestamp
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "200px" }}
+                    className="text-center"
+                  >
                     Topic
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "100px" }}
+                    className="text-center"
+                  >
                     SNR
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  <CTableHeaderCell
+                    style={{ minWidth: "100px" }}
+                    className="text-center"
+                  >
                     RSSI
                   </CTableHeaderCell>
                 </CTableRow>
@@ -438,19 +571,19 @@ const DebugLog = () => {
               <CTableBody>
                 {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={6} className="text-center">
+                    <CTableHeaderCell colSpan={8} className="text-center">
                       <LoadingSpinner />
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={6} className="text-center">
+                    <CTableHeaderCell colSpan={8} className="text-center">
                       {error}
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : filteredLogs.length === 0 ? (
                   <CTableRow>
-                    <CTableDataCell colSpan="6" className="text-center">
+                    <CTableDataCell colSpan="8" className="text-center">
                       No debug logs found
                     </CTableDataCell>
                   </CTableRow>

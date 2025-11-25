@@ -10,6 +10,7 @@ import {
   CFormTextarea,
   CRow,
   CCol,
+  CBadge,
 } from "@coreui/react";
 
 import "../../master-admin/internal-tickets/internaltickts.css";
@@ -18,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
 const reducer = (state, action) => {
   switch (action.type) {
     case "CREATE_TICKET_REQUEST":
@@ -26,7 +29,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         createTicketloading: false,
-        client_tickets: action.payload,
+        // client_tickets: action.payload,
       };
     case "CREATE_TICKET_FAIL":
       return { ...state, createTicketloading: false, error: action.payload };
@@ -91,7 +94,13 @@ const CreateNewClientTicketClient = () => {
   const [formData, setFormData] = useState({
     subject: "",
     description: "",
+    creation_image1: "",
+    creation_image2: "",
   });
+  const [creationImage1, setCreationImage1] = useState("");
+  const [creationImage2, setCreationImage2] = useState("");
+  const [uploading1, setUploading1] = useState(false);
+  const [uploading2, setUploading2] = useState(false);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
@@ -138,35 +147,112 @@ const CreateNewClientTicketClient = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    const data = {
-      ...formData,
-      ...siteName,
-    };
-    try {
-      dispatch({ type: "CREATE_TICKET_REQUEST" });
+  const handleImageUpload1 = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-      const response = await axios.post("/api/v1/clienttickets", data, {
-        headers: { authorization: `Bearer ${authtoken}` },
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploading1(true);
+
+      const { data } = await axios.post(
+        "/api/v1/image-upload/client-tickets",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      setCreationImage1(data.url);
+      toast.success("Image 1 uploaded");
+    } catch (err) {
+      toast.error("Image upload failed");
+    } finally {
+      setUploading1(false);
+    }
+  };
+  const handleImageUpload2 = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploading2(true);
+
+      const { data } = await axios.post(
+        "/api/v1/image-upload/client-tickets",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      setCreationImage2(data.url);
+      toast.success("Image 2 uploaded");
+    } catch (err) {
+      toast.error("Image upload failed");
+    } finally {
+      setUploading2(false);
+    }
+  };
+  const deleteImage1 = () => {
+    setCreationImage1("");
+    toast.success("Image 1 removed");
+  };
+
+  const deleteImage2 = () => {
+    setCreationImage2("");
+    toast.success("Image 2 removed");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.subject) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    console.log(formData);
+
+    dispatch({ type: "CREATE_TICKET_REQUEST" });
+
+    const payload = {
+      ...formData,
+      site_id: siteName.site_id,
+      creation_image1: creationImage1,
+      creation_image2: creationImage2,
+    };
+
+    try {
+      await axios.post("/api/v1/clienttickets", payload, {
+        headers: {
+          Authorization: `Bearer ${authtoken}`,
+        },
       });
 
+      toast.success("Ticket submitted successfully!");
       dispatch({
         type: "CREATE_TICKET_SUCCESS",
-        payload: response.data.data, // Append new robot to state
       });
 
-      toast.success(response.data.message);
-      navigate(`/${adminroute}/clientadmin-client-ticket`); // Redirect after success
+      navigate(`/${adminroute}/clientadmin-client-ticket`);
     } catch (error) {
-      console.error(error);
       dispatch({
         type: "CREATE_TICKET_FAIL",
-        payload: error.response
-          ? error.response.data.error
-          : "An error occurred",
+        payload: error.response.data.error || error.response.data.message,
       });
-      alert(error.response ? error.response.data.error : "An error occurred");
+
+      toast.error(error.response.data.error || error.response.data.message);
     }
   };
 
@@ -225,7 +311,99 @@ const CreateNewClientTicketClient = () => {
                   />
                 </CCol>
 
-                <CCol md={12}>
+                <CCol md="3">
+                  <label className="form-label">Image 1</label>
+
+                  {/* Upload Button */}
+                  <div className="container-btn-file p-2 m-2 w-80">
+                    <CIcon icon={cilCloudUpload} className="upload-icon" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload1}
+                      disabled={uploading1}
+                      className="file"
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  {uploading1 ? (
+                    <div className="d-flex justify-content-center">
+                      <LoadingSpinner />
+                    </div>
+                  ) : creationImage1 ? (
+                    <div className="position-relative d-inline-block">
+                      <img
+                        src={creationImage1}
+                        alt="creation im 2"
+                        width="50"
+                        height="50"
+                        style={{ objectFit: "cover", borderRadius: "5px" }}
+                      />
+                      <CBadge
+                        className="p-1 position-absolute"
+                        style={{
+                          top: "-8px",
+                          right: "-8px",
+                          cursor: "pointer",
+                          borderRadius: "50%",
+                          backgroundColor: "red",
+                        }}
+                        onClick={deleteImage1}
+                      >
+                        <CIcon icon={cilX} size="sm" />
+                      </CBadge>
+                    </div>
+                  ) : null}
+                </CCol>
+
+                <CCol md="3">
+                  <label className="form-label">Image 2</label>
+
+                  {/* Upload Button */}
+                  <div className="container-btn-file p-2 m-2 w-80">
+                    <CIcon icon={cilCloudUpload} className="upload-icon" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload2}
+                      disabled={uploading2}
+                      className="file"
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  {uploading2 ? (
+                    <div className="d-flex justify-content-center">
+                      <LoadingSpinner />
+                    </div>
+                  ) : creationImage2 ? (
+                    <div className="position-relative d-inline-block">
+                      <img
+                        src={creationImage2}
+                        alt="creation im 2"
+                        width="50"
+                        height="50"
+                        style={{ objectFit: "cover", borderRadius: "5px" }}
+                      />
+                      <CBadge
+                        className="p-1 position-absolute"
+                        style={{
+                          top: "-8px",
+                          right: "-8px",
+                          cursor: "pointer",
+                          borderRadius: "50%",
+                          backgroundColor: "red",
+                        }}
+                        onClick={deleteImage2}
+                      >
+                        <CIcon icon={cilX} size="sm" />
+                      </CBadge>
+                    </div>
+                  ) : null}
+                </CCol>
+
+                <CCol md={12} className="my-2">
                   <CButton
                     className=""
                     size="sm"
@@ -235,7 +413,6 @@ const CreateNewClientTicketClient = () => {
                   >
                     {createTicketloading ? (
                       <>
-                        {" "}
                         Creating... <LoadingSpinner />
                       </>
                     ) : (

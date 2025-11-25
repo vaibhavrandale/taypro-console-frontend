@@ -16,6 +16,7 @@ import {
 } from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
 import SearchRobot from "./SearchRobot";
+import { Link } from "react-router-dom";
 // import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
@@ -334,6 +335,36 @@ const RobotTracker = () => {
     }
   };
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
+
+  let InternaladminRoles = ["Master Admin", "Service Admin", "Project Admin"];
+  let technicianRole = ["Site Technician"];
+  let clientAdminRole = ["Client Admin"];
+
   return (
     <div
       className=""
@@ -357,11 +388,12 @@ const RobotTracker = () => {
 
       {!loadingSites && !loading && (
         <>
-          <CRow className="my-3 justify-content-end align-items-center">
-            <CCol md={3}>
-              <h4 className=" text-center text-success">Live Robot Tracking</h4>
+          <CRow className="my-3 justify-content-center align-items-center">
+            <CCol md={2} className="my-2">
+              <h5 className=" text-start text-success">Live Robot Tracking</h5>
             </CCol>
-            <CCol md={2}>
+
+            <CCol md={2} className="my-2">
               <CFormSelect
                 id="blockSelect"
                 className="p-2"
@@ -377,7 +409,7 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={2}>
+            <CCol md={2} className="my-2">
               <CFormSelect
                 id="siteSelect"
                 className="p-2"
@@ -392,7 +424,7 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={2}>
+            <CCol md={2} className="my-2">
               <CFormInput
                 type="date"
                 className="p-2"
@@ -402,7 +434,7 @@ const RobotTracker = () => {
               />
             </CCol>
 
-            <CCol md={2}>
+            <CCol md={2} className="my-2">
               <CInputGroup className="">
                 <CFormInput
                   type="text"
@@ -412,6 +444,34 @@ const RobotTracker = () => {
                   onChange={handleSearchChange}
                 />
               </CInputGroup>
+            </CCol>
+            <CCol md={1} xs={12} sm={12} className="my-2">
+              {InternaladminRoles.includes(userInfo.role) && (
+                <Link
+                  className="btn btn-sm btn-warning"
+                  to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site_id}`}
+                >
+                  Log
+                </Link>
+              )}
+
+              {clientAdminRole.includes(userInfo.role) && (
+                <Link
+                  className="btn btn-sm btn-warning"
+                  to={`/${adminroute}/cleaning-log-sites/${site_id}`}
+                >
+                  Log
+                </Link>
+              )}
+
+              {technicianRole.includes(userInfo.role) && (
+                <Link
+                  className="btn btn-sm btn-warning"
+                  to={`/${adminroute}/cleaning-log-sites/${site_id}`}
+                >
+                  Log
+                </Link>
+              )}
             </CCol>
           </CRow>
           {/* <CleaningSummary
@@ -506,6 +566,7 @@ const RobotTracker = () => {
           bottom: 0,
           padding: "5px 5px",
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "flex-end",
           alignItems: "center",
           gap: "15px",
@@ -513,7 +574,13 @@ const RobotTracker = () => {
           zIndex: 50,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
           <div
             style={{
               width: "10px",

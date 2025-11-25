@@ -15,6 +15,7 @@ import {
   CModalTitle,
   CModalBody,
   CTooltip,
+  CImage,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -239,7 +240,15 @@ const ClientTicketsDashboard = () => {
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  {ticket.ticket_id}
+                  {/* {ticket.ticket_id} */}
+                  <Link
+                    className="m-1"
+                    color="primary"
+                    size="sm"
+                    onClick={() => openViewModal(ticket)}
+                  >
+                    {ticket.ticket_id}
+                  </Link>
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
                   {ticket.site_id}
@@ -345,13 +354,23 @@ const ClientTicketsDashboard = () => {
         <CModalBody>
           {selectedTicket && (
             <>
-              <CTable bordered hover responsive className="bg-important">
-                <CTableHead>
+              <CTable
+                bordered
+                striped
+                responsive
+                className="shadow-sm rounded overflow-hidden"
+              >
+                <CTableHead color="primary" className="text-white">
                   <CTableRow>
-                    <CTableHeaderCell>Field</CTableHeaderCell>
-                    <CTableHeaderCell>Value</CTableHeaderCell>
+                    <CTableHeaderCell className="fw-bold">
+                      Field
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="fw-bold">
+                      Value
+                    </CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
                   {Object.entries({
                     "Ticket ID": formData.ticket_id,
@@ -366,6 +385,7 @@ const ClientTicketsDashboard = () => {
                             ? "danger"
                             : "warning"
                         }
+                        className="px-3 py-2"
                       >
                         {formData.status}
                       </CBadge>
@@ -373,23 +393,57 @@ const ClientTicketsDashboard = () => {
                     "Resolution Notes": formData.resolution_notes,
                     "Created By": formData.created_by.name,
                     "Created By Email": formData.created_by.email,
-                    "Created At": new Date(formData.createdAt).toLocaleString(),
+                    "Created At": new Date(formData.createdAt).toLocaleString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      }
+                    ),
                     ...(formData.status === "Resolved" && {
-                      "Resolved By": formData.resolved_by?.name || "",
-                      "Resolved By Email": formData.resolved_by?.email || "",
-                      "Resolved By ID": formData.resolved_by?.id || "",
-                      "Resolved At": formData.resolved_at || "",
+                      "Resolved By": formData.resolved_by?.name || "--",
+                      "Resolved By Email": formData.resolved_by?.email || "--",
+                      "Resolved By ID": formData.resolved_by?.id || "--",
+                      "Resolved At": formData.resolved_at || "--",
                     }),
+
+                    // ---------------- Images ----------------
+                    "Creation Image 1": formData.creation_image1,
+                    "Creation Image 2": formData.creation_image2,
+                    "Resolution Image 1": formData.resolution_image1,
+                    "Resolution Image 2": formData.resolution_image2,
                   }).map(([field, value]) => (
                     <CTableRow key={field}>
-                      <CTableDataCell>{field}</CTableDataCell>
-                      <CTableDataCell>{value}</CTableDataCell>
+                      <CTableDataCell className="">{field}</CTableDataCell>
+
+                      <CTableDataCell className="">
+                        {typeof value === "string" &&
+                        value.startsWith("http") ? (
+                          <a href={value} target="_blank" rel="noreferrer">
+                            <CImage
+                              src={value}
+                              width={120}
+                              height={80}
+                              className="rounded border shadow-sm"
+                            />
+                          </a>
+                        ) : (
+                          value
+                        )}
+                      </CTableDataCell>
                     </CTableRow>
                   ))}
                 </CTableBody>
               </CTable>
 
-              <LastActivity lastactivity={formData.last_activity} />
+              <div className="mt-2">
+                <LastActivity lastactivity={formData.last_activity} />
+              </div>
             </>
           )}
         </CModalBody>
