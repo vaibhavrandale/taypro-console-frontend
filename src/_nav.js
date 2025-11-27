@@ -388,7 +388,7 @@ const _nav = [
 
       {
         component: CNavGroup,
-        name: "Feedback",
+        name: "Customer Feedback",
         icon: (
           <CIcon
             icon={cilFactory}
@@ -399,7 +399,7 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Customer Feedback",
+            name: "All Feedbacks",
             to: "/master-admin/customer-feedback",
           },
         ],

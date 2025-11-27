@@ -181,8 +181,8 @@ const ClientFeedback = () => {
   );
 
   return (
-    <div className="p-2">
-      <h2 className="text-center mt-4 mb-4">Client Feedback</h2>
+    <div className="">
+      <h2 className="text-center  mb-4">Client Feedbacks</h2>
       <div className="d-flex justify-content-end mb-3">
         <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
           Export

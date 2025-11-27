@@ -142,17 +142,18 @@ const RobotCommands = () => {
 
     const deveuiList = selectedRobots.map((r) => r.deveui);
     const robotNoList = selectedRobots.map((r) => r.robot_no);
-    //  let robotdownlink = {
-    //     deveui: deveuiList,
-    //     block: block,
-    //     site_id: site_id,
-    //     command: command,
-    //   };
+    let robotdownlink = {
+      deveui: deveuiList,
+      block: "Random Block",
+      site_id: site_id,
+      command: commandCode,
+      robot_no: robotNoList.join(", "),
+    };
     try {
       await axios.post(
         // "/api/v1/robots/send-downlink-in-bulk",
         "/api/v1/robots/send-mqtt-multicast-downlink",
-        { deveui: deveuiList, command: commandCode },
+        robotdownlink,
         { headers: { Authorization: `Bearer ${authtoken}` } }
       );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -240,29 +241,36 @@ const RobotCommands = () => {
         <div className="d-flex justify-content-end mb-3 mt-4">
           {selectedRobots.length > 0 && (
             <>
-              <CButton
-                className="btn btn-sm btn-secondary m-1"
-                disabled={LoadingDownlink}
-                onClick={() => sendMulticastDownlink(COMMAND_CODES.START)}
-              >
-                START
-              </CButton>
-              <CButton
-                className="btn btn-sm btn-secondary m-1"
-                disabled={LoadingDownlink}
-                onClick={() => sendMulticastDownlink(COMMAND_CODES.STOP)}
-              >
-                STOP
-              </CButton>
-              <CButton
-                className="btn btn-sm btn-secondary m-1"
-                disabled={LoadingDownlink}
-                onClick={() =>
-                  sendMulticastDownlink(COMMAND_CODES.RETURN_TO_DOCK)
-                }
-              >
-                RETURN TO DOCK
-              </CButton>
+              {LoadingDownlink ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  {" "}
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1"
+                    disabled={LoadingDownlink}
+                    onClick={() => sendMulticastDownlink(COMMAND_CODES.START)}
+                  >
+                    START
+                  </CButton>
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1"
+                    disabled={LoadingDownlink}
+                    onClick={() => sendMulticastDownlink(COMMAND_CODES.STOP)}
+                  >
+                    STOP
+                  </CButton>
+                  <CButton
+                    className="btn btn-sm btn-secondary m-1"
+                    disabled={LoadingDownlink}
+                    onClick={() =>
+                      sendMulticastDownlink(COMMAND_CODES.RETURN_TO_DOCK)
+                    }
+                  >
+                    RETURN TO DOCK
+                  </CButton>
+                </>
+              )}
             </>
           )}
         </div>
