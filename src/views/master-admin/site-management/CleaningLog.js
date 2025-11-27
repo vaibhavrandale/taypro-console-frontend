@@ -439,6 +439,15 @@ const CleaningLog = () => {
                     Topic
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
+                    RSSI
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    SNR
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Gateway ID
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
                     Timestamp
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
@@ -486,6 +495,15 @@ const CleaningLog = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {log.topic}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.rssi}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.snr}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {log.gateway_id}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {new Date(log.createdAt).toLocaleString("en-GB", {

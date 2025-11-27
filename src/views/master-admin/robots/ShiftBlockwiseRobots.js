@@ -17,6 +17,8 @@ import {
   CFormInput,
   CFormSelect,
   CCol,
+  CForm,
+  CRow,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -107,6 +109,7 @@ const ShiftBlockwiseRobots = () => {
   const [site_id, setSiteId] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [targetBlock, setTargetBlock] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     let pagination = {
@@ -275,6 +278,12 @@ const ShiftBlockwiseRobots = () => {
     }
   };
 
+  const filteredRobots = shiftrobots.filter(
+    (robot) =>
+      robot.block.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="p-2">
       <h4>Update Blocks of Robots</h4>
@@ -369,23 +378,35 @@ const ShiftBlockwiseRobots = () => {
             ))}
           </div>
         )}
-        <CCol md={4}>
-          <CFormSelect
-            id="siteSelect"
-            label="Select Site"
-            value={site_id}
-            onChange={(e) => {
-              setSiteId(e.target.value);
-            }}
-          >
-            <option value="">Select a site</option>
-            {sites?.map((site, index) => (
-              <option key={index} value={site.site_id}>
-                {site.site_id}
-              </option>
-            ))}
-          </CFormSelect>
-        </CCol>
+        <CRow>
+          <CCol md={4}>
+            <CFormSelect
+              id="siteSelect"
+              label="Select Site"
+              value={site_id}
+              onChange={(e) => {
+                setSiteId(e.target.value);
+              }}
+            >
+              <option value="">Select a site</option>
+              {sites?.map((site, index) => (
+                <option key={index} value={site.site_id}>
+                  {site.site_id}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCol>
+
+          <CCol md={4}>
+            <CFormInput
+              label="Search by Block"
+              type="text"
+              placeholder="Search by Block ,Robot No"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </CCol>
+        </CRow>
 
         <CTable
           bordered
@@ -420,14 +441,14 @@ const ShiftBlockwiseRobots = () => {
                   {error}
                 </CTableDataCell>
               </CTableRow>
-            ) : shiftrobots.length === 0 ? (
+            ) : filteredRobots.length === 0 ? (
               <CTableRow>
                 <CTableDataCell colSpan="7" className="text-center">
                   No robots found.
                 </CTableDataCell>
               </CTableRow>
             ) : (
-              shiftrobots.map((robot, index) => (
+              filteredRobots.map((robot, index) => (
                 <CTableRow key={robot.deveui}>
                   <CTableDataCell>
                     <CFormCheck

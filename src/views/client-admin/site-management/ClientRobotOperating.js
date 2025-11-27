@@ -1652,12 +1652,12 @@ const ClientRobotOperating = () => {
               >
                 RETURN TO DOCK ALL
               </CButton>
-              <Link
+              {/* <Link
                 to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
                 className="btn btn-sm btn-secondary  btn-sm m-1 shadow-sm"
               >
                 DEBUG LOG
-              </Link>
+              </Link> */}
 
               <CDropdown className="dropdown">
                 {siteRobots.length > 1 ? (
@@ -1688,6 +1688,11 @@ const ClientRobotOperating = () => {
                     ? ""
                     : siteRobots.map((item, index) => (
                         <CDropdownItem
+                          style={{
+                            color: `${
+                              robot.lora_state === 1 ? `black` : `white`
+                            }`,
+                          }}
                           key={index}
                           to={`${
                             item.robot_no === robot_no
