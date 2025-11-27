@@ -12,6 +12,12 @@ const initialState = {
   authtoken: localStorage.getItem("authtoken")
     ? JSON.parse(localStorage.getItem("authtoken"))
     : null,
+  robots: localStorage.getItem("robots")
+    ? JSON.parse(localStorage.getItem("robots"))
+    : null,
+  gateways: localStorage.getItem("gateways")
+    ? JSON.parse(localStorage.getItem("gateways"))
+    : null,
 };
 
 // Reducer function
@@ -23,7 +29,13 @@ const reducer = (state = initialState, action) => {
     case "EMP_SIGNOUT":
       localStorage.removeItem("userInfo");
       localStorage.removeItem("authtoken");
-      return { ...state, userInfo: action.payload, authtoken: action.token };
+      localStorage.removeItem("robots");
+      localStorage.removeItem("gateways");
+      return {
+        ...state,
+        userInfo: action.payload,
+        authtoken: action.token,
+      };
 
     case "set":
       return { ...state, ...action.payload };

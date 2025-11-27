@@ -840,21 +840,45 @@ const SiteTechnicianRobotOperating = () => {
             <CCol>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
+                disabled={commandButton === 1}
                 onClick={() => sendMulticastDownlink(start, 1)}
               >
-                START ALL
+                {commandButton === 1 ? (
+                  <>
+                    START ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "START ALL"
+                )}
               </CButton>
               <CButton
+                disabled={commandButton === 2}
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
                 onClick={() => sendMulticastDownlink(stop, 2)}
               >
-                STOP ALL
+                {commandButton === 2 ? (
+                  <>
+                    STOP ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "STOP ALL"
+                )}
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
+                disabled={commandButton === 3}
                 onClick={() => sendMulticastDownlink(returntodock, 3)}
               >
-                RETURN TO DOCK ALL
+                {commandButton === 2 ? (
+                  <>
+                    RETURN TO DOCK ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "RETURN TO DOCK ALL"
+                )}
               </CButton>
               <Link
                 to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}
