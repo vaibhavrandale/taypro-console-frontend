@@ -25,6 +25,7 @@ import {
   CFormLabel,
   CFormTextarea,
   CButton,
+  CCard,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilBell, cilMenu, cilSearch, cilX } from "@coreui/icons";
@@ -173,8 +174,21 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const [feedbackModal, setFeedbackModal] = useState(true);
   const [timerModal, setTimerModal] = useState(false);
   const [formData, setFormData] = useState({
-    comments: "",
-    rating: "",
+    feedback_data: {
+      comments: "",
+      rating: "",
+    },
+    technician_feedback_data: {
+      is_technician_assigned:
+        latestfeedback?.technician_feedback_data?.is_technician_assigned ||
+        false,
+      comments: "",
+      rating: "",
+    },
+    service_feedback_data: {
+      comments: "",
+      rating: "",
+    },
   });
 
   useEffect(() => {
@@ -491,9 +505,24 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Accept both (StarRating + textarea)
+    const section = e.target.section || e.target.dataset.section;
+
+    setFormData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [name]: value,
+      },
+    }));
   };
 
   const handleSubmit = async () => {
@@ -501,6 +530,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     if (document.activeElement) {
       document.activeElement.blur();
     }
+
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
       const data = await axios.put(
@@ -515,8 +545,23 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       dispatch({ type: "SUBMIT_SUCCESS" });
       setFeedbackModal(false); // Hide the modal
       setFormData({
-        comments: "",
-        rating: "",
+        feedback_data: {
+          comments: "",
+          rating: "",
+        },
+        technician_feedback_data: {
+          comments: latestfeedback.technician_feedback_data
+            .is_technician_assigned
+            ? ""
+            : "No Technician Assigned",
+          rating: latestfeedback.technician_feedback_data.is_technician_assigned
+            ? ""
+            : 1,
+        },
+        service_feedback_data: {
+          comments: "",
+          rating: "",
+        },
       });
     } catch (error) {
       dispatch({
@@ -553,7 +598,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
   };
 
-  const StarRating = ({ rating, onChange }) => {
+  const StarRating = ({ rating, onChange, section }) => {
     const currentRating = Number(rating) || 0;
 
     return (
@@ -569,12 +614,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               key={star}
               color="#ffc107"
               onClick={() =>
-                onChange({ target: { name: "rating", value: star } })
+                onChange({
+                  //  target: { name: "rating", value: star }
+                  target: { name: "rating", value: star, section },
+                })
               }
               onKeyDown={(e) => {
                 if (e.key === "Enter")
                   onChange({
-                    target: { name: "rating", value: star },
+                    target: { name: "rating", value: star, section },
                   });
               }}
               role="radio"
@@ -588,12 +636,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               key={star}
               color="#e4e5e9"
               onClick={() =>
-                onChange({ target: { name: "rating", value: star } })
+                onChange({ target: { name: "rating", value: star, section } })
               }
               onKeyDown={(e) => {
                 if (e.key === "Enter")
                   onChange({
-                    target: { name: "rating", value: star },
+                    target: { name: "rating", value: star, section },
                   });
               }}
               role="radio"
@@ -809,6 +857,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           scrollable
           alignment="top"
           visible={feedbackModal}
+          size="xl"
         >
           {loading ? (
             <div
@@ -830,8 +879,33 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             </div>
           ) : (
             <>
-              <CModalHeader closeButton={false}>
-                <CModalTitle>Rate for our Service</CModalTitle>
+              <CModalHeader
+                closeButton={false}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <CModalTitle>Rate Us</CModalTitle>
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handleSubmit}
+                  disabled={
+                    !formData.feedback_data.comments ||
+                    !formData.feedback_data.rating ||
+                    // !formData.technician_feedback_data.rating ||
+                    // !formData.technician_feedback_data.comments ||
+                    !formData.service_feedback_data.rating ||
+                    !formData.service_feedback_data.comments ||
+                    submitLoading
+                  }
+                >
+                  {submitLoading ? (
+                    <>
+                      Submitting Your Feedback <LoadingSpinner />
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </CButton>
               </CModalHeader>
 
               <CModalBody>
@@ -840,43 +914,215 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     {submiterror}
                   </div>
                 )}
+                {/* <CForm>
+                  <CRow>
+                    <CCol md={4}>
+                      <CCard
+                        className="shadow-lg rounded-0 p-2"
+                        style={{
+                          color: "#fff",
+                          borderRadius: "10px",
+                          // border: "1px solid #3a3a3a",
+                        }}
+                      >
+                        <div className="mb-3">
+                          <CFormLabel>Rating for Portal</CFormLabel>
+                          <StarRating
+                            rating={formData.feedback_data.rating}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <CFormLabel htmlFor="comments">
+                            Portal Feedback
+                          </CFormLabel>
+                          <CFormTextarea
+                            id="comments"
+                            name="comments"
+                            style={{}}
+                            rows={4}
+                            placeholder="Write your portal feedback..."
+                            value={formData.feedback_data.comments}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </CCard>
+                    </CCol>
+                    <CCol md={4}>
+                      <div className="mb-3">
+                        <CFormLabel>Rating for technician</CFormLabel>
+                        <StarRating
+                          rating={formData.technician_feedback_data.rating}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="mb-3">
+                        <CFormLabel htmlFor="comments">
+                          Technician Feedback
+                        </CFormLabel>
+                        <CFormTextarea
+                          id="comments"
+                          name="comments"
+                          rows={4}
+                          placeholder="Write your technician feedback..."
+                          value={formData.technician_feedback_data.comments}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </CCol>
+                    <CCol md={4}>
+                      <div className="mb-3">
+                        <CFormLabel>Rating for our overall Service</CFormLabel>
+                        <StarRating
+                          rating={formData.service_feedback_data.rating}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="mb-3">
+                        <CFormLabel htmlFor="comments">
+                          Service Feedback
+                        </CFormLabel>
+                        <CFormTextarea
+                          id="comments"
+                          name="comments"
+                          rows={4}
+                          placeholder="Write your service feedback..."
+                          value={formData.service_feedback_data.comments}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </CCol>
+                  </CRow>
+                </CForm> */}
                 <CForm>
-                  <div className="mb-3">
-                    <CFormLabel htmlFor="comments">Feedback</CFormLabel>
-                    <CFormTextarea
-                      id="comments"
-                      name="comments"
-                      rows={2}
-                      placeholder="Write your feedback..."
-                      value={formData.comments}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <CFormLabel>Rating</CFormLabel>
-                    <StarRating
-                      rating={formData.rating}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </CForm>
-                <hr />
-                <div className="d-flex justify-content-between">
-                  <CButton
-                    color="success"
-                    size="sm"
-                    onClick={handleSubmit}
-                    disabled={!formData.comments || !formData.rating}
-                  >
-                    {submitLoading ? (
-                      <>
-                        Please Wait <LoadingSpinner />
-                      </>
-                    ) : (
-                      "Submit"
+                  <CRow className="g-4">
+                    {/* Portal Feedback */}
+                    <CCol md={4}>
+                      <CCard
+                        className="shadow-sm rounded-3 p-3 border-0"
+                        style={{ background: "#f8f9fa" }}
+                      >
+                        <h6 className="mb-3 text-warning fw-bold">
+                          Portal Feedback
+                        </h6>
+
+                        <div className="mb-3">
+                          <CFormLabel className="fw-semibold">
+                            Rating
+                          </CFormLabel>
+                          <StarRating
+                            section="feedback_data"
+                            rating={formData.feedback_data.rating}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <CFormLabel
+                            htmlFor="portal_comments"
+                            className="fw-semibold"
+                          >
+                            Comments
+                          </CFormLabel>
+                          <CFormTextarea
+                            id="portal_comments"
+                            data-section="feedback_data"
+                            name="comments"
+                            rows={4}
+                            placeholder="Share your portal experience..."
+                            value={formData.feedback_data.comments}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </CCard>
+                    </CCol>
+
+                    {/* Technician Feedback */}
+                    {latestfeedback.technician_feedback_data
+                      .is_technician_assigned && (
+                      <CCol md={4}>
+                        <CCard
+                          className="shadow-sm rounded-3 p-3 border-0"
+                          style={{ background: "#f8f9fa" }}
+                        >
+                          <h6 className="mb-3 text-success fw-bold">
+                            Technician Feedback
+                          </h6>
+
+                          <div className="mb-3">
+                            <CFormLabel className="fw-semibold">
+                              Rating
+                            </CFormLabel>
+                            <StarRating
+                              section="technician_feedback_data"
+                              rating={formData.technician_feedback_data.rating}
+                              onChange={handleChange}
+                            />
+                          </div>
+
+                          <div className="mb-3">
+                            <CFormLabel
+                              htmlFor="tech_comments"
+                              className="fw-semibold"
+                            >
+                              Comments
+                            </CFormLabel>
+                            <CFormTextarea
+                              id="tech_comments"
+                              name="comments"
+                              rows={4}
+                              data-section="technician_feedback_data"
+                              placeholder="Share your technician feedback..."
+                              value={formData.technician_feedback_data.comments}
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </CCard>
+                      </CCol>
                     )}
-                  </CButton>
-                </div>
+
+                    {/* Service Feedback */}
+                    <CCol md={4}>
+                      <CCard
+                        className="shadow-sm rounded-3 p-3 border-0"
+                        style={{ background: "#f8f9fa" }}
+                      >
+                        <h6 className="mb-3 text-info fw-bold">
+                          Service Feedback
+                        </h6>
+
+                        <div className="mb-3">
+                          <CFormLabel className="fw-semibold">
+                            Rating
+                          </CFormLabel>
+                          <StarRating
+                            section="service_feedback_data"
+                            rating={formData.service_feedback_data.rating}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <CFormLabel
+                            htmlFor="service_comments"
+                            className="fw-semibold"
+                          >
+                            Comments
+                          </CFormLabel>
+                          <CFormTextarea
+                            id="service_comments"
+                            data-section="service_feedback_data"
+                            name="comments"
+                            rows={4}
+                            placeholder="Write about your overall service experience..."
+                            value={formData.service_feedback_data.comments}
+                            onChange={handleChange}
+                          />
+                        </div>
+                      </CCard>
+                    </CCol>
+                  </CRow>
+                </CForm>
               </CModalBody>
             </>
           )}

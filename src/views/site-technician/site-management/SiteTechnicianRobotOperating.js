@@ -781,6 +781,7 @@ const SiteTechnicianRobotOperating = () => {
 
   const sendMulticastDownlink = async (command, index) => {
     let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    let allrobotnos = blockwiserobots.map((robot) => robot.robot_no); // Corrected arrow function syntax
 
     setCommandButton(index);
     //deveui,command,robot_no,site_id,lora_no
@@ -789,6 +790,7 @@ const SiteTechnicianRobotOperating = () => {
       block: block,
       site_id: site_id,
       command: command,
+      robot_no: allrobotnos,
     };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
@@ -871,7 +873,7 @@ const SiteTechnicianRobotOperating = () => {
                 disabled={commandButton === 3}
                 onClick={() => sendMulticastDownlink(returntodock, 3)}
               >
-                {commandButton === 2 ? (
+                {commandButton === 3 ? (
                   <>
                     RETURN TO DOCK ALL&nbsp;
                     <LoadingSpinner />
