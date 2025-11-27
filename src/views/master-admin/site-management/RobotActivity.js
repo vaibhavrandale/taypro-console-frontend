@@ -15,6 +15,7 @@ import {
   CCol,
   CInputGroup,
   CAvatar,
+  CBadge,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -119,13 +120,30 @@ const RobotActivity = () => {
     }
   };
 
+  // const filteredData = robotNotifications.filter((item) => {
+  //   const term = searchTerm.toLowerCase();
+  //   return (
+  //     item.robot_no?.toLowerCase().includes(term) ||
+  //     item.command?.toLowerCase().includes(term) ||
+  //     item.site_id?.toLowerCase().includes(term) ||
+  //     item.last_activity?.name?.toLowerCase().includes(term) ||
+  //     item.last_activity?.details?.toLowerCase().includes(term)
+  //   );
+  // });
+
   const filteredData = robotNotifications.filter((item) => {
     const term = searchTerm.toLowerCase();
+
+    const cleanDetails = item.last_activity?.details
+      ?.replace(/<[^>]+>/g, "") // Remove HTML tags
+      .toLowerCase();
+
     return (
       item.robot_no?.toLowerCase().includes(term) ||
       item.command?.toLowerCase().includes(term) ||
       item.site_id?.toLowerCase().includes(term) ||
-      item.last_activity?.name?.toLowerCase().includes(term)
+      item.last_activity?.name?.toLowerCase().includes(term) ||
+      cleanDetails?.includes(term)
     );
   });
 
@@ -175,7 +193,19 @@ const RobotActivity = () => {
                   <br />
                   <small className="text-muted">{item.deveui}</small>
                 </CTableDataCell>
-                <CTableDataCell>{item.command}</CTableDataCell>
+                <CTableDataCell>
+                  {item.command === "11" ||
+                  item.command === "Cleaning Start" ? (
+                    <CBadge color="success">Cleaning Start</CBadge>
+                  ) : item.command === "14" ||
+                    item.command === "Cleaning Stop" ? (
+                    <CBadge color="danger"> Cleaning Stop</CBadge>
+                  ) : item.command === "15" ? (
+                    <CBadge color="secondary">Return To Dock</CBadge>
+                  ) : (
+                    <CBadge color="secondary">{item.command}</CBadge>
+                  )}
+                </CTableDataCell>
                 {/* <CTableDataCell></CTableDataCell> */}
                 <CTableDataCell>{item.site_id}</CTableDataCell>
                 {/* <CTableDataCell>{item.last_activity?.name}</CTableDataCell> */}

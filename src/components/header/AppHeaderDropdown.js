@@ -54,21 +54,66 @@ const AppHeaderDropdown = () => {
 
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     try {
+  //       dispatch({ type: "FETCH_USER_REQUEST" });
+  //       const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       });
+  //       dispatch({ type: "FETCH_USER_SUCCESS", payload: response.data.data });
+  //     } catch (error) {
+  //       if (error?.response?.data?.message === "Session Expired") {
+  //         dispatch({ type: "EMP_SIGNOUT" });
+  //         localStorage.removeItem("userInfo");
+  //         localStorage.removeItem("authtoken");
+  //         navigate("/login");
+  //       }
+  //       dispatch({
+  //         type: "FETCH_USER_FAIL",
+  //         payload:
+  //           error?.response?.data?.message || error?.response?.data?.error,
+  //       });
+  //     }
+  //   };
+
+  //   if (!user?._id) {
+  //     fetchUserDetails();
+  //   }
+  // }, [authtoken, userInfo, navigate, user?._id]);
+
+  // Close dropdown on outside click
+
   useEffect(() => {
+    // If Redux already has user info → do NOT fetch
+    if (userInfo && userInfo?._id) {
+      dispatch({ type: "FETCH_USER_SUCCESS", payload: userInfo });
+      return;
+    }
+
     const fetchUserDetails = async () => {
       try {
         dispatch({ type: "FETCH_USER_REQUEST" });
+
         const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
+
         dispatch({ type: "FETCH_USER_SUCCESS", payload: response.data.data });
       } catch (error) {
-        if (error?.response?.data?.message === "Session Expired") {
-          dispatch({ type: "EMP_SIGNOUT" });
+        if (
+          error?.response?.data?.message === "Session Expired" ||
+          error?.response?.data?.message === "Unauthorized"
+        ) {
           localStorage.removeItem("userInfo");
           localStorage.removeItem("authtoken");
+          localStorage.removeItem("robots");
+          localStorage.removeItem("gateways");
+          dispatch({ type: "EMP_SIGNOUT" });
+
           navigate("/login");
         }
+
         dispatch({
           type: "FETCH_USER_FAIL",
           payload:
@@ -77,12 +122,12 @@ const AppHeaderDropdown = () => {
       }
     };
 
-    if (!user?._id) {
+    // Only call if userInfo is missing
+    if (!userInfo || !userInfo._id) {
       fetchUserDetails();
     }
-  }, [authtoken, userInfo, navigate, user?._id]);
+  }, [authtoken, dispatch, navigate, userInfo]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -97,6 +142,9 @@ const AppHeaderDropdown = () => {
     dispatch({ type: "EMP_SIGNOUT" });
     localStorage.removeItem("userInfo");
     localStorage.removeItem("selectedChatId");
+    localStorage.removeItem("authtoken");
+    localStorage.removeItem("robots");
+    localStorage.removeItem("gateways");
     navigate("/login");
     toast.success("Logged out Successfully!");
   };

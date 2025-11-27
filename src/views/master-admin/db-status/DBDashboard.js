@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { RefreshCcw } from "lucide-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import CollectionCard from "./CollectionCard";
 
 const DBDashboard = () => {
   const [stats, setStats] = useState([]);
@@ -143,6 +144,11 @@ const DBDashboard = () => {
           <CRow className="g-4">
             {filteredStats.map((item, i) => (
               <CCol xs={12} md={6} lg={4} key={i}>
+                <CollectionCard item={item} index={i} />
+              </CCol>
+            ))}
+            {/* {filteredStats.map((item, i) => (
+              <CCol xs={12} md={6} lg={4} key={i}>
                 <CCard className="shadow-sm border-0">
                   <CCardHeader className="fw-bold d-flex justify-content-between">
                     <span>
@@ -175,7 +181,7 @@ const DBDashboard = () => {
                   </CCardBody>
                 </CCard>
               </CCol>
-            ))}
+            ))} */}
           </CRow>
         </>
       )}

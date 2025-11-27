@@ -230,19 +230,20 @@ const TimerCommandSentLog = () => {
             <CTableHeaderCell>Site ID</CTableHeaderCell>
             <CTableHeaderCell>Block</CTableHeaderCell>
             <CTableHeaderCell>Is Command Sent?</CTableHeaderCell>
+            <CTableHeaderCell>Comment</CTableHeaderCell>
             <CTableHeaderCell>Sent At</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
           {loadingTimerLogs ? (
             <CTableRow className="text-center">
-              <CTableDataCell colSpan={6}>
+              <CTableDataCell colSpan={7}>
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : timerLogsError ? (
             <CTableRow className="text-center">
-              <CTableDataCell colSpan={6}>{timerLogsError}</CTableDataCell>
+              <CTableDataCell colSpan={7}>{timerLogsError}</CTableDataCell>
             </CTableRow>
           ) : filteredLogs.length > 0 ? (
             filteredLogs.map((robot, index) => (
@@ -259,6 +260,7 @@ const TimerCommandSentLog = () => {
                     <CBadge color="danger">NO</CBadge>
                   )}
                 </CTableDataCell>
+                <CTableDataCell>{robot.command}</CTableDataCell>
                 <CTableDataCell>
                   {new Date(robot.createdAt).toLocaleString("en-GB", {
                     timeZone: "Asia/Kolkata",
@@ -275,7 +277,7 @@ const TimerCommandSentLog = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="6" className="text-start">
+              <CTableDataCell colSpan="7" className="text-start">
                 No Robots Found
               </CTableDataCell>
             </CTableRow>

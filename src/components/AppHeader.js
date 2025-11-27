@@ -169,7 +169,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   });
 
   const [showDropdown, setShowDropdown] = useState(false);
-
   const navigate = useNavigate();
   const [feedbackModal, setFeedbackModal] = useState(true);
   const [timerModal, setTimerModal] = useState(false);
@@ -177,6 +176,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     comments: "",
     rating: "",
   });
+
   useEffect(() => {
     if (!userInfo) {
       navigate("/login"); // Redirect if user is not found
@@ -210,6 +210,17 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         ) {
           setTimerModal(false); // Hide the modal if no notifications
         }
+
+        if (
+          error?.response?.data?.message === "Session Expired" ||
+          error?.response?.data?.message === "Unauthorized"
+        ) {
+          dispatch({ type: "EMP_SIGNOUT" });
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("authtoken");
+          navigate("/login");
+        }
+
         dispatch({
           type: "FETCH_TIMER_FAIL",
           payload: error.response?.data.error || error.response?.data.message,
@@ -267,6 +278,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             gateways: response.data.gateways,
           },
         });
+        localStorage.setItem("robots", JSON.stringify(response.data.robots));
+        localStorage.setItem(
+          "gateways",
+          JSON.stringify(response.data.gateways)
+        );
       } catch (error) {
         dispatch({
           type: "FETCH_ROBOTS_GATEWAYS_FAIL",
@@ -314,12 +330,27 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       fetchNotifications();
       notificationsFetched.current = true;
     }
+    const cachedRobots = localStorage.getItem("robots");
+    const cachedGateways = localStorage.getItem("gateways");
 
     if (
       !robotsGatewaysFetched.current &&
       !userInfo?.role.includes(["Opex Client Admin", "Opex Site Technician"])
     ) {
-      fetchRobotsAndGateways();
+      if (cachedRobots && cachedGateways) {
+        // Load from cache
+        dispatch({
+          type: "FETCH_ROBOTS_GATEWAYS_SUCCESS",
+          payload: {
+            robots: JSON.parse(cachedRobots),
+            gateways: JSON.parse(cachedGateways),
+          },
+        });
+      } else {
+        // Fetch fresh
+        fetchRobotsAndGateways();
+      }
+
       fetchTimerData();
       robotsGatewaysFetched.current = true;
     }
