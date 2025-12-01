@@ -1073,6 +1073,7 @@ const reducer = (state, action) => {
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
+        dynamicCycles: action.payload.dynamicCycles,
       };
     case "FETCH_FAIL":
       return {
@@ -1167,6 +1168,7 @@ const SitewaiseLog = () => {
       dprError,
       dprLogs,
       dprLoading,
+      dynamicCycles,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -1192,6 +1194,7 @@ const SitewaiseLog = () => {
     offlineRobotLoading: false,
     offlineRobotError: "",
     offlineRobots: [],
+    dynamicCycles: {},
     dprError: "",
     dprLogs: [],
     dprLoading: false,
@@ -1231,6 +1234,7 @@ const SitewaiseLog = () => {
             cleaningCompleted: data.cleaningCompleted || [],
             cleaningInProgress: data.cleaningInProgress || [],
             failureLogs: data.failureLogs || [],
+            dynamicCycles: data.dynamicCycles || {},
             totalPages: data.totalPages || 1,
             hasNextPage: data.hasNextPage || false,
             hasPrevPage: data.hasPrevPage || false,
@@ -1277,7 +1281,7 @@ const SitewaiseLog = () => {
     const fetchOfflineLogs = async () => {
       try {
         dispatch({
-          type: "FETCH_OFFLINE_SUCCESS",
+          type: "FETCH_OFFLINE_REQUEST",
         });
         const response = await axios.get(
           `/api/v1/errorlogs/site-error-logs/${site_id}/${startDate}/${startDate}`,
@@ -1293,7 +1297,7 @@ const SitewaiseLog = () => {
         });
       } catch (error) {
         dispatch({
-          type: "FETCH_OFFLINE_SUCCESS",
+          type: "FETCH_OFFLINE_FAIL",
           payload: error.response.data.data || error.response.data.error,
         });
         toast.error(error.response.data.data || error.response.data.error);
@@ -1309,7 +1313,8 @@ const SitewaiseLog = () => {
       !cleaningCompleted?.length &&
       !cleaningInProgress?.length &&
       !failureLogs?.length &&
-      !offlineRobots?.length
+      !offlineRobots?.length &&
+      !dprLogs?.length
     ) {
       toast.error("No data available to export.");
       return;
@@ -1317,9 +1322,9 @@ const SitewaiseLog = () => {
 
     const mergedData = [];
 
-    // ================================
+    // ===================================================
     // 1. Cleaning Logs (Completed)
-    // ================================
+    // ===================================================
     mergedData.push(["Cleaning Logs"]);
 
     if (cleaningCompleted?.length) {
@@ -1342,28 +1347,12 @@ const SitewaiseLog = () => {
           log.row_no || "N/A",
           log.row_length || "N/A",
           log.cleaning?.startAt
-            ? new Date(log.cleaning.startAt).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              })
+            ? new Date(log.cleaning.startAt).toLocaleString()
             : "N/A",
           log.cleaning?.battery_before_cleaning ?? "N/A",
           log.cleaning?.battery_after_cleaning ?? "N/A",
           log.cleaning?.finishAt
-            ? new Date(log.cleaning.finishAt).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              })
+            ? new Date(log.cleaning.finishAt).toLocaleString()
             : "N/A",
           log.cleaning?.finish
             ? "Completed"
@@ -1381,9 +1370,9 @@ const SitewaiseLog = () => {
     mergedData.push([]);
     mergedData.push([]);
 
-    // ================================
+    // ===================================================
     // 2. Cleaning In Progress
-    // ================================
+    // ===================================================
     mergedData.push(["Cleaning In Progress"]);
 
     if (cleaningInProgress?.length) {
@@ -1394,15 +1383,7 @@ const SitewaiseLog = () => {
           index + 1,
           log.robot_no || "N/A",
           log.cleaning?.startAt
-            ? new Date(log.cleaning.startAt).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              })
+            ? new Date(log.cleaning.startAt).toLocaleString()
             : "N/A",
           log.block || "N/A",
           "In Progress",
@@ -1415,9 +1396,9 @@ const SitewaiseLog = () => {
     mergedData.push([]);
     mergedData.push([]);
 
-    // ================================
-    // 3. Failure Logs (Error Logs tab)
-    // ================================
+    // ===================================================
+    // 3. Failure Logs
+    // ===================================================
     mergedData.push(["Error Logs"]);
 
     if (failureLogs?.length) {
@@ -1428,7 +1409,7 @@ const SitewaiseLog = () => {
           index + 1,
           log.robot_no || "N/A",
           log.block || "N/A",
-          log.cleaning?.battery_dead ? "In Complete" : "Cleaning Cancelled",
+          log.cleaning?.battery_dead ? "Incomplete" : "Cleaning Cancelled",
         ]);
       });
     } else {
@@ -1438,9 +1419,9 @@ const SitewaiseLog = () => {
     mergedData.push([]);
     mergedData.push([]);
 
-    // ================================
+    // ===================================================
     // 4. Offline Robots
-    // ================================
+    // ===================================================
     mergedData.push(["Offline Robots At the time of cleaning"]);
 
     if (offlineRobots?.length) {
@@ -1461,86 +1442,105 @@ const SitewaiseLog = () => {
     mergedData.push([]);
     mergedData.push([]);
 
-    // ================================
+    // ===================================================
+    // 6. Technician DPR Logs (NEW)
+    // ===================================================
+    mergedData.push(["Technician DPR Logs"]);
+
+    if (dprLogs?.length) {
+      mergedData.push([
+        "Sr No",
+        "Date",
+        "Site",
+        "Operational Robots",
+        "Failed Robots",
+        "Total Robots",
+        "Remarks",
+        "Technician",
+      ]);
+
+      dprLogs.forEach((log, index) => {
+        const technician = log.technician_present?.[0]?.name || "-";
+        const reportDate = log.report_date
+          ? new Date(log.report_date).toLocaleDateString()
+          : "-";
+
+        mergedData.push([
+          index + 1,
+          reportDate,
+          log.site_id,
+          log.total_running_robots,
+          log.total_failed_robots,
+          log.total_robots,
+          log.comments || "-",
+          technician,
+        ]);
+      });
+    } else {
+      mergedData.push(["No DPR logs available"]);
+    }
+
+    mergedData.push([]);
+    mergedData.push([]);
+    // ===================================================
     // 5. Summary
-    // ================================
+    // ===================================================
     mergedData.push(["Summary"]);
     mergedData.push(["Site ID", site_id || "N/A"]);
-    mergedData.push([
-      "Report Period",
-      `${startDate || "N/A"} to ${startDate || "N/A"}`,
-    ]);
+    mergedData.push(["Report Period", `${startDate} to ${startDate}`]);
     mergedData.push(["Generated At", new Date().toLocaleString()]);
     mergedData.push([]);
     mergedData.push(["Data Summary"]);
     mergedData.push([
       "Cleaning Logs (Completed)",
-      cleaningCompleted ? cleaningCompleted.length : 0,
+      cleaningCompleted?.length || 0,
     ]);
-    mergedData.push([
-      "Cleaning In Progress",
-      cleaningInProgress ? cleaningInProgress.length : 0,
-    ]);
-    mergedData.push(["Error Logs", failureLogs ? failureLogs.length : 0]);
-    mergedData.push([
-      "Offline Robots",
-      offlineRobots ? offlineRobots.length : 0,
-    ]);
+    mergedData.push(["Cleaning In Progress", cleaningInProgress?.length || 0]);
+    mergedData.push(["Error Logs", failureLogs?.length || 0]);
+    mergedData.push(["Offline Robots", offlineRobots?.length || 0]);
+    mergedData.push(["Technician DPR Logs", dprLogs?.length || 0]);
 
-    // ================================
+    mergedData.push([]);
+    mergedData.push([]);
+
+    // ===================================================
     // Create Sheet + Formatting
-    // ================================
+    // ===================================================
     const ws = XLSX.utils.aoa_to_sheet(mergedData);
 
     // Column widths
     ws["!cols"] = [
       { wch: 5 },
-      { wch: 15 },
-      { wch: 15 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
       { wch: 20 },
       { wch: 25 },
-      { wch: 20 },
-      { wch: 20 },
       { wch: 25 },
-      { wch: 15 },
     ];
 
     const range = XLSX.utils.decode_range(ws["!ref"]);
 
-    // Style templates
     const tableNameFill = {
       fill: { fgColor: { rgb: "FFFFF2CC" } },
       font: { bold: true },
-      alignment: { horizontal: "center", vertical: "center" },
-      border: {
-        top: { style: "thin" },
-        bottom: { style: "thin" },
-        left: { style: "thin" },
-        right: { style: "thin" },
-      },
+      alignment: { horizontal: "center" },
     };
-
     const headerFill = {
       fill: { fgColor: { rgb: "FFBDD7EE" } },
       font: { bold: true },
-      alignment: { horizontal: "center", vertical: "center" },
-      border: {
-        top: { style: "thin" },
-        bottom: { style: "thin" },
-        left: { style: "thin" },
-        right: { style: "thin" },
-      },
+      alignment: { horizontal: "center" },
     };
-
     const centerAlign = {
-      alignment: { horizontal: "center", vertical: "center", wrapText: true },
+      alignment: { horizontal: "center", wrapText: true },
     };
 
-    // Rows where titles & headers exist
-    const tableNameRows = new Set([0, 4, 8, 12, 16]);
-    const headerRows = new Set([1, 5, 9, 13, 18]);
+    // Identify table title rows (every section title)
+    const tableNameRows = new Set([0, 4, 8, 12, 16, 23]); // added DPR section
+    const headerRows = new Set([1, 5, 9, 13, 18, 24]);
 
-    // Apply styles
+    // Apply style
     for (let R = range.s.r; R <= range.e.r; ++R) {
       for (let C = range.s.c; C <= range.e.c; ++C) {
         const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
@@ -1652,12 +1652,14 @@ const SitewaiseLog = () => {
                       <CBadge
                         color="primary"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Total Assigned Robots: {totalAssignedRobots}
                       </CBadge>
                       <CBadge
                         color="secondary"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Total Logs:{" "}
                         {cleaningCompleted.length +
@@ -1667,16 +1669,22 @@ const SitewaiseLog = () => {
                       <CBadge
                         color="success"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Completed: {cleaningCompleted.length}
                       </CBadge>
                       <CBadge
                         color="warning"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         In Progress: {cleaningInProgress.length}
                       </CBadge>
-                      <CBadge color="danger" className="px-3 py-2 rounded-pill">
+                      <CBadge
+                        color="danger"
+                        className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
+                      >
                         Failure: {failureLogs.length}
                       </CBadge>
                     </div>
@@ -1706,6 +1714,9 @@ const SitewaiseLog = () => {
                   </CTab>
                   <CTab itemKey="offline-robots" className="text-white">
                     Offline Robots At the time of execution
+                  </CTab>
+                  <CTab itemKey="technician-dpr-logs" className="text-white">
+                    Technician DPR Logs
                   </CTab>
                 </CTabList>
 
@@ -1828,7 +1839,151 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
-                    </CTable>{" "}
+                    </CTable>
+
+                    {Object.keys(dynamicCycles).map((cycleKey, cycleIndex) => (
+                      <div key={cycleKey} className="mb-4">
+                        {/* Cycle Title */}
+                        <h4 className="fw-bold my-2">
+                          {cycleKey.replace(
+                            "completedCycle",
+                            "Completed Cycle "
+                          )}
+                        </h4>
+
+                        <CTable
+                          bordered
+                          hover
+                          responsive
+                          className="text-center bg-important mb-2"
+                        >
+                          <CTableHead color="secondary">
+                            <CTableRow>
+                              <CTableHeaderCell>Sr</CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "150px" }}>
+                                Robot No
+                              </CTableHeaderCell>
+                              <CTableHeaderCell>Status</CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "130px" }}>
+                                Row Number
+                              </CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "190px" }}>
+                                Row Length (Meters)
+                              </CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "190px" }}>
+                                Started At
+                              </CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "190px" }}>
+                                Finished At
+                              </CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "150px" }}>
+                                Battery Start (%)
+                              </CTableHeaderCell>
+                              <CTableHeaderCell style={{ minWidth: "190px" }}>
+                                Battery Finished (%)
+                              </CTableHeaderCell>
+                            </CTableRow>
+                          </CTableHead>
+
+                          <CTableBody>
+                            {dynamicCycles[cycleKey].length > 0 ? (
+                              dynamicCycles[cycleKey].map((log, index) => (
+                                <CTableRow key={index}>
+                                  <CTableDataCell>{index + 1}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {log.robot_no}
+                                  </CTableDataCell>
+
+                                  {/* STATUS */}
+                                  <CTableDataCell>
+                                    {log.cleaning.finish ? (
+                                      <CBadge color="success">Completed</CBadge>
+                                    ) : log.cleaning.battery_dead ? (
+                                      <CBadge color="danger">
+                                        Battery Dead
+                                      </CBadge>
+                                    ) : log.cleaning.cleaning_cancelled ? (
+                                      <CBadge color="danger">
+                                        Cleaning Cancelled
+                                      </CBadge>
+                                    ) : (
+                                      <CBadge color="info">In Progress</CBadge>
+                                    )}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell>{log.row_no}</CTableDataCell>
+                                  <CTableDataCell>
+                                    {log.row_length}
+                                  </CTableDataCell>
+
+                                  {/* Started At */}
+                                  <CTableDataCell>
+                                    {log.cleaning.startAt &&
+                                      new Date(
+                                        log.cleaning.startAt
+                                      ).toLocaleString("en-GB", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      })}
+                                  </CTableDataCell>
+
+                                  {/* Finished At */}
+                                  <CTableDataCell>
+                                    {log.cleaning.finish ? (
+                                      new Date(
+                                        log.cleaning.finishAt
+                                      ).toLocaleString("en-GB", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      })
+                                    ) : log.cleaning.battery_dead ? (
+                                      <CBadge color="danger">
+                                        Battery Dead
+                                      </CBadge>
+                                    ) : log.cleaning.cleaning_cancelled ? (
+                                      <CBadge color="danger">
+                                        Cleaning Cancelled
+                                      </CBadge>
+                                    ) : (
+                                      <CBadge color="info">In Progress</CBadge>
+                                    )}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell>
+                                    {log.cleaning.battery_before_cleaning ||
+                                      "N/A"}
+                                  </CTableDataCell>
+
+                                  <CTableDataCell>
+                                    {log.cleaning.battery_after_cleaning ||
+                                      "N/A"}
+                                  </CTableDataCell>
+                                </CTableRow>
+                              ))
+                            ) : (
+                              <CTableRow>
+                                <CTableDataCell
+                                  colSpan="11"
+                                  className="text-start"
+                                >
+                                  No logs found for this cycle.
+                                </CTableDataCell>
+                              </CTableRow>
+                            )}
+                          </CTableBody>
+                        </CTable>
+                      </div>
+                    ))}
                   </CTabPanel>
 
                   {/* Cleaning In Progress */}
@@ -1901,6 +2056,7 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>#</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Is Duplicate</CTableHeaderCell>
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
                         </CTableRow>
@@ -1913,6 +2069,13 @@ const SitewaiseLog = () => {
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell>{log.robot_no}</CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
+                              <CTableDataCell>
+                                {log.is_duplicate ? (
+                                  <CBadge color="danger">Yes</CBadge>
+                                ) : (
+                                  <CBadge color="success">No</CBadge>
+                                )}
+                              </CTableDataCell>
                               <CTableDataCell>
                                 {log.createdAt &&
                                   new Date(log.createdAt).toLocaleString(
@@ -1937,7 +2100,7 @@ const SitewaiseLog = () => {
                           ))
                         ) : (
                           <CTableRow>
-                            <CTableDataCell colSpan={5} className="text-start">
+                            <CTableDataCell colSpan={6} className="text-start">
                               No error logs found for the selected date.
                             </CTableDataCell>
                           </CTableRow>
@@ -1946,8 +2109,74 @@ const SitewaiseLog = () => {
                     </CTable>{" "}
                   </CTabPanel>
 
-                  {/* Offline Robots */}
+                  {/* ============ OFFLINE ROBOTS TAB ================= */}
+                  {/* ================================================= */}
                   <CTabPanel itemKey="offline-robots">
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>startAt</CTableHeaderCell>
+                          <CTableHeaderCell>Error Type</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {offlineRobotLoading ? (
+                          <CTableRow>
+                            <CTableDataCell colSpan={5}>
+                              <LoadingSpinner />
+                            </CTableDataCell>
+                          </CTableRow>
+                        ) : offlineRobotError ? (
+                          <CBadge color="danger">{offlineRobotError}</CBadge>
+                        ) : offlineRobots?.length > 0 ? (
+                          offlineRobots.map((log, index) => (
+                            <CTableRow key={index}>
+                              <CTableDataCell>{index + 1}</CTableDataCell>
+                              <CTableDataCell>{log.robot_no}</CTableDataCell>
+                              <CTableDataCell>{log.block}</CTableDataCell>
+                              {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
+
+                              <CTableDataCell>
+                                {log.createdAt &&
+                                  new Date(log.createdAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    }
+                                  )}
+                              </CTableDataCell>
+
+                              <CTableDataCell>{log.error_type}</CTableDataCell>
+                            </CTableRow>
+                          ))
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={5} className="text-start">
+                              No offline Robots found for the selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
+                    </CTable>
+                  </CTabPanel>
+
+                  {/* Technician DPR Robots */}
+                  <CTabPanel itemKey="technician-dpr-logs">
                     <CTable
                       bordered
                       hover
