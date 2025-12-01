@@ -15,8 +15,9 @@ import {
   CRow,
 } from "@coreui/react";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
-import SearchRobot from "./SearchRobot";
+
 import { Link } from "react-router-dom";
+import FullScreen from "./FullScreen";
 // import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
@@ -91,6 +92,7 @@ const RobotTracker = () => {
   });
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
+  const pageRef = useRef(null);
   const [site_id, setSiteId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const authtoken = useSelector((state) => state.authtoken);
@@ -186,7 +188,7 @@ const RobotTracker = () => {
     const handleUpdate = ({ tracking }) => {
       const newPoint = parseInt(tracking.uplink.data, 10);
       toast.success(`${tracking.block} - ${tracking.robot_no}'s Update Sent!`, {
-        position: "top-right",
+        position: "top-left",
       });
 
       dispatch({
@@ -368,9 +370,13 @@ const RobotTracker = () => {
   return (
     <div
       className=""
+      ref={pageRef}
       style={{
         display: "flex",
         flexDirection: "column",
+        height: "100vh", // Required
+        overflowY: "auto", // Required
+        overflowX: "hidden",
       }}
     >
       {(loadingSites || loading) && (
@@ -379,7 +385,7 @@ const RobotTracker = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "70vh", // centers spinner vertically
+            height: "100vh", // centers spinner vertically
           }}
         >
           <LoadingSpinner />
@@ -388,12 +394,12 @@ const RobotTracker = () => {
 
       {!loadingSites && !loading && (
         <>
-          <CRow className="my-3 justify-content-center align-items-center">
-            <CCol md={2} className="my-2">
-              <h5 className=" text-start text-success">Live Robot Tracking</h5>
+          <CRow className=" justify-content-start align-items-center">
+            <CCol md={2} className="">
+              <h5 className=" text-center text-success">Live Robot Tracking</h5>
             </CCol>
 
-            <CCol md={2} className="my-2">
+            <CCol md={2} className="mb-2">
               <CFormSelect
                 id="blockSelect"
                 className="p-2"
@@ -409,7 +415,7 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={2} className="my-2">
+            <CCol md={2} className="mb-2">
               <CFormSelect
                 id="siteSelect"
                 className="p-2"
@@ -424,7 +430,7 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={2} className="my-2">
+            <CCol md={2} className="mb-2">
               <CFormInput
                 type="date"
                 className="p-2"
@@ -434,7 +440,7 @@ const RobotTracker = () => {
               />
             </CCol>
 
-            <CCol md={2} className="my-2">
+            <CCol md={2} className="mb-2">
               <CInputGroup className="">
                 <CFormInput
                   type="text"
@@ -445,7 +451,7 @@ const RobotTracker = () => {
                 />
               </CInputGroup>
             </CCol>
-            <CCol md={1} xs={12} sm={12} className="my-2">
+            <CCol md={1} xs={12} sm={12} className="mb-2">
               {InternaladminRoles.includes(userInfo.role) && (
                 <Link
                   className="btn btn-sm btn-warning"
@@ -472,6 +478,10 @@ const RobotTracker = () => {
                   Log
                 </Link>
               )}
+            </CCol>
+
+            <CCol md={1} xs={12} sm={12} className="mb-2">
+              <FullScreen pageRef={pageRef} />
             </CCol>
           </CRow>
           {/* <CleaningSummary
