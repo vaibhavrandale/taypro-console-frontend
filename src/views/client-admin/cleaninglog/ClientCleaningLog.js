@@ -204,7 +204,7 @@ const ClientCleaningLog = () => {
         );
       }
     };
-    const fetchErrorLogs = async () => {
+    const fetchOfflineLogs = async () => {
       try {
         dispatch({
           type: "FETCH_OFFLINE_LOGS_REQUEST",
@@ -230,7 +230,7 @@ const ClientCleaningLog = () => {
       }
     };
     fetchCleaningLogs();
-    fetchErrorLogs();
+    fetchOfflineLogs();
   }, [site_id, startDate, authtoken]);
 
   // const exportToExcel = () => {
@@ -805,6 +805,7 @@ const ClientCleaningLog = () => {
                       <CBadge
                         color="primary"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Total Assigned Robots: {totalAssignedRobots}
                       </CBadge>
@@ -812,6 +813,7 @@ const ClientCleaningLog = () => {
                       <CBadge
                         color="secondary"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Total Logs:{" "}
                         {cleaningCompleted.length +
@@ -822,6 +824,7 @@ const ClientCleaningLog = () => {
                       <CBadge
                         color="success"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         Completed: {cleaningCompleted.length}
                       </CBadge>
@@ -829,11 +832,16 @@ const ClientCleaningLog = () => {
                       <CBadge
                         color="warning"
                         className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
                       >
                         In Progress: {cleaningInProgress.length}
                       </CBadge>
 
-                      <CBadge color="danger" className="px-3 py-2 rounded-pill">
+                      <CBadge
+                        color="danger"
+                        className="px-3 py-2 rounded-pill"
+                        style={{ fontSize: "14px" }}
+                      >
                         Failure: {failureLogs.length}
                       </CBadge>
                     </div>
