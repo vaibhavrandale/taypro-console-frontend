@@ -177,9 +177,62 @@ const SiteTechnicianBlockManagement = () => {
             </button>
           </CModalHeader>
           <CModalBody>
-            <CRow className="justify-content-end">
-              <CCol xs={12} sm={10} md={6} lg={4}>
-                <CInputGroup className="mb-3">
+            <CRow className="align-items-center mb-3">
+              {/* Left side – badges */}
+              <CCol xs={12} md={8}>
+                <div className="d-flex align-items-center flex-wrap gap-3">
+                  <CBadge
+                    color="success"
+                    className="px-3 py-2"
+                    shape="rounded-pill"
+                  >
+                    Online:{" "}
+                    <span>
+                      {robots.filter((r) => r.lora_state === 1).length}
+                    </span>
+                  </CBadge>
+
+                  <CBadge
+                    color="danger"
+                    className="px-3 py-2"
+                    shape="rounded-pill"
+                  >
+                    Offline:{" "}
+                    <span>
+                      {robots.filter((r) => r.lora_state === 0).length}
+                    </span>
+                  </CBadge>
+
+                  <CBadge
+                    color="warning"
+                    className="px-3 py-2"
+                    shape="rounded-pill"
+                  >
+                    Cleaning In Progress:{" "}
+                    <span>
+                      {
+                        robots.filter(
+                          (r) =>
+                            r.last_status === "Cleaning Started" &&
+                            r.lora_state === 1
+                        ).length
+                      }
+                    </span>
+                  </CBadge>
+
+                  <CBadge
+                    color="primary"
+                    className="px-3 py-2"
+                    shape="rounded-pill"
+                  >
+                    Total Robots: <span>{robots.length}</span>
+                  </CBadge>
+                </div>
+              </CCol>
+
+              {/* Right side – search */}
+              <CCol xs={12} md={4}>
+                <CInputGroup>
                   <CFormInput
                     type="text"
                     placeholder="Search Robot..."
@@ -189,6 +242,7 @@ const SiteTechnicianBlockManagement = () => {
                 </CInputGroup>
               </CCol>
             </CRow>
+
             <CTable responsive hover bordered>
               <CTableHead color="secondary">
                 <CTableRow>
@@ -212,6 +266,18 @@ const SiteTechnicianBlockManagement = () => {
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     Block
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    Firmware Version
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    timer1
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    timer2
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
+                    timer3
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     Last Status
@@ -246,6 +312,24 @@ const SiteTechnicianBlockManagement = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.block}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        <CBadge color="info" className="me-1">
+                          FW: {robot.version}
+                        </CBadge>
+                        <CBadge color="secondary">
+                          PCB: {robot.pcb_version}
+                        </CBadge>
+                      </CTableDataCell>
+
+                      <CTableDataCell className="text-center">
+                        {robot.timer1}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.timer2}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.timer3}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.last_status}

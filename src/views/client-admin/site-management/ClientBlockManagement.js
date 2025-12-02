@@ -259,6 +259,16 @@ const ClientBlockManagement = () => {
                       <CTableHeaderCell className="text-center">
                         Block
                       </CTableHeaderCell>
+
+                      <CTableHeaderCell className="text-center">
+                        timer1
+                      </CTableHeaderCell>
+                      <CTableHeaderCell className="text-center">
+                        timer2
+                      </CTableHeaderCell>
+                      <CTableHeaderCell className="text-center">
+                        timer3
+                      </CTableHeaderCell>
                       <CTableHeaderCell className="text-center">
                         Last Update
                       </CTableHeaderCell>
@@ -286,6 +296,16 @@ const ClientBlockManagement = () => {
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
                             {robot.block}
+                          </CTableDataCell>
+
+                          <CTableDataCell className="text-center">
+                            {robot.timer1}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center">
+                            {robot.timer2}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center">
+                            {robot.timer3}
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
                             {new Date(robot.last_uplink).toLocaleString(
