@@ -1056,6 +1056,9 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import CompletedCycles from "./CompletedCycles";
+import ErrorCycles from "./ErrorCycles";
+import OfflineRobotsCycle from "./OfflineRobotsCycle";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -1841,9 +1844,9 @@ const SitewaiseLog = () => {
                       </CTableBody>
                     </CTable>
 
-                    {Object.keys(dynamicCycles).map((cycleKey, cycleIndex) => (
+                    {/* {Object.keys(dynamicCycles).map((cycleKey, cycleIndex) => (
                       <div key={cycleKey} className="mb-4">
-                        {/* Cycle Title */}
+                   
                         <h4 className="fw-bold my-2">
                           {cycleKey.replace(
                             "completedCycle",
@@ -1894,7 +1897,7 @@ const SitewaiseLog = () => {
                                     {log.robot_no}
                                   </CTableDataCell>
 
-                                  {/* STATUS */}
+                                 
                                   <CTableDataCell>
                                     {log.cleaning.finish ? (
                                       <CBadge color="success">Completed</CBadge>
@@ -1916,7 +1919,7 @@ const SitewaiseLog = () => {
                                     {log.row_length}
                                   </CTableDataCell>
 
-                                  {/* Started At */}
+                                 
                                   <CTableDataCell>
                                     {log.cleaning.startAt &&
                                       new Date(
@@ -1932,7 +1935,7 @@ const SitewaiseLog = () => {
                                       })}
                                   </CTableDataCell>
 
-                                  {/* Finished At */}
+                                 
                                   <CTableDataCell>
                                     {log.cleaning.finish ? (
                                       new Date(
@@ -1983,7 +1986,11 @@ const SitewaiseLog = () => {
                           </CTableBody>
                         </CTable>
                       </div>
-                    ))}
+                    ))} */}
+
+                    <h4 className="my-3  border-top">Testing Cycles</h4>
+
+                    <CompletedCycles completedLogs={cleaningCompleted} />
                   </CTabPanel>
 
                   {/* Cleaning In Progress */}
@@ -2040,7 +2047,7 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
-                    </CTable>{" "}
+                    </CTable>
                   </CTabPanel>
 
                   {/* Error Logs */}
@@ -2106,7 +2113,10 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
-                    </CTable>{" "}
+                    </CTable>
+
+                    <h4 className="my-3  border-top">Testing Error Cycles</h4>
+                    <ErrorCycles errorlogs={failureLogs} />
                   </CTabPanel>
 
                   {/* ============ OFFLINE ROBOTS TAB ================= */}
@@ -2173,6 +2183,12 @@ const SitewaiseLog = () => {
                         )}
                       </CTableBody>
                     </CTable>
+                    <h4 className="my-3  border-top">Offline Robots Cycles</h4>
+                    <OfflineRobotsCycle
+                      offlineLogs={offlineRobots}
+                      loading={offlineRobotLoading}
+                      error={offlineRobotError}
+                    />
                   </CTabPanel>
 
                   {/* Technician DPR Robots */}
