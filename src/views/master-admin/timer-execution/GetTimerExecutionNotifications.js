@@ -9,7 +9,6 @@ import {
   CTableHeaderCell,
   CTableRow,
   CTableDataCell,
-  CAvatar,
   CBadge,
   CInputGroup,
   CFormInput,
@@ -157,7 +156,8 @@ const TimerExecutionNotificationView = () => {
               <CTableHeaderCell>User</CTableHeaderCell>
               <CTableHeaderCell>Block</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
-              <CTableHeaderCell>Created</CTableHeaderCell>
+              {/* <CTableHeaderCell>Created</CTableHeaderCell> */}
+              <CTableHeaderCell>Read At</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
@@ -191,8 +191,15 @@ const TimerExecutionNotificationView = () => {
                       {item.read_status ? "Read" : "Unread"}
                     </CBadge>
                   </CTableDataCell>
-                  <CTableDataCell>
+                  {/* <CTableDataCell>
                     {moment(item.createdAt).format("DD/MM/YYYY hh:mm A")}
+                  </CTableDataCell> */}
+                  <CTableDataCell>
+                    {item.read_at ? (
+                      moment(item.read_at).format("DD/MM/YYYY hh:mm A")
+                    ) : (
+                      <CBadge color="danger">Unread</CBadge>
+                    )}
                   </CTableDataCell>
                 </CTableRow>
               ))
