@@ -26,6 +26,8 @@ import {
   CFormTextarea,
   CButton,
   CCard,
+  CCardHeader,
+  CCardBody,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilBell, cilMenu, cilSearch, cilX } from "@coreui/icons";
@@ -151,7 +153,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     timerLoading: false,
     submitLoading: false,
     robotsGatewayLoading: false,
-    timernotification: {},
+    timernotification: [],
     submiterror: "",
     updateError: "",
     timerError: "",
@@ -212,7 +214,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           type: "FETCH_TIMER_SUCCESS",
           payload: result.data.data,
         });
-        if (result.data.data.read_status === false) {
+        // if (result.data.data.read_status === false) {
+        if (result.data.data.length > 0) {
           setTimerModal(true); // Hide the modal
         } else {
           setTimerModal(false); // Hide the modal
@@ -576,11 +579,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     if (document.activeElement) {
       document.activeElement.blur();
     }
+
+    const allUnreadTmerNotifications = timernotification.map(
+      (item) => item._id
+    );
     dispatch({ type: "UPDATE_TIMER_REQUEST" });
     try {
       const data = await axios.put(
-        `/api/v1/timerexecutionnotifications/${timernotification._id}`,
-        {},
+        `/api/v1/timerexecutionnotifications/mark-allnotification/as-read`,
+        { allUnreadTmerNotifications },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
         }
@@ -1129,94 +1136,254 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         </CModal>
       )}
 
-      {timernotification && (
+      {/* {timernotification.length > 0 && (
         <CModal
-          // className={feedbackModal ? "fade-out" : "fade-in"}
-          // size="m"
           backdrop="static"
           scrollable
           alignment="top"
+          size="xl"
           visible={timerModal}
         >
           {timerLoading ? (
             <div
               className="d-flex justify-content-center align-items-center flex-column"
-              style={{ height: "200px", width: "100%" }}
+              style={{ height: "250px", width: "100%" }}
             >
               <CImage
                 src={TayproLogo}
                 alt="Logo"
                 width={200}
                 height={100}
-                style={{
-                  objectFit: "contain",
-                  marginBottom: "20px",
-                }}
+                style={{ objectFit: "contain" }}
                 className="mb-3"
               />
               <LoadingSpinner />
             </div>
           ) : (
             <>
-              <CModalHeader closeButton={false}>
+           
+              <CModalHeader
+                closeButton={false}
+                className="d-flex justify-content-between align-items-center flex-wrap"
+              >
+                {" "}
                 <CModalTitle>
                   {" "}
-                  Cleaning Timer Executed At &nbsp;
-                  <CBadge color="warning">
-                    {new Date(timernotification.createdAt).toLocaleString(
-                      "en-GB",
-                      {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      }
-                    )}
-                  </CBadge>
+                  Cleaning Timer Executed of Below Sites And Blocks{" "}
+                </CModalTitle>{" "}
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handleReadTimerNotification}
+                  disabled={updateError || updateLoading}
+                >
+                  {" "}
+                  {updateLoading ? (
+                    <>
+                      {" "}
+                      Please Wait <LoadingSpinner />{" "}
+                    </>
+                  ) : (
+                    "Mark all as Read"
+                  )}{" "}
+                </CButton>{" "}
+              </CModalHeader>
+        
+              <CModalBody className="">
+                {timerError && (
+                  <div className="alert alert-danger" role="alert">
+                    {timerError}
+                  </div>
+                )}
+
+                <CRow>
+                  {timernotification.map((item) => (
+                    <CCol key={item._id} lg={3} md={4} sm={6} xs={12}>
+                      <CCard className="shadow-sm border-0 m-2 card-hover">
+                  
+                        <CCardHeader className="p-2  border-bottom d-flex justify-content-between align-items-center rounded-top">
+                          <CBadge
+                            color="success"
+                            className="p-2 text-uppercase"
+                          >
+                            {item.site_id}
+                          </CBadge>
+                        </CCardHeader>
+
+              
+                        <CCardBody className="p-2">
+                          {item.block?.length > 0 &&
+                            item.block.map((blockItem, index) => (
+                              <div
+                                key={index}
+                                className="d-flex justify-content-between align-items-center rounded p-2 mb-2 flex-wrap"
+                              >
+                          
+                                <CBadge
+                                  color="warning"
+                                  className="p-2  text-dark"
+                                  style={{ fontSize: "11px" }}
+                                >
+                                  {blockItem}
+                                </CBadge>
+
+                          
+                                <div
+                                  className="text-muted"
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 500,
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {new Date(item.createdAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    }
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  ))}
+                </CRow>
+              </CModalBody>
+            </>
+          )}
+        </CModal>
+      )} */}
+
+      {timernotification.length > 0 && (
+        <CModal
+          backdrop="static"
+          alignment="top"
+          size="xl"
+          visible={timerModal}
+          scrollable={!timerLoading} // Disable scroll while loading
+        >
+          {timerLoading ? (
+            // ----------- LOADER -----------
+            <div
+              className="d-flex justify-content-center align-items-center flex-column"
+              style={{
+                height: "300px",
+                width: "100%",
+              }}
+            >
+              <CImage
+                src={TayproLogo}
+                alt="Logo"
+                width={200}
+                height={100}
+                className="mb-3"
+                style={{ objectFit: "contain" }}
+              />
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              {/* ----------- HEADER ----------- */}
+              <CModalHeader
+                closeButton={false}
+                className="d-flex justify-content-between align-items-center flex-wrap"
+              >
+                <CModalTitle>
+                  Cleaning Timer Executed for Below Sites & Blocks
                 </CModalTitle>
+
+                <CButton
+                  color="success"
+                  size="sm"
+                  onClick={handleReadTimerNotification}
+                  disabled={updateError || updateLoading}
+                >
+                  {updateLoading ? (
+                    <>
+                      Please Wait <LoadingSpinner />
+                    </>
+                  ) : (
+                    "Mark all as Read"
+                  )}
+                </CButton>
               </CModalHeader>
 
+              {/* ----------- BODY ----------- */}
               <CModalBody>
                 {timerError && (
                   <div className="alert alert-danger" role="alert">
                     {timerError}
                   </div>
                 )}
-                <div>
-                  <ul>
-                    {timernotification.block &&
-                      timernotification.block.length > 0 &&
-                      timernotification.block.map((item, index) => (
-                        <li key={index}>
-                          {" "}
-                          <CBadge color="success">
-                            {timernotification.site_id}
-                          </CBadge>{" "}
-                          - {item}
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between">
-                  <CButton
-                    color="success"
-                    size="sm"
-                    onClick={handleReadTimerNotification}
-                    disabled={updateError || updateLoading}
-                  >
-                    {updateLoading ? (
-                      <>
-                        Please Wait <LoadingSpinner />
-                      </>
-                    ) : (
-                      "Mark as Read"
-                    )}
-                  </CButton>
-                </div>
+
+                <CRow>
+                  {timernotification.map((item) => (
+                    <CCol key={item._id} lg={3} md={4} sm={6} xs={12}>
+                      <CCard className="shadow-sm border-0 m-2 card-hover">
+                        {/* ---- Card Header ---- */}
+                        <CCardHeader className="p-2 border-bottom d-flex justify-content-between align-items-center rounded-top">
+                          <CBadge
+                            color="success"
+                            className="p-2 text-uppercase"
+                          >
+                            {item.site_id}
+                          </CBadge>
+                        </CCardHeader>
+
+                        {/* ---- Card Body ---- */}
+                        <CCardBody className="p-2">
+                          {item.block?.length > 0 &&
+                            item.block.map((blockItem, index) => (
+                              <div
+                                key={index}
+                                className="d-flex justify-content-between align-items-center rounded p-2 mb-2 flex-wrap"
+                              >
+                                {/* Block ID badge */}
+                                <CBadge
+                                  color="warning"
+                                  className="p-2 text-dark"
+                                  style={{ fontSize: "11px" }}
+                                >
+                                  {blockItem}
+                                </CBadge>
+
+                                {/* Timestamp */}
+                                <div
+                                  className="text-muted"
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 500,
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {new Date(item.createdAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    }
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  ))}
+                </CRow>
               </CModalBody>
             </>
           )}
