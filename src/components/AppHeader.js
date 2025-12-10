@@ -42,6 +42,7 @@ import toast from "react-hot-toast";
 import "./AppHeader.css"; // Assuming you have some custom styles
 import { BsStar, BsStarFill } from "react-icons/bs";
 import TayproLogo from "../assets/brand/logofordarkbg.png"; // Import the image
+import { customNotifications } from "../data";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -100,6 +101,25 @@ const reducer = (state, action) => {
     case "FETCH_TIMER_FAIL":
       return { ...state, timerLoading: false, timerError: action.payload };
 
+    case "FETCH_CUSTOM_NOTIFIATION_REQUEST":
+      return {
+        ...state,
+        customNotificationLoading: true,
+        customNotificationError: "",
+      };
+    case "FETCH_CUSTOM_NOTIFIATION_SUCCESS":
+      return {
+        ...state,
+        customNotificationLoading: false,
+        customNotificationData: action.payload,
+      };
+    case "FETCH_CUSTOM_NOTIFIATION_FAIL":
+      return {
+        ...state,
+        customNotificationLoading: false,
+        customNotificationError: action.payload,
+      };
+
     case "SUBMIT_REQUEST":
       return { ...state, submitLoading: true, submiterror: "" };
 
@@ -117,6 +137,23 @@ const reducer = (state, action) => {
 
     case "UPDATE_TIMER_FAIL":
       return { ...state, updateLoading: false, updateError: action.payload };
+
+    case "UPDATE_CUSTOM_NOTIFICATION_REQUEST":
+      return {
+        ...state,
+        updatecustomNotificationLoading: true,
+        updateCustomNotificationError: "",
+      };
+
+    case "UPDATE_CUSTOM_NOTIFICATION_SUCCESS":
+      return { ...state, updatecustomNotificationLoading: false };
+
+    case "UPDATE_CUSTOM_NOTIFICATION_FAIL":
+      return {
+        ...state,
+        updatecustomNotificationLoading: false,
+        updateCustomNotificationError: action.payload,
+      };
 
     default:
       return state;
@@ -142,6 +179,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       timerLoading,
       updateError,
       updateLoading,
+      customNotificationData,
+      customNotificationError,
+      customNotificationLoading,
+      updatecustomNotificationLoading,
+      updateCustomNotificationError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -157,6 +199,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     submiterror: "",
     updateError: "",
     timerError: "",
+    customNotificationData: {},
+    customNotificationError: "",
+    customNotificationLoading: false,
+    updatecustomNotificationLoading: false,
+    updateCustomNotificationError: "",
   });
   const notificationsFetched = useRef(false);
   const robotsGatewaysFetched = useRef(false); // New ref for robots/gateways
@@ -175,6 +222,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   const navigate = useNavigate();
   const [feedbackModal, setFeedbackModal] = useState(true);
   const [timerModal, setTimerModal] = useState(false);
+  const [customNotificationModal, setCustomNotificationModal] = useState(false);
+  const [customNotificationFeedback, setCustomNotificationFeedback] =
+    useState("");
+
   const [formData, setFormData] = useState({
     feedback_data: {
       comments: "",
@@ -330,6 +381,36 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
     };
 
+    const fetchCustomNotifications = async () => {
+      try {
+        dispatch({ type: "FETCH_CUSTOM_NOTIFIATION_REQUEST" });
+        // const response = await axios.get(
+        //   "/api/v1/",
+        //   {
+        //     headers: { Authorization: `Bearer ${authtoken}` },
+        //   }
+        // );
+        let response = customNotifications[0];
+        if (customNotifications[0].is_active) {
+          dispatch({
+            type: "FETCH_CUSTOM_NOTIFIATION_SUCCESS",
+            payload: response,
+          });
+          setCustomNotificationModal(true);
+        } else {
+          dispatch({
+            type: "FETCH_CUSTOM_NOTIFIATION_SUCCESS",
+            payload: {},
+          });
+        }
+      } catch (error) {
+        dispatch({
+          type: "FETCH_CUSTOM_NOTIFIATION_FAIL",
+          payload: error.response.data.message || error.response.data.error,
+        });
+      }
+    };
+
     const allowedRoles = [
       "Master Admin",
       "Master User",
@@ -369,6 +450,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       }
 
       fetchTimerData();
+      fetchCustomNotifications();
       robotsGatewaysFetched.current = true;
     }
   }, [authtoken, userInfo, navigate]);
@@ -679,6 +761,36 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     setSearchTerm("");
     // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
   };
+
+  const readCustomNotification = async () => {
+    dispatch({ type: "UPDATE_CUSTOM_NOTIFICATION_REQUEST" });
+    try {
+      let feedback;
+      if (customNotificationData.is_feedback_required) {
+        feedback = customNotificationFeedback;
+      } else {
+        feedback = "";
+      }
+      const data = await axios.put(
+        `/api/v1/customnotifications/${customNotificationData._id}`,
+        { feedback },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "UPDATE_CUSTOM_NOTIFICATION_SUCCESS" });
+      setCustomNotificationModal(false); // Hide the modal
+    } catch (error) {
+      dispatch({
+        type: "UPDATE_CUSTOM_NOTIFICATION_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
+
   return (
     <CHeader
       position="sticky"
@@ -1384,6 +1496,154 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     </CCol>
                   ))}
                 </CRow>
+              </CModalBody>
+            </>
+          )}
+        </CModal>
+      )}
+
+      {customNotificationData && (
+        <CModal
+          backdrop="static"
+          size="xl" // smaller size = better mobile experience
+          visible={customNotificationModal}
+          scrollable
+          className="custom-modal"
+        >
+          {customNotificationLoading ? (
+            // ---------------- LOADER SECTION ----------------
+            <div
+              className="d-flex justify-content-center align-items-center flex-column p-4"
+              style={{ minHeight: "200px", width: "100%" }}
+            >
+              <CImage
+                src={TayproLogo}
+                alt="Logo"
+                width={150}
+                height={60}
+                className="mb-3"
+                style={{ objectFit: "contain" }}
+              />
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              {/* ---------------- HEADER ---------------- */}
+              <CModalHeader
+                closeButton={false}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <CModalTitle className="fw-bold">Alert</CModalTitle>
+              </CModalHeader>
+
+              {/* ---------------- BODY ---------------- */}
+              <CModalBody className="p-2 p-md-3">
+                {customNotificationError && (
+                  <div className="alert alert-danger small">
+                    {customNotificationError}
+                  </div>
+                )}
+
+                <CCard className="shadow-sm border-0 card-hover">
+                  {/* -------- CARD HEADER -------- */}
+                  <CCardHeader className="border-bottom d-flex justify-content-between align-items-center">
+                    <div className="me-3 flex-grow-1">
+                      <h6 className=" mb-1">
+                        {customNotificationData.subject}
+                      </h6>
+                      <small className="text-muted font-italic">
+                        <span>Posted At - </span>
+                        {new Date(
+                          customNotificationData.createdAt
+                        ).toLocaleString("en-GB")}
+                      </small>
+                    </div>
+
+                    <div className="text-center">
+                      <CImage
+                        src={customNotificationData.posted_by?.image}
+                        alt="posted-by"
+                        width={45}
+                        height={45}
+                        className="rounded-circle border mb-1"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <p className="text-muted small m-0">
+                        {customNotificationData.posted_by?.name}
+                      </p>
+                    </div>
+                  </CCardHeader>
+
+                  {/* -------- CARD BODY -------- */}
+                  <CCardBody className="pt-3">
+                    {/* Description */}
+                    <p className="mb-2 ">
+                      {customNotificationData.description}
+                    </p>
+
+                    {/* Points */}
+                    {customNotificationData.points?.length > 0 && (
+                      <ul className="">
+                        {customNotificationData.points.map((p, i) => (
+                          <li key={i}>{p}</li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* Images */}
+                    {customNotificationData.images?.length > 0 && (
+                      <div className="mt-3 row g-2 border-bottom">
+                        {customNotificationData.images.map((img, idx) => (
+                          <div key={idx} className="col-4 col-md-3 col-lg-2">
+                            <Link to={img} target="blank">
+                              <CImage
+                                src={img}
+                                alt="notification-img"
+                                className="border rounded thumbnail-img"
+                                style={{
+                                  width: "100%",
+                                  height: "100px", // perfect thumbnail height
+                                  objectFit: "cover", // makes it thumbnail-style
+                                }}
+                              />
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {customNotificationData.is_feedback_required && (
+                      <div className="my-3 ">
+                        <CFormTextarea
+                          rows={3}
+                          value={customNotificationFeedback}
+                          onChange={(e) =>
+                            setCustomNotificationFeedback(e.target.value)
+                          }
+                          label="Feedback*"
+                        ></CFormTextarea>
+                      </div>
+                    )}
+                  </CCardBody>
+                </CCard>
+
+                {/* -------- FOOTER ACTION -------- */}
+                <div className="text-end mt-3">
+                  <CButton
+                    color="success"
+                    size="sm"
+                    disabled={updatecustomNotificationLoading}
+                    onClick={readCustomNotification}
+                  >
+                    {updatecustomNotificationLoading ? (
+                      <>
+                        Please Wait <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Mark as Read"
+                    )}
+                  </CButton>
+                </div>
               </CModalBody>
             </>
           )}
