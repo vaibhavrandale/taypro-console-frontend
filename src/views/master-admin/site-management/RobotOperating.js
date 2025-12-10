@@ -383,9 +383,14 @@ const RobotOperating = () => {
     let robotdownlink = {};
 
     if (sent_custom_to_all) {
-      let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+      let robots = blockwiserobots.map((robot) => ({
+        deveui: robot.deveui,
+        robot_no: robot.robot_no,
+      }));
       robotdownlink = {
-        deveui: alldeveuis,
+        robots,
+        // deveui: [allrobots.deveui],
+        // robot_no: [allrobots.robot_no],
         block: block,
         site_id: site_id,
         command: command,
@@ -393,8 +398,13 @@ const RobotOperating = () => {
     } else {
       //deveui,command,robot_no,site_id,lora_no
       robotdownlink = {
-        deveui: [robot.deveui],
-        robot_no: robot.robot_no,
+        robots: [
+          {
+            deveui: robot.deveui,
+            robot_no: robot.robot_no,
+          },
+        ],
+
         site_id: site_id,
         command: command,
         lora_no: robot.lora_no,

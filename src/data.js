@@ -4993,3 +4993,126 @@ export const clientSubscriptionPlans = [
     trialDuration: 7,
   },
 ];
+
+export const customNotifications = [
+  {
+    subject: "Scheduled Maintenance Update",
+    description:
+      "A scheduled maintenance activity will take place tomorrow between 10:00 AM and 12:30 PM. Certain services may be temporarily unavailable.",
+    points: [
+      "Service downtime expected for 2 hours",
+      "Technicians will be onsite",
+      "Users will be notified once maintenance is completed",
+    ],
+    posted_by: {
+      _id: "675afc991c54a94b3d901234",
+      name: "Rahul Sharma",
+      email: "rahul.sharma@example.com",
+      role: "Master Admin",
+      image:
+        "https://res.cloudinary.com/decyim6cd/image/upload/v1747742282/profile-image/knu41ahounppjp8b0xne.jpg",
+    },
+    users: [
+      {
+        _id: "675afc991c54a94b3d906789",
+        username: "vaibhav_randale",
+        email: "vaibhav.randale@example.com",
+        read_status: null,
+        read_at: null,
+        image:
+          "https://res.cloudinary.com/decyim6cd/image/upload/v1747742282/profile-image/knu41ahounppjp8b0xne.jpg",
+        feedback: "",
+      },
+      {
+        _id: "675afc991c54a94b3d906710",
+        username: "john_doe",
+        email: "john.doe@example.com",
+        read_status: "read",
+        read_at: "2025-12-10T09:30:12.458Z",
+        image:
+          "https://res.cloudinary.com/decyim6cd/image/upload/v1746014764/profile-image/hacjxld1vhtsirbr2hxj.jpg",
+        feedbqack: "",
+      },
+    ],
+    for_user_roles: ["Master Admin", "Service Admin", "Support Executive"],
+    is_active: false,
+    images: [
+      "https://res.cloudinary.com/decyim6cd/image/upload/v1746014764/profile-image/hacjxld1vhtsirbr2hxj.jpg",
+      "https://res.cloudinary.com/decyim6cd/image/upload/v1764912444/preventive-maintanance/iprqj2mcqp3ycbnp12gl.jpg",
+      "https://res.cloudinary.com/decyim6cd/image/upload/v1764912415/preventive-maintanance/g7cwlw8tbbhdpwvy3ggf.jpg",
+    ],
+    is_feedback_required: true,
+    createdAt: "2025-12-10T08:15:24.112Z",
+    updatedAt: "2025-12-10T08:15:24.112Z",
+  },
+  {
+    subject: "New Feature Release",
+    description:
+      "We have introduced a new analytics dashboard featuring robot health metrics and real-time device usage.",
+    points: [
+      "Live device uptime graph",
+      "Error rate analysis",
+      "Predictive maintenance insights",
+    ],
+    posted_by: {
+      _id: "675b00001c54a94b3d900002",
+      name: "Priya Singh",
+      email: "priya.singh@example.com",
+      role: "Product Manager",
+      image: "https://res.cloudinary.com/demo/image/upload/admin2.png",
+    },
+    users: [
+      {
+        _id: "675b02001c54a94b3d902222",
+        username: "john_doe",
+        email: "john.doe@example.com",
+        read_status: "read",
+        read_at: "2025-12-10T09:10:10.458Z",
+        image: "https://res.cloudinary.com/demo/image/upload/user2.png",
+        feedbqack: "",
+      },
+      {
+        _id: "675b02001c54a94b3d902223",
+        username: "alex",
+        email: "alex@example.com",
+        read_status: null,
+        read_at: null,
+        image: "https://res.cloudinary.com/demo/image/upload/user3.png",
+        feedbqack: "",
+      },
+    ],
+    for_user_roles: ["Master Admin", "Viewer"],
+    is_active: true,
+    images: [
+      "https://res.cloudinary.com/demo/image/upload/feature1.png",
+      "https://res.cloudinary.com/demo/image/upload/feature2.png",
+    ],
+    is_feedback_required: false,
+    createdAt: "2025-12-10T10:05:12.112Z",
+    updatedAt: "2025-12-10T10:05:12.112Z",
+  },
+  {
+    subject: "Holiday Office Hours",
+    description:
+      "Support operations will run at limited capacity during the holiday period.",
+    points: [
+      "Ticket response time may increase",
+      "Emergency support will remain active",
+      "Normal operations resume Jan 3",
+    ],
+    posted_by: {
+      _id: "675b00001c54a94b3d900003",
+      name: "Sneha Patil",
+      email: "sneha.patil@example.com",
+      role: "HR Admin",
+      image: "https://res.cloudinary.com/demo/image/upload/admin3.png",
+    },
+    users: [],
+    for_user_roles: ["All Users"],
+    is_active: true,
+    is_feedback_required: false,
+    images: [],
+    createdAt: "2025-12-09T15:20:10.112Z",
+    updatedAt: "2025-12-09T15:20:10.112Z",
+  },
+];

@@ -18,6 +18,7 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
+  CImage,
 } from "@coreui/react";
 import axios from "axios";
 import moment from "moment";
@@ -175,7 +176,17 @@ const ApiLoggerDashboard = () => {
                               <CBadge color="warning" className="p-2">
                                 {index + 1}
                               </CBadge>
-                              <span className="fw-semibold">
+                              <img
+                                alt={u._id.role}
+                                src={u._id.profile_image}
+                                className="border"
+                                style={{
+                                  borderRadius: "50%",
+                                  height: "20px",
+                                  width: "20px",
+                                }}
+                              />
+                              <span className="">
                                 {u._id.name || "- "} - {u._id.role || "-"}
                               </span>
                             </div>
