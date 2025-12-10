@@ -452,7 +452,7 @@ const UpdateTimer = () => {
                   <div className="mb-3">
                     <label className="form-label">Timer2_date</label>
                     <input
-                      type="text"
+                      type="date"
                       className="form-control"
                       name="timer2_date"
                       value={timerData.timer2_date}
@@ -467,7 +467,7 @@ const UpdateTimer = () => {
                   <div className="mb-3">
                     <label className="form-label">Timer3_date</label>
                     <input
-                      type="text"
+                      type="date"
                       className="form-control"
                       name="timer3_date"
                       value={timerData.timer3_date}

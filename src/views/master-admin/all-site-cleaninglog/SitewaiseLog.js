@@ -1739,6 +1739,7 @@ const SitewaiseLog = () => {
                             Robot No
                           </CTableHeaderCell>
                           <CTableHeaderCell>Status</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
                           <CTableHeaderCell style={{ minWidth: "130px" }}>
                             Row Number
                           </CTableHeaderCell>
@@ -1781,7 +1782,7 @@ const SitewaiseLog = () => {
                                   <CBadge color="info">In Progress</CBadge>
                                 )}
                               </CTableDataCell>
-
+                              <CTableDataCell>{log.block}</CTableDataCell>
                               <CTableDataCell>{log.row_no}</CTableDataCell>
                               <CTableDataCell>{log.row_length}</CTableDataCell>
 
