@@ -28,6 +28,7 @@ import {
   Tags,
   Wrench,
 } from "lucide-react";
+import { MdCircleNotifications } from "react-icons/md";
 
 const _nav = [
   // -----------------------------------master admin----------------------------------------
@@ -659,6 +660,24 @@ const _nav = [
             component: CNavItem,
             name: "View Row Data",
             to: "/master-admin/update-row-data",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Custom Notifications",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Custom Notifications",
+            to: "/master-admin/custom-notifications",
           },
         ],
       },

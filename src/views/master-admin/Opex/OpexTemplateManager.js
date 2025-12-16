@@ -876,9 +876,7 @@ const OpexTemplateManager = () => {
             </CButton>
 
             {/* Create Cycle (only for allowed roles) */}
-            {!["Master User", "Project User", "Service User"].includes(
-              userInfo.role
-            ) && (
+            {!["Master User", "Project User"].includes(userInfo.role) && (
               <Link
                 onClick={openUploadStartDateModal}
                 className="btn btn-primary btn-sm me-2"

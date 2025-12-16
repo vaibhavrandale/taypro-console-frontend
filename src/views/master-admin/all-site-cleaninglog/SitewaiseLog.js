@@ -1077,6 +1077,8 @@ const reducer = (state, action) => {
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
         dynamicCycles: action.payload.dynamicCycles,
+        robotswhichareonlineandnotstartedForthisSite:
+          action.payload.robotswhichareonlineandnotstartedForthisSite,
       };
     case "FETCH_FAIL":
       return {
@@ -1172,6 +1174,7 @@ const SitewaiseLog = () => {
       dprLogs,
       dprLoading,
       dynamicCycles,
+      robotswhichareonlineandnotstartedForthisSite,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -1198,6 +1201,7 @@ const SitewaiseLog = () => {
     offlineRobotError: "",
     offlineRobots: [],
     dynamicCycles: {},
+    robotswhichareonlineandnotstartedForthisSite: [],
     dprError: "",
     dprLogs: [],
     dprLoading: false,
@@ -1237,6 +1241,8 @@ const SitewaiseLog = () => {
             cleaningCompleted: data.cleaningCompleted || [],
             cleaningInProgress: data.cleaningInProgress || [],
             failureLogs: data.failureLogs || [],
+            robotswhichareonlineandnotstartedForthisSite:
+              data.robotswhichareonlineandnotstartedForthisSite || [],
             dynamicCycles: data.dynamicCycles || {},
             totalPages: data.totalPages || 1,
             hasNextPage: data.hasNextPage || false,
@@ -1266,7 +1272,6 @@ const SitewaiseLog = () => {
             },
           }
         );
-        console.log(data.data);
 
         dispatch({
           type: "FETCH_DPR_SUCCESS",
@@ -1647,48 +1652,56 @@ const SitewaiseLog = () => {
             <CCard className="shadow-sm border-0">
               <CCardBody className="py-3">
                 <CRow className="align-items-center">
-                  <CCol xs="12" md="3" className="mb-2 mb-md-0">
-                    <h5 className="fw-bold mb-0">🤖 Total Logs</h5>
-                  </CCol>
-                  <CCol xs="12" md="9">
-                    <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
+                  <CCol xs="12" md="12">
+                    <div className="d-flex flex-wrap  justify-content-between  align-iems-center">
+                      <h5 className="fw-bold mb-0 me-3">🤖 Logs</h5>
                       <CBadge
                         color="primary"
-                        className="px-3 py-2 rounded-pill"
+                        className="px-3 py-2 rounded-pill m-1"
                         style={{ fontSize: "14px" }}
                       >
                         Total Assigned Robots: {totalAssignedRobots}
                       </CBadge>
                       <CBadge
                         color="secondary"
-                        className="px-3 py-2 rounded-pill"
+                        className="px-3 py-2 rounded-pill m-1"
                         style={{ fontSize: "14px" }}
                       >
-                        Total Logs:{" "}
+                        Total Logs:
                         {cleaningCompleted.length +
                           cleaningInProgress.length +
                           failureLogs.length}
                       </CBadge>
                       <CBadge
                         color="success"
-                        className="px-3 py-2 rounded-pill"
+                        className="px-3 py-2 rounded-pill m-1"
                         style={{ fontSize: "14px" }}
                       >
                         Completed: {cleaningCompleted.length}
                       </CBadge>
                       <CBadge
                         color="warning"
-                        className="px-3 py-2 rounded-pill"
+                        className="px-3 py-2 rounded-pill m-1"
                         style={{ fontSize: "14px" }}
                       >
                         In Progress: {cleaningInProgress.length}
                       </CBadge>
                       <CBadge
                         color="danger"
-                        className="px-3 py-2 rounded-pill"
+                        className="px-3 py-2 rounded-pill m-1"
                         style={{ fontSize: "14px" }}
                       >
                         Failure: {failureLogs.length}
+                      </CBadge>
+                      <CBadge
+                        color="danger"
+                        className="px-3 py-2 rounded-pill m-1"
+                        style={{ fontSize: "14px" }}
+                      >
+                        Online – Command given, Not Started :
+                        <spa className="ms-2">
+                          {robotswhichareonlineandnotstartedForthisSite.length}
+                        </spa>
                       </CBadge>
                     </div>
                   </CCol>
@@ -1705,7 +1718,7 @@ const SitewaiseLog = () => {
           ) : (
             <>
               <CTabs activeItemKey="cleaning-logs">
-                <CTabList variant="tabs">
+                <CTabList variant="tabs" className="border-bottom">
                   <CTab itemKey="cleaning-logs" className="text-white">
                     Completed Logs
                   </CTab>
@@ -1717,6 +1730,13 @@ const SitewaiseLog = () => {
                   </CTab>
                   <CTab itemKey="offline-robots" className="text-white">
                     Offline Robots At the time of execution
+                  </CTab>
+
+                  <CTab
+                    itemKey="online–command-given-not-started"
+                    className="text-white"
+                  >
+                    Online but Not Started
                   </CTab>
                   <CTab itemKey="technician-dpr-logs" className="text-white">
                     Technician DPR Logs
@@ -2190,6 +2210,77 @@ const SitewaiseLog = () => {
                       loading={offlineRobotLoading}
                       error={offlineRobotError}
                     />
+                  </CTabPanel>
+
+                  {/* ============online–command-given-not-started TAB ================= */}
+                  {/* ================================================= */}
+                  <CTabPanel itemKey="online–command-given-not-started">
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Online Status</CTableHeaderCell>
+                          <CTableHeaderCell>Last Uplink</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {timerLogLoading ? (
+                          <CTableRow>
+                            <CTableDataCell colSpan={4}>
+                              <LoadingSpinner />
+                            </CTableDataCell>
+                          </CTableRow>
+                        ) : cleaningError ? (
+                          <CBadge color="danger">{cleaningError}</CBadge>
+                        ) : robotswhichareonlineandnotstartedForthisSite?.length >
+                          0 ? (
+                          robotswhichareonlineandnotstartedForthisSite.map(
+                            (log, index) => (
+                              <CTableRow key={index}>
+                                <CTableDataCell>{index + 1}</CTableDataCell>
+                                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                                <CTableDataCell>{log.block}</CTableDataCell>
+                                <CTableDataCell>
+                                  {log.lora_state ? "Online" : "Offline"}
+                                </CTableDataCell>
+                                {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
+
+                                <CTableDataCell>
+                                  {log.last_uplink &&
+                                    new Date(log.last_uplink).toLocaleString(
+                                      "en-GB",
+                                      {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      }
+                                    )}
+                                </CTableDataCell>
+                              </CTableRow>
+                            )
+                          )
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={4} className="text-start">
+                              Online Command Given Not Started found for the
+                              selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
+                    </CTable>
                   </CTabPanel>
 
                   {/* Technician DPR Robots */}
