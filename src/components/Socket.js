@@ -8,7 +8,9 @@ const backendURL =
 
 const socket = io(backendURL, {
   path: "/socket.io", // must match Nginx/backend
-  transports: ["websocket"],
+  // transports: ["websocket"],
+  transports: ["polling", "websocket"], // allow upgrade
+
   upgrade: false,
   autoConnect: true,
   secure: true, // ensure WSS

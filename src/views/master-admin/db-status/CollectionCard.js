@@ -195,14 +195,40 @@ export default function CollectionCard({ item, index }) {
                       >
                         <CCardBody style={{ padding: "12px 14px" }}>
                           <div className="d-flex justify-content-between align-items-center">
-                            <span style={{ fontSize: "0.95rem" }}>
-                              {m.month}
-                            </span>
+                            {/* Left: Month Info */}
+                            <div className="d-flex align-items-center gap-2">
+                              <span
+                                style={{
+                                  fontSize: "0.95rem",
+                                  fontWeight: 600,
+                                  color: "#f1f3f5",
+                                }}
+                              >
+                                {m.monthName}
+                              </span>
 
+                              <CBadge
+                                color="secondary"
+                                className="rounded-pill px-2 py-1"
+                                style={{
+                                  fontSize: "0.75rem",
+                                  backgroundColor: "#343a40",
+                                  color: "#ced4da",
+                                }}
+                              >
+                                {m.month}
+                              </CBadge>
+                            </div>
+
+                            {/* Right: Total Count */}
                             <CBadge
                               color={getBadgeColor(montotal(m))}
-                              shape="rounded-pill"
-                              style={{ fontSize: "0.8rem" }}
+                              className="rounded-pill px-3 py-1"
+                              style={{
+                                fontSize: "0.8rem",
+                                fontWeight: 600,
+                                letterSpacing: "0.3px",
+                              }}
                             >
                               {montotal(m)}
                             </CBadge>
