@@ -723,6 +723,7 @@ export default function CustomNotifications() {
         visible={editModal}
         onClose={() => setEditModal(false)}
         size="xl"
+        backdrop="static"
       >
         <CModalHeader className="bg-dark text-light" closeButton={false}>
           <strong>Edit Notification</strong>

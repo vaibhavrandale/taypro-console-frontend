@@ -1554,7 +1554,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
                     <div className="text-center">
                       <CImage
-                        src={customNotificationData.posted_by?.image}
+                        src={customNotificationData.posted_by?.profile_image}
                         alt="posted-by"
                         width={45}
                         height={45}
