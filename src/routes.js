@@ -189,6 +189,7 @@ import FactoryAdmin from "./views/factory-admin/FactoryAdmin";
 import UpdateRobotTracking from "./views/robot-position/UpdateRobotTracking";
 import ApiLoggerDashboard from "./views/master-admin/api-logger/ApiLoggerDashboard";
 import DBDashboard from "./views/master-admin/db-status/DBDashboard";
+import MdsOperatingClient from "./views/client-admin/mds-tracking/MdsOperatingClient";
 import CustomNofifications from "./views/master-admin/custom-notifications/CustomNofifications";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2921,7 +2922,108 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  //MDS Devices
+  {
+    path: "/master-user/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <MasterUserRoute>
+        <Mds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <MasterUserRoute>
+        <AddMdsUsingLoraNo />
+      </MasterUserRoute>
+    ),
+  },
 
+  {
+    path: "/master-user/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <MasterUserRoute>
+        <ActivateMds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <MasterUserRoute>
+        <ViewMds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <MasterUserRoute>
+        <UpdateMds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <MasterUserRoute>
+        <ActiveMds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <MasterUserRoute>
+        <InActiveMds />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <MasterUserRoute>
+        <ReplaceMdsLora />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <MasterUserRoute>
+        <MdsOperating />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <MasterUserRoute>
+        <MdsEventAndFrames />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <MasterUserRoute>
+        <MdsDashboard />
+      </MasterUserRoute>
+    ),
+  },
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
   {
@@ -3639,6 +3741,108 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  //MDS Devices
+  {
+    path: "/project-admin/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <ProjectAdminRoute>
+        <Mds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <ProjectAdminRoute>
+        <AddMdsUsingLoraNo />
+      </ProjectAdminRoute>
+    ),
+  },
+
+  {
+    path: "/project-admin/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <ProjectAdminRoute>
+        <ActivateMds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <ProjectAdminRoute>
+        <ViewMds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateMds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <ProjectAdminRoute>
+        <ActiveMds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <ProjectAdminRoute>
+        <InActiveMds />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <ProjectAdminRoute>
+        <ReplaceMdsLora />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <ProjectAdminRoute>
+        <MdsOperating />
+      </ProjectAdminRoute>
+    ),
+  },
+
+  {
+    path: "/project-admin/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <ProjectAdminRoute>
+        <MdsEventAndFrames />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <ProjectAdminRoute>
+        <MdsDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -4327,6 +4531,108 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <RobotPosition />
+      </ProjectUserRoute>
+    ),
+  },
+  //MDS Devices
+  {
+    path: "/project-user/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <ProjectUserRoute>
+        <Mds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <ProjectUserRoute>
+        <AddMdsUsingLoraNo />
+      </ProjectUserRoute>
+    ),
+  },
+
+  {
+    path: "/project-user/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <ProjectUserRoute>
+        <ActivateMds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <ProjectUserRoute>
+        <ViewMds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <ProjectUserRoute>
+        <UpdateMds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <ProjectUserRoute>
+        <ActiveMds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <ProjectUserRoute>
+        <InActiveMds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <ProjectUserRoute>
+        <ReplaceMdsLora />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <ProjectUserRoute>
+        <MdsOperating />
+      </ProjectUserRoute>
+    ),
+  },
+
+  {
+    path: "/project-user/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <ProjectUserRoute>
+        <MdsEventAndFrames />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <ProjectUserRoute>
+        <MdsDashboard />
       </ProjectUserRoute>
     ),
   },
@@ -5105,6 +5411,110 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  //MDS Devices
+  {
+    path: "/service-admin/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <ServiceAdminRoute>
+        <Mds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <ServiceAdminRoute>
+        <AddMdsUsingLoraNo />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <ServiceAdminRoute>
+        <ActivateMds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <ServiceAdminRoute>
+        <ViewMds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateMds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <ServiceAdminRoute>
+        <ActiveMds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <ServiceAdminRoute>
+        <InActiveMds />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <ServiceAdminRoute>
+        <ReplaceMdsLora />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <ServiceAdminRoute>
+        <MdsOperating />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <ServiceAdminRoute>
+        <MdsEventAndFrames />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <ServiceAdminRoute>
+        <MdsDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {
@@ -5811,6 +6221,108 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  //MDS Devices
+  {
+    path: "/service-user/mds-devices",
+    name: "MDS Devices",
+    element: (
+      <ServiceUserRoute>
+        <Mds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/add-mds-device/add-mds-using-lorano",
+    name: "Add MDS Device",
+    element: (
+      <ServiceUserRoute>
+        <AddMdsUsingLoraNo />
+      </ServiceUserRoute>
+    ),
+  },
+
+  {
+    path: "/service-user/mds-devices/activate-mds-devices",
+    name: "All Inactivate MDS",
+    element: (
+      <ServiceUserRoute>
+        <ActivateMds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds-devices/view/:id",
+    name: "View MDS Device",
+    element: (
+      <ServiceUserRoute>
+        <ViewMds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds-devices/update/:id",
+    name: "Update MDS Device",
+    element: (
+      <ServiceUserRoute>
+        <UpdateMds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/replace-mds-lora/active-mdss",
+    name: "Active MDS Devices",
+    element: (
+      <ServiceUserRoute>
+        <ActiveMds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/replace-mds-lora/in-active-mdss",
+    name: "In Active MDS Devices",
+    element: (
+      <ServiceUserRoute>
+        <InActiveMds />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/replace-mds-lora",
+    name: "Replace MDS Lora",
+    element: (
+      <ServiceUserRoute>
+        <ReplaceMdsLora />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <ServiceUserRoute>
+        <MdsOperating />
+      </ServiceUserRoute>
+    ),
+  },
+
+  {
+    path: "/service-user/mds/site-management/block-management/:site_id/:block/:mds_no/event-and-frames/:deveui",
+    name: "Mds Event and Frames",
+    element: (
+      <ServiceUserRoute>
+        <MdsEventAndFrames />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <ServiceUserRoute>
+        <MdsDashboard />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -6355,6 +6867,24 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <Pricing />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/mds-tracker",
+    name: "MDS Tracker",
+    element: (
+      <ClientAdminRoute>
+        <MdsDashboard />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/mds/site-management/block-management/:site_id/:block/:mds_no",
+    name: "MDS Operation",
+    element: (
+      <ClientAdminRoute>
+        <MdsOperatingClient />
       </ClientAdminRoute>
     ),
   },

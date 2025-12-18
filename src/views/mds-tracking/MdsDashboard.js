@@ -16,19 +16,14 @@ import {
   mergeRows,
   mergeUniqueArrayByKey,
 } from "./mdsTrackingHelper";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MdsSidebar from "./MdsSidebar";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
       return { ...state, loading: true, error: "" };
-    // case "FETCH_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loading: false,
-    //     mdsdevices: action.payload,
-    //   };
+
     case "FETCH_SUCCESS":
       // ✅ Check if payload is a function (state updater)
       const updatedMdsDevices =
@@ -49,6 +44,24 @@ const reducer = (state, action) => {
         error: action.payload,
         mdsdevices: [],
       };
+
+    case "FETCH_MDS_DEVICES_REQUEST":
+      return { ...state, mdsdevicesLoading: true, error: "" };
+
+    case "FETCH_MDS_DEVICES_SUCCESS":
+      return {
+        ...state,
+        mdsdevicesLoading: false,
+        allMdsDevices: action.payload,
+      };
+
+    case "FETCH_MDS_DEVICES_FAIL":
+      return {
+        ...state,
+        mdsdevicesLoading: false,
+        mdsError: action.payload,
+      };
+
     case "FETCH_SITES_REQUEST":
       return { ...state, loadingSites: true, sitesError: "" };
     case "FETCH_SITES_SUCCESS":
@@ -61,6 +74,7 @@ const reducer = (state, action) => {
 };
 
 const MdsDashboard = () => {
+  const navigate = useNavigate();
   const [
     {
       error,
@@ -70,6 +84,9 @@ const MdsDashboard = () => {
       loadingSites,
       sites,
       sitesError,
+      mdsError,
+      allMdsDevices,
+      mdsdevicesLoading,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -81,12 +98,16 @@ const MdsDashboard = () => {
     sites: [],
     loadingSites: true,
     sitesError: "",
+    allMdsDevices: [],
+    mdsdevicesLoading: false,
+    mdsError: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [site_id, setSiteId] = useState("");
+  const [mdsDevice, setMdsDevice] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedMdsDeviceId, setSelectedMdsDeviceId] = useState(null);
@@ -147,6 +168,30 @@ const MdsDashboard = () => {
         toast.error(msg);
       }
     };
+
+    // /get-mdsno-by-site-and-block/:site_id/:block
+    if (site_id) {
+      const fetchAllmdsdevices = async () => {
+        dispatch({ type: "FETCH_MDS_DEVICES_REQUEST" });
+        try {
+          const response = await axios.get(
+            `/api/v1/mds-device/get-mdsno-by-site-and-block/${site_id}/Block-1`,
+            {
+              headers: { Authorization: `Bearer ${authtoken}` },
+            }
+          );
+          dispatch({
+            type: "FETCH_MDS_DEVICES_SUCCESS",
+            payload: response.data.data,
+          });
+        } catch (err) {
+          const msg = err.response?.data?.error || err.response?.data?.message;
+          dispatch({ type: "FETCH_MDS_DEVICES_FAIL", payload: msg });
+          toast.error(msg);
+        }
+      };
+      fetchAllmdsdevices();
+    }
     fetchmdsTracking();
   }, [authtoken, date, site_id]);
 
@@ -220,6 +265,30 @@ const MdsDashboard = () => {
 
   const selectedMDS = mdsdevices.find((r) => r._id === selectedMdsDeviceId);
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
+
   return (
     <div className="p-2" style={{ display: "flex", flexDirection: "column" }}>
       {(loadingSites || loading) && (
@@ -250,16 +319,15 @@ const MdsDashboard = () => {
       {!loadingSites && !loading && (
         <>
           <CRow className="m-1 d-flex justify-content-between align-items-center">
-            <CCol md={4}>
+            <CCol md={3}>
               <h4 className="text-light text-center text-success">
                 MDS And Robot Tracking
               </h4>
             </CCol>
-
             <CCol md={3}>
               <CFormSelect
                 id="siteSelect"
-                className="p-2"
+                className="p-2 m-2"
                 value={site_id}
                 onChange={(e) => setSiteId(e.target.value)}
               >
@@ -271,10 +339,40 @@ const MdsDashboard = () => {
                 ))}
               </CFormSelect>
             </CCol>
+
+            {allMdsDevices && allMdsDevices.length > 0 && (
+              <CCol md={3}>
+                <CFormSelect
+                  id="siteSelect"
+                  className="p-2 m-2"
+                  value={mdsDevice}
+                  onChange={(e) => {
+                    const selectedMds = allMdsDevices.find(
+                      (mds) => mds.mds_no === e.target.value
+                    );
+
+                    if (selectedMds) {
+                      setMdsDevice(e.target.value);
+                      navigate(
+                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`
+                      );
+                    }
+                  }}
+                >
+                  <option value="">Select MDS</option>
+
+                  {allMdsDevices.map((mds, index) => (
+                    <option key={index} value={mds.mds_no}>
+                      {mds.mds_no}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            )}
             <CCol md={3}>
               <CFormInput
                 type="date"
-                className="p-2"
+                className="p-2 m-2"
                 placeholder="Search by Category..."
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
@@ -306,7 +404,7 @@ const MdsDashboard = () => {
                   <h6 className="mb-3">{data.mds_no}</h6>
                   <div className="d-flex justify-content-end align-items-center">
                     <Link
-                      to={`/master-admin/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
+                      to={`/${adminroute}/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
                       className="btn btn-primary btn-sm mb-2 d-flex align-items-center"
                     >
                       Command

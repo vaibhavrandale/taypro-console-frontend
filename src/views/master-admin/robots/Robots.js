@@ -408,7 +408,7 @@ const Robots = () => {
 
       {/* delete Modal */}
       <CModal
-        size="md"
+        size="sm"
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         backdrop="static"
