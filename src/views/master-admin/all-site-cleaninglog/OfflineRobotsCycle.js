@@ -48,10 +48,6 @@ const OfflineRobotsCycle = ({
       }
     });
 
-  console.log("Cycle 1:", cycle1);
-  console.log("Cycle 2:", cycle2);
-  console.log("Cycle 3:", cycle3);
-
   return (
     <div>
       <h4>Offline Robots Cycle 1 (6 AM - 12 PM)</h4>

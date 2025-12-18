@@ -190,6 +190,7 @@ import UpdateRobotTracking from "./views/robot-position/UpdateRobotTracking";
 import ApiLoggerDashboard from "./views/master-admin/api-logger/ApiLoggerDashboard";
 import DBDashboard from "./views/master-admin/db-status/DBDashboard";
 import MdsOperatingClient from "./views/client-admin/mds-tracking/MdsOperatingClient";
+import CustomNofifications from "./views/master-admin/custom-notifications/CustomNofifications";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1854,6 +1855,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <DBDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/custom-notifications",
+    name: "Custom Notifications",
+    element: (
+      <MasterAdminRoute>
+        <CustomNofifications />
       </MasterAdminRoute>
     ),
   },
