@@ -385,7 +385,7 @@ const Gateways = () => {
       {/* delete gateway */}
 
       <CModal
-        size="md"
+        size="sm"
         visible={showGatewayDeleteModal}
         onClose={() => !isGatewayDeleting && setShowGatewayDeleteModal(false)}
         backdrop="static"

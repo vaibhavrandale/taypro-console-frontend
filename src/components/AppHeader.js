@@ -384,25 +384,18 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     const fetchCustomNotifications = async () => {
       try {
         dispatch({ type: "FETCH_CUSTOM_NOTIFIATION_REQUEST" });
-        // const response = await axios.get(
-        //   "/api/v1/",
-        //   {
-        //     headers: { Authorization: `Bearer ${authtoken}` },
-        //   }
-        // );
-        let response = customNotifications[0];
-        if (customNotifications[0].is_active) {
-          dispatch({
-            type: "FETCH_CUSTOM_NOTIFIATION_SUCCESS",
-            payload: response,
-          });
-          setCustomNotificationModal(true);
-        } else {
-          dispatch({
-            type: "FETCH_CUSTOM_NOTIFIATION_SUCCESS",
-            payload: {},
-          });
-        }
+        const response = await axios.get(
+          "/api/v1/customnotifications/active/latest/unread",
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          }
+        );
+
+        dispatch({
+          type: "FETCH_CUSTOM_NOTIFIATION_SUCCESS",
+          payload: response.data.data,
+        });
+        if (response.data.data) setCustomNotificationModal(true);
       } catch (error) {
         dispatch({
           type: "FETCH_CUSTOM_NOTIFIATION_FAIL",
@@ -772,7 +765,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         feedback = "";
       }
       const data = await axios.put(
-        `/api/v1/customnotifications/${customNotificationData._id}`,
+        `/api/v1/customnotifications/read/${customNotificationData._id}`,
         { feedback },
         {
           headers: { Authorization: `Bearer ${authtoken}` },

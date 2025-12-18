@@ -284,8 +284,12 @@ const Mds = () => {
     adminroute = "master-admin";
   } else if (userInfo?.role === "Service Admin") {
     adminroute = "service-admin";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
   } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
   } else if (userInfo?.role === "Factory Admin") {
     adminroute = "factory-admin";
   }
@@ -366,9 +370,11 @@ const Mds = () => {
               Block
             </CTableHeaderCell>
             <CTableHeaderCell>Site ID</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "480px" }}>
-              Actions
-            </CTableHeaderCell>{" "}
+            {userInfo?.role === "Master Admin" && (
+              <CTableHeaderCell style={{ minWidth: "480px" }}>
+                Actions
+              </CTableHeaderCell>
+            )}
           </CTableRow>
         </CTableHead>
         <CTableBody>
@@ -391,7 +397,11 @@ const Mds = () => {
                 <CTableDataCell>
                   <Link
                     className="text-decoration-none m-1"
-                    to={`/${adminroute}/mds-devices/view/${mds._id}`}
+                    to={`${
+                      userInfo?.role === "Master Admin"
+                        ? `/${adminroute}/mds-devices/update/${mds._id}`
+                        : `/${adminroute}/mds/site-management/block-management/${mds.site_id}/${mds.block}/${mds.mds_no}`
+                    }`}
                   >
                     {mds.mds_no}
                   </Link>
@@ -426,56 +436,58 @@ const Mds = () => {
                 </CTableDataCell>
                 <CTableDataCell>{mds.block}</CTableDataCell>
                 <CTableDataCell>{mds.site_id}</CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="info"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedMds(mds);
-                      setAssignModalVisible(true);
-                    }}
-                  >
-                    Assign Robot
-                  </CButton>
+                {userInfo?.role === "Master Admin" && (
+                  <CTableDataCell>
+                    <CButton
+                      color="info"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedMds(mds);
+                        setAssignModalVisible(true);
+                      }}
+                    >
+                      Assign Robot
+                    </CButton>
 
-                  <Link
-                    className="btn btn-sm btn-secondary m-1"
-                    to={`/${adminroute}/mds-devices/view/${mds._id}`}
-                  >
-                    View
-                  </Link>
+                    <Link
+                      className="btn btn-sm btn-secondary m-1"
+                      to={`/${adminroute}/mds-devices/view/${mds._id}`}
+                    >
+                      View
+                    </Link>
 
-                  {userInfo?.role === "Master Admin" && (
-                    <>
-                      <Link
-                        className="btn btn-sm btn-warning m-1"
-                        to={`/${adminroute}/mds-devices/update/${mds._id}`}
-                      >
-                        Update
-                      </Link>
-                      <button
-                        className="btn btn-sm btn-danger m-1"
-                        onClick={() => {
-                          setSelectedMds(mds);
-                          setDeleteType("lns");
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete-LNS
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-warning m-1"
-                        onClick={() => {
-                          setSelectedMds(mds);
-                          setDeleteType("db");
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete-DB
-                      </button>
-                    </>
-                  )}
-                </CTableDataCell>
+                    {userInfo?.role === "Master Admin" && (
+                      <>
+                        <Link
+                          className="btn btn-sm btn-warning m-1"
+                          to={`/${adminroute}/mds-devices/update/${mds._id}`}
+                        >
+                          Update
+                        </Link>
+                        <button
+                          className="btn btn-sm btn-danger m-1"
+                          onClick={() => {
+                            setSelectedMds(mds);
+                            setDeleteType("lns");
+                            setShowDeleteModal(true);
+                          }}
+                        >
+                          Delete-LNS
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-warning m-1"
+                          onClick={() => {
+                            setSelectedMds(mds);
+                            setDeleteType("db");
+                            setShowDeleteModal(true);
+                          }}
+                        >
+                          Delete-DB
+                        </button>
+                      </>
+                    )}
+                  </CTableDataCell>
+                )}
               </CTableRow>
             ))
           ) : (
@@ -489,7 +501,7 @@ const Mds = () => {
       </CTable>
 
       <CModal
-        size="md"
+        size="sm"
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         backdrop="static"

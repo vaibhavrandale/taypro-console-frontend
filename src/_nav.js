@@ -1074,6 +1074,36 @@ const _nav = [
           },
         ],
       },
+
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/master-user/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/master-user/replace-mds-lora/active-mdss",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/master-user/mds-tracker",
+          },
+        ],
+      },
     ],
   },
   //------------------------------------master-user--------------------------------------------
@@ -1389,6 +1419,36 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/project-admin/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/project-admin/replace-mds-lora/active-mdss",
+          },
+
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/project-admin/mds-tracker",
+          },
+        ],
+      },
     ],
   },
 
@@ -1658,6 +1718,36 @@ const _nav = [
             component: CNavItem,
             name: "Opex Dashboard",
             to: "/project-user/opexdata",
+          },
+        ],
+      },
+
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/project-user/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/project-user/replace-mds-lora/active-mdss",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/project-user/mds-tracker",
           },
         ],
       },
@@ -1991,6 +2081,35 @@ const _nav = [
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+      },
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/service-admin/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/service-admin/replace-mds-lora/active-mdss",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/service-admin/mds-tracker",
+          },
+        ],
       },
     ],
   },
@@ -3031,6 +3150,35 @@ const _nav = [
           />
         ),
       },
+      {
+        component: CNavGroup,
+        name: "MDS Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Devices",
+            to: "/service-user/mds-devices",
+          },
+
+          {
+            component: CNavItem,
+            name: "Replace MDS Lora",
+            to: "/service-user/replace-mds-lora/active-mdss",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/service-user/mds-tracker",
+          },
+        ],
+      },
       // {
       //   component: CNavItem,
       //   name: "Expense Management",
@@ -3314,6 +3462,26 @@ const _nav = [
           },
         ],
       },
+
+      {
+        component: CNavGroup,
+        name: "MDS Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/client-admin/mds-tracker",
+          },
+        ],
+      },
+
       // {
       //   component: CNavGroup,
       //   name: "Subscription",

@@ -5,13 +5,9 @@ import {
   CCard,
   CCardBody,
   CButton,
-  CDropdownMenu,
-  CDropdown,
-  CDropdownToggle,
   CTooltip,
   CBadge,
 } from "@coreui/react";
-import { FaArrowUp } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -83,7 +79,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const MdsOperating = () => {
+const MdsOperatingClient = () => {
   const [
     {
       error,
@@ -104,8 +100,8 @@ const MdsOperating = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   // const [loadingRow, setLoadingRow] = useState(null);
-  const navigate = useNavigate();
   const { site_id, block, mds_no } = useParams();
+  const navigate = useNavigate();
 
   const [commandButton, setCommandButton] = useState(null);
   const [customDownlink, setCustomDownlink] = useState("");
@@ -273,6 +269,8 @@ const MdsOperating = () => {
     adminroute = "project-user";
   } else if (userInfo?.role === "Factory Admin") {
     adminroute = "factory-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
   }
   error && <CBadge color="danger">{error}</CBadge>;
 
@@ -289,13 +287,13 @@ const MdsOperating = () => {
               <h4 className="fw-bold text-center">
                 <span className="">{site_id} -&nbsp;</span>
                 <span className="text-primary">{block}</span>
-                &nbsp;-&nbsp;MDS's Configuration
+                &nbsp;-&nbsp;Robot's Configuration
               </h4>
             </CCol>
           </CRow>
 
           {/* Action Buttons */}
-          <CRow className="my-2">
+          {/* <CRow className="my-2">
             <CCol>
               <div className="d-flex flex-wrap align-items-center">
                 <CButton
@@ -449,7 +447,7 @@ const MdsOperating = () => {
                 )}
               </div>
             </CCol>
-          </CRow>
+          </CRow> */}
 
           <CRow className="my-2">
             <CCol></CCol>
@@ -577,6 +575,8 @@ const MdsOperating = () => {
                     </CCardBody>
                   </CCard>
                 </CCol>
+
+                {/* 3th card -> mds cycle  */}
                 <CCol md={3} className="mt-2">
                   <CCard
                     className="shadow border-0 "
@@ -696,13 +696,14 @@ const MdsOperating = () => {
                     </CCard>
                   </CCol>
                 )}
+
+                {/* fifth Card */}
                 {mdsDevice.robot && (
                   <CCol md={4} className="mt-3">
                     <CCard className="h-100 border-0 shadow-sm">
-                      <CCardBody className="d-flex flex-column justify-content-start p-3">
-                        {/* Top row */}
+                      <CCardBody className="d-flex flex-column p-3">
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                          {/* LEFT: Online / Offline */}
+                          {/* Left: Online / Offline */}
                           <span
                             className={`fw-bold text-${
                               mdsDevice.robot.lora_state === 1
@@ -716,7 +717,7 @@ const MdsOperating = () => {
                               : "Offline"}
                           </span>
 
-                          {/* RIGHT: Robot Operation button */}
+                          {/* Right: Robot Operation Button */}
                           <Link
                             className="btn btn-sm btn-primary"
                             to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${mdsDevice.robot.robot_no}`}
@@ -725,7 +726,6 @@ const MdsOperating = () => {
                           </Link>
                         </div>
 
-                        {/* Details */}
                         <div className="d-flex flex-column">
                           {!mdsDevice.robot.last_uplink ||
                           isNaN(
@@ -822,51 +822,6 @@ const MdsOperating = () => {
                     </CCardBody>
                   </CCard>
                 </CCol>
-
-                {/* 5th card -> mds cycle  */}
-                {userInfo.role === "Master Admin" && (
-                  <CCol md={3} className="mt-2">
-                    <CCard
-                      className="shadow border-0 "
-                      style={{ height: "100%" }}
-                    >
-                      <CCardBody>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <h6 className="fw-bold">Custom Downlink to MDS</h6>
-                        </div>
-                        <form className="position-relative mt-4">
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter command"
-                            name={customDownlink}
-                            onChange={(e) => setCustomDownlink(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && customDownlink) {
-                                e.preventDefault();
-                                sendCustomDownlink(customDownlink);
-                              }
-                            }}
-                          />
-                          <CButton
-                            disabled={!customDownlink}
-                            onClick={() => sendCustomDownlink(customDownlink)}
-                            type="button"
-                            className="d-flex justify-content-center align-items-center btn-sm send-button"
-                          >
-                            <span className="d-flex justify-content-center align-items-center">
-                              {sendingCommandloading ? (
-                                <LoadingSpinner />
-                              ) : (
-                                <FaArrowUp />
-                              )}
-                            </span>
-                          </CButton>
-                        </form>
-                      </CCardBody>
-                    </CCard>
-                  </CCol>
-                )}
               </CRow>
             </div>
           )}
@@ -876,4 +831,4 @@ const MdsOperating = () => {
   );
 };
 
-export default MdsOperating;
+export default MdsOperatingClient;
