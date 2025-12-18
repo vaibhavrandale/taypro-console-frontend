@@ -25,13 +25,14 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import PaginateInput from "../../../components/PaginateInput";
-import LastActivity from "../../../components/LastActivity";
+
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import {
   deleteGatewayFromDatabase,
   deleteGatewayFromLns,
 } from "./GatewayDeletion";
+import GatewayModel from "../../../components/GatewayModel";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -105,6 +106,8 @@ const Gateways = () => {
   const [gatewayDeleteType, setGatewayDeleteType] = useState(""); // 'lns' or 'db'
   const [gatewayDeleteReason, setGatewayDeleteReason] = useState("");
   const [isGatewayDeleting, setIsGatewayDeleting] = useState(false);
+  const [showGatewayModal, setShowGatewayModal] = useState(false);
+  const [viewGateway, setViewGateway] = useState(null);
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -201,6 +204,11 @@ const Gateways = () => {
     }
   };
 
+  const openGatewayModal = (gateway) => {
+    setViewGateway(gateway);
+    setShowGatewayModal(true);
+  };
+
   return (
     <div className="mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -255,13 +263,13 @@ const Gateways = () => {
           <CTableBody>
             {loadingGateways ? (
               <CTableRow className="text-center">
-                <CTableHeaderCell colSpan={7}>
+                <CTableHeaderCell colSpan={8}>
                   <LoadingSpinner />
                 </CTableHeaderCell>
               </CTableRow>
             ) : Gateways.length === 0 ? (
               <CTableRow className="text-center">
-                <CTableHeaderCell colSpan={7}>
+                <CTableHeaderCell colSpan={8}>
                   No Gateways Found
                 </CTableHeaderCell>
               </CTableRow>
@@ -312,6 +320,13 @@ const Gateways = () => {
                         : ""
                     }
                   >
+                    <CButton
+                      className="btn btn-sm btn-info p-1 m-1"
+                      onClick={() => openGatewayModal(gateway)}
+                    >
+                      View Modal
+                    </CButton>
+
                     {/* View Button */}
                     <Link
                       className="btn btn-sm btn-info text-decoration-none p-1 m-1"
@@ -489,6 +504,17 @@ const Gateways = () => {
           </CButton>
         </CModalFooter>
       </CModal>
+
+      {showGatewayModal && (
+        <GatewayModel
+          gateway={viewGateway}
+          visible={showGatewayModal}
+          onClose={() => {
+            setShowGatewayModal(false);
+            setViewGateway(null);
+          }}
+        />
+      )}
     </div>
   );
 };
