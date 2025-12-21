@@ -21,7 +21,8 @@ const RobotHeader = ({
     lastreeivedPointInTracking,
     L,
     robot.cleaning,
-    robot.track_details
+    robot.track_details,
+    robot.createdAt // ✅ Pass createdAt to check if document is from today
   );
   return (
     <div className=" d-flex justify-content-between text-sm">

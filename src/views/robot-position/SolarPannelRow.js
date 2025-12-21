@@ -25,12 +25,44 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
     highestPoint,
     L,
     robot.cleaning,
-    robot.track_details
+    robot.track_details,
+    robot.createdAt // ✅ Pass createdAt to check if document is from today
   );
 
   // ✅ Get current status text for display
   const getStatusText = () => {
-    if (robot.cleaning?.finish === true) {
+    // ✅ Check if cleaning finished on a previous day
+    const isFinishedYesterdayOrEarlier = () => {
+      if (!robot.cleaning?.finish || !robot.cleaning?.finishAt) {
+        return false;
+      }
+      
+      try {
+        const finishDate = new Date(robot.cleaning.finishAt);
+        if (isNaN(finishDate.getTime())) {
+          return false; // Invalid date
+        }
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const finishDateOnly = new Date(finishDate);
+        finishDateOnly.setHours(0, 0, 0, 0);
+        
+        // If finish date is before today, it was finished yesterday or earlier
+        return finishDateOnly.getTime() < today.getTime();
+      } catch (e) {
+        return false;
+      }
+    };
+
+    // ✅ If cleaning finished yesterday or earlier, show "Not yet started"
+    // (Don't check cleaning.start because it might still be true from yesterday's cycle)
+    if (robot.cleaning?.finish === true && isFinishedYesterdayOrEarlier()) {
+      return "Not yet started";
+    }
+    
+    if (robot.cleaning?.finish === true && !isFinishedYesterdayOrEarlier()) {
       return "Cleaning Finished";
     } else if (robot.cleaning?.cleaning_cancelled === true) {
       return "Cleaning Cancelled";

@@ -44,7 +44,8 @@ const RobotSidebar = ({
     lastreeivedPointInTracking,
     L,
     item,
-    robot.track_details
+    robot.track_details,
+    robot.createdAt // ✅ Pass createdAt to check if document is from today
   );
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
