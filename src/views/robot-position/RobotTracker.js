@@ -57,6 +57,16 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false };
     case "DELETE_RESET":
       return { ...state, deleteSuccess: false };
+    
+    case "SOCKET_UPDATE":
+      // ✅ Handle socket updates - silently update robots without showing spinner
+      // Keep loading state unchanged (don't trigger loading spinner)
+      return { 
+        ...state, 
+        robots: action.payload,
+        // Explicitly keep loading false to prevent spinner
+        loading: false 
+      };
 
     default:
       return state;
@@ -139,10 +149,22 @@ const RobotTracker = () => {
 
   useEffect(() => {
     if (site_id) {
-      socket.emit("join_site_id_room", site_id);
-      console.log("Joined site:", site_id);
+      // ✅ Ensure socket is connected before joining room
+      if (socket.connected) {
+        socket.emit("join_site_id_room", site_id);
+        console.log("✅ Joined site room:", site_id);
+      } else {
+        socket.once("connect", () => {
+          socket.emit("join_site_id_room", site_id);
+          console.log("✅ Socket connected, joined site room:", site_id);
+        });
+      }
     }
-    return () => socket.emit("leave_site_id_room", site_id);
+    return () => {
+      if (site_id) {
+        socket.emit("leave_site_id_room", site_id);
+      }
+    };
   }, [site_id]);
 
   // Fetch robot tracking data
@@ -183,99 +205,133 @@ const RobotTracker = () => {
     }
   }, [authtoken, date, site_id, deleteSuccess]);
 
-  robotsRef.current = robots;
+  // ✅ Keep robotsRef in sync with robots state for smooth scroll
+  useEffect(() => {
+    robotsRef.current = robots;
+  }, [robots]);
+
   useEffect(() => {
     const handleUpdate = ({ tracking }) => {
-      const newPoint = parseInt(tracking.uplink.data, 10);
-      toast.success(`${tracking.block} - ${tracking.robot_no}'s Update Sent!`, {
-        position: "top-left",
+      // ✅ Silent update - no console logs to avoid unnecessary re-renders
+      const newPoint = parseInt(tracking.uplink?.data || "0", 10);
+      
+      // ✅ Get current robots from ref (updated by useEffect)
+      const currentRobots = robotsRef.current;
+      const index = currentRobots.findIndex(
+        (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
+      );
+
+      let updatedRobots;
+      
+      // ✅ Case 1: Robot already exists - update it with new data
+      if (index !== -1) {
+        const existing = currentRobots[index];
+        updatedRobots = [...currentRobots];
+        
+        // ✅ Merge track_details intelligently (avoid duplicates)
+        const existingTrackDetails = existing.track_details || [];
+        const newTrackDetails = tracking.track_details || [];
+        const trackDetailsMap = new Map();
+        
+        // Add existing track details to map
+        existingTrackDetails.forEach((td) => {
+          const key = `${td.point}_${new Date(td.timestamp).getTime()}`;
+          trackDetailsMap.set(key, td);
+        });
+        
+        // Add new track details (will overwrite duplicates)
+        newTrackDetails.forEach((td) => {
+          const key = `${td.point}_${new Date(td.timestamp).getTime()}`;
+          trackDetailsMap.set(key, td);
+        });
+        
+        // ✅ Update the robot with complete new data - prioritize new tracking data
+        updatedRobots[index] = {
+          ...tracking, // Start with new tracking data (has all latest fields)
+          ...existing, // Then merge existing (for any missing fields)
+          last_activity: mergeLastActivity(
+            existing.last_activity || [],
+            tracking.last_activity || []
+          ),
+          track_details: Array.from(trackDetailsMap.values()).sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          ),
+          cleaning: {
+            ...existing.cleaning,
+            ...tracking.cleaning, // Merge cleaning state (includes start, finish, metrics, etc.)
+          },
+          uplink: tracking.uplink || existing.uplink,
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        // ✅ Case 2: Robot not found → add as new
+        updatedRobots = [tracking, ...currentRobots];
+      }
+      
+      // ✅ Dispatch socket update action
+      dispatch({
+        type: "SOCKET_UPDATE",
+        payload: updatedRobots,
       });
 
-      dispatch({
-        type: "FETCH_SUCCESS",
-        payload: (() => {
-          const index = robotsRef.current.findIndex(
+      // ✅ Smooth scroll update (only if it's a location point update)
+      if (newPoint >= 20 && newPoint <= 40) {
+        // Use setTimeout to ensure state is updated before accessing
+        setTimeout(() => {
+          const updatedRobots = robotsRef.current;
+          const robot = updatedRobots.find(
             (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
           );
+          const el = scrollRefs.current[tracking._id || robot?._id];
 
-          // ✅ Case 1: Robot already exists
-          if (index !== -1) {
-            const existing = robotsRef.current[index];
+          if (robot && el) {
+            const L = robot.row_length || 100;
+            let segmentPct = 0;
 
-            // ✅ Check if cleaning.start = true, cleaning_cancelled = false, battery_dead = false
-            if (
-              existing.cleaning?.start === true &&
-              existing.cleaning?.cleaning_cancelled === false &&
-              existing.cleaning?.battery_dead === false
-            ) {
-              const updated = [...robotsRef.current];
-              updated[index] = {
-                ...existing,
-                ...tracking,
-                last_activity: mergeLastActivity(
-                  existing.last_activity,
-                  tracking.last_activity
-                ),
-                track_details: [
-                  ...existing.track_details,
-                  ...(tracking.track_details || []),
-                ],
-                cleaning: { ...existing.cleaning, ...tracking.cleaning },
-                updatedAt: new Date().toISOString(),
-              };
-              return updated;
+            if (newPoint >= 20 && newPoint <= 29) {
+              segmentPct = (newPoint - 19) / (29 - 19);
+            } else if (newPoint >= 31 && newPoint <= 40) {
+              segmentPct = (newPoint - 29) / (40 - 29);
+            } else {
+              segmentPct = newPoint / L;
             }
 
-            // ❌ Conditions not met → return unchanged list
-            return [tracking, ...robotsRef.current];
+            const iconOffsetPx = segmentPct * L * 14; // Match SolarPannelRow calculation
+            const halfWidth = el.clientWidth / 2;
+
+            let targetScroll =
+              newPoint >= 20 && newPoint <= 29
+                ? iconOffsetPx - el.clientWidth * 0.25
+                : newPoint >= 31 && newPoint <= 40
+                ? iconOffsetPx - el.clientWidth * 0.75
+                : iconOffsetPx - halfWidth;
+
+            targetScroll = Math.max(
+              0,
+              Math.min(targetScroll, el.scrollWidth - el.clientWidth)
+            );
+
+            smoothScroll(el, targetScroll, 400);
           }
-
-          // ✅ Case 2: Robot not found → add as new
-          return [tracking, ...robotsRef.current];
-        })(),
-      });
-
-      // Smooth scroll update
-      const robot = robotsRef.current.find((r) => r._id === tracking._id);
-      const el = scrollRefs.current[tracking._id];
-
-      if (robot && el) {
-        const L = robot.row_length || 100;
-        let segmentPct = 0;
-
-        if (newPoint >= 19 && newPoint <= 29) {
-          segmentPct = (newPoint - 19) / (29 - 19);
-        } else if (newPoint >= 31 && newPoint <= 40) {
-          segmentPct = (newPoint - 31) / (40 - 31);
-        } else {
-          segmentPct = newPoint / L;
-        }
-
-        const iconOffsetPx = segmentPct * L * 25; // 25px per point
-        const halfWidth = el.clientWidth / 2;
-
-        let targetScroll =
-          newPoint >= 19 && newPoint <= 29
-            ? iconOffsetPx - el.clientWidth * 0.25
-            : newPoint >= 31 && newPoint <= 40
-            ? iconOffsetPx - el.clientWidth * 0.75
-            : iconOffsetPx - halfWidth;
-
-        targetScroll = Math.max(
-          0,
-          Math.min(targetScroll, el.scrollWidth - el.clientWidth)
-        );
-
-        smoothScroll(el, targetScroll, 400);
+        }, 100);
       }
     };
+
+    // ✅ Socket connection check (only log once on mount, not on every update)
+    if (!socket.connected) {
+      socket.once("connect", () => {
+        console.log("✅ Socket connected for real-time updates");
+      });
+    }
 
     // Remove old listener before adding
     socket.off("robotPositionUpdate", handleUpdate);
     socket.on("robotPositionUpdate", handleUpdate);
 
-    return () => socket.off("robotPositionUpdate", handleUpdate);
-  }, [dispatch]);
+    return () => {
+      socket.off("robotPositionUpdate", handleUpdate);
+    };
+  }, [dispatch, robots]); // ✅ Add robots to dependencies to ensure fresh data
   useEffect(() => {
     // When robots are fetched, sync filtered list
     if (robots.length > 0) {
@@ -528,8 +584,8 @@ const RobotTracker = () => {
                 {filteredRobot.length > 0 ? (
                   filteredRobot
                     .filter((r) => !selectedBlock || r.block === selectedBlock)
-                    .map((robot, index) => (
-                      <div className="col-md-12 my-1" key={index}>
+                    .map((robot) => (
+                      <div className="col-md-12 my-1" key={robot._id || robot.robot_no}>
                         <Robot
                           robot={robot}
                           handleRobotClick={handleRobotClick}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   COffcanvas,
   COffcanvasHeader,
@@ -22,6 +22,10 @@ import CIcon from "@coreui/icons-react";
 import { getRobotPhase } from "./helpers";
 import RobotLastActivity from "./RobotLastActivity";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const RobotSidebar = ({
   robot,
@@ -43,6 +47,43 @@ const RobotSidebar = ({
     robot.track_details
   );
   const navigate = useNavigate();
+  const authtoken = useSelector((state) => state.authtoken);
+  const [commandButton, setCommandButton] = useState(null);
+
+  // Command codes
+  const start = "11";
+  const stop = "14";
+  const returntodock = "15";
+
+  // Send downlink command to robot
+  const sendsingleDownlink = async (command, index) => {
+    setCommandButton(index);
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-downlink",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: robot.site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        }
+      );
+
+      toast.success(data.data.message || "Command sent successfully");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to send command"
+      );
+    } finally {
+      setCommandButton(null);
+    }
+  };
 
   // 🔹 Utility function (can put this in a utils.js file or above your component)
   const formatTime = (totalSec) => {
@@ -141,6 +182,57 @@ const RobotSidebar = ({
         <CleaningStatusCard robot={robot} userInfo={userInfo} />
 
         <BatteryStatusCard cleaning={robot.cleaning} />
+
+        {/* ✅ Cleaning Cycle Control Buttons */}
+        <CCard className="border-0 my-3 shadow-sm bg-secondary text-light">
+          <CCardBody>
+            <h5 className="text-light mb-3">🎮 Cleaning Cycle Control</h5>
+            <div className="d-flex flex-wrap gap-2">
+              <CButton
+                className="btn btn-sm btn-secondary shadow"
+                disabled={commandButton === 1}
+                onClick={() => sendsingleDownlink(start, 1)}
+              >
+                {commandButton === 1 ? (
+                  <>
+                    START&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "START"
+                )}
+              </CButton>
+              <CButton
+                className="btn btn-sm btn-secondary shadow-sm"
+                disabled={commandButton === 2}
+                onClick={() => sendsingleDownlink(stop, 2)}
+              >
+                {commandButton === 2 ? (
+                  <>
+                    STOP&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "STOP"
+                )}
+              </CButton>
+              <CButton
+                className="btn btn-sm btn-secondary shadow-sm"
+                disabled={commandButton === 3}
+                onClick={() => sendsingleDownlink(returntodock, 3)}
+              >
+                {commandButton === 3 ? (
+                  <>
+                    RETURN TO DOCK&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "RETURN TO DOCK"
+                )}
+              </CButton>
+            </div>
+          </CCardBody>
+        </CCard>
 
         {userInfo.type === "Internal" && (
           <TrackingDetailsTable trackDetails={robot.track_details} />
