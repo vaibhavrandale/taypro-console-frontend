@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 // 🔧 Use the correct backend URL
 const backendURL =
   window.location.hostname === "localhost"
-    ? "http://localhost:5000" // local dev
+    ? "http://localhost:5500" // local dev
     : "https://console.taypro.in"; // production (force HTTPS)
 
 const socket = io(backendURL, {
