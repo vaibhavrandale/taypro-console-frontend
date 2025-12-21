@@ -5,17 +5,82 @@ import { getRobotPhase } from "./helpers";
 import "./tracking.css";
 const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
   const L = robot.row_length;
-  const lastPoint = robot.track_details?.length
-    ? robot.track_details[robot.track_details.length - 1].point
-    : 0;
+  
+  // ✅ Calculate highest point from track_details (19-40) instead of last point
+  let highestPoint = 0;
+  if (robot.track_details && robot.track_details.length > 0) {
+    const validPoints = robot.track_details
+      .map((td) => td.point)
+      .filter((p) => p >= 19 && p <= 40);
+    if (validPoints.length > 0) {
+      highestPoint = Math.max(...validPoints);
+    } else {
+      // Fallback to last point if no valid points found
+      highestPoint = robot.track_details[robot.track_details.length - 1].point || 0;
+    }
+  }
 
   // // const distanceCovered = pt;
   const { phase, segmentPct } = getRobotPhase(
-    lastPoint,
+    highestPoint,
     L,
     robot.cleaning,
     robot.track_details
   );
+
+  // ✅ Get current status text for display
+  const getStatusText = () => {
+    if (robot.cleaning?.finish === true) {
+      return "Cleaning Finished";
+    } else if (robot.cleaning?.cleaning_cancelled === true) {
+      return "Cleaning Cancelled";
+    } else if (robot.cleaning?.battery_dead === true) {
+      return "Battery Dead";
+    } else if (robot.cleaning?.start === true) {
+      // Cleaning has started, determine specific phase
+      if (phase === "Forward Cleaning") {
+        return "Forward Cleaning In Progress";
+      } else if (phase === "Reverse Cleaning") {
+        return "Return Cleaning In Progress";
+      } else if (phase === "At Reverse Station" || phase === "Ready for Reverse Cleaning") {
+        return "At Reverse Station";
+      } else if (highestPoint >= 20 && highestPoint <= 40) {
+        // Has location points but phase might not be set yet
+        if (highestPoint >= 20 && highestPoint <= 28) {
+          return "Forward Cleaning In Progress";
+        } else if (highestPoint >= 31 && highestPoint <= 39) {
+          return "Return Cleaning In Progress";
+        } else if (highestPoint === 40) {
+          return "At Dock";
+        }
+      } else {
+        // Cleaning started but no location points yet (or point < 20)
+        return "Starting Cleaning Cycle";
+      }
+    } else {
+      return "At Dock";
+    }
+    return "At Dock";
+  };
+
+  const statusText = getStatusText();
+
+  // ✅ Get current battery percentage for display
+  const getBatteryPercentage = () => {
+    const cleaning = robot.cleaning || {};
+    
+    // Priority: after_cleaning > at_reverse_station > before_cleaning
+    if (cleaning.battery_after_cleaning != null) {
+      return cleaning.battery_after_cleaning;
+    } else if (cleaning.battery_at_reverse_station != null) {
+      return cleaning.battery_at_reverse_station;
+    } else if (cleaning.battery_before_cleaning != null) {
+      return cleaning.battery_before_cleaning;
+    }
+    return null;
+  };
+
+  const batteryPercentage = getBatteryPercentage();
 
   const iconOffsetPx = segmentPct * L * 14;
   const iconStyle =
@@ -133,7 +198,8 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
         >
           {" "}
           {robot?.row_no !== 0 && <>Row: {robot.row_no} |</>}
-          {robot.robot_no}
+          {robot.robot_no} | {statusText}
+          {batteryPercentage != null && ` | 🔋 ${batteryPercentage}%`}
         </span>
         <div
           style={{

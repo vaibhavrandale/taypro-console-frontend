@@ -241,22 +241,47 @@ export const getCleaningPercentage = (pt, robot) => {
   let percentage = 0;
   let distance = 0;
   const totalSteps = 20;
-  if (robot.cleaning.start && robot.cleaning.finish && pt !== 40) {
-    distance = pt - 19;
-    percentage = 100;
-  } else if (pt >= 20 && pt <= 29) {
-    distance = pt - 19;
+  
+  // ✅ If cleaning is finished (uplink 16 or metrics received), always return 100%
+  if (robot.cleaning?.finish === true) {
+    return {
+      point: pt,
+      distanceCovered: totalSteps,
+      totalDistance: totalSteps,
+      percentage: 100,
+    };
+  }
+  
+  // ✅ Find highest point from track_details (19-40) instead of using last point
+  let highestPoint = pt;
+  if (robot.track_details && robot.track_details.length > 0) {
+    const validPoints = robot.track_details
+      .map((td) => td.point)
+      .filter((p) => p >= 19 && p <= 40);
+    if (validPoints.length > 0) {
+      highestPoint = Math.max(...validPoints);
+    }
+  }
+  
+  // Use highest point for calculation
+  if (highestPoint >= 20 && highestPoint <= 29) {
+    distance = highestPoint - 19;
     percentage = (distance / totalSteps) * 100;
-  } else if (pt === 30) {
+  } else if (highestPoint === 30) {
     distance = 10;
     percentage = (distance / totalSteps) * 100;
-  } else if (pt >= 31 && pt <= 40) {
-    distance = 10 + (pt - 30);
+  } else if (highestPoint >= 31 && highestPoint <= 39) {
+    distance = 10 + (highestPoint - 30);
     percentage = (distance / totalSteps) * 100;
+  } else if (highestPoint === 40) {
+    // ✅ Point 40 should show 99% (not 100%) unless cleaning is finished
+    // Cleaning finished is handled above, so if we reach here, cleaning is not finished
+    distance = 10 + (40 - 30); // = 20
+    percentage = 99; // Cap at 99% for point 40 when not finished
   }
 
   return {
-    point: pt,
+    point: highestPoint,
     distanceCovered: distance,
     totalDistance: totalSteps,
     percentage: Math.round(percentage),

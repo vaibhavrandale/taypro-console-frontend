@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, useCallback, useRef } from "react";
 import {
   CTable,
   CTableHead,
@@ -99,6 +99,11 @@ const CleaningLog = () => {
     new Date().toISOString().split("T")[0]
   );
 
+  // ✅ Auto-refresh States
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [refreshInterval, setRefreshInterval] = useState(5000); // 5 seconds default
+  const isAutoRefreshCall = useRef(false); // Track if current call is from auto-refresh
+
   let adminroute = "";
 
   if (userInfo?.role === "Master Admin") {
@@ -125,58 +130,73 @@ const CleaningLog = () => {
 
   const authtoken = useSelector((state) => state.authtoken);
 
-  useEffect(() => {
-    const fetchCleaningLogs = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
+  // ✅ Extract fetchCleaningLogs function to be reusable
+  const fetchCleaningLogs = useCallback(async (isAutoRefresh = false) => {
+    isAutoRefreshCall.current = isAutoRefresh;
+    try {
+      dispatch({ type: "FETCH_REQUEST" });
 
-        let requestBody = {
-          pg: page,
-          limit: limit,
-        };
+      let requestBody = {
+        pg: page,
+        limit: limit,
+      };
 
-        if (fetchBySite) {
-          requestBody.site_id = site_id;
-        } else {
-          requestBody.robot_no = robot_no;
+      if (fetchBySite) {
+        requestBody.site_id = site_id;
+      } else {
+        requestBody.robot_no = robot_no;
+      }
+
+      // ✅ Add Dates to Request
+      if (startDate && endDate) {
+        requestBody.startDate = startDate;
+        requestBody.endDate = endDate;
+      }
+
+      const response = await axios.post(
+        `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
+        requestBody,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
         }
+      );
 
-        // ✅ Add Dates to Request
-        if (startDate && endDate) {
-          requestBody.startDate = startDate;
-          requestBody.endDate = endDate;
-        }
+      let total = Math.ceil(
+        Number(response.data.total) / Number(response.data.limit)
+      );
 
-        const response = await axios.post(
-          `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
-          requestBody,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
-
-        let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
-        );
-
-        dispatch({
-          type: "FETCH_SUCCESS",
-          payload: {
-            data: response.data.data,
-            totalPages: total,
-            hasNextPage: response.data.hasNextPage,
-            hasPrevPage: response.data.hasPrevPage,
-          },
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: error.response?.data?.error || "Failed to fetch data",
-        });
+      dispatch({
+        type: "FETCH_SUCCESS",
+        payload: {
+          data: response.data.data,
+          totalPages: total,
+          hasNextPage: response.data.hasNextPage,
+          hasPrevPage: response.data.hasPrevPage,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: "FETCH_FAIL",
+        payload: error.response?.data?.error || "Failed to fetch data",
+      });
+      // Only show toast error on manual refresh, not auto-refresh
+      if (!isAutoRefreshCall.current) {
         toast.error(error.response?.data?.error || "Failed to fetch data");
       }
-    };
+    }
+  }, [
+    authtoken,
+    limit,
+    page,
+    robot_no,
+    site_id,
+    fetchBySite,
+    startDate,
+    endDate,
+  ]);
 
+  // ✅ Initial fetch and when dependencies change
+  useEffect(() => {
     const fetchRobots = async () => {
       try {
         dispatch({ type: "FETCH_ROBOT_REQUEST" });
@@ -210,7 +230,24 @@ const CleaningLog = () => {
     fetchBySite,
     startDate,
     endDate,
+    fetchCleaningLogs,
   ]);
+
+  // ✅ Auto-refresh effect
+  useEffect(() => {
+    if (!autoRefresh) {
+      return; // Don't set up interval if auto-refresh is disabled
+    }
+
+    const intervalId = setInterval(() => {
+      fetchCleaningLogs(true); // Pass true to indicate this is an auto-refresh call
+    }, refreshInterval);
+
+    // Cleanup interval on unmount or when auto-refresh is disabled
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [autoRefresh, refreshInterval, fetchCleaningLogs]);
 
   const filteredLogs = (
     fetchBySite
@@ -312,9 +349,9 @@ const CleaningLog = () => {
             </CCol>
           </CRow>
 
-          {/* Second line: Checkbox left, Export button right */}
+          {/* Second line: Checkboxes left, Export button right */}
           <CRow className="align-items-center justify-content-between my-2">
-            <CCol md={6}>
+            <CCol md={6} className="d-flex gap-4 align-items-center">
               <CFormCheck
                 type="checkbox"
                 id="fetchBySite"
@@ -323,6 +360,29 @@ const CleaningLog = () => {
                 onChange={(e) => {
                   setFetchBySite(e.target.checked);
                   setPage(1);
+                }}
+                style={{
+                  cursor: "pointer",
+                  transform: "scale(1.1)",
+                  marginBottom: "0",
+                }}
+              />
+              <CFormCheck
+                type="checkbox"
+                id="autoRefresh"
+                label={
+                  <span>
+                    Auto Refresh{" "}
+                    {autoRefresh && (
+                      <CBadge color="success" className="ms-1">
+                        ON
+                      </CBadge>
+                    )}
+                  </span>
+                }
+                checked={autoRefresh}
+                onChange={(e) => {
+                  setAutoRefresh(e.target.checked);
                 }}
                 style={{
                   cursor: "pointer",
