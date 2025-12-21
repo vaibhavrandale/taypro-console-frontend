@@ -124,11 +124,48 @@ export const smoothScroll = (element, target, duration = 400) => {
 // };
 // ----------------------------new phase-----------------------
 
-export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
+export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = null) => {
   let phase,
     badgeColor,
     iconBorder,
     segmentPct = 0;
+
+  // ✅ Check if cleaning finished on a previous day
+  const isFinishedYesterdayOrEarlier = () => {
+    if (!cleaning?.finish || !cleaning?.finishAt) {
+      return false;
+    }
+    
+    try {
+      const finishDate = new Date(cleaning.finishAt);
+      if (isNaN(finishDate.getTime())) {
+        return false; // Invalid date
+      }
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const finishDateOnly = new Date(finishDate);
+      finishDateOnly.setHours(0, 0, 0, 0);
+      
+      // If finish date is before today, it was finished yesterday or earlier
+      const isPreviousDay = finishDateOnly.getTime() < today.getTime();
+      
+      // Debug log (remove after testing)
+      if (isPreviousDay) {
+        console.log(`✅ Cleaning finished on previous day: finishAt=${finishDateOnly.toISOString()}, today=${today.toISOString()}`);
+      }
+      
+      return isPreviousDay;
+    } catch (e) {
+      console.error("Error checking finish date:", e);
+      return false;
+    }
+  };
+
+  // ✅ If cleaning finished yesterday or earlier, treat as "not started today"
+  // Check if finishAt is from a previous day (regardless of start status, as start might still be true from yesterday)
+  const isFinishedFromPreviousDay = cleaning?.finish && isFinishedYesterdayOrEarlier();
 
   // --- Determine last effective point (latest progress) ---
   const points = trackDetails.map((t) => t.point).sort((a, b) => a - b);
@@ -164,10 +201,18 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
     effectivePoint === 40 &&
     (cleaning?.cleaning_cancelled || cleaning?.battery_dead)
   ) {
-    phase = "Cleaning Completed & At Dock";
-    badgeColor = "success";
-    iconBorder = "#000";
-    segmentPct = 0;
+    // ✅ If finished yesterday or earlier, show "At Dock" instead
+    if (isFinishedFromPreviousDay) {
+      phase = "At Dock";
+      badgeColor = "secondary";
+      iconBorder = "#6c757d";
+      segmentPct = 0;
+    } else {
+      phase = "Cleaning Completed & At Dock";
+      badgeColor = "success";
+      iconBorder = "#000";
+      segmentPct = 0;
+    }
   } else if (cleaning?.cleaning_cancelled) {
     return {
       phase: "Cleaning Cancelled",
@@ -182,6 +227,16 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
       effectivePoint,
     };
   } else if (effectivePoint !== 40 && cleaning.finish) {
+    // ✅ If finished yesterday or earlier, show "At Dock" instead
+    if (isFinishedFromPreviousDay) {
+      return {
+        phase: "At Dock",
+        badgeColor: "secondary",
+        iconBorder: "#6c757d",
+        segmentPct: 0,
+        effectivePoint,
+      };
+    }
     return {
       phase: "Cleaning Completed & At Dock",
       badgeColor: "success",
@@ -198,10 +253,18 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails) => {
     iconBorder = "#343a40";
     segmentPct = 0;
   } else if (effectivePoint === 40 && cleaning?.finish) {
-    phase = "Cleaning Completed & At Dock";
-    badgeColor = "success";
-    iconBorder = "#000";
-    segmentPct = 0;
+    // ✅ If finished yesterday or earlier, show "At Dock" instead
+    if (isFinishedFromPreviousDay) {
+      phase = "At Dock";
+      badgeColor = "secondary";
+      iconBorder = "#6c757d";
+      segmentPct = 0;
+    } else {
+      phase = "Cleaning Completed & At Dock";
+      badgeColor = "success";
+      iconBorder = "#000";
+      segmentPct = 0;
+    }
   } else if (effectivePoint === 29) {
     phase = "At Reverse Station";
     badgeColor = "warning";
