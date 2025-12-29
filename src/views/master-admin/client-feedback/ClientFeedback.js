@@ -10,6 +10,11 @@ import {
   CCol,
   CInputGroup,
   CFormInput,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CCard,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -19,6 +24,9 @@ import PaginateInput from "../../../components/PaginateInput";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { BsStar, BsStarFill } from "react-icons/bs";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -66,6 +74,9 @@ const ClientFeedback = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
+  const [feedbackModal, setFeedbackModal] = useState(false);
+  const [currentFeedback, setCurrentFeedback] = useState(null);
+
   useEffect(() => {
     let pagination = {
       pg: page,
@@ -128,32 +139,56 @@ const ClientFeedback = () => {
   };
 
   const exportToExcel = () => {
-    if (feedbacks.length === 0) {
+    if (!feedbacks || feedbacks.length === 0) {
       toast.error("No data available for export.");
       return;
     }
 
-    // Convert JSON to sheet
-    const worksheet = XLSX.utils.json_to_sheet(
-      feedbacks.map((item, index) => ({
-        "#": index + 1,
-        "Client Name": item.user.name,
-        "Client Email": item.user.email,
-        Designation: item.user.designation
-          ? item.user.designation
-          : "No designation",
-        Comments: item.feedback_data
-          ? item.feedback_data.comments
-          : "No comments",
-        Rating: item.feedback_data ? item.feedback_data.rating : "No rating",
-        Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
-      }))
-    );
+    const excelData = feedbacks.map((item, index) => ({
+      "#": index + 1,
+
+      // Client Info
+      "Client Name": item.user?.username || "N/A",
+      "Client Email": item.user?.email || "N/A",
+      Designation: item.user?.designation || "No designation",
+
+      // Assigned Sites
+      "Site IDs":
+        item.user?.assigned_sites?.length > 0
+          ? item.user.assigned_sites.map((site) => site.site_id).join(", ")
+          : "No Sites",
+
+      // Portal Feedback
+      "Portal Rating": item.feedback_data?.rating ?? 0,
+      "Portal Comments": item.feedback_data?.comments?.trim() || "-",
+
+      // Technician Feedback
+      "Technician Assigned": item.technician_feedback_data
+        ?.is_technician_assigned
+        ? "Yes"
+        : "No",
+      "Technician Rating": item.technician_feedback_data?.rating ?? "-",
+      "Technician Comments":
+        item.technician_feedback_data?.comments?.trim() || "-",
+
+      // Service Feedback
+      "Service Rating": item.service_feedback_data?.rating ?? "-",
+      "Service Comments": item.service_feedback_data?.comments?.trim() || "-",
+
+      // Status
+      Status: item.status ? "Completed" : "Pending",
+
+      // Date
+      Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
+      "Updated At": moment(item.updatedAt).format("DD/MM/YYYY hh:mm A"),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
+
     XLSX.utils.book_append_sheet(workbook, worksheet, "Client Feedback");
 
-    // Trigger download
-    XLSX.writeFile(workbook, "Client Feedback.xlsx");
+    XLSX.writeFile(workbook, "Client_Feedback.xlsx");
   };
 
   // const userInfo = useSelector((state) => state.userInfo);
@@ -179,6 +214,62 @@ const ClientFeedback = () => {
       feedback.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       feedback.user.site_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const StarRating = ({ rating, onChange, section }) => {
+    const currentRating = Number(rating) || 0;
+
+    return (
+      <div
+        className="d-flex gap-2"
+        style={{ cursor: "pointer", fontSize: "1.8rem" }}
+      >
+        {[1, 2, 3, 4, 5].map((star) => {
+          const FilledStar = star <= currentRating;
+          return FilledStar ? (
+            <BsStarFill
+              size={20}
+              key={star}
+              color="#ffc107"
+              onClick={() =>
+                onChange({
+                  //  target: { name: "rating", value: star }
+                  target: { name: "rating", value: star, section },
+                })
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  onChange({
+                    target: { name: "rating", value: star, section },
+                  });
+              }}
+              role="radio"
+              tabIndex={0}
+              aria-checked={star === currentRating}
+              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+            />
+          ) : (
+            <BsStar
+              size={20}
+              key={star}
+              color="#e4e5e9"
+              onClick={() =>
+                onChange({ target: { name: "rating", value: star, section } })
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  onChange({
+                    target: { name: "rating", value: star, section },
+                  });
+              }}
+              role="radio"
+              tabIndex={0}
+              aria-checked={star === currentRating}
+              aria-label={`${star} Star${star > 1 ? "s" : ""}`}
+            />
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="">
@@ -216,20 +307,19 @@ const ClientFeedback = () => {
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Client Email
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Designation
-            </CTableHeaderCell>
+
             <CTableHeaderCell style={{ minWidth: "100px" }}>
               Site ID
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Comments
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "140px" }}>
-              Rating (out of 5)
-            </CTableHeaderCell>
+
             <CTableHeaderCell style={{ minWidth: "140px" }}>
               Date
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "140px" }}>
+              Updated At
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "100px" }}>
+              Actions
             </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -256,27 +346,36 @@ const ClientFeedback = () => {
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{feedback.user.username}</CTableDataCell>
                 <CTableDataCell>{feedback.user.email}</CTableDataCell>
+
                 <CTableDataCell>
-                  {feedback.user.designation
-                    ? feedback.user.designation
-                    : "No designation"}
+                  {feedback.user?.assigned_sites?.length > 0
+                    ? feedback.user.assigned_sites
+                        .map((site) => site.site_id)
+                        .join(", ")
+                    : ""}
                 </CTableDataCell>
-                <CTableDataCell>{feedback.user.site_id}</CTableDataCell>
+                {/* <CTableDataCell>
+                  {feedback.user?.assigned_sites?.[0]?.site_id}
+                </CTableDataCell> */}
+
                 <CTableDataCell>
-                  {feedback.feedback_data
-                    ? feedback.feedback_data.comments
-                    : "No comments"}
+                  {moment(feedback.createdAt).format("MMM YYYY ")}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {feedback.feedback_data
-                    ? feedback.feedback_data.rating
-                    : "No rating"}
+                  {moment(feedback.updatedAt).format("DD/MM/YYYY, HH:mm:ss")}
                 </CTableDataCell>
+
                 <CTableDataCell>
-                  {/* {feedback.feedback_data
-                        ? new Date(feedback.createdAt).toLocaleString("")
-                        : "No data"} */}
-                  {moment(feedback.createdAt).format("DD/MM/YYYY hh:mm A")}
+                  <button
+                    className="btn btn-sm btn-info"
+                    onClick={() => {
+                      setCurrentFeedback(feedback);
+
+                      setFeedbackModal(true);
+                    }}
+                  >
+                    View
+                  </button>
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -289,6 +388,107 @@ const ClientFeedback = () => {
           )}
         </CTableBody>
       </CTable>
+      {/* Feedback Modal */}
+      {feedbackModal && currentFeedback && (
+        <CModal
+          backdrop="static"
+          scrollable
+          alignment="top"
+          visible={feedbackModal}
+          size="xl"
+          onClose={() => setFeedbackModal(false)}
+        >
+          <CModalHeader closeButton={false}>
+            <CModalTitle>Client Feedback Details</CModalTitle>
+            <button
+              type="button"
+              className="border-0 ms-auto py-0 px-1"
+              onClick={() => setFeedbackModal(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </CModalHeader>
+
+          <CModalBody>
+            <CRow className="g-4">
+              {/* PORTAL FEEDBACK */}
+              <CCol md={4}>
+                <CCard className="shadow-sm rounded-3 p-3 border-0 bg-light h-100">
+                  <h6 className="mb-3 text-warning fw-bold">Portal Feedback</h6>
+                  <p className="mb-2">
+                    <strong>Rating:</strong>{" "}
+                    <StarRating
+                      rating={currentFeedback.feedback_data?.rating || 0}
+                      readOnly
+                    />
+                  </p>
+                  <p className="mb-0">
+                    <strong>Comments:</strong>
+                    <br />
+                    {currentFeedback.feedback_data?.comments || "No comments"}
+                  </p>
+                </CCard>
+              </CCol>
+
+              {/* TECHNICIAN FEEDBACK */}
+              <CCol md={4}>
+                <CCard className="shadow-sm rounded-3 p-3 border-0 bg-light h-100">
+                  <h6 className="mb-3 text-success fw-bold">
+                    Technician Feedback
+                  </h6>
+
+                  {currentFeedback.technician_feedback_data
+                    ?.is_technician_assigned ? (
+                    <>
+                      <p className="mb-2">
+                        <strong>Rating:</strong>{" "}
+                        <StarRating
+                          rating={
+                            currentFeedback.technician_feedback_data?.rating ||
+                            0
+                          }
+                          readOnly
+                        />
+                      </p>
+                      <p className="mb-0">
+                        <strong>Comments:</strong>
+                        <br />
+                        {currentFeedback.technician_feedback_data?.comments ||
+                          "No comments"}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-muted">Technician not assigned yet.</p>
+                  )}
+                </CCard>
+              </CCol>
+
+              {/* SERVICE FEEDBACK */}
+              <CCol md={4}>
+                <CCard className="shadow-sm rounded-3 p-3 border-0 bg-light h-100">
+                  <h6 className="mb-3 text-info fw-bold">Service Feedback</h6>
+                  <p className="mb-2">
+                    <strong>Rating:</strong>{" "}
+                    <StarRating
+                      rating={
+                        currentFeedback.service_feedback_data?.rating || 0
+                      }
+                      readOnly
+                    />
+                  </p>
+                  <p className="mb-0">
+                    <strong>Comments:</strong>
+                    <br />
+                    {currentFeedback.service_feedback_data?.comments ||
+                      "No comments"}
+                  </p>
+                </CCard>
+              </CCol>
+            </CRow>
+          </CModalBody>
+        </CModal>
+      )}
 
       <PaginateInput
         page={page}
