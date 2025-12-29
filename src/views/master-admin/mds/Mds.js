@@ -399,7 +399,7 @@ const Mds = () => {
                     className="text-decoration-none m-1"
                     to={`${
                       userInfo?.role === "Master Admin"
-                        ? `/${adminroute}/mds-devices/update/${mds._id}`
+                        ? `/${adminroute}/mds-devices/view/${mds._id}`
                         : `/${adminroute}/mds/site-management/block-management/${mds.site_id}/${mds.block}/${mds.mds_no}`
                     }`}
                   >

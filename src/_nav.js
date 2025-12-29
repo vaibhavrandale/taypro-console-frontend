@@ -474,6 +474,11 @@ const _nav = [
             name: "Database Status",
             to: "/master-admin/db-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "System Info",
+            to: "/master-admin/system-info",
+          },
         ],
       },
       // {
@@ -610,6 +615,11 @@ const _nav = [
             component: CNavItem,
             name: "Replace MDS Lora",
             to: "/master-admin/replace-mds-lora/active-mdss",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/master-admin/mds-timer",
           },
 
           // {
@@ -1121,6 +1131,11 @@ const _nav = [
             name: "MDS Tracking",
             to: "/master-user/mds-tracker",
           },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/master-user/mds-timer",
+          },
         ],
       },
     ],
@@ -1466,6 +1481,11 @@ const _nav = [
             name: "MDS Tracking",
             to: "/project-admin/mds-tracker",
           },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/project-admin/mds-timer",
+          },
         ],
       },
     ],
@@ -1767,6 +1787,11 @@ const _nav = [
             component: CNavItem,
             name: "MDS Tracking",
             to: "/project-user/mds-tracker",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/project-user/mds-timer",
           },
         ],
       },
@@ -2127,6 +2152,11 @@ const _nav = [
             component: CNavItem,
             name: "MDS Tracking",
             to: "/service-admin/mds-tracker",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/service-admin/mds-timer",
           },
         ],
       },
@@ -3195,6 +3225,11 @@ const _nav = [
             component: CNavItem,
             name: "MDS Tracking",
             to: "/service-user/mds-tracker",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Timer",
+            to: "/service-user/mds-timer",
           },
         ],
       },

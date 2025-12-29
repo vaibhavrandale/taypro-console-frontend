@@ -191,6 +191,9 @@ import ApiLoggerDashboard from "./views/master-admin/api-logger/ApiLoggerDashboa
 import DBDashboard from "./views/master-admin/db-status/DBDashboard";
 import MdsOperatingClient from "./views/client-admin/mds-tracking/MdsOperatingClient";
 import CustomNofifications from "./views/master-admin/custom-notifications/CustomNofifications";
+import SystemDashboard from "./views/master-admin/syatem-info/SystemDashboard";
+import Mdstimer from "./views/master-admin/mds-timer/Mdstimer";
+import UpdateMdsTimer from "./views/master-admin/mds-timer/UpdateMdsTimer";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1859,11 +1862,38 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/system-info",
+    name: "Master Admin Syatem Information",
+    element: (
+      <MasterAdminRoute>
+        <SystemDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/custom-notifications",
     name: "Custom Notifications",
     element: (
       <MasterAdminRoute>
         <CustomNofifications />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-timer",
+    name: "MDS Timer",
+    element: (
+      <MasterAdminRoute>
+        <Mdstimer />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mds-timer/update/:site_id/:block",
+    name: "MDS Timer",
+    element: (
+      <MasterAdminRoute>
+        <UpdateMdsTimer />
       </MasterAdminRoute>
     ),
   },
@@ -3843,6 +3873,24 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/mds-timer",
+    name: "MDS Timer",
+    element: (
+      <ProjectAdminRoute>
+        <Mdstimer />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/mds-timer/update/:site_id/:block",
+    name: "MDS Timer",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateMdsTimer />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -4633,6 +4681,24 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <MdsDashboard />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-timer",
+    name: "MDS Timer",
+    element: (
+      <ProjectUserRoute>
+        <Mdstimer />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-timer/update/:site_id/:block",
+    name: "MDS Timer",
+    element: (
+      <ProjectUserRoute>
+        <UpdateMdsTimer />
       </ProjectUserRoute>
     ),
   },
@@ -5514,7 +5580,24 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
-
+  {
+    path: "/service-admin/mds-timer",
+    name: "MDS Timer",
+    element: (
+      <ServiceAdminRoute>
+        <Mdstimer />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/mds-timer/update/:site_id/:block",
+    name: "MDS Timer",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateMdsTimer />
+      </ServiceAdminRoute>
+    ),
+  },
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {
@@ -6320,6 +6403,24 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <MdsDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds-timer",
+    name: "MDS Timer",
+    element: (
+      <ServiceUserRoute>
+        <Mdstimer />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/mds-timer/update/:site_id/:block",
+    name: "MDS Timer",
+    element: (
+      <ServiceUserRoute>
+        <UpdateMdsTimer />
       </ServiceUserRoute>
     ),
   },
