@@ -252,12 +252,14 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CAlert,
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CRow,
 } from "@coreui/react";
+import TimerInstructionModal from "../../../components/TimerInstructionModal";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -289,7 +291,7 @@ const UpdateTimer = () => {
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
-
+  const [showModal, setShowModal] = useState(false);
   const [timerData, setTimerData] = useState({
     timer1: "",
     timer1_date: "",
@@ -347,6 +349,10 @@ const UpdateTimer = () => {
   if (userInfo.role === "Master Admin") adminroute = "master-admin";
   else if (userInfo.role === "Service Admin") adminroute = "service-admin";
   else if (userInfo.role === "Project Admin") adminroute = "project-admin";
+  else if (userInfo.role === "Project User") adminroute = "project-user";
+  else if (userInfo.role === "Service User") adminroute = "service-user";
+  else if (userInfo.role === "Master User") adminroute = "master-user";
+  else if (userInfo.role === "Client Admin") adminroute = "client-admin";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -413,13 +419,22 @@ const UpdateTimer = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className=" mt-4">
       <CCard>
-        <CCardHeader>
-          Update Timer -{" "}
-          <b className="badge bg-success">
-            {site_id} : {block}
-          </b>
+        <CCardHeader className="d-flex justify-content-between align-items-center flex-wrap">
+          <div>
+            Update Timer -{" "}
+            <b className="badge bg-success">
+              {site_id} : {block}
+            </b>
+          </div>
+          <CButton size="sm" color="info" onClick={() => setShowModal(true)}>
+            ?
+          </CButton>
+          <TimerInstructionModal
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+          />
         </CCardHeader>
         {loading ? (
           <div className="d-flex mt-2 justify-content-center align-items-center">

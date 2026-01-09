@@ -107,6 +107,7 @@ const MetricModal = ({ visible, onClose, metric }) => {
       size="xl"
       onClose={onClose}
       backdrop="static"
+      scrollable
     >
       <CModalHeader
         closeButton={false}
@@ -131,12 +132,12 @@ const MetricModal = ({ visible, onClose, metric }) => {
         </div>
       </CModalHeader>
 
-      <CModalBody>
+      <CModalBody style={{ width: "100vw" }} className="">
         {loading ? (
           <LoadingSpinner />
         ) : (
           <CChartLine
-            style={{ height: "550px", width: "100%" }}
+            style={{ height: "480px", width: "100%" }}
             data={{
               labels: metrics.labels,
               datasets: metric.datasets(metrics),

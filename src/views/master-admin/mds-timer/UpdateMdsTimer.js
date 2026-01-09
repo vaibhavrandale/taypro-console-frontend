@@ -114,6 +114,10 @@ const UpdateMdsTimer = () => {
   if (userInfo.role === "Master Admin") adminroute = "master-admin";
   else if (userInfo.role === "Service Admin") adminroute = "service-admin";
   else if (userInfo.role === "Project Admin") adminroute = "project-admin";
+  else if (userInfo.role === "Project User") adminroute = "project-user";
+  else if (userInfo.role === "Service User") adminroute = "service-user";
+  else if (userInfo.role === "Master User") adminroute = "master-user";
+  else if (userInfo.role === "Client Admin") adminroute = "client-admin";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -180,9 +184,9 @@ const UpdateMdsTimer = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className=" mt-4">
       <CCard>
-        <CCardHeader className="my-2 d-flex justify-content-between align-items-center">
+        <CCardHeader className="my-2 d-flex justify-content-between align-items-center flex-wrap">
           <div className="d-flex justify-content-start align-items-center">
             Update MDS Timer -
             <CBadge color="warning" className="p-2 ms-2">

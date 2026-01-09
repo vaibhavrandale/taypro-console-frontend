@@ -194,9 +194,17 @@ const Sites = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
-                    to={`/${adminroute}/cleaning-log-sites/${site.site_id}`}
+                    to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site.site_id}`}
                   >
                     Manage
+                  </Link>
+                  <Link
+                    color="success"
+                    size="sm"
+                    className="btn btn-success btn-sm m-1"
+                    to={`/${adminroute}/cleaning-log-sites/cleaning-report/${site.site_id}`}
+                  >
+                    Report
                   </Link>
                 </CTableDataCell>
               </CTableRow>

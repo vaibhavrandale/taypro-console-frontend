@@ -1704,6 +1704,7 @@ const RobotOperating = () => {
                           <div className="d-flex flex-wrap gap-2">
                             <CButton
                               className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              disabled={robot.dock === "left" ? true : false}
                               onClick={() =>
                                 sendsingleDownlink(setDockAtLeft, 23)
                               }
@@ -1720,6 +1721,7 @@ const RobotOperating = () => {
                             </CButton>
                             <CButton
                               className="btn btn-sm btn-secondary m-1 shadow-sm"
+                              disabled={robot.dock === "right" ? true : false}
                               onClick={() =>
                                 sendsingleDownlink(setDockAtRight, 24)
                               }

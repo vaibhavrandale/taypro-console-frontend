@@ -57,15 +57,15 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false };
     case "DELETE_RESET":
       return { ...state, deleteSuccess: false };
-    
+
     case "SOCKET_UPDATE":
       // ✅ Handle socket updates - silently update robots without showing spinner
       // Keep loading state unchanged (don't trigger loading spinner)
-      return { 
-        ...state, 
+      return {
+        ...state,
         robots: action.payload,
         // Explicitly keep loading false to prevent spinner
-        loading: false 
+        loading: false,
       };
 
     default:
@@ -214,7 +214,7 @@ const RobotTracker = () => {
     const handleUpdate = ({ tracking }) => {
       // ✅ Silent update - no console logs to avoid unnecessary re-renders
       const newPoint = parseInt(tracking.uplink?.data || "0", 10);
-      
+
       // ✅ Get current robots from ref (updated by useEffect)
       const currentRobots = robotsRef.current;
       const index = currentRobots.findIndex(
@@ -222,29 +222,29 @@ const RobotTracker = () => {
       );
 
       let updatedRobots;
-      
+
       // ✅ Case 1: Robot already exists - update it with new data
       if (index !== -1) {
         const existing = currentRobots[index];
         updatedRobots = [...currentRobots];
-        
+
         // ✅ Merge track_details intelligently (avoid duplicates)
         const existingTrackDetails = existing.track_details || [];
         const newTrackDetails = tracking.track_details || [];
         const trackDetailsMap = new Map();
-        
+
         // Add existing track details to map
         existingTrackDetails.forEach((td) => {
           const key = `${td.point}_${new Date(td.timestamp).getTime()}`;
           trackDetailsMap.set(key, td);
         });
-        
+
         // Add new track details (will overwrite duplicates)
         newTrackDetails.forEach((td) => {
           const key = `${td.point}_${new Date(td.timestamp).getTime()}`;
           trackDetailsMap.set(key, td);
         });
-        
+
         // ✅ Update the robot with complete new data - prioritize new tracking data
         updatedRobots[index] = {
           ...tracking, // Start with new tracking data (has all latest fields)
@@ -267,7 +267,7 @@ const RobotTracker = () => {
         // ✅ Case 2: Robot not found → add as new
         updatedRobots = [tracking, ...currentRobots];
       }
-      
+
       // ✅ Dispatch socket update action
       dispatch({
         type: "SOCKET_UPDATE",
@@ -520,7 +520,7 @@ const RobotTracker = () => {
               {clientAdminRole.includes(userInfo.role) && (
                 <Link
                   className="btn btn-sm btn-warning"
-                  to={`/${adminroute}/cleaning-log-sites/${site_id}`}
+                  to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}`}
                 >
                   Log
                 </Link>
@@ -585,7 +585,10 @@ const RobotTracker = () => {
                   filteredRobot
                     .filter((r) => !selectedBlock || r.block === selectedBlock)
                     .map((robot) => (
-                      <div className="col-md-12 my-1" key={robot._id || robot.robot_no}>
+                      <div
+                        className="col-md-12 my-1"
+                        key={robot._id || robot.robot_no}
+                      >
                         <Robot
                           robot={robot}
                           handleRobotClick={handleRobotClick}

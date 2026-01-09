@@ -242,12 +242,13 @@ const Gateways = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
             <CTableHeaderCell>Gateway Name</CTableHeaderCell>
+            <CTableHeaderCell>Gateway Status</CTableHeaderCell>
             <CTableHeaderCell>Gateway ID in Console</CTableHeaderCell>
             <CTableHeaderCell>Gateway EUI</CTableHeaderCell>
             <CTableHeaderCell>Type</CTableHeaderCell>
             <CTableHeaderCell>Latitude</CTableHeaderCell>
             <CTableHeaderCell>Longitude</CTableHeaderCell>
-            <CTableHeaderCell>Gateway Status</CTableHeaderCell>
+
             <CTableHeaderCell>Actions</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -278,6 +279,13 @@ const Gateways = () => {
                 <CTableRow key={index}>
                   <CTableHeaderCell>{index + 1}</CTableHeaderCell>
                   <CTableDataCell>{gateway.gateway_id}</CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "160px" }}>
+                    {gateway.gateway_status ? (
+                      <CBadge color="success">Online</CBadge>
+                    ) : (
+                      <CBadge color="danger">Offline</CBadge>
+                    )}
+                  </CTableDataCell>
                   <CTableDataCell>
                     {gateway.gateway_id_in_lns_server}
                   </CTableDataCell>
@@ -295,13 +303,7 @@ const Gateways = () => {
                       ? gateway.gateway_longitude
                       : "N/A"}
                   </CTableDataCell>
-                  <CTableDataCell style={{ minWidth: "160px" }}>
-                    {gateway.gateway_status ? (
-                      <CBadge color="success">Online</CBadge>
-                    ) : (
-                      <CBadge color="danger">Offline</CBadge>
-                    )}
-                  </CTableDataCell>
+
                   <CTableDataCell
                     style={{
                       minWidth: [

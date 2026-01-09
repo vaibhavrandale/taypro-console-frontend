@@ -664,7 +664,7 @@ const SiteTechnicianAddDpr = () => {
   };
 
   return (
-    <div className="container mt-6">
+    <div className=" mt-6">
       <CCard>
         <CCardHeader>
           <h4>Create DPR</h4>
@@ -1528,8 +1528,8 @@ const SiteTechnicianAddDpr = () => {
                   <CTableRow>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
                     <CTableHeaderCell>Block</CTableHeaderCell>
-                    <CTableHeaderCell>DevEUI</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
+                    {/* <CTableHeaderCell>DevEUI</CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell> */}
                     <CTableHeaderCell>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
@@ -1538,7 +1538,7 @@ const SiteTechnicianAddDpr = () => {
                     <CTableRow key={index}>
                       <CTableDataCell>{robot.robot_no}</CTableDataCell>
                       <CTableDataCell>{robot.block}</CTableDataCell>
-                      <CTableDataCell>{robot.deveui}</CTableDataCell>
+                      {/* <CTableDataCell>{robot.deveui}</CTableDataCell>
                       <CTableDataCell>
                         <CBadge
                           color={
@@ -1547,7 +1547,7 @@ const SiteTechnicianAddDpr = () => {
                         >
                           {robot.lora_state || "Unknown"}
                         </CBadge>
-                      </CTableDataCell>
+                      </CTableDataCell> */}
                       <CTableDataCell>
                         <CButton
                           color="danger"

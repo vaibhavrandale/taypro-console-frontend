@@ -271,6 +271,8 @@ const SubscriptionViewPage = () => {
     html2pdf().from(content).set(opt).save();
   };
 
+  const invoice = subscription.invoice[subscription.invoice.length - 1];
+
   return (
     <div className="">
       {loading ? (
@@ -365,6 +367,19 @@ const SubscriptionViewPage = () => {
                       <div>
                         <CBadge color="warning">
                           {subscription?.frequency.toUpperCase()}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                    <CCol md={6}>
+                      <small className="text-success">Payment Status</small>
+                      <div>
+                        {" "}
+                        <CBadge
+                          color={`${
+                            invoice.status === "Paid" ? "success" : "danger"
+                          }`}
+                        >
+                          {invoice.status === "Paid" ? "Paid" : "Pending"}
                         </CBadge>
                       </div>
                     </CCol>

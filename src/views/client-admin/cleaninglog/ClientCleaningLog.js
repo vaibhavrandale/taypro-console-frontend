@@ -45,7 +45,7 @@ const reducer = (state, action) => {
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
       };
-    case "FETCH_FAIL":
+    case "FETCH_CLEANING_FAIL":
       return {
         ...state,
         cleaningLoading: false,
@@ -194,14 +194,12 @@ const ClientCleaningLog = () => {
         });
       } catch (error) {
         dispatch({
-          type: "FETCH_FAIL",
-          payload: error.response?.data?.error || error.response?.data?.message,
+          type: "FETCH_CLEANING_FAIL",
+          payload: error.response.data.error || error.response.data.message,
           subscriptiondata: error.response?.data?.data,
           subscriptionStatus: error.response?.data.subscriptionStatus,
         });
-        toast.error(
-          error.response?.data?.error || error.response?.data?.message
-        );
+        toast.error(error.response.data.error || error.response.data.message);
       }
     };
     const fetchOfflineLogs = async () => {
@@ -225,6 +223,8 @@ const ClientCleaningLog = () => {
         dispatch({
           type: "FETCH_OFFLINE_LOGS_FAIL",
           payload: error.response.data.error || error.response.data.message,
+          subscriptiondata: error.response?.data?.data,
+          subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(error.response.data.error || error.response.data.message);
       }
@@ -758,13 +758,14 @@ const ClientCleaningLog = () => {
         <SubscriptionExpiryCard
           data={subscriptiondata}
           subscriptionStatus={subscriptionStatus}
-          error={errorLogError || cleaningError || timerLogError}
+          error={offlineLogError || cleaningError}
         />
-      ) : errorLogError || cleaningError || timerLogError ? (
-        <CAlert className="p-2 w-50" color="danger">
-          {errorLogError || cleaningError || timerLogError}
-        </CAlert>
       ) : (
+        //  errorLogError || cleaningError || timerLogError ? (
+        //   <CAlert className="p-2 w-50" color="danger">
+        //     {errorLogError || cleaningError || timerLogError}
+        //   </CAlert>
+        // ) :
         <div>
           {/* ================= HEADER + FILTERS ================= */}
           <h5 className="text-center mb-3">
