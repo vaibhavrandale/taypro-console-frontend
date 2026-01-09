@@ -357,7 +357,9 @@ const CleaningSummary = () => {
                     <CTableHeaderCell style={{ minWidth: "150px" }}>
                       Failure Reason
                     </CTableHeaderCell>
-                    <CTableHeaderCell style={{ minWidth: "150px" }}>Comments</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "150px" }}>
+                      Comments
+                    </CTableHeaderCell>
                   </>
                 )}
               </CTableRow>
