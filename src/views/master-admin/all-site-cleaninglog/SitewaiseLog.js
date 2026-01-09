@@ -1410,7 +1410,7 @@ const SitewaiseLog = () => {
     mergedData.push(["Error Logs"]);
 
     if (failureLogs?.length) {
-      mergedData.push(["Sr No", "Robot No", "Block", "Error Type"]);
+      mergedData.push(["Sr No", "Robot No", "Block", "Error Type", "Comments"]);
 
       failureLogs.forEach((log, index) => {
         mergedData.push([
@@ -1418,6 +1418,7 @@ const SitewaiseLog = () => {
           log.robot_no || "N/A",
           log.block || "N/A",
           log.cleaning?.battery_dead ? "Incomplete" : "Cleaning Cancelled",
+          log.comments,
         ]);
       });
     } else {
@@ -2087,6 +2088,7 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>Is Duplicate</CTableHeaderCell>
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
+                          <CTableHeaderCell>Comments</CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
 
@@ -2124,6 +2126,7 @@ const SitewaiseLog = () => {
                                   ? "In Complete"
                                   : "Cleaning Cancelled"}
                               </CTableDataCell>
+                              <CTableDataCell>{log.comments}</CTableDataCell>
                             </CTableRow>
                           ))
                         ) : (

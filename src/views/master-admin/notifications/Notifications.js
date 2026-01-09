@@ -42,6 +42,13 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "UPDATE_REQUEST":
+      return { ...state, loadingUpdate: true, updateError: "" };
+    case "UPDATE_SUCCESS":
+      return { ...state, loadingUpdate: false, updateError: "" };
+    case "UPDATE_FAIL":
+      return { ...state, loadingUpdate: false, updateError: action.payload };
+
     default:
       return state;
   }
@@ -49,17 +56,25 @@ const reducer = (state, action) => {
 
 const Notifications = () => {
   const [
-    { loading, notifications, totalPages, hasNextPage, hasPrevPage },
+    {
+      loading,
+      notifications,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      updateError,
+      loadingUpdate,
+    },
     dispatch,
   ] = useReducer(reducer, {
     notifications: [],
     loading: false,
-
     error: "",
-
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
+    loadingUpdate: false,
+    updateError: "",
   });
   const authtoken = useSelector((state) => state.authtoken);
 
@@ -103,7 +118,6 @@ const Notifications = () => {
             Authorization: `Bearer ${authtoken}`, // Attach Authorization token
           },
         });
-
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit)
         );
@@ -178,10 +192,49 @@ const Notifications = () => {
     }
   };
 
+  const readAllNotifications = async () => {
+    try {
+      dispatch({ type: "UPDATE_REQUEST" });
+      const resposne = await axios.put(
+        `/api/v1/notifications/read-allnotifications-by-user`, // API call with notification ID
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authtoken}`, // Authorization header
+          },
+        }
+      );
+
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success(resposne.data.message);
+    } catch (error) {
+      toast.error(error.response.data.error || error.response.data.message);
+      dispatch({
+        type: "UPDATE_FAIL",
+        payload: error.response.data.error || error.response.data.message,
+      });
+    }
+  };
+
   return (
     <div className="m-2">
-      <h2>📢 System Notifications</h2>
-
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>📢 System Notifications</h2>
+        <CButton
+          color="primary"
+          size="sm"
+          className="mb-2"
+          onClick={readAllNotifications}
+          disabled={loadingUpdate}
+        >
+          {loadingUpdate ? <LoadingSpinner /> : "Mark All as Read"}
+        </CButton>
+      </div>
+      {updateError && (
+        <p className="text-danger text-end">
+          Error updating notifications: {updateError}
+        </p>
+      )}
       {/* 🔍 Search Input */}
       <CRow className="justify-content-end">
         <CCol md={4}>

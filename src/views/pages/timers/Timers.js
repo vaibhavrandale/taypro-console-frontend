@@ -107,7 +107,7 @@ const Timers = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="">
       <h2>⏳ Timers Management</h2>
 
       {/* 📌 Site Filter */}

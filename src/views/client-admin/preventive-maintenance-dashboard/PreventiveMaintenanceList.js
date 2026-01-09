@@ -19,6 +19,7 @@ import {
   CFormSelect,
   CFormInput,
   CButton,
+  CBadge,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
@@ -419,9 +420,9 @@ const PreventiveMaintenanceList = () => {
                       ) : (
                         <CTableRow>
                           <CTableDataCell colSpan={15} className="text-start">
-                            <span className="badge bg-danger">
+                            <CBadge className="badge bg-danger">
                               No Data Found
-                            </span>
+                            </CBadge>
                           </CTableDataCell>
                         </CTableRow>
                       )}

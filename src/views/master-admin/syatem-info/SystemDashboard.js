@@ -244,8 +244,7 @@ const SystemDashboard = () => {
                   </p>
                   <p>Used: {(sysInfo.memory_mb?.used / 1024).toFixed(2)} GB</p>
                   <p>
-                    Available:{" "}
-                    {(sysInfo.memory_mb?.available / 1024).toFixed(2)} GB
+                    Available: {(sysInfo.memory_mb?.free / 1024).toFixed(2)} GB
                   </p>
                   <CProgress value={memoryPercent} />
                   <div className="mt-2">

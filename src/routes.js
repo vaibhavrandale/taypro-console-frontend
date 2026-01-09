@@ -194,6 +194,7 @@ import CustomNofifications from "./views/master-admin/custom-notifications/Custo
 import SystemDashboard from "./views/master-admin/syatem-info/SystemDashboard";
 import Mdstimer from "./views/master-admin/mds-timer/Mdstimer";
 import UpdateMdsTimer from "./views/master-admin/mds-timer/UpdateMdsTimer";
+import CleaningSummary from "./views/master-admin/all-site-cleaninglog/cleaning-report/CleaningSummary";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1056,6 +1057,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <AllSiteCleaningLog />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Master Admin Cleaning Report",
+    element: (
+      <MasterAdminRoute>
+        <CleaningSummary />
       </MasterAdminRoute>
     ),
   },
@@ -2388,11 +2398,20 @@ const routes = [
     ),
   },
   {
-    path: "/master-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
-    name: "Master User Sitewise Cleaning Log",
+    path: "/master-user/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Master User Cleaning Report",
+    element: (
+      <MasterAdminRoute>
+        <CleaningSummary />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-user/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Master User Cleaning Report",
     element: (
       <MasterUserRoute>
-        <SitewaiseLog />
+        <CleaningSummary />
       </MasterUserRoute>
     ),
   },
@@ -3380,15 +3399,17 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
   {
-    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
-    name: "Master Admin Sitewise Cleaning Log",
+    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/cleaning-report/:site_id",
+    name: "Project Admin Sitewise Cleaning Log",
     element: (
-      <MasterAdminRoute>
-        <SitewaiseLog />
-      </MasterAdminRoute>
+      <ProjectAdminRoute>
+        <CleaningSummary />
+      </ProjectAdminRoute>
     ),
   },
+
   {
     path: "/project-admin/timers",
     name: "All Site Timers",
@@ -4202,11 +4223,11 @@ const routes = [
     ),
   },
   {
-    path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
-    name: "Master Admin Sitewise Cleaning Log",
+    path: "/project-user/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Project User Cleaning Report",
     element: (
       <ProjectUserRoute>
-        <SitewaiseLog />
+        <CleaningSummary />
       </ProjectUserRoute>
     ),
   },
@@ -5055,6 +5076,16 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <SitewaiseLog />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Service Admin Cleaning Report",
+    element: (
+      <ServiceAdminRoute>
+        <CleaningSummary />
       </ServiceAdminRoute>
     ),
   },
@@ -5921,6 +5952,16 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <SitewaiseLog />
+      </ServiceUserRoute>
+    ),
+  },
+
+  {
+    path: "/service-user/all-site-cleaning-log/cleaning-report/:site_id",
+    name: "Service User Cleaning Report",
+    element: (
+      <ServiceUserRoute>
+        <CleaningSummary />
       </ServiceUserRoute>
     ),
   },
@@ -6876,8 +6917,19 @@ const routes = [
       </ClientAdminRoute>
     ),
   },
+
   {
-    path: "/client-admin/cleaning-log-sites/:site_id",
+    path: "/client-admin/cleaning-log-sites/cleaning-report/:site_id",
+    name: "Cleaning Report",
+    element: (
+      <ClientAdminRoute>
+        <CleaningSummary />
+      </ClientAdminRoute>
+    ),
+  },
+  //hre
+  {
+    path: "/client-admin/cleaning-log-sites/daywise-cleaning/:site_id",
     name: "Cleaning Log",
     element: (
       <ClientAdminRoute>
