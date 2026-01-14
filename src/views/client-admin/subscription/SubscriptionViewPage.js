@@ -271,7 +271,8 @@ const SubscriptionViewPage = () => {
     html2pdf().from(content).set(opt).save();
   };
 
-  const invoice = subscription.invoice[subscription.invoice.length - 1];
+  const invoice =
+    subscription && subscription.invoice[subscription.invoice.length - 1];
 
   return (
     <div className="">
