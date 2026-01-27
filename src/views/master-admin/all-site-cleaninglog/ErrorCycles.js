@@ -51,7 +51,7 @@ import {
 } from "@coreui/react";
 import React from "react";
 
-const CompletedCycles = ({ errorlogs }) => {
+const ErrorCycles = ({ errorlogs }) => {
   const cycle1 = [];
   const cycle2 = [];
   const cycle3 = [];
@@ -409,4 +409,4 @@ const CompletedCycles = ({ errorlogs }) => {
   );
 };
 
-export default CompletedCycles;
+export default ErrorCycles;
