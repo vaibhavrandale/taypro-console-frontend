@@ -14,7 +14,7 @@ import {
   CCardHeader,
   CBadge,
   CButton,
-  CModalFooter,
+  // CModalFooter,
   CModalHeader,
   CModal,
   CModalTitle,
@@ -145,7 +145,7 @@ const Timers = () => {
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -203,7 +203,7 @@ const Timers = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -328,7 +328,7 @@ const Timers = () => {
                         </Link>
                       </CTableDataCell>
                     </CTableRow>
-                  ))
+                  )),
                 )
               ) : (
                 <CTableRow>
