@@ -98,7 +98,7 @@ export default function CustomNotifications() {
       const res = await axios.post(
         "/api/v1/customnotifications/list",
         { pg: page, limit },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({
@@ -165,7 +165,7 @@ export default function CustomNotifications() {
       const res = await axios.put(
         `/api/v1/customnotifications/${selectedItem._id}`,
         editForm,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       let message = res.data.message;
 
@@ -190,8 +190,8 @@ export default function CustomNotifications() {
         readFilter === "all"
           ? true
           : readFilter === "read"
-          ? user.read_status === true
-          : user.read_status === false;
+            ? user.read_status === true
+            : user.read_status === false;
 
       const matchesRole =
         roleFilter === "all" ? true : user.role === roleFilter;
@@ -227,7 +227,7 @@ export default function CustomNotifications() {
   const handleDelete = async (id, subject) => {
     try {
       const confirmed = window.confirm(
-        `Are you sure you want to delete this notification of subject -${subject}? This action cannot be undone.`
+        `Are you sure you want to delete this notification of subject -${subject}? This action cannot be undone.`,
       );
 
       if (!confirmed) return;
@@ -236,7 +236,7 @@ export default function CustomNotifications() {
       const res = await axios.delete(
         `/api/v1/customnotifications/${id}`,
 
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       let message = res.data.message;
 
@@ -325,7 +325,7 @@ export default function CustomNotifications() {
                               minute: "2-digit",
                               second: "2-digit",
                               hour12: true,
-                            }
+                            },
                           )}
                         </small>
                       </div>
@@ -482,9 +482,13 @@ export default function CustomNotifications() {
                   <h6 className="text-muted mb-2">Key Points</h6>
                   <ul className="ps-3">
                     {selectedItem.points.map((point, idx) => (
-                      <li key={idx} className="mb-1">
-                        {point}
-                      </li>
+                      <li
+                        key={idx}
+                        className="mb-1"
+                        dangerouslySetInnerHTML={{
+                          __html: point,
+                        }}
+                      ></li>
                     ))}
                   </ul>
                 </div>
@@ -582,7 +586,7 @@ export default function CustomNotifications() {
                       <option key={idx} value={role}>
                         {role}
                       </option>
-                    )
+                    ),
                   )}
                 </select>
               </div>
@@ -800,7 +804,7 @@ export default function CustomNotifications() {
                     size="sm"
                     onClick={() => {
                       const updated = editForm.points.filter(
-                        (_, i) => i !== index
+                        (_, i) => i !== index,
                       );
                       setEditForm({ ...editForm, points: updated });
                     }}
@@ -833,7 +837,7 @@ export default function CustomNotifications() {
                         const updatedRoles = e.target.checked
                           ? [...(editForm.for_user_roles || []), roleName]
                           : editForm.for_user_roles.filter(
-                              (r) => r !== roleName
+                              (r) => r !== roleName,
                             );
 
                         setEditForm({
@@ -953,7 +957,7 @@ export default function CustomNotifications() {
                   size="sm"
                   onClick={() => {
                     const images = editForm.images.filter(
-                      (_, i) => i !== index
+                      (_, i) => i !== index,
                     );
                     setEditForm({ ...editForm, images });
                   }}
@@ -1095,7 +1099,7 @@ export default function CustomNotifications() {
                         const roles = e.target.checked
                           ? [...addForm.for_user_roles, roleName]
                           : addForm.for_user_roles.filter(
-                              (r) => r !== roleName
+                              (r) => r !== roleName,
                             );
 
                         setAddForm({ ...addForm, for_user_roles: roles });

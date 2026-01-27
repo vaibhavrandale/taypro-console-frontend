@@ -535,6 +535,11 @@ const _nav = [
             name: "MQTT Dashboard",
             to: "/master-admin/mqtt-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "MQTT Events",
+            to: "/master-admin/mqtt-events-per-robot",
+          },
         ],
       },
       {

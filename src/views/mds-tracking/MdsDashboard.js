@@ -159,7 +159,7 @@ const MdsDashboard = () => {
           },
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
       } catch (err) {
@@ -178,7 +178,7 @@ const MdsDashboard = () => {
             `/api/v1/mds-device/get-mdsno-by-site-and-block/${site_id}/Block-1`,
             {
               headers: { Authorization: `Bearer ${authtoken}` },
-            }
+            },
           );
           dispatch({
             type: "FETCH_MDS_DEVICES_SUCCESS",
@@ -204,7 +204,7 @@ const MdsDashboard = () => {
       type: "FETCH_SUCCESS",
       payload: () => {
         const index = mdsRef.current.findIndex(
-          (m) => m._id === tracking._id || m.mds_no === tracking.mds_no
+          (m) => m._id === tracking._id || m.mds_no === tracking.mds_no,
         );
 
         if (index !== -1) {
@@ -214,17 +214,17 @@ const MdsDashboard = () => {
           const mergedPositions = mergeUniqueArrayByKey(
             existing.mds_positions || [],
             tracking.mds_positions || [],
-            "row_number"
+            "row_number",
           );
 
           const mergedActivity = mergeLastActivity(
             existing.last_activity || [],
-            tracking.last_activity || []
+            tracking.last_activity || [],
           );
 
           const mergedRows = mergeRows(
             existing.rows || [],
-            tracking.rows || []
+            tracking.rows || [],
             // "_id"
           );
 
@@ -320,9 +320,9 @@ const MdsDashboard = () => {
         <>
           <CRow className="m-1 d-flex justify-content-between align-items-center">
             <CCol md={3}>
-              <h4 className="text-light text-center text-success">
+              <h5 className="text-light text-center text-success">
                 MDS And Robot Tracking
-              </h4>
+              </h5>
             </CCol>
             <CCol md={3}>
               <CFormSelect
@@ -348,13 +348,13 @@ const MdsDashboard = () => {
                   value={mdsDevice}
                   onChange={(e) => {
                     const selectedMds = allMdsDevices.find(
-                      (mds) => mds.mds_no === e.target.value
+                      (mds) => mds.mds_no === e.target.value,
                     );
 
                     if (selectedMds) {
                       setMdsDevice(e.target.value);
                       navigate(
-                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`
+                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`,
                       );
                     }
                   }}
@@ -378,6 +378,17 @@ const MdsDashboard = () => {
                 onChange={(e) => setDate(e.target.value)}
               />
             </CCol>
+            {site_id && (
+              <CCol md={1}>
+                <Link
+                  className="btn btn-sm "
+                  target="blank"
+                  to={`/${adminroute}/mds-logs/${site_id}`}
+                >
+                  Logs
+                </Link>
+              </CCol>
+            )}
           </CRow>
 
           {mdsdevices.length > 0 ? (
@@ -388,7 +399,7 @@ const MdsDashboard = () => {
               const { isDocked, isMoving } = getMdsStatus(data);
 
               const activeMdsPosition = data?.mds_positions.find(
-                (p) => p.active || (p.robot_released && !p.robot_returned)
+                (p) => p.active || (p.robot_released && !p.robot_returned),
               );
 
               const activeRowNumber = isDocked
@@ -426,11 +437,11 @@ const MdsDashboard = () => {
                             row,
                             activeRowNumber,
                             isDocked,
-                            data
+                            data,
                           );
 
                         const mdsPosition = data?.mds_positions.find(
-                          (p) => p.row_number === row.row_no
+                          (p) => p.row_number === row.row_no,
                         );
 
                         const showMdsBridge =

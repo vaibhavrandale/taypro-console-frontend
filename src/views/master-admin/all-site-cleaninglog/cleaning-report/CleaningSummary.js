@@ -87,7 +87,7 @@ const CleaningSummary = () => {
           data,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -117,10 +117,10 @@ const CleaningSummary = () => {
   };
 
   const filteredMainData = data.filter((item) =>
-    item.date.toLowerCase().includes(mainSearch.toLowerCase())
+    item.date.toLowerCase().includes(mainSearch.toLowerCase()),
   );
   const filteredModalRobots = modalData.robots.filter((robot) =>
-    robot.robot_no.toLowerCase().includes(modalSearch.toLowerCase())
+    robot.robot_no.toLowerCase().includes(modalSearch.toLowerCase()),
   );
 
   return (
@@ -265,7 +265,7 @@ const CleaningSummary = () => {
                               handleViewDetails(
                                 item.date,
                                 "success",
-                                item.success_robots
+                                item.success_robots,
                               )
                             }
                           >
@@ -279,7 +279,7 @@ const CleaningSummary = () => {
                               handleViewDetails(
                                 item.date,
                                 "failure",
-                                item.failure_robots
+                                item.failure_robots,
                               )
                             }
                           >
@@ -387,7 +387,7 @@ const CleaningSummary = () => {
                                   minute: "2-digit",
                                   second: "2-digit",
                                   hour12: true,
-                                }
+                                },
                               )
                             : "N/A"}
                         </CTableDataCell>
@@ -403,7 +403,7 @@ const CleaningSummary = () => {
                                   minute: "2-digit",
                                   second: "2-digit",
                                   hour12: true,
-                                }
+                                },
                               )
                             : "N/A"}
                         </CTableDataCell>
@@ -428,14 +428,14 @@ const CleaningSummary = () => {
                                   minute: "2-digit",
                                   second: "2-digit",
                                   hour12: true,
-                                }
+                                },
                               )
                             : "N/A"}
                         </CTableDataCell>
                         <CTableDataCell>
                           {robot.cleaning.battery_dead_at
                             ? new Date(
-                                robot.cleaning.battery_dead_at
+                                robot.cleaning.battery_dead_at,
                               ).toLocaleString("en-GB", {
                                 day: "2-digit",
                                 month: "2-digit",
@@ -446,27 +446,32 @@ const CleaningSummary = () => {
                                 hour12: true,
                               })
                             : robot.cleaning.cleaning_cancelled_at
-                            ? new Date(
-                                robot.cleaning.cleaning_cancelled_at
-                              ).toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                              })
-                            : "N/A"}
+                              ? new Date(
+                                  robot.cleaning.cleaning_cancelled_at,
+                                ).toLocaleString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  hour12: true,
+                                })
+                              : "N/A"}
                         </CTableDataCell>
                         <CTableDataCell>
                           {robot.cleaning.battery_dead
                             ? "Battery Dead"
                             : robot.cleaning.cleaning_cancelled
-                            ? "Cleaning Cancelled"
-                            : "N/A"}
+                              ? "Cleaning Cancelled"
+                              : "N/A"}
                         </CTableDataCell>
-                        <CTableDataCell>{robot.comments}</CTableDataCell>
+                        <CTableDataCell>
+                          {robot.comments ===
+                          "🚫 Emergency Stop By undefined (undefined)"
+                            ? "🚫 Emergency Stop By Admin"
+                            : robot.comments}
+                        </CTableDataCell>
                       </>
                     )}
                   </CTableRow>
