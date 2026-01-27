@@ -110,11 +110,11 @@ const SitesCoordinates = () => {
           pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -148,7 +148,7 @@ const SitesCoordinates = () => {
       coordinates.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       coordinates.longitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
       coordinates.latitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      coordinates.radius.toLowerCase().includes(searchTerm.toLowerCase())
+      coordinates.radius.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Open modal and load coordinates data
@@ -182,7 +182,7 @@ const SitesCoordinates = () => {
     }
     if (
       window.confirm(
-        `Are you sure you want to delete Site Coordinate Data of - ${coordinates.site_id}`
+        `Are you sure you want to delete Site Coordinate Data of - ${coordinates.site_id}`,
       )
     ) {
       try {
@@ -191,7 +191,7 @@ const SitesCoordinates = () => {
         });
 
         toast.success(
-          `Site Coordinate Data of - ${coordinates.site_id} deleted successfully`
+          `Site Coordinate Data of - ${coordinates.site_id} deleted successfully`,
         );
         dispatch({ type: "DELETE_SUCCESS" });
       } catch (err) {
@@ -215,7 +215,7 @@ const SitesCoordinates = () => {
         Longitude: item.longitude,
         Latitude: item.latitude,
         "Radius(cm)": item.radius,
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sites Coordinates");
@@ -246,17 +246,7 @@ const SitesCoordinates = () => {
       <h2 className="text-center mt-4">Site Coordinates List</h2>
       <div className="d-flex justify-content-end mb-3">
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && (
-          <Link
-            className="btn btn-sm btn-secondary m-1"
-            to={`/${adminroute}/sites-coordinates/add-sitescoordinates`}
-          >
-            Add
-          </Link>
-        )}{" "}
-        {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             className="btn btn-sm btn-secondary m-1"
@@ -265,6 +255,7 @@ const SitesCoordinates = () => {
             Add
           </Link>
         )}
+
         <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
           Export
         </Link>
@@ -312,7 +303,6 @@ const SitesCoordinates = () => {
             </CTableRow>
           ) : error ? (
             <CTableRow>
-              {" "}
               <CTableDataCell colSpan="9" className="text-center fw-bold">
                 {error}
               </CTableDataCell>
@@ -339,7 +329,7 @@ const SitesCoordinates = () => {
                   </Link>
 
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <>
                       <Link

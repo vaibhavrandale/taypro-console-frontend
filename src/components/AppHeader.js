@@ -257,7 +257,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         // console.log(result.data.data);
 
@@ -305,7 +305,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
             {
               headers: { Authorization: `Bearer ${authtoken}` },
-            }
+            },
           );
           dispatch({
             type: "FETCH_FEEDBACK_SUCCESS",
@@ -333,7 +333,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           `/api/v1/robots/get-gateways-and-robots`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         // console.log(response.data.robots);
         // console.log(response.data.gateways);
@@ -349,7 +349,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         localStorage.setItem("robots", JSON.stringify(response.data.robots));
         localStorage.setItem(
           "gateways",
-          JSON.stringify(response.data.gateways)
+          JSON.stringify(response.data.gateways),
         );
       } catch (error) {
         dispatch({
@@ -367,7 +367,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           "/api/v1/notifications/get-ten-notifications",
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let result = response.data.data;
@@ -388,7 +388,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           "/api/v1/customnotifications/active/latest/unread",
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -453,16 +453,16 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     userInfo?.role === "Master Admin"
       ? "/master-admin/notifications"
       : userInfo?.role === "Service Admin"
-      ? "/service-admin/notifications"
-      : userInfo?.role === "Project Admin"
-      ? "/project-admin/notifications"
-      : userInfo?.role === "Master User"
-      ? "/master-user/notifications"
-      : userInfo?.role === "Service User"
-      ? "/service-user/notifications"
-      : userInfo?.role === "Project User"
-      ? "/project-user/notifications"
-      : "/notifications";
+        ? "/service-admin/notifications"
+        : userInfo?.role === "Project Admin"
+          ? "/project-admin/notifications"
+          : userInfo?.role === "Master User"
+            ? "/master-user/notifications"
+            : userInfo?.role === "Service User"
+              ? "/service-user/notifications"
+              : userInfo?.role === "Project User"
+                ? "/project-user/notifications"
+                : "/notifications";
 
   const filteredNotifications = notifications
     ? notifications.filter((notification) => {
@@ -491,8 +491,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     .filter(
       (notification) =>
         !notification.read_status.some(
-          (status) => status.readbyId === userInfo._id && status.read
-        )
+          (status) => status.readbyId === userInfo._id && status.read,
+        ),
     )
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
     .slice(0, 5);
@@ -501,8 +501,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     ? notifications.filter(
         (notification) =>
           !notification.read_status.some(
-            (status) => status.readbyId === userInfo._id && status.read
-          )
+            (status) => status.readbyId === userInfo._id && status.read,
+          ),
       )
     : [];
   const readNotification = async (notify) => {
@@ -515,7 +515,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           headers: {
             Authorization: `Bearer ${authtoken}`, // Authorization header
           },
-        }
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Notification read");
@@ -565,12 +565,12 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     if (value.length > 0) {
       // Filter robots
       const filteredRobots = robots.filter((robot) =>
-        robot.robot_no?.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no?.toLowerCase().includes(value.toLowerCase()),
       );
 
       // Filter gateways
       const filteredGateways = gateways.filter((gateway) =>
-        gateway.gateway_name?.toLowerCase().includes(value.toLowerCase())
+        gateway.gateway_name?.toLowerCase().includes(value.toLowerCase()),
       );
 
       // Store them separately
@@ -616,7 +616,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         formData,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -656,7 +656,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     }
 
     const allUnreadTmerNotifications = timernotification.map(
-      (item) => item._id
+      (item) => item._id,
     );
     dispatch({ type: "UPDATE_TIMER_REQUEST" });
     try {
@@ -665,7 +665,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         { allUnreadTmerNotifications },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -769,7 +769,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         { feedback },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -897,7 +897,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     latestNotifications.map((notification, index) => {
                       const isRead = notification.read_status.some(
                         (status) =>
-                          status.readbyId === userInfo._id && status.read
+                          status.readbyId === userInfo._id && status.read,
                       );
 
                       return (
@@ -933,7 +933,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             >
                               {notification.performed_by.name} |{" "}
                               {moment(notification.timestamp).format(
-                                "MMM DD, YYYY HH:mm"
+                                "MMM DD, YYYY HH:mm",
                               )}
                             </small>
                           </div>
@@ -1479,7 +1479,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                                 </div>
                               </div>
@@ -1526,7 +1526,9 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                 closeButton={false}
                 className="d-flex justify-content-between align-items-center"
               >
-                <CModalTitle className="fw-bold">Alert</CModalTitle>
+                <CModalTitle className="text-warning fw-bold">
+                  New Notification
+                </CModalTitle>
               </CModalHeader>
 
               {/* ---------------- BODY ---------------- */}
@@ -1537,89 +1539,89 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   </div>
                 )}
 
-                <CCard className="shadow-sm border-0 card-hover">
-                  {/* -------- CARD HEADER -------- */}
-                  <CCardHeader className="border-bottom d-flex justify-content-between align-items-center">
-                    <div className="me-3 flex-grow-1">
-                      <h6 className=" mb-1">
-                        {customNotificationData.subject}
-                      </h6>
-                      <small className="text-muted font-italic">
-                        <span>Posted At - </span>
-                        {new Date(
-                          customNotificationData.createdAt
-                        ).toLocaleString("en-GB")}
-                      </small>
-                    </div>
+                {/* <CCard className="shadow-sm border-0 card-hover"> */}
+                {/* -------- CARD HEADER -------- */}
+                <div className="border-bottom d-flex justify-content-between align-items-center">
+                  <div className="me-3 flex-grow-1">
+                    <h6 className=" mb-1">{customNotificationData.subject}</h6>
+                    <small className="text-muted font-italic">
+                      <span>Posted At - </span>
+                      {new Date(
+                        customNotificationData.createdAt,
+                      ).toLocaleString("en-GB")}
+                    </small>
+                  </div>
 
-                    <div className="text-center">
-                      <CImage
-                        src={customNotificationData.posted_by?.profile_image}
-                        alt="posted-by"
-                        width={45}
-                        height={45}
-                        className="rounded-circle border mb-1"
-                        style={{ objectFit: "cover" }}
-                      />
-                      <p className="text-muted small m-0">
-                        {customNotificationData.posted_by?.name}
-                      </p>
-                    </div>
-                  </CCardHeader>
-
-                  {/* -------- CARD BODY -------- */}
-                  <CCardBody className="pt-3">
-                    {/* Description */}
-                    <p className="mb-2 ">
-                      {customNotificationData.description}
+                  <div className="text-center">
+                    <CImage
+                      src={customNotificationData.posted_by?.profile_image}
+                      alt="posted-by"
+                      width={45}
+                      height={45}
+                      className="rounded-circle border mb-1"
+                      style={{ objectFit: "cover" }}
+                    />
+                    <p className="text-muted small m-0">
+                      {customNotificationData.posted_by?.name}
                     </p>
+                  </div>
+                </div>
 
-                    {/* Points */}
-                    {customNotificationData.points?.length > 0 && (
-                      <ul className="">
-                        {customNotificationData.points.map((p, i) => (
-                          <li key={i}>{p}</li>
-                        ))}
-                      </ul>
-                    )}
+                {/* -------- CARD BODY -------- */}
+                {/* <CCardBody className="pt-3"> */}
+                {/* Description */}
+                <p className="m-2 ">{customNotificationData.description}</p>
 
-                    {/* Images */}
-                    {customNotificationData.images?.length > 0 && (
-                      <div className="mt-3 row g-2 border-bottom">
-                        {customNotificationData.images.map((img, idx) => (
-                          <div key={idx} className="col-4 col-md-3 col-lg-2">
-                            <Link to={img} target="blank">
-                              <CImage
-                                src={img}
-                                alt="notification-img"
-                                className="border rounded thumbnail-img"
-                                style={{
-                                  width: "100%",
-                                  height: "100px", // perfect thumbnail height
-                                  objectFit: "cover", // makes it thumbnail-style
-                                }}
-                              />
-                            </Link>
-                          </div>
-                        ))}
+                {/* Points */}
+                {customNotificationData.points?.length > 0 && (
+                  <ul className="">
+                    {customNotificationData.points.map((p, i) => (
+                      <li
+                        key={i}
+                        dangerouslySetInnerHTML={{
+                          __html: p,
+                        }}
+                      ></li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* Images */}
+                {customNotificationData.images?.length > 0 && (
+                  <div className="mt-3 row g-2 border-bottom">
+                    {customNotificationData.images.map((img, idx) => (
+                      <div key={idx} className="col-4 col-md-3 col-lg-2">
+                        <Link to={img} target="blank">
+                          <CImage
+                            src={img}
+                            alt="notification-img"
+                            className="border rounded thumbnail-img"
+                            style={{
+                              width: "100%",
+                              height: "100px", // perfect thumbnail height
+                              objectFit: "cover", // makes it thumbnail-style
+                            }}
+                          />
+                        </Link>
                       </div>
-                    )}
+                    ))}
+                  </div>
+                )}
 
-                    {customNotificationData.is_feedback_required && (
-                      <div className="my-3 ">
-                        <CFormTextarea
-                          rows={3}
-                          value={customNotificationFeedback}
-                          onChange={(e) =>
-                            setCustomNotificationFeedback(e.target.value)
-                          }
-                          label="Feedback*"
-                        ></CFormTextarea>
-                      </div>
-                    )}
-                  </CCardBody>
-                </CCard>
-
+                {customNotificationData.is_feedback_required && (
+                  <div className="my-3 ">
+                    <CFormTextarea
+                      rows={3}
+                      value={customNotificationFeedback}
+                      onChange={(e) =>
+                        setCustomNotificationFeedback(e.target.value)
+                      }
+                      label="Feedback*"
+                    ></CFormTextarea>
+                  </div>
+                )}
+                {/* </CCardBody> */}
+                {/* </CCard> */}
                 {/* -------- FOOTER ACTION -------- */}
                 <div className="text-end mt-3">
                   <CButton
@@ -1756,7 +1758,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                               robotLink(
                                 robot.site_id,
                                 robot.block,
-                                robot.robot_no
+                                robot.robot_no,
                               )
                             }
                             // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}

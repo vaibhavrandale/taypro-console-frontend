@@ -127,11 +127,11 @@ const ExpenseDashboard = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       const total = Math.ceil(
-        Number(result?.data?.data?.total) / Number(result?.data?.data?.limit)
+        Number(result?.data?.data?.total) / Number(result?.data?.data?.limit),
       );
       const hasNextPage = result?.data?.data?.hasNextPage;
       const hasPrevPage = result?.data?.data?.hasPrevPage;
@@ -163,7 +163,7 @@ const ExpenseDashboard = () => {
       const result = await axios.put(
         `/api/v1/expenseclaims/delete-expense/${id}`,
         { reason },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({ type: "DELETE_EXPENSE_SUCCESS", payload: id });
@@ -186,7 +186,7 @@ const ExpenseDashboard = () => {
     (expense) =>
       expense.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       expense.employee_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.department?.toLowerCase().includes(searchTerm.toLowerCase())
+      expense.department?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getStatusBadge = (status) => {
@@ -225,7 +225,7 @@ const ExpenseDashboard = () => {
       const response = await axios.put(
         `/api/v1/expenseclaims/approve/${id}`,
         { console_status: "Approved", remark: remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       console.log(response.data.frappe_response.data.name);
 
@@ -469,7 +469,7 @@ const ExpenseDashboard = () => {
                 <CTableDataCell>
                   <CTooltip
                     content={moment(expense.createdAt).format(
-                      "DD MMM YYYY, hh:mm A"
+                      "DD MMM YYYY, hh:mm A",
                     )}
                   >
                     <span>{moment(expense.createdAt).fromNow()}</span>
@@ -497,7 +497,7 @@ const ExpenseDashboard = () => {
 
                   {/* Update */}
                   {!["Master User", "Service User", "Project User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) &&
                     (userInfo.role !== "Site Technician" ||
                       expense.can_technician_edit) && (
@@ -511,7 +511,7 @@ const ExpenseDashboard = () => {
 
                   {/* Approve (only Admins & if Draft) */}
                   {["Master Admin", "Service Admin", "Project Admin"].includes(
-                    userInfo.role
+                    userInfo.role,
                   ) &&
                     expense.status === "Draft" && (
                       <CButton
@@ -537,7 +537,7 @@ const ExpenseDashboard = () => {
 
                   {/* Delete (only Admins) */}
                   {["Master Admin", "Service Admin", "Project Admin"].includes(
-                    userInfo.role
+                    userInfo.role,
                   ) && (
                     <CButton
                       color="danger"
@@ -556,7 +556,7 @@ const ExpenseDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="10" className="text-center">
+              <CTableDataCell colSpan="12" className="text-center">
                 No expense claims found
               </CTableDataCell>
             </CTableRow>

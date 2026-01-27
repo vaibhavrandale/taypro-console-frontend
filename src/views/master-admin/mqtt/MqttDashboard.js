@@ -1,448 +1,4 @@
-// import React, { useEffect, useState } from "react";
-
-// import {
-//   CCard,
-//   CCardBody,
-//   COffcanvas,
-//   COffcanvasBody,
-//   COffcanvasHeader,
-//   COffcanvasTitle,
-//   CBadge,
-//   CCol,
-//   CRow,
-// } from "@coreui/react";
-// import {
-//   cilCode,
-//   cilDataTransferDown,
-//   cilDevices,
-//   cilInfo,
-//   cilRouter,
-//   cilX,
-// } from "@coreui/icons";
-// import CIcon from "@coreui/icons-react";
-// import { clients } from "../../../data";
-// import socket from "../../../components/Socket";
-
-// const tabs = [
-//   // "Dashboard",
-//   // "Configuration",
-//   // "OTAA keys",
-//   // "Activation",
-//   // "Queue",
-//   "Events",
-//   // "LoRaWAN frames",
-// ];
-
-// const MqttDashboard = () => {
-//   const [activeTab, setActiveTab] = useState("Events");
-//   const [frames, setFrames] = useState(() => {
-//     const saved = localStorage.getItem("allRobotFrames");
-//     return saved ? JSON.parse(saved) : [];
-//   });
-//   const [selectedFrame, setSelectedFrame] = useState(null);
-//   const [visible, setVisible] = useState(false);
-
-//   useEffect(() => {
-//     socket.on("event", (msg) => {
-//       setFrames((prev) => {
-//         const updated = [msg, ...prev].slice(0, 40); // keep latest 20
-//         localStorage.setItem("allRobotFrames", JSON.stringify(updated)); // sync with storage
-//         return updated;
-//       });
-//     });
-
-//     return () => {
-//       socket.off("event");
-//     };
-//   }, []);
-
-//   const handleFrameClick = (frame) => {
-//     setSelectedFrame(frame);
-//     setVisible(true);
-//   };
-//   // console.log(frames);
-
-//   return (
-//     <div className="">
-//       {/* Tabs */}
-//       <div className="border-bottom mb-3">
-//         <div className="d-flex gap-3 fw-medium small">
-//           {tabs.map((tab) => (
-//             <span
-//               key={tab}
-//               className={`pb-2 cursor-pointer ${
-//                 activeTab === tab
-//                   ? "text-primary border-bottom border-primary"
-//                   : "text-secondary"
-//               }`}
-//               onClick={() => setActiveTab(tab)}
-//             >
-//               {tab}
-//             </span>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* LoRaWAN Frames Section */}
-//       {activeTab === "Events" && (
-//         <div className="d-flex flex-column gap-3">
-//           {frames?.map((frame, idx) => (
-//             <CCard
-//               key={idx}
-//               className="shadow-sm border-0"
-//               role="button"
-//               onClick={() => handleFrameClick(frame)}
-//             >
-//               <CCardBody>
-//                 <CRow className="align-items-center g-2">
-//                   {/* Timestamp */}
-//                   <CCol xs={6} sm={4} md={3} className="d-flex flex-column">
-//                     <span className="fw-semibold">
-//                       {frame.data?.deviceInfo.deviceName}
-//                     </span>
-//                     <span className="text-muted">
-//                       {new Date(frame.data?.time).toLocaleString("en-GB", {
-//                         day: "2-digit",
-//                         month: "2-digit",
-//                         year: "numeric",
-//                         hour: "2-digit",
-//                         minute: "2-digit",
-//                         second: "2-digit",
-//                         hour12: true,
-//                       })}
-//                     </span>
-//                   </CCol>
-
-//                   {/* Badge */}
-//                   <CCol xs={6} sm={4} md={1}>
-//                     <CBadge
-//                       className="fs-7"
-//                       color={
-//                         frame.topic?.endsWith("/up")
-//                           ? "success"
-//                           : frame.topic?.endsWith("/join")
-//                           ? "warning"
-//                           : frame.topic?.endsWith("/txack")
-//                           ? "secondary"
-//                           : frame.topic?.endsWith("/ack")
-//                           ? "secondary"
-//                           : frame.topic?.endsWith("/error")
-//                           ? "danger"
-//                           : "secondary"
-//                       }
-//                     >
-//                       {frame.topic?.endsWith("/up")
-//                         ? "Up"
-//                         : frame.topic?.endsWith("/join")
-//                         ? "Join"
-//                         : frame.topic?.endsWith("/txack")
-//                         ? "TxAck"
-//                         : frame.topic?.endsWith("/ack")
-//                         ? "Ack"
-//                         : frame.topic?.endsWith("/error")
-//                         ? "Error"
-//                         : "Unconfirmed"}
-//                     </CBadge>
-//                   </CCol>
-//                   {frame.topic?.endsWith("/up") && (
-//                     <>
-//                       {/* DR */}
-//                       <CCol xs={6} sm={2} md={1} className="text-truncate">
-//                         <strong>DR:</strong> {frame.data?.dr}
-//                       </CCol>
-
-//                       {/* Data */}
-//                       <CCol xs={6} sm={2} md={3} className="text-truncate">
-//                         <strong>Data:</strong> {frame.data?.data}
-//                       </CCol>
-
-//                       {/* FCnt */}
-//                       <CCol xs={6} sm={2} md={1} className="text-truncate">
-//                         <strong>FCnt:</strong> {frame.data?.fCnt}
-//                       </CCol>
-
-//                       {/* fPort */}
-//                       <CCol xs={6} sm={2} md={1} className="text-truncate">
-//                         <strong>fPort:</strong> {frame.data?.fPort}
-//                       </CCol>
-//                     </>
-//                   )}
-//                 </CRow>
-//               </CCardBody>
-//             </CCard>
-//           ))}
-
-//           {frames.length === 0 && (
-//             <p className="text-muted text-center">No frames yet...</p>
-//           )}
-//         </div>
-//       )}
-
-//       <COffcanvas
-//         placement="end"
-//         visible={visible}
-//         onHide={() => setVisible(false)}
-//         style={{
-//           width: "100%",
-//           maxWidth: window.innerWidth < 768 ? "100%" : "42%", // full width on small screens
-//         }}
-//       >
-//         <COffcanvasHeader>
-//           <COffcanvasTitle className="">
-//             {selectedFrame && (
-//               <span>
-//                 {selectedFrame.data?.deviceInfo.deviceName}&nbsp;(
-//                 {selectedFrame.data?.deviceInfo.devEui})
-//               </span>
-//             )}
-//           </COffcanvasTitle>
-//           <button
-//             type="button"
-//             className="border-0 ms-auto py-0 px-1"
-//             onClick={() => setVisible(false)}
-//             style={{ background: "none" }}
-//           >
-//             <CIcon icon={cilX} size="lg" />
-//           </button>
-//         </COffcanvasHeader>
-
-//         <COffcanvasBody>
-//           {selectedFrame && (
-//             <div className="d-flex flex-column gap-4">
-//               {/* General Frame Info */}
-//               <CCard className="shadow-sm border-0 rounded-3">
-//                 <CCardBody>
-//                   <h6 className="fw-bold mb-3 text-secondary">
-//                     <CIcon icon={cilInfo} className="me-2 text-primary" />
-//                     General
-//                   </h6>
-//                   <div className="d-flex flex-column  gap-2">
-//                     <div>
-//                       <strong>Topic:</strong> {selectedFrame.topic}
-//                     </div>
-//                     <div>
-//                       <strong>Event Type:</strong>{" "}
-//                       {selectedFrame.topic.split("/").pop()}
-//                     </div>
-//                     <div>
-//                       <strong>Frame Time:</strong> {selectedFrame.data?.time}
-//                     </div>
-//                     <div>
-//                       <strong>Outer Time:</strong> {selectedFrame.time}
-//                     </div>
-//                     <div>
-//                       <strong>Deduplication ID:</strong>{" "}
-//                       {selectedFrame.data?.deduplicationId}
-//                     </div>
-//                     <div>
-//                       <strong>Region Config:</strong>{" "}
-//                       {selectedFrame.data?.regionConfigId}
-//                     </div>
-//                   </div>
-//                 </CCardBody>
-//               </CCard>
-
-//               {/* Device Info */}
-//               <CCard className="shadow-sm border-0 rounded-3">
-//                 <CCardBody>
-//                   <h6 className="fw-bold mb-3 text-secondary">
-//                     <CIcon icon={cilDevices} className="me-2 text-primary" />
-//                     Device Info
-//                   </h6>
-//                   <div className="d-flex flex-column gap-2">
-//                     <span>
-//                       <strong>Device Name:</strong>{" "}
-//                       {selectedFrame.data?.deviceInfo?.deviceName}
-//                     </span>
-//                     <span>
-//                       <strong>DevEUI:</strong>{" "}
-//                       <CBadge color="warning">
-//                         {selectedFrame.data?.deviceInfo?.devEui}
-//                       </CBadge>
-//                     </span>
-//                     <span>
-//                       <strong>Device Profile:</strong>{" "}
-//                       {selectedFrame.data?.deviceInfo?.deviceProfileName}
-//                     </span>
-//                     <span>
-//                       <strong>Device Profile ID:</strong>{" "}
-//                       {selectedFrame.data?.deviceInfo?.deviceProfileId}
-//                     </span>
-//                     <span>
-//                       <strong>Device Class:</strong>{" "}
-//                       <CBadge color="warning">
-//                         {selectedFrame.data?.deviceInfo?.deviceClassEnabled}
-//                       </CBadge>
-//                     </span>
-//                     <span>
-//                       <strong>Tenant:</strong>{" "}
-//                       {selectedFrame.data?.deviceInfo?.tenantName} (
-//                       {selectedFrame.data?.deviceInfo?.tenantId})
-//                     </span>
-//                     <span>
-//                       <strong>Application:</strong>{" "}
-//                       {selectedFrame.data?.applicationName} (
-//                       {selectedFrame.data?.applicationId})
-//                     </span>
-//                     <span>
-//                       <strong>Tags:</strong>{" "}
-//                       {JSON.stringify(selectedFrame.data?.deviceInfo?.tags)}
-//                     </span>
-//                   </div>
-//                 </CCardBody>
-//               </CCard>
-
-//               {/* Frame Info */}
-// <CCard className="shadow-sm border-0 rounded-3">
-//   <CCardBody>
-//     <h6 className="fw-bold mb-3 text-secondary">
-//       <CIcon
-//         icon={cilDataTransferDown}
-//         className="me-2 text-primary"
-//       />
-//       Frame Info
-//     </h6>
-//     <div className="d-flex flex-wrap  flex-column gap-1">
-//       <div>
-//         <strong>DevAddr:</strong> {selectedFrame.data?.devAddr}
-//       </div>
-//       <div>
-//         <strong>ADR:</strong> {String(selectedFrame.data?.adr)}
-//       </div>
-//       <div>
-//         <strong>DR:</strong> {selectedFrame.data?.dr}
-//       </div>
-//       <div>
-//         <strong>FCnt:</strong> {selectedFrame.data?.fCnt}
-//       </div>
-//       <div>
-//         <strong>FPort:</strong> {selectedFrame.data?.fPort}
-//       </div>
-//       <div>
-//         <strong>Confirmed:</strong>{" "}
-//         {String(selectedFrame.data?.confirmed)}
-//       </div>
-//       <div>
-//         <strong>Payload:</strong>{" "}
-//         <CBadge color="success">
-//           {selectedFrame.data?.data}
-//         </CBadge>
-//       </div>
-//     </div>
-//   </CCardBody>
-// </CCard>
-
-//               {/* Gateway Info */}
-//               {selectedFrame.data?.rxInfo?.map((gw, i) => (
-//                 <CCard key={i} className="shadow-sm border-0 rounded-3">
-//                   <CCardBody>
-//                     <h6 className="fw-bold mb-3 text-secondary">
-//                       <CIcon icon={cilRouter} className="me-2 text-primary" />
-//                       Gateway #{i + 1}
-//                     </h6>
-//                     <div className="d-flex flex-column gap-2">
-//                       <span>
-//                         <strong>Gateway ID:</strong> {gw.gatewayId}
-//                       </span>
-//                       <span>
-//                         <strong>Uplink ID:</strong> {gw.uplinkId}
-//                       </span>
-//                       <span>
-//                         <strong>Gateway Time:</strong> {gw.gwTime}
-//                       </span>
-//                       <span>
-//                         <strong>NS Time:</strong> {gw.nsTime}
-//                       </span>
-//                       <span>
-//                         <strong>RSSI:</strong>{" "}
-//                         <CBadge color="danger">{gw.rssi}</CBadge>
-//                       </span>
-//                       <span>
-//                         <strong>SNR:</strong>{" "}
-//                         <CBadge color="warning">{gw.snr}</CBadge>
-//                       </span>
-//                       <span>
-//                         <strong>Channel:</strong> {gw.channel}
-//                       </span>
-//                       <span>
-//                         <strong>RF Chain:</strong> {gw.rfChain}
-//                       </span>
-//                       <span>
-//                         <strong>CRC Status:</strong> {gw.crcStatus}
-//                       </span>
-//                       <span>
-//                         <strong>Context:</strong> {gw.context}
-//                       </span>
-//                       <span>
-//                         <strong>Location:</strong>{" "}
-//                         <a
-//                           href={`https://maps.google.com/?q=${gw.location?.latitude},${gw.location?.longitude}`}
-//                           target="_blank"
-//                           rel="noreferrer"
-//                         >
-//                           {gw.location?.latitude}, {gw.location?.longitude}{" "}
-//                           (Alt: {gw.location?.altitude})
-//                         </a>
-//                       </span>
-//                     </div>
-//                   </CCardBody>
-//                 </CCard>
-//               ))}
-
-//               {/* TX Info */}
-// <CCard className="shadow-sm border-0 rounded-3">
-//   <CCardBody>
-//     <h6 className="fw-bold mb-3 text-secondary">
-//       <CIcon icon={clients} className="me-2 text-primary" />
-//       TX Info
-//     </h6>
-//     <div className="d-flex flex-column gap-2">
-//       <span>
-//         <strong>Frequency:</strong>{" "}
-//         {selectedFrame.data?.txInfo?.frequency}
-//       </span>
-//       <span>
-//         <strong>Bandwidth:</strong>{" "}
-//         {selectedFrame.data?.txInfo?.modulation?.lora?.bandwidth}
-//       </span>
-//       <span>
-//         <strong>Spreading Factor:</strong>{" "}
-//         {
-//           selectedFrame.data?.txInfo?.modulation?.lora
-//             ?.spreadingFactor
-//         }
-//       </span>
-//       <span>
-//         <strong>Code Rate:</strong>{" "}
-//         {selectedFrame.data?.txInfo?.modulation?.lora?.codeRate}
-//       </span>
-//     </div>
-//   </CCardBody>
-// </CCard>
-
-//               {/* Raw JSON */}
-//               <CCard className="shadow-sm border-0 rounded-3">
-//                 <CCardBody style={{ maxHeight: "35vh", overflowY: "auto" }}>
-//                   <h6 className="fw-bold mb-3 text-secondary">
-//                     <CIcon icon={cilCode} className="me-2 text-primary" />
-//                     Raw JSON
-//                   </h6>
-//                   <pre className="bg-dark text-light p-3 rounded small">
-//                     {JSON.stringify(selectedFrame, null, 2)}
-//                   </pre>
-//                 </CCardBody>
-//               </CCard>
-//             </div>
-//           )}
-//         </COffcanvasBody>
-//       </COffcanvas>
-//     </div>
-//   );
-// };
-
-// export default MqttDashboard;
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
   CCardBody,
@@ -453,6 +9,7 @@ import {
   CBadge,
   CCol,
   CRow,
+  CAlert,
 } from "@coreui/react";
 import {
   cilCode,
@@ -463,242 +20,430 @@ import {
   cilX,
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import { Clipboard } from "lucide-react";
 import socket from "../../../components/Socket";
-import { clients } from "../../../data";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { decodeRobotPayload } from "../../../components/robotPayloadDecoder";
 
-const tabs = ["Events"];
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true, error: "" };
 
-const getFrameType = (topic) => {
-  if (topic?.endsWith("/up")) return "up";
-  if (topic?.endsWith("/join")) return "join";
-  if (topic?.endsWith("/ack")) return "ack";
-  if (topic?.endsWith("/txack")) return "txack";
-  if (topic?.endsWith("/status")) return "status";
-  if (topic?.endsWith("/error")) return "error";
-  if (topic?.endsWith("/down")) return "down";
-  return "unknown";
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        frames:
+          typeof action.payload === "function"
+            ? action.payload(state.frames)
+            : action.payload,
+      };
+
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
 };
 
 const MqttDashboard = () => {
-  const [activeTab, setActiveTab] = useState("Events");
-  const [frames, setFrames] = useState(() => {
-    const saved = localStorage.getItem("allRobotFrames");
-    return saved ? JSON.parse(saved) : [];
+  const [{ loading, error, frames }, dispatch] = useReducer(reducer, {
+    frames: [],
+    loading: true,
+    error: "",
   });
+  // const { robot_no, deveui } = useParams();
+  const [activeTab, setActiveTab] = useState("Events");
+
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    socket.on("event", (msg) => {
-      setFrames((prev) => {
-        const updated = [msg, ...prev].slice(0, 40); // keep latest 40
-        localStorage.setItem("allRobotFrames", JSON.stringify(updated)); // sync with storage
-        return updated;
-      });
-    });
+  const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
-    return () => {
-      socket.off("event");
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      dispatch({ type: "FETCH_REQUEST" });
+
+      try {
+        const response = await axios.get(`/api/v1/mqtt-event-logs`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+
+        const result = response.data.data;
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: result,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response?.data?.message || error.response?.data?.error,
+        });
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error,
+        );
+      }
     };
+    fetchSubscriptions();
+  }, [authtoken]);
+  useEffect(() => {
+    socket.emit("event");
+  }, []);
+
+  useEffect(() => {
+    const handleEvent = (msg) => {
+      if (msg) {
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: (prev) => [msg, ...prev].slice(0, 20),
+        });
+      }
+    };
+
+    socket.on("event", handleEvent);
+    return () => socket.off("event", handleEvent);
   }, []);
 
   const handleFrameClick = (frame) => {
+    console.log("--------------opened frame---------");
+    console.log(frame);
+    console.log("--------------opened frame---------");
     setSelectedFrame(frame);
     setVisible(true);
   };
 
+  const tabs = [
+    // "Dashboard",
+    // "Configuration",
+    // "OTAA keys",
+    // "Activation",
+    // "Queue",
+    "Events",
+    // "LoRaWAN frames",
+  ];
+  function isValidBase64(str) {
+    if (!str || typeof str !== "string") return false;
+
+    // Remove whitespace
+    const s = str.trim();
+
+    // Base64 regex (handles padding)
+    return /^[A-Za-z0-9+/]+={0,2}$/.test(s) && s.length % 4 === 0;
+  }
+
   function base64ToHex(base64Str) {
-    const binaryString = atob(base64Str);
-    return Array.from(binaryString, (char) => {
-      return char.charCodeAt(0).toString(16).padStart(2, "0");
-    }).join("");
+    if (!isValidBase64(base64Str)) return "-";
+
+    try {
+      const binaryString = atob(base64Str);
+      return Array.from(binaryString, (char) =>
+        char.charCodeAt(0).toString(16).padStart(2, "0"),
+      ).join("");
+    } catch {
+      return "-";
+    }
   }
 
   function base64ToAscii(base64Str) {
-    const binaryString = atob(base64Str); // decode Base64 to binary string
-    return Array.from(binaryString, (char) =>
-      // replace non-printable characters with "."
-      char.charCodeAt(0) >= 32 && char.charCodeAt(0) <= 126 ? char : "."
-    ).join("");
+    if (!isValidBase64(base64Str)) return "-";
+
+    try {
+      const binaryString = atob(base64Str);
+      return Array.from(binaryString, (char) =>
+        char.charCodeAt(0) >= 32 && char.charCodeAt(0) <= 126 ? char : ".",
+      ).join("");
+    } catch {
+      return "-";
+    }
+  }
+
+  function resolveEventType(topic) {
+    if (topic.includes("/event/up")) return "up";
+    if (topic.includes("/event/join")) return "join";
+    if (topic.includes("/event/ack")) return "ack";
+    if (topic.includes("/event/txack")) return "txack";
+    if (topic.includes("/event/error")) return "error";
+    if (topic.includes("/event/log")) return "log";
+    if (topic.startsWith("application/")) return "raw";
+    return "unknown";
   }
 
   return (
     <div>
-      {/* Tabs */}
-      <div className="border-bottom mb-3">
-        <div className="d-flex gap-3 fw-medium small">
-          {tabs.map((tab) => (
-            <span
-              key={tab}
-              className={`pb-2 cursor-pointer ${
-                activeTab === tab
-                  ? "text-primary border-bottom border-primary"
-                  : "text-secondary"
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Frames List */}
-      {activeTab === "Events" && (
-        <div className="d-flex flex-column gap-3">
-          {frames?.map((frame, idx) => {
-            const type = getFrameType(frame.topic);
-            return (
-              <CCard
-                key={idx}
-                className="shadow-sm border-0"
-                role="button"
-                onClick={() => handleFrameClick(frame)}
+      <div className="">
+        {/* Tabs */}
+        <div className="border-bottom mb-3">
+          <div className="d-flex gap-3 fw-medium small">
+            {tabs.map((tab) => (
+              <span
+                key={tab}
+                className={`pb-2 cursor-pointer ${
+                  activeTab === tab ? " border-bottom border-warning" : ""
+                }`}
+                onClick={() => setActiveTab(tab)}
               >
-                <CCardBody>
-                  <CRow className="align-items-center g-2">
-                    {/* Device + Timestamp */}
-                    <CCol xs={6} sm={4} md={3} className="d-flex flex-column">
-                      <span className="fw-semibold">
-                        {frame.data?.deviceInfo?.deviceName ?? "Unknown"}
-                      </span>
-                      <span className="text-muted">
-                        {new Date(frame.data.time).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}
-                      </span>
-                    </CCol>
-
-                    {/* Event Type Badge */}
-                    <CCol xs={6} sm={4} md={1}>
-                      <CBadge
-                        className="fs-7"
-                        color={
-                          type === "up"
-                            ? "success"
-                            : type === "join"
-                            ? "warning"
-                            : type === "txack"
-                            ? "secondary"
-                            : type === "ack"
-                            ? "secondary"
-                            : type === "error"
-                            ? "danger"
-                            : type === "status"
-                            ? "info"
-                            : "secondary"
-                        }
-                      >
-                        {type.toUpperCase()}
-                      </CBadge>
-                    </CCol>
-
-                    {/* Extra info only for Uplink */}
-                    {type === "up" && (
-                      <>
-                        {/* Data */}
-                        <CCol xs={6} sm={2} md={2} className="text-truncate">
-                          <span className="text-success">HEX:</span>&nbsp;
-                          {base64ToHex(frame.data?.data)}
-                        </CCol>
-                        {/* Data */}
-                        <CCol xs={6} sm={2} md={2} className="text-truncate">
-                          <span className="text-success">ASCII:</span>&nbsp;
-                          {base64ToAscii(frame.data?.data)}
-                        </CCol>
-                        {/* DR */}
-                        <CCol xs={6} sm={2} md={1} className="text-truncate">
-                          <span className="text-success">DR:</span>{" "}
-                          {frame.data?.dr}
-                        </CCol>
-
-                        {/* FCnt */}
-                        <CCol xs={6} sm={2} md={1} className="text-truncate">
-                          <span className="text-success">FCnt:</span>{" "}
-                          {frame.data?.fCnt}
-                        </CCol>
-
-                        {/* fPort */}
-                        <CCol xs={6} sm={2} md={1} className="text-truncate">
-                          <span className="text-success">fPort:</span>{" "}
-                          {frame.data?.fPort}
-                        </CCol>
-                      </>
-                    )}
-                  </CRow>
-                </CCardBody>
-              </CCard>
-            );
-          })}
-
-          {frames.length === 0 && (
-            <p className="text-muted text-center">No frames yet...</p>
-          )}
+                {/* <span className="text-warning p-2 fs-6">{robot_no}</span> -{" "} */}
+                <span className="fs-5">&nbsp;{tab}</span>
+              </span>
+            ))}
+          </div>
         </div>
-      )}
 
-      {/* Frame Details Offcanvas */}
-      <COffcanvas
-        placement="end"
-        visible={visible}
-        onHide={() => setVisible(false)}
-        style={{
-          width: "100%",
-          maxWidth: window.innerWidth < 768 ? "100%" : "42%",
-        }}
-      >
-        <COffcanvasHeader>
-          <COffcanvasTitle>
-            {selectedFrame?.data?.deviceInfo?.deviceName} (
-            {selectedFrame?.data?.deviceInfo?.devEui})
-          </COffcanvasTitle>
-          <button
-            type="button"
-            className="border-0 ms-auto py-0 px-1"
-            onClick={() => setVisible(false)}
-            style={{ background: "none" }}
-          >
-            <CIcon icon={cilX} size="lg" />
-          </button>
-        </COffcanvasHeader>
+        {/* LoRaWAN Frames Section */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <CAlert color="danger">{error}</CAlert>
+        ) : (
+          activeTab === "Events" && (
+            <div className="d-flex flex-column gap-2">
+              {frames.map((frame, idx) => {
+                const decoded = decodeRobotPayload(
+                  frame.payload?.data || frame.data?.data,
+                );
 
-        <COffcanvasBody>
-          {selectedFrame && (
-            <div className="d-flex flex-column gap-4">
-              {/* General Info */}
-              <CCard className="shadow-sm border-0 rounded-3">
-                <CCardBody>
-                  <h6 className="fw-bold mb-3 text-secondary">
-                    <CIcon icon={cilInfo} className="me-2 text-primary" />
-                    General
-                  </h6>
-                  <div className="d-flex flex-column gap-2">
-                    <div>
-                      <strong>Topic:</strong> {selectedFrame.topic}
-                    </div>
-                    <div>
-                      <strong>Event Type:</strong>{" "}
-                      {getFrameType(selectedFrame.topic)}
-                    </div>
-                    <div>
-                      <strong>Frame Time:</strong>{" "}
-                      {selectedFrame.data?.time ?? "-"}
-                    </div>
-                    <div>
-                      <strong>Outer Time:</strong> {selectedFrame.time}
-                    </div>
-                  </div>
-                </CCardBody>
-              </CCard>
+                return (
+                  <CCard
+                    key={idx}
+                    className="shadow-sm border-0"
+                    role="button"
+                    onClick={() => handleFrameClick(frame)}
+                  >
+                    <CCardBody>
+                      <CRow className="align-items-center g-2">
+                        {/* Timestamp */}
+                        <CCol xs={6} sm={2} md={3} className="">
+                          <span className="text-success">
+                            {frame.payload?.deviceInfo?.deviceName ||
+                              frame.data?.deviceInfo?.deviceName}
+                          </span>
+                        </CCol>
+                        <CCol
+                          xs={6}
+                          sm={4}
+                          md={3}
+                          className="d-flex flex-column"
+                        >
+                          <span className="text-muted">
+                            {new Date(
+                              frame.createdAt || frame.time,
+                            ).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })}
+                          </span>
+                        </CCol>
 
-              {/* Device Info */}
-              {selectedFrame.data?.deviceInfo && (
+                        {/* Badge */}
+                        <CCol xs={6} sm={4} md={1}>
+                          <CBadge
+                            className="fs-7"
+                            color={
+                              frame.topic?.endsWith("/up")
+                                ? "success"
+                                : frame.topic?.endsWith("/join")
+                                  ? "warning"
+                                  : frame.topic?.endsWith("/txack")
+                                    ? "secondary"
+                                    : frame.topic?.endsWith("/ack")
+                                      ? "secondary"
+                                      : frame.topic?.endsWith("/error")
+                                        ? "danger"
+                                        : frame.topic?.endsWith("/log")
+                                          ? "primary"
+                                          : frame.topic?.endsWith("/status")
+                                            ? "primary"
+                                            : "secondary"
+                            }
+                          >
+                            {frame.topic?.endsWith("/up")
+                              ? "Up"
+                              : frame.topic?.endsWith("/join")
+                                ? "Join"
+                                : frame.topic?.endsWith("/txack")
+                                  ? "TxAck"
+                                  : frame.topic?.endsWith("/ack")
+                                    ? "Ack"
+                                    : frame.topic?.endsWith("/error")
+                                      ? "Error"
+                                      : frame.topic?.endsWith("/log")
+                                        ? "Log"
+                                        : frame.topic?.endsWith("/status")
+                                          ? "Status"
+                                          : "Unconfirmed"}
+                          </CBadge>
+                        </CCol>
+                        {frame.topic?.endsWith("/up") && (
+                          <>
+                            <CCol xs={6} sm={2} md={2} className="">
+                              <CBadge
+                                color={
+                                  decoded.type === "robot_alert"
+                                    ? "warning"
+                                    : decoded.type === "metric"
+                                      ? "primary"
+                                      : decoded.type === "battery"
+                                        ? "success"
+                                        : decoded.type === "cleaning"
+                                          ? "warning"
+                                          : decoded.type === "tracking"
+                                            ? "danger"
+                                            : decoded.type === "reset"
+                                              ? "warning"
+                                              : "secondary"
+                                }
+                              >
+                                {decoded.description}
+
+                                {decoded.dynamic &&
+                                  decoded.unit &&
+                                  decoded.value !== undefined && (
+                                    <span className="ms-1">
+                                      {decoded.value}
+                                      {decoded.unit}
+                                    </span>
+                                  )}
+                              </CBadge>
+                            </CCol>
+
+                            {/* <CCol xs={6} sm={2} md={2} className="text-truncate">
+                            <span className="text-success">HEX:</span>&nbsp;
+                            {base64ToHex(frame.payload?.data)}
+                          </CCol>
+                       
+                          <CCol xs={6} sm={2} md={2} className="text-truncate">
+                            <span className="text-success">ASCII:</span>&nbsp;
+                            {base64ToAscii(frame.payload?.data)}
+                          </CCol> */}
+
+                            {/* <CCol
+                              xs={6}
+                              sm={2}
+                              md={1}
+                              className="text-truncate"
+                            >
+                              <span className="text-success">DR:</span>{" "}
+                              {frame.payload?.dr || frame.data?.dr}
+                            </CCol>
+
+                      
+                            <CCol
+                              xs={6}
+                              sm={2}
+                              md={1}
+                              className="text-truncate"
+                            >
+                              <span className="text-success">FCnt:</span>{" "}
+                              {frame.payload?.fCnt || frame.data?.fCnt}
+                            </CCol>
+
+                         
+                            <CCol
+                              xs={6}
+                              sm={2}
+                              md={1}
+                              className="text-truncate"
+                            >
+                              <span className="text-success">fPort:</span>{" "}
+                              {frame.payload?.fPort || frame.data?.fPort}
+                            </CCol> */}
+                          </>
+                        )}
+                      </CRow>
+                    </CCardBody>
+                  </CCard>
+                );
+              })}
+
+              {frames.length === 0 && (
+                <p className="text-muted text-center">No frames yet...</p>
+              )}
+            </div>
+          )
+        )}
+
+        <COffcanvas
+          placement="end"
+          visible={visible}
+          onHide={() => setVisible(false)}
+          style={{
+            width: "100%",
+            maxWidth: window.innerWidth < 768 ? "100%" : "42%", // full width on small screens
+          }}
+        >
+          <COffcanvasHeader>
+            <COffcanvasTitle className="">
+              {selectedFrame && (
+                <span>
+                  {selectedFrame.payload?.deviceInfo.deviceName ||
+                    selectedFrame.data?.deviceInfo.deviceName}
+                  &nbsp;(
+                  {selectedFrame.payload?.deviceInfo.devEui ||
+                    selectedFrame.data?.deviceInfo.devEui}
+                  )
+                </span>
+              )}
+            </COffcanvasTitle>
+            <button
+              type="button"
+              className="border-0 ms-auto py-0 px-1"
+              onClick={() => setVisible(false)}
+              style={{ background: "none" }}
+            >
+              <CIcon icon={cilX} size="lg" />
+            </button>
+          </COffcanvasHeader>
+
+          <COffcanvasBody>
+            {selectedFrame && (
+              <div className="d-flex flex-column gap-4">
+                <CCard className="shadow-sm border-0 rounded-3">
+                  <CCardBody>
+                    <h6 className="fw-bold mb-3 text-secondary">
+                      <CIcon icon={cilInfo} className="me-2 text-primary" />
+                      General
+                    </h6>
+                    <div className="d-flex flex-column  gap-2">
+                      <div>
+                        <span>Topic:</span> {selectedFrame.topic}
+                      </div>
+                      <div>
+                        <span>Event Type:</span>{" "}
+                        {resolveEventType(selectedFrame.topic)}
+                      </div>
+                      <div>
+                        <span>Frame Time:</span>{" "}
+                        {selectedFrame.createdAt || selectedFrame.time}
+                      </div>
+                      <div>
+                        <span>Outer Time:</span>{" "}
+                        {selectedFrame.createdAt || selectedFrame.time}
+                      </div>
+                      <div>
+                        <span>Deduplication ID:</span>{" "}
+                        {selectedFrame.payload?.deduplicationId ||
+                          selectedFrame.data?.deduplicationId}
+                      </div>
+                      <div>
+                        <span>Region Config:</span>{" "}
+                        {selectedFrame.payload?.regionConfigId ||
+                          selectedFrame.data?.regionConfigId}
+                      </div>
+                    </div>
+                  </CCardBody>
+                </CCard>
+
                 <CCard className="shadow-sm border-0 rounded-3">
                   <CCardBody>
                     <h6 className="fw-bold mb-3 text-secondary">
@@ -707,211 +452,260 @@ const MqttDashboard = () => {
                     </h6>
                     <div className="d-flex flex-column gap-2">
                       <span>
-                        <strong>Device Name:</strong>{" "}
-                        {selectedFrame.data.deviceInfo.deviceName}
+                        <span>Device Name:</span>{" "}
+                        {selectedFrame.payload?.deviceInfo?.deviceName ||
+                          selectedFrame.data?.deviceInfo?.deviceName}
                       </span>
                       <span>
-                        <strong>DevEUI:</strong>{" "}
+                        <span>DevEUI:</span>{" "}
                         <CBadge color="warning">
-                          {selectedFrame.data.deviceInfo.devEui}
+                          {selectedFrame.payload?.deviceInfo?.devEui ||
+                            selectedFrame.data?.deviceInfo?.devEui}
                         </CBadge>
                       </span>
                       <span>
-                        <strong>Profile:</strong>{" "}
-                        {selectedFrame.data.deviceInfo.deviceProfileName}
+                        <span>Device Profile:</span>{" "}
+                        {selectedFrame.payload?.deviceInfo?.deviceProfileName ||
+                          selectedFrame.data?.deviceInfo?.deviceProfileName}
+                      </span>
+                      <span>
+                        <span>Device Profile ID:</span>{" "}
+                        {selectedFrame.payload?.deviceInfo?.deviceProfileId ||
+                          selectedFrame.data?.deviceInfo?.deviceProfileId}
+                      </span>
+                      <span>
+                        <span>Device Class:</span>{" "}
+                        <CBadge color="warning">
+                          {selectedFrame.payload?.deviceInfo
+                            ?.deviceClassEnabled ||
+                            selectedFrame.data?.deviceInfo?.deviceClassEnabled}
+                        </CBadge>
+                      </span>
+                      <span>
+                        <span>Tenant:</span>{" "}
+                        {selectedFrame.payload?.deviceInfo?.tenantName ||
+                          selectedFrame.data?.deviceInfo?.tenantName}{" "}
+                        (
+                        {selectedFrame.payload?.deviceInfo?.tenantId ||
+                          selectedFrame.data?.deviceInfo?.tenantId}
+                        )
+                      </span>
+                      <span>
+                        <span>Application:</span>{" "}
+                        {selectedFrame.payload?.deviceInfo.applicationName ||
+                          selectedFrame.data?.deviceInfo.applicationName}{" "}
+                        (
+                        {selectedFrame.payload?.deviceInfo.applicationId ||
+                          selectedFrame.data?.deviceInfo.applicationId}{" "}
+                        )
+                      </span>
+                      <span>
+                        <span>Tags:</span>{" "}
+                        {JSON.stringify(
+                          selectedFrame.payload?.deviceInfo?.tags,
+                        )}
                       </span>
                     </div>
                   </CCardBody>
                 </CCard>
-              )}
-              {getFrameType(selectedFrame.topic) === "up" && (
+
+                {selectedFrame.topic?.endsWith("/up") && (
+                  <CCard className="shadow-sm border-0 rounded-3">
+                    <CCardBody>
+                      <h6 className="fw-bold mb-3 text-secondary">
+                        <CIcon
+                          icon={cilDataTransferDown}
+                          className="me-2 text-primary"
+                        />
+                        Frame Info
+                      </h6>
+                      <div className="d-flex flex-wrap  flex-column gap-1">
+                        <div>
+                          <span>DevAddr:</span>{" "}
+                          {selectedFrame.payload?.devAddr ||
+                            selectedFrame.data?.devAddr}
+                        </div>
+                        <div>
+                          <span>ADR:</span>{" "}
+                          {String(
+                            selectedFrame.payload?.adr ||
+                              selectedFrame.data?.adr,
+                          )}
+                        </div>
+                        <div>
+                          <span>DR:</span>{" "}
+                          {selectedFrame.payload?.dr || selectedFrame.data?.dr}
+                        </div>
+                        <div>
+                          <span>FCnt:</span>{" "}
+                          {selectedFrame.payload?.fCnt ||
+                            selectedFrame.data?.fCnt}
+                        </div>
+                        <div>
+                          <span>FPort:</span>{" "}
+                          {selectedFrame.payload?.fPort ||
+                            selectedFrame.data?.fPort}
+                        </div>
+                        <div>
+                          <span>Confirmed:</span>{" "}
+                          {String(
+                            selectedFrame.payload?.confirmed ||
+                              selectedFrame.data?.confirmed,
+                          )}
+                        </div>
+                        <div className="card shadow-sm p-3 mb-3 rounded-3">
+                          <h6 className="text-success mb-3">
+                            📦 Payload Details
+                          </h6>
+
+                          <div className="row">
+                            <div className="col-md-4 mb-2">
+                              <span className="fw-bold text-success">
+                                Base64 (original):
+                              </span>
+                              <div className="bg-dark text-warning rounded p-2 mt-1 small">
+                                {selectedFrame.payload?.data ||
+                                  selectedFrame.data?.data}
+                              </div>
+                            </div>
+
+                            <div className="col-md-4 mb-2">
+                              <span className="fw-bold text-success">HEX:</span>
+                              <div className="bg-dark text-light rounded p-2 mt-1 small">
+                                {base64ToHex(selectedFrame.payload?.data) ||
+                                  base64ToHex(selectedFrame.data?.data)}
+                              </div>
+                            </div>
+
+                            <div className="col-md-4 mb-2">
+                              <span className="fw-bold text-success">
+                                ASCII:
+                              </span>
+                              <div className="bg-dark text-info rounded p-2 mt-1 small">
+                                {base64ToAscii(selectedFrame.payload?.data) ||
+                                  base64ToAscii(selectedFrame.data?.data)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                )}
+
+                {(
+                  selectedFrame.payload?.rxInfo || selectedFrame.data?.rxInfo
+                )?.map((gw, i) => (
+                  <CCard key={i} className="shadow-sm border-0 rounded-3">
+                    <CCardBody>
+                      <h6 className="fw-bold mb-3 text-secondary">
+                        <CIcon icon={cilRouter} className="me-2 text-primary" />
+                        Gateway #{i + 1}
+                      </h6>
+                      <div className="d-flex flex-column gap-2">
+                        <span>
+                          <span>Gateway ID:</span> {gw.gatewayId}
+                        </span>
+                        <span>
+                          <span>Uplink ID:</span> {gw.uplinkId}
+                        </span>
+                        <span>
+                          <span>Gateway Time:</span> {gw.gwTime}
+                        </span>
+                        <span>
+                          <span>NS Time:</span> {gw.nsTime}
+                        </span>
+                        <span>
+                          <span>RSSI:</span>{" "}
+                          <CBadge color="danger">{gw.rssi}</CBadge>
+                        </span>
+                        <span>
+                          <span>SNR:</span>{" "}
+                          <CBadge color="warning">{gw.snr}</CBadge>
+                        </span>
+                        <span>
+                          <span>Channel:</span> {gw.channel}
+                        </span>
+                        <span>
+                          <span>RF Chain:</span> {gw.rfChain}
+                        </span>
+                        <span>
+                          <span>CRC Status:</span> {gw.crcStatus}
+                        </span>
+                        <span>
+                          <span>Context:</span> {gw.context}
+                        </span>
+                        <span>
+                          <span>Location:</span>{" "}
+                          <a
+                            href={`https://maps.google.com/?q=${gw.location?.latitude},${gw.location?.longitude}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {gw.location?.latitude}, {gw.location?.longitude}{" "}
+                            (Alt: {gw.location?.altitude})
+                          </a>
+                        </span>
+                      </div>
+                    </CCardBody>
+                  </CCard>
+                ))}
+
                 <CCard className="shadow-sm border-0 rounded-3">
                   <CCardBody>
                     <h6 className="fw-bold mb-3 text-secondary">
-                      <CIcon
-                        icon={cilDataTransferDown}
-                        className="me-2 text-primary"
-                      />
-                      Frame Info
+                      <Clipboard size={18} className="text-primary" />
+                      TX Info
                     </h6>
-                    <div className="d-flex flex-wrap  flex-column gap-1">
-                      <div>
-                        <strong>DevAddr:</strong> {selectedFrame.data?.devAddr}
-                      </div>
-                      <div>
-                        <strong>ADR:</strong> {String(selectedFrame.data?.adr)}
-                      </div>
-                      <div>
-                        <strong>DR:</strong> {selectedFrame.data?.dr}
-                      </div>
-                      <div>
-                        <strong>FCnt:</strong> {selectedFrame.data?.fCnt}
-                      </div>
-                      <div>
-                        <strong>FPort:</strong> {selectedFrame.data?.fPort}
-                      </div>
-                      <div>
-                        <strong>Confirmed:</strong>{" "}
-                        {String(selectedFrame.data?.confirmed)}
-                      </div>
-                      {/* <div>
-                      <strong>Payload:</strong>{" "}
-                      <CBadge color="success">
-                        {selectedFrame.data?.data}
-                      </CBadge>
-                    </div> */}
-
-                      <div className="card shadow-sm p-3 mb-3 rounded-3">
-                        <h6 className="text-success mb-3">
-                          📦 Payload Details
-                        </h6>
-
-                        <div className="row">
-                          {/* Base64 */}
-                          <div className="col-md-4 mb-2">
-                            <span className="fw-bold text-success">
-                              Base64 (original):
-                            </span>
-                            <div className="bg-dark text-warning rounded p-2 mt-1 small">
-                              {selectedFrame.data?.data || "-"}
-                            </div>
-                          </div>
-
-                          {/* HEX */}
-                          <div className="col-md-4 mb-2">
-                            <span className="fw-bold text-success">HEX:</span>
-                            <div className="bg-dark text-light rounded p-2 mt-1 small">
-                              {base64ToHex(selectedFrame.data?.data) || "-"}
-                            </div>
-                          </div>
-
-                          {/* ASCII */}
-                          <div className="col-md-4 mb-2">
-                            <span className="fw-bold text-success">ASCII:</span>
-                            <div className="bg-dark text-info rounded p-2 mt-1 small">
-                              {base64ToAscii(selectedFrame.data?.data) || "-"}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="d-flex flex-column gap-2">
+                      <span>
+                        <span>Frequency:</span>{" "}
+                        {selectedFrame.payload?.txInfo?.frequency ||
+                          selectedFrame.data?.txInfo?.frequency}
+                      </span>
+                      <span>
+                        <span>Bandwidth:</span>{" "}
+                        {selectedFrame.payload?.txInfo?.modulation?.lora
+                          ?.bandwidth ||
+                          selectedFrame.data?.txInfo?.modulation?.lora
+                            ?.bandwidth}
+                      </span>
+                      <span>
+                        <span>Spreading Factor:</span>{" "}
+                        {
+                          selectedFrame.payload?.txInfo?.modulation?.lora
+                            ?.spreadingFactor
+                        }
+                      </span>
+                      <span>
+                        <span>Code Rate:</span>{" "}
+                        {
+                          selectedFrame.payload?.txInfo?.modulation?.lora
+                            ?.codeRate
+                        }
+                      </span>
                     </div>
                   </CCardBody>
                 </CCard>
-              )}
 
-              {/* Frame-specific sections */}
-              {getFrameType(selectedFrame.topic) === "up" && (
-                <>
-                  {/* RX Info */}
-                  {selectedFrame.data?.rxInfo?.map((gw, i) => (
-                    <CCard key={i} className="shadow-sm border-0 rounded-3">
-                      <CCardBody>
-                        <h6 className="fw-bold mb-3 text-secondary">
-                          <CIcon
-                            icon={cilRouter}
-                            className="me-2 text-primary"
-                          />
-                          Gateway #{i + 1}
-                        </h6>
-                        <div className="d-flex flex-column gap-2">
-                          <span>
-                            <strong>Gateway ID:</strong> {gw.gatewayId}
-                          </span>
-                          <span>
-                            <strong>RSSI:</strong>{" "}
-                            <CBadge color="danger">{gw.rssi}</CBadge>
-                          </span>
-                          <span>
-                            <strong>SNR:</strong>{" "}
-                            <CBadge color="warning">{gw.snr}</CBadge>
-                          </span>
-                        </div>
-                      </CCardBody>
-                    </CCard>
-                  ))}
-
-                  {/* TX Info */}
-                  {selectedFrame.data?.txInfo && (
-                    <CCard className="shadow-sm border-0 rounded-3">
-                      <CCardBody>
-                        <h6 className="fw-bold mb-3 text-secondary">
-                          <CIcon icon={clients} className="me-2 text-primary" />
-                          TX Info
-                        </h6>
-                        <div className="d-flex flex-column gap-2">
-                          <span>
-                            <strong>Frequency:</strong>{" "}
-                            {selectedFrame.data?.txInfo?.frequency}
-                          </span>
-                          <span>
-                            <strong>Bandwidth:</strong>{" "}
-                            {
-                              selectedFrame.data?.txInfo?.modulation?.lora
-                                ?.bandwidth
-                            }
-                          </span>
-                          <span>
-                            <strong>Spreading Factor:</strong>{" "}
-                            {
-                              selectedFrame.data?.txInfo?.modulation?.lora
-                                ?.spreadingFactor
-                            }
-                          </span>
-                          <span>
-                            <strong>Code Rate:</strong>{" "}
-                            {
-                              selectedFrame.data?.txInfo?.modulation?.lora
-                                ?.codeRate
-                            }
-                          </span>
-                        </div>
-                      </CCardBody>
-                    </CCard>
-                  )}
-                </>
-              )}
-
-              {getFrameType(selectedFrame.topic) === "join" && (
-                <CCard className="shadow-sm border-0 rounded-3">
-                  <CCardBody>
-                    <strong>Join Request from:</strong>{" "}
-                    {selectedFrame.data?.deviceInfo?.devEui}
-                  </CCardBody>
-                </CCard>
-              )}
-
-              {getFrameType(selectedFrame.topic) === "ack" && (
-                <CCard className="shadow-sm border-0 rounded-3">
-                  <CCardBody>
-                    <strong>Acknowledgment received</strong>
-                  </CCardBody>
-                </CCard>
-              )}
-
-              {getFrameType(selectedFrame.topic) === "error" && (
-                <CCard className="shadow-sm border-0 rounded-3 bg-light-danger">
-                  <CCardBody>
-                    <strong>Error:</strong> {selectedFrame.data?.error}
-                  </CCardBody>
-                </CCard>
-              )}
-
-              {/* Raw JSON */}
-              <CCard className="shadow-sm border-0 rounded-3">
-                <CCardBody style={{ maxHeight: "35vh", overflowY: "auto" }}>
-                  <h6 className="fw-bold mb-3 text-secondary">
-                    <CIcon icon={cilCode} className="me-2 text-primary" />
-                    Raw JSON
-                  </h6>
-                  <pre className="bg-dark text-light p-3 rounded small">
-                    {JSON.stringify(selectedFrame, null, 2)}
-                  </pre>
-                </CCardBody>
-              </CCard>
-            </div>
-          )}
-        </COffcanvasBody>
-      </COffcanvas>
+                {userInfo.role?.includes("Admin") && (
+                  <CCard className="shadow-sm border-0 rounded-3">
+                    <CCardBody style={{ maxHeight: "35vh", overflowY: "auto" }}>
+                      <h6 className="fw-bold mb-3 text-secondary">
+                        <CIcon icon={cilCode} className="me-2 text-primary" />
+                        Raw JSON
+                      </h6>
+                      <pre className="bg-dark text-light p-3 rounded small">
+                        {JSON.stringify(selectedFrame, null, 2)}
+                      </pre>
+                    </CCardBody>
+                  </CCard>
+                )}
+              </div>
+            )}
+          </COffcanvasBody>
+        </COffcanvas>
+      </div>
     </div>
   );
 };

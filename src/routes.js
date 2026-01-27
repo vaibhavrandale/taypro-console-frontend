@@ -195,207 +195,211 @@ import SystemDashboard from "./views/master-admin/syatem-info/SystemDashboard";
 import Mdstimer from "./views/master-admin/mds-timer/Mdstimer";
 import UpdateMdsTimer from "./views/master-admin/mds-timer/UpdateMdsTimer";
 import CleaningSummary from "./views/master-admin/all-site-cleaninglog/cleaning-report/CleaningSummary";
+import MqttEvents from "./views/master-admin/mqtt/MqttEvents";
+import MdsLog from "./views/mds-tracking/MdsLog";
+import Service from "./views/mis-report/Service";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
 //-----------------------master admin----------------------------------
 
-const MasterAdminDashboard = React.lazy(() =>
-  import("./views/master-admin/MasterAdminDashboard")
+const MasterAdminDashboard = React.lazy(
+  () => import("./views/master-admin/MasterAdminDashboard"),
 );
-const LoraConfiguration = React.lazy(() =>
-  import("./views/master-admin/replace-lora/LoraConfiguration")
-);
-
-const ReplaceLora = React.lazy(() =>
-  import("./views/master-admin/replace-lora/ReplaceLora")
+const LoraConfiguration = React.lazy(
+  () => import("./views/master-admin/replace-lora/LoraConfiguration"),
 );
 
-const ActiveRobots = React.lazy(() =>
-  import("./views/master-admin/replace-lora/ActiveRobots")
-);
-const InActiveRobots = React.lazy(() =>
-  import("./views/master-admin/replace-lora/InActiveRobots")
+const ReplaceLora = React.lazy(
+  () => import("./views/master-admin/replace-lora/ReplaceLora"),
 );
 
-const AddRobotUsingLoraNo = React.lazy(() =>
-  import("./views/master-admin/add-robot/AddRobotUsingLoraNo")
+const ActiveRobots = React.lazy(
+  () => import("./views/master-admin/replace-lora/ActiveRobots"),
+);
+const InActiveRobots = React.lazy(
+  () => import("./views/master-admin/replace-lora/InActiveRobots"),
 );
 
-const ClientsDasboard = React.lazy(() =>
-  import("./views/master-admin/clients-and-sites/Clients")
+const AddRobotUsingLoraNo = React.lazy(
+  () => import("./views/master-admin/add-robot/AddRobotUsingLoraNo"),
 );
 
-const ClientAssignedSites = React.lazy(() =>
-  import("./views/master-admin/clients-and-sites/ClientAssignedSites")
+const ClientsDasboard = React.lazy(
+  () => import("./views/master-admin/clients-and-sites/Clients"),
 );
 
-const EditClient = React.lazy(() =>
-  import("./views/master-admin/clients-and-sites/EditClient")
+const ClientAssignedSites = React.lazy(
+  () => import("./views/master-admin/clients-and-sites/ClientAssignedSites"),
 );
 
-const ServiceTicketDashboard = React.lazy(() =>
-  import("./views/master-admin/service-tickets/ServiceTicketDashboard")
+const EditClient = React.lazy(
+  () => import("./views/master-admin/clients-and-sites/EditClient"),
 );
 
-const UpdateServiceTicket = React.lazy(() =>
-  import("./views/master-admin/service-tickets/UpdateServiceTicket")
+const ServiceTicketDashboard = React.lazy(
+  () => import("./views/master-admin/service-tickets/ServiceTicketDashboard"),
 );
 
-const CreateNewServiceTicket = React.lazy(() =>
-  import("./views/master-admin/service-tickets/CreateServiceTicket")
+const UpdateServiceTicket = React.lazy(
+  () => import("./views/master-admin/service-tickets/UpdateServiceTicket"),
 );
 
-const InternalTicketsDashboard = React.lazy(() =>
-  import("./views/master-admin/internal-tickets/InternalTicketsDashboard")
+const CreateNewServiceTicket = React.lazy(
+  () => import("./views/master-admin/service-tickets/CreateServiceTicket"),
 );
 
-const CreateNewInternalTicket = React.lazy(() =>
-  import("./views/master-admin/internal-tickets/CreateNewInternalTicket")
+const InternalTicketsDashboard = React.lazy(
+  () =>
+    import("./views/master-admin/internal-tickets/InternalTicketsDashboard"),
 );
 
-const UsersDashboard = React.lazy(() =>
-  import("./views/master-admin/users/UsersDashboard")
+const CreateNewInternalTicket = React.lazy(
+  () => import("./views/master-admin/internal-tickets/CreateNewInternalTicket"),
 );
 
-const Notifications = React.lazy(() =>
-  import("./views/master-admin/notifications/Notifications")
+const UsersDashboard = React.lazy(
+  () => import("./views/master-admin/users/UsersDashboard"),
 );
 
-const AllSiteCleaningLog = React.lazy(() =>
-  import("./views/master-admin/all-site-cleaninglog/AllSiteCleaningLog")
+const Notifications = React.lazy(
+  () => import("./views/master-admin/notifications/Notifications"),
 );
 
-const SitewaiseLog = React.lazy(() =>
-  import("./views/master-admin/all-site-cleaninglog/SitewaiseLog")
+const AllSiteCleaningLog = React.lazy(
+  () => import("./views/master-admin/all-site-cleaninglog/AllSiteCleaningLog"),
 );
 
-const Gateways = React.lazy(() =>
-  import("./views/master-admin/gateways/Gateways")
+const SitewaiseLog = React.lazy(
+  () => import("./views/master-admin/all-site-cleaninglog/SitewaiseLog"),
 );
 
-const UpdateGateway = React.lazy(() =>
-  import("./views/master-admin/gateways/UpdateGateway")
+const Gateways = React.lazy(
+  () => import("./views/master-admin/gateways/Gateways"),
 );
 
-const CreateNewGateways = React.lazy(() =>
-  import("./views/master-admin/gateways/CreateNewGateways")
+const UpdateGateway = React.lazy(
+  () => import("./views/master-admin/gateways/UpdateGateway"),
 );
 
-const AssignGateway = React.lazy(() =>
-  import("./views/master-admin/gateways/AssignGateway")
+const CreateNewGateways = React.lazy(
+  () => import("./views/master-admin/gateways/CreateNewGateways"),
 );
 
-const AllSiteDpr = React.lazy(() =>
-  import("./views/master-admin/all-site-dpr/AllSiteDpr")
+const AssignGateway = React.lazy(
+  () => import("./views/master-admin/gateways/AssignGateway"),
+);
+
+const AllSiteDpr = React.lazy(
+  () => import("./views/master-admin/all-site-dpr/AllSiteDpr"),
 );
 
 // activate mutiple robots
-const ActivateRobots = React.lazy(() =>
-  import("./views/master-admin/robots/ActivateRobots")
+const ActivateRobots = React.lazy(
+  () => import("./views/master-admin/robots/ActivateRobots"),
 );
 
-const SiteCoordinates = React.lazy(() =>
-  import("./views/master-admin/sites-coordinates/SitesCoordinates")
+const SiteCoordinates = React.lazy(
+  () => import("./views/master-admin/sites-coordinates/SitesCoordinates"),
 );
 
-const UpdateSiteCoordinates = React.lazy(() =>
-  import("./views/master-admin/sites-coordinates/UpdateSitesCoordinates")
+const UpdateSiteCoordinates = React.lazy(
+  () => import("./views/master-admin/sites-coordinates/UpdateSitesCoordinates"),
 );
 
-const AddSiteCoordinates = React.lazy(() =>
-  import("./views/master-admin/sites-coordinates/AddSitesCoordinates")
+const AddSiteCoordinates = React.lazy(
+  () => import("./views/master-admin/sites-coordinates/AddSitesCoordinates"),
 );
 
-const ServiceTicketsFaultDashboard = React.lazy(() =>
-  import(
-    "./views/master-admin/serviceticket-fault/ServiceTicketsFaultDashboard"
-  )
+const ServiceTicketsFaultDashboard = React.lazy(
+  () =>
+    import("./views/master-admin/serviceticket-fault/ServiceTicketsFaultDashboard"),
 );
 
 //----------------------------------master admin------------------------------------
 
 //----------------------------------client admin------------------------------------
 
-const ClientAdminDashboard = React.lazy(() =>
-  import("./views/client-admin/ClientAdminDashboard")
+const ClientAdminDashboard = React.lazy(
+  () => import("./views/client-admin/ClientAdminDashboard"),
 );
 
-const MasterUserDashboard = React.lazy(() =>
-  import("./views/master-user/MasterUserDashboard")
+const MasterUserDashboard = React.lazy(
+  () => import("./views/master-user/MasterUserDashboard"),
 );
 
-const ServiceUserDashboard = React.lazy(() =>
-  import("./views/service-user/ServiceUserDashboard")
+const ServiceUserDashboard = React.lazy(
+  () => import("./views/service-user/ServiceUserDashboard"),
 );
 
-const ProjectUserDashboard = React.lazy(() =>
-  import("./views/project-user/ProjectUserDashboard")
+const ProjectUserDashboard = React.lazy(
+  () => import("./views/project-user/ProjectUserDashboard"),
 );
 
 //----------------------------------client admin------------------------------------
 
 //-------------------------------------project admin---------------------------
-const ProjectAdminDashboard = React.lazy(() =>
-  import("./views/project-admin/ProjectAdminDashboard")
+const ProjectAdminDashboard = React.lazy(
+  () => import("./views/project-admin/ProjectAdminDashboard"),
 );
 
 //--------------------------------------project admin---------------------------------
 
 //-------------------------------------service admin---------------------------
-const ServiceAdminDahboard = React.lazy(() =>
-  import("./views/service-admin/ServiceAdminDashboard")
+const ServiceAdminDahboard = React.lazy(
+  () => import("./views/service-admin/ServiceAdminDashboard"),
 );
 //--------------------------------------service admin---------------------------------
 
 const Robots = React.lazy(() => import("./views/master-admin/robots/Robots"));
 
-const UpdateRobots = React.lazy(() =>
-  import("./views/master-admin/robots/UpdateRobot")
+const UpdateRobots = React.lazy(
+  () => import("./views/master-admin/robots/UpdateRobot"),
 );
 
-const AddServiceItem = React.lazy(() =>
-  import("./views/master-admin/inventories/AddServiceItem")
+const AddServiceItem = React.lazy(
+  () => import("./views/master-admin/inventories/AddServiceItem"),
 );
 
-const UpdateServiceItem = React.lazy(() =>
-  import("./views/master-admin/inventories/UpdateServiceItem")
+const UpdateServiceItem = React.lazy(
+  () => import("./views/master-admin/inventories/UpdateServiceItem"),
 );
 
-const Inventories = React.lazy(() =>
-  import("./views/master-admin/inventories/Inventories")
+const Inventories = React.lazy(
+  () => import("./views/master-admin/inventories/Inventories"),
 );
 
-const UpdateInventory = React.lazy(() =>
-  import("./views/master-admin/inventories/UpdateInventory")
+const UpdateInventory = React.lazy(
+  () => import("./views/master-admin/inventories/UpdateInventory"),
 );
 
-const AddInventory = React.lazy(() =>
-  import("./views/master-admin/inventories/AddInventory")
+const AddInventory = React.lazy(
+  () => import("./views/master-admin/inventories/AddInventory"),
 );
 
-const AddDpr = React.lazy(() =>
-  import("./views/master-admin/all-site-dpr/AddDpr")
+const AddDpr = React.lazy(
+  () => import("./views/master-admin/all-site-dpr/AddDpr"),
 );
 const Timers = React.lazy(() => import("./views/master-admin/timers/Timers"));
 
-const UpdateTimer = React.lazy(() =>
-  import("./views/master-admin/timers/UpdateTimer")
+const UpdateTimer = React.lazy(
+  () => import("./views/master-admin/timers/UpdateTimer"),
 );
 
-const ProjectClosureForm = React.lazy(() =>
-  import("./views/master-admin/project-closure/ProjectClosureDashboard")
+const ProjectClosureForm = React.lazy(
+  () => import("./views/master-admin/project-closure/ProjectClosureDashboard"),
 );
 
-const AddProjectClosureForm = React.lazy(() =>
-  import("./views/master-admin/project-closure/AddProjectClosureForm")
+const AddProjectClosureForm = React.lazy(
+  () => import("./views/master-admin/project-closure/AddProjectClosureForm"),
 );
 
-const UpdateProjectClosureForm = React.lazy(() =>
-  import("./views/master-admin/project-closure/UpdateProjectClosureForm")
+const UpdateProjectClosureForm = React.lazy(
+  () => import("./views/master-admin/project-closure/UpdateProjectClosureForm"),
 );
-const ViewProjectClosureDocument = React.lazy(() =>
-  import("./views/master-admin/project-closure/ViewProjectClosureDocument")
+const ViewProjectClosureDocument = React.lazy(
+  () =>
+    import("./views/master-admin/project-closure/ViewProjectClosureDocument"),
 );
 
 //common pages
@@ -1570,6 +1574,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MqttDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mqtt-events-per-robot",
+    name: "MQTT Events",
+    element: (
+      <MasterAdminRoute>
+        <MqttEvents />
       </MasterAdminRoute>
     ),
   },
@@ -2952,6 +2965,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/mds-logs/:site_id",
+    name: "MDS Tracker",
+    element: (
+      <MasterAdminRoute>
+        <MdsLog />
+      </MasterAdminRoute>
+    ),
+  },
 
   {
     path: "/master-admin/mis-report",
@@ -2978,6 +3000,16 @@ const routes = [
     element: (
       <MasterUserRoute>
         <Mds />
+      </MasterUserRoute>
+    ),
+  },
+
+  {
+    path: "/master-user/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <MasterUserRoute>
+        <MdsLog />
       </MasterUserRoute>
     ),
   },
@@ -3803,6 +3835,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <ProjectAdminRoute>
+        <MdsLog />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/add-mds-device/add-mds-using-lorano",
     name: "Add MDS Device",
     element: (
@@ -4610,6 +4651,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <Mds />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <ProjectUserRoute>
+        <MdsLog />
       </ProjectUserRoute>
     ),
   },
@@ -5520,6 +5570,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-admin/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <ServiceAdminRoute>
+        <MdsLog />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
     path: "/service-admin/add-mds-device/add-mds-using-lorano",
     name: "Add MDS Device",
     element: (
@@ -6356,6 +6415,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-user/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <ServiceUserRoute>
+        <MdsLog />
+      </ServiceUserRoute>
+    ),
+  },
+  {
     path: "/service-user/add-mds-device/add-mds-using-lorano",
     name: "Add MDS Device",
     element: (
@@ -6796,6 +6864,16 @@ const routes = [
       </SiteTechnicianRoute>
     ),
   },
+  {
+    // path: "/master-admin/event-and-frames/:deveui",     path: "/site-technician/site-management/block-management/:site_id/:block/:robot_no",
+    path: "/site-technician/site-management/block-management/:site_id/:block/:robot_no/event-and-frames/:deveui",
+    name: "Robot Event and Frames",
+    element: (
+      <SiteTechnicianRoute>
+        <RobotEventAndFrames />
+      </SiteTechnicianRoute>
+    ),
+  },
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
@@ -7038,6 +7116,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <MdsOperatingClient />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/mds-logs/:site_id",
+    name: "MDS Logs",
+    element: (
+      <ClientAdminRoute>
+        <MdsLog />
       </ClientAdminRoute>
     ),
   },

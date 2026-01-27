@@ -69,7 +69,7 @@ const SubscriptionViewPage = () => {
           `/api/v1/client-subscription/get-subscriptions`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         const result = response.data.data;
@@ -85,7 +85,7 @@ const SubscriptionViewPage = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -151,6 +151,9 @@ const SubscriptionViewPage = () => {
       reader.readAsDataURL(blob);
     });
   };
+  useEffect(() => {
+    console.log("Runs once (mount)");
+  }, []);
 
   const exportToPdf = async (
     subscriptionId,
@@ -168,7 +171,7 @@ const SubscriptionViewPage = () => {
     igst,
     place_of_supply,
     status,
-    transaction_id
+    transaction_id,
   ) => {
     const headerBase64 = await getBase64ImageFromURL(headerImage);
     const footerBase64 = await getBase64ImageFromURL(footerImage);
@@ -336,8 +339,8 @@ const SubscriptionViewPage = () => {
                             subscription.subscription_status === "subscribed"
                               ? "success"
                               : subscription.subscription_status === "expired"
-                              ? "warning"
-                              : "danger"
+                                ? "warning"
+                                : "danger"
                           }
                           className="px-2 py-1"
                         >
@@ -350,7 +353,7 @@ const SubscriptionViewPage = () => {
                       <small className="text-success">Start Date</small>
                       <div className="">
                         {moment(subscription.subscription_start_date).format(
-                          "DD-MM-YYYY"
+                          "DD-MM-YYYY",
                         )}
                       </div>
                     </CCol>
@@ -358,7 +361,7 @@ const SubscriptionViewPage = () => {
                       <small className="text-success">End Date</small>
                       <div className="">
                         {moment(subscription.subscription_end_date).format(
-                          "DD-MM-YYYY"
+                          "DD-MM-YYYY",
                         )}
                       </div>
                     </CCol>
@@ -377,10 +380,10 @@ const SubscriptionViewPage = () => {
                         {" "}
                         <CBadge
                           color={`${
-                            invoice.status === "Paid" ? "success" : "danger"
+                            invoice.status === "paid" ? "success" : "danger"
                           }`}
                         >
-                          {invoice.status === "Paid" ? "Paid" : "Pending"}
+                          {invoice.status === "paid" ? "Paid" : "Pending"}
                         </CBadge>
                       </div>
                     </CCol>
