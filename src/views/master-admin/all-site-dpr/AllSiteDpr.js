@@ -55,7 +55,7 @@ const AllSiteDpr = () => {
       siteIds: [],
       loadingSiteIds: true,
       sitesError: "",
-    }
+    },
   );
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -79,7 +79,7 @@ const AllSiteDpr = () => {
       const result = await axios.post(
         "/api/v1/techniciandprs/monthly",
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "FETCH_DPR_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -111,7 +111,7 @@ const AllSiteDpr = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -124,76 +124,132 @@ const AllSiteDpr = () => {
     setFormData(dpr);
     setModalVisible(true);
   };
-  // Process the data to create proper headers with weeks inserted after every 7 days
-  const processDprData = () => {
-    if (!dprs.length) return { headers: [], weekHeaders: [] };
 
-    // Extract all dates and weeks from the first site (all sites should have same structure)
-    const dateEntries = [];
-    const weekEntries = [];
+  const getWeekOfMonth = (dateObj) => {
+    return Math.ceil(dateObj.getDate() / 7);
+  };
+
+  // Process the data to create proper headers with weeks inserted after every 7 days
+  // const processDprData = () => {
+  //   if (!dprs.length) return { headers: [], weekHeaders: [] };
+
+  //   // Extract all dates and weeks from the first site (all sites should have same structure)
+  //   const dateEntries = [];
+  //   const weekEntries = [];
+
+  //   dprs[0].month_wise_data.forEach((entry) => {
+  //     if (entry.date) {
+  //       dateEntries.push({
+  //         key: entry.date,
+  //         type: "date",
+  //         value: entry.date,
+  //         // Parse date for sorting
+  //         dateObj: new Date(
+  //           parseInt(entry.date.split("-")[2]),
+  //           parseInt(entry.date.split("-")[1]) - 1,
+  //           parseInt(entry.date.split("-")[0])
+  //         ),
+  //       });
+  //     } else if (entry.week) {
+  //       weekEntries.push({
+  //         key: entry.week,
+  //         type: "week",
+  //         value: entry.week,
+  //         weekNum: parseInt(entry.week.replace("Week ", "")),
+  //       });
+  //     }
+  //   });
+
+  //   // Sort dates chronologically
+  //   dateEntries.sort((a, b) => a.dateObj - b.dateObj);
+
+  //   // Sort weeks numerically
+  //   weekEntries.sort((a, b) => a.weekNum - b.weekNum);
+
+  //   // Insert weeks after every 7 days
+  //   const headers = [];
+  //   const weekHeaders = [];
+
+  //   let dayCount = 0;
+  //   let weekIndex = 0;
+
+  //   dateEntries.forEach((date, index) => {
+  //     headers.push(date);
+  //     dayCount++;
+
+  //     // After 7 days, insert the corresponding week summary
+  //     if (dayCount === 7 && weekIndex < weekEntries.length) {
+  //       const weekEntry = weekEntries[weekIndex];
+  //       headers.push(weekEntry);
+
+  //       // Add to week headers for the table
+  //       weekHeaders.push({ week: weekEntry.value, span: 8 }); // 7 days + 1 week column
+
+  //       dayCount = 0;
+  //       weekIndex++;
+  //     }
+  //   });
+
+  //   // Add any remaining weeks (if any)
+  //   while (weekIndex < weekEntries.length) {
+  //     const weekEntry = weekEntries[weekIndex];
+  //     headers.push(weekEntry);
+  //     weekHeaders.push({ week: weekEntry.value, span: 1 });
+  //     weekIndex++;
+  //   }
+
+  //   return { headers, weekHeaders };
+  // };
+
+  const processDprData = () => {
+    if (!dprs.length) return { headers: [] };
+
+    const dateSet = new Set();
 
     dprs[0].month_wise_data.forEach((entry) => {
-      if (entry.date) {
-        dateEntries.push({
-          key: entry.date,
-          type: "date",
-          value: entry.date,
-          // Parse date for sorting
-          dateObj: new Date(
-            parseInt(entry.date.split("-")[2]),
-            parseInt(entry.date.split("-")[1]) - 1,
-            parseInt(entry.date.split("-")[0])
-          ),
-        });
-      } else if (entry.week) {
-        weekEntries.push({
-          key: entry.week,
-          type: "week",
-          value: entry.week,
-          weekNum: parseInt(entry.week.replace("Week ", "")),
-        });
-      }
+      if (entry.date) dateSet.add(entry.date);
     });
 
-    // Sort dates chronologically
-    dateEntries.sort((a, b) => a.dateObj - b.dateObj);
+    const dates = Array.from(dateSet).map((d) => {
+      const [dd, mm, yyyy] = d.split("-");
+      const dateObj = new Date(yyyy, mm - 1, dd);
 
-    // Sort weeks numerically
-    weekEntries.sort((a, b) => a.weekNum - b.weekNum);
+      return {
+        key: d,
+        type: "date",
+        value: d,
+        dateObj,
+        week: getWeekOfMonth(dateObj),
+      };
+    });
 
-    // Insert weeks after every 7 days
+    // Sort dates
+    dates.sort((a, b) => a.dateObj - b.dateObj);
+
     const headers = [];
-    const weekHeaders = [];
+    let currentWeek = null;
 
-    let dayCount = 0;
-    let weekIndex = 0;
+    dates.forEach((d, index) => {
+      headers.push(d);
 
-    dateEntries.forEach((date, index) => {
-      headers.push(date);
-      dayCount++;
+      if (currentWeek === null) {
+        currentWeek = d.week;
+      }
 
-      // After 7 days, insert the corresponding week summary
-      if (dayCount === 7 && weekIndex < weekEntries.length) {
-        const weekEntry = weekEntries[weekIndex];
-        headers.push(weekEntry);
+      const next = dates[index + 1];
 
-        // Add to week headers for the table
-        weekHeaders.push({ week: weekEntry.value, span: 8 }); // 7 days + 1 week column
-
-        dayCount = 0;
-        weekIndex++;
+      // Insert week column when week changes OR last date
+      if (!next || next.week !== currentWeek) {
+        headers.push({
+          key: `Week ${currentWeek}`,
+          type: "week",
+          value: `Week ${currentWeek}`,
+        });
+        currentWeek = next?.week;
       }
     });
 
-    // Add any remaining weeks (if any)
-    while (weekIndex < weekEntries.length) {
-      const weekEntry = weekEntries[weekIndex];
-      headers.push(weekEntry);
-      weekHeaders.push({ week: weekEntry.value, span: 1 });
-      weekIndex++;
-    }
-
-    return { headers, weekHeaders };
+    return { headers };
   };
 
   const { headers, weekHeaders } = processDprData();
@@ -254,7 +310,7 @@ const AllSiteDpr = () => {
           metric.label,
           rowIndex === 0 ? site.total_robots : "", // Robots Qty (only in first row for this site)
           ...headers.map(
-            (header) => entryMap[metric.field]?.[header.key] ?? ""
+            (header) => entryMap[metric.field]?.[header.key] ?? "",
           ),
         ];
         dataRows.push(rowData);

@@ -521,6 +521,24 @@ const _nav = [
       },
       {
         component: CNavGroup,
+        name: "Scada",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Scada Dashboard",
+            to: "/master-admin/scada-integration",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
         name: "MQTT",
         icon: (
           <CIcon
