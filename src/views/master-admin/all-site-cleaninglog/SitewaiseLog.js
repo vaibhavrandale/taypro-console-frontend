@@ -1057,8 +1057,8 @@ import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import CompletedCycles from "./CompletedCycles";
-import ErrorCycles from "./ErrorCycles";
-import OfflineRobotsCycle from "./OfflineRobotsCycle";
+// import ErrorCycles from "./ErrorCycles";
+// import OfflineRobotsCycle from "./OfflineRobotsCycle";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -1211,7 +1211,7 @@ const SitewaiseLog = () => {
   const { site_id } = useParams();
 
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   useEffect(() => {
@@ -1228,7 +1228,7 @@ const SitewaiseLog = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
 
         const data = result.data.data;
@@ -1257,7 +1257,7 @@ const SitewaiseLog = () => {
           subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -1270,7 +1270,7 @@ const SitewaiseLog = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
 
         dispatch({
@@ -1297,7 +1297,7 @@ const SitewaiseLog = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
         dispatch({
           type: "FETCH_OFFLINE_SUCCESS",
@@ -1365,10 +1365,10 @@ const SitewaiseLog = () => {
           log.cleaning?.finish
             ? "Completed"
             : log.cleaning?.battery_dead
-            ? "Battery Dead"
-            : log.cleaning?.cleaning_cancelled
-            ? "Cleaning Cancelled"
-            : "In Progress",
+              ? "Battery Dead"
+              : log.cleaning?.cleaning_cancelled
+                ? "Cleaning Cancelled"
+                : "In Progress",
         ]);
       });
     } else {
@@ -1573,7 +1573,7 @@ const SitewaiseLog = () => {
     try {
       XLSX.writeFile(
         wb,
-        `Site_${site_id || "Unknown"}_Logs_${startDate}_To_${startDate}.xlsx`
+        `Site_${site_id || "Unknown"}_Logs_${startDate}_To_${startDate}.xlsx`,
       );
       toast.success("Excel file downloaded successfully!");
     } catch (error) {
@@ -1819,14 +1819,14 @@ const SitewaiseLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
 
                               <CTableDataCell>
                                 {log.cleaning.finish ? (
                                   new Date(
-                                    log.cleaning.finishAt
+                                    log.cleaning.finishAt,
                                   ).toLocaleString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
@@ -2010,9 +2010,9 @@ const SitewaiseLog = () => {
                       </div>
                     ))} */}
 
-                    <h4 className="my-3  border-top">Testing Cycles</h4>
+                    {/* <h4 className="my-3  border-top">Testing Cycles</h4>
 
-                    <CompletedCycles completedLogs={cleaningCompleted} />
+                    <CompletedCycles completedLogs={cleaningCompleted} /> */}
                   </CTabPanel>
 
                   {/* Cleaning In Progress */}
@@ -2051,7 +2051,7 @@ const SitewaiseLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
@@ -2118,7 +2118,7 @@ const SitewaiseLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>{" "}
                               <CTableDataCell>
@@ -2139,8 +2139,8 @@ const SitewaiseLog = () => {
                       </CTableBody>
                     </CTable>
 
-                    <h4 className="my-3  border-top">Testing Error Cycles</h4>
-                    <ErrorCycles errorlogs={failureLogs} />
+                    {/* <h4 className="my-3  border-top">Testing Error Cycles</h4>
+                    <ErrorCycles errorlogs={failureLogs} /> */}
                   </CTabPanel>
 
                   {/* ============ OFFLINE ROBOTS TAB ================= */}
@@ -2191,7 +2191,7 @@ const SitewaiseLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
 
@@ -2207,12 +2207,12 @@ const SitewaiseLog = () => {
                         )}
                       </CTableBody>
                     </CTable>
-                    <h4 className="my-3  border-top">Offline Robots Cycles</h4>
+                    {/* <h4 className="my-3  border-top">Offline Robots Cycles</h4>
                     <OfflineRobotsCycle
                       offlineLogs={offlineRobots}
                       loading={offlineRobotLoading}
                       error={offlineRobotError}
-                    />
+                    /> */}
                   </CTabPanel>
 
                   {/* ============online–command-given-not-started TAB ================= */}
@@ -2268,11 +2268,11 @@ const SitewaiseLog = () => {
                                         minute: "2-digit",
                                         second: "2-digit",
                                         hour12: true,
-                                      }
+                                      },
                                     )}
                                 </CTableDataCell>
                               </CTableRow>
-                            )
+                            ),
                           )
                         ) : (
                           <CTableRow>

@@ -63,6 +63,7 @@ const CleaningSummary = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   // Main table search
   const [mainSearch, setMainSearch] = useState("");
+  const [masterData, setMasterData] = useState({});
   // Modal table search
   const [modalSearch, setModalSearch] = useState("");
 
@@ -99,6 +100,7 @@ const CleaningSummary = () => {
             uptime: result.data.uptime,
           },
         });
+        setMasterData(result.data);
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -122,6 +124,46 @@ const CleaningSummary = () => {
   const filteredModalRobots = modalData.robots.filter((robot) =>
     robot.robot_no.toLowerCase().includes(modalSearch.toLowerCase()),
   );
+
+  const handleExport = async () => {
+    try {
+      toast.loading("Preparing Excel report...", { id: "export" });
+      const data = {
+        site_id: site_id,
+        month: month,
+        year: year,
+      };
+
+      const response = await axios.post(`/api/v1/robot-tracking/export`, data, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = `${site_id}_Cleaning_Report_${month}_${year}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Excel downloaded", { id: "export" });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || error.response?.data?.error,
+        {
+          id: "export",
+        },
+      );
+    }
+  };
 
   return (
     <>
@@ -181,9 +223,18 @@ const CleaningSummary = () => {
                     ))}
                   </select>
                 </CCol>
+                <CCol xs="3" md="2">
+                  <CButton
+                    className=" btn-sm"
+                    color="primary"
+                    onClick={handleExport}
+                  >
+                    Export
+                  </CButton>
+                </CCol>
 
                 {/* KPI / Loader Container */}
-                <CCol xs="12" md="8">
+                <CCol xs="12" md="6">
                   <div className="d-flex justify-content-end align-items-center h-100 ">
                     {loading ? (
                       <div className="d-flex justify-content-center align-items-center">
@@ -227,19 +278,20 @@ const CleaningSummary = () => {
                     <CTableHeaderCell>Date</CTableHeaderCell>
                     <CTableHeaderCell>Successful Cleanings</CTableHeaderCell>
                     <CTableHeaderCell>Failed Cleanings</CTableHeaderCell>
+                    <CTableHeaderCell>Technician Comment</CTableHeaderCell>
                     <CTableHeaderCell>Actions</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
                   {loading ? (
                     <CTableRow>
-                      <CTableHeaderCell colSpan="5" className="text-center">
+                      <CTableHeaderCell colSpan="6" className="text-center">
                         <LoadingSpinner />
                       </CTableHeaderCell>
                     </CTableRow>
                   ) : error ? (
                     <CTableRow>
-                      <CTableHeaderCell colSpan="5" className="text-center">
+                      <CTableHeaderCell colSpan="6" className="text-center">
                         {error}
                       </CTableHeaderCell>
                     </CTableRow>
@@ -256,6 +308,11 @@ const CleaningSummary = () => {
                         </CTableDataCell>
                         <CTableDataCell>{item.success_count}</CTableDataCell>
                         <CTableDataCell>{item.failure_count}</CTableDataCell>
+                        <CTableDataCell>
+                          {item.dpr_comment
+                            ? item.dpr_comment
+                            : "Cleaning Cycle completed Successfully"}
+                        </CTableDataCell>
                         <CTableDataCell>
                           <CButton
                             color="success"
@@ -290,7 +347,7 @@ const CleaningSummary = () => {
                     ))
                   ) : (
                     <CTableRow>
-                      <CTableDataCell colSpan="5" className="text-center">
+                      <CTableDataCell colSpan="6" className="text-center">
                         No records found for the selected month and year.
                       </CTableDataCell>
                     </CTableRow>

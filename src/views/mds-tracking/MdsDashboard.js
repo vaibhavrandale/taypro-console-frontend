@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import MdsRowTrack from "./MdsRowTrack";
 import Robot from "./Robot";
 import MdsRailingTrack from "./MdsRailingTrack";
-import { CCol, CFormInput, CFormSelect, CRow } from "@coreui/react";
+import { CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ import {
 } from "./mdsTrackingHelper";
 import { Link, useNavigate } from "react-router-dom";
 import MdsSidebar from "./MdsSidebar";
+import MdsGallery from "./MdsGallery";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -318,7 +319,7 @@ const MdsDashboard = () => {
         ))}
       {!loadingSites && !loading && (
         <>
-          <CRow className="m-1 d-flex justify-content-between align-items-center">
+          {/* <CRow className="m-1 d-flex justify-content-between align-items-center">
             <CCol md={3}>
               <h5 className="text-light text-center text-success">
                 MDS And Robot Tracking
@@ -369,7 +370,7 @@ const MdsDashboard = () => {
                 </CFormSelect>
               </CCol>
             )}
-            <CCol md={3}>
+            <CCol md={2}>
               <CFormInput
                 type="date"
                 className="p-2 m-2"
@@ -389,6 +390,90 @@ const MdsDashboard = () => {
                 </Link>
               </CCol>
             )}
+            <CCol md={1}>
+              <MdsGallery />
+            </CCol>
+          </CRow> */}
+          <CRow className="gx-2 gy-2 align-items-end m-2">
+            {/* Title */}
+            <CCol xs={12} md={4}>
+              <h5 className="fw-semibold text-success mb-0 text-center text-md-start">
+                MDS & Robot Tracking
+              </h5>
+            </CCol>
+
+            {/* Site Select */}
+            <CCol xs={12} sm={6} md={3}>
+              <CFormLabel className="small">Site</CFormLabel>
+              <CFormSelect
+                value={site_id}
+                onChange={(e) => setSiteId(e.target.value)}
+              >
+                <option value="">Select Site</option>
+                {sites?.map((site) => (
+                  <option key={site.site_id} value={site.site_id}>
+                    {site.site_id}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+
+            {/* MDS Select */}
+            {allMdsDevices?.length > 0 && (
+              <CCol xs={12} sm={6} md={3}>
+                <CFormLabel className="small">MDS</CFormLabel>
+                <CFormSelect
+                  value={mdsDevice}
+                  onChange={(e) => {
+                    const selectedMds = allMdsDevices.find(
+                      (mds) => mds.mds_no === e.target.value,
+                    );
+                    if (selectedMds) {
+                      setMdsDevice(e.target.value);
+                      navigate(
+                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`,
+                      );
+                    }
+                  }}
+                >
+                  <option value="">Select MDS</option>
+                  {allMdsDevices.map((mds) => (
+                    <option key={mds.mds_no} value={mds.mds_no}>
+                      {mds.mds_no}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            )}
+
+            {/* Date */}
+            <CCol xs={12} sm={6} md={2}>
+              <CFormLabel className="small">Date</CFormLabel>
+              <CFormInput
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </CCol>
+
+            {/* Actions */}
+            <CCol
+              xs={12}
+              md={3}
+              className="d-flex gap-2 justify-content-md-end"
+            >
+              {site_id && (
+                <Link
+                  className="btn btn-outline-primary btn-sm"
+                  target="_blank"
+                  to={`/${adminroute}/mds-logs/${site_id}`}
+                >
+                  View Logs
+                </Link>
+              )}
+
+              <MdsGallery />
+            </CCol>
           </CRow>
 
           {mdsdevices.length > 0 ? (

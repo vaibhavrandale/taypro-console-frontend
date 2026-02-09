@@ -198,6 +198,7 @@ import CleaningSummary from "./views/master-admin/all-site-cleaninglog/cleaning-
 import MqttEvents from "./views/master-admin/mqtt/MqttEvents";
 import MdsLog from "./views/mds-tracking/MdsLog";
 import Service from "./views/mis-report/Service";
+import ScadaDashboard from "./views/scada/ScadaDashboard";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1917,6 +1918,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateMdsTimer />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/scada-integration",
+    name: "Scada Integration",
+    element: (
+      <MasterAdminRoute>
+        <ScadaDashboard />
       </MasterAdminRoute>
     ),
   },
