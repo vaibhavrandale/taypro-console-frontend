@@ -290,7 +290,7 @@ const ErrorCycles = ({ errorlogs }) => {
           ) : (
             <CTableRow>
               <CTableDataCell colSpan="11" className="text-start">
-                No logs found for Cycle 2.
+                No logs found for Cycle 2...
               </CTableDataCell>
             </CTableRow>
           )}
@@ -399,7 +399,7 @@ const ErrorCycles = ({ errorlogs }) => {
           ) : (
             <CTableRow>
               <CTableDataCell colSpan="11" className="text-start">
-                No logs found for Cycle 3.
+                No logs found for Cycle 3.....
               </CTableDataCell>
             </CTableRow>
           )}
