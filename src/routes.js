@@ -199,6 +199,7 @@ import MqttEvents from "./views/master-admin/mqtt/MqttEvents";
 import MdsLog from "./views/mds-tracking/MdsLog";
 import Service from "./views/mis-report/Service";
 import ScadaDashboard from "./views/scada/ScadaDashboard";
+import OpenAiChat from "./views/openai/OpenAiChat";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1927,6 +1928,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ScadaDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/chat-with-console",
+    name: "Chat with Console",
+    element: (
+      <MasterAdminRoute>
+        <OpenAiChat />
       </MasterAdminRoute>
     ),
   },
@@ -3963,6 +3973,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/chat-with-console",
+    name: "Chat with Console",
+    element: (
+      <ProjectAdminRoute>
+        <OpenAiChat />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -5695,6 +5714,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <UpdateMdsTimer />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/chat-with-console",
+    name: "Chat with Console",
+    element: (
+      <ServiceAdminRoute>
+        <OpenAiChat />
       </ServiceAdminRoute>
     ),
   },

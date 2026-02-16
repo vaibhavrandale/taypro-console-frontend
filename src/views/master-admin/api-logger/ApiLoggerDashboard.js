@@ -27,6 +27,8 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { RefreshCcw } from "lucide-react";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import UserApiUsageBarChart from "./UserApiUsageBarChart";
+import EndpointUsageTable from "./EndpointUsageTable";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -60,6 +62,7 @@ const ApiLoggerDashboard = () => {
   const [mainSearch, setMainSearch] = useState("");
   const [modalSearch, setModalSearch] = useState("");
   const [selectedUserName, setSelectedUserName] = useState("");
+  const [selectedEndpoint, setSelectedEndpoint] = useState(null);
 
   const authtoken = useSelector((state) => state.authtoken);
   // Modal state
@@ -106,14 +109,14 @@ const ApiLoggerDashboard = () => {
           setUserLogsLoading(true);
           setUserLogsError("");
           const res = await axios.get(
-            `/api/v1/api-logger/full-logs/${selectedUserId}`
+            `/api/v1/api-logger/full-logs/${selectedUserId}`,
           );
           console.log(res);
 
           setUserLogs(res.data.logs);
         } catch (err) {
           setUserLogsError(
-            err.response?.data?.message || err.response?.data?.error
+            err.response?.data?.message || err.response?.data?.error,
           );
         } finally {
           setUserLogsLoading(false);
@@ -337,7 +340,7 @@ const ApiLoggerDashboard = () => {
                 <CIcon icon={cilX} size="lg" />
               </button>
             </CModalHeader>
-            <CModalBody>
+            {/* <CModalBody>
               {userLogsLoading ? (
                 <LoadingSpinner />
               ) : userLogsError ? (
@@ -378,6 +381,28 @@ const ApiLoggerDashboard = () => {
                       ))}
                     </CTableBody>
                   </CTable>
+                </>
+              )}
+            </CModalBody> */}
+            <CModalBody>
+              {userLogsLoading ? (
+                <LoadingSpinner />
+              ) : userLogsError ? (
+                <CAlert color="danger">{userLogsError}</CAlert>
+              ) : filteredUserLogs.length === 0 ? (
+                <div className="text-center py-3">
+                  No logs found for this user
+                </div>
+              ) : (
+                <>
+                  {/* BAR CHART */}
+                  <UserApiUsageBarChart
+                    logs={filteredUserLogs}
+                    onSelectEndpoint={setSelectedEndpoint}
+                  />
+
+                  {/* TABLE */}
+                  <EndpointUsageTable selectedLog={selectedEndpoint} />
                 </>
               )}
             </CModalBody>

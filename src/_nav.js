@@ -715,6 +715,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Chat with Console",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Chat with Console",
+            to: "/master-admin/chat-with-console",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------

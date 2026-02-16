@@ -616,7 +616,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import MonthFeedbackCard from "./MonthFeedbackCard";
+import FeedbackCard from "./FeedbackCard";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -687,13 +687,7 @@ const ClientFeedback = () => {
       f.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       f.user.username?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesSite =
-      !siteId ||
-      f.user.assigned_sites?.some((s) =>
-        s.site_id.toLowerCase().includes(siteId.toLowerCase()),
-      );
-
-    return matchesSearch && matchesSite;
+    return matchesSearch;
   });
 
   return (
@@ -706,17 +700,9 @@ const ClientFeedback = () => {
       </div>
 
       {/* ================= FILTER BAR ================= */}
-      <CRow className="mb-3 g-2">
-        <CCol md={4}>
-          <CFormInput
-            placeholder="Filter by Site ID (optional)"
-            value={siteId}
-            onChange={(e) => setSiteId(e.target.value)}
-          />
-        </CCol>
-
-        <CCol md={4}>
-          <CFormSelect
+      <CRow className="mb-3 g-2 justify-content-end">
+        <CCol md={2}>
+          {/* <CFormSelect
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
           >
@@ -725,10 +711,26 @@ const ClientFeedback = () => {
                 {moment().month(i).format("MMMM")}
               </option>
             ))}
+          </CFormSelect> */}
+          <CFormSelect
+            value={month}
+            onChange={(e) =>
+              setMonth(
+                e.target.value === "all" ? "all" : Number(e.target.value),
+              )
+            }
+          >
+            <option value="all">All of {year}</option>
+
+            {[...Array(12)].map((_, i) => (
+              <option key={i} value={i + 1}>
+                {moment().month(i).format("MMMM")}
+              </option>
+            ))}
           </CFormSelect>
         </CCol>
 
-        <CCol md={4}>
+        <CCol md={2}>
           <CFormSelect
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
@@ -740,11 +742,7 @@ const ClientFeedback = () => {
             ))}
           </CFormSelect>
         </CCol>
-      </CRow>
-
-      {/* Search */}
-      <CRow className="justify-content-end">
-        <CCol xs={12} md={6}>
+        <CCol xs={12} md={3}>
           <CInputGroup>
             <CFormInput
               placeholder="Search by username or email..."
@@ -755,21 +753,34 @@ const ClientFeedback = () => {
         </CCol>
       </CRow>
 
+      {/* Search */}
+      <CRow className="justify-content-end"></CRow>
+
       {/* ================= CONTENT ================= */}
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
-        <div className="text-center text-danger fw-bold">{error}</div>
-      ) : filteredFeedbacks.length === 0 ? (
-        <div className="text-center fw-bold mt-4">No feedbacks found.</div>
-      ) : (
-        <MonthFeedbackCard
-          month={`${moment()
-            .month(month - 1)
-            .format("MMMM")} ${year}`}
-          items={filteredFeedbacks}
-        />
-      )}
+      <CRow>
+        {loading ? (
+          <CCol xs={12} md={4}>
+            {" "}
+            <LoadingSpinner />
+          </CCol>
+        ) : error ? (
+          <CCol xs={12} md={4}>
+            {" "}
+            <div className="text-center text-danger fw-bold">{error}</div>
+          </CCol>
+        ) : filteredFeedbacks.length === 0 ? (
+          <CCol xs={12} md={4}>
+            {" "}
+            <div className="text-center fw-bold mt-4">No feedbacks found.</div>
+          </CCol>
+        ) : (
+          filteredFeedbacks.map((feedback) => (
+            <CCol xs={12} md={6} key={feedback._id} className="my-2">
+              <FeedbackCard feedback={feedback} />
+            </CCol>
+          ))
+        )}
+      </CRow>
     </div>
   );
 };
