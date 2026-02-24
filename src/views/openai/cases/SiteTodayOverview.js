@@ -370,6 +370,7 @@ const SiteTodayOverview = ({ data }) => {
             )}
           </CTabContent>
         </CTabs>
+        <span color="danger">{data.azureai}</span>
       </CCardBody>
     </CCard>
   );

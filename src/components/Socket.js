@@ -19,16 +19,6 @@ const socket = io(backendURL, {
   secure: true, // ensure WSS
 });
 
-// const socket = io(backendURL, {
-//   path: "/socket.io",
-//   transports: ["websocket"], // ✅ NO polling
-//   autoConnect: false, // ✅ manual lifecycle
-//   secure: true,
-//   reconnection: true,
-//   reconnectionAttempts: 5,
-//   reconnectionDelay: 2000,
-// });
-
 console.log("🔌 Connecting to:", backendURL);
 
 export default socket;

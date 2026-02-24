@@ -1,4 +1,10 @@
-import React, { useEffect, useReducer, useState, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useReducer,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import {
   CTable,
   CTableHead,
@@ -93,14 +99,14 @@ const CleaningLog = () => {
 
   // ✅ New Date Filter States
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   // ✅ Auto-refresh States
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(5000); // 5 seconds default
   const isAutoRefreshCall = useRef(false); // Track if current call is from auto-refresh
 
@@ -131,69 +137,72 @@ const CleaningLog = () => {
   const authtoken = useSelector((state) => state.authtoken);
 
   // ✅ Extract fetchCleaningLogs function to be reusable
-  const fetchCleaningLogs = useCallback(async (isAutoRefresh = false) => {
-    isAutoRefreshCall.current = isAutoRefresh;
-    try {
-      dispatch({ type: "FETCH_REQUEST" });
+  const fetchCleaningLogs = useCallback(
+    async (isAutoRefresh = false) => {
+      isAutoRefreshCall.current = isAutoRefresh;
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
 
-      let requestBody = {
-        pg: page,
-        limit: limit,
-      };
+        let requestBody = {
+          pg: page,
+          limit: limit,
+        };
 
-      if (fetchBySite) {
-        requestBody.site_id = site_id;
-      } else {
-        requestBody.robot_no = robot_no;
-      }
-
-      // ✅ Add Dates to Request
-      if (startDate && endDate) {
-        requestBody.startDate = startDate;
-        requestBody.endDate = endDate;
-      }
-
-      const response = await axios.post(
-        `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
-        requestBody,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
+        if (fetchBySite) {
+          requestBody.site_id = site_id;
+        } else {
+          requestBody.robot_no = robot_no;
         }
-      );
 
-      let total = Math.ceil(
-        Number(response.data.total) / Number(response.data.limit)
-      );
+        // ✅ Add Dates to Request
+        if (startDate && endDate) {
+          requestBody.startDate = startDate;
+          requestBody.endDate = endDate;
+        }
 
-      dispatch({
-        type: "FETCH_SUCCESS",
-        payload: {
-          data: response.data.data,
-          totalPages: total,
-          hasNextPage: response.data.hasNextPage,
-          hasPrevPage: response.data.hasPrevPage,
-        },
-      });
-    } catch (error) {
-      dispatch({
-        type: "FETCH_FAIL",
-        payload: error.response?.data?.error || "Failed to fetch data",
-      });
-      // Only show toast error on manual refresh, not auto-refresh
-      if (!isAutoRefreshCall.current) {
-        toast.error(error.response?.data?.error || "Failed to fetch data");
+        const response = await axios.post(
+          `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
+          requestBody,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          },
+        );
+
+        let total = Math.ceil(
+          Number(response.data.total) / Number(response.data.limit),
+        );
+
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: {
+            data: response.data.data,
+            totalPages: total,
+            hasNextPage: response.data.hasNextPage,
+            hasPrevPage: response.data.hasPrevPage,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response?.data?.error || "Failed to fetch data",
+        });
+        // Only show toast error on manual refresh, not auto-refresh
+        if (!isAutoRefreshCall.current) {
+          toast.error(error.response?.data?.error || "Failed to fetch data");
+        }
       }
-    }
-  }, [
-    authtoken,
-    limit,
-    page,
-    robot_no,
-    site_id,
-    fetchBySite,
-    startDate,
-    endDate,
-  ]);
+    },
+    [
+      authtoken,
+      limit,
+      page,
+      robot_no,
+      site_id,
+      fetchBySite,
+      startDate,
+      endDate,
+    ],
+  );
 
   // ✅ Initial fetch and when dependencies change
   useEffect(() => {
@@ -215,7 +224,7 @@ const CleaningLog = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -259,7 +268,7 @@ const CleaningLog = () => {
         log.robot_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
       log.data.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
+      (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   const exportToExcel = () => {
@@ -284,7 +293,7 @@ const CleaningLog = () => {
           hour12: true,
         }),
         Topic: log.topic,
-      }))
+      })),
     );
 
     const workbook = XLSX.utils.book_new();
@@ -297,7 +306,7 @@ const CleaningLog = () => {
     setRobotNo(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no?.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no?.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {
@@ -309,7 +318,7 @@ const CleaningLog = () => {
     setRobotNo(robot.robot_no);
     setFilteredRobot([]);
     navigate(
-      `/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}/cleaning_logs`
+      `/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}/cleaning_logs`,
     );
   };
 
