@@ -1481,7 +1481,7 @@ const routes = [
 
   {
     path: "/master-admin/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <MasterAdminRoute>
         <Pricing />
@@ -2923,7 +2923,7 @@ const routes = [
   },
   {
     path: "/master-user/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <MasterUserRoute>
         <Pricing />
@@ -7149,7 +7149,7 @@ const routes = [
 
   {
     path: "/client-admin/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <ClientAdminRoute>
         <Pricing />
