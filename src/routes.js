@@ -1481,7 +1481,7 @@ const routes = [
 
   {
     path: "/master-admin/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <MasterAdminRoute>
         <Pricing />
@@ -2923,7 +2923,7 @@ const routes = [
   },
   {
     path: "/master-user/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <MasterUserRoute>
         <Pricing />
@@ -5406,7 +5406,6 @@ const routes = [
   {
     path: "/service-admin/user-performance-dashboard",
     name: "User Performance",
-
     element: (
       <ServiceAdminRoute>
         <UserPerformanceDashboard />
@@ -5723,6 +5722,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <OpenAiChat />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/update-row-data",
+    name: "Update Robot Row Data",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateRobotRowData />
       </ServiceAdminRoute>
     ),
   },
@@ -6571,6 +6579,15 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  {
+    path: "/service-user/robots-tracker",
+    name: "Robots Tracker",
+    element: (
+      <ServiceUserRoute>
+        <RobotTracker />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -7132,7 +7149,7 @@ const routes = [
 
   {
     path: "/client-admin/pricing",
-    name: "Pricing",
+    name: "Features & Pricing",
     element: (
       <ClientAdminRoute>
         <Pricing />

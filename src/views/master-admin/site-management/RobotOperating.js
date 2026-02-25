@@ -222,7 +222,7 @@ const RobotOperating = () => {
           `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
@@ -259,11 +259,11 @@ const RobotOperating = () => {
           pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
@@ -299,7 +299,7 @@ const RobotOperating = () => {
           `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
@@ -317,13 +317,13 @@ const RobotOperating = () => {
   }, [authtoken, robot_no]);
 
   const filteredDownlink = downlinks.filter((item) =>
-    item.downlink.toLowerCase().includes(searchTerm.toLowerCase())
+    item.downlink.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const deleteDownlink = async (downlink) => {
     if (
       window.confirm(
-        `Are you sure you want to delete downlink ${downlink.downlink}🚫`
+        `Are you sure you want to delete downlink ${downlink.downlink}🚫`,
       )
     ) {
       try {
@@ -362,7 +362,7 @@ const RobotOperating = () => {
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -417,7 +417,7 @@ const RobotOperating = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -457,7 +457,7 @@ const RobotOperating = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -813,7 +813,7 @@ const RobotOperating = () => {
                                   new Date(robot.last_uplink),
                                   {
                                     addSuffix: true,
-                                  }
+                                  },
                                 )}
                               </span>
                             </span>
@@ -839,7 +839,8 @@ const RobotOperating = () => {
                 </CCol>
 
                 {/* Third Card (Custom Downlink) */}
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Master User") && (
                   <CCol md={3} className="mt-2">
                     <CCard
                       className="shadow border-0 "
@@ -939,7 +940,7 @@ const RobotOperating = () => {
                                 e.preventDefault(); // Prevent form submission
                                 sendCustomDownlink(
                                   customDownlink,
-                                  sent_custom_to_all
+                                  sent_custom_to_all,
                                 ); // Trigger the same function as the button
                               }
                             }}
@@ -949,7 +950,7 @@ const RobotOperating = () => {
                             onClick={() =>
                               sendCustomDownlink(
                                 customDownlink,
-                                sent_custom_to_all
+                                sent_custom_to_all,
                               )
                             }
                             type="button"
@@ -1388,7 +1389,7 @@ const RobotOperating = () => {
                               onClick={() =>
                                 sendsingleDownlink(
                                   `${setWheelCurrent}${wheelCurrentValue}`,
-                                  10
+                                  10,
                                 )
                               }
                               type="button"
@@ -1421,7 +1422,7 @@ const RobotOperating = () => {
                               onClick={() =>
                                 sendsingleDownlink(
                                   `${setBrushCurrent}${brushCurrentValue}`,
-                                  11
+                                  11,
                                 )
                               }
                             >
@@ -1467,7 +1468,7 @@ const RobotOperating = () => {
                               onClick={() =>
                                 sendsingleDownlink(
                                   `${setBrushSpeed}${brushSpeedValue}`,
-                                  12
+                                  12,
                                 )
                               }
                             >
@@ -1498,7 +1499,7 @@ const RobotOperating = () => {
                               onClick={() =>
                                 sendsingleDownlink(
                                   `${setWheelSpeed}${wheelSpeedValue}`,
-                                  13
+                                  13,
                                 )
                               }
                             >

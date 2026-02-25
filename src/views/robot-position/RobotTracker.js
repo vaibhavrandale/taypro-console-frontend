@@ -114,10 +114,10 @@ const RobotTracker = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const mergeLastActivity = (existing, incoming) => {
     const existingKeys = new Set(
-      existing.map((a) => new Date(a.timestamp).getTime())
+      existing.map((a) => new Date(a.timestamp).getTime()),
     );
     const newItems = (incoming || []).filter(
-      (a) => !existingKeys.has(new Date(a.timestamp).getTime())
+      (a) => !existingKeys.has(new Date(a.timestamp).getTime()),
     );
     return [...existing, ...newItems];
   };
@@ -182,7 +182,7 @@ const RobotTracker = () => {
           },
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         dispatch({ type: "DELETE_RESET" }); // 👈 reset flag
@@ -194,7 +194,7 @@ const RobotTracker = () => {
           subscriptionStatus: error.response?.data?.subscriptionStatus,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -218,7 +218,7 @@ const RobotTracker = () => {
       // ✅ Get current robots from ref (updated by useEffect)
       const currentRobots = robotsRef.current;
       const index = currentRobots.findIndex(
-        (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
+        (r) => r._id === tracking._id || r.robot_no === tracking.robot_no,
       );
 
       let updatedRobots;
@@ -251,10 +251,10 @@ const RobotTracker = () => {
           ...existing, // Then merge existing (for any missing fields)
           last_activity: mergeLastActivity(
             existing.last_activity || [],
-            tracking.last_activity || []
+            tracking.last_activity || [],
           ),
           track_details: Array.from(trackDetailsMap.values()).sort(
-            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
           ),
           cleaning: {
             ...existing.cleaning,
@@ -280,7 +280,7 @@ const RobotTracker = () => {
         setTimeout(() => {
           const updatedRobots = robotsRef.current;
           const robot = updatedRobots.find(
-            (r) => r._id === tracking._id || r.robot_no === tracking.robot_no
+            (r) => r._id === tracking._id || r.robot_no === tracking.robot_no,
           );
           const el = scrollRefs.current[tracking._id || robot?._id];
 
@@ -303,12 +303,12 @@ const RobotTracker = () => {
               newPoint >= 20 && newPoint <= 29
                 ? iconOffsetPx - el.clientWidth * 0.25
                 : newPoint >= 31 && newPoint <= 40
-                ? iconOffsetPx - el.clientWidth * 0.75
-                : iconOffsetPx - halfWidth;
+                  ? iconOffsetPx - el.clientWidth * 0.75
+                  : iconOffsetPx - halfWidth;
 
             targetScroll = Math.max(
               0,
-              Math.min(targetScroll, el.scrollWidth - el.clientWidth)
+              Math.min(targetScroll, el.scrollWidth - el.clientWidth),
             );
 
             smoothScroll(el, targetScroll, 400);
@@ -350,7 +350,7 @@ const RobotTracker = () => {
   const deleteHandler = async (e, id) => {
     e.preventDefault();
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete this robot tracking (${id})?`
+      `Are you sure you want to delete this robot tracking (${id})?`,
     );
     if (!confirmDelete) return; // Exit if user cancels
 
@@ -385,7 +385,7 @@ const RobotTracker = () => {
     setSearchTerm(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {
@@ -419,7 +419,13 @@ const RobotTracker = () => {
     adminroute = "factory-admin";
   }
 
-  let InternaladminRoles = ["Master Admin", "Service Admin", "Project Admin"];
+  let InternaladminRoles = [
+    "Master Admin",
+    "Service Admin",
+    "Project Admin",
+    "Service User",
+    "Project User",
+  ];
   let technicianRole = ["Site Technician"];
   let clientAdminRole = ["Client Admin"];
 

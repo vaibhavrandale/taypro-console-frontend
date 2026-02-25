@@ -313,18 +313,18 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/master-admin/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/master-admin/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
 
       {
         component: CNavGroup,
@@ -347,7 +347,7 @@ const _nav = [
       //robots-positioning
       {
         component: CNavGroup,
-        name: "Robots Tracking",
+        name: "Live Tracking",
         icon: (
           <CIcon
             icon={cilLocationPin}
@@ -356,30 +356,16 @@ const _nav = [
           />
         ),
         items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots Position Tracking",
+          //   to: "/master-admin/robots-position",
+          // },
           {
             component: CNavItem,
-            name: "Robots Position Tracking",
-            to: "/master-admin/robots-position",
-          },
-          {
-            component: CNavItem,
-            name: "New Tracking",
+            name: "Robot Tracking",
             to: "/master-admin/robots-tracker",
           },
-        ],
-      },
-
-      {
-        component: CNavGroup,
-        name: "MDS Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
           {
             component: CNavItem,
             name: "MDS Tracking",
@@ -387,6 +373,25 @@ const _nav = [
           },
         ],
       },
+
+      // {
+      //   component: CNavGroup,
+      //   name: "MDS Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilLocationPin}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "MDS Tracking",
+      //       to: "/master-admin/mds-tracker",
+      //     },
+      //   ],
+      // },
 
       {
         component: CNavGroup,
@@ -605,7 +610,8 @@ const _nav = [
           // customClassName="nav-icon"
           // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           // />
-          <Proportions
+          <CIcon
+            icon={cilMoney}
             customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
@@ -1114,18 +1120,18 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/master-user/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/master-user/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
       //
       {
         component: CNavGroup,
@@ -1447,18 +1453,18 @@ const _nav = [
         ],
       },
 
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/project-admin/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/project-admin/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
       {
         component: CNavGroup,
         name: "Expense Management",
@@ -1527,6 +1533,24 @@ const _nav = [
             component: CNavItem,
             name: "MDS Timer",
             to: "/project-admin/mds-timer",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Chat with Console",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Chat with Console",
+            to: "/project-admin/chat-with-console",
           },
         ],
       },
@@ -1735,18 +1759,18 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/project-user/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/project-user/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
       {
         component: CNavGroup,
         name: "Expense Management",
@@ -1867,9 +1891,27 @@ const _nav = [
         ),
       },
       //robots-positioning
+      // {
+      //   component: CNavGroup,
+      //   name: "Robots Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilLocationPin}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "Robots Tracking",
+      //       to: "/service-admin/robots-tracker",
+      //     },
+      //   ],
+      // },
       {
         component: CNavGroup,
-        name: "Robots Tracking",
+        name: "Live Tracking",
         icon: (
           <CIcon
             icon={cilLocationPin}
@@ -1878,10 +1920,20 @@ const _nav = [
           />
         ),
         items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots Position Tracking",
+          //   to: "/master-admin/robots-position",
+          // },
           {
             component: CNavItem,
-            name: "Robots Tracking",
+            name: "Robot Tracking",
             to: "/service-admin/robots-tracker",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/service-admin/mds-tracker",
           },
         ],
       },
@@ -2144,18 +2196,18 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/service-admin/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/service-admin/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
       {
         component: CNavItem,
         name: "MIS Report",
@@ -2190,15 +2242,33 @@ const _nav = [
             name: "Replace MDS Lora",
             to: "/service-admin/replace-mds-lora/active-mdss",
           },
-          {
-            component: CNavItem,
-            name: "MDS Tracking",
-            to: "/service-admin/mds-tracker",
-          },
+          // {
+          //   component: CNavItem,
+          //   name: "MDS Tracking",
+          //   to: "/service-admin/mds-tracker",
+          // },
           {
             component: CNavItem,
             name: "MDS Timer",
             to: "/service-admin/mds-timer",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Chat with Console",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Chat with Console",
+            to: "/service-admin/chat-with-console",
           },
         ],
       },
@@ -3229,18 +3299,18 @@ const _nav = [
       //   ),
       // },
 
-      {
-        component: CNavItem,
-        name: "Monthly Sites Report",
-        to: "/service-user/monthlyreport",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Monthly Sites Report",
+      //   to: "/service-user/monthlyreport",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilFactory}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
       {
         component: CNavGroup,
         name: "MDS Management",
@@ -3263,15 +3333,43 @@ const _nav = [
             name: "Replace MDS Lora",
             to: "/service-user/replace-mds-lora/active-mdss",
           },
-          {
-            component: CNavItem,
-            name: "MDS Tracking",
-            to: "/service-user/mds-tracker",
-          },
+          // {
+          //   component: CNavItem,
+          //   name: "MDS Tracking",
+          //   to: "/service-user/mds-tracker",
+          // },
           {
             component: CNavItem,
             name: "MDS Timer",
             to: "/service-user/mds-timer",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Live Tracking",
+        icon: (
+          <CIcon
+            icon={cilLocationPin}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots Position Tracking",
+          //   to: "/master-admin/robots-position",
+          // },
+          {
+            component: CNavItem,
+            name: "Robot Tracking",
+            to: "/service-user/robots-tracker",
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/service-user/mds-tracker",
           },
         ],
       },

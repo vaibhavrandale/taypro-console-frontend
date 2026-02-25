@@ -1,0 +1,25 @@
+.ai-response table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.ai-response h1,
+.ai-response h2 {
+  margin-top: 16px;
+}
+
+.ai-response table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.ai-response th,
+.ai-response td {
+  border: 1px solid #333;
+  padding: 8px;
+}
+
+.ai-response th {
+  background: #1f1f1f;
+}
