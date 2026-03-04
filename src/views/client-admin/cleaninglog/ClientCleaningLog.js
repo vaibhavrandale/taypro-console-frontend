@@ -11,7 +11,7 @@ import {
   CCol,
   CButton,
   CBadge,
-  CAlert,
+  // CAlert,
   CCard,
   CCardBody,
   CTabs,
@@ -44,6 +44,8 @@ const reducer = (state, action) => {
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
+        robotswhichareonlineandnotstartedForthisSite:
+          action.payload.robotswhichareonlineandnotstartedForthisSite || [],
       };
     case "FETCH_CLEANING_FAIL":
       return {
@@ -113,11 +115,11 @@ const ClientCleaningLog = () => {
       cleaningInProgress,
       failureLogs,
       errLogloading,
-      errorLogError,
-      errorLogs,
+      // errorLogError,
+      // errorLogs,
       timerLogLoading,
-      timerLogs,
-      timerLogError,
+      // timerLogs,
+      // timerLogError,
       // totalPages,
       // hasNextPage,
       // hasPrevPage,
@@ -126,6 +128,7 @@ const ClientCleaningLog = () => {
       offlineLogError,
       offlineLogsloading,
       offlineLogs,
+      robotswhichareonlineandnotstartedForthisSite,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -136,7 +139,7 @@ const ClientCleaningLog = () => {
     failureLogs: [],
     cleaningLoading: false,
     cleaningError: "",
-
+    robotswhichareonlineandnotstartedForthisSite: [],
     errLogloading: false,
     errorLogError: "",
     errorLogs: [],
@@ -157,7 +160,7 @@ const ClientCleaningLog = () => {
   const { site_id } = useParams();
 
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   useEffect(() => {
@@ -174,7 +177,7 @@ const ClientCleaningLog = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
 
         const data = result.data.data;
@@ -187,6 +190,8 @@ const ClientCleaningLog = () => {
             cleaningCompleted: data.cleaningCompleted || [],
             cleaningInProgress: data.cleaningInProgress || [],
             failureLogs: data.failureLogs || [],
+            robotswhichareonlineandnotstartedForthisSite:
+              data.robotswhichareonlineandnotstartedForthisSite || [],
             totalPages: data.totalPages || 1,
             hasNextPage: data.hasNextPage || false,
             hasPrevPage: data.hasPrevPage || false,
@@ -213,7 +218,7 @@ const ClientCleaningLog = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
         dispatch({
           type: "FETCH_OFFLINE_LOGS_SUCCESS",
@@ -500,7 +505,8 @@ const ClientCleaningLog = () => {
       !cleaningCompleted?.length &&
       !cleaningInProgress?.length &&
       !failureLogs?.length &&
-      !offlineLogs?.length
+      !offlineLogs?.length &&
+      !robotswhichareonlineandnotstartedForthisSite?.length
     ) {
       toast.error("No data available to export.");
       return;
@@ -556,10 +562,10 @@ const ClientCleaningLog = () => {
           log.cleaning?.finish
             ? "Completed"
             : log.cleaning?.battery_dead
-            ? "Battery Dead"
-            : log.cleaning?.cleaning_cancelled
-            ? "Cleaning Cancelled"
-            : "In Progress",
+              ? "Battery Dead"
+              : log.cleaning?.cleaning_cancelled
+                ? "Cleaning Cancelled"
+                : "In Progress",
         ]);
       });
     } else {
@@ -637,6 +643,29 @@ const ClientCleaningLog = () => {
     mergedData.push([]);
     mergedData.push([]);
 
+    // ===================================================
+    // 5. Online – Command given, Not Started
+    // ===================================================
+    mergedData.push(["Online – Command given, Not Started"]);
+
+    if (robotswhichareonlineandnotstartedForthisSite?.length) {
+      mergedData.push(["Sr No", "Robot No", "Block", "Status"]);
+
+      robotswhichareonlineandnotstartedForthisSite.forEach((log, index) => {
+        mergedData.push([
+          index + 1,
+          log.robot_no || "N/A",
+          log.block || "N/A",
+          "Online but Not Started",
+        ]);
+      });
+    } else {
+      mergedData.push([" Online but Not Started robots found"]);
+    }
+
+    mergedData.push([]);
+    mergedData.push([]);
+
     // ===== 5. Summary =====
     mergedData.push(["Summary"]);
     mergedData.push(["Site ID", site_id || "N/A"]);
@@ -657,6 +686,12 @@ const ClientCleaningLog = () => {
     ]);
     mergedData.push(["Error Logs", failureLogs ? failureLogs.length : 0]);
     mergedData.push(["Offline Robots", offlineLogs ? offlineLogs.length : 0]);
+    mergedData.push([
+      "Online but Not Started Robots",
+      robotswhichareonlineandnotstartedForthisSite
+        ? robotswhichareonlineandnotstartedForthisSite.length
+        : 0,
+    ]);
 
     // ===== Build worksheet =====
     const ws = XLSX.utils.aoa_to_sheet(mergedData);
@@ -734,7 +769,7 @@ const ClientCleaningLog = () => {
         wb,
         `Site_${site_id || "Unknown"}_Logs_${startDate || "Start"}_To_${
           startDate || "End"
-        }.xlsx`
+        }.xlsx`,
       );
       toast.success("Excel file downloaded successfully!");
     } catch (error) {
@@ -796,62 +831,49 @@ const ClientCleaningLog = () => {
           <div className="mb-3">
             <CCard className="shadow-sm border-0">
               <CCardBody className="py-3">
-                <CRow className="align-items-center">
-                  <CCol xs="12" md="3" className="mb-2 mb-md-0">
-                    <h5 className="fw-bold mb-0">🤖 Total Logs</h5>
-                  </CCol>
+                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                  {/* Title */}
+                  <h5 className="fw-bold mb-0">🤖 Logs</h5>
 
-                  <CCol xs="12" md="9">
-                    <div className="d-flex flex-wrap gap-3 justify-content-md-end text-center text-md-end">
-                      <CBadge
-                        color="primary"
-                        className="px-3 py-2 rounded-pill"
-                        style={{ fontSize: "14px" }}
-                      >
-                        Total Assigned Robots: {totalAssignedRobots}
-                      </CBadge>
+                  {/* Badges */}
+                  <div className="d-flex flex-wrap justify-content-md-end gap-2">
+                    <CBadge color="primary" className="px-3 py-2 rounded-pill">
+                      Total Assigned Robots: {totalAssignedRobots}
+                    </CBadge>
 
-                      <CBadge
-                        color="secondary"
-                        className="px-3 py-2 rounded-pill"
-                        style={{ fontSize: "14px" }}
-                      >
-                        Total Logs:{" "}
-                        {cleaningCompleted.length +
-                          cleaningInProgress.length +
-                          failureLogs.length}
-                      </CBadge>
+                    <CBadge
+                      color="secondary"
+                      className="px-3 py-2 rounded-pill"
+                    >
+                      Logs:{" "}
+                      {cleaningCompleted.length +
+                        cleaningInProgress.length +
+                        failureLogs.length}
+                    </CBadge>
 
-                      <CBadge
-                        color="success"
-                        className="px-3 py-2 rounded-pill"
-                        style={{ fontSize: "14px" }}
-                      >
-                        Completed: {cleaningCompleted.length}
-                      </CBadge>
+                    <CBadge color="success" className="px-3 py-2 rounded-pill">
+                      Completed: {cleaningCompleted.length}
+                    </CBadge>
 
-                      <CBadge
-                        color="warning"
-                        className="px-3 py-2 rounded-pill"
-                        style={{ fontSize: "14px" }}
-                      >
-                        In Progress: {cleaningInProgress.length}
-                      </CBadge>
+                    <CBadge color="warning" className="px-3 py-2 rounded-pill">
+                      In Progress: {cleaningInProgress.length}
+                    </CBadge>
 
-                      <CBadge
-                        color="danger"
-                        className="px-3 py-2 rounded-pill"
-                        style={{ fontSize: "14px" }}
-                      >
-                        Failure: {failureLogs.length}
-                      </CBadge>
-                    </div>
-                  </CCol>
-                </CRow>
+                    <CBadge color="danger" className="px-3 py-2 rounded-pill">
+                      Failure: {failureLogs.length}
+                    </CBadge>
+
+                    <CBadge color="info" className="px-3 py-2 rounded-pill">
+                      Online – Command given, Not Started:
+                      <span className="ms-2 fw-bold">
+                        {robotswhichareonlineandnotstartedForthisSite.length}
+                      </span>
+                    </CBadge>
+                  </div>
+                </div>
               </CCardBody>
             </CCard>
           </div>
-
           {timerLogLoading || offlineLogsloading ? (
             <div className="text-center my-4">
               <LoadingSpinner />
@@ -872,6 +894,9 @@ const ClientCleaningLog = () => {
                   </CTab>
                   <CTab itemKey="offline-robots" className="text-white">
                     Offline Robots At the time of execution
+                  </CTab>
+                  <CTab itemKey="online-not-started" className="text-white">
+                    Online but Not Started
                   </CTab>
                 </CTabList>
 
@@ -950,14 +975,14 @@ const ClientCleaningLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
 
                               <CTableDataCell>
                                 {log.cleaning.finish ? (
                                   new Date(
-                                    log.cleaning.finishAt
+                                    log.cleaning.finishAt,
                                   ).toLocaleString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
@@ -1037,7 +1062,7 @@ const ClientCleaningLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
 
@@ -1101,7 +1126,7 @@ const ClientCleaningLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>{" "}
                               <CTableDataCell>
@@ -1175,7 +1200,7 @@ const ClientCleaningLog = () => {
                                       minute: "2-digit",
                                       second: "2-digit",
                                       hour12: true,
-                                    }
+                                    },
                                   )}
                               </CTableDataCell>
 
@@ -1186,6 +1211,68 @@ const ClientCleaningLog = () => {
                           <CTableRow>
                             <CTableDataCell colSpan={5} className="text-start">
                               No offline Robots found for the selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
+                    </CTable>
+                  </CTabPanel>
+
+                  {/* ============online–command-given-not-started TAB ================= */}
+
+                  <CTabPanel itemKey="online-not-started">
+                    <h5 className="mt-3 mb-3">🟡 Online but Not Started</h5>
+
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Online Status</CTableHeaderCell>
+                          <CTableHeaderCell>Last Uplink</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {robotswhichareonlineandnotstartedForthisSite?.length >
+                        0 ? (
+                          robotswhichareonlineandnotstartedForthisSite.map(
+                            (log, index) => (
+                              <CTableRow key={index}>
+                                <CTableDataCell>{index + 1}</CTableDataCell>
+                                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                                <CTableDataCell>{log.block}</CTableDataCell>
+                                <CTableDataCell>
+                                  {log.lora_state ? "Online" : "Offline"}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  {log.last_uplink &&
+                                    new Date(log.last_uplink).toLocaleString(
+                                      "en-GB",
+                                      {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      },
+                                    )}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ),
+                          )
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={5} className="text-start">
+                              No Online but Not Started robots found.
                             </CTableDataCell>
                           </CTableRow>
                         )}
