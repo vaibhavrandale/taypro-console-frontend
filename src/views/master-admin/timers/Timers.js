@@ -19,6 +19,7 @@ import {
   CModal,
   CModalTitle,
   CModalBody,
+  CFormCheck,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -64,32 +65,72 @@ const reducer = (state, action) => {
       return {
         ...state,
         loadingAllTimers: false,
-        timers: action.payload.data,
+        timers: action.payload,
       };
     case "FETCH_TIMER_FAIL":
       return { ...state, loadingAllTimers: false, error: action.payload };
+
+    case "BULK_UPDATE_TOGGLE_REQUEST":
+      return {
+        ...state,
+        loadingBulkUpdateToggle: true,
+        bulkUpdateToggleError: "",
+      };
+    case "BULK_UPDATE_TOGGLE_SUCCESS":
+      return {
+        ...state,
+        loadingBulkUpdateToggle: false,
+        timers: state.timers.map((timer) =>
+          action.payload.some((updated) => updated._id === timer._id)
+            ? {
+                ...timer,
+                ...action.payload.find((u) => u._id === timer._id),
+              }
+            : timer,
+        ),
+      };
+    case "BULK_UPDATE_TOGGLE_FAIL":
+      return {
+        ...state,
+        loadingBulkUpdateToggle: false,
+        bulkUpdateToggleError: action.payload,
+      };
+
     default:
       return state;
   }
 };
 
 const Timers = () => {
-  const [state, dispatch] = useReducer(reducer, {
-    timers: {},
+  const [
+    {
+      timers,
+      loadingAllTimers,
+      error,
+      updateLoading,
+      siteIds,
+      loadingBulkUpdateToggle,
+      bulkUpdateToggleError,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    timers: [],
     loadingAllTimers: true,
     error: "",
     totalPages: 1,
+    siteIds: [],
     hasNextPage: false,
     hasPrevPage: false,
     updateLoading: false,
+    loadingBulkUpdateToggle: false,
+    bulkUpdateToggleError: "",
   });
 
-  const [pageInput, setPageInput] = useState("");
-  const [site_id, setSiteId] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const authtoken = useSelector((state) => state.authtoken);
+  const [site_id, setSiteId] = useState("all");
 
+  const authtoken = useSelector((state) => state.authtoken);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [targetSite, setTargetSite] = useState("");
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
 
@@ -109,6 +150,10 @@ const Timers = () => {
     adminroute = "service-user";
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
   }
 
   useEffect(() => {
@@ -130,55 +175,92 @@ const Timers = () => {
         toast.error(error.response.data.error || "Error fetching sites");
       }
     };
+    fetchSiteIds();
+  }, [authtoken]);
 
+  useEffect(() => {
     const fetchAllTimers = async () => {
       dispatch({ type: "FETCH_TIMER_REQUEST" });
       try {
-        const data = {
-          pg: page,
-          limit: limit,
-          site_id: site_id,
-        };
-
-        const result = await axios.post(`/api/v1/robots/get-timer`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        });
-
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
+        const result = await axios.post(
+          `/api/v1/timers`,
+          { site_id },
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          },
         );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
+        // console.log(result.data.data);
 
         dispatch({
           type: "FETCH_TIMER_SUCCESS",
-          payload: {
-            data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
-          },
+          payload: result.data.data,
         });
       } catch (error) {
         dispatch({
           type: "FETCH_TIMER_FAIL",
-          payload: "Failed to fetch the Timers",
+          payload: error.response?.data?.error || error.response.data.message,
         });
-        toast.error("Failed to fetch the Timers");
+        toast.error(error.response?.data?.error || error.response.data.message);
       }
     };
-    fetchSiteIds();
+
     fetchAllTimers();
-  }, [authtoken, limit, page, site_id]);
+  }, [authtoken, site_id]);
 
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
+  const handleCheckboxChange = (site) => {
+    setSelectedRows((prev) => {
+      const exists = prev.some((r) => r._id === site._id);
+
+      if (exists) {
+        return prev.filter((r) => r._id !== site._id);
+      }
+
+      return [...prev, site];
+    });
   };
+  console.log(selectedRows);
 
-  // // console.item(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= state.totalPages) {
-      setPage(newPage);
+  const handleBulkUpdate = async () => {
+    if (selectedRows.length === 0) {
+      toast.error("Please select at least one block to update.");
+      return;
+    }
+
+    try {
+      const siteIdsToUpdate = selectedRows.map((row) => row._id);
+
+      dispatch({ type: "BULK_UPDATE_TOGGLE_REQUEST" });
+
+      const res = await axios.put(
+        "/api/v1/timers/enable-disable/edit",
+        { ids: siteIdsToUpdate },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        },
+      );
+
+      dispatch({
+        type: "BULK_UPDATE_TOGGLE_SUCCESS",
+        payload: res.data.data,
+      });
+
+      toast.success(res.data.message || "Bulk update successful.");
+
+      setSelectedRows([]);
+    } catch (error) {
+      dispatch({
+        type: "BULK_UPDATE_TOGGLE_FAIL",
+        payload:
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Bulk update failed",
+      });
+
+      toast.error(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Bulk update failed.",
+      );
     }
   };
 
@@ -187,22 +269,23 @@ const Timers = () => {
     setViewModalVisible(true);
   };
 
-  // const handlePageInputSubmit = () => {
-  //   const pageNumber = parseInt(pageInput);
-  //   if (
-  //     !isNaN(pageNumber) &&
-  //     pageNumber >= 1 &&
-  //     pageNumber <= state.totalPages
-  //   ) {
-  //     handlePageChange(pageNumber);
-  //   }
-  // };
-
   const handleSiteNameChange = (e) => {
+    const selectedSiteName = e.target.value;
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
-    const selectedSiteName = e.target.value;
-    const selectedSite = state.siteIds.find(
+    // Handle "All" separately
+    if (selectedSiteName === "all") {
+      setSiteId("all");
+
+      dispatch({
+        type: "SELECT_SITENAME_SUCCESS",
+        payload: { site_id: "all" },
+      });
+
+      return;
+    }
+
+    const selectedSite = siteIds.find(
       (site) => site.site_id.toString() === selectedSiteName,
     );
 
@@ -226,9 +309,9 @@ const Timers = () => {
             value={site_id}
             onChange={handleSiteNameChange}
           >
-            <option value="">All</option>
-            {state.siteIds?.length > 0 &&
-              state.siteIds.map((item) => (
+            <option value="all">All</option>
+            {siteIds?.length > 0 &&
+              siteIds.map((item) => (
                 <option key={item.site_id} value={item.site_id}>
                   {item.site_id}
                 </option>
@@ -238,16 +321,53 @@ const Timers = () => {
       </CRow>
       {/* 📝 Timers Table */}
       <CCard className="shadow-sm">
-        <CCardHeader>
+        <CCardHeader className="d-flex justify-content-between align-items-center">
           <h5 className="m-0">
             📋 Timers for &nbsp;
             <b>{site_id ? site_id : "All Sites"}</b>
           </h5>
+
+          {!["Site Technician", "Client Admin"].includes(userInfo.role) && (
+            <CButton
+              color="primary"
+              size="sm"
+              onClick={handleBulkUpdate}
+              disabled={selectedRows.length === 0}
+            >
+              {loadingBulkUpdateToggle
+                ? "Updating..."
+                : "Toggle Timer Permission"}
+            </CButton>
+          )}
+          {bulkUpdateToggleError && (
+            <div className="alert alert-danger mt-2 mb-0">
+              {bulkUpdateToggleError}
+            </div>
+          )}
         </CCardHeader>
         <CCardBody>
           <CTable bordered hover responsive>
             <CTableHead color="secondary">
               <CTableRow>
+                {!["Site Technician", "Client Admin"].includes(
+                  userInfo.role,
+                ) && (
+                  <CTableHeaderCell>
+                    <CFormCheck
+                      checked={
+                        timers.length > 0 &&
+                        selectedRows.length === timers.length
+                      }
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows(timers);
+                        } else {
+                          setSelectedRows([]);
+                        }
+                      }}
+                    />
+                  </CTableHeaderCell>
+                )}
                 <CTableHeaderCell>Sr</CTableHeaderCell>
                 <CTableHeaderCell>Site ID</CTableHeaderCell>
                 <CTableHeaderCell>Block</CTableHeaderCell>
@@ -262,78 +382,109 @@ const Timers = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {state.loadingAllTimers ? (
+              {loadingAllTimers ? (
                 <CTableRow className="text-center">
-                  <CTableDataCell colSpan={11}>
+                  <CTableDataCell colSpan={12}>
                     <LoadingSpinner />
                   </CTableDataCell>
                 </CTableRow>
-              ) : state.timers.length > 0 ? (
-                state.timers.flatMap((site, siteIndex) =>
-                  site.blocks.map((block, blockIndex) => (
-                    <CTableRow key={`${siteIndex}-${blockIndex}`}>
+              ) : timers.length > 0 ? (
+                timers.map((site, siteIndex) => (
+                  <CTableRow
+                    key={`${siteIndex}-${site.block}`}
+                    // color={`${site.is_available_to_edit ? "" : "warning"}`}
+                  >
+                    {!["Site Technician", "Client Admin"].includes(
+                      userInfo.role,
+                    ) && (
                       <CTableDataCell>
-                        {siteIndex * site.blocks.length + blockIndex + 1}
+                        <CFormCheck
+                          checked={selectedRows.some((r) => r._id === site._id)}
+                          onChange={() => handleCheckboxChange(site)}
+                        />
                       </CTableDataCell>
-                      <CTableDataCell>{site.site_id}</CTableDataCell>
-                      <CTableDataCell>{block.block}</CTableDataCell>
-                      <CTableDataCell>
-                        {block.total_robots_in_block}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer1 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer1
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer1_date}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer2 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer2
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer2_date}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer3 === "25:00:00" ? (
-                          <CBadge color="danger">Disabled</CBadge>
-                        ) : (
-                          block.robots[0]?.timer3
-                        )}
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        {block.robots[0]?.timer3_date}
-                      </CTableDataCell>
-                      <CTableDataCell style={{ minWidth: "150px" }}>
-                        <CButton
-                          color="info"
-                          size="sm"
-                          onClick={() => handleViewClick(block.robots[0])} // Open modal with this robot
-                          className="m-1"
-                        >
-                          View
-                        </CButton>
+                    )}
+                    <CTableDataCell>{siteIndex + 1}</CTableDataCell>
+                    <CTableDataCell>{site.site_id}</CTableDataCell>
+                    <CTableDataCell>{site.block}</CTableDataCell>
+                    <CTableDataCell>
+                      {site.total_robots_in_block}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {site.timer1 === "25:00:00" ? (
+                        <CBadge color="danger">Disabled</CBadge>
+                      ) : (
+                        site?.timer1
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>{site.timer1_date}</CTableDataCell>
+                    <CTableDataCell>
+                      {site.timer2 === "25:00:00" ? (
+                        <CBadge color="danger">Disabled</CBadge>
+                      ) : (
+                        site?.timer2
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>{site.timer2_date}</CTableDataCell>
+                    <CTableDataCell>
+                      {site.timer3 === "25:00:00" ? (
+                        <CBadge color="danger">Disabled</CBadge>
+                      ) : (
+                        site?.timer3
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>{site.timer3_date}</CTableDataCell>
+                    <CTableDataCell style={{ minWidth: "150px" }}>
+                      <CButton
+                        color="info"
+                        size="sm"
+                        onClick={() => handleViewClick(site)} // Open modal with this robot
+                        className="m-1"
+                      >
+                        View
+                      </CButton>
 
-                        <Link
-                          className="btn btn-sm btn-warning m-1"
-                          to={`/${adminroute}/timers/${block.block}/${site.site_id}`}
-                        >
-                          Update
-                        </Link>
-                      </CTableDataCell>
-                    </CTableRow>
-                  )),
-                )
+                      {!site.is_available_to_edit &&
+                      ["Site Technician", "Client Admin"].includes(
+                        userInfo.role,
+                      ) ? (
+                        <>
+                          <CButton
+                            size="sm"
+                            color="secondary"
+                            className="m-1"
+                            disabled
+                          >
+                            Update
+                          </CButton>
+
+                          <CBadge color="danger" className="ms-2">
+                            Timer Update Disabled
+                          </CBadge>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            className="btn btn-sm btn-warning m-1"
+                            to={`/${adminroute}/timers/${site._id}`}
+                          >
+                            Update
+                          </Link>
+
+                          {!site.is_available_to_edit && (
+                            <CBadge color="danger" className="ms-2">
+                              Timer Update Disabled for Client & Technicians
+                            </CBadge>
+                          )}
+                        </>
+                      )}
+                    </CTableDataCell>
+                  </CTableRow>
+                ))
               ) : (
                 <CTableRow>
                   <CTableDataCell
-                    colSpan="11"
+                    colSpan="12"
                     className="text-center text-danger"
                   >
                     No blocks found for this site.
@@ -342,18 +493,6 @@ const Timers = () => {
               )}
             </CTableBody>
           </CTable>
-          {/* <PaginateInput
-            page={page}
-            totalPages={state.totalPages}
-            hasPrevPage={state.hasPrevPage}
-            hasNextPage={state.hasNextPage}
-            pageInput={pageInput}
-            handlePageChange={handlePageChange}
-            handlePageInputChange={handlePageInputChange}
-            // handlePageInputSubmit={handlePageInputSubmit}
-            limit={limit}
-            handleLimitChange={setLimit}
-          /> */}
         </CCardBody>
       </CCard>
       {/* View */}

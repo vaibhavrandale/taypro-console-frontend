@@ -233,8 +233,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     },
     technician_feedback_data: {
       is_technician_assigned:
-        latestfeedback?.technician_feedback_data?.is_technician_assigned ||
-        false,
+        latestfeedback?.technician_feedback_data?.is_technician_assigned,
       comments: "",
       rating: "",
     },
@@ -307,6 +306,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               headers: { Authorization: `Bearer ${authtoken}` },
             },
           );
+
           dispatch({
             type: "FETCH_FEEDBACK_SUCCESS",
             payload: result.data.data,
@@ -628,10 +628,13 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           rating: "",
         },
         technician_feedback_data: {
+          is_technician_assigned:
+            latestfeedback.technician_feedback_data.is_technician_assigned,
           comments: latestfeedback.technician_feedback_data
             .is_technician_assigned
             ? ""
             : "No Technician Assigned",
+
           rating: latestfeedback.technician_feedback_data.is_technician_assigned
             ? ""
             : 1,

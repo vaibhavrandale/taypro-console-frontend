@@ -108,7 +108,7 @@ const SubscriptionDashboard = () => {
         toast.error(
           error.response?.data?.message ||
             error.response?.data?.error ||
-            "Failed to fetch subscriptions"
+            "Failed to fetch subscriptions",
         );
       }
     };
@@ -124,7 +124,7 @@ const SubscriptionDashboard = () => {
       subscriptions.client_name
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      subscriptions.plan_id.toLowerCase().includes(searchTerm.toLowerCase())
+      subscriptions.plan_id.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (loading)
@@ -142,11 +142,16 @@ const SubscriptionDashboard = () => {
 
       <div className="d-flex justify-content-end my-2">
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
-          <Link to="create" className="btn btn-sm btn-primary">
-            Create
-          </Link>
+          <>
+            <Link to="create" className="btn btn-sm btn-primary me-1">
+              Create
+            </Link>
+            <Link to="view-plans" className="btn btn-sm btn-primary">
+              View Plans
+            </Link>
+          </>
         )}
       </div>
       {/* Search Input */}
@@ -255,7 +260,7 @@ const SubscriptionDashboard = () => {
                     View
                   </Link>
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <Link
                       className="btn btn-sm btn-warning m-1"

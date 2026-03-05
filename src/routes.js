@@ -200,6 +200,7 @@ import MdsLog from "./views/mds-tracking/MdsLog";
 import Service from "./views/mis-report/Service";
 import ScadaDashboard from "./views/scada/ScadaDashboard";
 import OpenAiChat from "./views/openai/OpenAiChat";
+import SubScriptionPlan from "./views/master-admin/client-subscription/SubScriptionPlan";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -869,7 +870,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/timers/:block/:site_id",
+    path: "/master-admin/timers/:id",
     name: "Update Robot Timer",
     element: (
       <MasterAdminRoute>
@@ -1449,7 +1450,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
-
+  {
+    path: "/master-admin/client-subscriptions/view-plans",
+    name: "Subscriptions Plans",
+    element: (
+      <MasterAdminRoute>
+        <SubScriptionPlan />
+      </MasterAdminRoute>
+    ),
+  },
   {
     path: "/master-admin/email-logs",
     name: "Email Logs",
@@ -2233,7 +2242,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-user/timers/:block/:site_id",
+    path: "/master-user/timers/:id",
     name: "Update Robot Timer",
     element: (
       <MasterUserRoute>
@@ -3472,7 +3481,7 @@ const routes = [
     ),
   },
   {
-    path: "/project-admin/timers/:block/:site_id",
+    path: "/project-admin/timers/:id",
     name: "Update Block Timer",
     element: (
       <ProjectAdminRoute>
@@ -4311,7 +4320,7 @@ const routes = [
     ),
   },
   {
-    path: "/project-user/timers/:block/:site_id",
+    path: "/project-user/timers/:id",
     name: "Update Block Timer",
     element: (
       <ProjectUserRoute>
@@ -5189,7 +5198,7 @@ const routes = [
     ),
   },
   {
-    path: "/service-admin/timers/:block/:site_id",
+    path: "/service-admin/timers/:id",
     name: "Update Block Timer",
     element: (
       <ServiceAdminRoute>
@@ -6091,7 +6100,7 @@ const routes = [
     ),
   },
   {
-    path: "/service-user/timers/:block/:site_id",
+    path: "/service-user/timers/:id",
     name: "Update Block Timer",
     element: (
       <ServiceUserRoute>
@@ -6687,7 +6696,7 @@ const routes = [
     name: "Timers",
     element: (
       <SiteTechnicianRoute>
-        <SiteTechnicianTimers />
+        <Timers />
       </SiteTechnicianRoute>
     ),
   },
@@ -6701,11 +6710,11 @@ const routes = [
     ),
   },
   {
-    path: "/site-technician/timers/:block/:site_id",
+    path: "/site-technician/timers/:id",
     name: "Update Block Timer",
     element: (
       <SiteTechnicianRoute>
-        <SiteTechnicianUpdateTimer />
+        <UpdateTimer />
       </SiteTechnicianRoute>
     ),
   },
@@ -7019,12 +7028,12 @@ const routes = [
     name: "Timers",
     element: (
       <ClientAdminRoute>
-        <ClientTimers />
+        <Timers />
       </ClientAdminRoute>
     ),
   },
   {
-    path: "/client-admin/timers/:block/:site_id",
+    path: "/client-admin/timers/:id",
     name: "Update Block Timer",
     element: (
       <ClientAdminRoute>
@@ -7255,12 +7264,12 @@ const routes = [
     name: "Timers",
     element: (
       <ClientSiteInchargeRoute>
-        <ClientTimers />
+        <Timers />
       </ClientSiteInchargeRoute>
     ),
   },
   {
-    path: "/site-incharge/timers/:block/:site_id",
+    path: "/site-incharge/timers/:id",
     name: "Update Block Timer",
     element: (
       <ClientSiteInchargeRoute>
@@ -7369,12 +7378,12 @@ const routes = [
     name: "Timers",
     element: (
       <ClientSiteTechnicianRoute>
-        <ClientTimers />
+        <Timers />
       </ClientSiteTechnicianRoute>
     ),
   },
   {
-    path: "/client-site-technician/timers/:block/:site_id",
+    path: "/client-site-technician/timers/:id",
     name: "Update Block Timer",
     element: (
       <ClientSiteTechnicianRoute>

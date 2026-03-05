@@ -1,249 +1,3 @@
-// import axios from "axios";
-// import React, { useState, useEffect, useReducer } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
-// import LoadingSpinner from "../../../components/LoadingSpinner";
-// import {
-//   CAlert,
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-//   CCol,
-//   CRow,
-// } from "@coreui/react";
-
-// const reducer = (state, action) => {
-//   switch (action.type) {
-//     case "FETCH_REQUEST":
-//       return { ...state, loading: true, error: "" };
-//     case "FETCH_SUCCESS":
-//       return { ...state, timer: action.payload, loading: false };
-//     case "FETCH_FAIL":
-//       return { ...state, loading: false, error: action.payload };
-//     case "UPDATE_REQUEST":
-//       return { ...state, updating: true };
-//     case "UPDATE_SUCCESS":
-//       return { ...state, updating: false };
-//     case "UPDATE_FAIL":
-//       return { ...state, updating: false, error: action.payload };
-//     default:
-//       return state;
-//   }
-// };
-
-// const UpdateTimer = () => {
-//   const [{ loading, error, updating }, dispatch] = useReducer(reducer, {
-//     loading: true,
-//     error: "",
-//     updating: false,
-//   });
-
-//   const { block, site_id } = useParams();
-//   const authtoken = useSelector((state) => state.authtoken);
-//   const navigate = useNavigate();
-//   const userInfo = useSelector((state) => state.userInfo);
-
-//   const [timerData, setTimerData] = useState({
-//     timer1: "",
-//     timer1_date: "",
-//     timer2: "",
-//     timer2_date: "",
-//     timer3: "",
-//     timer3_date: "",
-//   });
-
-//   useEffect(() => {
-//     const fetchTimer = async () => {
-//       try {
-//         dispatch({ type: "FETCH_REQUEST" });
-
-//         const { data } = await axios.get(
-//           `/api/v1/robots/get-timer-by-siteid-block/${block}/${site_id}`,
-//           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
-//           }
-//         );
-
-//         if (data?.data?.length > 0 && data.data[0]?.robots?.length > 0) {
-//           setTimerData({
-//             timer1: data.data[0].robots[0].timer1 || "",
-//             timer1_date: data.data[0].robots[0].timer1_date || "",
-//             timer2: data.data[0].robots[0].timer2 || "",
-//             timer2_date: data.data[0].robots[0].timer2_date || "",
-//             timer3: data.data[0].robots[0].timer3 || "",
-//             timer3_date: data.data[0].robots[0].timer3_date || "",
-//           });
-//         }
-
-//         dispatch({ type: "FETCH_SUCCESS" });
-//       } catch (error) {
-//         dispatch({
-//           type: "FETCH_FAIL",
-//           payload: error.response?.data || "Failed to fetch data",
-//         });
-//         toast.error(error.response?.data || "Failed to fetch data");
-//       }
-//     };
-
-//     fetchTimer();
-//   }, [block, site_id, authtoken]);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setTimerData((prevData) => ({
-//       ...prevData,
-//       [name]: value,
-//     }));
-//   };
-
-//   let adminroute = "";
-
-//   if (userInfo.role === "Master Admin") {
-//     adminroute = "master-admin";
-//   } else if (userInfo.role === "Service Admin") {
-//     adminroute = "service-admin";
-//   } else if (userInfo.role === "Project Admin") {
-//     adminroute = "project-admin";
-//   }
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       dispatch({ type: "UPDATE_REQUEST" });
-
-//       const result = await axios.put(
-//         `/api/v1/robots/update-timer-blockwise/${block}/${site_id}`,
-//         timerData,
-//         {
-//           headers: { Authorization: `Bearer ${authtoken}` },
-//         }
-//       );
-
-//       dispatch({ type: "UPDATE_SUCCESS" });
-//       toast.success(result.data.message);
-
-//       navigate(`/${adminroute}/timers`);
-//     } catch (error) {
-//       dispatch({
-//         type: "UPDATE_FAIL",
-//         payload: error.response?.data || "Update failed",
-//       });
-//       toast.error(error.response?.data || "Update failed");
-//     }
-//   };
-
-//   return (
-//     <div className="container mt-4">
-//       <CCard>
-//         <CCardHeader>
-//           Update Timer -{" "}
-//           <b className="badge bg-success">
-//             {site_id} : {block}
-//           </b>
-//         </CCardHeader>
-//         {loading ? (
-//           <div className="d-flex mt-2 justify-content-center align-items-center">
-//             <LoadingSpinner />
-//           </div>
-//         ) : error ? (
-//           <CAlert color="danger">{error}</CAlert>
-//         ) : (
-//           <CCardBody>
-//             <form onSubmit={handleSubmit}>
-//               <CRow>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer1</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer1"
-//                       value={timerData.timer1}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer1_date</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer1_date"
-//                       value={timerData.timer1_date}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer2</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer2"
-//                       value={timerData.timer2}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//               </CRow>
-//               <CRow>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer2_date</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer2_date"
-//                       value={timerData.timer2_date}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer3</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer3"
-//                       value={timerData.timer3}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//                 <CCol>
-//                   <div className="mb-3">
-//                     <label className="form-label">Timer3_date</label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       name="timer3_date"
-//                       value={timerData.timer3_date}
-//                       onChange={handleChange}
-//                     />
-//                   </div>
-//                 </CCol>
-//               </CRow>
-//               <button
-//                 type="submit"
-//                 className="btn btn-warning btn-sm"
-//                 disabled={updating}
-//               >
-//                 {updating ? "Updating..." : "Update"}
-//               </button>
-//             </form>
-//           </CCardBody>
-//         )}
-//       </CCard>
-//     </div>
-//   );
-// };
-
-// export default UpdateTimer;
 import axios from "axios";
 import React, { useState, useEffect, useReducer } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -264,40 +18,45 @@ import TimerInstructionModal from "../../../components/TimerInstructionModal";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...state, loading: true, error: "" };
+      return { ...state, fetchLoading: true, fetchError: "" };
     case "FETCH_SUCCESS":
-      return { ...state, timer: action.payload, loading: false };
+      return { ...state, timers: action.payload, fetchLoading: false };
     case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, fetchLoading: false, fetchError: action.payload };
     case "UPDATE_REQUEST":
-      return { ...state, updating: true };
+      return { ...state, updateLoading: true };
     case "UPDATE_SUCCESS":
-      return { ...state, updating: false };
+      return { ...state, updateLoading: false };
     case "UPDATE_FAIL":
-      return { ...state, updating: false, error: action.payload };
+      return { ...state, updateLoading: false, updateError: action.payload };
     default:
       return state;
   }
 };
 
 const UpdateTimer = () => {
-  const [{ loading, error, updating }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: "",
-    updating: false,
+  const [
+    { fetchLoading, fetchError, updateLoading, timers, updateError },
+    dispatch,
+  ] = useReducer(reducer, {
+    fetchLoading: true,
+    fetchError: "",
+    updateLoading: false,
+    timers: {},
+    updateError: "",
   });
 
-  const { block, site_id } = useParams();
+  const { id } = useParams();
   const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   const [showModal, setShowModal] = useState(false);
   const [timerData, setTimerData] = useState({
-    timer1: "",
+    timer1: "00:00:00",
     timer1_date: "",
-    timer2: "",
+    timer2: "00:00:00",
     timer2_date: "",
-    timer3: "",
+    timer3: "00:00:00",
     timer3_date: "",
   });
 
@@ -306,25 +65,22 @@ const UpdateTimer = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
 
-        const { data } = await axios.get(
-          `/api/v1/robots/get-timer-by-siteid-block/${block}/${site_id}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
-        );
+        const data = await axios.get(`/api/v1/timers/${id}`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
 
-        if (data?.data?.length > 0 && data.data[0]?.robots?.length > 0) {
-          setTimerData({
-            timer1: data.data[0].robots[0].timer1 || "",
-            timer1_date: data.data[0].robots[0].timer1_date || "",
-            timer2: data.data[0].robots[0].timer2 || "",
-            timer2_date: data.data[0].robots[0].timer2_date || "",
-            timer3: data.data[0].robots[0].timer3 || "",
-            timer3_date: data.data[0].robots[0].timer3_date || "",
-          });
-        }
-
-        dispatch({ type: "FETCH_SUCCESS" });
+        dispatch({ type: "FETCH_SUCCESS", payload: data.data.data });
+        console.log(data.data.data);
+        setTimerData({
+          site_id: data.data.data?.site_id || "",
+          block: data.data.data?.block || "",
+          timer1: data.data.data?.timer1 || "25:00:00",
+          timer1_date: data.data.data?.timer1_date || "",
+          timer2: data.data.data?.timer2 || "25:00:00",
+          timer2_date: data.data.data?.timer2_date || "",
+          timer3: data.data.data?.timer3 || "25:00:00",
+          timer3_date: data.data.data?.timer3_date || "",
+        });
       } catch (error) {
         dispatch({
           type: "FETCH_FAIL",
@@ -335,7 +91,7 @@ const UpdateTimer = () => {
     };
 
     fetchTimer();
-  }, [block, site_id, authtoken]);
+  }, [id, authtoken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -353,6 +109,9 @@ const UpdateTimer = () => {
   else if (userInfo.role === "Service User") adminroute = "service-user";
   else if (userInfo.role === "Master User") adminroute = "master-user";
   else if (userInfo.role === "Client Admin") adminroute = "client-admin";
+  else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -360,13 +119,9 @@ const UpdateTimer = () => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
 
-      const result = await axios.put(
-        `/api/v1/robots/update-timer-blockwise/${block}/${site_id}`,
-        timerData,
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
-      );
+      const result = await axios.put(`/api/v1/timers/${id}`, timerData, {
+        headers: { Authorization: `Bearer ${authtoken}` },
+      });
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(result.data.message);
@@ -374,9 +129,16 @@ const UpdateTimer = () => {
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
-        payload: error.response?.data || "Update failed",
+        payload:
+          error.response?.data.error ||
+          error.response?.data.message ||
+          "Failed to update timer",
       });
-      toast.error(error.response?.data || "Update failed");
+      toast.error(
+        error.response?.data.error ||
+          error.response?.data.message ||
+          "Failed to update timer",
+      );
     }
   };
 
@@ -420,29 +182,29 @@ const UpdateTimer = () => {
 
   return (
     <div className=" mt-4">
-      <CCard>
-        <CCardHeader className="d-flex justify-content-between align-items-center flex-wrap">
-          <div>
-            Update Timer -{" "}
-            <b className="badge bg-success">
-              {site_id} : {block}
-            </b>
-          </div>
-          <CButton size="sm" color="info" onClick={() => setShowModal(true)}>
-            ?
-          </CButton>
-          <TimerInstructionModal
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-          />
-        </CCardHeader>
-        {loading ? (
-          <div className="d-flex mt-2 justify-content-center align-items-center">
-            <LoadingSpinner />
-          </div>
-        ) : error ? (
-          <CAlert color="danger">{error}</CAlert>
-        ) : (
+      {fetchLoading ? (
+        <div className="d-flex mt-2 justify-content-center align-items-center">
+          <LoadingSpinner />
+        </div>
+      ) : fetchError ? (
+        <CAlert color="danger">{fetchError}</CAlert>
+      ) : (
+        <CCard>
+          <CCardHeader className="d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              Update Timer -{" "}
+              <span className="badge bg-warning p-2">
+                {timerData.site_id} : {timerData.block}
+              </span>
+            </div>
+            <CButton size="sm" color="info" onClick={() => setShowModal(true)}>
+              ?
+            </CButton>
+            <TimerInstructionModal
+              visible={showModal}
+              onClose={() => setShowModal(false)}
+            />
+          </CCardHeader>
           <CCardBody>
             <form onSubmit={handleSubmit}>
               <CRow>
@@ -491,17 +253,19 @@ const UpdateTimer = () => {
                   </div>
                 </CCol>
               </CRow>
-              <button
-                type="submit"
-                className="btn btn-warning btn-sm"
-                disabled={updating}
-              >
-                {updating ? "Updating..." : "Update"}
-              </button>
+              <div className="d-flex justify-content-end">
+                <button
+                  type="submit"
+                  className="btn btn-warning btn-sm"
+                  disabled={updateLoading}
+                >
+                  {updateLoading ? "Updating..." : "Update"}
+                </button>
+              </div>
             </form>
           </CCardBody>
-        )}
-      </CCard>
+        </CCard>
+      )}
     </div>
   );
 };
