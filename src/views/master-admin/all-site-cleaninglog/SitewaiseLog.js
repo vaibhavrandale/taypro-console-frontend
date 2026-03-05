@@ -1056,7 +1056,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
-import CompletedCycles from "./CompletedCycles";
+// import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
 // import OfflineRobotsCycle from "./OfflineRobotsCycle";
 
@@ -1076,7 +1076,7 @@ const reducer = (state, action) => {
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
-        dynamicCycles: action.payload.dynamicCycles,
+        // dynamicCycles: action.payload.dynamicCycles,
         robotswhichareonlineandnotstartedForthisSite:
           action.payload.robotswhichareonlineandnotstartedForthisSite,
       };
@@ -1158,9 +1158,9 @@ const SitewaiseLog = () => {
       failureLogs,
       errLogloading,
       errorLogError,
-      errorLogs,
+      // errorLogs,
       timerLogLoading,
-      timerLogs,
+      // timerLogs,
       timerLogError,
       // totalPages,
       // hasNextPage,
@@ -1173,7 +1173,7 @@ const SitewaiseLog = () => {
       dprError,
       dprLogs,
       dprLoading,
-      dynamicCycles,
+      // dynamicCycles,
       robotswhichareonlineandnotstartedForthisSite,
     },
     dispatch,
@@ -1200,7 +1200,7 @@ const SitewaiseLog = () => {
     offlineRobotLoading: false,
     offlineRobotError: "",
     offlineRobots: [],
-    dynamicCycles: {},
+    // dynamicCycles: {},
     robotswhichareonlineandnotstartedForthisSite: [],
     dprError: "",
     dprLogs: [],
@@ -1243,7 +1243,7 @@ const SitewaiseLog = () => {
             failureLogs: data.failureLogs || [],
             robotswhichareonlineandnotstartedForthisSite:
               data.robotswhichareonlineandnotstartedForthisSite || [],
-            dynamicCycles: data.dynamicCycles || {},
+            // dynamicCycles: data.dynamicCycles || {},
             totalPages: data.totalPages || 1,
             hasNextPage: data.hasNextPage || false,
             hasPrevPage: data.hasPrevPage || false,
@@ -1322,7 +1322,8 @@ const SitewaiseLog = () => {
       !cleaningInProgress?.length &&
       !failureLogs?.length &&
       !offlineRobots?.length &&
-      !dprLogs?.length
+      !dprLogs?.length &&
+      !robotswhichareonlineandnotstartedForthisSite?.length
     ) {
       toast.error("No data available to export.");
       return;
@@ -1508,6 +1509,28 @@ const SitewaiseLog = () => {
     mergedData.push(["Error Logs", failureLogs?.length || 0]);
     mergedData.push(["Offline Robots", offlineRobots?.length || 0]);
     mergedData.push(["Technician DPR Logs", dprLogs?.length || 0]);
+
+    mergedData.push([]);
+    mergedData.push([]);
+    // ===================================================
+    // 5. Online – Command given, Not Started
+    // ===================================================
+    mergedData.push(["Online – Command given, Not Started"]);
+
+    if (robotswhichareonlineandnotstartedForthisSite?.length) {
+      mergedData.push(["Sr No", "Robot No", "Block", "Status"]);
+
+      robotswhichareonlineandnotstartedForthisSite.forEach((log, index) => {
+        mergedData.push([
+          index + 1,
+          log.robot_no || "N/A",
+          log.block || "N/A",
+          "Online but Not Started",
+        ]);
+      });
+    } else {
+      mergedData.push([" Online but Not Started robots found"]);
+    }
 
     mergedData.push([]);
     mergedData.push([]);
