@@ -311,7 +311,7 @@ const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
                     color: "#fff",
                     padding: 5,
                     borderRadius: 5,
-                    width: "40vw",
+                    // width: "40vw",
                     position: "relative",
                   }}
                 >

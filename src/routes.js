@@ -201,6 +201,9 @@ import Service from "./views/mis-report/Service";
 import ScadaDashboard from "./views/scada/ScadaDashboard";
 import OpenAiChat from "./views/openai/OpenAiChat";
 import SubScriptionPlan from "./views/master-admin/client-subscription/SubScriptionPlan";
+import ViewDoc from "./views/commisioning/ViewDoc";
+import CommisioningDashboard from "./views/commisioning/CommisioningDashboard";
+import FlushQueue from "./views/master-admin/robot-commands/FlushQueue";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -632,6 +635,16 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/flush-queues",
+    name: "Flush Queue",
+    element: (
+      <MasterAdminRoute>
+        <FlushQueue />
+      </MasterAdminRoute>
+    ),
+  },
+
   {
     path: "/master-admin/site-management/block-management/:site_id/:block/:robot_no/debug_logs",
     name: "Debug Log",
@@ -1949,6 +1962,24 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/commissioning",
+    name: "Comminsioning Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <CommisioningDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/commissioning/view/:id",
+    name: "View Doc",
+    element: (
+      <MasterAdminRoute>
+        <ViewDoc />
+      </MasterAdminRoute>
+    ),
+  },
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
@@ -2022,6 +2053,15 @@ const routes = [
     element: (
       <MasterUserRoute>
         <RobotCommands />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/flush-queues",
+    name: "Flush Queue",
+    element: (
+      <MasterUserRoute>
+        <FlushQueue />
       </MasterUserRoute>
     ),
   },

@@ -5,7 +5,7 @@ import { getRobotPhase } from "./helpers";
 import "./tracking.css";
 const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
   const L = robot.row_length;
-  
+
   // ✅ Calculate highest point from track_details (19-40) instead of last point
   let highestPoint = 0;
   if (robot.track_details && robot.track_details.length > 0) {
@@ -16,7 +16,8 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
       highestPoint = Math.max(...validPoints);
     } else {
       // Fallback to last point if no valid points found
-      highestPoint = robot.track_details[robot.track_details.length - 1].point || 0;
+      highestPoint =
+        robot.track_details[robot.track_details.length - 1].point || 0;
     }
   }
 
@@ -26,7 +27,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
     L,
     robot.cleaning,
     robot.track_details,
-    robot.createdAt // ✅ Pass createdAt to check if document is from today
+    robot.createdAt, // ✅ Pass createdAt to check if document is from today
   );
 
   // ✅ Get current status text for display
@@ -36,19 +37,19 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
       if (!robot.cleaning?.finish || !robot.cleaning?.finishAt) {
         return false;
       }
-      
+
       try {
         const finishDate = new Date(robot.cleaning.finishAt);
         if (isNaN(finishDate.getTime())) {
           return false; // Invalid date
         }
-        
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         const finishDateOnly = new Date(finishDate);
         finishDateOnly.setHours(0, 0, 0, 0);
-        
+
         // If finish date is before today, it was finished yesterday or earlier
         return finishDateOnly.getTime() < today.getTime();
       } catch (e) {
@@ -61,7 +62,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
     if (robot.cleaning?.finish === true && isFinishedYesterdayOrEarlier()) {
       return "Not yet started";
     }
-    
+
     if (robot.cleaning?.finish === true && !isFinishedYesterdayOrEarlier()) {
       return "Cleaning Finished";
     } else if (robot.cleaning?.cleaning_cancelled === true) {
@@ -74,7 +75,10 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
         return "Forward Cleaning In Progress";
       } else if (phase === "Reverse Cleaning") {
         return "Return Cleaning In Progress";
-      } else if (phase === "At Reverse Station" || phase === "Ready for Reverse Cleaning") {
+      } else if (
+        phase === "At Reverse Station" ||
+        phase === "Ready for Reverse Cleaning"
+      ) {
         return "At Reverse Station";
       } else if (highestPoint >= 20 && highestPoint <= 40) {
         // Has location points but phase might not be set yet
@@ -100,7 +104,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
   // ✅ Get current battery percentage for display
   const getBatteryPercentage = () => {
     const cleaning = robot.cleaning || {};
-    
+
     // Priority: after_cleaning > at_reverse_station > before_cleaning
     if (cleaning.battery_after_cleaning != null) {
       return cleaning.battery_after_cleaning;
@@ -156,7 +160,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
           // top: "20px",
           height: "40px",
           borderRadius: "4px",
-          width: `${L * 14}px`,
+          width: `${L * 2}px`,
           backgroundImage: `
             repeating-linear-gradient(to right, #0d47a1, #0d47a1 10px, #fff 10px, #fff 12px),
             linear-gradient(to bottom, #0d47a1 0%, #0d47a1 48%, #79aaf4ff 48%, #659ef5ff 53%, #0d47a1 53%, #0d47a1 100%)
