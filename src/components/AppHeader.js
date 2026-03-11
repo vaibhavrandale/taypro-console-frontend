@@ -233,8 +233,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
     },
     technician_feedback_data: {
       is_technician_assigned:
-        latestfeedback?.technician_feedback_data?.is_technician_assigned ||
-        false,
+        latestfeedback?.technician_feedback_data?.is_technician_assigned,
       comments: "",
       rating: "",
     },
@@ -307,6 +306,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               headers: { Authorization: `Bearer ${authtoken}` },
             },
           );
+
           dispatch({
             type: "FETCH_FEEDBACK_SUCCESS",
             payload: result.data.data,
@@ -628,10 +628,13 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           rating: "",
         },
         technician_feedback_data: {
+          is_technician_assigned:
+            latestfeedback.technician_feedback_data.is_technician_assigned,
           comments: latestfeedback.technician_feedback_data
             .is_technician_assigned
             ? ""
             : "No Technician Assigned",
+
           rating: latestfeedback.technician_feedback_data.is_technician_assigned
             ? ""
             : 1,
@@ -899,6 +902,50 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                         (status) =>
                           status.readbyId === userInfo._id && status.read,
                       );
+                      // Replace Bootstrap color classes with inline styles before injecting
+                      const inlineStyled = (html) =>
+                        html
+                          .replace(
+                            /class='text-success'/g,
+                            "style='color:#198754'",
+                          )
+                          .replace(
+                            /class='text-danger'/g,
+                            "style='color:#dc3545'",
+                          )
+                          .replace(
+                            /class='text-warning'/g,
+                            "style='color:#ffc107'",
+                          )
+                          .replace(
+                            /class='text-info'/g,
+                            "style='color:#0dcaf0'",
+                          )
+                          .replace(
+                            /class="text-success"/g,
+                            "style='color:#198754'",
+                          )
+                          .replace(
+                            /class="text-danger"/g,
+                            "style='color:#dc3545'",
+                          )
+                          .replace(
+                            /class="text-warning"/g,
+                            "style='color:#ffc107'",
+                          )
+                          .replace(
+                            /class="text-info"/g,
+                            "style='color:#0dcaf0'",
+                          );
+
+                      const stripHtml = (html) => html.replace(/<[^>]*>/g, "");
+                      // In your map:
+                      const plainText = stripHtml(notification.details);
+                      const displayHtml = inlineStyled(
+                        plainText.length > 30
+                          ? `${plainText.substring(0, 40)}...`
+                          : notification.details, // full HTML with inline colors now
+                      );
 
                       return (
                         <CDropdownItem
@@ -922,10 +969,18 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             <strong className="d-block">
                               {notification.action}
                             </strong>
-                            <small className="text-muted d-block">
-                              {notification.details.length > 30
-                                ? `${notification.details.substring(0, 30)}...`
-                                : notification.details}
+                            <small
+                              className="d-block"
+                              style={{
+                                fontSize: "12px",
+                                color: "inherit",
+                                opacity: 1,
+                              }} // ← override disabled opacity
+                              dangerouslySetInnerHTML={{
+                                __html: displayHtml,
+                              }}
+                            >
+                              {/* {notificationText} */}
                             </small>
                             <small
                               className="d-block"

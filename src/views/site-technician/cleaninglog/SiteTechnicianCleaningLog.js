@@ -621,7 +621,7 @@ const SiteTechnicianCleaningLog = () => {
           </CRow>
 
           {/* Total Logs Badges */}
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <CCard className="shadow-sm border-0">
               <CCardBody className="py-3">
                 <CRow className="align-items-center">
@@ -681,6 +681,61 @@ const SiteTechnicianCleaningLog = () => {
                 </CRow>
               </CCardBody>
             </CCard>
+          </div> */}
+          <div className="mb-3">
+            <CCard className="shadow-sm border-0">
+              <CCardBody className="py-3">
+                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                  {/* Title */}
+                  <h5 className="fw-bold mb-0">🤖 Logs</h5>
+
+                  {/* Badges */}
+                  <div className="d-flex flex-wrap justify-content-md-end align-items-center gap-2">
+                    <div className="border d-flex flex-wrap justify-content-between align-items-center gap-2 p-2 rounded">
+                      <CBadge
+                        color="secondary"
+                        className="px-3 py-2 rounded-pill"
+                      >
+                        Logs:{" "}
+                        {cleaningCompleted.length +
+                          cleaningInProgress.length +
+                          failureLogs.length}
+                      </CBadge>
+
+                      <CBadge
+                        color="success"
+                        className="px-3 py-2 rounded-pill"
+                      >
+                        Completed: {cleaningCompleted.length}
+                      </CBadge>
+
+                      <CBadge
+                        color="warning"
+                        className="px-3 py-2 rounded-pill"
+                      >
+                        In Progress: {cleaningInProgress.length}
+                      </CBadge>
+                      <CBadge color="danger" className="px-3 py-2 rounded-pill">
+                        Error: {failureLogs.length}
+                      </CBadge>
+                    </div>
+
+                    <CBadge
+                      color="light"
+                      className="px-3 py-2 text-dark rounded-pill"
+                    >
+                      Not Started:
+                      <span className="ms-2 fw-bold">
+                        {robotswhichareonlineandnotstartedForthisSite.length}
+                      </span>
+                    </CBadge>
+                    <CBadge color="primary" className="px-3 py-2 rounded-pill">
+                      Total Assigned Robots: {totalAssignedRobots}
+                    </CBadge>
+                  </div>
+                </div>
+              </CCardBody>
+            </CCard>
           </div>
 
           {/* Tabs Section */}
@@ -702,14 +757,11 @@ const SiteTechnicianCleaningLog = () => {
                     Error Logs
                   </CTab>
                   <CTab itemKey="offline-robots" className="text-white">
-                    Offline Robots At the time of execution
+                    Robots that were offline at scheduled cleaning time (Timer)
                   </CTab>
 
-                  <CTab
-                    itemKey="online–command-given-not-started"
-                    className="text-white"
-                  >
-                    Online but Not Started
+                  <CTab itemKey="online-not-started" className="text-white">
+                    Not Started
                   </CTab>
                   <CTab itemKey="technician-dpr-logs" className="text-white">
                     Technician DPR Logs
@@ -1118,6 +1170,13 @@ const SiteTechnicianCleaningLog = () => {
                   {/* ============ OFFLINE ROBOTS TAB ================= */}
                   {/* ================================================= */}
                   <CTabPanel itemKey="offline-robots">
+                    <h6 className="mt-3">
+                      🚨 Robots that were offline at cleaning time (Timer),
+                    </h6>
+                    <h7 className="text-warning my-3">
+                      Note: These robots may still appear in the above cleaning
+                      log if the robots started cleaning after the timer.
+                    </h7>
                     <CTable
                       bordered
                       hover
@@ -1179,7 +1238,7 @@ const SiteTechnicianCleaningLog = () => {
                         )}
                       </CTableBody>
                     </CTable>
-                    <h4 className="my-3  border-top">Offline Robots Cycles</h4>
+                    {/* <h4 className="my-3  border-top">Offline Robots Cycles</h4> */}
                     {/* <OfflineRobotsCycle
                       offlineLogs={offlineRobots}
                       loading={offlineRobotLoading}
@@ -1189,7 +1248,7 @@ const SiteTechnicianCleaningLog = () => {
 
                   {/* ============online–command-given-not-started TAB ================= */}
                   {/* ================================================= */}
-                  <CTabPanel itemKey="online–command-given-not-started">
+                  <CTabPanel itemKey="online-not-started">
                     <CTable
                       bordered
                       hover
@@ -1207,16 +1266,8 @@ const SiteTechnicianCleaningLog = () => {
                       </CTableHead>
 
                       <CTableBody>
-                        {timerLogLoading ? (
-                          <CTableRow>
-                            <CTableDataCell colSpan={4}>
-                              <LoadingSpinner />
-                            </CTableDataCell>
-                          </CTableRow>
-                        ) : cleaningError ? (
-                          <CBadge color="danger">{cleaningError}</CBadge>
-                        ) : robotswhichareonlineandnotstartedForthisSite?.length >
-                          0 ? (
+                        {robotswhichareonlineandnotstartedForthisSite?.length >
+                        0 ? (
                           robotswhichareonlineandnotstartedForthisSite.map(
                             (log, index) => (
                               <CTableRow key={index}>
@@ -1224,10 +1275,12 @@ const SiteTechnicianCleaningLog = () => {
                                 <CTableDataCell>{log.robot_no}</CTableDataCell>
                                 <CTableDataCell>{log.block}</CTableDataCell>
                                 <CTableDataCell>
-                                  {log.lora_state ? "Online" : "Offline"}
+                                  {log.lora_state === 1 ? (
+                                    <CBadge color="success">Online</CBadge>
+                                  ) : (
+                                    <CBadge color="danger">Offline</CBadge>
+                                  )}
                                 </CTableDataCell>
-                                {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
-
                                 <CTableDataCell>
                                   {log.last_uplink &&
                                     new Date(log.last_uplink).toLocaleString(
@@ -1248,8 +1301,8 @@ const SiteTechnicianCleaningLog = () => {
                           )
                         ) : (
                           <CTableRow>
-                            <CTableDataCell colSpan={4} className="text-start">
-                              Given/Not Started found for the selected date.
+                            <CTableDataCell colSpan={5} className="text-start">
+                              No Online but Not Started robots found.
                             </CTableDataCell>
                           </CTableRow>
                         )}

@@ -10,7 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { clientSubscriptionPlans } from "../../../data.js";
+import { subPlans } from "../../../data.js";
 import { useNavigate, useParams } from "react-router-dom";
 
 const reducer = (state, action) => {
@@ -21,6 +21,21 @@ const reducer = (state, action) => {
       return { ...state, loading: false };
     case "CREATE_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "FETCH_SUB_PLANS_REQUEST":
+      return { ...state, loadingSubPlans: true, subPlansError: "" };
+    case "FETCH_SUB_PLANS_SUCCESS":
+      return {
+        ...state,
+        loadingSubPlans: false,
+        subPlans: action.payload,
+      };
+    case "FETCH_SUB_PLANS_FAIL":
+      return {
+        ...state,
+        loadingSubPlans: false,
+        subPlansError: action.payload,
+      };
     default:
       return state;
   }
@@ -30,9 +45,12 @@ const RenewSubscription = () => {
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
+    loadingSubPlans: false,
+    subPlansError: "",
+    subPlans: [],
   });
   const { client_id } = useParams();
-  const { loading, error } = state;
+  const { loading, error, loadingSubPlans, subPlansError, subPlans } = state;
 
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
@@ -52,19 +70,48 @@ const RenewSubscription = () => {
     adminroute = "project-user";
   }
 
-  const [formData, setFormData] = useState({
-    client_id: "",
+  // const [formData, setFormData] = useState({
+  //   client_id: "",
+  //   amount: 0,
+  //   plan_id: "basic",
+  //   frequency: "monthly",
+  // });
 
-    plan_id: "basic",
-    frequency: "monthly",
+  const [formData, setFormData] = useState({
+    plan_id: "",
+    frequency: "",
+    amount: 0,
+    customAmount: false,
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const plan = clientSubscriptionPlans.find(
-      (p) => p.plan_id === formData.plan_id
-    );
+    const subscriptionPlans = async () => {
+      dispatch({ type: "FETCH_SUB_PLANS_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/subscription-plans`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SUB_PLANS_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SUB_PLANS_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message,
+        );
+      }
+    };
+    subscriptionPlans();
+  }, [authtoken]);
+
+  useEffect(() => {
+    const plan = subPlans.find((p) => p.plan_id === formData.plan_id);
     if (plan && !plan.frequency.includes(formData.frequency)) {
       setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
     }
@@ -90,7 +137,7 @@ const RenewSubscription = () => {
         subscriptionData,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
       dispatch({ type: "CREATE_SUCCESS" });
       toast.success(response.data.message);
@@ -98,8 +145,10 @@ const RenewSubscription = () => {
         client_id: "",
         client_name: "",
         client_logo: "",
-        plan_id: "basic",
-        frequency: "monthly",
+        plan_id: "",
+        frequency: "",
+        amount: 0,
+        customAmount: false,
       });
       navigate(`/${adminroute}/client-subscriptions`);
     } catch (error) {
@@ -111,14 +160,35 @@ const RenewSubscription = () => {
     }
   };
 
+  const selectedPlan =
+    subPlans && subPlans.find((p) => p.plan_id === formData.plan_id);
+  useEffect(() => {
+    if (!selectedPlan) return;
+
+    const calculatedAmount =
+      formData.frequency === "monthly"
+        ? selectedPlan.price
+        : selectedPlan.price * 12;
+
+    setFormData((prev) => {
+      // If user already entered custom amount, don't override
+      if (prev.customAmount) return prev;
+
+      return {
+        ...prev,
+        amount: calculatedAmount || 0,
+      };
+    });
+  }, [formData.plan_id, formData.frequency]);
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Renew Subscription</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <CForm onSubmit={handleSubmit}>
         <CRow className="mb-3">
-          <CCol md={6}>
+          <CCol md={3}>
             <CFormInput
+              label={<span className="fw-semibold">client Id</span>}
               type="text"
               name="client_id"
               value={client_id}
@@ -127,13 +197,14 @@ const RenewSubscription = () => {
               required
             />
           </CCol>
-          <CCol md={6}>
+          <CCol md={3}>
             <CFormSelect
               name="plan_id"
+              label={<span className="fw-semibold">Plan</span>}
               value={formData.plan_id}
               onChange={handleChange}
             >
-              {clientSubscriptionPlans.map((plan) => (
+              {subPlans.map((plan) => (
                 <option key={plan.plan_id} value={plan.plan_id}>
                   {plan.name}
                 </option>
@@ -143,14 +214,15 @@ const RenewSubscription = () => {
         </CRow>
 
         <CRow className="mb-3">
-          <CCol md={6}>
+          <CCol md={3}>
             <CFormSelect
+              label={<span className="fw-semibold">Frequency</span>}
               name="frequency"
               value={formData.frequency}
               onChange={handleChange}
-              disabled={formData.plan_id === "free_trial"}
+              disabled={formData.plan_id === "Free"}
             >
-              {clientSubscriptionPlans
+              {subPlans
                 .find((p) => p.plan_id === formData.plan_id)
                 ?.frequency.map((freq) => (
                   <option key={freq} value={freq}>
@@ -158,6 +230,25 @@ const RenewSubscription = () => {
                   </option>
                 ))}
             </CFormSelect>
+          </CCol>
+          <CCol md={3}>
+            <CCol md={3}>
+              <CFormInput
+                type="number"
+                label={<span className="fw-semibold">Amount</span>}
+                name="amount"
+                value={formData.amount}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    amount: Number(e.target.value),
+                    customAmount: true, // 🔥 prevents auto overwrite
+                  }))
+                }
+                disabled={formData.plan_id === "free_trial"}
+                className="rounded-2 shadow-sm"
+              />
+            </CCol>
           </CCol>
         </CRow>
         <div className="d-flex justify-content-end">

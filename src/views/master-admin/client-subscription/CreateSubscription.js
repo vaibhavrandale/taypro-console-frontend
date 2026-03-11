@@ -1,9 +1,19 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { CForm, CFormSelect, CButton, CCol, CRow, CBadge } from "@coreui/react";
+import {
+  CForm,
+  CFormSelect,
+  CButton,
+  CCol,
+  CRow,
+  CBadge,
+  CFormInput,
+  CInputGroup,
+  CAlert,
+} from "@coreui/react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { clientSubscriptionPlans } from "../../../data.js";
+// import { subplans } from "../../../data.js";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner.js";
 
@@ -19,6 +29,22 @@ const reducer = (state, action) => {
       };
     case "FETCH_CLIENTS_FAIL":
       return { ...state, loadingClient: false, clientError: action.payload };
+
+    case "FETCH_SUB_PLANS_REQUEST":
+      return { ...state, loadingSubPlans: true, subPlansError: "" };
+    case "FETCH_SUB_PLANS_SUCCESS":
+      return {
+        ...state,
+        loadingSubPlans: false,
+        subPlans: action.payload,
+      };
+    case "FETCH_SUB_PLANS_FAIL":
+      return {
+        ...state,
+        loadingSubPlans: false,
+        subPlansError: action.payload,
+      };
+
     case "CREATE_REQUEST":
       return { ...state, loading: true, error: "" };
     case "CREATE_SUCCESS":
@@ -31,14 +57,28 @@ const reducer = (state, action) => {
 };
 
 const CreateSubscription = () => {
-  const [{ loading, error, clients, loadingClient, clientError }, dispatch] =
-    useReducer(reducer, {
-      loading: false,
-      error: "",
-      clients: [],
-      loadingClient: false,
-      clientError: "",
-    });
+  const [
+    {
+      loading,
+      error,
+      clients,
+      loadingClient,
+      clientError,
+      loadingSubPlans,
+      subPlansError,
+      subPlans,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: false,
+    error: "",
+    clients: [],
+    loadingClient: false,
+    clientError: "",
+    loadingSubPlans: false,
+    subPlansError: "",
+    subPlans: [],
+  });
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -58,10 +98,11 @@ const CreateSubscription = () => {
   }
 
   const [formData, setFormData] = useState({
-    plan_id: "basic",
-    frequency: "monthly",
+    plan_id: "",
+    frequency: "",
+    amount: 0,
+    customAmount: false,
   });
-
   const [client_id, setClientId] = useState("");
   const navigate = useNavigate();
 
@@ -82,16 +123,39 @@ const CreateSubscription = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
     clients();
+
+    const subscriptionPlans = async () => {
+      dispatch({ type: "FETCH_SUB_PLANS_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/subscription-plans`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SUB_PLANS_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SUB_PLANS_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+        toast.error(
+          error.response?.data?.error || error.response?.data?.message,
+        );
+      }
+    };
+    subscriptionPlans();
   }, [authtoken]);
 
-  const plan = clientSubscriptionPlans.find(
-    (p) => p.plan_id === formData.plan_id
-  );
+  const plan =
+    subPlans &&
+    subPlans.length > 0 &&
+    subPlans.find((p) => p.plan_id === formData.plan_id);
   if (plan && !plan.frequency.includes(formData.frequency)) {
     setFormData((prev) => ({ ...prev, frequency: plan.frequency[0] }));
   }
@@ -107,7 +171,7 @@ const CreateSubscription = () => {
     const selectedClients = e.target.value;
 
     const selectedClient = clients.find(
-      (client) => client.client_id === selectedClients
+      (client) => client.client_id === selectedClients,
     );
 
     if (selectedClient) {
@@ -138,7 +202,7 @@ const CreateSubscription = () => {
         subscriptionData,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
       dispatch({ type: "CREATE_SUCCESS" });
       toast.success(response.data.message);
@@ -148,6 +212,8 @@ const CreateSubscription = () => {
         client_logo: "",
         plan_id: "",
         frequency: "",
+        amount: 0,
+        customAmount: false,
       });
       navigate(`/${adminroute}/client-subscriptions`);
     } catch (error) {
@@ -159,109 +225,27 @@ const CreateSubscription = () => {
     }
   };
 
+  const selectedPlan = subPlans.find((p) => p.plan_id === formData.plan_id);
+
+  useEffect(() => {
+    if (!selectedPlan) return;
+
+    const calculatedAmount =
+      formData.frequency === "monthly"
+        ? selectedPlan.price
+        : selectedPlan.price * 12;
+
+    setFormData((prev) => {
+      // If user already entered custom amount, don't override
+      if (prev.customAmount) return prev;
+
+      return {
+        ...prev,
+        amount: calculatedAmount || 0,
+      };
+    });
+  }, [formData.plan_id, formData.frequency]);
   return (
-    // <div className="  shadow-lg rounded-3">
-    //   <h4 className="text-2xl font-bold mb-4 text-primary border-bottom pb-2">
-    //     Create Subscription
-    //   </h4>
-
-    //   {clientError && (
-    //     <CBadge color="danger" className="p-3 rounded-2">
-    //       {clientError}
-    //     </CBadge>
-    //   )}
-    //   {error && (
-    //     <CBadge color="danger" className="p-3 rounded-2">
-    //       {error}
-    //     </CBadge>
-    //   )}
-    //   <CForm onSubmit={handleSubmit}>
-    //     <CRow className="g-4 align-items-center">
-    //       {/* Select Client */}
-    //       <CCol md={3}>
-    //         {loadingClient ? (
-    //           <LoadingSpinner />
-    //         ) : clientError ? (
-    //           <div className="text-danger fw-semibold">{clientError}</div>
-    //         ) : clients?.length > 0 ? (
-    //           <CFormSelect
-    //             label={<span className="fw-semibold">Select Client</span>}
-    //             name="client_id"
-    //             value={client_id}
-    //             onChange={handleSiteNameChange}
-    //             className="rounded-2 shadow-sm my-2"
-    //           >
-    //             <option value="" disabled hidden>
-    //               -- Select Client --
-    //             </option>
-    //             {clients.map((item) => (
-    //               <option key={item.client_id} value={item.client_id}>
-    //                 {item.client_id}
-    //               </option>
-    //             ))}
-    //           </CFormSelect>
-    //         ) : (
-    //           <p className="text-muted">No Clients Found</p>
-    //         )}
-
-    //         <CFormSelect
-    //           label={<span className="fw-semibold">Select Plan</span>}
-    //           name="plan_id"
-    //           value={formData.plan_id}
-    //           onChange={handleChange}
-    //           className="rounded-2 shadow-sm my-2"
-    //         >
-    //           <option value="" disabled hidden>
-    //             -- Select Plan --
-    //           </option>
-    //           {clientSubscriptionPlans.map((plan) => (
-    //             <option key={plan.plan_id} value={plan.plan_id}>
-    //               {plan.name}
-    //             </option>
-    //           ))}
-    //         </CFormSelect>
-
-    //         <CFormSelect
-    //           label={<span className="fw-semibold">Select Frequency</span>}
-    //           name="frequency"
-    //           value={formData.frequency}
-    //           onChange={handleChange}
-    //           disabled={formData.plan_id === "free_trial"}
-    //           className="rounded-2 shadow-sm my-2"
-    //         >
-    //           <option value="" disabled hidden>
-    //             -- Select Frequency --
-    //           </option>
-    //           {clientSubscriptionPlans
-    //             .find((p) => p.plan_id === formData.plan_id)
-    //             ?.frequency.map((freq) => (
-    //               <option key={freq} value={freq}>
-    //                 {freq}
-    //               </option>
-    //             ))}
-    //         </CFormSelect>
-
-    //         <CButton
-    //           type="submit"
-    //           size="sm"
-    //           color="primary"
-    //           className="px-4 fw-semibold shadow-sm my-2"
-    //           disabled={loading}
-    //         >
-    //           {loading ? (
-    //             <span>
-    //               <LoadingSpinner />
-    //               Creating...
-    //             </span>
-    //           ) : (
-    //             "Create Subscription"
-    //           )}
-    //         </CButton>
-    //       </CCol>
-    //     </CRow>
-    //   </CForm>
-    // </div>
-
     <div className="shadow-lg rounded-3">
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
@@ -271,7 +255,7 @@ const CreateSubscription = () => {
       {/* Error Alerts */}
       {(clientError || error) && (
         <div className="mb-3">
-          <CBadge color="danger" className="p-2 fs-6 text-start">
+          <CBadge color="danger" className="p-2 ">
             {clientError || error}
           </CBadge>
         </div>
@@ -281,7 +265,7 @@ const CreateSubscription = () => {
         <CRow className="g-4">
           <CCol md={6}>
             {/* Select Client */}
-            {loadingClient ? (
+            {loadingClient || loadingSubPlans ? (
               <LoadingSpinner />
             ) : clientError ? (
               <div className="text-danger fw-semibold">{clientError}</div>
@@ -297,7 +281,7 @@ const CreateSubscription = () => {
                   -- Select Client --
                 </option>
                 {clients.map((item) => (
-                  <option key={item.client_id} value={item.client_id}>
+                  <option key={item._id} value={item.client_id}>
                     {item.client_id}
                   </option>
                 ))}
@@ -307,49 +291,81 @@ const CreateSubscription = () => {
             )}
           </CCol>
 
-          <CCol md={6}>
-            {/* Select Plan */}
-            <CFormSelect
-              label={<span className="fw-semibold">Select Plan</span>}
-              name="plan_id"
-              value={formData.plan_id}
-              onChange={handleChange}
-              className="rounded-2 shadow-sm"
-            >
-              <option value="" disabled hidden>
-                -- Select Plan --
-              </option>
-              {clientSubscriptionPlans.map((plan) => (
-                <option key={plan.plan_id} value={plan.plan_id}>
-                  {plan.name}
-                </option>
-              ))}
-            </CFormSelect>
-          </CCol>
+          {subPlansError ? (
+            <CCol md={6}>
+              <CAlert color="danger">{subPlansError}</CAlert>
+            </CCol>
+          ) : (
+            subPlans &&
+            subPlans.length > 0 && (
+              <>
+                <CCol md={6}>
+                  {/* Select Plan */}
+                  <CFormSelect
+                    label={<span className="fw-semibold">Select Plan</span>}
+                    name="plan_id"
+                    value={formData.plan_id}
+                    onChange={handleChange}
+                    className="rounded-2 shadow-sm"
+                  >
+                    <option value="" disabled hidden>
+                      -- Select Plan --
+                    </option>
+                    {subPlans.map((plan) => (
+                      <option key={plan.plan_id} value={plan.plan_id}>
+                        {plan.name}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                </CCol>
 
-          <CCol md={6}>
-            {/* Select Frequency */}
-            <CFormSelect
-              label={<span className="fw-semibold">Select Frequency</span>}
-              name="frequency"
-              value={formData.frequency}
-              onChange={handleChange}
-              disabled={formData.plan_id === "free_trial"}
-              className="rounded-2 shadow-sm"
-            >
-              <option value="" disabled hidden>
-                -- Select Frequency --
-              </option>
-              {clientSubscriptionPlans
-                .find((p) => p.plan_id === formData.plan_id)
-                ?.frequency.map((freq) => (
-                  <option key={freq} value={freq}>
-                    {freq}
-                  </option>
-                ))}
-            </CFormSelect>
-          </CCol>
+                <CCol md={6}>
+                  {/* Select Frequency */}
+                  <CFormSelect
+                    label={
+                      <span className="fw-semibold">Select Frequency</span>
+                    }
+                    name="frequency"
+                    value={formData.frequency}
+                    onChange={handleChange}
+                    disabled={formData.plan_id === "free_trial"}
+                    className="rounded-2 shadow-sm"
+                  >
+                    <option value="" disabled hidden>
+                      -- Select Frequency --
+                    </option>
+                    {subPlans
+                      .find((p) => p.plan_id === formData.plan_id)
+                      ?.frequency.map((freq) => (
+                        <option key={freq} value={freq}>
+                          {freq}
+                        </option>
+                      ))}
+                  </CFormSelect>
+                </CCol>
 
+                <CCol md={6}>
+                  <CCol md={6}>
+                    <CFormInput
+                      type="number"
+                      label={<span className="fw-semibold">Amount</span>}
+                      name="amount"
+                      value={formData.amount}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          amount: Number(e.target.value),
+                          customAmount: true, // 🔥 prevents auto overwrite
+                        }))
+                      }
+                      disabled={formData.plan_id === "free_trial"}
+                      className="rounded-2 shadow-sm"
+                    />
+                  </CCol>
+                </CCol>
+              </>
+            )
+          )}
           {/* Submit Button */}
           <CCol xs={12} className="d-flex justify-content-end">
             <CButton

@@ -175,6 +175,7 @@ const RobotOperating = () => {
 
   let setWheelSpeed = "RWS";
   let setBrushSpeed = "RBS";
+  let intelligentStart = "13";
   // let getPwmWheel = "PW";
   // let getPwmBrush = "PB";
   // let getAntiStuckBrushSpeed = "SP"; // PA180
@@ -1160,9 +1161,9 @@ const RobotOperating = () => {
                       <p>Cleaning Cycle</p>
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow"
-                        onClick={() => sendsingleDownlink(start, 1)}
+                        onClick={() => sendsingleDownlink(start, 45)}
                       >
-                        {commandButton === 1 ? (
+                        {commandButton === 45 ? (
                           <>
                             START&nbsp;
                             <LoadingSpinner />
@@ -1172,19 +1173,36 @@ const RobotOperating = () => {
                         )}
                       </CButton>
                       {userInfo.role === "Master Admin" && (
-                        <CButton
-                          className="btn btn-sm btn-warning m-1 shadow"
-                          onClick={() => sendsingleDownlink(partialStart, 43)}
-                        >
-                          {commandButton === 43 ? (
-                            <>
-                              Partial Start&nbsp;
-                              <LoadingSpinner />
-                            </>
-                          ) : (
-                            "Partial Start"
-                          )}
-                        </CButton>
+                        <>
+                          <CButton
+                            className="btn btn-sm btn-warning m-1 shadow"
+                            onClick={() => sendsingleDownlink(partialStart, 43)}
+                          >
+                            {commandButton === 43 ? (
+                              <>
+                                Partial Start&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Partial Start"
+                            )}
+                          </CButton>
+                          <CButton
+                            className="btn btn-sm btn-warning m-1 shadow"
+                            onClick={() =>
+                              sendsingleDownlink(intelligentStart, 46)
+                            }
+                          >
+                            {commandButton === 46 ? (
+                              <>
+                                Intelligent Start&nbsp;
+                                <LoadingSpinner />
+                              </>
+                            ) : (
+                              "Intelligent Start"
+                            )}
+                          </CButton>
+                        </>
                       )}
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow-sm"

@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { decodeRobotPayload } from "../../../components/robotPayloadDecoder";
+import Queues from "./Queues/Queues";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -128,8 +129,9 @@ const RobotEventAndFrames = () => {
     // "Configuration",
     // "OTAA keys",
     // "Activation",
-    // "Queue",
+
     "Events",
+    "Queues",
     // "LoRaWAN frames",
   ];
   function isValidBase64(str) {
@@ -184,6 +186,9 @@ const RobotEventAndFrames = () => {
       <div className="">
         {/* Tabs */}
         <div className="border-bottom mb-3">
+          <span className="text-warning p-2 fs-6">
+            {robot_no}-{deveui}
+          </span>
           <div className="d-flex gap-3 fw-medium small">
             {tabs.map((tab) => (
               <span
@@ -193,7 +198,6 @@ const RobotEventAndFrames = () => {
                 }`}
                 onClick={() => setActiveTab(tab)}
               >
-                <span className="text-warning p-2 fs-6">{robot_no}</span> -{" "}
                 <span className="fs-5">&nbsp;{tab}</span>
               </span>
             ))}
@@ -376,6 +380,8 @@ const RobotEventAndFrames = () => {
             </div>
           )
         )}
+
+        {activeTab === "Queues" && <Queues deveui={deveui} />}
 
         <COffcanvas
           placement="end"

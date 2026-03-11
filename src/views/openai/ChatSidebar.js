@@ -20,6 +20,7 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId }) => {
     } catch (err) {
       setError(err.response.data.err || err.response.data.message);
       toast.error(err.response.data.err || err.response.data.message);
+      setLoading(false);
     }
   };
 
@@ -60,7 +61,7 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId }) => {
         <LoadingSpinner />
       ) : error ? (
         <div className="alert alert-danger">{error}</div>
-      ) : (
+      ) : chats.length > 0 ? (
         chats.map((chat) => (
           <div
             key={chat._id}
@@ -77,6 +78,19 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId }) => {
             {chat.title}
           </div>
         ))
+      ) : (
+        <div
+          style={{
+            padding: 8,
+            cursor: "pointer",
+            background: "#cbd5e1",
+            borderRadius: 6,
+            marginBottom: 6,
+            color: "#000",
+          }}
+        >
+          No Chats Found
+        </div>
       )}
     </div>
   );

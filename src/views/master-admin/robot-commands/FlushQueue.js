@@ -33,18 +33,18 @@ const reducer = (state, action) => {
       return { ...state, loadingSites: false, sites: action.payload };
     case "FETCH_SITES_FAIL":
       return { ...state, loadingSites: false, sitesError: action.payload };
-    case "SEND_DOWNLINK_REQUEST":
-      return { ...state, LoadingDownlink: true, sendDownLinkError: "" };
-    case "SEND_DOWNLINK_SUCCESS":
-      return { ...state, LoadingDownlink: false };
-    case "SEND_DOWNLINK_FAIL":
-      return { ...state, LoadingDownlink: false, error: action.payload };
+    case "SEND_FLUSH_REQUEST":
+      return { ...state, loadingFlush: true, flushError: "" };
+    case "SEND_FLUSH_SUCCESS":
+      return { ...state, loadingFlush: false };
+    case "SEND_FLUSH_FAIL":
+      return { ...state, loadingFlush: false, flushError: action.payload };
     default:
       return state;
   }
 };
 
-const RobotCommands = () => {
+const FlushQueue = () => {
   const [
     {
       LoadingRobots,
@@ -54,7 +54,7 @@ const RobotCommands = () => {
       sitesError,
       robotsError,
       loadingSites,
-      sendDownLinkError,
+      flushError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -65,7 +65,7 @@ const RobotCommands = () => {
     LoadingDownlink: false,
     robotsError: "",
     sitesError: "",
-    sendDownLinkError: "",
+    flushError: "",
   });
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -73,6 +73,7 @@ const RobotCommands = () => {
   const [site_id, setSiteId] = useState();
   const [selectedRobots, setSelectedRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSelectAll, setIsSelectAll] = useState(false);
 
   useEffect(() => {
     const fetchSites = async () => {
@@ -123,56 +124,42 @@ const RobotCommands = () => {
     );
   };
 
-  const COMMAND_CODES = {
-    // START: "11",
-    // STOP: "CC",
-    // RETURN_TO_DOCK: "D1",
-    START: "11",
-    STOP: "14",
-    RETURN_TO_DOCK: "15",
+  const handleSelectAllDeveuis = () => {
+    if (!isSelectAll) {
+      setSelectedRobots(filteredRobots);
+    } else {
+      setSelectedRobots([]);
+    }
+    setIsSelectAll((prev) => !prev);
   };
 
-  const sendMulticastDownlink = async (commandCode) => {
+  const handleFlushQueue = async () => {
     if (selectedRobots.length === 0) {
       toast.error("Please select at least one robot.");
       return;
     }
 
-    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    dispatch({ type: "SEND_FLUSH_REQUEST" });
 
     const deveuiList = selectedRobots.map((r) => r.deveui);
-    const robotNoList = selectedRobots.map((r) => r.robot_no);
-    let robotdownlink = {
-      deveui: deveuiList,
-      block: "Random Block",
-      site_id: site_id,
-      command: commandCode,
-      robot_no: robotNoList.join(", "),
-    };
+
     try {
-      await axios.post(
+      const res = await axios.post(
         // "/api/v1/robots/send-downlink-in-bulk",
-        "/api/v1/robots/send-mqtt-multicast-downlink",
-        robotdownlink,
+        "/api/v1/robots/flush-queue",
+        { deveuiList },
         { headers: { Authorization: `Bearer ${authtoken}` } },
       );
-      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
-      const cmd =
-        commandCode === COMMAND_CODES.START
-          ? "START"
-          : commandCode === COMMAND_CODES.STOP
-            ? "STOP"
-            : "RETURN TO DOCK";
-      toast.success(
-        `${cmd} Command sent successfully to robots: ` + robotNoList.join(", "),
-      );
+      dispatch({ type: "SEND_FLUSH_SUCCESS" });
+
+      toast.success(res.data.message);
       setSelectedRobots([]);
     } catch (err) {
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
-        "Command failed";
-      dispatch({ type: "SEND_DOWNLINK_FAIL", payload: msg });
+        "flush failed";
+      dispatch({ type: "SEND_FLUSH_FAIL", payload: msg });
       toast.error(msg);
     }
   };
@@ -200,43 +187,9 @@ const RobotCommands = () => {
 
   return (
     <div className="p-2">
-      <h4 className="text-center mb-4">Send Commands To Robots</h4>
+      <h4 className="text-center mb-4">Flush Queue of Robots</h4>
 
       <CCardBody>
-        {/* <CRow className="mb-3 justify-content-between align-items-center">
-          <CCol md="6">
-            <div className="mb-3">
-              <label className="form-label">Site Id</label>
-              {loadingSites ? (
-                <LoadingSpinner />
-              ) : (
-                <CFormSelect
-                  name="site_id"
-                  value={site_id}
-                  onChange={handleSiteNameChange}
-                >
-                  <option value="">Select Site Name</option>
-                  {sites?.length > 0 &&
-                    sites.map((item) => (
-                      <option key={item.site_id} value={item.site_id}>
-                        {item.site_id}
-                      </option>
-                    ))}
-                </CFormSelect>
-              )}
-            </div>
-          </CCol>
-
-          <CCol md={4}>
-            <CFormInput
-              type="text"
-              placeholder="Search by Robot No..."
-              className="mb-3"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </CCol>
-        </CRow> */}
         <CRow className="mb-3 justify-content-end align-items-center">
           <CCol md="3">
             <div className="mb-3 d-flex flex-column">
@@ -272,48 +225,38 @@ const RobotCommands = () => {
             />
           </CCol>
         </CRow>
+
         <div className="d-flex justify-content-end mb-3 mt-4">
-          {selectedRobots.length > 0 && (
+          {LoadingDownlink ? (
+            <LoadingSpinner />
+          ) : (
             <>
-              {LoadingDownlink ? (
-                <LoadingSpinner />
-              ) : (
-                <>
-                  {" "}
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1"
-                    disabled={LoadingDownlink}
-                    onClick={() => sendMulticastDownlink(COMMAND_CODES.START)}
-                  >
-                    START
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1"
-                    disabled={LoadingDownlink}
-                    onClick={() => sendMulticastDownlink(COMMAND_CODES.STOP)}
-                  >
-                    STOP
-                  </CButton>
-                  <CButton
-                    className="btn btn-sm btn-secondary m-1"
-                    disabled={LoadingDownlink}
-                    onClick={() =>
-                      sendMulticastDownlink(COMMAND_CODES.RETURN_TO_DOCK)
-                    }
-                  >
-                    RETURN TO DOCK
-                  </CButton>
-                </>
-              )}
+              {" "}
+              <CButton
+                className="btn btn-sm btn-danger m-1"
+                disabled={selectedRobots.length === 0 || LoadingDownlink}
+                onClick={() => handleFlushQueue()}
+              >
+                Flush
+              </CButton>
             </>
           )}
         </div>
-        {sendDownLinkError && (
-          <CBadge color="danger">{sendDownLinkError}</CBadge>
-        )}
-        {selectedRobots.length > 0 && (
+        {flushError && <CBadge color="danger">{flushError}</CBadge>}
+        <div
+          className={`d-flex justify-content-start align-items-center my-2 ${shiftrobots && shiftrobots.length === 0 ? "d-none" : ""}`}
+        >
+          <span className="me-2">Select All</span>
+          <CFormCheck
+            checked={isSelectAll}
+            onChange={() => handleSelectAllDeveuis()}
+            className="me-3"
+            style={{}}
+          />
+        </div>
+        {/* {selectedRobots.length > 0 && (
           <div className="mt-3">
-            <h5>Send Command 🔽</h5>
+            <h5>Flush All Queue of Selected Robots 🔽</h5>
             {selectedRobots.map((robot, index) => (
               <p key={index}>
                 {index + 1} Robot No:{" "}
@@ -323,7 +266,7 @@ const RobotCommands = () => {
               </p>
             ))}
           </div>
-        )}
+        )} */}
 
         <CRow className="g-3 mt-3">
           {LoadingRobots ? (
@@ -334,7 +277,9 @@ const RobotCommands = () => {
             <CBadge color="danger" className="">
               {robotsError || sitesError}
             </CBadge>
-          ) : filteredRobots.length > 0 ? (
+          ) : filteredRobots.length === 0 ? (
+            <CCol className="text-center py-5">No robots found</CCol>
+          ) : (
             filteredRobots.map((robot) => (
               <CCol md={3} sm={4} xs={6} key={robot.deveui}>
                 <CCard
@@ -358,8 +303,6 @@ const RobotCommands = () => {
                 </CCard>
               </CCol>
             ))
-          ) : (
-            <CCol className="text-center py-5">No robots found</CCol>
           )}
         </CRow>
       </CCardBody>
@@ -367,4 +310,4 @@ const RobotCommands = () => {
   );
 };
 
-export default RobotCommands;
+export default FlushQueue;

@@ -1,14 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import {
-  CRow,
-  CCol,
-  CFormSelect,
-  CFormInput,
-  CBadge,
-  CCard,
-  CCardHeader,
-  CCardBody,
-} from "@coreui/react";
+import { CRow, CCol, CFormSelect, CFormInput } from "@coreui/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -16,6 +7,7 @@ import RobotAndCleaningGraph from "./RobotAndCleaningGraph";
 import RobotAndBatteryGraph from "./RobotAndBatteryGraph";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import RobotAnalytics from "./RobotAnalytics";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -95,10 +87,10 @@ const Statistics = () => {
   });
 
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   const authtoken = useSelector((state) => state.authtoken);
@@ -115,7 +107,7 @@ const Statistics = () => {
           `/api/v1/robots/sitewise-battery-status/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -131,7 +123,7 @@ const Statistics = () => {
         });
 
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -152,7 +144,7 @@ const Statistics = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -169,7 +161,7 @@ const Statistics = () => {
           `/api/v1/cleaninglogs/calculated-distance/${startDate}/${endDate}/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -199,7 +191,7 @@ const Statistics = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = sites.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
     console.log(selectedSite);
     if (selectedSite) {
@@ -291,16 +283,7 @@ const Statistics = () => {
             loading={cleaningLoading}
             error={cleaningError}
           />
-          {/* <CCol xs={12} className="mb-4 shadow">
-            <CCard>
-              <CCardHeader>More Statistics Coming Soon...</CCardHeader>
-              <CCardBody className="text-center">
-                <CBadge color="warning p-3 fs-5">
-                  Stay tuned for more updates!
-                </CBadge>
-              </CCardBody>
-            </CCard>
-          </CCol> */}
+          <RobotAnalytics />
         </>
       )}
     </div>

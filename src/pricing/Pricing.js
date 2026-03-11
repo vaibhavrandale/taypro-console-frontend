@@ -1,5 +1,12 @@
-import { CCard, CCardBody, CCardHeader, CCol, CRow } from "@coreui/react";
-import React, { useState } from "react";
+import {
+  CBadge,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCol,
+  CRow,
+} from "@coreui/react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Cpu,
   BatteryFull,
@@ -16,7 +23,36 @@ import {
   ServerCog,
   Users2,
   MapPin,
+  Megaphone,
+  BotMessageSquare,
 } from "lucide-react";
+import axios from "axios";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { useSelector } from "react-redux";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_PLANS_REQUEST":
+      return { ...state, loading: true, error: "" };
+
+    case "FETCH_PLANS_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        plans: action.payload,
+      };
+
+    case "FETCH_PLANS_FAIL":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
 
 const featureIcons = {
   "Robot Operating": <Cpu size={16} className="me-2 text-warning" />,
@@ -25,7 +61,9 @@ const featureIcons = {
   "Site Management": <Building size={16} className="me-2 text-warning" />,
   "Only 3 Users": <Users size={16} className="me-2 text-warning" />,
   "Statistics/Reports": <BarChart2 size={16} className="me-2 text-warning" />,
-  "Prev. Maintenance": <ShieldCheck size={16} className="me-2 text-warning" />,
+  "Preventive Maintenance": (
+    <ShieldCheck size={16} className="me-2 text-warning" />
+  ),
   "Live Chat": <MessageCircle size={16} className="me-2 text-warning" />,
   "Multiple Users": <Users2 size={16} className="me-2 text-warning" />,
   // "Multiple Alerts": <AlertCircle size={16} className="me-2 text-warning" />,
@@ -33,7 +71,7 @@ const featureIcons = {
     <AlertTriangle size={16} className="me-2 text-warning" />
   ),
   "Robot Offline Alert": <WifiOff size={16} className="me-2 text-warning" />,
-  "Robot Pos. Tracking": <MapPin size={16} className="me-2 text-warning" />,
+  "Robot Position Tracking": <MapPin size={16} className="me-2 text-warning" />,
   "Major Breakdown": <AlertTriangle size={16} className="me-2 text-warning" />,
   "Grass Cutting Alert": (
     <ClipboardList size={16} className="me-2 text-warning" />
@@ -41,98 +79,147 @@ const featureIcons = {
   "Forecast Weather Alert": (
     <CloudRain size={16} className="me-2 text-warning" />
   ),
+  "Weather Model": <CloudRain size={16} className="me-2 text-warning" />,
+  "Multiple Alerts": <Megaphone size={16} className="me-2 text-warning" />,
 
   "Scada Integration": <ServerCog size={16} className="me-2 text-warning" />,
+  "AI Chat": <BotMessageSquare size={16} className="me-2 text-warning" />,
 };
 
-const plans = [
-  {
-    plan_id: "Basic",
-    name: "Basic Plan",
-    description: "Essential features for basic robot operation and monitoring.",
-    price: 1000,
-    features: [
-      "Robot Operating",
-      "Battery Status",
-      "Cleaning Log",
-      "Site Management",
-      // "Only 3 Users",
-    ],
-  },
-  {
-    plan_id: "Premium",
-    name: "Premium Plan",
-    description:
-      "Advanced features including reports, maintenance, and alerts.",
-    price: 5000,
-    features: [
-      "Robot Operating",
-      "Robot Pos. Tracking",
-      "Battery Status",
-      "Cleaning Log",
-      "Site Management",
-      "Statistics/Reports",
-      "Prev. Maintenance",
-      "Live Chat",
-      "Multiple Users",
-      // "Multiple Alerts",
-      "Robot Failure Alert",
-      "Robot Offline Alert",
-      "Major Breakdown",
-      "Grass Cutting Alert",
-      "Forecast Weather Alert",
-    ],
-  },
-  {
-    plan_id: "Enterprise",
-    name: "Enterprise Plan",
-    description:
-      "Comprehensive features with AI, weather models, and scalability.",
-    price: 10000,
-    features: [
-      "Robot Operating",
-      "Robot Pos. Tracking",
-      "Battery Status",
-      "Cleaning Log",
-      "Site Management",
-      "Statistics/Reports",
-      "Prev. Maintenance",
-      "Live Chat",
-      "Multiple Users",
-      // "Multiple Alerts",
-      "Robot Failure Alert",
-      "Robot Offline Alert",
-      "Major Breakdown",
-      "Grass Cutting Alert",
-      "Forecast Weather Alert",
-      "Scada Integration",
-    ],
-  },
-];
+// const plans = [
+//   {
+//     plan_id: "Basic",
+//     name: "Basic Plan",
+//     description: "Essential features for basic robot operation and monitoring.",
+//     price: 1000,
+//     features: [
+//       "Robot Operating",
+//       "Battery Status",
+//       "Cleaning Log",
+//       "Site Management",
+//       // "Only 3 Users",
+//     ],
+//   },
+//   {
+//     plan_id: "Premium",
+//     name: "Premium Plan",
+//     description:
+//       "Advanced features including reports, maintenance, and alerts.",
+//     price: 5000,
+//     features: [
+//       "Robot Operating",
+//       "Robot Pos. Tracking",
+//       "Battery Status",
+//       "Cleaning Log",
+//       "Site Management",
+//       "Statistics/Reports",
+//       "Prev. Maintenance",
+//       "Live Chat",
+//       "Multiple Users",
+//       // "Multiple Alerts",
+//       "Robot Failure Alert",
+//       "Robot Offline Alert",
+//       "Major Breakdown",
+//       "Grass Cutting Alert",
+//       "Forecast Weather Alert",
+//     ],
+//   },
+//   {
+//     plan_id: "Enterprise",
+//     name: "Enterprise Plan",
+//     description:
+//       "Comprehensive features with AI, weather models, and scalability.",
+//     price: 10000,
+//     features: [
+//       "Robot Operating",
+//       "Robot Pos. Tracking",
+//       "Battery Status",
+//       "Cleaning Log",
+//       "Site Management",
+//       "Statistics/Reports",
+//       "Prev. Maintenance",
+//       "Live Chat",
+//       "Multiple Users",
+//       // "Multiple Alerts",
+//       "Robot Failure Alert",
+//       "Robot Offline Alert",
+//       "Major Breakdown",
+//       "Grass Cutting Alert",
+//       "Forecast Weather Alert",
+//       "Scada Integration",
+//     ],
+//   },
+// ];
 
-const allFeatures = [
-  "Robot Operating",
-  "Battery Status",
-  "Robot Pos. Tracking",
-  "Cleaning Log",
-  "Site Management",
-  // "Only 3 Users",
-  "Statistics/Reports",
-  "Prev. Maintenance",
-  "Live Chat",
-  "Multiple Users",
-  // "Multiple Alerts",
-  "Robot Failure Alert",
-  "Robot Offline Alert",
-  "Major Breakdown",
-  "Grass Cutting Alert",
-  "Forecast Weather Alert",
-  "Scada Integration",
-];
+// const allFeatures = [
+//   "Robot Operating",
+//   "Battery Status",
+//   "Robot Pos. Tracking",
+//   "Cleaning Log",
+//   "Site Management",
+//   // "Only 3 Users",
+//   "Statistics/Reports",
+//   "Prev. Maintenance",
+//   "Live Chat",
+//   "Multiple Users",
+//   // "Multiple Alerts",
+//   "Robot Failure Alert",
+//   "Robot Offline Alert",
+//   "Major Breakdown",
+//   "Grass Cutting Alert",
+//   "Forecast Weather Alert",
+//   "Scada Integration",
+// ];
 
 const Pricing = () => {
+  const [{ loading, error, plans }, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: "",
+    plans: [],
+  });
   const [isYearly, setIsYearly] = useState(false);
+  const authtoken = useSelector((state) => state.authtoken);
+  /* ===========================
+     FETCH DATA
+  =========================== */
+  useEffect(() => {
+    const fetchPlans = async () => {
+      dispatch({ type: "FETCH_PLANS_REQUEST" });
 
+      try {
+        const data = await axios.get("/api/v1/subscription-plans", {
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+          },
+        });
+
+        dispatch({
+          type: "FETCH_PLANS_SUCCESS",
+          payload: data.data.data,
+        });
+      } catch (err) {
+        dispatch({
+          type: "FETCH_PLANS_FAIL",
+          payload: err.response?.data?.error || err.response?.data?.message,
+        });
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  const allFeatures =
+    plans &&
+    plans
+      .reduce((acc, plan) => {
+        plan.features.forEach((feature) => {
+          if (!acc.includes(feature)) {
+            acc.push(feature);
+          }
+        });
+        return acc;
+      }, [])
+      .sort((a, b) => a.localeCompare(b));
   return (
     <div className="m-0">
       <CRow className="my-1 d-flex justify-content-center">
@@ -165,66 +252,96 @@ const Pricing = () => {
       </div>
 
       <CRow className="my-2 ">
-        {plans.map((plan) => (
-          <CCol xs={12} md={4} key={plan.plan_id} className="mb-4">
-            <CCard className="shadow-sm h-100 ">
-              <CCardHeader className="pricing-card-header">
-                <h5 className="mb-0 text-center">{plan.name}</h5>
-              </CCardHeader>
-              <CCardBody>
-                {/* <h5 className="text-center">
+        {loading ? (
+          <CCol xs={12} md={4}>
+            {" "}
+            <LoadingSpinner />
+          </CCol>
+        ) : error ? (
+          <CBadge color="danger">{error}</CBadge>
+        ) : (
+          <>
+            {plans.map((plan) => (
+              <CCol xs={12} md={4} key={plan.plan_id} className="mb-4">
+                <CCard className="shadow-sm h-100 ">
+                  <CCardHeader className="pricing-card-header">
+                    <h5 className="mb-0 text-center">{plan.name}</h5>
+                  </CCardHeader>
+                  <CCardBody>
+                    {/* <h5 className="text-center">
                   ₹{isYearly ? plan.price * 12 : plan.price}/
                   <small>{isYearly ? "year" : "month"}</small>
                 </h5> */}
-                <p className="text-center fst-italic  ">{plan.description}</p>
-                <CRow>
-                  {plan.features.map((feature, idx) => (
-                    <CCol xs={6} key={idx} className="mb-2">
-                      <span style={{ fontSize: "12px" }}>
-                        {featureIcons[feature] || "✅"} {feature}
-                      </span>
+                    <p className="text-center fst-italic  ">
+                      {plan.description}
+                    </p>
+                    {/* <CRow>
+                    {plan.features
+                      .map((feature, idx) => (
+                        <CCol xs={6} key={idx} className="mb-2">
+                          <span style={{ fontSize: "12px" }}>
+                            {featureIcons[feature] || "✅"} {feature}
+                          </span>
+                        </CCol>
+                      ))
+                      .sort((a, b) => a.localeCompare(b))}
+                  </CRow> */}
+                    <CRow>
+                      {[...plan.features]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((feature, idx) => (
+                          <CCol xs={6} key={idx} className="mb-2">
+                            <span style={{ fontSize: "12.5px" }}>
+                              {featureIcons[feature] || "✅"} {feature}
+                            </span>
+                          </CCol>
+                        ))}
+                    </CRow>
+                  </CCardBody>
+                </CCard>
+              </CCol>
+            ))}
+            <h4 className="text-center my-3">Compare Plan Features</h4>
+            <CCol xs={12} md={9} className="mx-auto border">
+              {/* Header Row */}
+              <CRow className="border-bottom  fw-bold py-2 text-center">
+                <CCol xs={4} className="text-start ">
+                  Feature
+                </CCol>
+                {plans.map((plan) => (
+                  <CCol key={plan.plan_id} className="text-center">
+                    {plan.name}
+                  </CCol>
+                ))}
+              </CRow>
+
+              {/* Feature Rows */}
+              {allFeatures.map((feature) => (
+                <CRow
+                  key={feature}
+                  className={`py-2 align-items-center  border-bottom`}
+                >
+                  <CCol
+                    xs={4}
+                    className="text-start"
+                    style={{ fontSize: "14px" }}
+                  >
+                    {featureIcons[feature] || "📌"} {feature}
+                  </CCol>
+                  {plans.map((plan) => (
+                    <CCol key={plan.plan_id} className="text-center">
+                      {plan.features.includes(feature) ? (
+                        <span className="text-success">✔</span>
+                      ) : (
+                        <span className="text-danger">✖</span>
+                      )}
                     </CCol>
                   ))}
                 </CRow>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        ))}
-        <h4 className="text-center my-3">Compare Plan Features</h4>
-        <CCol xs={12} md={9} className="mx-auto border">
-          {/* Header Row */}
-          <CRow className="border-bottom  fw-bold py-2 text-center">
-            <CCol xs={4} className="text-start ">
-              Feature
-            </CCol>
-            {plans.map((plan) => (
-              <CCol key={plan.plan_id} className="text-center">
-                {plan.name}
-              </CCol>
-            ))}
-          </CRow>
-
-          {/* Feature Rows */}
-          {allFeatures.map((feature, index) => (
-            <CRow
-              key={feature}
-              className={`py-2 align-items-center  border-bottom`}
-            >
-              <CCol xs={4} className="text-start" style={{ fontSize: "14px" }}>
-                {featureIcons[feature] || "📌"} {feature}
-              </CCol>
-              {plans.map((plan) => (
-                <CCol key={plan.plan_id} className="text-center">
-                  {plan.features.includes(feature) ? (
-                    <span className="text-success">✔</span>
-                  ) : (
-                    <span className="text-danger">✖</span>
-                  )}
-                </CCol>
               ))}
-            </CRow>
-          ))}
-        </CCol>
+            </CCol>
+          </>
+        )}
       </CRow>
     </div>
   );

@@ -187,6 +187,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Flush Queue",
+            to: "/master-admin/flush-queues",
+          },
+          {
+            component: CNavItem,
             name: "Robot Log Details",
             to: "/master-admin/robot-log-details",
           },
@@ -739,6 +744,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Commissioning",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/master-admin/commissioning",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -1028,6 +1051,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Commands",
             to: "/master-user/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "Flush Queue",
+            to: "/master-user/flush-commands",
           },
           {
             component: CNavItem,
@@ -3566,7 +3594,7 @@ const _nav = [
       //robots-positioning
       {
         component: CNavGroup,
-        name: "Robots Tracking",
+        name: "Live Tracking",
         icon: (
           <CIcon
             icon={cilLocationPin}
@@ -3575,21 +3603,6 @@ const _nav = [
           />
         ),
         items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Robots Pos. Tracking",
-          //   to: "/client-admin/robots-position",
-          //   subscriptionIcon: (
-          //     <CIcon
-          //       icon={cilDiamond}
-          //       style={{
-          //         height: "18px",
-          //         width: "18px",
-          //         color: "yellow",
-          //       }}
-          //     />
-          //   ),
-          // },
           {
             component: CNavItem,
             name: "Robots Tracking",
@@ -3611,6 +3624,11 @@ const _nav = [
                 }}
               />
             ),
+          },
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/client-admin/mds-tracker",
           },
         ],
       },
@@ -3657,24 +3675,24 @@ const _nav = [
         ],
       },
 
-      {
-        component: CNavGroup,
-        name: "MDS Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "MDS Tracking",
-            to: "/client-admin/mds-tracker",
-          },
-        ],
-      },
+      // {
+      //   component: CNavGroup,
+      //   name: "MDS Tracking",
+      //   icon: (
+      //     <CIcon
+      //       icon={cilLocationPin}
+      //       customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "MDS Tracking",
+      //       to: "/client-admin/mds-tracker",
+      //     },
+      //   ],
+      // },
 
       // {
       //   component: CNavGroup,
