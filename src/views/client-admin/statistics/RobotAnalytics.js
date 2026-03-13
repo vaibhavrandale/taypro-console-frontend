@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
+import axios from "axios";
 import {
   CRow,
   CCol,
@@ -10,220 +11,152 @@ import {
 
 import { CChartBar, CChartLine } from "@coreui/react-chartjs";
 
-const CleaningData = [
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-03-05T05:28:46Z",
-      finish: true,
-      finishAt: "2026-03-05T06:10:52Z",
-      forward_cleaning_time: 1267,
-      reverse_cleaning_time: 1055,
-      total_cleaning_time: 2456,
-      battery_before_cleaning: 80,
-      battery_at_reverse_station: 63,
-      battery_after_cleaning: 64,
-      cycle_average_brush_current: 4627,
-      cycle_average_wheel_current: 2434,
-      cycle_max_wheel_current: 3328,
-      cycle_max_brush_current: 3328,
-      cycle_count: 37,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-03-04T05:30:21Z",
-      finish: true,
-      finishAt: "2026-03-04T06:12:15Z",
-      forward_cleaning_time: 1255,
-      reverse_cleaning_time: 1042,
-      total_cleaning_time: 2401,
-      battery_before_cleaning: 82,
-      battery_at_reverse_station: 66,
-      battery_after_cleaning: 65,
-      cycle_average_brush_current: 3605,
-      cycle_average_wheel_current: 3410,
-      cycle_max_wheel_current: 3302,
-      cycle_max_brush_current: 3310,
-      cycle_count: 36,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-03-03T05:31:40Z",
-      finish: true,
-      finishAt: "2026-03-03T06:14:02Z",
-      forward_cleaning_time: 1270,
-      reverse_cleaning_time: 1030,
-      total_cleaning_time: 2445,
-      battery_before_cleaning: 79,
-      battery_at_reverse_station: 61,
-      battery_after_cleaning: 62,
-      cycle_average_brush_current: 3580,
-      cycle_average_wheel_current: 3398,
-      cycle_max_wheel_current: 3290,
-      cycle_max_brush_current: 3305,
-      cycle_count: 35,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-03-02T05:29:15Z",
-      finish: true,
-      finishAt: "2026-03-02T06:11:08Z",
-      forward_cleaning_time: 1248,
-      reverse_cleaning_time: 1048,
-      total_cleaning_time: 2395,
-      battery_before_cleaning: 81,
-      battery_at_reverse_station: 64,
-      battery_after_cleaning: 63,
-      cycle_average_brush_current: 3610,
-      cycle_average_wheel_current: 3420,
-      cycle_max_wheel_current: 3332,
-      cycle_max_brush_current: 3320,
-      cycle_count: 34,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-03-01T05:33:12Z",
-      finish: true,
-      finishAt: "2026-03-01T06:16:05Z",
-      forward_cleaning_time: 1280,
-      reverse_cleaning_time: 1060,
-      total_cleaning_time: 2470,
-      battery_before_cleaning: 83,
-      battery_at_reverse_station: 67,
-      battery_after_cleaning: 66,
-      cycle_average_brush_current: 3650,
-      cycle_average_wheel_current: 3450,
-      cycle_max_wheel_current: 3340,
-      cycle_max_brush_current: 3335,
-      cycle_count: 33,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-02-28T05:34:30Z",
-      finish: true,
-      finishAt: "2026-02-28T06:17:00Z",
-      forward_cleaning_time: 1295,
-      reverse_cleaning_time: 1055,
-      total_cleaning_time: 2488,
-      battery_before_cleaning: 84,
-      battery_at_reverse_station: 68,
-      battery_after_cleaning: 67,
-      cycle_average_brush_current: 3660,
-      cycle_average_wheel_current: 3465,
-      cycle_max_wheel_current: 3355,
-      cycle_max_brush_current: 3342,
-      cycle_count: 32,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-02-27T05:35:02Z",
-      finish: true,
-      finishAt: "2026-02-27T06:18:15Z",
-      forward_cleaning_time: 1302,
-      reverse_cleaning_time: 1068,
-      total_cleaning_time: 2498,
-      battery_before_cleaning: 85,
-      battery_at_reverse_station: 69,
-      battery_after_cleaning: 68,
-      cycle_average_brush_current: 3685,
-      cycle_average_wheel_current: 3480,
-      cycle_max_wheel_current: 3360,
-      cycle_max_brush_current: 3355,
-      cycle_count: 31,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-02-26T05:35:02Z",
-      finish: true,
-      finishAt: "2026-02-26T06:18:15Z",
-      forward_cleaning_time: 1100,
-      reverse_cleaning_time: 1168,
-      total_cleaning_time: 2580,
-      battery_before_cleaning: 85,
-      battery_at_reverse_station: 69,
-      battery_after_cleaning: 68,
-      cycle_average_brush_current: 3185,
-      cycle_average_wheel_current: 3780,
-      cycle_max_wheel_current: 360,
-      cycle_max_brush_current: 355,
-      cycle_count: 30,
-    },
-  },
-  {
-    robot_no: "AAG-2324337",
-    site_id: "avaada_agar",
-    block: "Block-3",
-    cleaning: {
-      start: true,
-      startAt: "2026-02-16T05:35:02Z",
-      finish: true,
-      finishAt: "2026-02-16T06:18:15Z",
-      forward_cleaning_time: 100,
-      reverse_cleaning_time: 168,
-      total_cleaning_time: 2588,
-      battery_before_cleaning: 100,
-      battery_at_reverse_station: 49,
-      battery_after_cleaning: 18,
-      cycle_average_brush_current: 4185,
-      cycle_average_wheel_current: 3800,
-      cycle_max_wheel_current: 4160,
-      cycle_max_brush_current: 4355,
-      cycle_count: 30,
-    },
-  },
-];
-const RobotAnalytics = () => {
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_CLEANING_REQUEST":
+      return { ...state, robotAnalyticsLoading: true, robotAnalyticsError: "" };
+
+    case "FETCH_CLEANING_SUCCESS":
+      return {
+        ...state,
+        robotAnalyticsLoading: false,
+        CleaningData: action.payload.data,
+        avg_cleaning_minutes: action.payload.avg_cleaning_minutes,
+        mx_cycle: action.payload.avg_cycle_count,
+      };
+
+    case "FETCH_FAIL":
+      return {
+        ...state,
+        robotAnalyticsLoading: false,
+        robotAnalyticsError: action.payload,
+        // subscriptiondata: action.subscriptiondata,
+        // subscriptionStatus: action.subscriptionStatus,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const RobotAnalytics = ({ site_id, authtoken }) => {
+  const [
+    { robotAnalyticsLoading, robotAnalyticsError, CleaningData = [] },
+    dispatch,
+  ] = useReducer(reducer, {
+    robotAnalyticsLoading: false,
+    robotAnalyticsError: "",
+    CleaningData: [],
+    avg_cleaning_minutes: 0,
+    mx_cycle: 0,
+  });
+
   const today = new Date();
   const last7 = new Date();
-  last7.setDate(today.getDate() - 6);
+  last7.setDate(today.getDate() - 12);
 
   const formatDate = (d) => d.toISOString().slice(0, 10);
 
   const [startDate, setStartDate] = useState(formatDate(last7));
   const [endDate, setEndDate] = useState(formatDate(today));
 
+  const [robots, setRobots] = useState([]);
+  const [filteredRobots, setFilteredRobots] = useState([]);
+  const [selectedRobot, setSelectedRobot] = useState("");
+  // const [searchTerm, setSearchTerm] = useState(robots && robots[0]?.robot_no);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+  useEffect(() => {
+    const cachedRobots = JSON.parse(localStorage.getItem("robots")) || [];
+    setRobots(cachedRobots);
+  }, []);
+
+  useEffect(() => {
+    if (robots.length > 0 && !selectedRobot) {
+      setSelectedRobot(robots[0].robot_no);
+      setSearchTerm(robots[0].robot_no);
+    }
+  }, [robots, selectedRobot]);
+
+  useEffect(() => {
+    const fetchRobotAnalytics = async () => {
+      try {
+        dispatch({ type: "FETCH_CLEANING_REQUEST" });
+
+        const result = await axios.post(
+          `/api/v1/robot-tracking/robot-cleaning-analytics`,
+          {
+            robot_no: selectedRobot || robots[0]?.robot_no,
+            site_id,
+            startDate,
+            endDate,
+          },
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          },
+        );
+        const resData = result.data;
+
+        dispatch({
+          type: "FETCH_CLEANING_SUCCESS",
+          payload: {
+            data: resData.data, // ✅ correct
+            avg_cleaning_minutes: resData.avg_cleaning_minutes,
+            avg_cycle_count: resData.avg_cycle_count,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+      }
+    };
+
+    fetchRobotAnalytics();
+  }, [site_id, startDate, endDate, authtoken, selectedRobot]);
+  useEffect(() => {
+    if (debouncedSearch && debouncedSearch.length > 0) {
+      const filtered =
+        robots &&
+        robots.filter((robot) =>
+          robot.robot_no?.toLowerCase().includes(debouncedSearch.toLowerCase()),
+        );
+
+      setFilteredRobots(filtered);
+    } else {
+      setFilteredRobots([]);
+    }
+  }, [debouncedSearch, robots]);
+  // const handleRobotSearch = (e) => {
+  //   const value = e.target.value;
+  //   setSearchTerm(value);
+
+  //   if (value.length > 0) {
+  //     const filtered = robots.filter((robot) =>
+  //       robot.robot_no?.toLowerCase().includes(value.toLowerCase()),
+  //     );
+  //     setFilteredRobots(filtered);
+  //   } else {
+  //     setFilteredRobots([]);
+  //   }
+  // };
+
+  const handleRobotSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
   /* ---------------------- PROCESS DATA ---------------------- */
 
   const processedData = CleaningData.map((d) => ({
     date: new Date(d.cleaning.startAt).toISOString().slice(0, 10),
+    robot_no: d.robot_no, // add this
 
     cleaning_minutes: Math.round(d.cleaning.total_cleaning_time / 60),
 
@@ -235,22 +168,30 @@ const RobotAnalytics = () => {
 
     cycles: d.cleaning.cycle_count,
   }));
+
   const filteredData = processedData.filter((d) => {
     const rowDate = new Date(d.date);
     const start = new Date(startDate);
     const end = new Date(endDate);
+    const robotMatch =
+      !searchTerm ||
+      d.robot_no?.toLowerCase().includes(searchTerm?.toLowerCase());
 
-    return rowDate >= start && rowDate <= end;
+    return rowDate >= start && rowDate <= end && robotMatch;
   });
 
   /* ---------------------- KPI ---------------------- */
 
   const avgCleaningTime =
-    filteredData.reduce((a, b) => a + b.cleaning_minutes, 0) /
-    filteredData.length;
+    filteredData.length > 0
+      ? filteredData.reduce((a, b) => a + b.cleaning_minutes, 0) /
+        filteredData.length
+      : 0;
 
   const avgCycles =
-    filteredData.reduce((a, b) => a + b.cycles, 0) / filteredData.length;
+    filteredData.length > 0
+      ? filteredData.reduce((a, b) => a + b.cycles, 0) / filteredData.length
+      : 0;
 
   return (
     <>
@@ -260,6 +201,55 @@ const RobotAnalytics = () => {
         <CCardHeader>Filters</CCardHeader>
         <CCardBody>
           <CRow>
+            <CCol md={3}>
+              <div style={{ position: "relative" }}>
+                <CFormInput
+                  type="text"
+                  label="Search Robot"
+                  placeholder="Search Robot No"
+                  value={searchTerm}
+                  onChange={handleRobotSearch}
+                />
+
+                {searchTerm && filteredRobots.length > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "70px",
+                      width: "100%",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      background: "#212631",
+                      border: "1px solid #ddd",
+                      borderRadius: "6px",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {filteredRobots.length === 0 ? (
+                      <div className="p-2 text-center">No robots found</div>
+                    ) : (
+                      filteredRobots.map((robot, index) => (
+                        <div
+                          key={index}
+                          className="p-2"
+                          style={{
+                            cursor: "pointer",
+                            borderBottom: "1px solid #eee",
+                          }}
+                          onClick={() => {
+                            setSearchTerm(robot.robot_no); // show in input
+                            setSelectedRobot(robot.robot_no); // 🔥 THIS will trigger API
+                            setFilteredRobots([]);
+                          }}
+                        >
+                          {robot.robot_no}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            </CCol>
             <CCol md={2}>
               <CFormInput
                 type="date"

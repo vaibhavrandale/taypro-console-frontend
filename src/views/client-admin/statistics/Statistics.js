@@ -283,7 +283,7 @@ const Statistics = () => {
             loading={cleaningLoading}
             error={cleaningError}
           />
-          <RobotAnalytics />
+          <RobotAnalytics site_id={site_id} authtoken={authtoken} />
         </>
       )}
     </div>
