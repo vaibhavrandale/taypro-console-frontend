@@ -43,16 +43,31 @@ const reducer = (state, action) => {
       };
     case "FETCH_BLOCKDATA_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "SEND_DOWNLINK_REQUEST":
+      return { ...state, Commandloading: true, commandError: "" };
+    case "SEND_DOWNLINK_SUCCESS":
+      return {
+        ...state,
+        Commandloading: false,
+      };
+    case "SEND_DOWNLINK_FAIL":
+      return { ...state, Commandloading: false, commandError: action.payload };
     default:
       return state;
   }
 };
 
 const SiteTechnicianBlockManagement = () => {
-  const [{ error, robots, blocks, loading }, dispatch] = useReducer(reducer, {
+  const [
+    { error, robots, blocks, loading, commandError, Commandloading },
+    dispatch,
+  ] = useReducer(reducer, {
     robots: [],
     blocks: [],
     loading: false,
+    Commandloading: false,
+    commandError: "",
   });
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
@@ -70,7 +85,7 @@ const SiteTechnicianBlockManagement = () => {
           `/api/v1/robots/site-management/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -101,24 +116,63 @@ const SiteTechnicianBlockManagement = () => {
           robot.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           robot.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           robot.block?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.company?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
+  // const stopCommand = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
+  //       {},
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       }
+  //     );
+  //     toast.success(
+  //       response.data.message || "Stop Command sent to all Robots successfully"
+  //     );
+  //   } catch (error) {
+  //     toast.error(error.message || "Failed to send stop command");
+  //   }
+  // };
 
   const stopCommand = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want Stop All Robots at ${sitename}, ${sitelocation}?`,
+      )
+    ) {
+      return;
+    }
+
+    let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
+
+    //deveui,command,robot_no,site_id,lora_no
+    let robotdownlink = {
+      deveui: alldeveuis,
+      block: "All",
+      site_id: site_id,
+      command: "14",
+    };
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
-      const response = await axios.post(
-        `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
-        {},
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+        robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
-      toast.success(
-        response.data.message || "Stop Command sent to all Robots successfully"
-      );
+
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
     } catch (error) {
-      toast.error(error.message || "Failed to send stop command");
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response.data.error,
+      });
+
+      toast.error(error.response.data.message || error.response.data.error);
     }
   };
 
@@ -147,12 +201,13 @@ const SiteTechnicianBlockManagement = () => {
           <CButton
             className="btn btn-secondary btn-sm"
             size="sm"
+            disabled={robots.length === 0 || Commandloading}
             onClick={() => stopCommand()}
           >
-            Stop Cleaning
+            {Commandloading ? "Sending..." : "Stop All"}
           </CButton>
         </div>
-
+        {commandError && <div className="ms-3 text-danger">{commandError}</div>}
         <CModal
           backdrop="static"
           size="xl"
@@ -214,7 +269,7 @@ const SiteTechnicianBlockManagement = () => {
                         robots.filter(
                           (r) =>
                             r.last_status === "Cleaning Started" &&
-                            r.lora_state === 1
+                            r.lora_state === 1,
                         ).length
                       }
                     </span>
@@ -346,7 +401,7 @@ const SiteTechnicianBlockManagement = () => {
                                 minute: "2-digit",
                                 second: "2-digit",
                                 hour12: true,
-                              }
+                              },
                             )
                           : "N/A"}
                       </CTableDataCell>
@@ -380,7 +435,7 @@ const SiteTechnicianBlockManagement = () => {
             {
               robots.filter(
                 (r) =>
-                  r?.last_status === "Cleaning Started" && r.lora_state === 1
+                  r?.last_status === "Cleaning Started" && r.lora_state === 1,
               ).length
             }
           </span>
@@ -444,7 +499,7 @@ const SiteTechnicianBlockManagement = () => {
                             <div
                               onClick={() =>
                                 navigate(
-                                  `/site-technician/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
+                                  `/site-technician/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`,
                                 )
                               }
                             >

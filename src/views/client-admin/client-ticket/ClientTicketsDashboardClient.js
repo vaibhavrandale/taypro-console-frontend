@@ -91,12 +91,12 @@ const ClientTicketsDashboardClient = () => {
         const result = await axios.post(
           `/api/v1/clienttickets/get-all`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         // Handle totalPages, hasNextPage, and hasPrevPage logic
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -117,7 +117,7 @@ const ClientTicketsDashboardClient = () => {
           payload: error.response.data.error,
         });
         toast.error(
-          error.response.data.error || "Failed to fetch the Client Tickets"
+          error.response.data.error || "Failed to fetch the Client Tickets",
         );
       }
     };
@@ -132,7 +132,7 @@ const ClientTicketsDashboardClient = () => {
       ticket.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   /** ✏️ Open Update Modal */
@@ -251,8 +251,8 @@ const ClientTicketsDashboardClient = () => {
                       ticket.status === "Resolved"
                         ? "success"
                         : ticket.status === "Open"
-                        ? "danger"
-                        : "warning"
+                          ? "danger"
+                          : "warning"
                     }
                   >
                     {ticket.status}
@@ -365,8 +365,8 @@ const ClientTicketsDashboardClient = () => {
                           formData.status === "Resolved"
                             ? "success"
                             : formData.status === "Open"
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                         className="px-3 py-2"
                       >
@@ -386,7 +386,7 @@ const ClientTicketsDashboardClient = () => {
                         minute: "2-digit",
                         second: "2-digit",
                         hour12: true,
-                      }
+                      },
                     ),
                     ...(formData.status === "Resolved" && {
                       "Resolved By": formData.resolved_by?.name || "--",
@@ -410,7 +410,7 @@ const ClientTicketsDashboardClient = () => {
                           <a href={value} target="_blank" rel="noreferrer">
                             <CImage
                               src={value}
-                              width={120}
+                              width={30}
                               height={80}
                               className="rounded border shadow-sm"
                             />

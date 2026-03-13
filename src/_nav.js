@@ -2181,6 +2181,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Client Tickets",
+            to: "/service-admin/client-tickets",
+          },
+          {
+            component: CNavItem,
             name: "Internal Tickets",
             to: "/service-admin/internal-tickets",
           },

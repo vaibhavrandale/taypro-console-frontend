@@ -127,7 +127,7 @@ const UpdateClientTicket = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setResolutionImage1(data.url);
@@ -156,7 +156,7 @@ const UpdateClientTicket = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setResolutionImage2(data.url);
@@ -298,7 +298,7 @@ const UpdateClientTicket = () => {
               <label className="form-label">Image 1</label>
 
               {/* Upload Button */}
-              <div className="container-btn-file p-2 m-2 w-80">
+              <div className="container-btn-file p-2 m-2 w-50">
                 <CIcon icon={cilCloudUpload} className="upload-icon" />
                 <input
                   type="file"
@@ -344,7 +344,7 @@ const UpdateClientTicket = () => {
               <label className="form-label">Image 2</label>
 
               {/* Upload Button */}
-              <div className="container-btn-file p-2 m-2 w-80">
+              <div className="container-btn-file p-2 m-2 w-50">
                 <CIcon icon={cilCloudUpload} className="upload-icon" />
                 <input
                   type="file"
