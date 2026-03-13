@@ -133,7 +133,7 @@ const CreateNewClientTicketClient = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -165,7 +165,7 @@ const CreateNewClientTicketClient = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setCreationImage1(data.url);
@@ -194,7 +194,7 @@ const CreateNewClientTicketClient = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setCreationImage2(data.url);
@@ -315,7 +315,7 @@ const CreateNewClientTicketClient = () => {
                   <label className="form-label">Image 1</label>
 
                   {/* Upload Button */}
-                  <div className="container-btn-file p-2 m-2 w-80">
+                  <div className="container-btn-file p-2 m-2 w-30">
                     <CIcon icon={cilCloudUpload} className="upload-icon" />
                     <input
                       type="file"
@@ -361,7 +361,7 @@ const CreateNewClientTicketClient = () => {
                   <label className="form-label">Image 2</label>
 
                   {/* Upload Button */}
-                  <div className="container-btn-file p-2 m-2 w-80">
+                  <div className="container-btn-file p-2 m-2 w-30">
                     <CIcon icon={cilCloudUpload} className="upload-icon" />
                     <input
                       type="file"

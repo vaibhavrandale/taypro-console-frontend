@@ -160,7 +160,7 @@ const SolarPanelRow = ({ robot, handleRobotClick, scrollRefs }) => {
           // top: "20px",
           height: "40px",
           borderRadius: "4px",
-          width: `${L * 2}px`,
+          width: `${L * 14}px`,
           backgroundImage: `
             repeating-linear-gradient(to right, #0d47a1, #0d47a1 10px, #fff 10px, #fff 12px),
             linear-gradient(to bottom, #0d47a1 0%, #0d47a1 48%, #79aaf4ff 48%, #659ef5ff 53%, #0d47a1 53%, #0d47a1 100%)
