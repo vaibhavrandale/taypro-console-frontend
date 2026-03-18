@@ -684,14 +684,14 @@ const RobotOperating = () => {
                       Update Robot
                     </Link>
                     {/* /robot-event-and-frames/:robot_no */}
-                    <Link
-                      to={`event-and-frames/${robot.deveui}`}
-                      className="btn btn-sm btn-outline-info me-2 mb-2"
-                    >
-                      View Robot Events and Frames
-                    </Link>
                   </>
                 )}
+                <Link
+                  to={`event-and-frames/${robot.deveui}`}
+                  className="btn btn-sm btn-outline-info me-2 mb-2"
+                >
+                  View Robot Events and Frames
+                </Link>
               </div>
             </CCol>
           </CRow>
@@ -847,62 +847,6 @@ const RobotOperating = () => {
                       className="shadow border-0 "
                       style={{ height: "100%" }}
                     >
-                      {/* <CCardBody>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <h6 className="fw-bold">Custom Downlink</h6>
-
-                          <FaCircleInfo
-                            className="text-primary"
-                            style={{ cursor: "pointer" }}
-                            onClick={() => setModalVisible(true)}
-                          />
-                        </div>
-                        <form className="position-relative mt-4">
-                          <CFormCheck
-                            type="checkbox"
-                            className="my-1"
-                            label="Send to all"
-                            id="sent_custom_to_all"
-                            checked={sent_custom_to_all}
-                            onChange={(e) => {
-                              setSentCustomToAll(e.target.checked);
-                            }}
-                            style={{
-                              cursor: "pointer",
-                              transform: "scale(1.1)",
-                              marginBottom: "0",
-                            }}
-                          />
-
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter command"
-                            name={customDownlink}
-                            onChange={(e) => setCustomDownlink(e.target.value)}
-                          />
-                          <CButton
-                            disabled={!customDownlink}
-                            onClick={() =>
-                              sendCustomDownlink(
-                                customDownlink,
-                                sent_custom_to_all
-                              )
-                            }
-                            type="button"
-                            className="d-flex justify-content-center align-items-center btn-sm send-button "
-                          >
-                            <span className="d-flex justify-content-center align-items-center">
-                              {" "}
-                              {sendingCommandloading ? (
-                                <LoadingSpinner />
-                              ) : (
-                                <FaArrowUp />
-                              )}
-                            </span>
-                          </CButton>
-                        </form>
-                      </CCardBody> */}
                       <CCardBody>
                         <div className="d-flex justify-content-between align-items-center">
                           <h6 className="fw-bold">Custom Downlink</h6>
@@ -913,7 +857,7 @@ const RobotOperating = () => {
                             onClick={() => setModalVisible(true)}
                           />
                         </div>
-                        <form className="position-relative mt-4">
+                        {/* <form className="position-relative mt-4">
                           <CFormCheck
                             type="checkbox"
                             className="my-1"
@@ -965,6 +909,63 @@ const RobotOperating = () => {
                               )}
                             </span>
                           </CButton>
+                        </form> */}
+                        <form className="mt-4">
+                          <CFormCheck
+                            type="checkbox"
+                            className="my-2"
+                            label="Send to all"
+                            id="sent_custom_to_all"
+                            checked={sent_custom_to_all}
+                            onChange={(e) =>
+                              setSentCustomToAll(e.target.checked)
+                            }
+                            style={{
+                              cursor: "pointer",
+                              transform: "scale(1.1)",
+                              marginBottom: "6px",
+                            }}
+                          />
+
+                          {/* INPUT WRAPPER */}
+                          <div className="position-relative">
+                            <input
+                              type="text"
+                              className="form-control pe-5"
+                              placeholder="Enter command"
+                              name={customDownlink}
+                              onChange={(e) =>
+                                setCustomDownlink(e.target.value)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && customDownlink) {
+                                  e.preventDefault();
+                                  sendCustomDownlink(
+                                    customDownlink,
+                                    sent_custom_to_all,
+                                  );
+                                }
+                              }}
+                            />
+
+                            <CButton
+                              disabled={!customDownlink}
+                              onClick={() =>
+                                sendCustomDownlink(
+                                  customDownlink,
+                                  sent_custom_to_all,
+                                )
+                              }
+                              type="button"
+                              className="send-button d-flex justify-content-center align-items-center btn-sm"
+                            >
+                              {sendingCommandloading ? (
+                                <LoadingSpinner />
+                              ) : (
+                                <FaArrowUp />
+                              )}
+                            </CButton>
+                          </div>
                         </form>
                       </CCardBody>
                     </CCard>
@@ -1172,38 +1173,7 @@ const RobotOperating = () => {
                           "START"
                         )}
                       </CButton>
-                      {userInfo.role === "Master Admin" && (
-                        <>
-                          <CButton
-                            className="btn btn-sm btn-warning m-1 shadow"
-                            onClick={() => sendsingleDownlink(partialStart, 43)}
-                          >
-                            {commandButton === 43 ? (
-                              <>
-                                Partial Start&nbsp;
-                                <LoadingSpinner />
-                              </>
-                            ) : (
-                              "Partial Start"
-                            )}
-                          </CButton>
-                          <CButton
-                            className="btn btn-sm btn-warning m-1 shadow"
-                            onClick={() =>
-                              sendsingleDownlink(intelligentStart, 46)
-                            }
-                          >
-                            {commandButton === 46 ? (
-                              <>
-                                Intelligent Start&nbsp;
-                                <LoadingSpinner />
-                              </>
-                            ) : (
-                              "Intelligent Start"
-                            )}
-                          </CButton>
-                        </>
-                      )}
+
                       <CButton
                         className="btn btn-sm btn-secondary m-1 shadow-sm"
                         onClick={() => sendsingleDownlink(stop, 2)}
@@ -1230,6 +1200,43 @@ const RobotOperating = () => {
                           "RETURN"
                         )}
                       </CButton>
+                      <div className=" border-top">
+                        {(userInfo.role === "Master Admin" ||
+                          userInfo.role === "Service Admin") && (
+                          <>
+                            <CButton
+                              className="btn btn-sm btn-warning m-1 shadow"
+                              onClick={() =>
+                                sendsingleDownlink(partialStart, 43)
+                              }
+                            >
+                              {commandButton === 43 ? (
+                                <>
+                                  Partial Start&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Partial Start"
+                              )}
+                            </CButton>
+                            <CButton
+                              className="btn btn-sm btn-warning m-1 shadow"
+                              onClick={() =>
+                                sendsingleDownlink(intelligentStart, 46)
+                              }
+                            >
+                              {commandButton === 46 ? (
+                                <>
+                                  Intelligent Start&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Intelligent Start"
+                              )}
+                            </CButton>
+                          </>
+                        )}
+                      </div>
                     </CCardBody>
                   </CCard>
                 </CCol>
@@ -1337,7 +1344,8 @@ const RobotOperating = () => {
                 </CCol>
 
                 {/* Fourth Card - Text To Base64 */}
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Service Admin") && (
                   <CCol md={3} className="mt-2">
                     <CCard
                       className="shadow border-0 "
@@ -1376,7 +1384,8 @@ const RobotOperating = () => {
 
               {/* Fourth Row */}
               <CRow className="my-2">
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Service Admin") && (
                   <>
                     {/* Card 1 - Custom Current */}
                     <CCol md={3} className="mt-2">
@@ -1393,7 +1402,7 @@ const RobotOperating = () => {
                           </div>
 
                           {/* Wheel Current */}
-                          <div className="position-relative mb-3 mt-4">
+                          <form className="position-relative mb-3 mt-4">
                             <input
                               type="text"
                               className="form-control"
@@ -1404,6 +1413,7 @@ const RobotOperating = () => {
                               }
                             />
                             <CButton
+                              disabled={!wheelCurrentValue}
                               onClick={() =>
                                 sendsingleDownlink(
                                   `${setWheelCurrent}${wheelCurrentValue}`,
@@ -1411,7 +1421,7 @@ const RobotOperating = () => {
                                 )
                               }
                               type="button"
-                              className="d-flex justify-content-center align-items-center btn-sm send-button shadow-sm position-absolute"
+                              className="d-flex justify-content-center align-items-center btn-sm send-button "
                             >
                               {commandButton === 10 ? (
                                 <>
@@ -1421,7 +1431,7 @@ const RobotOperating = () => {
                                 <FaArrowUp />
                               )}
                             </CButton>
-                          </div>
+                          </form>
 
                           {/* Brush Current */}
                           <div className="position-relative">
@@ -1435,6 +1445,7 @@ const RobotOperating = () => {
                               }
                             />
                             <CButton
+                              disabled={!brushCurrentValue}
                               type="button"
                               className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
                               onClick={() =>
@@ -1482,6 +1493,7 @@ const RobotOperating = () => {
                             />
                             <CButton
                               type="button"
+                              disabled={!brushSpeedValue}
                               className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
                               onClick={() =>
                                 sendsingleDownlink(
@@ -1513,6 +1525,7 @@ const RobotOperating = () => {
                             />
                             <CButton
                               type="button"
+                              disabled={!wheelSpeedValue}
                               className="d-flex justify-content-between align-items-center btn-sm btn-secondary position-absolute send-button shadow-sm"
                               onClick={() =>
                                 sendsingleDownlink(
@@ -1643,7 +1656,8 @@ const RobotOperating = () => {
 
               {/* Seventh Row */}
               <CRow className="my-2">
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Service Admin") && (
                   <>
                     {/* Card 1 - Weather Lock */}
                     <CCol md={3} className="mt-2">
@@ -1812,7 +1826,8 @@ const RobotOperating = () => {
 
               {/* Fifth Row */}
               <CRow className="my-2">
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Service Admin") && (
                   <>
                     {/* Card 1 - Get Values */}
                     <CCol md={3} className="mt-2">
@@ -2085,7 +2100,8 @@ const RobotOperating = () => {
 
               {/* Sixth Row */}
               <CRow className="my-2">
-                {userInfo.role === "Master Admin" && (
+                {(userInfo.role === "Master Admin" ||
+                  userInfo.role === "Service Admin") && (
                   <>
                     {/* Card 1 - Custom Temperature Limit */}
                     <CCol md={3} className="mt-2">

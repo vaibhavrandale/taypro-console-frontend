@@ -5810,6 +5810,16 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    // path: "/master-admin/event-and-frames/:deveui",
+    path: "/service-admin/site-management/block-management/:site_id/:block/:robot_no/event-and-frames/:deveui",
+    name: "Robot Event and Frames",
+    element: (
+      <ServiceAdminRoute>
+        <RobotEventAndFrames />
+      </ServiceAdminRoute>
+    ),
+  },
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {

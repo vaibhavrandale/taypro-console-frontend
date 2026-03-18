@@ -3223,7 +3223,7 @@ const ClientCleaningLog = () => {
                           <CTableHeaderCell>#</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
-                          <CTableHeaderCell>Is Duplicate</CTableHeaderCell>
+                          {/* <CTableHeaderCell>Is Duplicate</CTableHeaderCell> */}
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
                           <CTableHeaderCell>Comments</CTableHeaderCell>
@@ -3245,13 +3245,13 @@ const ClientCleaningLog = () => {
                                 {log.robot_no}
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
-                              <CTableDataCell>
+                              {/* <CTableDataCell>
                                 {log.is_duplicate ? (
                                   <CBadge color="danger">Yes</CBadge>
                                 ) : (
                                   <CBadge color="success">No</CBadge>
                                 )}
-                              </CTableDataCell>
+                              </CTableDataCell> */}
                               <CTableDataCell>
                                 {log.createdAt &&
                                   new Date(log.createdAt).toLocaleString(

@@ -116,7 +116,7 @@ const ClientAdminDashboard = () => {
   });
 
   const [site_id, setSiteid] = useState(
-    userInfo.assigned_sites[0]?.site_id || "abc"
+    userInfo.assigned_sites[0]?.site_id || "abc",
   );
   const [blockWiseCleaning, setBlockWiseCleaning] = useState([]);
   const [gateways, setGateways] = useState([]);
@@ -150,7 +150,7 @@ const ClientAdminDashboard = () => {
           `/api/v1/sites-coordinates/site-details/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -178,7 +178,7 @@ const ClientAdminDashboard = () => {
           `/api/v1/weatherdata/client/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         dispatch({
           type: "FETCH_WEATHER_SUCCESS",
@@ -206,7 +206,7 @@ const ClientAdminDashboard = () => {
     const selectedSiteName = e.target.value;
 
     const selectedSite = siteIds.find(
-      (site) => site.site_id === selectedSiteName
+      (site) => site.site_id === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -273,7 +273,21 @@ const ClientAdminDashboard = () => {
       robot: entry.robot_no,
       value: parseInt(entry.battery_voltage),
     })) || [];
+  const formatNumberShort = (num) => {
+    if (num === null || num === undefined) return "0";
 
+    const n = Number(num); // ✅ handle string values
+    if (isNaN(n)) return "0";
+
+    const absNum = Math.abs(n);
+
+    if (absNum >= 1e12) return (n / 1e12).toFixed(2) + " T";
+    if (absNum >= 1e9) return (n / 1e9).toFixed(2) + " B";
+    if (absNum >= 1e6) return (n / 1e6).toFixed(2) + " M";
+    if (absNum >= 1e3) return (n / 1e3).toFixed(2) + " K";
+
+    return n.toFixed(2);
+  };
   return (
     <>
       <div className="p-2">
@@ -298,7 +312,7 @@ const ClientAdminDashboard = () => {
                     ) : (
                       GoogleMapEmbed(
                         siteCoordinates.latitude,
-                        siteCoordinates.longitude
+                        siteCoordinates.longitude,
                       )
                     )}
                   </div>
@@ -391,7 +405,7 @@ const ClientAdminDashboard = () => {
                             minute: "2-digit",
                             second: "2-digit",
                             hour12: true,
-                          }
+                          },
                         )}
                       </p>
                       <p className="">{weatherData?.siteName}</p>
@@ -436,7 +450,7 @@ const ClientAdminDashboard = () => {
                               <div className="text-muted small">
                                 Wind @{" "}
                                 {new Date(
-                                  weatherData?.createdAt
+                                  weatherData?.createdAt,
                                 ).toLocaleTimeString()}
                               </div>
                             </CCardBody>
@@ -471,7 +485,7 @@ const ClientAdminDashboard = () => {
                   <h5 className="text-center">
                     Total Area Cleaned
                     <span className="text-success fw-bold ms-2">
-                      {totalAreaCleaned} m
+                      {totalAreaCleaned} m²
                     </span>
                   </h5>
                 </CCardHeader>
@@ -499,16 +513,16 @@ const ClientAdminDashboard = () => {
                           style={{ height: "300px" }}
                           data={{
                             labels: blockWiseCleaning.map(
-                              (block) => block.block
+                              (block) => block.block,
                             ),
                             datasets: [
                               {
                                 data: blockWiseCleaning.map(
-                                  (block) => block.areaCleaned
+                                  (block) => block.areaCleaned,
                                 ),
                                 backgroundColor: chartColors.slice(
                                   0,
-                                  blockWiseCleaning.length
+                                  blockWiseCleaning.length,
                                 ),
                               },
                             ],
@@ -525,7 +539,10 @@ const ClientAdminDashboard = () => {
                                       blockWiseCleaning[tooltipItem.dataIndex];
                                     return ` ${
                                       block.block || "Unassigned"
-                                    } |  ${block.areaCleaned} m`;
+                                    } | ${formatNumberShort(block.areaCleaned)} m²`;
+                                    // return ` ${
+                                    //   block.block || "Unassigned"
+                                    // } |  ${block.areaCleaned} m`;
                                   },
                                 },
                               },
@@ -579,13 +596,15 @@ const ClientAdminDashboard = () => {
                           style={{ height: "300px" }}
                           data={{
                             labels: gateways.map(
-                              (gateway) => gateway.gateway_name
+                              (gateway) => gateway.gateway_name,
                             ),
                             datasets: [
                               {
                                 data: gateways.map(() => 1),
                                 backgroundColor: gateways.map((gateway) =>
-                                  gateway.gateway_status ? "#28a745" : "#dc3545"
+                                  gateway.gateway_status
+                                    ? "#28a745"
+                                    : "#dc3545",
                                 ),
                               },
                             ],
@@ -680,7 +699,7 @@ const ClientAdminDashboard = () => {
                       style={{ height: "300px", width: "100%" }}
                       data={{
                         labels: batteryChartData.map((entry) =>
-                          entry.robot.slice(-3)
+                          entry.robot.slice(-3),
                         ),
                         datasets: [
                           {
