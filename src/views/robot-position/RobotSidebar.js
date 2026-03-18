@@ -45,7 +45,7 @@ const RobotSidebar = ({
     L,
     item,
     robot.track_details,
-    robot.createdAt // ✅ Pass createdAt to check if document is from today
+    robot.createdAt, // ✅ Pass createdAt to check if document is from today
   );
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
@@ -71,7 +71,7 @@ const RobotSidebar = ({
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message || "Command sent successfully");
@@ -79,7 +79,7 @@ const RobotSidebar = ({
       toast.error(
         error.response?.data?.message ||
           error.response?.data?.error ||
-          "Failed to send command"
+          "Failed to send command",
       );
     } finally {
       setCommandButton(null);
@@ -126,7 +126,7 @@ const RobotSidebar = ({
 
           <span style={{ fontSize: "15px" }}>Doc id – {robot._id}</span>
 
-          <span style={{ fontSize: "15px" }}>
+          {/* <span style={{ fontSize: "15px" }}>
             Robot Current State –{" "}
             {robot.lora_state === 1 ? (
               <CBadge color="success" className="p-2">
@@ -137,7 +137,7 @@ const RobotSidebar = ({
                 OFFLINE
               </CBadge>
             )}
-          </span>
+          </span> */}
         </div>
 
         {/* RIGHT SIDE BUTTONS */}
@@ -372,7 +372,8 @@ const RobotSidebar = ({
                           {robot.cleaning.forward_cleaning_time_received_at ? (
                             <>
                               {new Date(
-                                robot.cleaning.forward_cleaning_time_received_at
+                                robot.cleaning
+                                  .forward_cleaning_time_received_at,
                               ).toLocaleString("en-GB", {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -407,7 +408,7 @@ const RobotSidebar = ({
                         >
                           {robot.cleaning.reverse_cleaning_time_received_at ? (
                             new Date(
-                              robot.cleaning.reverse_cleaning_time_received_at
+                              robot.cleaning.reverse_cleaning_time_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -443,7 +444,7 @@ const RobotSidebar = ({
                     >
                       {robot.cleaning.total_cleaning_time_received_at ? (
                         new Date(
-                          robot.cleaning.total_cleaning_time_received_at
+                          robot.cleaning.total_cleaning_time_received_at,
                         ).toLocaleString("en-GB", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -477,7 +478,7 @@ const RobotSidebar = ({
                     >
                       {robot.cleaning.battery_before_cleaning_received_at ? (
                         new Date(
-                          robot.cleaning.battery_before_cleaning_received_at
+                          robot.cleaning.battery_before_cleaning_received_at,
                         ).toLocaleString("en-GB", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -511,7 +512,7 @@ const RobotSidebar = ({
                     >
                       {robot.cleaning.battery_after_cleaning_received_at ? (
                         new Date(
-                          robot.cleaning.battery_after_cleaning_received_at
+                          robot.cleaning.battery_after_cleaning_received_at,
                         ).toLocaleString("en-GB", {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -547,7 +548,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .battery_at_reverse_station_received_at ? (
                             new Date(
-                              robot.cleaning.battery_at_reverse_station_received_at
+                              robot.cleaning
+                                .battery_at_reverse_station_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -582,7 +584,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .temperature_before_cleaning_received_at ? (
                             new Date(
-                              robot.cleaning.temperature_before_cleaning_received_at
+                              robot.cleaning
+                                .temperature_before_cleaning_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -619,7 +622,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .temperature_at_reverse_station_received_at ? (
                             new Date(
-                              robot.cleaning.temperature_at_reverse_station_received_at
+                              robot.cleaning
+                                .temperature_at_reverse_station_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -654,7 +658,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .temperature_after_cleaning_received_at ? (
                             new Date(
-                              robot.cleaning.temperature_after_cleaning_received_at
+                              robot.cleaning
+                                .temperature_after_cleaning_received_at,
                             ).toLocaleString("en-IN", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -689,7 +694,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .cycle_average_brush_current_received_at ? (
                             new Date(
-                              robot.cleaning.cycle_average_brush_current_received_at
+                              robot.cleaning
+                                .cycle_average_brush_current_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -724,7 +730,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .cycle_average_wheel_current_received_at ? (
                             new Date(
-                              robot.cleaning.cycle_average_wheel_current_received_at
+                              robot.cleaning
+                                .cycle_average_wheel_current_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -762,7 +769,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .cycle_max_brush_current_received_at ? (
                             new Date(
-                              robot.cleaning.cycle_max_brush_current_received_at
+                              robot.cleaning
+                                .cycle_max_brush_current_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -797,7 +805,8 @@ const RobotSidebar = ({
                           {robot.cleaning
                             .cycle_max_wheel_current_received_at ? (
                             new Date(
-                              robot.cleaning.cycle_max_wheel_current_received_at
+                              robot.cleaning
+                                .cycle_max_wheel_current_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -831,7 +840,7 @@ const RobotSidebar = ({
                         >
                           {robot.cleaning.cycle_count_received_at ? (
                             new Date(
-                              robot.cleaning.cycle_count_received_at
+                              robot.cleaning.cycle_count_received_at,
                             ).toLocaleString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",

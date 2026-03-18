@@ -59,7 +59,6 @@
   color: white;
   height: 30px;
   width: 30px;
-  margin-top: 12px;
   border-radius: 50%;
   position: absolute;
   right: 10px;
@@ -82,7 +81,9 @@
 
 .dropdown-menu-robot .dropdown-item {
   margin: 5px 0px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .online:hover {

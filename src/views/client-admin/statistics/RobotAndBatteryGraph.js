@@ -56,7 +56,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
           <CCard className="mb-4 shadow">
             <CCardHeader>
               <h5 className="text-start">
-                Battery Voltage per Robot of &nbsp;
+                Battery Percentage per Robot of &nbsp;
                 <span className="text-success">{site_id}</span>
               </h5>
             </CCardHeader>
@@ -80,7 +80,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                   style={{ height: "350px", width: "100%" }}
                   data={{
                     labels: batteryrobots.map((robot) =>
-                      robot.robot_no.slice(-4)
+                      robot.robot_no.slice(-4),
                     ),
                     //   datasets: [
                     //     {
@@ -135,7 +135,7 @@ const RobotAndBatteryGraph = ({ batteryrobots, loading, site_id, error }) => {
                       {
                         label: "Battery (%)",
                         data: batteryrobots.map(
-                          (entry) => entry.battery_voltage
+                          (entry) => entry.battery_voltage,
                         ),
                         backgroundColor: chartColors[1],
                         borderWidth: 1,
