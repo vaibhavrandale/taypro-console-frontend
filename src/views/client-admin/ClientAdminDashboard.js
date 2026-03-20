@@ -13,8 +13,9 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChartBar, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
-import CIcon from "@coreui/icons-react";
-import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
+// import CIcon from "@coreui/icons-react";
+// import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
+import Weather from "./weather/Weather";
 
 const chartColors = [
   "#052638",
@@ -288,451 +289,506 @@ const ClientAdminDashboard = () => {
 
     return n.toFixed(2);
   };
+
+  const getWeatherType = () => {
+    const cloudiness = weatherData && weatherData?.cloudiness;
+    const cloudy = weatherData && weatherData?.description?.includes("cloud");
+
+    const rainy = weatherData && weatherData?.is_rain;
+
+    if (rainy) return "rainy";
+    if (cloudy || cloudiness > 70) return "cloudy";
+    if (weatherData?.humidity > 60 && cloudiness > 40 && !rainy) return "foggy";
+    return "sunny";
+  };
+
+  const weatherType = getWeatherType();
+  console.log(weatherData?.cloudiness);
+  console.log(weatherData?.is_rain);
+  console.log(weatherData?.humidity);
+  console.log(weatherData?.description);
   return (
     <>
-      <div className="p-2">
-        <div className="">
-          <CRow className="g-4">
-            {/* Map Section */}
-            <CCol xs={12} md={6}>
-              <CCard className="h-100 border-0 shadow-sm">
-                <CCardHeader className="">
-                  Hello {userInfo.username},
-                  <span className="text-success"> {getGreeting()}</span>
-                </CCardHeader>
-                <CCardBody className="p-0">
-                  <div>
-                    {loadingSiteDetails ? (
+      <div className={``}>
+        <div className="p-2 z-0">
+          <div className="">
+            <CRow className="g-4">
+              {/* Map Section */}
+              <CCol xs={12} md={6}>
+                <CCard className="h-100 border-0 shadow-sm z-0">
+                  <CCardHeader className="">
+                    Hello {userInfo.username},
+                    <span className="text-success"> {getGreeting()}</span>
+                  </CCardHeader>
+                  <CCardBody className="p-0">
+                    <div>
+                      {loadingSiteDetails ? (
+                        <div
+                          className="d-flex justify-content-center align-items-center"
+                          style={{ minHeight: "350px" }}
+                        >
+                          <LoadingSpinner />
+                        </div>
+                      ) : (
+                        GoogleMapEmbed(
+                          siteCoordinates.latitude,
+                          siteCoordinates.longitude,
+                        )
+                      )}
+                    </div>
+                  </CCardBody>
+                </CCard>
+              </CCol>
+
+              {/* Weather Section */}
+              <CCol xs={12} md={6}>
+                <CCard className="h-100 shadow-sm border-0">
+                  <CCardHeader className="fw-bold">
+                    <CRow className="d-flex justify-content-between align-items-center">
+                      <CCol md={4} className="">
+                        Current Weather
+                      </CCol>
+
+                      <CCol md={8} className="">
+                        {loadingSiteIds ? (
+                          // <LoadingSpinner />
+                          <span className="d-flex justify-content-center align-items-center">
+                            {" "}
+                            Fetching
+                          </span>
+                        ) : errorSiteIds ? (
+                          <CBadge color="warning" className="">
+                            {errorSiteIds === "Site not found"
+                              ? "Please contact Admin to view Data"
+                              : errorSiteIds}
+                          </CBadge>
+                        ) : (
+                          <CFormSelect
+                            value={site_id}
+                            onChange={handleSiteNameChange}
+                            className="form-select p-1 mx-1"
+                            style={{ fontSize: "12px" }}
+                            aria-label="Select Site"
+                          >
+                            <option value="" disabled>
+                              Select Site
+                            </option>
+                            {siteIds.map((site) => (
+                              <option key={site.site_id} value={site.site_id}>
+                                {site.site_id}
+                              </option>
+                            ))}
+                          </CFormSelect>
+                        )}
+                      </CCol>
+                    </CRow>
+                  </CCardHeader>
+                  {/* <CCardBody className="d-flex flex-column">
+                    {loadingWeatherData ? (
                       <div
                         className="d-flex justify-content-center align-items-center"
                         style={{ minHeight: "350px" }}
                       >
                         <LoadingSpinner />
                       </div>
+                    ) : errorWeatherData ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ minHeight: "350px" }}
+                      >
+                        {errorWeatherData ===
+                        `Weather data for site: ${site_id} not found` ? (
+                          <CBadge color="warning" className="p-2">
+                            Please contact Admin to view Data
+                          </CBadge>
+                        ) : errorWeatherData ? (
+                          <CBadge color="warning" className="p-2">
+                            {errorWeatherData}
+                          </CBadge>
+                        ) : (
+                          errorWeatherData
+                        )}
+                      </div>
                     ) : (
-                      GoogleMapEmbed(
-                        siteCoordinates.latitude,
-                        siteCoordinates.longitude,
-                      )
+                      <>
+               
+                        <p className="">
+                          Last Updated:{" "}
+                          {new Date(weatherData?.createdAt).toLocaleString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            },
+                          )}
+                        </p>
+                        <p className="">{weatherData?.siteName}</p>
+
+                        <CRow className="s">
+                          <CCol xs={6}>
+                            <CCard className="text-center border-0  bg-gradient rounded-0">
+                              <CCardBody>
+                                <CIcon
+                                  icon={cilSpeedometer}
+                                  className="mb-2 text-danger"
+                                  size="lg"
+                                />
+                                <h5>{weatherData?.temperature}°C</h5>
+                                <div className="text-muted small">
+                                  Feels Like
+                                </div>
+                              </CCardBody>
+                            </CCard>
+                          </CCol>
+                          <CCol xs={6}>
+                            <CCard className="text-center border-0 bg-gradient rounded-0">
+                              <CCardBody>
+                                <CIcon
+                                  icon={cilCloud}
+                                  className="mb-2 text-primary"
+                                  size="lg"
+                                />
+                                <h5>{weatherData?.cloudiness}%</h5>
+                                <div className="text-muted small">
+                                  Cloudiness
+                                </div>
+                              </CCardBody>
+                            </CCard>
+                          </CCol>
+                          <CCol xs={6}>
+                            <CCard className="text-center border-0 bg-gradient rounded-0">
+                              <CCardBody>
+                                <CIcon
+                                  icon={cilSpeedometer}
+                                  className="mb-2 text-warning"
+                                  size="lg"
+                                />
+                                <h5>{weatherData?.wind_speed} m/s</h5>
+                                <div className="text-muted small">
+                                  Wind @{" "}
+                                  {new Date(
+                                    weatherData?.createdAt,
+                                  ).toLocaleTimeString()}
+                                </div>
+                              </CCardBody>
+                            </CCard>
+                          </CCol>
+                          <CCol xs={6}>
+                            <CCard className="text-center border-0  bg-gradient rounded-0">
+                              <CCardBody>
+                                <CIcon
+                                  icon={cilBolt}
+                                  className="mb-2 text-success"
+                                  size="lg"
+                                />
+                                <h5>{weatherData?.humidity}%</h5>
+                                <div className="text-muted small">Humidity</div>
+                              </CCardBody>
+                            </CCard>
+                          </CCol>
+                        </CRow>
+                      </>
+                    )}
+                  </CCardBody> */}
+
+                  <CCardBody className="p-0">
+                    {loadingWeatherData ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ minHeight: 390 }}
+                      >
+                        <LoadingSpinner />
+                      </div>
+                    ) : errorWeatherData ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ minHeight: 390 }}
+                      >
+                        <CBadge color="warning" className="p-2">
+                          {errorWeatherData ===
+                          `Weather data for site: ${site_id} not found`
+                            ? "Please contact Admin to view Data"
+                            : errorWeatherData}
+                        </CBadge>
+                      </div>
+                    ) : (
+                      <Weather
+                        weatherType={weatherType} // "sunny"|"rainy"|"cloudy"|"foggy"
+                        weatherData={weatherData} // full API response object
+                        siteName={weatherData?.siteName}
+                      />
+                    )}
+                  </CCardBody>
+                </CCard>
+              </CCol>
+            </CRow>
+          </div>
+          <div className="mt-2">
+            <CRow className="justify-content-center">
+              <CCol xs={12} md={6} className="mt-4">
+                <CCard className=" shadow">
+                  <CCardHeader>
+                    <h5 className="text-center">
+                      Total Area Cleaned
+                      <span className="text-success fw-bold ms-2">
+                        {totalAreaCleaned} m²
+                      </span>
+                    </h5>
+                  </CCardHeader>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "350px" }}
+                  >
+                    {loadingSiteDetails ? (
+                      <LoadingSpinner />
+                    ) : siteDetailsError ? (
+                      <>
+                        {siteDetailsError === "Site not found" ||
+                        siteDetailsError === "Site Coordinates not found" ? (
+                          <CBadge color="warning" className="p-2">
+                            Please contact to Admin to view Data
+                          </CBadge>
+                        ) : (
+                          siteDetailsError
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {blockWiseCleaning?.length > 0 ? (
+                          <CChartPie
+                            style={{ height: "300px" }}
+                            data={{
+                              labels: blockWiseCleaning.map(
+                                (block) => block.block,
+                              ),
+                              datasets: [
+                                {
+                                  data: blockWiseCleaning.map(
+                                    (block) => block.areaCleaned,
+                                  ),
+                                  backgroundColor: chartColors.slice(
+                                    0,
+                                    blockWiseCleaning.length,
+                                  ),
+                                },
+                              ],
+                            }}
+                            options={{
+                              plugins: {
+                                legend: {
+                                  display: false, // ✅ This hides the legend
+                                },
+                                tooltip: {
+                                  callbacks: {
+                                    label: function (tooltipItem) {
+                                      const block =
+                                        blockWiseCleaning[
+                                          tooltipItem.dataIndex
+                                        ];
+                                      return ` ${
+                                        block.block || "Unassigned"
+                                      } | ${formatNumberShort(block.areaCleaned)} m²`;
+                                      // return ` ${
+                                      //   block.block || "Unassigned"
+                                      // } |  ${block.areaCleaned} m`;
+                                    },
+                                  },
+                                },
+                              },
+                            }}
+                          />
+                        ) : (
+                          <CBadge color="warning">
+                            No Cleaning Data available
+                          </CBadge>
+                        )}
+                      </>
+                      // <div>
+                      //   <CBadge color="warning fs-5">
+                      //     Stay tuned for more updates!
+                      //   </CBadge>
+                      // </div>
                     )}
                   </div>
-                </CCardBody>
-              </CCard>
-            </CCol>
+                </CCard>
+              </CCol>
 
-            {/* Weather Section */}
-            <CCol xs={12} md={6}>
-              <CCard className="h-100 shadow-sm border-0">
-                <CCardHeader className="fw-bold">
-                  <CRow className="d-flex justify-content-between align-items-center">
-                    <CCol md={4} className="">
-                      Weather Today{" "}
-                    </CCol>
-
-                    <CCol md={8} className="">
-                      {loadingSiteIds ? (
-                        // <LoadingSpinner />
-                        <span className="d-flex justify-content-center align-items-center">
-                          {" "}
-                          Fetching
-                        </span>
-                      ) : errorSiteIds ? (
-                        <CBadge color="warning" className="">
-                          {errorSiteIds === "Site not found"
-                            ? "Please contact Admin to view Data"
-                            : errorSiteIds}
-                        </CBadge>
-                      ) : (
-                        <CFormSelect
-                          value={site_id}
-                          onChange={handleSiteNameChange}
-                          className="form-select p-1 mx-1"
-                          style={{ fontSize: "12px" }}
-                          aria-label="Select Site"
-                        >
-                          <option value="" disabled>
-                            Select Site
-                          </option>
-                          {siteIds.map((site) => (
-                            <option key={site.site_id} value={site.site_id}>
-                              {site.site_id}
-                            </option>
-                          ))}
-                        </CFormSelect>
-                      )}
-                    </CCol>
-                  </CRow>
-                </CCardHeader>
-                <CCardBody className="d-flex flex-column">
-                  {loadingWeatherData ? (
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ minHeight: "350px" }}
-                    >
+              <CCol xs={12} md={6} className="mt-4">
+                <CCard className="mb-4 shadow">
+                  <CCardHeader>
+                    <h5 className="text-center">Gateway Details</h5>
+                  </CCardHeader>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "350px" }}
+                  >
+                    {loadingSiteDetails ? (
                       <LoadingSpinner />
-                    </div>
-                  ) : errorWeatherData ? (
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ minHeight: "350px" }}
-                    >
-                      {errorWeatherData ===
-                      `Weather data for site: ${site_id} not found` ? (
-                        <CBadge color="warning" className="p-2">
-                          Please contact Admin to view Data
-                        </CBadge>
-                      ) : errorWeatherData ? (
-                        <CBadge color="warning" className="p-2">
-                          {errorWeatherData}
-                        </CBadge>
-                      ) : (
-                        errorWeatherData
-                      )}
-                    </div>
-                  ) : (
-                    <>
-                      {/* Welcome */}
-                      <p className="">
-                        Last Updated:{" "}
-                        {/* {new Date(weatherData?.createdAt).toLocaleString()} */}
-                        {new Date(weatherData?.createdAt).toLocaleString(
-                          "en-GB",
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                            hour12: true,
-                          },
+                    ) : siteDetailsError ? (
+                      <>
+                        {siteDetailsError === "Site not found" ||
+                        siteDetailsError === "Site Coordinates not found" ? (
+                          <CBadge color="warning" className="p-2">
+                            Please contact to Admin to view Data
+                          </CBadge>
+                        ) : siteDetailsError ? (
+                          <CBadge color="warning" className="p-2">
+                            {siteDetailsError}
+                          </CBadge>
+                        ) : null}
+                      </>
+                    ) : (
+                      <>
+                        {gateways.length > 0 ? (
+                          <CChartPie
+                            style={{ height: "300px" }}
+                            data={{
+                              labels: gateways.map(
+                                (gateway) => gateway.gateway_name,
+                              ),
+                              datasets: [
+                                {
+                                  data: gateways.map(() => 1),
+                                  backgroundColor: gateways.map((gateway) =>
+                                    gateway.gateway_status
+                                      ? "#28a745"
+                                      : "#dc3545",
+                                  ),
+                                },
+                              ],
+                            }}
+                            options={{
+                              plugins: {
+                                legend: {
+                                  display: false, // ✅ This hides the legend
+                                },
+
+                                tooltip: {
+                                  callbacks: {
+                                    label: function (tooltipItem) {
+                                      const gateway =
+                                        gateways[tooltipItem.dataIndex];
+                                      return `${
+                                        gateway.gateway_status
+                                          ? "Online"
+                                          : "Offline"
+                                      }${
+                                        gateway.battery_voltage
+                                          ? `| Battery:  ${gateway.battery_voltage} %`
+                                          : ""
+                                      }`;
+                                    },
+                                  },
+                                },
+                              },
+                            }}
+                          />
+                        ) : (
+                          <CBadge color="warning">
+                            No Gateway details available
+                          </CBadge>
                         )}
-                      </p>
-                      <p className="">{weatherData?.siteName}</p>
-
-                      {/* Weather Grid */}
-                      <CRow className="s">
-                        <CCol xs={6}>
-                          <CCard className="text-center border-0  bg-gradient rounded-0">
-                            <CCardBody>
-                              <CIcon
-                                icon={cilSpeedometer}
-                                className="mb-2 text-danger"
-                                size="lg"
-                              />
-                              <h5>{weatherData?.temperature}°C</h5>
-                              <div className="text-muted small">Feels Like</div>
-                            </CCardBody>
-                          </CCard>
-                        </CCol>
-                        <CCol xs={6}>
-                          <CCard className="text-center border-0 bg-gradient rounded-0">
-                            <CCardBody>
-                              <CIcon
-                                icon={cilCloud}
-                                className="mb-2 text-primary"
-                                size="lg"
-                              />
-                              <h5>{weatherData?.cloudiness}%</h5>
-                              <div className="text-muted small">Cloudiness</div>
-                            </CCardBody>
-                          </CCard>
-                        </CCol>
-                        <CCol xs={6}>
-                          <CCard className="text-center border-0 bg-gradient rounded-0">
-                            <CCardBody>
-                              <CIcon
-                                icon={cilSpeedometer}
-                                className="mb-2 text-warning"
-                                size="lg"
-                              />
-                              <h5>{weatherData?.wind_speed} m/s</h5>
-                              <div className="text-muted small">
-                                Wind @{" "}
-                                {new Date(
-                                  weatherData?.createdAt,
-                                ).toLocaleTimeString()}
-                              </div>
-                            </CCardBody>
-                          </CCard>
-                        </CCol>
-                        <CCol xs={6}>
-                          <CCard className="text-center border-0  bg-gradient rounded-0">
-                            <CCardBody>
-                              <CIcon
-                                icon={cilBolt}
-                                className="mb-2 text-success"
-                                size="lg"
-                              />
-                              <h5>{weatherData?.humidity}%</h5>
-                              <div className="text-muted small">Humidity</div>
-                            </CCardBody>
-                          </CCard>
-                        </CCol>
-                      </CRow>
-                    </>
-                  )}
-                </CCardBody>
-              </CCard>
-            </CCol>
-          </CRow>
-        </div>
-        <div className="mt-2">
-          <CRow className="justify-content-center">
-            <CCol xs={12} md={6} className="mt-4">
-              <CCard className=" shadow">
-                <CCardHeader>
-                  <h5 className="text-center">
-                    Total Area Cleaned
-                    <span className="text-success fw-bold ms-2">
-                      {totalAreaCleaned} m²
-                    </span>
-                  </h5>
-                </CCardHeader>
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ minHeight: "350px" }}
-                >
-                  {loadingSiteDetails ? (
-                    <LoadingSpinner />
-                  ) : siteDetailsError ? (
-                    <>
-                      {siteDetailsError === "Site not found" ||
-                      siteDetailsError === "Site Coordinates not found" ? (
-                        <CBadge color="warning" className="p-2">
-                          Please contact to Admin to view Data
-                        </CBadge>
-                      ) : (
-                        siteDetailsError
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {blockWiseCleaning?.length > 0 ? (
-                        <CChartPie
-                          style={{ height: "300px" }}
-                          data={{
-                            labels: blockWiseCleaning.map(
-                              (block) => block.block,
-                            ),
-                            datasets: [
-                              {
-                                data: blockWiseCleaning.map(
-                                  (block) => block.areaCleaned,
-                                ),
-                                backgroundColor: chartColors.slice(
-                                  0,
-                                  blockWiseCleaning.length,
-                                ),
-                              },
-                            ],
-                          }}
-                          options={{
-                            plugins: {
-                              legend: {
-                                display: false, // ✅ This hides the legend
-                              },
-                              tooltip: {
-                                callbacks: {
-                                  label: function (tooltipItem) {
-                                    const block =
-                                      blockWiseCleaning[tooltipItem.dataIndex];
-                                    return ` ${
-                                      block.block || "Unassigned"
-                                    } | ${formatNumberShort(block.areaCleaned)} m²`;
-                                    // return ` ${
-                                    //   block.block || "Unassigned"
-                                    // } |  ${block.areaCleaned} m`;
-                                  },
-                                },
-                              },
+                      </>
+                    )}
+                  </div>
+                </CCard>
+              </CCol>
+            </CRow>
+          </div>
+          <div className="mt-2">
+            <CCard className="shadow">
+              <CCardHeader>
+                <h5>Battery Status</h5>{" "}
+              </CCardHeader>
+              <CCardBody
+                className="d-flex justify-content-center align-items-center"
+                // style={{ minHeight: "350px" }}
+              >
+                {loadingSiteDetails ? (
+                  <LoadingSpinner />
+                ) : siteDetailsError ? (
+                  <>
+                    {siteDetailsError === "Site not found" ||
+                    siteDetailsError === "Site Coordinates not found" ? (
+                      <CBadge color="warning" className="p-2">
+                        Please contact to Admin to view Data
+                      </CBadge>
+                    ) : (
+                      siteDetailsError
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {robotsData?.length > 0 ? (
+                      // <CChartLine
+                      //   style={{ height: "300px", width: "100%" }}
+                      //   data={{
+                      //     labels: batteryChartData.map((entry) =>
+                      //       entry.robot.slice(-3)
+                      //     ),
+                      //     datasets: [
+                      //       {
+                      //         label: "Battery (%)",
+                      //         data: batteryChartData.map((entry) => entry.value),
+                      //         borderColor: "#648DB3",
+                      //         tension: 0.4,
+                      //       },
+                      //     ],
+                      //   }}
+                      //   options={{
+                      //     scales: {
+                      //       y: {
+                      //         beginAtZero: true,
+                      //       },
+                      //     },
+                      //   }}
+                      // />
+                      <CChartBar
+                        style={{ height: "300px", width: "100%" }}
+                        data={{
+                          labels: batteryChartData.map((entry) =>
+                            entry.robot.slice(-3),
+                          ),
+                          datasets: [
+                            {
+                              label: "Battery (%)",
+                              data: batteryChartData.map(
+                                (entry) => entry.value,
+                              ),
+                              backgroundColor: chartColors[1],
+                              borderWidth: 1,
+                              barThickness: 20, // 👈 Fixed width for each bar (in pixels)
+                              maxBarThickness: 20, // 👈 Optional: max limit for bar width
+                              categoryPercentage: 0.8, // 👈 Optional: % of available space per category
+                              barPercentage: 0.9, // 👈 Optional: % of space inside each category
                             },
-                          }}
-                        />
-                      ) : (
-                        <CBadge color="warning">
-                          No Cleaning Data available
-                        </CBadge>
-                      )}
-                    </>
-                    // <div>
-                    //   <CBadge color="warning fs-5">
-                    //     Stay tuned for more updates!
-                    //   </CBadge>
-                    // </div>
-                  )}
-                </div>
-              </CCard>
-            </CCol>
-
-            <CCol xs={12} md={6} className="mt-4">
-              <CCard className="mb-4 shadow">
-                <CCardHeader>
-                  <h5 className="text-center">Gateway Details</h5>
-                </CCardHeader>
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ minHeight: "350px" }}
-                >
-                  {loadingSiteDetails ? (
-                    <LoadingSpinner />
-                  ) : siteDetailsError ? (
-                    <>
-                      {siteDetailsError === "Site not found" ||
-                      siteDetailsError === "Site Coordinates not found" ? (
-                        <CBadge color="warning" className="p-2">
-                          Please contact to Admin to view Data
-                        </CBadge>
-                      ) : siteDetailsError ? (
-                        <CBadge color="warning" className="p-2">
-                          {siteDetailsError}
-                        </CBadge>
-                      ) : null}
-                    </>
-                  ) : (
-                    <>
-                      {gateways.length > 0 ? (
-                        <CChartPie
-                          style={{ height: "300px" }}
-                          data={{
-                            labels: gateways.map(
-                              (gateway) => gateway.gateway_name,
-                            ),
-                            datasets: [
-                              {
-                                data: gateways.map(() => 1),
-                                backgroundColor: gateways.map((gateway) =>
-                                  gateway.gateway_status
-                                    ? "#28a745"
-                                    : "#dc3545",
-                                ),
-                              },
-                            ],
-                          }}
-                          options={{
-                            plugins: {
-                              legend: {
-                                display: false, // ✅ This hides the legend
-                              },
-
-                              tooltip: {
-                                callbacks: {
-                                  label: function (tooltipItem) {
-                                    const gateway =
-                                      gateways[tooltipItem.dataIndex];
-                                    return `${
-                                      gateway.gateway_status
-                                        ? "Online"
-                                        : "Offline"
-                                    }${
-                                      gateway.battery_voltage
-                                        ? `| Battery:  ${gateway.battery_voltage} %`
-                                        : ""
-                                    }`;
-                                  },
-                                },
-                              },
+                          ],
+                        }}
+                        options={{
+                          maintainAspectRatio: false, // 🔑 let it expand
+                          responsive: true, // 🔑 auto adjust width
+                          scales: {
+                            y: {
+                              beginAtZero: true,
                             },
-                          }}
-                        />
-                      ) : (
-                        <CBadge color="warning">
-                          No Gateway details available
-                        </CBadge>
-                      )}
-                    </>
-                  )}
-                </div>
-              </CCard>
-            </CCol>
-          </CRow>
-        </div>
-        <div className="mt-2">
-          <CCard className="shadow">
-            <CCardHeader>
-              <h5>Battery Status</h5>{" "}
-            </CCardHeader>
-            <CCardBody
-              className="d-flex justify-content-center align-items-center"
-              // style={{ minHeight: "350px" }}
-            >
-              {loadingSiteDetails ? (
-                <LoadingSpinner />
-              ) : siteDetailsError ? (
-                <>
-                  {siteDetailsError === "Site not found" ||
-                  siteDetailsError === "Site Coordinates not found" ? (
-                    <CBadge color="warning" className="p-2">
-                      Please contact to Admin to view Data
-                    </CBadge>
-                  ) : (
-                    siteDetailsError
-                  )}
-                </>
-              ) : (
-                <>
-                  {robotsData?.length > 0 ? (
-                    // <CChartLine
-                    //   style={{ height: "300px", width: "100%" }}
-                    //   data={{
-                    //     labels: batteryChartData.map((entry) =>
-                    //       entry.robot.slice(-3)
-                    //     ),
-                    //     datasets: [
-                    //       {
-                    //         label: "Battery (%)",
-                    //         data: batteryChartData.map((entry) => entry.value),
-                    //         borderColor: "#648DB3",
-                    //         tension: 0.4,
-                    //       },
-                    //     ],
-                    //   }}
-                    //   options={{
-                    //     scales: {
-                    //       y: {
-                    //         beginAtZero: true,
-                    //       },
-                    //     },
-                    //   }}
-                    // />
-                    <CChartBar
-                      style={{ height: "300px", width: "100%" }}
-                      data={{
-                        labels: batteryChartData.map((entry) =>
-                          entry.robot.slice(-3),
-                        ),
-                        datasets: [
-                          {
-                            label: "Battery (%)",
-                            data: batteryChartData.map((entry) => entry.value),
-                            backgroundColor: chartColors[1],
-                            borderWidth: 1,
-                            barThickness: 20, // 👈 Fixed width for each bar (in pixels)
-                            maxBarThickness: 20, // 👈 Optional: max limit for bar width
-                            categoryPercentage: 0.8, // 👈 Optional: % of available space per category
-                            barPercentage: 0.9, // 👈 Optional: % of space inside each category
                           },
-                        ],
-                      }}
-                      options={{
-                        maintainAspectRatio: false, // 🔑 let it expand
-                        responsive: true, // 🔑 auto adjust width
-                        scales: {
-                          y: {
-                            beginAtZero: true,
-                          },
-                        },
-                      }}
-                    />
-                  ) : (
-                    <CBadge color="warning">
-                      No battery logs found for the Robots
-                    </CBadge>
-                  )}
-                </>
-              )}
-            </CCardBody>
-          </CCard>
+                        }}
+                      />
+                    ) : (
+                      <CBadge color="warning">
+                        No battery logs found for the Robots
+                      </CBadge>
+                    )}
+                  </>
+                )}
+              </CCardBody>
+            </CCard>
+          </div>
         </div>
       </div>
     </>
