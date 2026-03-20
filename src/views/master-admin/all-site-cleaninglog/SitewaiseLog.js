@@ -28,6 +28,7 @@
 // import * as XLSX from "xlsx";
 // import LoadingSpinner from "../../../components/LoadingSpinner";
 // import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+
 // // import CompletedCycles from "./CompletedCycles";
 // // import ErrorCycles from "./ErrorCycles";
 // // import OfflineRobotsCycle from "./OfflineRobotsCycle";
@@ -119,6 +120,25 @@
 //   const [startDate, setStartDate] = useState(
 //     new Date().toISOString().split("T")[0],
 //   );
+//   // Completed logs filters
+//   const [completedSearch, setCompletedSearch] = useState("");
+//   const [completedBlock, setCompletedBlock] = useState("");
+
+//   // In progress filters
+//   const [progressSearch, setProgressSearch] = useState("");
+//   const [progressBlock, setProgressBlock] = useState("");
+
+//   // Failure filters
+//   const [failureSearch, setFailureSearch] = useState("");
+//   const [failureBlock, setFailureBlock] = useState("");
+
+//   // Offline filters
+//   const [offlineSearch, setOfflineSearch] = useState("");
+//   const [offlineBlock, setOfflineBlock] = useState("");
+
+//   // Not started filters
+//   const [notStartedSearch, setNotStartedSearch] = useState("");
+//   const [notStartedBlock, setNotStartedBlock] = useState("");
 
 //   useEffect(() => {
 //     const fetchCleaningLogs = async () => {
@@ -521,6 +541,45 @@
 //       notStartedRobotCount[log.robot_no] =
 //         (notStartedRobotCount[log.robot_no] || 0) + 1;
 //     });
+
+//   const getBlocks = (data) => {
+//     return [...new Set(data.map((item) => item.block).filter(Boolean))];
+//   };
+//   const filteredCompleted = cleaning_completed.filter((log) => {
+//     return (
+//       log.robot_no.toLowerCase().includes(completedSearch.toLowerCase()) &&
+//       (completedBlock ? log.block === completedBlock : true)
+//     );
+//   });
+
+//   const filteredProgress = cleaning_in_progress.filter((log) => {
+//     return (
+//       log.robot_no.toLowerCase().includes(progressSearch.toLowerCase()) &&
+//       (progressBlock ? log.block === progressBlock : true)
+//     );
+//   });
+
+//   const filteredFailure = cleaning_failures.filter((log) => {
+//     return (
+//       log.robot_no.toLowerCase().includes(failureSearch.toLowerCase()) &&
+//       (failureBlock ? log.block === failureBlock : true)
+//     );
+//   });
+
+//   const filteredOffline = offline_robots_at_time_of_cleaning.filter((log) => {
+//     return (
+//       log.robot_no.toLowerCase().includes(offlineSearch.toLowerCase()) &&
+//       (offlineBlock ? log.block === offlineBlock : true)
+//     );
+//   });
+
+//   const filteredNotStarted = not_started_robots.filter((log) => {
+//     return (
+//       log.robot_no.toLowerCase().includes(notStartedSearch.toLowerCase()) &&
+//       (notStartedBlock ? log.block === notStartedBlock : true)
+//     );
+//   });
+
 //   return (
 //     <>
 //       {cleaningLoading ? (
@@ -667,6 +726,30 @@
 //                 <CTabContent>
 //                   {/* Completed Logs Tab */}
 //                   <CTabPanel itemKey="cleaning-logs">
+//                     <CRow className="my-2 justify-content-end">
+//                       <CCol md={2}>
+//                         <CFormInput
+//                           placeholder="Search Robot No..."
+//                           value={completedSearch}
+//                           onChange={(e) => setCompletedSearch(e.target.value)}
+//                         />
+//                       </CCol>
+
+//                       <CCol md={2}>
+//                         <select
+//                           className="form-select"
+//                           value={completedBlock}
+//                           onChange={(e) => setCompletedBlock(e.target.value)}
+//                         >
+//                           <option value="">All Blocks</option>
+//                           {getBlocks(cleaning_completed).map((block) => (
+//                             <option key={block} value={block}>
+//                               {block}
+//                             </option>
+//                           ))}
+//                         </select>
+//                       </CCol>
+//                     </CRow>
 //                     <CTable
 //                       bordered
 //                       hover
@@ -704,7 +787,7 @@
 
 //                       <CTableBody>
 //                         {cleaning_completed.length > 0 ? (
-//                           cleaning_completed.map((log, index) => (
+//                           filteredCompleted.map((log, index) => (
 //                             <CTableRow key={index}>
 //                               <CTableDataCell>{index + 1}</CTableDataCell>
 //                               <CTableDataCell
@@ -796,6 +879,30 @@
 
 //                   {/* Cleaning In Progress */}
 //                   <CTabPanel itemKey="in-progress">
+//                     <CRow className="my-2 justify-content-end">
+//                       <CCol md={2}>
+//                         <CFormInput
+//                           placeholder="Search Robot No..."
+//                           value={progressSearch}
+//                           onChange={(e) => setProgressSearch(e.target.value)}
+//                         />
+//                       </CCol>
+
+//                       <CCol md={2}>
+//                         <select
+//                           className="form-select"
+//                           value={progressBlock}
+//                           onChange={(e) => setProgressBlock(e.target.value)}
+//                         >
+//                           <option value="">All Blocks</option>
+//                           {getBlocks(cleaning_in_progress).map((block) => (
+//                             <option key={block} value={block}>
+//                               {block}
+//                             </option>
+//                           ))}
+//                         </select>
+//                       </CCol>
+//                     </CRow>
 //                     <CTable
 //                       bordered
 //                       hover
@@ -813,8 +920,8 @@
 //                       </CTableHead>
 
 //                       <CTableBody>
-//                         {cleaning_in_progress?.length > 0 ? (
-//                           cleaning_in_progress.map((log, index) => (
+//                         {filteredProgress?.length > 0 ? (
+//                           filteredProgress.map((log, index) => (
 //                             <CTableRow key={index}>
 //                               <CTableDataCell>{index + 1}</CTableDataCell>
 //                               <CTableDataCell
@@ -860,6 +967,30 @@
 
 //                   {/* Failure Logs */}
 //                   <CTabPanel itemKey="error-logs">
+//                     <CRow className="my-2 justify-content-end">
+//                       <CCol md={2}>
+//                         <CFormInput
+//                           placeholder="Search Robot No..."
+//                           value={failureSearch}
+//                           onChange={(e) => setFailureSearch(e.target.value)}
+//                         />
+//                       </CCol>
+
+//                       <CCol md={2}>
+//                         <select
+//                           className="form-select"
+//                           value={failureBlock}
+//                           onChange={(e) => setFailureBlock(e.target.value)}
+//                         >
+//                           <option value="">All Blocks</option>
+//                           {getBlocks(cleaning_failures).map((block) => (
+//                             <option key={block} value={block}>
+//                               {block}
+//                             </option>
+//                           ))}
+//                         </select>
+//                       </CCol>
+//                     </CRow>
 //                     <CTable
 //                       bordered
 //                       hover
@@ -879,8 +1010,8 @@
 //                       </CTableHead>
 
 //                       <CTableBody>
-//                         {cleaning_failures?.length > 0 ? (
-//                           cleaning_failures.map((log, index) => (
+//                         {filteredFailure?.length > 0 ? (
+//                           filteredFailure.map((log, index) => (
 //                             <CTableRow key={index}>
 //                               <CTableDataCell>{index + 1}</CTableDataCell>
 //                               <CTableDataCell
@@ -940,6 +1071,32 @@
 //                   {/* ============ OFFLINE ROBOTS TAB ================= */}
 //                   {/* ================================================= */}
 //                   <CTabPanel itemKey="offline-robots">
+//                     <CRow className="my-2 justify-content-end">
+//                       <CCol md={2}>
+//                         <CFormInput
+//                           placeholder="Search Robot No..."
+//                           value={offlineSearch}
+//                           onChange={(e) => setOfflineSearch(e.target.value)}
+//                         />
+//                       </CCol>
+
+//                       <CCol md={2}>
+//                         <select
+//                           className="form-select"
+//                           value={offlineBlock}
+//                           onChange={(e) => setOfflineBlock(e.target.value)}
+//                         >
+//                           <option value="">All Blocks</option>
+//                           {getBlocks(offline_robots_at_time_of_cleaning).map(
+//                             (block) => (
+//                               <option key={block} value={block}>
+//                                 {block}
+//                               </option>
+//                             ),
+//                           )}
+//                         </select>
+//                       </CCol>
+//                     </CRow>
 //                     <CTable
 //                       bordered
 //                       hover
@@ -957,35 +1114,31 @@
 //                       </CTableHead>
 
 //                       <CTableBody>
-//                         {offline_robots_at_time_of_cleaning?.length > 0 ? (
-//                           offline_robots_at_time_of_cleaning.map(
-//                             (log, index) => (
-//                               <CTableRow key={index}>
-//                                 <CTableDataCell>{index + 1}</CTableDataCell>
-//                                 <CTableDataCell>{log.robot_no}</CTableDataCell>
-//                                 <CTableDataCell>{log.block}</CTableDataCell>
-//                                 <CTableDataCell>
-//                                   {log.createdAt &&
-//                                     new Date(log.createdAt).toLocaleString(
-//                                       "en-GB",
-//                                       {
-//                                         day: "2-digit",
-//                                         month: "2-digit",
-//                                         year: "numeric",
-//                                         hour: "2-digit",
-//                                         minute: "2-digit",
-//                                         second: "2-digit",
-//                                         hour12: true,
-//                                       },
-//                                     )}
-//                                 </CTableDataCell>
+//                         {filteredOffline?.length > 0 ? (
+//                           filteredOffline.map((log, index) => (
+//                             <CTableRow key={index}>
+//                               <CTableDataCell>{index + 1}</CTableDataCell>
+//                               <CTableDataCell>{log.robot_no}</CTableDataCell>
+//                               <CTableDataCell>{log.block}</CTableDataCell>
+//                               <CTableDataCell>
+//                                 {log.createdAt &&
+//                                   new Date(log.createdAt).toLocaleString(
+//                                     "en-GB",
+//                                     {
+//                                       day: "2-digit",
+//                                       month: "2-digit",
+//                                       year: "numeric",
+//                                       hour: "2-digit",
+//                                       minute: "2-digit",
+//                                       second: "2-digit",
+//                                       hour12: true,
+//                                     },
+//                                   )}
+//                               </CTableDataCell>
 
-//                                 <CTableDataCell>
-//                                   {log.error_type}
-//                                 </CTableDataCell>
-//                               </CTableRow>
-//                             ),
-//                           )
+//                               <CTableDataCell>{log.error_type}</CTableDataCell>
+//                             </CTableRow>
+//                           ))
 //                         ) : (
 //                           <CTableRow>
 //                             <CTableDataCell colSpan={5} className="text-start">
@@ -1006,6 +1159,30 @@
 //                   {/* ============online–command-given-not-started TAB ================= */}
 //                   {/* ================================================= */}
 //                   <CTabPanel itemKey="online–command-given-not-started">
+//                     <CRow className="my-2 justify-content-end">
+//                       <CCol md={2}>
+//                         <CFormInput
+//                           placeholder="Search Robot No..."
+//                           value={notStartedSearch}
+//                           onChange={(e) => setNotStartedSearch(e.target.value)}
+//                         />
+//                       </CCol>
+
+//                       <CCol md={2}>
+//                         <select
+//                           className="form-select"
+//                           value={notStartedBlock}
+//                           onChange={(e) => setNotStartedBlock(e.target.value)}
+//                         >
+//                           <option value="">All Blocks</option>
+//                           {getBlocks(not_started_robots).map((block) => (
+//                             <option key={block} value={block}>
+//                               {block}
+//                             </option>
+//                           ))}
+//                         </select>
+//                       </CCol>
+//                     </CRow>
 //                     <CTable
 //                       bordered
 //                       hover
@@ -1023,8 +1200,8 @@
 //                       </CTableHead>
 
 //                       <CTableBody>
-//                         {not_started_robots?.length > 0 ? (
-//                           not_started_robots.map((log, index) => (
+//                         {filteredNotStarted?.length > 0 ? (
+//                           filteredNotStarted.map((log, index) => (
 //                             <CTableRow
 //                               key={index}
 //                               color={
@@ -1190,6 +1367,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import Logmodal from "../../../components/individual-robot-log/Logmodal";
 
 // import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
@@ -1277,6 +1455,7 @@ const SitewaiseLog = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const { site_id } = useParams();
 
   const [startDate, setStartDate] = useState(
@@ -1301,6 +1480,9 @@ const SitewaiseLog = () => {
   // Not started filters
   const [notStartedSearch, setNotStartedSearch] = useState("");
   const [notStartedBlock, setNotStartedBlock] = useState("");
+
+  const [selectedLogId, setSelectedLogId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCleaningLogs = async () => {
@@ -1742,6 +1924,12 @@ const SitewaiseLog = () => {
     );
   });
 
+  const OpenCleaningModal = (logId) => {
+    setSelectedLogId(logId);
+    setModalOpen(true);
+    // Here you can set the state to open the modal and pass the logId to it
+  };
+
   return (
     <>
       {cleaningLoading ? (
@@ -1953,6 +2141,8 @@ const SitewaiseLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   successRobotCount[log.robot_no] > 1
                                     ? "success"
@@ -2087,6 +2277,8 @@ const SitewaiseLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   inProgressRobotCount[log.robot_no] > 1
                                     ? "warning"
@@ -2164,7 +2356,7 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>#</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
-                          <CTableHeaderCell>Is Duplicate</CTableHeaderCell>
+                          {/* <CTableHeaderCell>Is Duplicate</CTableHeaderCell> */}
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
                           <CTableHeaderCell>Comments</CTableHeaderCell>
@@ -2177,6 +2369,8 @@ const SitewaiseLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   failureRobotCount[log.robot_no] > 1
                                     ? "danger"
@@ -2186,13 +2380,13 @@ const SitewaiseLog = () => {
                                 {log.robot_no}
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
-                              <CTableDataCell>
-                                {log.is_duplicate ? (
-                                  <CBadge color="danger">Yes</CBadge>
-                                ) : (
-                                  <CBadge color="success">No</CBadge>
-                                )}
-                              </CTableDataCell>
+                              {/* <CTableDataCell>
+                                                {log.is_duplicate ? (
+                                                  <CBadge color="danger">Yes</CBadge>
+                                                ) : (
+                                                  <CBadge color="success">No</CBadge>
+                                                )}
+                                              </CTableDataCell> */}
                               <CTableDataCell>
                                 {log.createdAt &&
                                   new Date(log.createdAt).toLocaleString(
@@ -2227,7 +2421,7 @@ const SitewaiseLog = () => {
                     </CTable>
 
                     {/* <h4 className="my-3  border-top">Testing Error Cycles</h4>
-                    <ErrorCycles errorlogs={failureLogs} /> */}
+                                    <ErrorCycles errorlogs={failureLogs} /> */}
                   </CTabPanel>
 
                   {/* ============ OFFLINE ROBOTS TAB ================= */}
@@ -2311,11 +2505,11 @@ const SitewaiseLog = () => {
                       </CTableBody>
                     </CTable>
                     {/* <h4 className="my-3  border-top">Offline Robots Cycles</h4>
-                    <OfflineRobotsCycle
-                      offlineLogs={offlineRobots}
-                      loading={offlineRobotLoading}
-                      error={offlineRobotError}
-                    /> */}
+                                    <OfflineRobotsCycle
+                                      offlineLogs={offlineRobots}
+                                      loading={offlineRobotLoading}
+                                      error={offlineRobotError}
+                                    /> */}
                   </CTabPanel>
 
                   {/* ============online–command-given-not-started TAB ================= */}
@@ -2426,11 +2620,11 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>Date</CTableHeaderCell>
                           <CTableHeaderCell>Site</CTableHeaderCell>
                           {/* <CTableHeaderCell>
-                            Operational Robots
-                          </CTableHeaderCell>
-                          <CTableHeaderCell>Failed Robots</CTableHeaderCell>
-                          <CTableHeaderCell>Total Robots</CTableHeaderCell>
-                          <CTableHeaderCell>FromLog (Success)</CTableHeaderCell> */}
+                                            Operational Robots
+                                          </CTableHeaderCell>
+                                          <CTableHeaderCell>Failed Robots</CTableHeaderCell>
+                                          <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                                          <CTableHeaderCell>FromLog (Success)</CTableHeaderCell> */}
                           <CTableHeaderCell>Remarks</CTableHeaderCell>
                           <CTableHeaderCell>Technician</CTableHeaderCell>
                         </CTableRow>
@@ -2450,26 +2644,7 @@ const SitewaiseLog = () => {
                                 <CTableDataCell>{index + 1}</CTableDataCell>
                                 <CTableDataCell>{reportDate}</CTableDataCell>
                                 <CTableDataCell>{log.site_id}</CTableDataCell>
-                                {/* <CTableDataCell>
-                                  {log.total_running_robots}
-                                </CTableDataCell>
-                                <CTableDataCell>
-                                  {log.total_failed_robots}
-                                </CTableDataCell>
-                                <CTableDataCell>
-                                  {log.total_robots}
-                                </CTableDataCell> */}
-                                {/* <CTableDataCell>
-                                 <span
-                                  className={`badge ${
-                                    cleaningSuccessMap?.[log.site_id]
-                                      ? "bg-success"
-                                      : "bg-danger"
-                                  }`}
-                                >
-                                  {cleaningSuccessMap?.[log.site_id] || 0}
-                                </span> 
-                                </CTableDataCell> */}
+
                                 <CTableDataCell>
                                   {log.comments || "-"}
                                 </CTableDataCell>
@@ -2489,6 +2664,13 @@ const SitewaiseLog = () => {
                   </CTabPanel>
                 </CTabContent>
               </CTabs>
+              <Logmodal
+                _id={selectedLogId}
+                modalState={modalOpen}
+                authtoken={authtoken}
+                userInfo={userInfo}
+                onClose={() => setModalOpen(false)}
+              />
             </>
           )}
         </div>
