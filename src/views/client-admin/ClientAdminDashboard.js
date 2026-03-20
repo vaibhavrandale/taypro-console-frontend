@@ -13,8 +13,8 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { CChartBar, CChartPie } from "@coreui/react-chartjs";
 import "./GoogleMapEmbed.css";
-import CIcon from "@coreui/icons-react";
-import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
+// import CIcon from "@coreui/icons-react";
+// import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
 import Weather from "./weather/Weather";
 
 const chartColors = [
