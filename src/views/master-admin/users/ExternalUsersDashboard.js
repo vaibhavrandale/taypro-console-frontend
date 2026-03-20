@@ -93,7 +93,7 @@ const reducer = (state, action) => {
         ...state,
         updatingUserLoading: false,
         users: state.users.map((user) =>
-          user._id === action.payload._id ? action.payload : user
+          user._id === action.payload._id ? action.payload : user,
         ),
       };
 
@@ -134,7 +134,7 @@ const reducer = (state, action) => {
         ...state,
         removesiteloading: false,
         assigned_sites: state.assigned_sites.filter(
-          (site) => site._id !== action.payload
+          (site) => site._id !== action.payload,
         ), // ✅ Remove site
       };
     case "REMOVE_SITE_FAIL":
@@ -231,10 +231,10 @@ const ExternalUsersDashboard = () => {
           pagination,
           {
             headers: { authorization: `Bearer ${authtoken}` },
-          }
+          },
         ); // Replace with your API endpoint
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -355,7 +355,7 @@ const ExternalUsersDashboard = () => {
           (user.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
           (user.department || "")
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -390,7 +390,7 @@ const ExternalUsersDashboard = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
 
@@ -423,7 +423,7 @@ const ExternalUsersDashboard = () => {
         newdata,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       dispatch({
@@ -458,7 +458,7 @@ const ExternalUsersDashboard = () => {
         },
         {
           headers: { authorization: `Bearer ${authtoken}` },
-        }
+        },
       ); // Replace with your API endpoint
       if (response.data.success) {
         dispatch({
@@ -482,7 +482,7 @@ const ExternalUsersDashboard = () => {
   const handleRemoveSite = async (sitedata) => {
     if (
       !window.confirm(
-        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`
+        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`,
       )
     ) {
       return;
@@ -499,7 +499,7 @@ const ExternalUsersDashboard = () => {
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -512,7 +512,7 @@ const ExternalUsersDashboard = () => {
         });
 
         setAssignedSites((prevSites) =>
-          prevSites.filter((site) => site._id !== sitedata._id)
+          prevSites.filter((site) => site._id !== sitedata._id),
         );
       }
     } catch (error) {
@@ -542,7 +542,7 @@ const ExternalUsersDashboard = () => {
           </Link>
           {/* Add User button - hidden for restricted roles */}
           {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role
+            userInfo?.role,
           ) && (
             <CButton
               color="success"
@@ -615,6 +615,19 @@ const ExternalUsersDashboard = () => {
                 <CTableDataCell style={{ minWidth: "120px" }}>
                   {user.phone}
                 </CTableDataCell>
+                <CTableDataCell style={{ minWidth: "120px" }}>
+                  {user.last_login
+                    ? new Date(user.last_login).toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
+                    : ""}
+                </CTableDataCell>
 
                 <CTableDataCell style={{ minWidth: "260px" }}>
                   <CButton
@@ -627,7 +640,7 @@ const ExternalUsersDashboard = () => {
                   </CButton>
                   {/* Update button - hidden for restricted roles */}
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <CButton
                       color="primary"

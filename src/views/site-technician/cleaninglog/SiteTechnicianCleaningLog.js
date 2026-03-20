@@ -28,6 +28,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import Logmodal from "../../../components/individual-robot-log/Logmodal";
 
 // import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
@@ -115,6 +116,7 @@ const SiteTechnicianCleaningLog = () => {
   });
 
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const { site_id } = useParams();
 
   const [startDate, setStartDate] = useState(
@@ -139,6 +141,9 @@ const SiteTechnicianCleaningLog = () => {
   // Not started filters
   const [notStartedSearch, setNotStartedSearch] = useState("");
   const [notStartedBlock, setNotStartedBlock] = useState("");
+
+  const [selectedLogId, setSelectedLogId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCleaningLogs = async () => {
@@ -580,6 +585,12 @@ const SiteTechnicianCleaningLog = () => {
     );
   });
 
+  const OpenCleaningModal = (logId) => {
+    setSelectedLogId(logId);
+    setModalOpen(true);
+    // Here you can set the state to open the modal and pass the logId to it
+  };
+
   return (
     <>
       {cleaningLoading ? (
@@ -791,6 +802,8 @@ const SiteTechnicianCleaningLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   successRobotCount[log.robot_no] > 1
                                     ? "success"
@@ -925,6 +938,8 @@ const SiteTechnicianCleaningLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   inProgressRobotCount[log.robot_no] > 1
                                     ? "warning"
@@ -1002,7 +1017,7 @@ const SiteTechnicianCleaningLog = () => {
                           <CTableHeaderCell>#</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
-                          <CTableHeaderCell>Is Duplicate</CTableHeaderCell>
+                          {/* <CTableHeaderCell>Is Duplicate</CTableHeaderCell> */}
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
                           <CTableHeaderCell>Comments</CTableHeaderCell>
@@ -1015,6 +1030,8 @@ const SiteTechnicianCleaningLog = () => {
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
                               <CTableDataCell
+                                className="cursor-pointer"
+                                onClick={() => OpenCleaningModal(log._id)}
                                 color={
                                   failureRobotCount[log.robot_no] > 1
                                     ? "danger"
@@ -1024,13 +1041,13 @@ const SiteTechnicianCleaningLog = () => {
                                 {log.robot_no}
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
-                              <CTableDataCell>
-                                {log.is_duplicate ? (
-                                  <CBadge color="danger">Yes</CBadge>
-                                ) : (
-                                  <CBadge color="success">No</CBadge>
-                                )}
-                              </CTableDataCell>
+                              {/* <CTableDataCell>
+                                                {log.is_duplicate ? (
+                                                  <CBadge color="danger">Yes</CBadge>
+                                                ) : (
+                                                  <CBadge color="success">No</CBadge>
+                                                )}
+                                              </CTableDataCell> */}
                               <CTableDataCell>
                                 {log.createdAt &&
                                   new Date(log.createdAt).toLocaleString(
@@ -1065,7 +1082,7 @@ const SiteTechnicianCleaningLog = () => {
                     </CTable>
 
                     {/* <h4 className="my-3  border-top">Testing Error Cycles</h4>
-                    <ErrorCycles errorlogs={failureLogs} /> */}
+                                    <ErrorCycles errorlogs={failureLogs} /> */}
                   </CTabPanel>
 
                   {/* ============ OFFLINE ROBOTS TAB ================= */}
@@ -1149,11 +1166,11 @@ const SiteTechnicianCleaningLog = () => {
                       </CTableBody>
                     </CTable>
                     {/* <h4 className="my-3  border-top">Offline Robots Cycles</h4>
-                    <OfflineRobotsCycle
-                      offlineLogs={offlineRobots}
-                      loading={offlineRobotLoading}
-                      error={offlineRobotError}
-                    /> */}
+                                    <OfflineRobotsCycle
+                                      offlineLogs={offlineRobots}
+                                      loading={offlineRobotLoading}
+                                      error={offlineRobotError}
+                                    /> */}
                   </CTabPanel>
 
                   {/* ============online–command-given-not-started TAB ================= */}
@@ -1264,11 +1281,11 @@ const SiteTechnicianCleaningLog = () => {
                           <CTableHeaderCell>Date</CTableHeaderCell>
                           <CTableHeaderCell>Site</CTableHeaderCell>
                           {/* <CTableHeaderCell>
-                            Operational Robots
-                          </CTableHeaderCell>
-                          <CTableHeaderCell>Failed Robots</CTableHeaderCell>
-                          <CTableHeaderCell>Total Robots</CTableHeaderCell>
-                          <CTableHeaderCell>FromLog (Success)</CTableHeaderCell> */}
+                                            Operational Robots
+                                          </CTableHeaderCell>
+                                          <CTableHeaderCell>Failed Robots</CTableHeaderCell>
+                                          <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                                          <CTableHeaderCell>FromLog (Success)</CTableHeaderCell> */}
                           <CTableHeaderCell>Remarks</CTableHeaderCell>
                           <CTableHeaderCell>Technician</CTableHeaderCell>
                         </CTableRow>
@@ -1288,26 +1305,7 @@ const SiteTechnicianCleaningLog = () => {
                                 <CTableDataCell>{index + 1}</CTableDataCell>
                                 <CTableDataCell>{reportDate}</CTableDataCell>
                                 <CTableDataCell>{log.site_id}</CTableDataCell>
-                                {/* <CTableDataCell>
-                                  {log.total_running_robots}
-                                </CTableDataCell>
-                                <CTableDataCell>
-                                  {log.total_failed_robots}
-                                </CTableDataCell>
-                                <CTableDataCell>
-                                  {log.total_robots}
-                                </CTableDataCell> */}
-                                {/* <CTableDataCell>
-                                 <span
-                                  className={`badge ${
-                                    cleaningSuccessMap?.[log.site_id]
-                                      ? "bg-success"
-                                      : "bg-danger"
-                                  }`}
-                                >
-                                  {cleaningSuccessMap?.[log.site_id] || 0}
-                                </span> 
-                                </CTableDataCell> */}
+
                                 <CTableDataCell>
                                   {log.comments || "-"}
                                 </CTableDataCell>
@@ -1327,6 +1325,13 @@ const SiteTechnicianCleaningLog = () => {
                   </CTabPanel>
                 </CTabContent>
               </CTabs>
+              <Logmodal
+                _id={selectedLogId}
+                modalState={modalOpen}
+                authtoken={authtoken}
+                userInfo={userInfo}
+                onClose={() => setModalOpen(false)}
+              />
             </>
           )}
         </div>
