@@ -149,12 +149,12 @@ const RobotOperating = () => {
   let stop = "14";
   let returntodock = "15";
   let removecurrentLimit = "HCD";
-  let setWheelPwm100 = "W1";
-  let setWheelPwm200 = "W2";
-  let setWheelPwm250 = "W3";
-  let setBrushPwm100 = "R1";
-  let setBrushPwm200 = "R2";
-  let setBrushPwm250 = "R3";
+  let setWheelPwm100 = "69";
+  let setWheelPwm200 = "6A";
+  let setWheelPwm250 = "6B";
+  let setBrushPwm100 = "66";
+  let setBrushPwm200 = "67";
+  let setBrushPwm250 = "68";
   let setWheelCurrent = "GWC";
   let setBrushCurrent = "GBC";
   let batteryVoltage = "63";
@@ -522,6 +522,30 @@ const RobotOperating = () => {
   };
   error && <CBadge color="danger">{error}</CBadge>;
 
+  let WheelSpeedBadge = "";
+
+  if (robot.wheel_motor_speed > 100 && robot.wheel_motor_speed <= 170) {
+    WheelSpeedBadge = "primary";
+  } else if (robot.wheel_motor_speed > 170 && robot.wheel_motor_speed <= 210) {
+    WheelSpeedBadge = "warning";
+  } else if (robot.wheel_motor_speed > 210) {
+    WheelSpeedBadge = "success";
+  } else {
+    WheelSpeedBadge = "primary";
+  }
+
+  let BrushSpeedBadge = "";
+
+  if (robot.brush_motor_speed > 100 && robot.brush_motor_speed <= 170) {
+    BrushSpeedBadge = "primary";
+  } else if (robot.brush_motor_speed > 170 && robot.brush_motor_speed <= 210) {
+    BrushSpeedBadge = "warning";
+  } else if (robot.brush_motor_speed > 210) {
+    BrushSpeedBadge = "success";
+  } else {
+    BrushSpeedBadge = "primary";
+  }
+
   return (
     <>
       {loadingRobots ? (
@@ -748,9 +772,10 @@ const RobotOperating = () => {
                           <small className="text-muted">Wheel Speed</small>
                           <div>
                             <CBadge
-                              color="danger"
+                              color={`${WheelSpeedBadge}`}
                               className="px-3 py-2 rounded-pill"
                             >
+                              {robot.wheel_motor_speed_string} -{" "}
                               {robot.wheel_motor_speed}
                             </CBadge>
                           </div>
@@ -759,9 +784,10 @@ const RobotOperating = () => {
                           <small className="text-muted">Brush Speed</small>
                           <div>
                             <CBadge
-                              color="danger"
+                              color={`${BrushSpeedBadge}`}
                               className="px-3 py-2 rounded-pill"
                             >
+                              {robot.brush_motor_speed_string} -{" "}
                               {robot.brush_motor_speed}
                             </CBadge>
                           </div>

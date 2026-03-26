@@ -415,13 +415,13 @@ const ExpenseDashboard = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="7" className="text-center">
+              <CTableHeaderCell colSpan="12" className="text-center">
                 <LoadingSpinner />
               </CTableHeaderCell>
             </CTableRow>
           ) : error ? (
             <CTableRow>
-              <CTableHeaderCell colSpan="7" className="text-center">
+              <CTableHeaderCell colSpan="12" className="text-center">
                 {error}
               </CTableHeaderCell>
             </CTableRow>

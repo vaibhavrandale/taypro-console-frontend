@@ -46,7 +46,7 @@ const reducer = (state, action) => {
 const EditClient = () => {
   const [{ loading, error, updateLoading }, dispatch] = useReducer(
     reducer,
-    initialState
+    initialState,
   );
   const { id } = useParams();
   const navigate = useNavigate();
@@ -79,11 +79,12 @@ const EditClient = () => {
           client_id: data.data.client_id || "",
           password: data.data.password || "",
           is_deleted: data.data.is_delete || false,
+          set_warehouse: data.data.set_warehouse || "",
         });
       } catch (error) {
         console.error(
           "Failed to fetch site:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
         dispatch({ type: "FETCH_FAIL", payload: "Failed to fetch site" });
       }
@@ -114,7 +115,7 @@ const EditClient = () => {
               Authorization: `Bearer ${authtoken}`,
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         updatedData.logo = uploadRes.data.url;
       }
@@ -207,6 +208,17 @@ const EditClient = () => {
                 setFormData({ ...formData, password: e.target.value })
               }
               placeholder="Enter Password"
+              className="my-3"
+            />
+
+            <CFormInput
+              label="Wearehouse"
+              type="text"
+              value={formData.set_warehouse}
+              onChange={(e) =>
+                setFormData({ ...formData, set_warehouse: e.target.value })
+              }
+              placeholder="Enter Wearehouse"
               className="my-3"
             />
 
