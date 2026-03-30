@@ -458,6 +458,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Material Management",
+        icon: (
+          <CIcon
+            icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/master-admin/material-requests",
+          },
+        ],
+      },
 
       {
         component: CNavGroup,
@@ -1582,6 +1600,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Material Management",
+        icon: (
+          <CIcon
+            icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/project-admin/material-requests",
+          },
+        ],
+      },
     ],
   },
 
@@ -2305,6 +2341,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Material Management",
+        icon: (
+          <CIcon
+            icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/service-admin/material-requests",
+          },
+        ],
+      },
     ],
   },
 
@@ -2534,6 +2588,24 @@ const _nav = [
             component: CNavItem,
             name: "View Row Data",
             to: "/site-technician/update-row-data",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Material Management",
+        icon: (
+          <CIcon
+            icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/site-technician/material-requests",
           },
         ],
       },
@@ -3403,6 +3475,24 @@ const _nav = [
             component: CNavItem,
             name: "MDS Tracking",
             to: "/service-user/mds-tracker",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Material Management",
+        icon: (
+          <CIcon
+            icon={cilStorage}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/service-user/material-requests",
           },
         ],
       },

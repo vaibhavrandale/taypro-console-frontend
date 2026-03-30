@@ -133,13 +133,13 @@ const CreateExpense = () => {
           itm.expense_date ===
             (field === "expense_date" ? value : updatedItem.expense_date) &&
           itm.expense_type ===
-            (field === "expense_type" ? value : updatedItem.expense_type)
+            (field === "expense_type" ? value : updatedItem.expense_type),
       );
 
       if (isDuplicate) {
         // Optionally show a toast or alert
         toast.error(
-          "This expense type is already selected for the selected date."
+          "This expense type is already selected for the selected date.",
         );
         return prevItems; // 🚫 Do not apply the change
       }
@@ -193,7 +193,7 @@ const CreateExpense = () => {
   const calculateTotals = () => {
     const totalClaimed = expenseItems.reduce(
       (sum, item) => sum + parseFloat(item.amount),
-      0
+      0,
     );
     return {
       total_claimed_amount: parseFloat(totalClaimed.toFixed(2)),
@@ -247,7 +247,7 @@ const CreateExpense = () => {
                   "Content-Type": "multipart/form-data",
                   Authorization: `Bearer ${authtoken}`,
                 },
-              }
+              },
             );
             item.file = data.url; // assume server returns { url: "..." }
             dispatch({ type: "UPLOAD_SUCCESS" });
@@ -272,7 +272,7 @@ const CreateExpense = () => {
         approval_status: "Draft",
         status: "Draft",
         workflow_state: "Draft",
-        console_status: "Draft",
+        console_status: "Waiting For Approval",
         is_paid: true,
         taxes: [],
         advances: [],
@@ -531,7 +531,7 @@ const CreateExpense = () => {
                           idx !== index &&
                           itm.expense_date === item.expense_date &&
                           itm.expense_type === item.expense_type &&
-                          item.expense_type !== ""
+                          item.expense_type !== "",
                       );
 
                       return (
@@ -546,7 +546,7 @@ const CreateExpense = () => {
                                   handleExpenseItemChange(
                                     index,
                                     "expense_date",
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                                 required
@@ -560,7 +560,7 @@ const CreateExpense = () => {
                                   handleExpenseItemChange(
                                     index,
                                     "expense_type",
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                                 required
@@ -573,7 +573,7 @@ const CreateExpense = () => {
                                         idx !== index &&
                                         itm.expense_date ===
                                           item.expense_date &&
-                                        itm.expense_type === type
+                                        itm.expense_type === type,
                                     );
                                     return (
                                       <option
@@ -584,7 +584,7 @@ const CreateExpense = () => {
                                         {type}
                                       </option>
                                     );
-                                  }
+                                  },
                                 )}
                               </select>
                             </td>
@@ -597,7 +597,7 @@ const CreateExpense = () => {
                                   handleExpenseItemChange(
                                     index,
                                     "description",
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                                 required
@@ -614,7 +614,7 @@ const CreateExpense = () => {
                                   handleExpenseItemChange(
                                     index,
                                     "amount",
-                                    e.target.value
+                                    e.target.value,
                                   )
                                 }
                                 required
@@ -646,7 +646,7 @@ const CreateExpense = () => {
                                         (1024 * 1024)
                                       ).toFixed(2); // convert to MB
                                       toast.error(
-                                        `File size must be less than 1MB. Your file size is ${fileSizeInMB} MB.`
+                                        `File size must be less than 1MB. Your file size is ${fileSizeInMB} MB.`,
                                       );
                                       e.target.value = ""; // reset input
                                       return;
@@ -654,7 +654,7 @@ const CreateExpense = () => {
                                     handleExpenseItemChange(
                                       index,
                                       "file",
-                                      file
+                                      file,
                                     );
                                   }
                                 }}

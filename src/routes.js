@@ -205,6 +205,11 @@ import ViewDoc from "./views/commisioning/ViewDoc";
 import CommisioningDashboard from "./views/commisioning/CommisioningDashboard";
 import FlushQueue from "./views/master-admin/robot-commands/FlushQueue";
 import SiteAnalytics from "./views/client-admin/statistics/SiteAnalytics";
+import ViewMaterialRequest from "./views/material-request/ViewMaterialRequest";
+import CreateMaterialRequest from "./views/material-request/CreateMaterialRequest";
+import MaterialRequestDashboard from "./views/material-request/MaterialRequestDashboard";
+import UpdateMaterialRequest from "./views/material-request/UpdateMaterialRequest";
+
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -1981,6 +1986,45 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+
+  // Material Request
+  {
+    path: "/master-admin/material-requests",
+    name: "Material Requests",
+    element: (
+      <MasterAdminRoute>
+        <MaterialRequestDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/material-requests/create-material-request",
+    name: "Create Material Request",
+    element: (
+      <MasterAdminRoute>
+        <CreateMaterialRequest />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/material-requests/view/:id",
+    name: "View Material Request",
+    element: (
+      <MasterAdminRoute>
+        <ViewMaterialRequest />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/material-requests/update/:id",
+    name: "Update Material Request",
+    element: (
+      <MasterAdminRoute>
+        <UpdateMaterialRequest />
+      </MasterAdminRoute>
+    ),
+  },
+
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
@@ -4032,6 +4076,43 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  // Material Request
+  {
+    path: "/project-admin/material-requests",
+    name: "Material Requests",
+    element: (
+      <ProjectAdminRoute>
+        <MaterialRequestDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/material-requests/create-material-request",
+    name: "Create Material Request",
+    element: (
+      <ProjectAdminRoute>
+        <CreateMaterialRequest />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/material-requests/view/:id",
+    name: "View Material Request",
+    element: (
+      <ProjectAdminRoute>
+        <ViewMaterialRequest />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/material-requests/update/:id",
+    name: "Update Material Request",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateMaterialRequest />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -5821,6 +5902,43 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  // Material Request
+  {
+    path: "/service-admin/material-requests",
+    name: "Material Requests",
+    element: (
+      <ServiceAdminRoute>
+        <MaterialRequestDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/material-requests/create-material-request",
+    name: "Create Material Request",
+    element: (
+      <ServiceAdminRoute>
+        <CreateMaterialRequest />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/material-requests/view/:id",
+    name: "View Material Request",
+    element: (
+      <ServiceAdminRoute>
+        <ViewMaterialRequest />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/material-requests/update/:id",
+    name: "Update Material Request",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateMaterialRequest />
+      </ServiceAdminRoute>
+    ),
+  },
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {
@@ -6675,6 +6793,43 @@ const routes = [
       </ServiceUserRoute>
     ),
   },
+  // Material Request
+  {
+    path: "/service-user/material-requests",
+    name: "Material Requests",
+    element: (
+      <ServiceUserRoute>
+        <MaterialRequestDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/material-requests/create-material-request",
+    name: "Create Material Request",
+    element: (
+      <ServiceUserRoute>
+        <CreateMaterialRequest />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/material-requests/view/:id",
+    name: "View Material Request",
+    element: (
+      <ServiceUserRoute>
+        <ViewMaterialRequest />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/material-requests/update/:id",
+    name: "Update Material Request",
+    element: (
+      <ServiceUserRoute>
+        <UpdateMaterialRequest />
+      </ServiceUserRoute>
+    ),
+  },
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
@@ -7016,6 +7171,45 @@ const routes = [
       </SiteTechnicianRoute>
     ),
   },
+
+  // Material Request
+  {
+    path: "/site-technician/material-requests",
+    name: "Material Requests",
+    element: (
+      <SiteTechnicianRoute>
+        <MaterialRequestDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/material-requests/create-material-request",
+    name: "Create Material Request",
+    element: (
+      <SiteTechnicianRoute>
+        <CreateMaterialRequest />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/material-requests/view/:id",
+    name: "View Material Request",
+    element: (
+      <SiteTechnicianRoute>
+        <ViewMaterialRequest />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/material-requests/update/:id",
+    name: "Update Material Request",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdateMaterialRequest />
+      </SiteTechnicianRoute>
+    ),
+  },
+
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
