@@ -13,6 +13,7 @@ import { CChartBar, CChartLine } from "@coreui/react-chartjs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_CLEANING_REQUEST":
@@ -236,7 +237,12 @@ const RobotAnalytics = () => {
           {/* FILTER */}
 
           <CCard className="mb-4">
-            <CCardHeader>Filters</CCardHeader>
+            <CCardHeader className="d-flex justify-content-between align-items-center">
+              Filters
+              <Link target="blank" to="/client-admin/site-statistics">
+                View Site Statistics
+              </Link>
+            </CCardHeader>
             <CCardBody>
               <CRow>
                 <CCol md={3}>

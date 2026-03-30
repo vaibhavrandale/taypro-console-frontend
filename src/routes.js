@@ -204,6 +204,7 @@ import SubScriptionPlan from "./views/master-admin/client-subscription/SubScript
 import ViewDoc from "./views/commisioning/ViewDoc";
 import CommisioningDashboard from "./views/commisioning/CommisioningDashboard";
 import FlushQueue from "./views/master-admin/robot-commands/FlushQueue";
+import SiteAnalytics from "./views/client-admin/statistics/SiteAnalytics";
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 
@@ -7163,6 +7164,16 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <Statistics />
+      </ClientAdminRoute>
+    ),
+  },
+
+  {
+    path: "/client-admin/site-statistics",
+    name: "Site Statistics",
+    element: (
+      <ClientAdminRoute>
+        <SiteAnalytics />
       </ClientAdminRoute>
     ),
   },
