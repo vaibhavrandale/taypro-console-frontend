@@ -124,11 +124,11 @@ const ShiftBlockwiseRobots = () => {
           pagination,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -148,7 +148,7 @@ const ShiftBlockwiseRobots = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -184,11 +184,11 @@ const ShiftBlockwiseRobots = () => {
         pagination,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       let total = Math.ceil(
-        Number(result.data.total) / Number(result.data.limit)
+        Number(result.data.total) / Number(result.data.limit),
       );
       let next = result.data.hasNextPage;
       let prev = result.data.hasPrevPage;
@@ -216,7 +216,7 @@ const ShiftBlockwiseRobots = () => {
     setSelectedRobots((prev) =>
       prev.some((r) => r.deveui === robot.deveui)
         ? prev.filter((r) => r.deveui !== robot.deveui)
-        : [...prev, robot]
+        : [...prev, robot],
     );
   };
 
@@ -242,7 +242,7 @@ const ShiftBlockwiseRobots = () => {
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       dispatch({ type: "SHIFT_ROBOTS_SUCCESS", payload: selectedRobots });
@@ -281,7 +281,7 @@ const ShiftBlockwiseRobots = () => {
   const filteredRobots = shiftrobots.filter(
     (robot) =>
       robot.block.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
+      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -330,6 +330,11 @@ const ShiftBlockwiseRobots = () => {
                 </button>
               </CModalHeader>
               <CModalBody>
+                <span className="form-label">Enter new block name</span>
+                <div className="text-warning">
+                  (Kindly update block name as eg.
+                  Block-1,Block-A,Block-B,Block-MCR)
+                </div>
                 <CFormInput
                   type="text"
                   placeholder="Enter new block name"
@@ -453,7 +458,7 @@ const ShiftBlockwiseRobots = () => {
                   <CTableDataCell>
                     <CFormCheck
                       checked={selectedRobots.some(
-                        (r) => r.deveui === robot.deveui
+                        (r) => r.deveui === robot.deveui,
                       )}
                       onChange={() => handleCheckboxChange(robot)}
                     />

@@ -78,6 +78,7 @@ const RobotAnalytics = () => {
   const today = new Date();
   const last7 = new Date();
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   last7.setDate(today.getDate() - 7);
 
   const formatDate = (d) => d.toISOString().slice(0, 10);
@@ -222,6 +223,32 @@ const RobotAnalytics = () => {
     "subscriptionPaymentStatus",
     "subscriptionPlanAccess",
   ];
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
   return (
     <div>
       {robotAnalyticsLoading ? (
@@ -239,7 +266,7 @@ const RobotAnalytics = () => {
           <CCard className="mb-4">
             <CCardHeader className="d-flex justify-content-between align-items-center">
               Filters
-              <Link target="blank" to="/client-admin/site-statistics">
+              <Link target="blank" to={`/${adminroute}/site-statistics`}>
                 View Site Statistics
               </Link>
             </CCardHeader>
@@ -410,7 +437,7 @@ const RobotAnalytics = () => {
                           // borderColor: "#27AE60",
                           // backgroundColor: "#27AE60",
                           data: filteredData.map((d) => d.cleaning_minutes),
-                          tension: 0,
+                          tension: 0.4,
                         },
                       ],
                     }}

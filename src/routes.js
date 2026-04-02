@@ -2025,6 +2025,26 @@ const routes = [
     ),
   },
 
+  {
+    path: "/master-admin/statistics",
+    name: "General Statistics",
+    element: (
+      <MasterAdminRoute>
+        <Statistics />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/site-statistics",
+    name: "Site Statistics",
+    element: (
+      <MasterAdminRoute>
+        <SiteAnalytics />
+      </MasterAdminRoute>
+    ),
+  },
+
   // ------------------------master admin---------------------------------
 
   // ------------------------master user---------------------------------
@@ -5936,6 +5956,26 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <UpdateMaterialRequest />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/statistics",
+    name: "General Statistics",
+    element: (
+      <ServiceAdminRoute>
+        <Statistics />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/site-statistics",
+    name: "Site Statistics",
+    element: (
+      <ServiceAdminRoute>
+        <SiteAnalytics />
       </ServiceAdminRoute>
     ),
   },

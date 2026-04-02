@@ -17,6 +17,7 @@ import {
   CModalBody,
   CModalFooter,
   CForm,
+  CBadge,
 } from "@coreui/react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -154,11 +155,11 @@ const ClientAssignedSites = () => {
           { pg: page, limit: limit },
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
@@ -222,7 +223,7 @@ const ClientAssignedSites = () => {
     const confirm = window.confirm(
       `Are you sure you want to ${
         site.is_delete ? "permanently " : ""
-      }delete site - ${site.site_name}?`
+      }delete site - ${site.site_name}?`,
     );
 
     if (!confirm) return;
@@ -235,7 +236,7 @@ const ClientAssignedSites = () => {
       });
 
       toast.success(
-        `Site ${site.is_delete ? "permanently " : ""}deleted successfully`
+        `Site ${site.is_delete ? "permanently " : ""}deleted successfully`,
       );
       dispatch({ type: "DELETE_SUCCESS" });
     } catch (err) {
@@ -296,6 +297,9 @@ const ClientAssignedSites = () => {
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
                   <CTableHeaderCell>Site ID</CTableHeaderCell>
+                  <CTableHeaderCell>
+                    Weather Acess For Cleaning
+                  </CTableHeaderCell>
                   <CTableHeaderCell>Site Name</CTableHeaderCell>
                   <CTableHeaderCell>Location</CTableHeaderCell>
                   <CTableHeaderCell>Type</CTableHeaderCell>
@@ -313,13 +317,13 @@ const ClientAssignedSites = () => {
               <CTableBody>
                 {state.loading ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={6} className="text-center">
+                    <CTableDataCell colSpan={7} className="text-center">
                       <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
                 ) : state.error ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={6} className="text-center">
+                    <CTableDataCell colSpan={7} className="text-center">
                       {state.error}
                     </CTableDataCell>
                   </CTableRow>
@@ -330,7 +334,15 @@ const ClientAssignedSites = () => {
                       className={site.is_delete ? "table-danger" : ""} // Apply the conditional class here
                     >
                       <CTableDataCell>{index + 1}</CTableDataCell>
+
                       <CTableDataCell>{site.site_id}</CTableDataCell>
+                      <CTableDataCell>
+                        {site.is_weather_cleaning_enabled ? (
+                          <CBadge color="success">Enabled</CBadge>
+                        ) : (
+                          <CBadge color="danger">Disabled</CBadge>
+                        )}
+                      </CTableDataCell>
                       <CTableDataCell>{site.siteName}</CTableDataCell>
                       <CTableDataCell>{site.location}</CTableDataCell>
                       <CTableDataCell>{site.site_type}</CTableDataCell>
@@ -351,7 +363,7 @@ const ClientAssignedSites = () => {
                                 payload: site,
                               });
                               navigate(
-                                `/master-admin/clients-data-dashboard/edit-client/${site._id}`
+                                `/master-admin/clients-data-dashboard/edit-client/${site._id}`,
                               );
                             }}
                           >

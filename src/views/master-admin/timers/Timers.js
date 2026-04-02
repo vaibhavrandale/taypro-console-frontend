@@ -372,6 +372,7 @@ const Timers = () => {
                 <CTableHeaderCell>Site ID</CTableHeaderCell>
                 <CTableHeaderCell>Block</CTableHeaderCell>
                 <CTableHeaderCell>Total Robots</CTableHeaderCell>
+                <CTableHeaderCell>Max Cleaning Time</CTableHeaderCell>
                 <CTableHeaderCell>Timer 1</CTableHeaderCell>
                 <CTableHeaderCell>Date 1</CTableHeaderCell>
                 <CTableHeaderCell>Timer 2</CTableHeaderCell>
@@ -384,7 +385,7 @@ const Timers = () => {
             <CTableBody>
               {loadingAllTimers ? (
                 <CTableRow className="text-center">
-                  <CTableDataCell colSpan={12}>
+                  <CTableDataCell colSpan={13}>
                     <LoadingSpinner />
                   </CTableDataCell>
                 </CTableRow>
@@ -409,6 +410,9 @@ const Timers = () => {
                     <CTableDataCell>{site.block}</CTableDataCell>
                     <CTableDataCell>
                       {site.total_robots_in_block}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {site.max_cleaning_time} min
                     </CTableDataCell>
                     <CTableDataCell>
                       {site.timer1 === "25:00:00" ? (
@@ -484,7 +488,7 @@ const Timers = () => {
               ) : (
                 <CTableRow>
                   <CTableDataCell
-                    colSpan="12"
+                    colSpan="13"
                     className="text-center text-danger"
                   >
                     No blocks found for this site.

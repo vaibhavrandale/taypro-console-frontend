@@ -88,7 +88,7 @@ const WeatherDashboard = () => {
   const [pageInput, setPageInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const selectedSiteDetails = sites.find(
-    (site) => site.site_id === selectedSite
+    (site) => site.site_id === selectedSite,
   );
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const WeatherDashboard = () => {
             pg: page,
             limit: limit,
           },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         dispatch({
@@ -201,7 +201,7 @@ const WeatherDashboard = () => {
     <div className="p-4">
       {/* Site Id and Site Name Centered */}
       {selectedSiteDetails && weatherData.length > 0 && (
-        <div className="text-center fw-bold fs-5 mb-4">
+        <div className="text-center  fs-5 mb-4">
           Weather Data for Site: {selectedSiteDetails.site_id}
           {selectedSiteDetails.site_name}
         </div>

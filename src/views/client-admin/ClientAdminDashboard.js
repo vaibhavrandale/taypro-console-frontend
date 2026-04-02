@@ -125,6 +125,7 @@ const ClientAdminDashboard = () => {
   const [siteCoordinates, setSiteCoordinates] = useState({});
   const [totalAreaCleaned, setTotalAreaCleaned] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [logo, setLogo] = useState("");
   const fetchSiteIds = async () => {
     dispatch({ type: "FETCH_SITEID_REQUEST" });
     try {
@@ -163,6 +164,7 @@ const ClientAdminDashboard = () => {
         setRobotsData(response.data.data.robots);
         setGateways(response.data.data.gateways);
         setBlockWiseCleaning(response.data.data.blockWiseCleaning);
+        setLogo(response.data.data.logo);
       } catch (error) {
         dispatch({
           type: "FETCH_SITE_DETAILS_FAIL",
@@ -521,6 +523,7 @@ const ClientAdminDashboard = () => {
                         weatherType={weatherType} // "sunny"|"rainy"|"cloudy"|"foggy"
                         weatherData={weatherData} // full API response object
                         siteName={weatherData?.siteName}
+                        logo={logo}
                       />
                     )}
                   </CCardBody>
