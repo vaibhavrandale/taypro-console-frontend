@@ -67,15 +67,15 @@ const NewDownlink = () => {
       toast.success("Downlink added successfully");
       dispatch({ type: "SUBMIT_SUCCESS" });
       navigate(
-        `/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}`
+        `/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}`,
       );
     } catch (error) {
       dispatch({
         type: "SUBMIT_FAIL",
-        payload: error.response?.data?.message || "Error adding downlink",
+        payload: error.response?.data?.message || error.response.data.error,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response.data.message || error.response.data.error);
     }
   };
 

@@ -56,6 +56,7 @@ const EditClient = () => {
     client_id: "",
     logo: "",
     is_deleted: false, // <-- Add this field to track soft delete status
+    is_weather_cleaning_enabled: false, // <-- Add this field to track weather cleaning status
   });
   const [logoFile, setLogoFile] = useState(null);
 
@@ -80,6 +81,8 @@ const EditClient = () => {
           password: data.data.password || "",
           is_deleted: data.data.is_delete || false,
           set_warehouse: data.data.set_warehouse || "",
+          is_weather_cleaning_enabled:
+            data.data.is_weather_cleaning_enabled || false,
         });
       } catch (error) {
         console.error(
@@ -155,7 +158,6 @@ const EditClient = () => {
               placeholder="Enter Site ID"
               className="my-3"
             />
-
             <CFormInput
               label="Site Type"
               type="text"
@@ -166,7 +168,6 @@ const EditClient = () => {
               placeholder="Enter Site Type"
               className="my-3"
             />
-
             <CFormInput
               label="Site Name"
               type="text"
@@ -177,7 +178,6 @@ const EditClient = () => {
               placeholder="Enter Site Name"
               className="my-3"
             />
-
             <CFormInput
               label="Location"
               type="text"
@@ -188,7 +188,6 @@ const EditClient = () => {
               placeholder="Enter Location"
               className="my-3"
             />
-
             <CFormInput
               label="Client ID"
               type="text"
@@ -199,7 +198,6 @@ const EditClient = () => {
               placeholder="Client ID"
               className="my-3"
             />
-
             <CFormInput
               label="Password"
               type="text"
@@ -210,7 +208,6 @@ const EditClient = () => {
               placeholder="Enter Password"
               className="my-3"
             />
-
             <CFormInput
               label="Wearehouse"
               type="text"
@@ -221,7 +218,27 @@ const EditClient = () => {
               placeholder="Enter Wearehouse"
               className="my-3"
             />
-
+            <br />
+            <CFormLabel>
+              Weather Auto Clean/Disable Access:
+              <span className="text-muted ms-2">
+                (If it is checked then it will enable the access of weather auto
+                clean/disable feature for the client)
+              </span>
+            </CFormLabel>
+            <br />
+            <CFormCheck
+              id="is_weather_cleaning_enabled"
+              name="is_weather_cleaning_enabled"
+              checked={formData.is_weather_cleaning_enabled || false}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  is_weather_cleaning_enabled: e.target.checked,
+                })
+              }
+            />{" "}
+            <br />
             <CFormInput
               label="Logo"
               type="file"
@@ -236,7 +253,6 @@ const EditClient = () => {
                 className="mt-3"
               />
             )}
-
             {/* Delete Inventory Section */}
             <CCol md="6">
               <CFormLabel>
@@ -257,7 +273,6 @@ const EditClient = () => {
                 }
               />
             </CCol>
-
             <div className="d-flex justify-content-end">
               <CButton
                 size="sm"

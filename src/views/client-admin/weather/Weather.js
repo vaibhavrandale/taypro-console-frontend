@@ -44,6 +44,7 @@ export default function Weather({
   weatherType = "sunny",
   weatherData = {},
   siteName,
+  logo,
 }) {
   const canvasRef = useRef(null);
   const stateRef = useRef({
@@ -326,23 +327,10 @@ export default function Weather({
           style={{
             display: "flex",
             alignItems: "flex-start",
-            justifyContent: "space-between",
+            justifyContent: "end",
             flexShrink: 0,
           }}
         >
-          {siteName && (
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                opacity: 0.95,
-                maxWidth: "65%",
-                lineHeight: 1.3,
-              }}
-            >
-              {siteName}
-            </div>
-          )}
           <div
             style={{
               display: "inline-flex",
@@ -351,7 +339,7 @@ export default function Weather({
               background: "rgba(255,255,255,0.14)",
               border: "1px solid rgba(255,255,255,0.22)",
               borderRadius: 20,
-              padding: "4px 12px",
+              padding: "4px 10px",
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.1em",
@@ -367,29 +355,57 @@ export default function Weather({
 
         {/* ── row 2: hero temperature ── */}
         <div style={{ marginTop: 23, flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 4 }}>
-            <span
-              style={{
-                fontSize: 50,
-                fontWeight: 700,
-                lineHeight: 1,
-                color: "#ffffff",
-                textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
-                letterSpacing: "-2px",
-              }}
-            >
-              {weatherData.temperature ?? "--"}
-            </span>
-            <span
-              style={{
-                fontSize: 28,
-                fontWeight: 300,
-                marginTop: 10,
-                opacity: 0.85,
-              }}
-            >
-              °C
-            </span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 4,
+            }}
+          >
+            {siteName && (
+              <>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    opacity: 0.95,
+                    maxWidth: "65%",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {siteName},&nbsp;{weatherData.location}
+                </div>
+              </>
+            )}
+            <div>
+              {" "}
+              <span
+                style={{
+                  fontSize: 30,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  color: "#ffffff",
+                  textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
+                  letterSpacing: "-2px",
+                  right: 9,
+                }}
+                className=" position-relative"
+              >
+                {weatherData.temperature ?? "--"}
+              </span>
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 300,
+                  right: 12,
+                  opacity: 0.85,
+                }}
+                className=" position-absolute"
+              >
+                °C
+              </span>
+            </div>
           </div>
           {/* <div
             style={{
@@ -407,7 +423,7 @@ export default function Weather({
         <div
           style={{
             height: 1,
-            background: "rgba(255,255,255,0.12)",
+            // background: "rgba(255,255,255,0.12)",
             margin: "14px 0",
             flexShrink: 0,
           }}
@@ -417,12 +433,30 @@ export default function Weather({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "1fr 1fr",
             gap: 10,
             flexShrink: 0,
           }}
         >
           {[
+            {
+              icon: logo && (
+                <div className=" d-flex justify-content-center align-items-center  ">
+                  <img
+                    src={logo}
+                    alt="Site Logo"
+                    style={{
+                      width: "90%",
+                      height: 70,
+
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              ),
+              value: "",
+              label: "",
+            },
             {
               icon: "💧",
               value: fmt(weatherData.humidity, "%"),
@@ -450,6 +484,7 @@ export default function Weather({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: 3,
               }}
             >
@@ -477,7 +512,22 @@ export default function Weather({
             </div>
           ))}
         </div>
+        {/* {logo && (
+            <img
+              src={logo}
+              alt="Site Logo"
+              style={{
+                width: 140,
+                height: 90,
+                // marginTop: 10,
+                // borderRadius: 20,
+                padding: 10,
+                objectFit: "contain",
+                border: "1px solid white",
+              }}
+            />
 
+        )} */}
         {/* ── spacer ── */}
         <div style={{ flex: 1, minHeight: 0 }} />
 

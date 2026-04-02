@@ -533,19 +533,19 @@ const CleaningLog = () => {
               <CTableBody>
                 {loading ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={8} className="text-center">
+                    <CTableHeaderCell colSpan={11} className="text-center">
                       <LoadingSpinner />
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableHeaderCell colSpan={8} className="text-center">
+                    <CTableHeaderCell colSpan={11} className="text-center">
                       {error}
                     </CTableHeaderCell>
                   </CTableRow>
                 ) : filteredLogs.length === 0 ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={8} className="text-center">
+                    <CTableDataCell colSpan={11} className="text-center">
                       No data found
                     </CTableDataCell>
                   </CTableRow>
