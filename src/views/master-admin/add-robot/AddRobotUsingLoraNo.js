@@ -152,7 +152,7 @@ const AddRobotUsingLoraNo = () => {
         const result = await axios.post(
           `/api/v1/robots/get-robots`,
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -169,7 +169,7 @@ const AddRobotUsingLoraNo = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -181,7 +181,7 @@ const AddRobotUsingLoraNo = () => {
           `/api/v1/loraconfigurations/fetch-all-loras`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
@@ -209,7 +209,7 @@ const AddRobotUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/robots",
         { ...formData, robot_type: "Automatic", block: "Block-1" },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       toast.success(`Robot ${formData.robot_no} added successfully!`);
       dispatch({
@@ -232,7 +232,7 @@ const AddRobotUsingLoraNo = () => {
       !manualRRobotData.site_id
     ) {
       return toast.error(
-        "Please fill all required fields (Robot No, Deveui, Site)"
+        "Please fill all required fields (Robot No, Deveui, Site)",
       );
     }
     dispatch({ type: "ADD_ROBOT_MANUAL_REQUEST" });
@@ -240,7 +240,7 @@ const AddRobotUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/robots/create-robot-using-manual-data",
         manualRRobotData,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);
       dispatch({
@@ -256,7 +256,7 @@ const AddRobotUsingLoraNo = () => {
       });
     } catch (error) {
       toast.error(
-        error.response?.data?.error || "Failed to add robot manually"
+        error.response?.data?.error || "Failed to add robot manually",
       );
       dispatch({
         type: "ADD_ROBOT_MANUAL_FAIL",
@@ -267,10 +267,10 @@ const AddRobotUsingLoraNo = () => {
 
   const assignedLoraNos = robots.map((robot) => robot.lora_no);
   const availableLoraConfig = lora_configuration.filter(
-    (lora) => !assignedLoraNos.includes(lora.serial)
+    (lora) => !assignedLoraNos.includes(lora.serial),
   );
   const filteredLoraConfig = availableLoraConfig.filter((lora) =>
-    lora.serial.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    lora.serial.toString().toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSearchChange = (e) => {

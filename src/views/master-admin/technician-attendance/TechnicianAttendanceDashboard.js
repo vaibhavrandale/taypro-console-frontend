@@ -67,7 +67,7 @@ const TechnicianAttendanceDashboard = () => {
 
   const currentDate = new Date();
   const [month, setMonth] = useState(
-    String(currentDate.getMonth() + 1).padStart(2, "0")
+    String(currentDate.getMonth() + 1).padStart(2, "0"),
   );
   const [year, setYear] = useState(String(currentDate.getFullYear()));
 
@@ -81,7 +81,7 @@ const TechnicianAttendanceDashboard = () => {
           { pg: page, limit: limit },
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         let total = Math.ceil(result.data.total / result.data.limit);
@@ -180,7 +180,7 @@ const TechnicianAttendanceDashboard = () => {
   const filteredEntries = Object.entries(groupedData).filter(
     ([username, data]) =>
       username.toLowerCase().includes(searchText) ||
-      data.site_id.toLowerCase().includes(searchText)
+      data.site_id.toLowerCase().includes(searchText),
   );
 
   const openModal = (log) => {
