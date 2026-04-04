@@ -168,6 +168,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Semi-Robots",
+            to: "/master-admin/semi-automatic-robots",
+          },
+          {
+            component: CNavItem,
             name: "Lora Configuration",
             to: "/master-admin/lora-configuration",
           },

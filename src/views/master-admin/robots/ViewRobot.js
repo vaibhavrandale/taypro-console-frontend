@@ -67,7 +67,7 @@ const ViewRobot = () => {
           payload: error.response?.data?.error || "Failed to fetch robot",
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
@@ -185,14 +185,16 @@ const ViewRobot = () => {
           className="d-flex justify-content-end gap-2 mx-auto mb-3"
           style={{ maxWidth: "900px" }}
         >
-          <Link
-            to={`/${adminroute}/site-management/block-management/${
-              robot.site_id
-            }/${encodeURIComponent(robot.block)}/${robot.robot_no}`}
-            className="btn btn-outline-primary btn-sm"
-          >
-            Robot Operation
-          </Link>
+          {robot.robot_type !== "Semi-Automatic" && (
+            <Link
+              to={`/${adminroute}/site-management/block-management/${
+                robot.site_id
+              }/${encodeURIComponent(robot.block)}/${robot.robot_no}`}
+              className="btn btn-outline-primary btn-sm"
+            >
+              Robot Operation
+            </Link>
+          )}
           <Link
             to={`/${adminroute}/robots/update/${robot._id}`}
             className="btn btn-outline-warning btn-sm"

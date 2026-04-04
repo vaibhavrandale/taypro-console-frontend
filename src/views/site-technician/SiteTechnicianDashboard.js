@@ -17,6 +17,7 @@ import "./GoogleMapEmbed.css";
 // import CIcon from "@coreui/icons-react";
 // import { cilBolt, cilCloud, cilSpeedometer } from "@coreui/icons";
 import Weather from "../client-admin/weather/Weather";
+import { Link } from "react-router-dom";
 // import moment from "moment";
 
 const chartColors = ["#52357B", "#5459AC", "#648DB3", "#B2D8CE"];
@@ -280,9 +281,20 @@ const SiteTechnicianDashboard = () => {
             {/* Map Section */}
             <CCol xs={12} md={7}>
               <CCard className="h-100 border-0 shadow-sm">
-                <CCardHeader className="">
-                  Hello {userInfo.username},
-                  <span className="text-success"> {getGreeting()}</span>
+                <CCardHeader className="d-flex justify-content-between align-items-center ">
+                  <span>
+                    Hello {userInfo.username},
+                    <span className="text-success"> {getGreeting()}</span>
+                  </span>
+                  <CBadge color="primary " shape="rounded-pill">
+                    {" "}
+                    <Link
+                      to="/site-technician/punch-in-punch-out"
+                      className="text-white"
+                    >
+                      Punch
+                    </Link>
+                  </CBadge>
                 </CCardHeader>
                 <CCardBody className="p-0">
                   <div>

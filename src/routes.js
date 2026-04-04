@@ -209,6 +209,8 @@ import ViewMaterialRequest from "./views/material-request/ViewMaterialRequest";
 import CreateMaterialRequest from "./views/material-request/CreateMaterialRequest";
 import MaterialRequestDashboard from "./views/material-request/MaterialRequestDashboard";
 import UpdateMaterialRequest from "./views/material-request/UpdateMaterialRequest";
+import SemiAutomaticRobot from "./views/master-admin/semi-robots/SemiAutomaticRobot";
+import AddSemiAutomaticRobot from "./views/master-admin/semi-robots/AddSemiAutomaticRobot";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2041,6 +2043,26 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <SiteAnalytics />
+      </MasterAdminRoute>
+    ),
+  },
+
+  //Semi Automatic Robot Routes
+  {
+    path: "/master-admin/semi-automatic-robots",
+    name: "All Robots",
+    element: (
+      <MasterAdminRoute>
+        <SemiAutomaticRobot />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/add-robot/add-semi-automatic-robot",
+    name: "Add Robot",
+    element: (
+      <MasterAdminRoute>
+        <AddSemiAutomaticRobot />
       </MasterAdminRoute>
     ),
   },
