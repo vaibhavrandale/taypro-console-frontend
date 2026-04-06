@@ -209,6 +209,10 @@ import ViewMaterialRequest from "./views/material-request/ViewMaterialRequest";
 import CreateMaterialRequest from "./views/material-request/CreateMaterialRequest";
 import MaterialRequestDashboard from "./views/material-request/MaterialRequestDashboard";
 import UpdateMaterialRequest from "./views/material-request/UpdateMaterialRequest";
+import GenerateNewCertificate from "./views/commisioning/GenerateNewCertificate";
+import NonCommisionedRobots from "./views/commisioning/NonCommisionedRobots";
+import ViewRobotCommisioningDoc from "./views/commisioning/ViewRobotCommisioningDoc";
+import UpdateRobotCommisioningDoc from "./views/commisioning/UpdateRobotCommisioningDoc";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -1983,6 +1987,42 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ViewDoc />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/commissioning/new-certificate",
+    name: "New Comminisioning Certificate",
+    element: (
+      <MasterAdminRoute>
+        <GenerateNewCertificate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/commissioning/non-commisioned-robots",
+    name: "Non Commisioned Robots",
+    element: (
+      <MasterAdminRoute>
+        <NonCommisionedRobots />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/commissioning/view-robot-commisioning-doc/:id",
+    name: "View Robot Commisioning Doc",
+    element: (
+      <MasterAdminRoute>
+        <ViewRobotCommisioningDoc />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/commissioning/update-robot-commisioning-doc/:id",
+    name: "Update Robot Commisioning Doc",
+    element: (
+      <MasterAdminRoute>
+        <UpdateRobotCommisioningDoc />
       </MasterAdminRoute>
     ),
   },

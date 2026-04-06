@@ -1,0 +1,259 @@
+.doc-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.doc-body {
+  padding: 0px;
+}
+
+/* HEADER */
+.doc-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.doc-header div {
+  padding: 2px;
+}
+
+.doc-header div:last-child {
+  border-right: none;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-dark {
+  height: 40px;
+  width: 120px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-print {
+  display: none;
+}
+.title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+/* TABLE */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+
+.table td,
+.table th {
+  padding: 4px;
+}
+
+.table.small td {
+  padding: 2px;
+}
+
+.sr {
+  width: 40px;
+  text-align: start;
+}
+
+/* DESCRIPTION */
+.desc {
+  padding: 5px;
+  margin-top: 5px;
+}
+
+/* ROBOT GRID */
+.robot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+/* SIGNATURE */
+.sign-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 10px;
+}
+
+.sign-box {
+  padding: 2px;
+}
+
+.sign-title {
+  font-weight: 600;
+  text-align: center;
+}
+
+.sign-sub {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.sign-line {
+  margin-top: 8px;
+}
+
+/* INFO GRID */
+.info-grid {
+  display: grid;
+  grid-template-columns: 194px 1fr;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0px;
+  height: 100%;
+}
+
+.meta-grid .cell {
+  /* padding: 3px 5px; */
+  font-size: 10px;
+}
+
+.meta-grid .label {
+  font-weight: 500;
+}
+
+.info-grid .cell {
+  padding: 1px;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 500;
+}
+
+/* TYPE GRID */
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.type-grid .cell {
+  padding: 2px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.type-grid .system-code {
+  font-size: 12px;
+}
+
+/* CHECKLIST */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+}
+
+.checklist-header {
+  grid-column: span 2;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+  padding: 4px;
+}
+
+.checklist-grid .cell {
+  padding: 1px;
+  font-size: 14px;
+}
+
+.sr {
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ROBOT GRID */
+.robot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.robot-col {
+  display: grid;
+  grid-template-rows: auto;
+}
+
+.robot-header,
+.robot-row {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+}
+
+.robot-header div,
+.robot-row div {
+  font-size: 13px;
+}
+
+.robot-header {
+  font-weight: 500;
+  text-align: center;
+}
+
+/* SIGNATURE (already good, minor refine) */
+.sign-grid {
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.sign-box {
+  padding: 0px 4px;
+}
+
+.sign-line {
+  margin-top: 8px;
+  padding-top: 4px;
+}
+
+.doc-container {
+  width: 794px; /* A4 width */
+  min-height: 100vh;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .logo-dark {
+    display: none !important;
+  }
+
+  .logo-print {
+    display: block !important;
+    height: 40px;
+    width: 120px;
+    object-fit: contain;
+  }
+
+  .doc-container,
+  .doc-container * {
+    visibility: visible;
+  }
+
+  .doc-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* width: 100%; */
+    color: black;
+    width: 210mm;
+    height: 297mm; /* exact A4 */
+    overflow: hidden; /* 🔥 prevents spill */
+  }
+}

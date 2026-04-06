@@ -1,10 +1,270 @@
-import React from "react";
+import {
+  CAlert,
+  CBadge,
+  CTab,
+  CTabContent,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
+  CTabList,
+  CTabPanel,
+  CTabs,
+} from "@coreui/react";
+import React, { useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
+import { commissioning_certificates, robot_commissioning_doc } from "./cdata";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
+// status: "completed", // pending | in_progress | completed | failed
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_DOCS_REQUEST":
+      return { ...state, loadingDoc: true, fetchDocError: "" };
+    case "FETCH_DOCS_SUCCESS":
+      return {
+        ...state,
+        loadingDoc: false,
+        docs: action.payload,
+      };
+    case "FETCH_DOCS_FAIL":
+      return { ...state, loadingDoc: false, fetchDocError: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case "pending":
+      return "warning";
+    case "in_progress":
+      return "primary";
+    case "completed":
+      return "success";
+    case "failed":
+      return "danger";
+    default:
+      return "secondary";
+  }
+};
 const CommisioningDashboard = () => {
+  const [{ loadingDoc, fetchDocError, docs }, dispatch] = useReducer(reducer, {
+    loadingDoc: false,
+    fetchDocError: "",
+    docs: [],
+  });
+  const userInfo = useSelector((state) => state.userInfo);
+  const authtoken = useSelector((state) => state.authtoken);
+  let site_id = "avaada_soyegaon";
+  useEffect(() => {
+    const fetchRobots = async () => {
+      dispatch({ type: "FETCH_DOCS_REQUEST" });
+      try {
+        const result = await axios.get(
+          `/api/v1/commisioning-docs/commisioned-sitewise-robots/${site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          },
+        );
+
+        dispatch({
+          type: "FETCH_DOCS_SUCCESS",
+
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_DOCS_FAIL",
+          payload: error.response?.data?.message || error.response?.data?.error,
+        });
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error,
+        );
+      }
+    };
+
+    fetchRobots();
+  }, [authtoken, site_id]);
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
+
   return (
     <div>
       <Link to="/master-admin/commissioning/view/1234">View Doc</Link>
+
+      <CTabs activeItemKey="comm-certificates">
+        {/* ✅ ONLY tabs here */}
+        <CTabList variant="tabs" className="border-bottom">
+          <CTab itemKey="comm-certificates" className="text-white">
+            Commisioned Certificates
+          </CTab>
+          <CTab itemKey="comm-robots" className="text-white">
+            Commisioned Robots
+          </CTab>
+        </CTabList>
+
+        {/* ✅ Content OUTSIDE */}
+        <CTabContent>
+          <CTabPanel itemKey="comm-certificates">
+            <div className="d-flex justify-content-end align-items-center my-2">
+              <Link className="btn btn-sm" to="new-certificate">
+                New Certificate
+              </Link>
+            </div>
+            <CTable
+              bordered
+              hover
+              responsive
+              className="text-center bg-important mb-2"
+            >
+              <CTableHead color="secondary">
+                <CTableRow>
+                  <CTableHeaderCell>Sr</CTableHeaderCell>
+                  <CTableHeaderCell>Certificate No</CTableHeaderCell>
+                  <CTableHeaderCell>Project Code</CTableHeaderCell>
+                  <CTableHeaderCell>Client Name</CTableHeaderCell>
+                  <CTableHeaderCell>Site Location</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+
+              <CTableBody>
+                {commissioning_certificates.length > 0 ? (
+                  commissioning_certificates.map((cert, index) => (
+                    <CTableRow key={cert._id}>
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          to={`/master-admin/commissioning/view/${cert._id}`}
+                        >
+                          {cert.certificate_no}
+                        </Link>
+                      </CTableDataCell>
+                      <CTableDataCell>{cert.project_code}</CTableDataCell>
+                      <CTableDataCell>{cert.client_name}</CTableDataCell>
+                      <CTableDataCell>{cert.site_location}</CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow colSpan={5}>
+                    <CTableDataCell>No Certificate Found</CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
+          </CTabPanel>
+
+          <CTabPanel itemKey="comm-robots">
+            <div className="d-flex justify-content-end align-items-center my-2">
+              <Link className="btn btn-sm" to="non-commisioned-robots">
+                New Commisioning
+              </Link>
+            </div>
+            <CTable
+              bordered
+              hover
+              responsive
+              className="text-center bg-important mb-2"
+            >
+              <CTableHead color="secondary">
+                <CTableRow>
+                  <CTableHeaderCell>Sr</CTableHeaderCell>
+                  <CTableHeaderCell>Robot No</CTableHeaderCell>
+                  <CTableHeaderCell>Status</CTableHeaderCell>
+                  <CTableHeaderCell>Site ID</CTableHeaderCell>
+                  <CTableHeaderCell>Block</CTableHeaderCell>
+                  <CTableHeaderCell>Client Name</CTableHeaderCell>
+                  <CTableHeaderCell>Site Location</CTableHeaderCell>
+                  <CTableHeaderCell>Action</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+
+              <CTableBody>
+                {loadingDoc ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={8}>
+                      {" "}
+                      <LoadingSpinner />
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : fetchDocError ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={8}>
+                      {" "}
+                      <CAlert>{fetchDocError}</CAlert>
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : docs.length > 0 ? (
+                  docs.map((robot, index) => (
+                    <CTableRow key={robot._id}>
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          to={`/${adminroute}/commissioning/view-robot-commisioning-doc/${robot._id}`}
+                        >
+                          {" "}
+                          {robot.robot_no}
+                        </Link>{" "}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color={`${getStatusColor(robot.status)}`}>
+                          {robot.status}
+                        </CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>{robot.site_id}</CTableDataCell>
+                      <CTableDataCell>{robot.block}</CTableDataCell>
+                      <CTableDataCell>{robot.client_name}</CTableDataCell>
+                      <CTableDataCell>{robot.site_location}</CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          className="btn btn-sm"
+                          to={`/${adminroute}/commissioning/update-robot-commisioning-doc/${robot._id}`}
+                        >
+                          Update
+                        </Link>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow colSpan={5}>
+                    <CTableDataCell>No Docs Found</CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
+          </CTabPanel>
+        </CTabContent>
+      </CTabs>
     </div>
   );
 };
