@@ -1,443 +1,270 @@
 import React, { useState } from "react";
 
+import { commissioning_certificates } from "./cdata";
+import "./commisioning.css";
+// import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
+import Tayprofordarkbg from "../../assets/brand/logofordarkbg.png";
+import Tayproforwhitebg from "../../assets/brand/logoforwhitebg.png";
+import { useParams } from "react-router-dom";
+import RobotSelectionModal from "./RobotSelectionModal";
+import { CButton } from "@coreui/react";
 const ViewDoc = () => {
-  const [formData, setFormData] = useState({
-    docNo: "",
-    revNo: "",
-    date: "",
-    pageNo: "",
-    approvedBy: "TEJAS HEMANT",
-    projectCode: "",
-    customerName: "",
-    plantLocation: "",
-    certificateDate: "",
-    certificateNo: "",
-    typeOfSystem: "",
-    systemCode: "",
-    systemQty: "",
-    checklistItems: [
-      {
-        checked: false,
-        text: "SYSTEM CONDITION / NO VISIBLE DAMAGE (MECHANICAL)",
-      },
-      { checked: false, text: "ALL TYRES INFLATED CONDITION (AIR TIGHTNESS)" },
-      { checked: false, text: "CHECK BATTERY VOLTAGE" },
-      { checked: false, text: "WORKING OF ON/OFF SWITCH" },
-      { checked: false, text: "MOVEMENT OF BRUSH / MOTOR" },
-      {
-        checked: false,
-        text: "POSITION OF ALL SUPPORTING WHEELS (TOP SIDE / BOTTOM SIDE)",
-      },
-      { checked: false, text: "WORKING OF DRIVE TRAIN" },
-      { checked: false, text: "WORKING OF REMOTE CONTROL (WITH BATTERIES)" },
-      { checked: false, text: "WORKING OF SENSORS (IF APPLY)" },
-    ],
-    robotSystems: Array(30).fill(""),
-    checkedByPar: { sign: "", name: "", designation: "" },
-    checkedByReceiver1: { sign: "", name: "", designation: "" },
-    checkedByReceiver2: { sign: "", name: "", designation: "" },
+  const { id } = useParams();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRobots, setSelectedRobots] = useState([]);
+  const data = commissioning_certificates.find((doc) => doc._id === id);
+  if (!data) return <div className="p-3">Document not found</div>;
+  // const data = commissioning_certificates[0];
+  if (!data) return null;
+
+  const robots = data.robots || [];
+  const sortedRobots = [...robots].sort((a, b) => {
+    const typeOrder = { Automatic: 1, "Semi-Automatic": 2 };
+    return (typeOrder[a.robot_type] || 99) - (typeOrder[b.robot_type] || 99);
   });
+  // Split into 3 columns (1–10, 11–20, 21–30)
+  const chunk = (arr, size) =>
+    Array.from({ length: size }, (_, i) => arr[i] || null);
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const col1 = chunk(sortedRobots, 10);
+  const col2 = chunk(sortedRobots.slice(10), 10);
+  const col3 = chunk(sortedRobots.slice(20), 10);
+  const uniquRobotTypes = [
+    ...new Set(sortedRobots.filter(Boolean).map((r) => r.robot_type)),
+  ].join(", ");
 
-  const handleChecklistToggle = (index) => {
-    const updated = [...formData.checklistItems];
-    updated[index].checked = !updated[index].checked;
-    setFormData((prev) => ({ ...prev, checklistItems: updated }));
-  };
-
-  const handleRobotSystemChange = (index, value) => {
-    const updated = [...formData.robotSystems];
-    updated[index] = value;
-    setFormData((prev) => ({ ...prev, robotSystems: updated }));
-  };
+  const uniqueSystemCodes = [
+    ...new Set(sortedRobots.filter(Boolean).map((r) => r.system_code)),
+  ].join(", ");
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
-        {/* Header */}
-        <div className="border-2 border-gray-800">
-          <div className="flex items-center justify-between bg-gray-200 border-b-2 border-gray-800 p-3">
-            <div className="flex items-center gap-4">
-              <div className="bg-white px-4 py-2 border-2 border-gray-800 font-bold text-xl">
-                <span className="text-blue-600">TEN</span>
-                <span className="text-gray-800">PRO</span>
+    <>
+      <div className="d-flex justify-content-between align-items-center">
+        <h4>Commissoning Doc</h4>
+        <div>
+          <CButton size="sm" onClick={() => window.print()}>
+            Print
+          </CButton>
+          <CButton
+            size="sm"
+            className="ms-2"
+            onClick={() => setShowModal(true)}
+          >
+            Add Robots
+          </CButton>
+        </div>
+      </div>
+      <div className="my-2 card rounded-0 doc-container">
+        <div className="doc-body p-2">
+          {/* HEADER */}
+          <div className="doc-header ">
+            <div className="logo border-start border-top border-bottom">
+              {/* Screen logo */}
+              <img
+                src={Tayprofordarkbg}
+                alt="Taypro Logo"
+                className="logo-dark"
+              />
+
+              {/* Print logo */}
+              <img
+                src={Tayproforwhitebg}
+                alt="Taypro Logo"
+                className="logo-print"
+              />
+            </div>
+            <div className="title border">
+              <div className="bold">SOLAR MODULE DRY CLEANING</div>
+              <div className="bold">SYSTEM COMMISSIONING</div>
+            </div>
+            <div className="meta-grid  border-top border-end border-bottom">
+              <div className="cell label border-end border-bottom">DOC NO</div>
+              <div className="cell value border-bottom">{data.doc_no}</div>
+
+              <div className="cell label border-end border-bottom">REV NO</div>
+              <div className="cell value border-bottom">A & 13-06-2024</div>
+              <div className="cell label border-end border-bottom">
+                PREPARED BY
               </div>
-              <div className="text-center">
-                <div className="font-bold text-sm">
-                  SOLAR MODULE DRY CLEANING
-                </div>
-                <div className="font-bold text-sm">SYSTEM COMMISSIONING</div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-px bg-gray-800 border-2 border-gray-800 text-xs">
-              <div className="bg-white px-2 py-1 font-semibold">DOC NO:</div>
-              <div className="bg-white px-2 py-1">
-                {formData.docNo || "TP-L"}
-              </div>
-              <div className="bg-white px-2 py-1 font-semibold">
-                REV NO & DATE:
-              </div>
-              <div className="bg-white px-2 py-1">
-                {formData.revNo || "1.1-06-2024"}
-              </div>
-              <div className="bg-white px-2 py-1 font-semibold">PAGE NO:</div>
-              <div className="bg-white px-2 py-1">{formData.pageNo || "1"}</div>
-              <div className="bg-white px-2 py-1 font-semibold">
-                APPROVED BY:
-              </div>
-              <div className="bg-white px-2 py-1">{formData.approvedBy}</div>
+              <div className="cell value border-bottom">TEJAS MANE</div>
+
+              <div className="cell label border-end ">APPROVED BY</div>
+              <div className="cell value ">TEJAS MEMANE</div>
             </div>
           </div>
 
-          {/* Project Details */}
-          <div className="grid grid-cols-2 gap-px bg-gray-800 border-b-2 border-gray-800">
-            <div className="flex bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm w-40 border-r border-gray-800">
-                PROJECT CODE:
-              </label>
-              <input
-                type="text"
-                value={formData.projectCode}
-                onChange={(e) =>
-                  handleInputChange("projectCode", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm outline-none"
-              />
-            </div>
-            <div className="flex bg-white border-l-2 border-gray-800">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm w-32 border-r border-gray-800">
-                DATE:
-              </label>
-              <input
-                type="date"
-                value={formData.certificateDate}
-                onChange={(e) =>
-                  handleInputChange("certificateDate", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-px bg-gray-800 border-b-2 border-gray-800">
-            <div className="flex bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm w-40 border-r border-gray-800">
-                CUSTOMER NAME:
-              </label>
-              <input
-                type="text"
-                value={formData.customerName}
-                onChange={(e) =>
-                  handleInputChange("customerName", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-px bg-gray-800 border-b-2 border-gray-800">
-            <div className="flex bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm w-40 border-r border-gray-800">
-                PLANT LOCATION:
-              </label>
-              <input
-                type="text"
-                value={formData.plantLocation}
-                onChange={(e) =>
-                  handleInputChange("plantLocation", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Certificate Section */}
-          <div className="grid grid-cols-1 gap-px bg-gray-800 border-b-2 border-gray-800">
-            <div className="flex bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm w-40 border-r border-gray-800">
-                CERTIFICATE NO.:
-              </label>
-              <input
-                type="text"
-                value={formData.certificateNo}
-                onChange={(e) =>
-                  handleInputChange("certificateNo", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="bg-white px-3 py-2 text-xs border-b-2 border-gray-800">
-            <p className="font-semibold mb-1">SYSTEM OVERVIEW:</p>
-            <p className="text-justify leading-relaxed">
-              THE SOLAR MODULE DRY CLEANING ROBOT / SYSTEM IS DESIGNED TO
-              EFFICIENTLY CLEAN AND MAINTAIN SOLAR PANELS FOR MAXIMUM
-              PERFORMANCE. THIS COMMISSIONING DOCUMENT OUTLINES THE CHECKS AND
-              OBSERVATIONS MADE DURING THE COMMISSIONING PROCESS TO ENSURE THE
-              SYSTEM OPERATES SAFELY AND EFFECTIVELY.
-            </p>
-          </div>
-
-          {/* System Details */}
-          <div className="grid grid-cols-3 gap-px bg-gray-800 border-b-2 border-gray-800">
-            <div className="flex flex-col bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm text-center border-b border-gray-800">
-                TYPE OF SYSTEM
-              </label>
-              <input
-                type="text"
-                value={formData.typeOfSystem}
-                onChange={(e) =>
-                  handleInputChange("typeOfSystem", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm text-center outline-none"
-              />
-            </div>
-            <div className="flex flex-col bg-white border-x-2 border-gray-800">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm text-center border-b border-gray-800">
-                SYSTEM CODE
-              </label>
-              <input
-                type="text"
-                value={formData.systemCode}
-                onChange={(e) =>
-                  handleInputChange("systemCode", e.target.value)
-                }
-                className="flex-1 px-3 py-2 text-sm text-center outline-none"
-              />
-            </div>
-            <div className="flex flex-col bg-white">
-              <label className="bg-gray-200 px-3 py-2 font-semibold text-sm text-center border-b border-gray-800">
-                SYSTEM QTY.
-              </label>
-              <input
-                type="text"
-                value={formData.systemQty}
-                onChange={(e) => handleInputChange("systemQty", e.target.value)}
-                className="flex-1 px-3 py-2 text-sm text-center outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Checklist */}
-          <div className="bg-gray-200 px-3 py-2 font-bold text-sm text-center border-b-2 border-gray-800">
-            SYSTEM COMMISSIONING CHECK LIST POINT
-          </div>
-
-          <div className="bg-white border-b-2 border-gray-800">
-            {formData.checklistItems.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-start px-3 py-2 border-b border-gray-300 hover:bg-gray-50"
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <span className="font-semibold text-sm w-6">
-                    {index + 1}.
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => handleChecklistToggle(index)}
-                    className="w-4 h-4 mt-0.5 cursor-pointer"
-                  />
-                  <span className="text-sm flex-1">{item.text}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Robot/System Numbers Table */}
-          <div className="grid grid-cols-6 gap-px bg-gray-800">
-            {/* Header Row */}
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              SR. NO
-            </div>
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              ROBOT / SYSTEM NO
-            </div>
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              SR.NO
-            </div>
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              ROBOT / SYSTEM NO
-            </div>
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              SR.NO
-            </div>
-            <div className="bg-gray-200 px-2 py-2 font-semibold text-xs text-center border-b border-gray-800">
-              ROBOT / SYSTEM NO
-            </div>
-
-            {/* Data Rows */}
-            {[...Array(10)].map((_, i) => (
+          <div className="info-grid  my-2">
+            {[
+              ["PROJECT CODE", data.project_code],
+              ["CUSTOMER NAME", data.client_name],
+              ["PLANT LOCATION", data.site_location],
+              ["DATE", new Date().toLocaleDateString()],
+              ["CERTIFICATE NO", data.certificate_no],
+            ].map(([label, value], i) => (
               <React.Fragment key={i}>
-                {/* Column 1 */}
-                <div className="bg-white px-2 py-1.5 text-xs text-center border-b border-gray-300">
-                  {i + 1}
+                <div
+                  className={`bold ps-1 cell label border-start  ${i === 0 ? "border-top border-bottom" : "border-bottom"}`}
+                >
+                  {label}
                 </div>
-                <div className="bg-white px-2 py-1.5 border-b border-gray-300">
-                  <input
-                    type="text"
-                    value={formData.robotSystems[i]}
-                    onChange={(e) => handleRobotSystemChange(i, e.target.value)}
-                    className="w-full text-xs text-center outline-none"
-                  />
-                </div>
-                {/* Column 2 */}
-                <div className="bg-white px-2 py-1.5 text-xs text-center border-b border-gray-300">
-                  {i + 11}
-                </div>
-                <div className="bg-white px-2 py-1.5 border-b border-gray-300">
-                  <input
-                    type="text"
-                    value={formData.robotSystems[i + 10]}
-                    onChange={(e) =>
-                      handleRobotSystemChange(i + 10, e.target.value)
-                    }
-                    className="w-full text-xs text-center outline-none"
-                  />
-                </div>
-                {/* Column 3 */}
-                <div className="bg-white px-2 py-1.5 text-xs text-center border-b border-gray-300">
-                  {i + 21}
-                </div>
-                <div className="bg-white px-2 py-1.5 border-b border-gray-300">
-                  <input
-                    type="text"
-                    value={formData.robotSystems[i + 20]}
-                    onChange={(e) =>
-                      handleRobotSystemChange(i + 20, e.target.value)
-                    }
-                    className="w-full text-xs text-center outline-none"
-                  />
+                <div
+                  className={`ps-1 cell value border-start border-end ${i === 0 ? "border-top border-bottom" : "border-bottom"}`}
+                >
+                  {value}
                 </div>
               </React.Fragment>
             ))}
           </div>
 
-          {/* Signature Section */}
-          <div className="grid grid-cols-3 gap-px bg-gray-800 border-t-2 border-gray-800">
-            {/* Par TenPro */}
-            <div className="bg-white">
-              <div className="bg-gray-200 px-3 py-2 font-semibold text-xs border-b border-gray-800">
-                CHECKED BY,
-                <br />
-                Par. TENPRO PVT LTD.
-              </div>
-              <div className="px-3 py-2 space-y-3">
-                <div>
-                  <label className="text-xs font-semibold">Sign:</label>
-                  <div className="border-b border-gray-400 h-12"></div>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">Name:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">DESIGNATION:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-              </div>
+          {/* DESCRIPTION */}
+          <div className="desc border">
+            <span className="bold">SYSTEM OVERVIEW</span> : The solar module dry
+            cleaning robot system is designed to efficiently clean and maintain
+            solar PV modules. This document ensures all commissioning checks are
+            completed.
+          </div>
+
+          <div className="type-grid  my-2">
+            <div className="cell border-start border-top bold">
+              TYPE OF SYSTEM
+            </div>
+            <div className="cell border-start border-top bold">SYSTEM CODE</div>
+            <div className="cell border-start border-top border-end bold">
+              SYSTEM QTY
             </div>
 
-            {/* Receiver 1 */}
-            <div className="bg-white border-x-2 border-gray-800">
-              <div className="bg-gray-200 px-3 py-2 font-semibold text-xs border-b border-gray-800">
-                CHECKED BY,
-                <br />
-                For RECEIVER
-              </div>
-              <div className="px-3 py-2 space-y-3">
-                <div>
-                  <label className="text-xs font-semibold">Sign:</label>
-                  <div className="border-b border-gray-400 h-12"></div>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">Name:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">DESIGNATION:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-              </div>
+            <div className="cell border-start border-top border-bottom">
+              {uniquRobotTypes}
             </div>
-
-            {/* Receiver 2 */}
-            <div className="bg-white">
-              <div className="bg-gray-200 px-3 py-2 font-semibold text-xs border-b border-gray-800">
-                CHECKED BY,
-                <br />
-                For RECEIVER
-              </div>
-              <div className="px-3 py-2 space-y-3">
-                <div>
-                  <label className="text-xs font-semibold">Sign:</label>
-                  <div className="border-b border-gray-400 h-12"></div>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">Name:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold">DESIGNATION:</label>
-                  <input
-                    type="text"
-                    className="w-full border-b border-gray-400 px-1 py-1 text-sm outline-none"
-                  />
-                </div>
-              </div>
+            <div className="cell system-code border-start border-top border-bottom">
+              {uniqueSystemCodes}
+            </div>
+            <div className="cell border-start border-top border-bottom border-end">
+              {robots.length}
             </div>
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="mt-6 bg-white rounded-lg p-6 shadow-lg">
-          <div className="flex gap-4 justify-center flex-wrap">
-            <button
-              onClick={() => window.print()}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
-            >
-              Print Document
-            </button>
-            <button
-              onClick={() => {
-                console.log("Form Data:", formData);
-                alert("Form data logged to console");
-              }}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
-            >
-              Save Data
-            </button>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
-            >
-              Reset Form
-            </button>
+          <div className="checklist-grid border-top border-start border-end mb-2">
+            <div className="checklist-header bold">
+              SYSTEM COMMISSIONING CHECK LIST POINT
+            </div>
+
+            {[
+              "System condition (no visible damage)",
+              "Fasteners tightness",
+              "Battery voltage",
+              "ON/OFF switch",
+              "Direction switch",
+              "Supporting wheels",
+              "Drive train",
+              "Brush cleaning",
+              "Sensors",
+              "Complete 1 test cycle",
+            ].map((item, i) => (
+              <React.Fragment key={i}>
+                <div
+                  className={`  cell text-center border-end border-bottom ${i === 0 ? "border-top" : ""}`}
+                >
+                  {i + 1}
+                </div>
+                <div
+                  className={`cell  border-bottom ${i === 0 ? "border-top" : ""}`}
+                >
+                  <span className="ms-1">{item} </span>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          <div className="robot-grid">
+            {[col1, col2, col3].map((col, colIndex) => (
+              <div key={colIndex} className="robot-col border">
+                <div className="robot-header border-bottom">
+                  <div className="bold">SR NO</div>
+                  <div className="border-start bold">ROBOT NO</div>
+                </div>
+
+                {/* {col.map((r, i) => (
+                  <div key={i} className="robot-row">
+                    <div
+                      className={`text-center border-end ${i === col.length - 1 ? "" : "border-bottom "}`}
+                    >
+                      {colIndex * 10 + i + 1}
+                    </div>
+                    <div
+                      className={`text-center ${i === col.length - 1 ? "" : "border-bottom "}`}
+                    >
+                      {r && r.robot_type === "Automatic"
+                        ? "A"
+                        : r.robot_type === "Semi-Automatic"
+                          ? "S"
+                          : ""}
+                      {r ? r.robot_no : ""}
+                    </div>
+                  </div>
+                ))} */}
+                {col.map((r, i) => {
+                  const prefix =
+                    r?.robot_type === "Automatic"
+                      ? "A - "
+                      : r?.robot_type === "Semi-Automatic"
+                        ? "S - "
+                        : "";
+
+                  return (
+                    <div key={i} className="robot-row">
+                      <div
+                        className={`text-center border-end ${
+                          i === col.length - 1 ? "" : "border-bottom"
+                        }`}
+                      >
+                        {colIndex * 10 + i + 1}
+                      </div>
+
+                      <div
+                        className={`text-center ${
+                          i === col.length - 1 ? "" : "border-bottom"
+                        }`}
+                      >
+                        {r ? `${prefix}${r.robot_no}` : ""}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {/* SIGNATURES */}
+          <div className="sign-grid">
+            {data.signatures.map((item, i) => (
+              <div
+                key={i}
+                className={`sign-box  border-top border-bottom   ${i === 0 ? "border-start border-end" : "border-end"}`}
+              >
+                <div className="sign-title ">CHECKED BY</div>
+                <div className="sign-sub">For {item.for}</div>
+                <div className="sign-line  border-top">Sign:</div>
+                <div className="sign-line  border-top">
+                  Name :<span className="ms-1">{item.name}</span>
+                </div>
+                <div className="sign-line  border-top">
+                  Designation :<span className="ms-1">{item.designation}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+      <RobotSelectionModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSelect={(robots) => {
+          console.log("Selected from modal:", robots);
+          setSelectedRobots(robots);
+        }}
+      />
+    </>
   );
 };
 

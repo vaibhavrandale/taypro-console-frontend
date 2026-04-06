@@ -100,8 +100,8 @@ const Timers = () => {
   const handleSaveChanges = () => {
     setFilteredBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
-        block.block === editData.block ? { ...editData } : block
-      )
+        block.block === editData.block ? { ...editData } : block,
+      ),
     );
     setEditModalVisible(false);
   };
