@@ -1077,7 +1077,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LastActivity from "../../components/LastActivity";
@@ -1330,7 +1330,8 @@ const optionLabel = (s) =>
 const UpdateRobotCommisioningDoc = () => {
   const { id } = useParams();
   const authtoken = useSelector((s) => s.authtoken);
-
+  const userInfo = useSelector((s) => s.userInfo);
+  const navigate = useNavigate();
   const [{ doc, loadingDoc, updating }, dispatch] = useReducer(reducer, {
     docError: "",
     loadingDoc: false,
@@ -1381,6 +1382,32 @@ const UpdateRobotCommisioningDoc = () => {
     ),
   });
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
+
   /* ── Deep-path setter for checklist ── */
   const setChecklist = (path, value) =>
     setForm((prev) => {
@@ -1407,6 +1434,9 @@ const UpdateRobotCommisioningDoc = () => {
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Commissioning doc updated successfully!");
+      navigate(
+        `/${adminroute}/commissioning/view-robot-commisioning-doc/${id}`,
+      );
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error;
       dispatch({ type: "UPDATE_FAIL" });

@@ -81,6 +81,7 @@ const EditClient = () => {
           password: data.data.password || "",
           is_deleted: data.data.is_delete || false,
           set_warehouse: data.data.set_warehouse || "",
+          project_code: data.data.project_code || "",
           is_weather_cleaning_enabled:
             data.data.is_weather_cleaning_enabled || false,
         });
@@ -216,6 +217,16 @@ const EditClient = () => {
                 setFormData({ ...formData, set_warehouse: e.target.value })
               }
               placeholder="Enter Wearehouse"
+              className="my-3"
+            />
+            <CFormInput
+              label="project_code"
+              type="text"
+              value={formData.project_code}
+              onChange={(e) =>
+                setFormData({ ...formData, project_code: e.target.value })
+              }
+              placeholder="Enter Project Code"
               className="my-3"
             />
             <br />
