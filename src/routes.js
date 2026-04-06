@@ -213,6 +213,8 @@ import GenerateNewCertificate from "./views/commisioning/GenerateNewCertificate"
 import NonCommisionedRobots from "./views/commisioning/NonCommisionedRobots";
 import ViewRobotCommisioningDoc from "./views/commisioning/ViewRobotCommisioningDoc";
 import UpdateRobotCommisioningDoc from "./views/commisioning/UpdateRobotCommisioningDoc";
+import SemiAutomaticRobot from "./views/master-admin/semi-robots/SemiAutomaticRobot";
+import AddSemiAutomaticRobot from "./views/master-admin/semi-robots/AddSemiAutomaticRobot";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2061,6 +2063,46 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <UpdateMaterialRequest />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/statistics",
+    name: "General Statistics",
+    element: (
+      <MasterAdminRoute>
+        <Statistics />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/site-statistics",
+    name: "Site Statistics",
+    element: (
+      <MasterAdminRoute>
+        <SiteAnalytics />
+      </MasterAdminRoute>
+    ),
+  },
+
+  //Semi Automatic Robot Routes
+  {
+    path: "/master-admin/semi-automatic-robots",
+    name: "All Robots",
+    element: (
+      <MasterAdminRoute>
+        <SemiAutomaticRobot />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/add-robot/add-semi-automatic-robot",
+    name: "Add Robot",
+    element: (
+      <MasterAdminRoute>
+        <AddSemiAutomaticRobot />
       </MasterAdminRoute>
     ),
   },
@@ -5976,6 +6018,26 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <UpdateMaterialRequest />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/statistics",
+    name: "General Statistics",
+    element: (
+      <ServiceAdminRoute>
+        <Statistics />
+      </ServiceAdminRoute>
+    ),
+  },
+
+  {
+    path: "/service-admin/site-statistics",
+    name: "Site Statistics",
+    element: (
+      <ServiceAdminRoute>
+        <SiteAnalytics />
       </ServiceAdminRoute>
     ),
   },

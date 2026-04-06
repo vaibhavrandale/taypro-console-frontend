@@ -578,7 +578,7 @@ const ExternalUsersDashboard = () => {
             <CTableHeaderCell>Role</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
             <CTableHeaderCell>Phone</CTableHeaderCell>
-
+            <CTableHeaderCell>Last Login</CTableHeaderCell>
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -586,7 +586,7 @@ const ExternalUsersDashboard = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center">
+              <CTableDataCell colSpan="9" className="text-center">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -656,7 +656,7 @@ const ExternalUsersDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center text-danger">
+              <CTableDataCell colSpan="9" className="text-center text-danger">
                 No users found.
               </CTableDataCell>
             </CTableRow>
@@ -916,6 +916,22 @@ const ExternalUsersDashboard = () => {
             value={formData.designation}
             onChange={handleChange}
           />
+          <br />
+          <CFormLabel>
+            Robot Command Access
+            <span className="text-muted ms-2">
+              (If it is un-checked then user can't Send command.)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="robot_command_access"
+            name="robot_command_access"
+            checked={formData.robot_command_access || false}
+            onChange={handleChange}
+          />
+          <br />
+          <hr />
           <br />
           <CFormLabel>
             Active Status

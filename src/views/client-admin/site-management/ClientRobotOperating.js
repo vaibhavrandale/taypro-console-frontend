@@ -209,7 +209,7 @@
 //         payload: error.response?.data?.message,
 //       });
 
-//       toast.error(error.response.data.message || "Error adding downlink");
+//       toast.error(error.response.data.message || error.response.data.error);
 //     }
 //     setLoadingRow(null);
 //     setCommandButton(null);
@@ -244,7 +244,7 @@
 //         payload: error.response?.data?.message,
 //       });
 
-//       toast.error(error.response.data.message || "Error adding downlink");
+//       toast.error(error.response.data.message || error.response.data.error);
 //     }
 
 //     setCommandButton(null);
@@ -993,7 +993,7 @@
 //         payload: error.response?.data?.message,
 //       });
 
-//       toast.error(error.response.data.message || "Error adding downlink");
+//       toast.error(error.response.data.message || error.response.data.error);
 //     }
 //     setLoadingRow(null);
 //     setCommandButton(null);
@@ -1028,7 +1028,7 @@
 //         payload: error.response?.data?.message,
 //       });
 
-//       toast.error(error.response.data.message || "Error adding downlink");
+//       toast.error(error.response.data.message || error.response.data.error);
 //     }
 
 //     setCommandButton(null);
@@ -1441,7 +1441,7 @@ const ClientRobotOperating = () => {
       error: "",
       loadingRobots: true,
       sendingCommandloading: false,
-    }
+    },
   );
 
   let adminroute = "";
@@ -1470,7 +1470,7 @@ const ClientRobotOperating = () => {
           `/api/v1/robots/site/${site_id}/${block}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         const robotsData = response.data.data; // Ensure correct data access
 
@@ -1483,10 +1483,10 @@ const ClientRobotOperating = () => {
 
           const filteredRobots = robotsData
             .filter(
-              (robot) => robot.site_id === site_id && robot.block === block
+              (robot) => robot.site_id === site_id && robot.block === block,
             )
             .sort(
-              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
+              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no),
             );
 
           setSiteRobots(filteredRobots);
@@ -1506,7 +1506,7 @@ const ClientRobotOperating = () => {
           `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
@@ -1559,7 +1559,7 @@ const ClientRobotOperating = () => {
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
       toast.success(data.data.message);
@@ -1593,7 +1593,7 @@ const ClientRobotOperating = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -1604,7 +1604,7 @@ const ClientRobotOperating = () => {
         payload: error.response?.data?.message,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response.data.message || error.response.data.error);
     }
 
     setCommandButton(null);
@@ -1823,7 +1823,7 @@ const ClientRobotOperating = () => {
                             <span>
                               <CTooltip
                                 content={new Date(
-                                  robot.last_uplink
+                                  robot.last_uplink,
                                 ).toLocaleString()}
                                 placement="top"
                               >
@@ -1832,7 +1832,7 @@ const ClientRobotOperating = () => {
                                     new Date(robot.last_uplink),
                                     {
                                       addSuffix: true,
-                                    }
+                                    },
                                   )}
                                 </span>
                               </CTooltip>

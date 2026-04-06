@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useMemo } from "react";
 import axios from "axios";
 import {
   CRow,
@@ -14,6 +14,7 @@ import {
   CTableBody,
   CTableHead,
   CTableHeaderCell,
+  CFormSelect,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -22,6 +23,12 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 const reducer = (state, action) => {
   switch (action.type) {
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, siteError: "" };
+    case "FETCH_SITES_SUCCESS":
+      return { ...state, loadingSites: false, sites: action.payload };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, siteError: action.payload };
     case "FETCH_CLEANING_REQUEST":
       return { ...state, siteAnalyticsLoading: true, siteAnalyticsError: "" };
 
@@ -55,6 +62,9 @@ const SiteAnalytics = () => {
       siteAnalyticsError,
       subscriptiondata,
       subscriptionStatus,
+      loadingSites,
+      siteError,
+      sites,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -68,8 +78,11 @@ const SiteAnalytics = () => {
     siteAnalyticsLoading: false,
     subscriptiondata: {},
     subscriptionStatus: "",
+    loadingSites: false,
+    siteError: "",
+    sites: [],
   });
-  const site_id = "avaada_agar";
+  // const site_id = "avaada_agar";
   const today = new Date();
   const last7 = new Date();
   const authtoken = useSelector((state) => state.authtoken);
@@ -79,8 +92,34 @@ const SiteAnalytics = () => {
 
   const [startDate, setStartDate] = useState(formatDate(last7));
   const [endDate, setEndDate] = useState(formatDate(today));
+  const [selectedSite, setSelectedSite] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  useEffect(() => {
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const response = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({ type: "FETCH_SITES_SUCCESS", payload: response.data.data });
+
+        if (response.data.data.length > 0) {
+          setSelectedSite(response.data.data[0].site_id);
+        }
+      } catch (error) {
+        const errorMsg =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Failed to fetch sites";
+        dispatch({ type: "FETCH_SITES_FAIL", payload: errorMsg });
+        toast.error(errorMsg);
+      }
+    };
+    fetchSites();
+  }, [authtoken]);
 
   useEffect(() => {
+    if (!selectedSite) return;
     const fetchRobotAnalytics = async () => {
       try {
         dispatch({ type: "FETCH_CLEANING_REQUEST" });
@@ -88,7 +127,7 @@ const SiteAnalytics = () => {
         const result = await axios.post(
           `/api/v1/robot-tracking/site-cleaning-analytics`,
           {
-            site_id,
+            site_id: selectedSite,
             startDate,
             endDate,
           },
@@ -118,7 +157,58 @@ const SiteAnalytics = () => {
     };
 
     fetchRobotAnalytics();
-  }, [startDate, endDate, authtoken]);
+  }, [startDate, endDate, authtoken, selectedSite]);
+
+  const handleSiteChange = (e) => {
+    setSelectedSite(e.target.value);
+
+    // Clear previous weather data on site change
+    dispatch({
+      type: "FETCH_WEATHER_SUCCESS",
+      payload: {
+        data: [],
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        totalRecords: 0,
+      },
+    });
+  };
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const sortedRobots = useMemo(() => {
+    if (!sortConfig.key) return robots;
+    return [...robots].sort((a, b) => {
+      const aVal = a[sortConfig.key] ?? "";
+      const bVal = b[sortConfig.key] ?? "";
+
+      // String comparison for non-numeric fields
+      if (typeof aVal === "string" || typeof bVal === "string") {
+        return sortConfig.direction === "asc"
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      }
+
+      // Numeric comparison
+      return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+    });
+  }, [robots, sortConfig]);
+
+  const SortIcon = ({ colKey }) => {
+    if (sortConfig.key !== colKey)
+      return <span style={{ opacity: 0.3, marginLeft: 4 }}>⇅</span>;
+    return (
+      <span style={{ marginLeft: 4 }}>
+        {sortConfig.direction === "asc" ? "↑" : "↓"}
+      </span>
+    );
+  };
 
   const checkStatus = [
     "subscriptionSitesAssigned",
@@ -147,9 +237,9 @@ const SiteAnalytics = () => {
             </CCardHeader>
 
             <CCardBody>
-              <CRow className="align-items-end g-3">
-                {/* Date Filters */}
-                <CCol md={3}>
+              <CRow className="align-items-end g-2 flex-wrap">
+                {/* Start Date */}
+                <CCol md={2}>
                   <CFormInput
                     type="date"
                     label="Start Date"
@@ -158,7 +248,8 @@ const SiteAnalytics = () => {
                   />
                 </CCol>
 
-                <CCol md={3}>
+                {/* End Date */}
+                <CCol md={2}>
                   <CFormInput
                     type="date"
                     label="End Date"
@@ -167,26 +258,47 @@ const SiteAnalytics = () => {
                   />
                 </CCol>
 
+                {/* Site Select */}
+                <CCol md={2}>
+                  <label className="form-label">Site</label>
+                  {loadingSites ? (
+                    <LoadingSpinner />
+                  ) : (
+                    <CFormSelect
+                      value={selectedSite}
+                      onChange={handleSiteChange}
+                      disabled={loadingSites}
+                    >
+                      <option value="">Select a site</option>
+                      {sites.map((site) => (
+                        <option key={site._id} value={site.site_id}>
+                          {site.site_id}
+                        </option>
+                      ))}
+                    </CFormSelect>
+                  )}
+                </CCol>
+
                 {/* Summary Badges */}
                 <CCol md={6}>
                   <div className="d-flex flex-wrap justify-content-md-end gap-2">
                     <CBadge
                       color="warning"
                       shape="rounded-pill"
-                      className="px-3 py-2 fs-6 d-flex align-items-center gap-1"
+                      className="px-2 py-2 fs-6 d-flex align-items-center gap-1"
                     >
-                      <small className=" ms-1 me-1">Total Robots</small>
+                      <small>Total Robots</small>
                       <span className="fw-semibold">
                         : {summary.total_robots}
                       </span>
                     </CBadge>
 
                     <CBadge
-                      color="info"
+                      color="primary"
                       shape="rounded-pill"
-                      className="px-3 py-2 fs-6 d-flex align-items-center gap-1"
+                      className="px-2 py-2 fs-6 d-flex align-items-center gap-1"
                     >
-                      <small className="ms-1 me-1">Avg Cleaning Time</small>
+                      <small>Avg Cleaning Time</small>
                       <span className="fw-semibold">
                         : {summary.avg_cleaning_minutes}
                       </span>
@@ -195,9 +307,9 @@ const SiteAnalytics = () => {
                     <CBadge
                       color="success"
                       shape="rounded-pill"
-                      className="px-3 py-2 fs-6 d-flex align-items-center gap-1"
+                      className="px-2 py-2 fs-6 d-flex align-items-center gap-1"
                     >
-                      <small className="ms-1 me-1">Total Cycles</small>
+                      <small>Total Cycles</small>
                       <span className="fw-semibold">
                         : {summary.total_cycles}
                       </span>
@@ -209,7 +321,7 @@ const SiteAnalytics = () => {
           </CCard>
 
           <div>
-            <CTable striped hover responsive bordered align="middle">
+            {/* <CTable striped hover responsive bordered align="middle">
               <CTableHead color="dark">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
@@ -274,6 +386,84 @@ const SiteAnalytics = () => {
                         {robot.maxBrushCurrent}
                       </CTableDataCell>
 
+                      <CTableDataCell className="text-center">
+                        {robot.avgBrushCurrent}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={11} className="text-center">
+                      No data available for the selected date range.
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable> */}
+            <CTable striped hover responsive bordered align="middle">
+              <CTableHead color="dark">
+                <CTableRow>
+                  <CTableHeaderCell>#</CTableHeaderCell>
+
+                  {[
+                    { label: "Robot No", key: "robot_no" },
+                    { label: "Total Cycles", key: "total_cycles" },
+                    { label: "Avg Time (min)", key: "avg_cleaning_minutes" },
+                    {
+                      label: "Avg Battery Before Cleaning",
+                      key: "avgBatteryBeforeCleaning",
+                    },
+                    {
+                      label: "Avg Battery After Cleaning",
+                      key: "avgBatteryAfterCleaning",
+                    },
+                    { label: "Max Wheel", key: "maxWheelCurrent" },
+                    { label: "Avg Wheel", key: "avgWheelCurrent" },
+                    { label: "Max Brush", key: "maxBrushCurrent" },
+                    { label: "Avg Brush", key: "avgBrushCurrent" },
+                  ].map(({ label, key }) => (
+                    <CTableHeaderCell
+                      key={key}
+                      className="text-center"
+                      onClick={() => handleSort(key)}
+                      style={{
+                        cursor: "pointer",
+                        userSelect: "none",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {label}
+                      <SortIcon colKey={key} />
+                    </CTableHeaderCell>
+                  ))}
+                </CTableRow>
+              </CTableHead>
+
+              <CTableBody>
+                {sortedRobots.length > 0 ? (
+                  sortedRobots.map((robot, index) => (
+                    <CTableRow key={robot.robot_no}>
+                      <CTableDataCell>{index + 1}</CTableDataCell>
+                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell>{robot.total_cycles}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.avg_cleaning_minutes}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.avgBatteryBeforeCleaning}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.avgBatteryAfterCleaning}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.maxWheelCurrent}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.avgWheelCurrent}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        {robot.maxBrushCurrent}
+                      </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.avgBrushCurrent}
                       </CTableDataCell>

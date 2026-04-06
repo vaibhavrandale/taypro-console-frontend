@@ -17,6 +17,7 @@ import {
   cilEnvelopeOpen,
   cilMoney,
   cilLocationPin,
+  cilGraph,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 import {
@@ -164,6 +165,11 @@ const _nav = [
             component: CNavItem,
             name: "Robots",
             to: "/master-admin/robots",
+          },
+          {
+            component: CNavItem,
+            name: "Semi-Robots",
+            to: "/master-admin/semi-automatic-robots",
           },
           {
             component: CNavItem,
@@ -777,6 +783,24 @@ const _nav = [
             component: CNavItem,
             name: "Dashboard",
             to: "/master-admin/commissioning",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Statistics",
+        icon: (
+          <CIcon
+            icon={cilGraph}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Statistics",
+            to: "/master-admin/statistics",
           },
         ],
       },
@@ -2356,6 +2380,25 @@ const _nav = [
             component: CNavItem,
             name: "Material Requests",
             to: "/service-admin/material-requests",
+          },
+        ],
+      },
+      // /service-admin/statistics
+      {
+        component: CNavGroup,
+        name: "Statistics",
+        icon: (
+          <CIcon
+            icon={cilGraph}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Statistics",
+            to: "/service-admin/statistics",
           },
         ],
       },

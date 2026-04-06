@@ -103,7 +103,7 @@ const reducer = (state, action) => {
         ...state,
         updatingUserLoading: false,
         users: state.users.map((user) =>
-          user._id === action.payload._id ? action.payload : user
+          user._id === action.payload._id ? action.payload : user,
         ),
       };
 
@@ -144,7 +144,7 @@ const reducer = (state, action) => {
         ...state,
         removesiteloading: false,
         assigned_sites: state.assigned_sites.filter(
-          (site) => site._id !== action.payload
+          (site) => site._id !== action.payload,
         ),
       };
     case "REMOVE_SITE_FAIL":
@@ -254,10 +254,10 @@ const UsersDashboard = () => {
           pagination,
           {
             headers: { authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -380,7 +380,7 @@ const UsersDashboard = () => {
           (user.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
           (user.department || "")
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -416,7 +416,7 @@ const UsersDashboard = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
       setImage(data.url);
@@ -440,7 +440,7 @@ const UsersDashboard = () => {
         newdata,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       dispatch({
@@ -476,7 +476,7 @@ const UsersDashboard = () => {
         },
         {
           headers: { authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
       if (response.data.success) {
         dispatch({
@@ -500,7 +500,7 @@ const UsersDashboard = () => {
   const handleRemoveSite = async (sitedata) => {
     if (
       !window.confirm(
-        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`
+        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`,
       )
     ) {
       return;
@@ -516,7 +516,7 @@ const UsersDashboard = () => {
         },
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -526,7 +526,7 @@ const UsersDashboard = () => {
           payload: sitedata._id,
         });
         setAssignedSites((prevSites) =>
-          prevSites.filter((site) => site._id !== sitedata._id)
+          prevSites.filter((site) => site._id !== sitedata._id),
         );
       }
     } catch (error) {
@@ -598,7 +598,7 @@ const UsersDashboard = () => {
         <CTableBody>
           {loading ? (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center">
+              <CTableDataCell colSpan="9" className="text-center">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
@@ -646,7 +646,7 @@ const UsersDashboard = () => {
                         .replace(
                           /(\d{2}:\d{2}\s[apAP][mM]) (\d{2})\/(\d{2})\/(\d{4})/,
                           (_, time, day, month, year) =>
-                            `${time}, ${year}-${month}-${day}`
+                            `${time}, ${year}-${month}-${day}`,
                         )
                     : ""}
                 </CTableDataCell>
@@ -679,7 +679,7 @@ const UsersDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center text-danger">
+              <CTableDataCell colSpan="9" className="text-center text-danger">
                 No users found.
               </CTableDataCell>
             </CTableRow>
@@ -984,7 +984,22 @@ const UsersDashboard = () => {
           />
           <br />
           <CFormLabel>
-            Active Status
+            Robot Command Access
+            <span className="text-muted ms-2">
+              (If it is un-checked then user can't Send command.)
+            </span>
+          </CFormLabel>
+          <br />
+          <CFormCheck
+            id="robot_command_access"
+            name="robot_command_access"
+            checked={formData.robot_command_access || false}
+            onChange={handleChange}
+          />
+          <br />
+          <hr />
+          <CFormLabel>
+            User Active Status
             <span className="text-muted ms-2">
               (If it is checked then user can't Login.)
             </span>
@@ -1144,7 +1159,7 @@ const UsersDashboard = () => {
                     <CTableHeaderCell>Role</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.role}</CTableDataCell>
                   </CTableRow>
-                  <CTableRow>  
+                  <CTableRow>
                     <CTableHeaderCell>Department</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.department}</CTableDataCell>
                   </CTableRow>
@@ -1242,6 +1257,7 @@ const UsersDashboard = () => {
                       <CTableHeaderCell>#</CTableHeaderCell>
                       <CTableHeaderCell>Site ID</CTableHeaderCell>
                       <CTableHeaderCell>Site Name</CTableHeaderCell>
+
                       <CTableHeaderCell style={{ minWidth: "300px" }}>
                         Action
                       </CTableHeaderCell>

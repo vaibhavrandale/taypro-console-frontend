@@ -467,10 +467,10 @@ const RobotOperating = () => {
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
-        payload: error.response?.data?.message,
+        payload: error.response?.data?.message || error.response.data.error,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response?.data?.message || error.response.data.error);
     }
 
     setCommandButton(null);

@@ -93,7 +93,7 @@ const ClientRobotOperating = () => {
           `/api/v1/robots/site/${site_id}/${block}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
         // robots/site/taypro_office/Block-1/
         const robotsData = response.data.data; // Ensure correct data access
@@ -107,10 +107,10 @@ const ClientRobotOperating = () => {
 
           const filteredRobots = robotsData
             .filter(
-              (robot) => robot.site_id === site_id && robot.block === block
+              (robot) => robot.site_id === site_id && robot.block === block,
             )
             .sort(
-              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no)
+              (a, b) => extractNumber(a.robot_no) - extractNumber(b.robot_no),
             );
 
           setSiteRobots(filteredRobots);
@@ -133,7 +133,7 @@ const ClientRobotOperating = () => {
           (robot) =>
             robot.site_id === site_id &&
             robot.block === block &&
-            robot.robot_no === robot_no
+            robot.robot_no === robot_no,
         )
       : [];
   const blockwiserobots =
@@ -164,7 +164,7 @@ const ClientRobotOperating = () => {
         payload: error.response?.data?.message,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response.data.message || error.response.data.error);
     }
     setLoadingRow(null);
     setCommandButton(null);
@@ -188,7 +188,7 @@ const ClientRobotOperating = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -199,7 +199,7 @@ const ClientRobotOperating = () => {
         payload: error.response?.data?.message,
       });
 
-      toast.error(error.response.data.message || "Error adding downlink");
+      toast.error(error.response.data.message || error.response.data.error);
     }
 
     setCommandButton(null);
@@ -391,7 +391,7 @@ const ClientRobotOperating = () => {
                         <CTableDataCell>
                           {!Robotdata[0].last_uplink ||
                           isNaN(
-                            new Date(Robotdata[0].last_uplink).getTime()
+                            new Date(Robotdata[0].last_uplink).getTime(),
                           ) ? (
                             <CBadge
                               className="badge bg-danger"
@@ -403,7 +403,7 @@ const ClientRobotOperating = () => {
                             <span>
                               <CTooltip
                                 content={new Date(
-                                  Robotdata[0].last_uplink
+                                  Robotdata[0].last_uplink,
                                 ).toLocaleString()}
                                 placement="top"
                               >
@@ -412,7 +412,7 @@ const ClientRobotOperating = () => {
                                     new Date(Robotdata[0].last_uplink),
                                     {
                                       addSuffix: true,
-                                    }
+                                    },
                                   )}
                                 </span>
                               </CTooltip>
