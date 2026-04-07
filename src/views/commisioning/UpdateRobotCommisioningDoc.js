@@ -1060,6 +1060,7 @@ import {
   CCardBody,
   CCardHeader,
   CSpinner,
+  CButton,
 } from "@coreui/react";
 import {
   Zap,
@@ -1081,6 +1082,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import LastActivity from "../../components/LastActivity";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 /* ─────────────────────────────────────────────
    Reducer
@@ -1128,7 +1130,6 @@ const CLEAN_EFF_OPTIONS = ["not-checked", "poor", "average", "good"];
 const DEVIATION_OPTIONS = ["none", "low", "medium", "high"];
 const OVERALL_STATUS_OPTIONS = ["pending", "pass", "fail"];
 const STATUS_OPTIONS = ["pending", "in_progress", "completed", "failed"];
-
 /* ─────────────────────────────────────────────
    Shared primitives
 ───────────────────────────────────────────── */
@@ -1338,6 +1339,12 @@ const UpdateRobotCommisioningDoc = () => {
     updating: false,
   });
   const [form, setForm] = useState(null);
+  // ✅ ADD HERE
+  const [commandButton, setCommandButton] = useState(null);
+
+  let start = "11";
+  let stop = "14";
+  let returntodock = "15";
 
   // Raw string buffers so commas can be typed freely; converted to array only on blur
   const [summaryIssuesRaw, setSummaryIssuesRaw] = useState("");
@@ -1366,6 +1373,37 @@ const UpdateRobotCommisioningDoc = () => {
     };
     fetchDoc();
   }, [authtoken, id]);
+
+  const sendsingleDownlink = async (command, index) => {
+    setCommandButton(index);
+
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-downlink",
+        {
+          deveui: doc.deveui,
+          robot_no: doc.robot_no,
+          site_id: doc.site_id,
+          payload: command,
+          lora_no: doc.lora_no,
+        },
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        },
+      );
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response.data.error,
+      });
+
+      toast.error(error.response.data.message || error.response.data.error);
+    }
+    // setLoadingRow(null);
+    setCommandButton(null);
+  };
 
   const buildForm = (d) => ({
     status: d.status || "pending",
@@ -1775,6 +1813,7 @@ const UpdateRobotCommisioningDoc = () => {
                       label="Reverse ✓"
                     />
                   </CCol>
+
                   <CCol xs={12}>
                     <FieldLabel>Remarks</FieldLabel>
                     <StyledTextarea
@@ -1784,6 +1823,56 @@ const UpdateRobotCommisioningDoc = () => {
                       }
                       placeholder="Enter remarks…"
                     />
+                  </CCol>
+
+                  {/* ✅ Buttons Added Here */}
+                  <CCol xs={12}>
+                    <FieldLabel>Controls</FieldLabel>
+
+                    <CButton
+                      className="btn btn-sm btn-secondary m-1 shadow"
+                      disabled={commandButton === 11}
+                      onClick={() => sendsingleDownlink(start, 11)}
+                    >
+                      {commandButton === 11 ? (
+                        <>
+                          START&nbsp;
+                          <LoadingSpinner />
+                        </>
+                      ) : (
+                        "START"
+                      )}
+                    </CButton>
+
+                    <CButton
+                      className="btn btn-sm btn-secondary m-1 shadow-sm"
+                      disabled={commandButton === 12}
+                      onClick={() => sendsingleDownlink(stop, 12)}
+                    >
+                      {commandButton === 12 ? (
+                        <>
+                          STOP&nbsp;
+                          <LoadingSpinner />
+                        </>
+                      ) : (
+                        "STOP"
+                      )}
+                    </CButton>
+
+                    <CButton
+                      className="btn btn-sm btn-secondary m-1 shadow-sm"
+                      disabled={commandButton === 13}
+                      onClick={() => sendsingleDownlink(returntodock, 13)}
+                    >
+                      {commandButton === 13 ? (
+                        <>
+                          RETURN&nbsp;
+                          <LoadingSpinner />
+                        </>
+                      ) : (
+                        "RETURN"
+                      )}
+                    </CButton>
                   </CCol>
                 </CRow>
               </SectionCard>

@@ -3812,6 +3812,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: " Robot Commissioning",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Non Commissioned Robots",
+            to: "/client-admin/dashboard/non-commisioned-robots", // ✅ FIXED
+          },
+        ],
+      },
 
       // {
       //   component: CNavGroup,
