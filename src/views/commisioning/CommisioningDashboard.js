@@ -1,6 +1,9 @@
 import {
   CAlert,
   CBadge,
+  CCol,
+  CFormSelect,
+  CRow,
   CTab,
   CTabContent,
   CTable,
@@ -13,7 +16,7 @@ import {
   CTabPanel,
   CTabs,
 } from "@coreui/react";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import { commissioning_certificates, robot_commissioning_doc } from "./cdata";
 import toast from "react-hot-toast";
@@ -35,6 +38,31 @@ const reducer = (state, action) => {
     case "FETCH_DOCS_FAIL":
       return { ...state, loadingDoc: false, fetchDocError: action.payload };
 
+    case "FETCH_CERTIFICATES_REQUEST":
+      return { ...state, loadingCertificates: true, certificatesError: "" };
+    case "FETCH_CERTIFICATES_SUCCESS":
+      return {
+        ...state,
+        loadingCertificates: false,
+        certificates: action.payload,
+      };
+    case "FETCH_CERTIFICATES_FAIL":
+      return {
+        ...state,
+        loadingCertificates: false,
+        certificatesError: action.payload,
+      };
+
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, sitesError: "" };
+    case "FETCH_SITES_SUCCESS":
+      return {
+        ...state,
+        loadingSites: false,
+        sites: action.payload,
+      };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, sitesError: action.payload };
     default:
       return state;
   }
@@ -55,14 +83,56 @@ const getStatusColor = (status) => {
   }
 };
 const CommisioningDashboard = () => {
-  const [{ loadingDoc, fetchDocError, docs }, dispatch] = useReducer(reducer, {
+  const [
+    {
+      loadingDoc,
+      fetchDocError,
+      docs,
+      sites,
+      loadingSites,
+      sitesError,
+      loadingCertificates,
+      certificates,
+      certificatesError,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
     loadingDoc: false,
     fetchDocError: "",
     docs: [],
+    sites: [],
+    loadingSites: false,
+    sitesError: "",
+    certificates: [],
+    loadingCertificates: false,
+    certificatesError: "",
   });
   const userInfo = useSelector((state) => state.userInfo);
   const authtoken = useSelector((state) => state.authtoken);
-  let site_id = "avaada_soyegaon";
+  const [site_id, setSiteId] = useState("all");
+  // let site_id = "avaada_soyegaon";
+
+  useEffect(() => {
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+      }
+    };
+    fetchSites();
+  }, [authtoken]);
+
   useEffect(() => {
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_DOCS_REQUEST" });
@@ -90,7 +160,34 @@ const CommisioningDashboard = () => {
       }
     };
 
+    const fetchCertificates = async () => {
+      dispatch({ type: "FETCH_CERTIFICATES_REQUEST" });
+      try {
+        const result = await axios.get(
+          `/api/v1/commisioning-certificates/sitewise-certificates/${site_id}`,
+          {
+            headers: { Authorization: `Bearer ${authtoken}` },
+          },
+        );
+
+        dispatch({
+          type: "FETCH_CERTIFICATES_SUCCESS",
+
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_CERTIFICATES_FAIL",
+          payload: error.response?.data?.message || error.response?.data?.error,
+        });
+        toast.error(
+          error.response?.data?.message || error.response?.data?.error,
+        );
+      }
+    };
+
     fetchRobots();
+    fetchCertificates();
   }, [authtoken, site_id]);
 
   let adminroute = "";
@@ -119,18 +216,45 @@ const CommisioningDashboard = () => {
     adminroute = "factory-admin";
   }
 
+  const handleSiteNameChange = (e) => {
+    const selectedSiteId = e.target.value;
+    setSiteId(selectedSiteId); // Updates local state
+  };
+
   return (
     <div>
-      <Link to="/master-admin/commissioning/view/1234">View Doc</Link>
-
-      <CTabs activeItemKey="comm-certificates">
+      {/* <Link to="/master-admin/commissioning/view/1234">View Doc</Link> */}
+      <CRow className="my-2 d-flex align-items-center justify-content-end">
+        <CCol md={3} xs={12} className="m-1">
+          <CFormSelect
+            name="site_id"
+            value={site_id}
+            onChange={handleSiteNameChange}
+          >
+            <option value="all">All Data</option>
+            {loadingSites ? (
+              <LoadingSpinner />
+            ) : sitesError ? (
+              <CAlert>{sitesError}</CAlert>
+            ) : (
+              sites?.length > 0 &&
+              sites.map((item) => (
+                <option key={item.site_id} value={item.site_id}>
+                  {item.site_id}
+                </option>
+              ))
+            )}
+          </CFormSelect>
+        </CCol>
+      </CRow>
+      <CTabs activeItemKey="comm-robots">
         {/* ✅ ONLY tabs here */}
         <CTabList variant="tabs" className="border-bottom">
-          <CTab itemKey="comm-certificates" className="text-white">
-            Commisioned Certificates
-          </CTab>
           <CTab itemKey="comm-robots" className="text-white">
             Commisioned Robots
+          </CTab>
+          <CTab itemKey="comm-certificates" className="text-white">
+            Commisioned Certificates
           </CTab>
         </CTabList>
 
@@ -159,8 +283,22 @@ const CommisioningDashboard = () => {
               </CTableHead>
 
               <CTableBody>
-                {commissioning_certificates.length > 0 ? (
-                  commissioning_certificates.map((cert, index) => (
+                {loadingCertificates ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={5}>
+                      {" "}
+                      <LoadingSpinner />
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : certificatesError ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={5}>
+                      {" "}
+                      <CAlert>{certificatesError}</CAlert>
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : certificates.length > 0 ? (
+                  certificates.map((cert, index) => (
                     <CTableRow key={cert._id}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>
@@ -176,8 +314,10 @@ const CommisioningDashboard = () => {
                     </CTableRow>
                   ))
                 ) : (
-                  <CTableRow colSpan={5}>
-                    <CTableDataCell>No Certificate Found</CTableDataCell>
+                  <CTableRow>
+                    <CTableDataCell colSpan={5}>
+                      No Certificate Found
+                    </CTableDataCell>
                   </CTableRow>
                 )}
               </CTableBody>
@@ -185,11 +325,14 @@ const CommisioningDashboard = () => {
           </CTabPanel>
 
           <CTabPanel itemKey="comm-robots">
-            <div className="d-flex justify-content-end align-items-center my-2">
-              <Link className="btn btn-sm" to="non-commisioned-robots">
-                New Commisioning
-              </Link>
-            </div>
+            <CRow className="my-2 d-flex align-items-center justify-content-end">
+              <CCol md={2} xs={12} className="m-1">
+                {" "}
+                <Link className="btn btn-sm" to="non-commisioned-robots">
+                  New Commisioning
+                </Link>
+              </CCol>
+            </CRow>
             <CTable
               bordered
               hover
@@ -247,7 +390,13 @@ const CommisioningDashboard = () => {
                       <CTableDataCell>{robot.site_location}</CTableDataCell>
                       <CTableDataCell>
                         <Link
-                          className="btn btn-sm"
+                          className="btn btn-sm m-1"
+                          to={`/${adminroute}/commissioning/view-robot-commisioning-doc/${robot._id}`}
+                        >
+                          View
+                        </Link>
+                        <Link
+                          className="btn btn-sm m-1"
                           to={`/${adminroute}/commissioning/update-robot-commisioning-doc/${robot._id}`}
                         >
                           Update
@@ -256,8 +405,8 @@ const CommisioningDashboard = () => {
                     </CTableRow>
                   ))
                 ) : (
-                  <CTableRow colSpan={5}>
-                    <CTableDataCell>No Docs Found</CTableDataCell>
+                  <CTableRow>
+                    <CTableDataCell colSpan={8}>No Docs Found</CTableDataCell>
                   </CTableRow>
                 )}
               </CTableBody>

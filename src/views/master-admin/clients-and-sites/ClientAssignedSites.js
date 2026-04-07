@@ -119,6 +119,7 @@ const ClientAssignedSites = () => {
       site_id: "",
       site_type: "",
       client_id: id,
+      project_code: "",
     },
   };
 
@@ -292,7 +293,7 @@ const ClientAssignedSites = () => {
               )}
             </div>
 
-            <CTable striped hover responsive className="mt-3 bg-important">
+            <CTable striped hover responsive className="mb-3 bg-important">
               <CTableHead color="dark">
                 <CTableRow>
                   <CTableHeaderCell>#</CTableHeaderCell>
@@ -453,7 +454,7 @@ const ClientAssignedSites = () => {
               placeholder="Location"
               value={state.formData.location}
               onChange={handleChange}
-              className="mt-3"
+              className=""
             />
             <CFormInput
               type="text"
@@ -462,7 +463,16 @@ const ClientAssignedSites = () => {
               placeholder="site_type"
               value={state.formData.site_type}
               onChange={handleChange}
-              className="mt-3"
+              className=""
+            />
+            <CFormInput
+              type="text"
+              label="project_code"
+              name="project_code"
+              placeholder="project code"
+              value={state.formData.project_code}
+              onChange={handleChange}
+              className=""
             />
             <CFormInput
               type="text"
@@ -471,7 +481,7 @@ const ClientAssignedSites = () => {
               placeholder="client_id"
               value={id}
               onChange={handleChange}
-              className="mt-3"
+              className=""
             />
           </CForm>
         </CModalBody>

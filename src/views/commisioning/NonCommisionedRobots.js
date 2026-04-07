@@ -11,6 +11,7 @@ import {
   CCol,
   CBadge,
   CAlert,
+  CFormSelect,
 } from "@coreui/react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -54,6 +55,18 @@ const reducer = (state, action) => {
           [action.payload.id]: action.payload.error,
         },
       };
+
+    case "FETCH_SITES_REQUEST":
+      return { ...state, loadingSites: true, sitesError: "" };
+    case "FETCH_SITES_SUCCESS":
+      return {
+        ...state,
+        loadingSites: false,
+        sites: action.payload,
+      };
+    case "FETCH_SITES_FAIL":
+      return { ...state, loadingSites: false, sitesError: action.payload };
+
     default:
       return state;
   }
@@ -61,7 +74,17 @@ const reducer = (state, action) => {
 
 const NonCommisionedRobots = () => {
   const [
-    { robots, error, loadingRobots, generateError, rowLoading, rowError },
+    {
+      robots,
+      error,
+      loadingRobots,
+      generateError,
+      rowLoading,
+      rowError,
+      sites,
+      loadingSites,
+      sitesError,
+    },
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
@@ -72,6 +95,9 @@ const NonCommisionedRobots = () => {
     rowLoading: {},
     rowError: {},
     generateSuccess: false,
+    sites: [],
+    loadingSites: false,
+    sitesError: "",
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +105,31 @@ const NonCommisionedRobots = () => {
   const navigate = useNavigate();
   const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-  let site_id = "avaada_soyegaon";
+  // let site_id = "avaada_soyegaon";
+
+  const [site_id, setSiteId] = useState("all");
+
+  useEffect(() => {
+    const fetchSites = async () => {
+      dispatch({ type: "FETCH_SITES_REQUEST" });
+      try {
+        const result = await axios.get(`/api/v1/sites`, {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        });
+        dispatch({
+          type: "FETCH_SITES_SUCCESS",
+          payload: result.data.data,
+        });
+      } catch (error) {
+        dispatch({
+          type: "FETCH_SITES_FAIL",
+          payload: error.response?.data?.error || error.response?.data?.message,
+        });
+      }
+    };
+    fetchSites();
+  }, [authtoken]);
+
   useEffect(() => {
     const fetchRobots = async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
@@ -164,7 +214,7 @@ const NonCommisionedRobots = () => {
       dispatch({ type: "GENERATE_DOC_SUCCESS", payload: id });
 
       navigate(
-        `/${adminroute}/commissioning/view-robot-commisioning-doc/${res.data.data._id}`,
+        `/${adminroute}/commissioning/update-robot-commisioning-doc/${res.data.data._id}`,
       );
       toast.success("Doc created successfully");
     } catch (error) {
@@ -182,14 +232,38 @@ const NonCommisionedRobots = () => {
       toast.error(error.response?.data?.message || error.response?.data?.error);
     }
   };
-
+  const handleSiteNameChange = (e) => {
+    const selectedSiteId = e.target.value;
+    setSiteId(selectedSiteId); // Updates local state
+  };
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>All Non Commisioned Robots</h2>
       </div>
       <CRow className="justify-content-end">
-        <CCol md={4} lg={4}>
+        <CCol md={3} xs={12} className="m-1">
+          <CFormSelect
+            name="site_id"
+            value={site_id}
+            onChange={handleSiteNameChange}
+          >
+            <option value="all">All Data</option>
+            {loadingSites ? (
+              <LoadingSpinner />
+            ) : sitesError ? (
+              <CAlert>{sitesError}</CAlert>
+            ) : (
+              sites?.length > 0 &&
+              sites.map((item) => (
+                <option key={item.site_id} value={item.site_id}>
+                  {item.site_id}
+                </option>
+              ))
+            )}
+          </CFormSelect>
+        </CCol>
+        <CCol md={4} lg={4} className="m-1">
           {/* Search Input */}
           <CFormInput
             type="text"
@@ -223,7 +297,9 @@ const NonCommisionedRobots = () => {
               </CTableDataCell>
             </CTableRow>
           ) : error ? (
-            error
+            <CTableRow>
+              <CTableDataCell colSpan={9}>{error}</CTableDataCell>
+            </CTableRow>
           ) : filteredRobots.length > 0 ? (
             filteredRobots.map((robot, index) => (
               <CTableRow key={index}>
