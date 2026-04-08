@@ -1642,6 +1642,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Commissioning",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/project-admin/commissioning",
+          },
+        ],
+      },
     ],
   },
 
@@ -2399,6 +2417,24 @@ const _nav = [
             component: CNavItem,
             name: "Statistics",
             to: "/service-admin/statistics",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Commissioning",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/service-admin/commissioning",
           },
         ],
       },
@@ -3809,6 +3845,24 @@ const _nav = [
                 }}
               />
             ),
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: " Robot Commissioning",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/client-admin/commissioning", // ✅ FIXED
           },
         ],
       },

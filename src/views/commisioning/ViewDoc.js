@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import LastActivity from "../../components/LastActivity";
 
 // status: "completed", // pending | in_progress | completed | failed
 const reducer = (state, action) => {
@@ -45,40 +46,36 @@ const ViewDoc = () => {
     });
 
   const authtoken = useSelector((state) => state.authtoken);
-
+  const userInfo = useSelector((state) => state.userInfo);
   const { id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [selectedRobots, setSelectedRobots] = useState([]);
+  const fetchCertificates = async () => {
+    dispatch({ type: "FETCH_CERTIFICATES_REQUEST" });
+    try {
+      const result = await axios.get(
+        `/api/v1/commisioning-certificates/${id}`,
+        {
+          headers: { Authorization: `Bearer ${authtoken}` },
+        },
+      );
 
+      dispatch({
+        type: "FETCH_CERTIFICATES_SUCCESS",
+
+        payload: result.data.data,
+      });
+      // console.log(result.data.data);
+      setSelectedRobots(result.data.data.robots);
+    } catch (error) {
+      dispatch({
+        type: "FETCH_CERTIFICATES_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    }
+  };
   useEffect(() => {
-    const fetchCertificates = async () => {
-      dispatch({ type: "FETCH_CERTIFICATES_REQUEST" });
-      try {
-        const result = await axios.get(
-          `/api/v1/commisioning-certificates/${id}`,
-          {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          },
-        );
-
-        dispatch({
-          type: "FETCH_CERTIFICATES_SUCCESS",
-
-          payload: result.data.data,
-        });
-        console.log(result.data.data);
-        setSelectedRobots(result.data.data.robots);
-      } catch (error) {
-        dispatch({
-          type: "FETCH_CERTIFICATES_FAIL",
-          payload: error.response?.data?.message || error.response?.data?.error,
-        });
-        toast.error(
-          error.response?.data?.message || error.response?.data?.error,
-        );
-      }
-    };
-
     fetchCertificates();
   }, [authtoken, id]);
 
@@ -119,15 +116,17 @@ const ViewDoc = () => {
             <h4>Commissoning Doc</h4>
             <div>
               <CButton size="sm" onClick={() => window.print()}>
-                Print
+                Export PDF
               </CButton>
-              <CButton
-                size="sm"
-                className="ms-2"
-                onClick={() => setShowModal(true)}
-              >
-                Add Robots
-              </CButton>
+              {userInfo.type === "Internal" && (
+                <CButton
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => setShowModal(true)}
+                >
+                  Add/ Remove Robots
+                </CButton>
+              )}
             </div>
           </div>
           <div className="my-2 card rounded-0 doc-container">
@@ -287,7 +286,7 @@ const ViewDoc = () => {
                           </div>
 
                           <div
-                            className={`text-center ${
+                            className={`ps-3 ${
                               i === col.length - 1 ? "" : "border-bottom"
                             }`}
                           >
@@ -322,13 +321,22 @@ const ViewDoc = () => {
               </div>
             </div>
           </div>
+
+          {certificate.last_activity && (
+            <LastActivity lastactivity={certificate.last_activity} />
+          )}
           <RobotSelectionModal
+            commisioning_doc_id={id}
+            site_id={certificate?.site_id}
+            authtoken={authtoken}
             visible={showModal}
+            certificate_robots={robots}
             onClose={() => setShowModal(false)}
-            onSelect={(robots) => {
-              console.log("Selected from modal:", robots);
-              setSelectedRobots(robots);
-            }}
+            fetchCertificates={fetchCertificates}
+            // onSelect={(robots) => {
+            //   console.log("Selected from modal:", robots);
+            //   setSelectedRobots(robots);
+            // }}
           />
         </div>
       ) : (

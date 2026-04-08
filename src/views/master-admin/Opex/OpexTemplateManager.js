@@ -86,7 +86,7 @@ const reducer = (state, action) => {
         opexData: {
           ...state.opexData,
           cycles: state.opexData.cycles.map((cycle) =>
-            cycle._id === action.payload._id ? action.payload : cycle
+            cycle._id === action.payload._id ? action.payload : cycle,
           ),
         },
       };
@@ -105,7 +105,7 @@ const reducer = (state, action) => {
         opexData: {
           ...state.opexData,
           cycles: state.opexData.cycles.filter(
-            (cycle) => cycle._id !== action.payload
+            (cycle) => cycle._id !== action.payload,
           ),
         },
       };
@@ -159,7 +159,7 @@ const OpexTemplateManager = () => {
   const [selectedYear, setSelectedYear] = useState(String(currentYear));
   const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -222,7 +222,7 @@ const OpexTemplateManager = () => {
             Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       dispatch({
@@ -256,7 +256,7 @@ const OpexTemplateManager = () => {
             Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       dispatch({
@@ -282,16 +282,16 @@ const OpexTemplateManager = () => {
     setSelectedCycles((prev) =>
       prev.some((c) => c._id === cycle._id)
         ? prev.filter((c) => c._id !== cycle._id)
-        : [...prev, cycle]
+        : [...prev, cycle],
     );
   };
 
   // Select all cycles
   const selectAllCycles = () => {
-    if (selectedCycles.length === opexData.cycles.length) {
+    if (selectedCycles.length === filteredCycles.length) {
       setSelectedCycles([]);
     } else {
-      setSelectedCycles([...opexData.cycles]);
+      setSelectedCycles([...filteredCycles]);
     }
   };
 
@@ -308,7 +308,7 @@ const OpexTemplateManager = () => {
       const response = await axios.put(
         `/api/v1/opex/generate-certificate/${opexData._id}/${site_id}`,
         { cyclesArray: selectedCycles.map((cycle) => cycle._id) },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({
@@ -339,7 +339,7 @@ const OpexTemplateManager = () => {
             Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       console.log(response.data);
       dispatch({
@@ -359,7 +359,7 @@ const OpexTemplateManager = () => {
 
   const years = [
     ...new Set(
-      opexData?.cycles?.map((c) => new Date(c.start_date).getFullYear())
+      opexData?.cycles?.map((c) => new Date(c.start_date).getFullYear()),
     ),
   ];
   const filteredCycles = opexData?.cycles?.filter((cycle) => {
@@ -480,7 +480,7 @@ const OpexTemplateManager = () => {
                       year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
-                    }
+                    },
                   )
                 : "N/A",
               dayData.remarks || "N/A",
@@ -607,7 +607,7 @@ const OpexTemplateManager = () => {
         wb,
         `OPEX_${opexData.site?.siteName || "Unknown"}_${
           new Date().toISOString().split("T")[0]
-        }.xlsx`
+        }.xlsx`,
       );
       toast.success("Excel file downloaded successfully!");
     } catch (error) {
@@ -629,12 +629,31 @@ const OpexTemplateManager = () => {
     setStartDate("");
   };
 
+  const monthOptions = (month) => {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return monthNames[month - 1] || "Unknown";
+  };
+
   return (
     <div className="mt-5">
       {!loadingOpex && Object.keys(opexData).length === 0 && (
         <div style={{ minWidth: "160px" }} className="text-end mb-2">
           {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role
+            userInfo?.role,
           ) && (
             <Link
               to={`/${adminroute}/create-template/${site_id}`}
@@ -785,7 +804,7 @@ const OpexTemplateManager = () => {
                 <CTable bordered hover responsive>
                   <CTableHead color="secondary">
                     <CTableRow>
-                      <CTableHeaderCell>Date</CTableHeaderCell>
+                      <CTableHeaderCell>Month-Year</CTableHeaderCell>
                       <CTableHeaderCell>Certificate ID</CTableHeaderCell>
                       <CTableHeaderCell>Verified By</CTableHeaderCell>
                       <CTableHeaderCell>Verified At</CTableHeaderCell>
@@ -816,7 +835,8 @@ const OpexTemplateManager = () => {
                       opexData.certificates.map((certificate, index) => (
                         <CTableRow key={index}>
                           <CTableDataCell>
-                            {certificate.month}/{certificate.year}
+                            {monthOptions(certificate.month)}-{" "}
+                            {certificate.year}
                           </CTableDataCell>
                           <CTableDataCell>{certificate._id}</CTableDataCell>
                           <CTableDataCell>
@@ -824,7 +844,7 @@ const OpexTemplateManager = () => {
                           </CTableDataCell>
                           <CTableDataCell>
                             {new Date(
-                              certificate.verified_by.timestamp
+                              certificate.verified_by.timestamp,
                             ).toLocaleString("en-GB", {
                               day: "2-digit",
                               month: "2-digit",
@@ -896,7 +916,7 @@ const OpexTemplateManager = () => {
           <div className="d-flex justify-content-end mb-3">
             {selectedCycles.length > 0 &&
               !["Master User", "Project User", "Service User"].includes(
-                userInfo?.role
+                userInfo?.role,
               ) && (
                 <CButton
                   color="success"
@@ -1034,7 +1054,7 @@ const OpexTemplateManager = () => {
                         <CTableDataCell>
                           <CFormCheck
                             checked={selectedCycles.some(
-                              (c) => c._id === cycle._id
+                              (c) => c._id === cycle._id,
                             )}
                             onChange={() => handleCheckboxChange(cycle)}
                           />
@@ -1104,7 +1124,7 @@ const OpexTemplateManager = () => {
                             isLastDayOfMonth(
                               cycle.day_wise_data[
                                 cycle.day_wise_data.length - 1
-                              ].date
+                              ].date,
                             )) &&
                           ![
                             "Master User",

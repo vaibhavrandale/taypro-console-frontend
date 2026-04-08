@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -45,6 +46,7 @@ const AddSemiAutomaticRobot = () => {
   });
 
   const { robots, loadingAddRobotManual, loadingSites, sites } = state;
+  const navigate = useNavigate();
 
   const [manualRRobotData, setManualRobotData] = useState({
     robot_no: "",
@@ -101,7 +103,8 @@ const AddSemiAutomaticRobot = () => {
       );
 
       toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);
-
+      // i want navigate to this link master-admin/semi-automatic-robots
+      navigate("/master-admin/semi-automatic-robots");
       dispatch({
         type: "ADD_ROBOT_MANUAL_SUCCESS",
         payload: [...robots, response.data.data],
