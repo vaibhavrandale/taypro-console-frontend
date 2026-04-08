@@ -3826,7 +3826,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Non Commissioned Robots",
-            to: "/client-admin/dashboard/non-commisioned-robots", // ✅ FIXED
+            to: "/client-admin/commissioning", // ✅ FIXED
           },
         ],
       },

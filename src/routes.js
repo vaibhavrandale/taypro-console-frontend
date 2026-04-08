@@ -215,7 +215,6 @@ import ViewRobotCommisioningDoc from "./views/commisioning/ViewRobotCommisioning
 import UpdateRobotCommisioningDoc from "./views/commisioning/UpdateRobotCommisioningDoc";
 import SemiAutomaticRobot from "./views/master-admin/semi-robots/SemiAutomaticRobot";
 import AddSemiAutomaticRobot from "./views/master-admin/semi-robots/AddSemiAutomaticRobot";
-import NonCommisionedRobotsClient from "./views/client-admin/commissioning/NonCommisionedRobotsClient";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -7578,14 +7577,43 @@ const routes = [
     ),
   },
   {
-    path: "/client-admin/dashboard/non-commisioned-robots",
-    name: "Non Commissioned Robots",
+    path: "/client-admin/commissioning",
+    name: "Comminsioning Dashboard",
     element: (
       <ClientAdminRoute>
-        <NonCommisionedRobotsClient />
+        <CommisioningDashboard />
       </ClientAdminRoute>
     ),
   },
+  {
+    path: "/client-admin/commissioning/view/:id",
+    name: "View Doc",
+    element: (
+      <ClientAdminRoute>
+        <ViewDoc />
+      </ClientAdminRoute>
+    ),
+  },
+
+  {
+    path: "/client-admin/commissioning/non-commisioned-robots",
+    name: "Non Commisioned Robots",
+    element: (
+      <ClientAdminRoute>
+        <NonCommisionedRobots />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/commissioning/view-robot-commisioning-doc/:id",
+    name: "View Robot Commisioning Doc",
+    element: (
+      <ClientAdminRoute>
+        <ViewRobotCommisioningDoc />
+      </ClientAdminRoute>
+    ),
+  },
+
   // ------------------------client admin---------------------------------
 
   // ---------------------client Site Incharge--------------------------------

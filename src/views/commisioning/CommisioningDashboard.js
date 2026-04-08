@@ -123,6 +123,7 @@ const CommisioningDashboard = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
+        setSiteId(result.data.data[0]?.site_id); // Set default site_id to the first site or "all" if no sites
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -226,25 +227,26 @@ const CommisioningDashboard = () => {
       {/* <Link to="/master-admin/commissioning/view/1234">View Doc</Link> */}
       <CRow className="my-2 d-flex align-items-center justify-content-end">
         <CCol md={3} xs={12} className="m-1">
-          <CFormSelect
-            name="site_id"
-            value={site_id}
-            onChange={handleSiteNameChange}
-          >
-            <option value="all">All Data</option>
-            {loadingSites ? (
-              <LoadingSpinner />
-            ) : sitesError ? (
-              <CAlert>{sitesError}</CAlert>
-            ) : (
-              sites?.length > 0 &&
-              sites.map((item) => (
-                <option key={item.site_id} value={item.site_id}>
-                  {item.site_id}
-                </option>
-              ))
-            )}
-          </CFormSelect>
+          {loadingSites ? (
+            <LoadingSpinner />
+          ) : sitesError ? (
+            <CAlert>{sitesError}</CAlert>
+          ) : (
+            <CFormSelect
+              name="site_id"
+              value={site_id}
+              onChange={handleSiteNameChange}
+            >
+              <option value="all">All Data</option>
+
+              {sites?.length > 0 &&
+                sites.map((item) => (
+                  <option key={item.site_id} value={item.site_id}>
+                    {item.site_id}
+                  </option>
+                ))}
+            </CFormSelect>
+          )}
         </CCol>
       </CRow>
       <CTabs activeItemKey="comm-robots">
@@ -262,9 +264,11 @@ const CommisioningDashboard = () => {
         <CTabContent>
           <CTabPanel itemKey="comm-certificates">
             <div className="d-flex justify-content-end align-items-center my-2">
-              <Link className="btn btn-sm" to="new-certificate">
-                New Certificate
-              </Link>
+              {userInfo?.type === "Internal" && (
+                <Link className="btn btn-sm" to="new-certificate">
+                  New Certificate
+                </Link>
+              )}
             </div>
             <CTable
               bordered
@@ -303,7 +307,7 @@ const CommisioningDashboard = () => {
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell>
                         <Link
-                          to={`/master-admin/commissioning/view/${cert._id}`}
+                          to={`/${adminroute}/commissioning/view/${cert._id}`}
                         >
                           {cert.certificate_no}
                         </Link>
@@ -328,9 +332,11 @@ const CommisioningDashboard = () => {
             <CRow className="my-2 d-flex align-items-center justify-content-end">
               <CCol md={2} xs={12} className="m-1">
                 {" "}
-                <Link className="btn btn-sm" to="non-commisioned-robots">
-                  New Commisioning
-                </Link>
+                {userInfo?.type === "Internal" && (
+                  <Link className="btn btn-sm" to="non-commisioned-robots">
+                    New Commisioning
+                  </Link>
+                )}
               </CCol>
             </CRow>
             <CTable
@@ -395,12 +401,14 @@ const CommisioningDashboard = () => {
                         >
                           View
                         </Link>
-                        <Link
-                          className="btn btn-sm m-1"
-                          to={`/${adminroute}/commissioning/update-robot-commisioning-doc/${robot._id}`}
-                        >
-                          Update
-                        </Link>
+                        {userInfo?.type === "Internal" && (
+                          <Link
+                            className="btn btn-sm m-1"
+                            to={`/${adminroute}/commissioning/update-robot-commisioning-doc/${robot._id}`}
+                          >
+                            Update
+                          </Link>
+                        )}
                       </CTableDataCell>
                     </CTableRow>
                   ))

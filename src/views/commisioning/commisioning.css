@@ -222,7 +222,11 @@
 }
 
 .doc-container {
-  width: 794px; /* A4 width */
+  /* width: 794px; 
+  min-height: 100vh; */
+  overflow-x: auto;
+  max-width: 900px;
+
   min-height: 100vh;
 }
 
