@@ -4195,6 +4195,60 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/commissioning",
+    name: "Comminsioning Dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <CommisioningDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/commissioning/view/:id",
+    name: "View Doc",
+    element: (
+      <ProjectAdminRoute>
+        <ViewDoc />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/commissioning/new-certificate",
+    name: "New Comminisioning Certificate",
+    element: (
+      <ProjectAdminRoute>
+        <GenerateNewCertificate />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/commissioning/non-commisioned-robots",
+    name: "Non Commisioned Robots",
+    element: (
+      <ProjectAdminRoute>
+        <NonCommisionedRobots />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/commissioning/view-robot-commisioning-doc/:id",
+    name: "View Robot Commisioning Doc",
+    element: (
+      <ProjectAdminRoute>
+        <ViewRobotCommisioningDoc />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/commissioning/update-robot-commisioning-doc/:id",
+    name: "Update Robot Commisioning Doc",
+    element: (
+      <ProjectAdminRoute>
+        <UpdateRobotCommisioningDoc />
+      </ProjectAdminRoute>
+    ),
+  },
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -6038,6 +6092,60 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <SiteAnalytics />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning",
+    name: "Comminsioning Dashboard",
+    element: (
+      <ServiceAdminRoute>
+        <CommisioningDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning/view/:id",
+    name: "View Doc",
+    element: (
+      <ServiceAdminRoute>
+        <ViewDoc />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning/new-certificate",
+    name: "New Comminisioning Certificate",
+    element: (
+      <ServiceAdminRoute>
+        <GenerateNewCertificate />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning/non-commisioned-robots",
+    name: "Non Commisioned Robots",
+    element: (
+      <ServiceAdminRoute>
+        <NonCommisionedRobots />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning/view-robot-commisioning-doc/:id",
+    name: "View Robot Commisioning Doc",
+    element: (
+      <ServiceAdminRoute>
+        <ViewRobotCommisioningDoc />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/commissioning/update-robot-commisioning-doc/:id",
+    name: "Update Robot Commisioning Doc",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateRobotCommisioningDoc />
       </ServiceAdminRoute>
     ),
   },
