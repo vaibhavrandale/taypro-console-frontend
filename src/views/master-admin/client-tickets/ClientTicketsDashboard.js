@@ -176,21 +176,139 @@ const ClientTicketsDashboard = () => {
     }
   };
 
+  const getTimeDifference = (start, end) => {
+  if (!start || !end) return "NA";
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  const diffMs = endDate - startDate;
+
+  const minutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (minutes < 60) return `${minutes} min`;
+  if (hours < 24) return `${hours} hr`;
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""}`;
+  if (months < 12) return `${months} month${months > 1 ? "s" : ""}`;
+
+  return `${years} year${years > 1 ? "s" : ""}`;
+};
+const exportToCSV = () => {
+  if (!filteredTickets || filteredTickets.length === 0) {
+    toast.error("No data to export");
+    return;
+  }
+
+  const makeHyperlink = (url, label = "View") => {
+    if (!url) return "";
+    return `=HYPERLINK("${url}","${label}")`;
+  };
+
+  const headers = [
+    "Ticket ID",
+    "Site ID",
+    "Subject",
+    "Description",
+    "Status",
+
+    "Created By Name",
+    "Created By Email",
+    "Created By Designation",
+
+    "Resolution Notes",
+
+    "Resolved By Name",
+    "Resolved By Email",
+    "Resolved By Role",
+
+    "Created At",
+    "Updated At",
+    "Resolved At",
+    "Resolution Time",
+
+    "Creation Image 1",
+    "Creation Image 2",
+    "Resolution Image 1",
+    "Resolution Image 2",
+  ];
+
+  const rows = filteredTickets.map((ticket) => [
+    ticket.ticket_id,
+    ticket.site_id,
+    ticket.subject,
+    ticket.description,
+    ticket.status,
+
+    ticket.created_by?.name || "",
+    ticket.created_by?.email || "",
+    ticket.created_by?.designation || "",
+
+    ticket.resolution_notes || "",
+
+    ticket.resolved_by?.name || "",
+    ticket.resolved_by?.email || "",
+    ticket.resolved_by?.role || "",
+
+    new Date(ticket.createdAt).toLocaleString("en-GB"),
+    new Date(ticket.updatedAt).toLocaleString("en-GB"),
+    ticket.resolved_at
+      ? new Date(ticket.resolved_at).toLocaleString("en-GB")
+      : "NA",
+
+    ticket.status === "Resolved"
+      ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
+      : "NA",
+
+    makeHyperlink(ticket.creation_image1, "View Image"),
+    makeHyperlink(ticket.creation_image2, "View Image"),
+    makeHyperlink(ticket.resolution_image1, "View Image"),
+    makeHyperlink(ticket.resolution_image2, "View Image"),
+  ]);
+
+  const csvContent =
+    "data:text/csv;charset=utf-8," +
+    [headers, ...rows]
+      .map((row) =>
+        row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")
+      )
+      .join("\n");
+
+  const link = document.createElement("a");
+  link.href = encodeURI(csvContent);
+  link.download = `client_tickets_full_${Date.now()}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   return (
     <div className="">
       <h2 className="text-center">Client Tickets</h2>
-      <div className="d-flex justify-content-end my-2 align-items-center">
-        {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
-        ) && (
-          <Link
-            to="create-new-client-ticket"
-            className="btn btn-sm btn-primary"
-          >
-            NEW
-          </Link>
-        )}
-      </div>
+     <div className="d-flex justify-content-end my-2 align-items-center">
+  <div>
+    {!["Master User", "Project User", "Service User"].includes(
+      userInfo?.role
+    ) && (
+      <Link
+        to="create-new-client-ticket"
+        className="btn btn-sm btn-primary me-2"
+      >
+        NEW
+      </Link>
+    )}
+  </div>
+
+  <button
+    className="btn btn-sm btn-success"
+    onClick={exportToCSV}
+  >
+    Export 
+  </button>
+</div>
 
       {/* 🔍 Search Input */}
       <CRow className="justify-content-end">
@@ -220,7 +338,10 @@ const ClientTicketsDashboard = () => {
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Created By
             </CTableHeaderCell>
-            <CTableHeaderCell>Created Time</CTableHeaderCell>
+            <CTableHeaderCell>Created Date</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>Resolved By</CTableHeaderCell>
+            <CTableHeaderCell>Resolved Date</CTableHeaderCell>
+            <CTableHeaderCell>Resolving Time Duration</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
               Action
             </CTableHeaderCell>
@@ -229,12 +350,16 @@ const ClientTicketsDashboard = () => {
         <CTableBody>
           {loadingTickets ? (
             <CTableRow>
-              <CTableDataCell colSpan="8" className="text-center">
+              <CTableDataCell colSpan="11" className="text-center">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : error ? (
-            <CTableRow>{error}</CTableRow>
+            <CTableRow>
+              <CTableDataCell colSpan="11" className="text-center">
+                {error}
+              </CTableDataCell>
+            </CTableRow>
           ) : filteredTickets.length > 0 ? (
             filteredTickets.map((ticket, index) => (
               <CTableRow key={index}>
@@ -273,20 +398,53 @@ const ClientTicketsDashboard = () => {
                   </CBadge>
                 </CTableDataCell>
                 <CTableDataCell>{ticket.created_by.name}</CTableDataCell>
+               
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  <span className="">
-                    <CTooltip
-                      content={new Date(ticket.createdAt).toLocaleString()}
-                      placement="top"
-                    >
-                      <span>
-                        {formatDistanceToNow(new Date(ticket.createdAt), {
-                          addSuffix: true,
+                  
+                        {new Date(ticket.createdAt).toLocaleString("en-GB", {
+                          year: "numeric",
+                          month: "numeric",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
                         })}
-                      </span>
-                    </CTooltip>
-                  </span>
+                    
                 </CTableDataCell>
+              <CTableDataCell>{
+                  ticket.status==="Resolved"?ticket.resolved_by.name:<CBadge
+                    color={
+                      ticket.status === "Resolved"
+                        ? "success"
+                        : ticket.status === "Open"
+                        ? "danger"
+                        : "warning"
+                    }
+                  >
+                    {ticket.status}
+                  </CBadge>
+                  }</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  
+                        {
+                        ticket.status==="Resolved"?
+                        new Date(ticket.resolved_at).toLocaleString("en-GB", {
+                          year: "numeric",
+                          month: "numeric",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        }):"NA"}
+                    
+                </CTableDataCell>
+                 <CTableDataCell style={{ minWidth: "150px" }}>
+  {ticket.status === "Resolved"
+    ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
+    : "NA"}
+</CTableDataCell>
                 <CTableDataCell>
                   <Link
                     className="btn btn-sm btn-secondary m-1"
@@ -309,7 +467,7 @@ const ClientTicketsDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="10" className="text-center text-danger">
+              <CTableDataCell colSpan="11" className="text-center text-danger">
                 No tickets found.
               </CTableDataCell>
             </CTableRow>

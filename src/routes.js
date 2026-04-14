@@ -7420,6 +7420,16 @@ const routes = [
     ),
   },
 
+    {
+    path: "/site-technician/chat-with-console",
+    name: "Chat with Console",
+    element: (
+      <SiteTechnicianRoute>
+        <OpenAiChat />
+      </SiteTechnicianRoute>
+    ),
+  },
+
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------

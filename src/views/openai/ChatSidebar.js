@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Plus } from "lucide-react";
+import { Plus, MessageSquare, X } from "lucide-react";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import "./openai.css";
 
-const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId }) => {
+const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId, onClose }) => {
   const authtoken = useSelector((s) => s.authtoken);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const fetchChats = async () => {
     try {
       setLoading(true);
@@ -16,83 +17,92 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId }) => {
         headers: { Authorization: `Bearer ${authtoken}` },
       });
       setChats(res.data.data || []);
-      setLoading(false);
     } catch (err) {
-      setError(err.response.data.err || err.response.data.message);
-      toast.error(err.response.data.err || err.response.data.message);
+      toast.error(
+        err.response?.data?.err ||
+          err.response?.data?.message ||
+          "Failed to load chats"
+      );
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchChats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const newChat = () => {
+  const handleNewChat = () => {
     setActiveChatId(null);
+    onClose?.();
+  };
+
+  const handleSelectChat = (id) => {
+    setActiveChatId(id);
+    onClose?.();
   };
 
   return (
-    <div
-      style={{
-        width: 260,
-        borderRight: "1px solid #2d3748",
-        background: "#0f172a",
-        padding: 10,
-        overflowY: "auto",
-      }}
-    >
-      <button
-        onClick={newChat}
-        style={{
-          width: "100%",
-          marginBottom: 10,
-          background: "#1e293b",
-          color: "white",
-          border: "none",
-          padding: 8,
-          borderRadius: 6,
-        }}
-      >
-        <Plus size={14} /> New Chat
-      </button>
-
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
-      ) : chats.length > 0 ? (
-        chats.map((chat) => (
-          <div
-            key={chat._id}
-            onClick={() => setActiveChatId(chat._id)}
-            style={{
-              padding: 8,
-              cursor: "pointer",
-              background: activeChatId === chat._id ? "#1e293b" : "transparent",
-              borderRadius: 6,
-              marginBottom: 6,
-              color: "#cbd5e1",
-            }}
-          >
-            {chat.title}
-          </div>
-        ))
-      ) : (
-        <div
+    <>
+      {/* ── Sidebar header ────────────────────── */}
+      <div className="gpt-sidebar-header">
+        <span className="gpt-sidebar-title">Console AI</span>
+        {/* Close button — visible on mobile */}
+        <button
+          onClick={onClose}
           style={{
-            padding: 8,
+            background: "transparent",
+            border: "none",
+            color: "#555",
             cursor: "pointer",
-            background: "#cbd5e1",
+            display: "flex",
+            alignItems: "center",
+            padding: "2px 4px",
             borderRadius: 6,
-            marginBottom: 6,
-            color: "#000",
           }}
+          title="Close sidebar"
         >
-          No Chats Found
-        </div>
-      )}
-    </div>
+          <X size={16} />
+        </button>
+      </div>
+
+      {/* ── New chat button ───────────────────── */}
+      <div style={{ padding: "8px 10px 0" }}>
+        <button className="gpt-new-btn" onClick={handleNewChat}>
+          <Plus size={15} />
+          New chat
+        </button>
+      </div>
+
+      {/* ── Chat list ─────────────────────────── */}
+      <div className="gpt-sidebar-list">
+        {loading ? (
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}>
+            <LoadingSpinner />
+          </div>
+        ) : chats.length > 0 ? (
+          chats.map((chat) => (
+            <div
+              key={chat._id}
+              className={`gpt-chat-item${activeChatId === chat._id ? " active" : ""}`}
+              onClick={() => handleSelectChat(chat._id)}
+              title={chat.title}
+            >
+              <MessageSquare
+                size={13}
+                style={{ display: "inline", marginRight: 7, opacity: 0.5, flexShrink: 0 }}
+              />
+              {chat.title}
+            </div>
+          ))
+        ) : (
+          <p className="gpt-sidebar-empty">
+            No conversations yet. <br /> Start a new chat!
+          </p>
+        )}
+      </div>
+    </>
   );
 };
 

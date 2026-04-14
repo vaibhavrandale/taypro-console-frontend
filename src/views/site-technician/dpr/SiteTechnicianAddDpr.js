@@ -314,6 +314,7 @@ const SiteTechnicianAddDpr = () => {
   const [showPMModal, setShowPMModal] = useState(false);
   const [selectedPMType, setSelectedPMType] = useState("");
   const [selectedBreakdownIndex, setSelectedBreakdownIndex] = useState(-1);
+  const [summarizingComments, setSummarizingComments] = useState(false);
 
   const breakdownReasons = [
     "Oxidation",
@@ -620,6 +621,37 @@ const SiteTechnicianAddDpr = () => {
       pmType: pmType,
       index: index,
     });
+  };
+
+  const summarizeComments = async () => {
+    const text = state.dprData.comments;
+    if (!text || !text.trim()) {
+      toast.error("Please enter some comments to improve.");
+      return;
+    }
+    setSummarizingComments(true);
+    try {
+      const result = await axios.post(
+        "/api/v1/openai/summarize",
+        { text },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
+      );
+      const improved = result.data?.summarizedText;
+      if (improved) {
+        dispatch({
+          type: "SET_FIELD",
+          name: "comments",
+          value: improved,
+        });
+        toast.success("Comments improved successfully!");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to improve comments."
+      );
+    } finally {
+      setSummarizingComments(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -1298,15 +1330,33 @@ const SiteTechnicianAddDpr = () => {
               </CCol>
             </CRow>
 
-            <CCol md="6">
+            <CCol md="12">
               <div className="mb-3">
-                <label className="form-label">Comments</label>
-
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <label className="form-label mb-0">Comments</label>
+                  <CButton
+                    color="info"
+                    size="sm"
+                    variant="outline"
+                    onClick={summarizeComments}
+                    disabled={summarizingComments || !state.dprData.comments?.trim()}
+                    title="Improve text using AI"
+                    className="m-1"
+                  >
+                    {summarizingComments ? (
+                      <>
+                        Improving... <LoadingSpinner />
+                      </>
+                    ) : (
+                      "✨ Improve with AI"
+                    )}
+                  </CButton>
+                </div>
                 <textarea
                   type="textarea"
-                  className="form-control"
+                  className="form-control m-1"
                   name="comments"
-                  rows={2}
+                  rows={4}
                   value={state.dprData.comments}
                   onChange={handleChange}
                   placeholder="Enter comments..."

@@ -336,7 +336,7 @@ export default function Weather({
               display: "inline-flex",
               alignItems: "center",
               gap: 5,
-              background: "rgba(255,255,255,0.14)",
+              // background: "rgba(255,255,255,0.14)",
               border: "1px solid rgba(255,255,255,0.22)",
               borderRadius: 20,
               padding: "4px 10px",
@@ -478,7 +478,7 @@ export default function Weather({
               style={{
                 background: "rgba(255,255,255,0.10)",
                 backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.16)",
+                // border: "1px solid rgba(255,255,255,0.16)",
                 borderRadius: 14,
                 padding: "12px 10px 10px",
                 display: "flex",

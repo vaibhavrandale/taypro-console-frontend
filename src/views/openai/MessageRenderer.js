@@ -5,7 +5,7 @@ const MessageRenderer = ({ msg }) => {
   if (!msg) return null;
   return (
     <div
-      className={`ai-response ${msg.role === "assistant" ? "mt-3 p-2" : "p-1"}`}
+      className={`ai-response ${msg.role === "assistant" ? "mt-3 p-2" : "p-1 m-1"}`}
     >
       <ReactMarkdown>{msg.content}</ReactMarkdown>
     </div>

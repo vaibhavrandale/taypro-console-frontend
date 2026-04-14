@@ -1,79 +1,82 @@
 import React, { useEffect, useReducer, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Send, Square, Volume2, VolumeX } from "lucide-react";
+import { Send, Square, Volume2, VolumeX, Menu, X, Bot } from "lucide-react";
 import MessageRenderer from "./MessageRenderer";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useTextToSpeech } from "./useTextToSpeech";
+import "./openai.css";
 
-/* =====================================================
-   STATE MANAGEMENT
-===================================================== */
-
+/* ─────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────── */
 const initialState = {
   messages: [],
   question: "",
   loadingChat: false,
   sending: false,
-  translating: false,
   error: null,
+  translatingMessageId: null,
 };
 
 function chatReducer(state, action) {
   switch (action.type) {
     case "LOAD_CHAT_START":
       return { ...state, loadingChat: true, error: null };
-
     case "LOAD_CHAT_SUCCESS":
       return { ...state, loadingChat: false, messages: action.payload };
-
     case "LOAD_CHAT_ERROR":
       return { ...state, loadingChat: false, error: action.payload };
-
     case "SEND_START":
       return { ...state, sending: true, error: null };
-
     case "SEND_SUCCESS":
       return { ...state, sending: false };
-
     case "SEND_ERROR":
       return { ...state, sending: false, error: action.payload };
-
     case "ADD_MESSAGE":
       return { ...state, messages: [...state.messages, action.payload] };
-
     case "UPDATE_MESSAGE":
       return {
         ...state,
         messages: state.messages.map((msg) =>
           msg.id === action.id
             ? { ...msg, content: msg.content + action.chunk }
-            : msg,
+            : msg
         ),
       };
-
     case "SET_QUESTION":
       return { ...state, question: action.payload };
-
     case "CLEAR_ERROR":
       return { ...state, error: null };
-
     case "TRANSLATE_START":
       return { ...state, translatingMessageId: action.payload };
-
     case "TRANSLATE_END":
       return { ...state, translatingMessageId: null };
-
     default:
       return state;
   }
 }
 
-/* =====================================================
-   COMPONENT
-===================================================== */
+/* ─────────────────────────────────────────────────
+   EXAMPLE PROMPTS (welcome screen chips)
+───────────────────────────────────────────────── */
+const EXAMPLE_PROMPTS = [
+  "Show robot status summary",
+  "Which sites have low uptime?",
+  "List pending service tickets",
+  "Robots with battery issues",
+];
 
-const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
+/* ─────────────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────────────── */
+const ChatWindow = ({
+  activeChatId,
+  setChats,
+  setActiveChatId,
+  onToggleSidebar,
+  sidebarOpen,
+}) => {
   const authtoken = useSelector((s) => s.authtoken);
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const { speak, stop } = useTextToSpeech();
@@ -82,99 +85,81 @@ const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
   const bottomRef = useRef(null);
   const activeChatIdRef = useRef(activeChatId);
   const textareaRef = useRef(null);
+
+  /* sync ref */
   useEffect(() => {
     activeChatIdRef.current = activeChatId;
   }, [activeChatId]);
+
+  /* auto-grow textarea */
   useEffect(() => {
     if (!textareaRef.current) return;
-
     textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    textareaRef.current.style.height =
+      Math.min(textareaRef.current.scrollHeight, 200) + "px";
   }, [state.question]);
-  /* ================= LOAD CHAT ================= */
 
+  /* auto-scroll */
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [state.messages]);
+
+  /* ── Load chat ───────────────────────────────── */
   useEffect(() => {
     if (!activeChatId) {
       dispatch({ type: "LOAD_CHAT_SUCCESS", payload: [] });
       return;
     }
-
-    const loadChat = async () => {
+    const load = async () => {
       dispatch({ type: "LOAD_CHAT_START" });
-
       try {
         const res = await axios.get(`/api/v1/openai/${activeChatId}`, {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
-
-        const serverMessages =
-          res.data?.data?.messages?.map((msg, index) => ({
-            ...msg,
-            id: msg._id || `${msg.role}-${index}-${Date.now()}`,
+        const msgs =
+          res.data?.data?.messages?.map((m, i) => ({
+            ...m,
+            id: m._id || `${m.role}-${i}-${Date.now()}`,
           })) || [];
-
-        dispatch({ type: "LOAD_CHAT_SUCCESS", payload: serverMessages });
-      } catch (err) {
+        dispatch({ type: "LOAD_CHAT_SUCCESS", payload: msgs });
+      } catch {
         dispatch({
           type: "LOAD_CHAT_ERROR",
           payload: "Failed to load chat history.",
         });
       }
     };
-
-    loadChat();
+    load();
   }, [activeChatId, authtoken]);
 
-  /* ================= TRANSLATE ================= */
-
+  /* ── Translate ───────────────────────────────── */
   const translateToHindi = async (text, messageId) => {
     dispatch({ type: "TRANSLATE_START", payload: messageId });
-
     try {
       const res = await axios.post(
         "/api/v1/openai/translate",
         { text },
-        {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        },
+        { headers: { Authorization: `Bearer ${authtoken}` } }
       );
-
       return res.data?.translated || text;
-    } catch (err) {
-      dispatch({
-        type: "SEND_ERROR",
-        payload: "Translation failed.",
-      });
+    } catch {
+      dispatch({ type: "SEND_ERROR", payload: "Translation failed." });
       return text;
     } finally {
       dispatch({ type: "TRANSLATE_END" });
     }
   };
 
-  /* ================= SEND MESSAGE ================= */
+  /* ── Send message ────────────────────────────── */
+  const sendMessage = async (text) => {
+    const question = (text ?? state.question).trim();
+    if (!question || state.sending) return;
 
-  const sendMessage = async () => {
-    if (!state.question.trim() || state.sending) return;
+    const uid = `user-${Date.now()}`;
+    const aid = `assistant-${Date.now()}`;
 
-    const userMessageId = `user-${Date.now()}`;
-    const assistantMessageId = `assistant-${Date.now()}`;
-
-    const userMessage = {
-      id: userMessageId,
-      role: "user",
-      content: state.question,
-      createdAt: new Date().toISOString(),
-    };
-
-    const assistantPlaceholder = {
-      id: assistantMessageId,
-      role: "assistant",
-      content: "",
-      createdAt: new Date().toISOString(),
-    };
-
-    dispatch({ type: "ADD_MESSAGE", payload: userMessage });
-    dispatch({ type: "ADD_MESSAGE", payload: assistantPlaceholder });
+    dispatch({ type: "ADD_MESSAGE", payload: { id: uid, role: "user", content: question } });
+    dispatch({ type: "ADD_MESSAGE", payload: { id: aid, role: "assistant", content: "" } });
     dispatch({ type: "SET_QUESTION", payload: "" });
     dispatch({ type: "SEND_START" });
 
@@ -188,60 +173,46 @@ const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authtoken}`,
         },
-        body: JSON.stringify({
-          question: userMessage.content,
-          chatId: activeChatIdRef.current,
-        }),
+        body: JSON.stringify({ question, chatId: activeChatIdRef.current }),
         signal: controller.signal,
       });
 
       if (!response.ok) throw new Error("Server error");
 
       const newChatId = response.headers.get("x-chat-id");
-
       if (!activeChatIdRef.current && newChatId) {
         activeChatIdRef.current = newChatId;
         setActiveChatId(newChatId);
         setChats((prev) => [
-          { _id: newChatId, title: userMessage.content.slice(0, 40) },
+          { _id: newChatId, title: question.slice(0, 40) },
           ...prev,
         ]);
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
-
       let done = false;
-
       while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-
+        const { value, done: d } = await reader.read();
+        done = d;
         if (value) {
-          const chunk = decoder.decode(value);
           dispatch({
             type: "UPDATE_MESSAGE",
-            id: assistantMessageId,
-            chunk,
+            id: aid,
+            chunk: decoder.decode(value),
           });
         }
       }
-
       dispatch({ type: "SEND_SUCCESS" });
     } catch (err) {
       if (err.name !== "AbortError") {
-        dispatch({
-          type: "SEND_ERROR",
-          payload: "AI response failed.",
-        });
+        dispatch({ type: "SEND_ERROR", payload: "AI response failed." });
       }
     } finally {
       abortRef.current = null;
       dispatch({ type: "SEND_SUCCESS" });
     }
   };
-
-  /* ================= STOP STREAM ================= */
 
   const stopStreaming = () => {
     abortRef.current?.abort();
@@ -250,161 +221,177 @@ const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
     dispatch({ type: "SEND_SUCCESS" });
   };
 
-  /* ================= AUTO SCROLL ================= */
+  const visibleMessages = state.messages.filter(
+    (m) => m.role === "user" || m.content?.trim() !== ""
+  );
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [state.messages]);
-
-  /* ================= RENDER ================= */
-
+  /* ═══════════════════ RENDER ════════════════════ */
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      <div style={{ flex: 1, overflowY: "auto", padding: 16 }}>
-        {/* ERROR DISPLAY */}
-        {state.error && (
-          <div
-            style={{
-              background: "#7f1d1d",
-              color: "#fff",
-              padding: 10,
-              borderRadius: 6,
-              marginBottom: 12,
-            }}
-          >
-            {state.error}
-            <button
-              onClick={() => dispatch({ type: "CLEAR_ERROR" })}
-              style={{
-                marginLeft: 10,
-                background: "transparent",
-                border: "none",
-                color: "#fca5a5",
-                cursor: "pointer",
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        )}
+    <div className="gpt-main">
 
-        {/* CHAT LOADING */}
+      {/* ── Top header bar ──────────────────────── */}
+      <div className="gpt-header">
+        <button
+          className="gpt-hamburger"
+          onClick={onToggleSidebar}
+          title="Toggle sidebar"
+        >
+          {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+
+        <span className="gpt-header-title">Console AI</span>
+
+        <span className="gpt-header-subtitle">
+          {activeChatId ? "Chat session" : "New conversation"}
+        </span>
+      </div>
+
+      {/* ── Error banner ────────────────────────── */}
+      {state.error && (
+        <div className="gpt-error">
+          <span>{state.error}</span>
+          <button onClick={() => dispatch({ type: "CLEAR_ERROR" })}>✕</button>
+        </div>
+      )}
+
+      {/* ── Messages area ───────────────────────── */}
+      <div className="gpt-messages">
         {state.loadingChat ? (
-          <LoadingSpinner />
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: 60 }}>
+            <LoadingSpinner />
+          </div>
+        ) : visibleMessages.length === 0 ? (
+          /* ── Welcome / empty state ─────────────── */
+          <div className="gpt-welcome">
+            <div className="gpt-welcome-logo">
+              <Bot size={26} color="#fff" />
+            </div>
+            <h2>How can I help you?</h2>
+            <p>
+              Ask me anything about your robots, sites, telemetry data, service
+              tickets, or operational reports.
+            </p>
+            <div className="gpt-welcome-chips">
+              {EXAMPLE_PROMPTS.map((p) => (
+                <button
+                  key={p}
+                  className="gpt-chip"
+                  onClick={() => sendMessage(p)}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
         ) : (
-          // state.messages.map((msg) => (
-          state.messages
-            .filter((msg) => msg.role === "user" || msg.content?.trim() !== "")
-            .map((msg) => (
+          /* ── Message list ─────────────────────── */
+          <>
+            {visibleMessages.map((msg) => (
               <div
                 key={msg.id}
-                style={{
-                  display: "flex",
-                  justifyContent:
-                    msg.role === "user" ? "flex-end" : "flex-start",
-                  marginBottom: 14,
-                }}
+                className={`gpt-msg-wrap ${msg.role}`}
               >
-                <div
-                  style={{
-                    background: msg.role === "user" ? "#3b82f6" : "#1e293b",
-                    color: "#fff",
-                    padding: 5,
-                    borderRadius: 5,
-                    // width: "40vw",
-                    position: "relative",
-                  }}
-                >
-                  {/* <MessageRenderer msg={msg} /> */}
-                  {msg.content?.trim() && <MessageRenderer msg={msg} />}
+                <div className="gpt-msg-inner">
+                  {/* Avatar */}
+                  <div className={`gpt-avatar ${msg.role}`}>
+                    {msg.role === "assistant" ? (
+                      <Bot size={15} color="#fff" />
+                    ) : (
+                      "U"
+                    )}
+                  </div>
 
-                  {msg.role === "assistant" && msg.content && (
-                    <>
-                      <button
-                        onClick={() => speak(msg.content)}
-                        style={{
-                          position: "absolute",
-                          top: 2,
-                          right: 4,
-                          background: "transparent",
-                          border: "none",
+                  {/* Bubble / content */}
+                  {msg.role === "user" ? (
+                    <div className="gpt-user-bubble">
+                      {msg.content}
+                    </div>
+                  ) : (
+                    <div className="gpt-assistant-content">
+                      {msg.content?.trim() && <MessageRenderer msg={msg} />}
 
-                          color: "#94a3b8",
-                          cursor: "pointer",
-                        }}
-                      >
-                        E
-                        <Volume2 size={16} />
-                      </button>
-                      <button
-                        disabled={state.translatingMessageId === msg.id}
-                        onClick={async () => {
-                          const hindi = await translateToHindi(
-                            msg.content,
-                            msg.id,
-                          );
-                          speak(hindi);
-                        }}
-                        style={{
-                          position: "absolute",
-                          top: 2,
-                          right: 42,
-                          background: "transparent",
-                          border: "none",
-                          color: "green",
-                          cursor: "pointer",
-                        }}
-                      >
-                        H
-                        {state.translatingMessageId === msg.id ? (
-                          <LoadingSpinner small />
-                        ) : (
-                          <Volume2 size={16} />
-                        )}
-                      </button>
+                      {/* Action bar — appears on hover */}
+                      {msg.content && (
+                        <div className="gpt-msg-actions">
+                          {/* English TTS */}
+                          <button
+                            className="gpt-action-btn"
+                            title="Read in English"
+                            onClick={() => speak(msg.content)}
+                          >
+                            <Volume2 size={12} /> EN
+                          </button>
 
-                      <button
-                        onClick={stop}
-                        style={{
-                          position: "absolute",
-                          top: 2,
-                          right: 80,
-                          background: "transparent",
-                          border: "none",
-                          color: "#ef4444",
-                        }}
-                      >
-                        <VolumeX size={16} />
-                      </button>
-                    </>
+                          {/* Hindi TTS */}
+                          <button
+                            className="gpt-action-btn hindi"
+                            title="Read in Hindi"
+                            disabled={state.translatingMessageId === msg.id}
+                            onClick={async () => {
+                              const hindi = await translateToHindi(
+                                msg.content,
+                                msg.id
+                              );
+                              speak(hindi);
+                            }}
+                          >
+                            {state.translatingMessageId === msg.id ? (
+                              <LoadingSpinner small />
+                            ) : (
+                              <Volume2 size={12} />
+                            )}
+                            HI
+                          </button>
+
+                          {/* Stop audio */}
+                          <button
+                            className="gpt-action-btn mute"
+                            title="Stop audio"
+                            onClick={stop}
+                          >
+                            <VolumeX size={12} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
-            ))
-        )}
+            ))}
 
-        {state.sending && (
-          <div style={{ opacity: 0.6, display: "flex", gap: 8 }}>
-            <LoadingSpinner small />
-            AI is typing...
-          </div>
+            {/* Typing indicator */}
+            {state.sending && (
+              <div className="gpt-msg-wrap assistant">
+                <div className="gpt-msg-inner">
+                  <div className="gpt-avatar assistant">
+                    <Bot size={15} color="#fff" />
+                  </div>
+                  <div className="gpt-assistant-content">
+                    <div className="gpt-typing">
+                      <div className="gpt-dot" />
+                      <div className="gpt-dot" />
+                      <div className="gpt-dot" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div ref={bottomRef} />
       </div>
 
-      {/* INPUT AREA */}
-      <div className="p-3 border-top bg-dark">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+      {/* ── Input area ──────────────────────────── */}
+      <div className="gpt-input-area">
+        <div className="gpt-input-box">
           <textarea
             ref={textareaRef}
+            className="gpt-textarea"
+            rows={1}
             value={state.question}
+            disabled={state.sending}
+            placeholder="Message Console AI…"
             onChange={(e) =>
               dispatch({ type: "SET_QUESTION", payload: e.target.value })
             }
@@ -414,32 +401,21 @@ const ChatWindow = ({ activeChatId, setChats, setActiveChatId }) => {
                 sendMessage();
               }
             }}
-            rows={1}
-            disabled={state.sending}
-            placeholder="Ask about robots, sites, telemetry..."
-            style={{
-              resize: "none",
-              overflow: "hidden",
-              minHeight: "44px",
-              maxHeight: "160px", // optional max height
-            }}
-            className="form-control bg-dark text-light border-secondary"
           />
 
           <button
+            className={`gpt-send-btn ${state.sending ? "stop" : "send"}`}
             onClick={state.sending ? stopStreaming : sendMessage}
-            style={{
-              marginLeft: 8,
-              background: state.sending ? "#dc2626" : "#2563eb",
-              border: "none",
-              color: "white",
-              padding: "8px",
-              borderRadius: 6,
-            }}
+            disabled={!state.sending && !state.question.trim()}
+            title={state.sending ? "Stop generating" : "Send message"}
           >
-            {state.sending ? <Square size={16} /> : <Send size={16} />}
+            {state.sending ? <Square size={15} /> : <Send size={15} />}
           </button>
         </div>
+
+        <p className="gpt-input-hint">
+          Press Enter to send · Shift+Enter for new line
+        </p>
       </div>
     </div>
   );
