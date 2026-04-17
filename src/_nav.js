@@ -21,12 +21,26 @@ import {
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 import {
-  ChartNoAxesCombined,
-  CircleGauge,
-  Crown,
+  // Crown,
+  LayoutDashboard,
+  BarChart3,
+  Terminal,
+  Ticket,
+  Building2,
+  Database,
+  Settings2,
+  Clock,
+  ShieldCheck,
+  ClipboardList,
+  Map,
+  Navigation,
+  Radar,
+  Users,
+  UserCog,
+  MessageSquare,
+  Settings,
+  Gem,
   Proportions,
-  SquareTerminal,
-  Tags,
   Wrench,
 } from "lucide-react";
 import { MdCircleNotifications } from "react-icons/md";
@@ -3612,339 +3626,501 @@ const _nav = [
 
   //-------------------------------client admin------------------------------------
 
+  // {
+  //   component: CNavGroup,
+  //   name: "Client Admin",
+  //   to: "/base",
+  //   icon: (
+  //     <CIcon
+  //       icon={cilPuzzle}
+  //       customClassName="nav-icon"
+  //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //     />
+  //   ),
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: "Dashboard",
+  //       to: "/client-admin/dashboard",
+  //       icon: (
+  //         // <CIcon
+  //         //   icon={<Gauge />}
+  //         // customClassName="nav-icon"
+  //         // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         // />
+  //         <CircleGauge
+  //           customClassName="nav-icon"
+  //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Statistics",
+  //       to: "/client-admin/statistics",
+  //       icon: (
+  //         // <CIcon
+  //         //   icon={cilBarChart}
+  //         // customClassName="nav-icon"
+  //         // style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         // />
+  //         <ChartNoAxesCombined
+  //           customClassName="nav-icon"
+  //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       subscriptionIcon: (
+  //         // <CIcon
+  //         //   icon={cilDiamond}
+  //         //   style={{
+  //         //     height: "18px",
+  //         //     width: "18px",
+  //         //     color: "yellow",
+  //         //   }}
+  //         // />
+  //         <Crown
+  //           style={{
+  //             height: "18px",
+  //             width: "18px",
+  //             color: "yellow",
+  //           }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Robot Commands",
+  //       to: "/client-admin/robot-commands",
+  //       icon: (
+  //         // <CIcon
+  //         //   icon={cilCursor}
+  //         // customClassName="nav-icon"
+  //         // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         // />
+  //         <SquareTerminal
+  //           customClassName="nav-icon"
+  //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: "Tickets",
+  //       to: "/client-admin/clientadmin-client-ticket",
+  //       icon: (
+  //         // <CIcon
+  //         //   icon={cilNoteAdd}
+  //         // customClassName="nav-icon"
+  //         // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         // />
+  //         <Tags
+  //           customClassName="nav-icon"
+  //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //     },
+
+  //     // Group: Site Management
+  //     {
+  //       component: CNavGroup,
+  //       name: "Sites",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilBuilding}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "All Site Data",
+  //           to: "/client-admin/site-management/all-site-data",
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Site Management",
+  //           to: "/client-admin/site-management",
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "All Sites Timers",
+  //           to: "/client-admin/timers",
+  //         },
+  //       ],
+  //     },
+
+  //     // Group: Maintenance & Logs
+  //     {
+  //       component: CNavGroup,
+  //       name: "Maintenance & Logs",
+  //       icon: (
+  //         // <CIcon
+  //         // icon={cilCalendarCheck}
+  //         // customClassName="nav-icon"
+  //         // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+
+  //         // />
+  //         <Wrench
+  //           customClassName="nav-icon"
+  //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "Prev. Maintenance",
+  //           to: "/client-admin/preventive-maintenance-dashboard",
+  //           subscriptionIcon: (
+  //             // <CIcon
+  //             //   icon={cilDiamond}
+  //             //   style={{
+  //             //     height: "18px",
+  //             //     width: "18px",
+  //             //     color: "yellow",
+  //             //   }}
+  //             // />
+  //             <Crown
+  //               style={{
+  //                 height: "18px",
+  //                 width: "18px",
+  //                 color: "yellow",
+  //               }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Cleaning Log",
+  //           to: "/client-admin/cleaning-log-sites",
+  //         },
+  //       ],
+  //     },
+
+  //     //robots-positioning
+  //     {
+  //       component: CNavGroup,
+  //       name: "Live Tracking",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilLocationPin}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "Robots Tracking",
+  //           to: "/client-admin/robots-tracking",
+  //           subscriptionIcon: (
+  //             // <CIcon
+  //             //   icon={cilDiamond}
+  //             //   style={{
+  //             //     height: "18px",
+  //             //     width: "18px",
+  //             //     color: "yellow",
+  //             //   }}
+  //             // />
+  //             <Crown
+  //               style={{
+  //                 height: "18px",
+  //                 width: "18px",
+  //                 color: "yellow",
+  //               }}
+  //             />
+  //           ),
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "MDS Tracking",
+  //           to: "/client-admin/mds-tracker",
+  //         },
+  //       ],
+  //     },
+
+  //     // Group: Users & Communication
+  //     {
+  //       component: CNavGroup,
+  //       name: "Users & Communication",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilGroup}
+  //           // customClassName="nav-icon"
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "User Management",
+  //           to: "/client-admin/external-users",
+  //         },
+  //         {
+  //           component: CNavItem,
+  //           name: "Live Chat",
+  //           to: "/client-admin/chat",
+  //           subscriptionIcon: (
+  //             // <CIcon
+  //             //   icon={cilDiamond}
+  //             //   style={{
+  //             //     height: "18px",
+  //             //     width: "18px",
+  //             //     color: "yellow",
+  //             //   }}
+  //             // />
+  //             <Crown
+  //               style={{
+  //                 height: "18px",
+  //                 width: "18px",
+  //                 color: "yellow",
+  //               }}
+  //             />
+  //           ),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       component: CNavGroup,
+  //       name: " Robot Commissioning",
+  //       icon: (
+  //         <CIcon
+  //           icon={cilSettings}
+  //           customClassName="nav-icon"
+  //           style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //         />
+  //       ),
+  //       items: [
+  //         {
+  //           component: CNavItem,
+  //           name: "Dashboard",
+  //           to: "/client-admin/commissioning", // ✅ FIXED
+  //         },
+  //       ],
+  //     },
+
+  //     // {
+  //     //   component: CNavGroup,
+  //     //   name: "MDS Tracking",
+  //     //   icon: (
+  //     //     <CIcon
+  //     //       icon={cilLocationPin}
+  //     //       customClassName="nav-icon"
+  //     //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //     //     />
+  //     //   ),
+  //     //   items: [
+  //     //     {
+  //     //       component: CNavItem,
+  //     //       name: "MDS Tracking",
+  //     //       to: "/client-admin/mds-tracker",
+  //     //     },
+  //     //   ],
+  //     // },
+
+  //     // {
+  //     //   component: CNavGroup,
+  //     //   name: "Subscription",
+  //     //   icon: (
+  //     //     <CIcon
+  //     //       icon={cilMoney}
+  //     //       customClassName="nav-icon"
+  //     //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //     //     />
+  //     //   ),
+  //     //   items: [
+  //     //     {
+  //     //       component: CNavItem,
+  //     //       name: "My Subscriptions",
+  //     //       to: "/client-admin/subscriptions",
+  //     //     },
+  //     //   ],
+  //     // },
+
+  //     // {
+  //     //   component: CNavItem,
+  //     //   name: "Monthly Sites Report",
+  //     //   to: "/client-admin/monthlyreport",
+  //     //   icon: (
+  //     //     <CIcon
+  //     //       icon={cilFactory}
+  //     //       customClassName="nav-icon"
+  //     //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+  //     //     />
+  //     //   ),
+  //     //   subscriptionIcon: (
+  //     //     <CIcon
+  //     //       icon={cilDiamond}
+  //     //       style={{
+  //     //         height: "18px",
+  //     //         width: "18px",
+  //     //         color: "yellow",
+  //     //       }}
+  //     //     />
+  //     //   ),
+  //     // },
+  //   ],
+  // },
+
   {
     component: CNavGroup,
     name: "Client Admin",
     to: "/base",
     icon: (
-      <CIcon
-        icon={cilPuzzle}
+      <LayoutDashboard
+        size={22}
         customClassName="nav-icon"
-        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        style={{ color: "rgb(57, 214, 0)" }}
       />
     ),
     items: [
       {
         component: CNavItem,
-        name: "Dashboard",
+        name: "Overview",
         to: "/client-admin/dashboard",
         icon: (
-          // <CIcon
-          //   icon={<Gauge />}
-          // customClassName="nav-icon"
-          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          // />
-          <CircleGauge
+          <LayoutDashboard
             customClassName="nav-icon"
+            size={18}
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
       },
       {
         component: CNavItem,
-        name: "Statistics",
+        name: "Analytics",
         to: "/client-admin/statistics",
-        icon: (
-          // <CIcon
-          //   icon={cilBarChart}
-          // customClassName="nav-icon"
-          // style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          // />
-          <ChartNoAxesCombined
-            customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        subscriptionIcon: (
-          // <CIcon
-          //   icon={cilDiamond}
-          //   style={{
-          //     height: "18px",
-          //     width: "18px",
-          //     color: "yellow",
-          //   }}
-          // />
-          <Crown
-            style={{
-              height: "18px",
-              width: "18px",
-              color: "yellow",
-            }}
-          />
-        ),
+        icon: <BarChart3 size={18} style={{ color: "rgb(57, 214, 0)" }} />,
+        subscriptionIcon: <Gem size={16} style={{ color: "yellow" }} />,
       },
       {
         component: CNavItem,
-        name: "Robot Commands",
+        name: "Command Center",
         to: "/client-admin/robot-commands",
-        icon: (
-          // <CIcon
-          //   icon={cilCursor}
-          // customClassName="nav-icon"
-          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          // />
-          <SquareTerminal
-            customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: <Terminal size={18} style={{ color: "rgb(57, 214, 0)" }} />,
       },
       {
         component: CNavItem,
-        name: "Tickets",
+        name: "Support Tickets",
         to: "/client-admin/clientadmin-client-ticket",
-        icon: (
-          // <CIcon
-          //   icon={cilNoteAdd}
-          // customClassName="nav-icon"
-          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          // />
-          <Tags
-            customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: <Ticket size={18} style={{ color: "rgb(57, 214, 0)" }} />,
       },
 
-      // Group: Site Management
+      // 🏢 Site Operations
       {
         component: CNavGroup,
-        name: "Sites",
-        icon: (
-          <CIcon
-            icon={cilBuilding}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        name: "Site Operations",
+        icon: <Building2 size={20} style={{ color: "rgb(57, 214, 0)" }} />,
         items: [
           {
             component: CNavItem,
-            name: "All Site Data",
+            name: "Site Insights",
             to: "/client-admin/site-management/all-site-data",
+            icon: <Database style={{ color: "rgb(57, 214, 0)" }} size={16} />,
           },
           {
             component: CNavItem,
-            name: "Site Management",
+            name: "Manage Sites",
             to: "/client-admin/site-management",
+            icon: <Settings2 style={{ color: "rgb(57, 214, 0)" }} size={16} />,
           },
           {
             component: CNavItem,
-            name: "All Sites Timers",
+            name: "Schedules",
             to: "/client-admin/timers",
+            icon: <Clock style={{ color: "rgb(57, 214, 0)" }} size={16} />,
           },
         ],
       },
 
-      // Group: Maintenance & Logs
+      // 🛠 Maintenance
       {
         component: CNavGroup,
-        name: "Maintenance & Logs",
-        icon: (
-          // <CIcon
-          // icon={cilCalendarCheck}
-          // customClassName="nav-icon"
-          // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-
-          // />
-          <Wrench
-            customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        name: "Maintenance",
+        icon: <Wrench size={20} style={{ color: "rgb(57, 214, 0)" }} />,
         items: [
           {
             component: CNavItem,
             name: "Prev. Maintenance",
             to: "/client-admin/preventive-maintenance-dashboard",
-            subscriptionIcon: (
-              // <CIcon
-              //   icon={cilDiamond}
-              //   style={{
-              //     height: "18px",
-              //     width: "18px",
-              //     color: "yellow",
-              //   }}
-              // />
-              <Crown
-                style={{
-                  height: "18px",
-                  width: "18px",
-                  color: "yellow",
-                }}
-              />
+            icon: (
+              <ShieldCheck style={{ color: "rgb(57, 214, 0)" }} size={16} />
             ),
+            subscriptionIcon: <Gem size={16} style={{ color: "yellow" }} />,
           },
           {
             component: CNavItem,
-            name: "Cleaning Log",
+            name: "Cleaning History",
             to: "/client-admin/cleaning-log-sites",
+            icon: (
+              <ClipboardList style={{ color: "rgb(57, 214, 0)" }} size={16} />
+            ),
           },
         ],
       },
 
-      //robots-positioning
+      // 📍 Tracking
       {
         component: CNavGroup,
-        name: "Live Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        name: "Tracking",
+        icon: <Map size={20} style={{ color: "rgb(57, 214, 0)" }} />,
         items: [
           {
             component: CNavItem,
-            name: "Robots Tracking",
+            name: "Robot Tracking",
             to: "/client-admin/robots-tracking",
-            subscriptionIcon: (
-              // <CIcon
-              //   icon={cilDiamond}
-              //   style={{
-              //     height: "18px",
-              //     width: "18px",
-              //     color: "yellow",
-              //   }}
-              // />
-              <Crown
-                style={{
-                  height: "18px",
-                  width: "18px",
-                  color: "yellow",
-                }}
-              />
-            ),
+            icon: <Navigation size={16} style={{ color: "rgb(57, 214, 0)" }} />,
+            subscriptionIcon: <Gem size={16} style={{ color: "yellow" }} />,
           },
           {
             component: CNavItem,
-            name: "MDS Tracking",
+            name: "MDS Monitor",
             to: "/client-admin/mds-tracker",
+            icon: <Radar size={16} style={{ color: "rgb(57, 214, 0)" }} />,
           },
         ],
       },
 
-      // Group: Users & Communication
+      // 👥 Users
       {
         component: CNavGroup,
-        name: "Users & Communication",
-        icon: (
-          <CIcon
-            icon={cilGroup}
-            // customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        name: "Users & Messaging",
+        icon: <Users size={20} style={{ color: "rgb(57, 214, 0)" }} />,
         items: [
           {
             component: CNavItem,
-            name: "User Management",
+            name: "Manage Users",
             to: "/client-admin/external-users",
+            icon: <UserCog size={16} style={{ color: "rgb(57, 214, 0)" }} />,
           },
           {
             component: CNavItem,
-            name: "Live Chat",
+            name: "Chat",
             to: "/client-admin/chat",
-            subscriptionIcon: (
-              // <CIcon
-              //   icon={cilDiamond}
-              //   style={{
-              //     height: "18px",
-              //     width: "18px",
-              //     color: "yellow",
-              //   }}
-              // />
-              <Crown
-                style={{
-                  height: "18px",
-                  width: "18px",
-                  color: "yellow",
-                }}
-              />
+            icon: (
+              <MessageSquare size={16} style={{ color: "rgb(57, 214, 0)" }} />
+            ),
+            subscriptionIcon: <Gem size={16} style={{ color: "yellow" }} />,
+          },
+        ],
+      },
+
+      // ⚙️ Deployment
+      {
+        component: CNavGroup,
+        name: "Deployment",
+        icon: <Settings size={20} style={{ color: "rgb(57, 214, 0)" }} />,
+        items: [
+          {
+            component: CNavItem,
+            name: "Overview",
+            to: "/client-admin/commissioning",
+            icon: (
+              <LayoutDashboard style={{ color: "rgb(57, 214, 0)" }} size={16} />
             ),
           },
         ],
       },
-      {
-        component: CNavGroup,
-        name: " Robot Commissioning",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Dashboard",
-            to: "/client-admin/commissioning", // ✅ FIXED
-          },
-        ],
-      },
-
-      // {
-      //   component: CNavGroup,
-      //   name: "MDS Tracking",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilLocationPin}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      //   items: [
-      //     {
-      //       component: CNavItem,
-      //       name: "MDS Tracking",
-      //       to: "/client-admin/mds-tracker",
-      //     },
-      //   ],
-      // },
-
-      // {
-      //   component: CNavGroup,
-      //   name: "Subscription",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilMoney}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      //   items: [
-      //     {
-      //       component: CNavItem,
-      //       name: "My Subscriptions",
-      //       to: "/client-admin/subscriptions",
-      //     },
-      //   ],
-      // },
-
-      // {
-      //   component: CNavItem,
-      //   name: "Monthly Sites Report",
-      //   to: "/client-admin/monthlyreport",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilFactory}
-      //       customClassName="nav-icon"
-      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      //   subscriptionIcon: (
-      //     <CIcon
-      //       icon={cilDiamond}
-      //       style={{
-      //         height: "18px",
-      //         width: "18px",
-      //         color: "yellow",
-      //       }}
-      //     />
-      //   ),
-      // },
     ],
   },
 
@@ -4299,7 +4475,6 @@ const _nav = [
           },
         ],
       },
-      
     ],
   },
 

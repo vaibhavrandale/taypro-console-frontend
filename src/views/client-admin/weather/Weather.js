@@ -283,7 +283,7 @@ export default function Weather({
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+        // fontFamily: "'Inter', 'Segoe UI', sans-serif",
         minHeight: 360,
       }}
     >

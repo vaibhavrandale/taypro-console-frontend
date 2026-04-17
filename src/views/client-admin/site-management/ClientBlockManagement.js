@@ -71,7 +71,7 @@ const ClientBlockManagement = () => {
           `/api/v1/robots/site-management/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -97,13 +97,18 @@ const ClientBlockManagement = () => {
   }, [authtoken, site_id]);
 
   const filteredRobots = Array.isArray(robots)
-    ? robots.filter(
-        (robot) =>
-          robot.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.block?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? robots
+        .filter((robot) => {
+          const term = searchTerm.toLowerCase();
+
+          return (
+            (robot.robot_no || "").toLowerCase().includes(term) ||
+            (robot.deveui || "").toLowerCase().includes(term) ||
+            (robot.block || "").toLowerCase().includes(term) ||
+            (robot.company || "").toLowerCase().includes(term)
+          );
+        })
+        .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))
     : [];
 
   const sendMulticastDownlink = async () => {
@@ -123,7 +128,7 @@ const ClientBlockManagement = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -168,6 +173,13 @@ const ClientBlockManagement = () => {
   //   }
   //   return count;
   // }, 0);
+
+  const sortedBlocks = [...blocks].sort((a, b) =>
+    (a.block_name || "").localeCompare(b.block_name || "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
 
   return (
     <div className="">
@@ -260,7 +272,7 @@ const ClientBlockManagement = () => {
                         Block
                       </CTableHeaderCell>
 
-                      <CTableHeaderCell className="text-center">
+                      {/* <CTableHeaderCell className="text-center">
                         timer1
                       </CTableHeaderCell>
                       <CTableHeaderCell className="text-center">
@@ -268,7 +280,7 @@ const ClientBlockManagement = () => {
                       </CTableHeaderCell>
                       <CTableHeaderCell className="text-center">
                         timer3
-                      </CTableHeaderCell>
+                      </CTableHeaderCell> */}
                       <CTableHeaderCell className="text-center">
                         Last Update
                       </CTableHeaderCell>
@@ -298,7 +310,7 @@ const ClientBlockManagement = () => {
                             {robot.block}
                           </CTableDataCell>
 
-                          <CTableDataCell className="text-center">
+                          {/* <CTableDataCell className="text-center">
                             {robot.timer1}
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
@@ -306,7 +318,7 @@ const ClientBlockManagement = () => {
                           </CTableDataCell>
                           <CTableDataCell className="text-center">
                             {robot.timer3}
-                          </CTableDataCell>
+                          </CTableDataCell> */}
                           <CTableDataCell className="text-center">
                             {new Date(robot.last_uplink).toLocaleString(
                               "en-GB",
@@ -318,7 +330,7 @@ const ClientBlockManagement = () => {
                                 minute: "2-digit",
                                 second: "2-digit",
                                 hour12: true,
-                              }
+                              },
                             )}
                           </CTableDataCell>
                         </CTableRow>
@@ -360,7 +372,7 @@ const ClientBlockManagement = () => {
                     robots.filter(
                       (r) =>
                         r?.last_status === "Cleaning Started" &&
-                        r.lora_state === 1
+                        r.lora_state === 1,
                     ).length
                   }
                 </span>
@@ -377,8 +389,12 @@ const ClientBlockManagement = () => {
           </div>
           <CContainer>
             <CRow className="mt-4 justify-content-center">
-              {blocks.map((block, index) => {
-                const robot = block.blockrobots ? block.blockrobots : null; // Handle single robot object
+              {sortedBlocks.map((block, index) => {
+                const robot = block.blockrobots
+                  ? block.blockrobots.sort((a, b) =>
+                      (a.robot_no || "").localeCompare(b.robot_no || ""),
+                    )
+                  : null; // Handle single robot object
 
                 return (
                   <CCol md={4} className="my-2" key={index}>
@@ -432,7 +448,7 @@ const ClientBlockManagement = () => {
                                 <div
                                   onClick={() =>
                                     navigate(
-                                      `/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
+                                      `/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`,
                                     )
                                   }
                                 >

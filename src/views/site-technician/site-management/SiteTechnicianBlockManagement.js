@@ -111,14 +111,20 @@ const SiteTechnicianBlockManagement = () => {
   }, [authtoken, site_id]);
 
   const filteredRobots = Array.isArray(robots)
-    ? robots.filter(
-        (robot) =>
-          robot.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.block?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.company?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+    ? robots
+        .filter((robot) => {
+          const term = searchTerm.toLowerCase();
+
+          return (
+            (robot.robot_no || "").toLowerCase().includes(term) ||
+            (robot.deveui || "").toLowerCase().includes(term) ||
+            (robot.block || "").toLowerCase().includes(term) ||
+            (robot.company || "").toLowerCase().includes(term)
+          );
+        })
+        .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))
     : [];
+
   // const stopCommand = async () => {
   //   try {
   //     const response = await axios.post(
@@ -175,6 +181,18 @@ const SiteTechnicianBlockManagement = () => {
       toast.error(error.response.data.message || error.response.data.error);
     }
   };
+
+  const getNumber = (name) => {
+    const match = name?.match(/\d+/);
+    return match ? parseInt(match[0], 10) : null;
+  };
+
+  const sortedBlocks = [...blocks].sort((a, b) =>
+    (a.block_name || "").localeCompare(b.block_name || "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
@@ -325,7 +343,7 @@ const SiteTechnicianBlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Firmware Version
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  {/* <CTableHeaderCell className="text-center">
                     timer1
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
@@ -333,7 +351,7 @@ const SiteTechnicianBlockManagement = () => {
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     timer3
-                  </CTableHeaderCell>
+                  </CTableHeaderCell> */}
                   <CTableHeaderCell className="text-center">
                     Last Status
                   </CTableHeaderCell>
@@ -377,7 +395,7 @@ const SiteTechnicianBlockManagement = () => {
                         </CBadge>
                       </CTableDataCell>
 
-                      <CTableDataCell className="text-center">
+                      {/* <CTableDataCell className="text-center">
                         {robot.timer1}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
@@ -385,7 +403,7 @@ const SiteTechnicianBlockManagement = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.timer3}
-                      </CTableDataCell>
+                      </CTableDataCell> */}
                       <CTableDataCell className="text-center">
                         {robot.last_status}
                       </CTableDataCell>
@@ -447,8 +465,12 @@ const SiteTechnicianBlockManagement = () => {
       </div>
       <CContainer>
         <CRow className="mt-4 justify-content-center">
-          {blocks.map((block, index) => {
-            const robot = block.blockrobots ? block.blockrobots : null; // Handle single robot object
+          {sortedBlocks.map((block, index) => {
+            const robot = block.blockrobots
+              ? block.blockrobots.sort((a, b) =>
+                  (a.robot_no || "").localeCompare(b.robot_no || ""),
+                )
+              : null; // Handle single robot object
 
             return (
               <CCol md={4} className="my-2" key={index}>
