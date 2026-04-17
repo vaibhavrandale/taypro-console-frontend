@@ -285,6 +285,7 @@ export default function Weather({
         overflow: "hidden",
         // fontFamily: "'Inter', 'Segoe UI', sans-serif",
         minHeight: 360,
+        borderRadius: "10px",
       }}
     >
       {/* sky canvas */}
