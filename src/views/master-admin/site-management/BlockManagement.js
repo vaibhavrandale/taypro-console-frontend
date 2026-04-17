@@ -90,7 +90,7 @@ const BlockManagement = () => {
           `/api/v1/robots/site-management/${site_id}`,
           {
             headers: { Authorization: `Bearer ${authtoken}` },
-          }
+          },
         );
 
         dispatch({
@@ -117,7 +117,7 @@ const BlockManagement = () => {
   const sendMulticastDownlink = async () => {
     if (
       !window.confirm(
-        `Are you sure you want Stop All Robots at ${sitename}, ${sitelocation}?`
+        `Are you sure you want Stop All Robots at ${sitename}, ${sitelocation}?`,
       )
     ) {
       return;
@@ -139,7 +139,7 @@ const BlockManagement = () => {
         robotdownlink,
         {
           headers: { Authorization: `Bearer ${authtoken}` },
-        }
+        },
       );
 
       toast.success(data.data.message);
@@ -155,14 +155,20 @@ const BlockManagement = () => {
   };
 
   const filteredRobots = Array.isArray(robots)
-    ? robots.filter(
-        (robot) =>
-          robot.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.block?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? robots
+        .filter((robot) => {
+          const term = searchTerm.toLowerCase();
+
+          return (
+            (robot.robot_no || "").toLowerCase().includes(term) ||
+            (robot.deveui || "").toLowerCase().includes(term) ||
+            (robot.block || "").toLowerCase().includes(term) ||
+            (robot.company || "").toLowerCase().includes(term)
+          );
+        })
+        .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))
     : [];
+
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -182,6 +188,13 @@ const BlockManagement = () => {
   }
   // const getRobotsByBlock = (blockName) =>
   //   robots.filter((robot) => robot.block === blockName);
+
+  const sortedBlocks = [...blocks].sort((a, b) =>
+    (a.block_name || "").localeCompare(b.block_name || "", undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
       <h4 className="p-2 text-center text-success">
@@ -275,7 +288,7 @@ const BlockManagement = () => {
                         robots.filter(
                           (r) =>
                             r.last_status === "Cleaning Started" &&
-                            r.lora_state === 1
+                            r.lora_state === 1,
                         ).length
                       }
                     </span>
@@ -328,7 +341,7 @@ const BlockManagement = () => {
                   <CTableHeaderCell className="text-center">
                     Firmware Version
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="text-center">
+                  {/* <CTableHeaderCell className="text-center">
                     timer1
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
@@ -336,7 +349,7 @@ const BlockManagement = () => {
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
                     timer3
-                  </CTableHeaderCell>
+                  </CTableHeaderCell> */}
                   <CTableHeaderCell className="text-center">
                     Last Status
                   </CTableHeaderCell>
@@ -383,7 +396,7 @@ const BlockManagement = () => {
                           PCB: {robot.pcb_version}
                         </CBadge>
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
+                      {/* <CTableDataCell className="text-center">
                         {robot.timer1}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
@@ -391,7 +404,7 @@ const BlockManagement = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.timer3}
-                      </CTableDataCell>
+                      </CTableDataCell> */}
                       <CTableDataCell className="text-center">
                         {robot.last_status}
                       </CTableDataCell>
@@ -407,7 +420,7 @@ const BlockManagement = () => {
                                 minute: "2-digit",
                                 second: "2-digit",
                                 hour12: true,
-                              }
+                              },
                             )
                           : "N/A"}
                       </CTableDataCell>
@@ -441,7 +454,7 @@ const BlockManagement = () => {
             {
               robots.filter(
                 (r) =>
-                  r.last_status === "Cleaning Started" && r.lora_state === 1
+                  r.last_status === "Cleaning Started" && r.lora_state === 1,
               ).length
             }
           </span>
@@ -454,199 +467,206 @@ const BlockManagement = () => {
       <CContainer>
         <CRow className="mt-4 justify-content-center">
           {/* mapping blocks */}
-          {blocks.map((block, index) => {
-            const robot = block.blockrobots ? block.blockrobots : null; // Handle single robot object
+          {sortedBlocks
+            .map((block, index) => {
+              const robot = block.blockrobots
+                ? block.blockrobots.sort((a, b) =>
+                    (a.robot_no || "").localeCompare(b.robot_no || ""),
+                  )
+                : null; // Handle single robot object
+              return (
+                <CCol md={4} className="my-2" key={index}>
+                  <CCard className="h-100 d-flex flex-column border border-primary shadow-sm rounded-0">
+                    <CCardHeader className="text-center fw-bold border-bottom border-primary rounded-0">
+                      {block.block_name}
+                    </CCardHeader>
+                    <CCardBody className="d-flex flex-column flex-grow-1">
+                      <div className="d-flex flex-row justify-content-between p-1">
+                        <CCol md={3}>
+                          <p className="text-center">Total</p>
+                          <p className="text-primary fw-bold text-center">
+                            {block.total_robot_count}
+                          </p>
+                        </CCol>
+                        <CCol md={3}>
+                          <p className="text-center">Online</p>
+                          <p className="text-success fw-bold text-center">
+                            {block.online}
+                          </p>
+                        </CCol>
+                        <CCol md={3}>
+                          <p className="text-center">Running</p>
+                          <p className="text-success fw-bold text-center">
+                            {block.running}
+                          </p>
+                        </CCol>
+                        <CCol md={3}>
+                          <p className="text-center">Offline</p>
+                          <p className="text-danger fw-bold text-center">
+                            {block.offline}
+                          </p>
+                        </CCol>
+                      </div>
 
-            return (
-              <CCol md={4} className="my-2" key={index}>
-                <CCard className="h-100 d-flex flex-column border border-primary shadow-sm rounded-0">
-                  <CCardHeader className="text-center fw-bold border-bottom border-primary rounded-0">
-                    {block.block_name}
-                  </CCardHeader>
-                  <CCardBody className="d-flex flex-column flex-grow-1">
-                    <div className="d-flex flex-row justify-content-between p-1">
-                      <CCol md={3}>
-                        <p className="text-center">Total</p>
-                        <p className="text-primary fw-bold text-center">
-                          {block.total_robot_count}
-                        </p>
-                      </CCol>
-                      <CCol md={3}>
-                        <p className="text-center">Online</p>
-                        <p className="text-success fw-bold text-center">
-                          {block.online}
-                        </p>
-                      </CCol>
-                      <CCol md={3}>
-                        <p className="text-center">Running</p>
-                        <p className="text-success fw-bold text-center">
-                          {block.running}
-                        </p>
-                      </CCol>
-                      <CCol md={3}>
-                        <p className="text-center">Offline</p>
-                        <p className="text-danger fw-bold text-center">
-                          {block.offline}
-                        </p>
-                      </CCol>
-                    </div>
-
-                    <div className="d-flex justify-content-center flex-wrap align-items-center flex-grow-1 mx-3">
-                      {robot.map((item, index) => (
-                        <CTooltip
-                          key={index}
-                          content={item.last_status}
-                          placement="top"
-                        >
-                          <span
-                            className={`tooltip-container m-1 badge p-1 rounded-1 ${
-                              item.lora_state === 1 ? "bg-success" : "bg-danger"
-                            }`}
+                      <div className="d-flex justify-content-center flex-wrap align-items-center flex-grow-1 mx-3">
+                        {robot.map((item, index) => (
+                          <CTooltip
+                            key={index}
+                            content={item.last_status}
+                            placement="top"
                           >
-                            <div
-                              onClick={() =>
-                                navigate(
-                                  `/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`
-                                )
-                              }
+                            <span
+                              className={`tooltip-container m-1 badge p-1 rounded-1 ${
+                                item.lora_state === 1
+                                  ? "bg-success"
+                                  : "bg-danger"
+                              }`}
                             >
-                              {item.robot_no.slice(-3)}
-                            </div>
-                          </span>
-                        </CTooltip>
-                      ))}
-                    </div>
-                  </CCardBody>
-                  <div className="p-2 d-flex justify-content-center gap-2">
-                    {robot ? (
-                      <>
-                        <Link
-                          to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
-                          className="btn btn-sm btn-secondary"
-                        >
-                          MANAGE
-                        </Link>
+                              <div
+                                onClick={() =>
+                                  navigate(
+                                    `/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`,
+                                  )
+                                }
+                              >
+                                {item.robot_no.slice(-3)}
+                              </div>
+                            </span>
+                          </CTooltip>
+                        ))}
+                      </div>
+                    </CCardBody>
+                    <div className="p-2 d-flex justify-content-center gap-2">
+                      {robot ? (
+                        <>
+                          <Link
+                            to={`/${adminroute}/site-management/block-management/${site_id}/${block.block_name}/${block.blockrobots[0].robot_no}`}
+                            className="btn btn-sm btn-secondary"
+                          >
+                            MANAGE
+                          </Link>
 
-                        <CButton
-                          color="info"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedBlock(block); // choose block
-                            setBlockModalVisible(true); // open single modal
-                          }}
-                        >
-                          View Details
+                          <CButton
+                            color="info"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedBlock(block); // choose block
+                              setBlockModalVisible(true); // open single modal
+                            }}
+                          >
+                            View Details
+                          </CButton>
+                        </>
+                      ) : (
+                        <CButton disabled className="btn-sm btn-secondary">
+                          No Robots
                         </CButton>
-                      </>
-                    ) : (
-                      <CButton disabled className="btn-sm btn-secondary">
-                        No Robots
-                      </CButton>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  {/* 🔹 Single Global Block Modal */}
-                  <CModal
-                    backdrop="static"
-                    size="lg"
-                    scrollable
-                    visible={blockModalVisible}
-                    onClose={() => setBlockModalVisible(false)}
-                  >
-                    <CModalHeader closeButton={false}>
-                      <CModalTitle>
-                        <span className="text-primary">
-                          {selectedBlock?.block_name}
-                        </span>{" "}
-                        - Robots
-                      </CModalTitle>
-                      <button
-                        type="button"
-                        className="border-0 ms-auto py-0 px-1 bg-transparent"
-                        onClick={() => setBlockModalVisible(false)}
-                      >
-                        <CIcon icon={cilX} size="lg" />
-                      </button>
-                    </CModalHeader>
+                    {/* 🔹 Single Global Block Modal */}
+                    <CModal
+                      backdrop="static"
+                      size="lg"
+                      scrollable
+                      visible={blockModalVisible}
+                      onClose={() => setBlockModalVisible(false)}
+                    >
+                      <CModalHeader closeButton={false}>
+                        <CModalTitle>
+                          <span className="text-primary">
+                            {selectedBlock?.block_name}
+                          </span>{" "}
+                          - Robots
+                        </CModalTitle>
+                        <button
+                          type="button"
+                          className="border-0 ms-auto py-0 px-1 bg-transparent"
+                          onClick={() => setBlockModalVisible(false)}
+                        >
+                          <CIcon icon={cilX} size="lg" />
+                        </button>
+                      </CModalHeader>
 
-                    <CModalBody>
-                      <CTable responsive bordered hover>
-                        <CTableHead color="secondary">
-                          <CTableRow>
-                            <CTableHeaderCell className="text-center">
-                              Sr
-                            </CTableHeaderCell>
-                            <CTableHeaderCell className="text-center">
-                              Robot No
-                            </CTableHeaderCell>
-                            <CTableHeaderCell className="text-center">
-                              Status
-                            </CTableHeaderCell>
-                            <CTableHeaderCell className="text-center">
-                              Battery (%)
-                            </CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
+                      <CModalBody>
+                        <CTable responsive bordered hover>
+                          <CTableHead color="secondary">
+                            <CTableRow>
+                              <CTableHeaderCell className="text-center">
+                                Sr
+                              </CTableHeaderCell>
+                              <CTableHeaderCell className="text-center">
+                                Robot No
+                              </CTableHeaderCell>
+                              <CTableHeaderCell className="text-center">
+                                Status
+                              </CTableHeaderCell>
+                              <CTableHeaderCell className="text-center">
+                                Battery (%)
+                              </CTableHeaderCell>
+                            </CTableRow>
+                          </CTableHead>
 
-                        <CTableBody>
-                          {selectedBlock?.blockrobots &&
-                          selectedBlock.blockrobots.length > 0 ? (
-                            selectedBlock.blockrobots.map((r, index) => (
-                              <CTableRow key={index}>
-                                <CTableDataCell className="text-center">
-                                  {index + 1}
-                                </CTableDataCell>
-                                <CTableDataCell className="text-center">
-                                  {r.robot_no}
-                                </CTableDataCell>
-                                <CTableDataCell className="text-center">
-                                  {r.lora_state === 1 ? (
-                                    <span className="text-success fw-bold">
-                                      Online
-                                    </span>
-                                  ) : (
-                                    <span className="text-danger fw-bold">
-                                      Offline
-                                    </span>
-                                  )}
-                                </CTableDataCell>
-                                <CTableDataCell className="text-center">
-                                  {r.battery_voltage !== undefined ? (
-                                    <span
-                                      className={`fw-bold ${
-                                        r.battery_voltage < 20
-                                          ? "text-danger"
-                                          : r.battery_voltage < 50
-                                          ? "text-warning"
-                                          : "text-success"
-                                      }`}
-                                    >
-                                      {r.battery_voltage}%
-                                    </span>
-                                  ) : (
-                                    "-"
-                                  )}
+                          <CTableBody>
+                            {selectedBlock?.blockrobots &&
+                            selectedBlock.blockrobots.length > 0 ? (
+                              selectedBlock.blockrobots.map((r, index) => (
+                                <CTableRow key={index}>
+                                  <CTableDataCell className="text-center">
+                                    {index + 1}
+                                  </CTableDataCell>
+                                  <CTableDataCell className="text-center">
+                                    {r.robot_no}
+                                  </CTableDataCell>
+                                  <CTableDataCell className="text-center">
+                                    {r.lora_state === 1 ? (
+                                      <span className="text-success fw-bold">
+                                        Online
+                                      </span>
+                                    ) : (
+                                      <span className="text-danger fw-bold">
+                                        Offline
+                                      </span>
+                                    )}
+                                  </CTableDataCell>
+                                  <CTableDataCell className="text-center">
+                                    {r.battery_voltage !== undefined ? (
+                                      <span
+                                        className={`fw-bold ${
+                                          r.battery_voltage < 20
+                                            ? "text-danger"
+                                            : r.battery_voltage < 50
+                                              ? "text-warning"
+                                              : "text-success"
+                                        }`}
+                                      >
+                                        {r.battery_voltage}%
+                                      </span>
+                                    ) : (
+                                      "-"
+                                    )}
+                                  </CTableDataCell>
+                                </CTableRow>
+                              ))
+                            ) : (
+                              <CTableRow>
+                                <CTableDataCell
+                                  colSpan="4"
+                                  className="text-center text-muted"
+                                >
+                                  No Robots Found
                                 </CTableDataCell>
                               </CTableRow>
-                            ))
-                          ) : (
-                            <CTableRow>
-                              <CTableDataCell
-                                colSpan="4"
-                                className="text-center text-muted"
-                              >
-                                No Robots Found
-                              </CTableDataCell>
-                            </CTableRow>
-                          )}
-                        </CTableBody>
-                      </CTable>
-                    </CModalBody>
-                  </CModal>
-                </CCard>
-              </CCol>
-            );
-          })}
+                            )}
+                          </CTableBody>
+                        </CTable>
+                      </CModalBody>
+                    </CModal>
+                  </CCard>
+                </CCol>
+              );
+            })
+            .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))}
         </CRow>
       </CContainer>
     </div>

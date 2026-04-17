@@ -556,7 +556,7 @@ const RobotTracker = () => {
             totalDeleted={totalDeleted}
             userInfo={userInfo}
           /> */}
-          {(sitesError || error) && (
+          {sitesError && (
             <div
               style={{
                 display: "flex",
@@ -566,7 +566,7 @@ const RobotTracker = () => {
               }}
             >
               <div className="alert alert-danger w-50 text-center">
-                {sitesError || error}
+                {sitesError}
               </div>
             </div>
           )}
@@ -575,7 +575,7 @@ const RobotTracker = () => {
               <SubscriptionExpiryCard
                 data={subscriptiondata}
                 subscriptionStatus={subscriptionStatus}
-                error={sitesError}
+                error={error || sitesError}
               />
             ) : (
               <div
