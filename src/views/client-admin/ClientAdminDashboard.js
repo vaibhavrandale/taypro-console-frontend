@@ -983,7 +983,6 @@ export default function ClientAdminDashboard() {
               />
             )}
           </section>
-
           {/* CHARTS ROW */}
           <section
             style={{
