@@ -1,13 +1,5 @@
+import { CBadge } from "@coreui/react";
 import React, { useEffect, useRef } from "react";
-
-/* ─────────────────────────────────────────────────────────
-   Weather.jsx  –  premium weather card
-   Props:
-     weatherType : "sunny" | "rainy" | "cloudy" | "foggy"
-     weatherData : { temperature, cloudiness, wind_speed,
-                     humidity, description, time }
-     siteName    : string
-   ───────────────────────────────────────────────────────── */
 
 const THEMES = {
   rainy: {
@@ -41,12 +33,12 @@ const THEMES = {
 };
 
 export default function Weather({
-  weatherType = "sunny",
+  siteDetailsError,
+  weatherType,
   weatherData = {},
   siteName,
   logo,
 }) {
-  const canvasRef = useRef(null);
   const stateRef = useRef({
     drops: [],
     clouds: [],
@@ -56,6 +48,7 @@ export default function Weather({
     type: weatherType,
   });
   const rafRef = useRef(null);
+  const canvasRef = useRef(null);
   const theme = THEMES[weatherType] || THEMES.sunny;
 
   /* ── canvas animation ── */
@@ -260,7 +253,11 @@ export default function Weather({
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
     };
-  }, [weatherType]);
+  }, [theme.sky, weatherType]);
+
+  if (!weatherData) {
+    return <div style={{ padding: 20, color: "#fff" }}>{siteDetailsError}</div>;
+  }
 
   /* ── helpers ── */
   const fmt = (v, unit) =>
@@ -288,127 +285,143 @@ export default function Weather({
         borderRadius: "10px",
       }}
     >
-      {/* sky canvas */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          display: "block",
-        }}
-      />
-
-      {/* bottom gradient scrim for readability */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(160deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.45) 100%)",
-        }}
-      />
-
-      {/* ── main content ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          padding: "20px 20px 16px",
-          boxSizing: "border-box",
-          color: "#ffffff",
-        }}
-      >
-        {/* ── row 1: site + description pill ── */}
+      {siteDetailsError ? (
         <div
+          className="border"
           style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
             display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "end",
-            flexShrink: 0,
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 5,
-              // background: "rgba(255,255,255,0.14)",
-              border: "1px solid rgba(255,255,255,0.22)",
-              borderRadius: 20,
-              padding: "4px 10px",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: theme.accent,
-              backdropFilter: "blur(8px)",
-              flexShrink: 0,
-            }}
-          >
-            {theme.emoji} {weatherData.description || theme.label}
-          </div>
+          <CBadge color="warning">{siteDetailsError}</CBadge>
         </div>
+      ) : (
+        <>
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              display: "block",
+            }}
+          />
 
-        {/* ── row 2: hero temperature ── */}
-        <div style={{ marginTop: 23, flexShrink: 0 }}>
+          {/* bottom gradient scrim for readability */}
           <div
             style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(160deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.45) 100%)",
+            }}
+          />
+
+          {/* ── main content ── */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 2,
+              height: "100%",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 4,
+              flexDirection: "column",
+              padding: "20px 20px 16px",
+              boxSizing: "border-box",
+              color: "#ffffff",
             }}
           >
-            {siteName && (
-              <>
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    opacity: 0.95,
-                    maxWidth: "65%",
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {siteName},&nbsp;{weatherData.location}
-                </div>
-              </>
-            )}
-            <div>
-              {" "}
-              <span
+            {/* ── row 1: site + description pill ── */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "end",
+                flexShrink: 0,
+              }}
+            >
+              <div
                 style={{
-                  fontSize: 30,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  // background: "rgba(255,255,255,0.14)",
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  borderRadius: 20,
+                  padding: "4px 10px",
+                  fontSize: 11,
                   fontWeight: 700,
-                  lineHeight: 1,
-                  color: "#ffffff",
-                  textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
-                  letterSpacing: "-2px",
-                  right: 9,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: theme.accent,
+                  backdropFilter: "blur(8px)",
+                  flexShrink: 0,
                 }}
-                className=" position-relative"
               >
-                {weatherData.temperature ?? "--"}
-              </span>
-              <span
-                style={{
-                  fontSize: 12,
-                  fontWeight: 300,
-                  right: 12,
-                  opacity: 0.85,
-                }}
-                className=" position-absolute"
-              >
-                °C
-              </span>
+                {theme.emoji} {weatherData.description || theme.label}
+              </div>
             </div>
-          </div>
-          {/* <div
+
+            {/* ── row 2: hero temperature ── */}
+            <div style={{ marginTop: 23, flexShrink: 0 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 4,
+                }}
+              >
+                {siteName && (
+                  <>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        opacity: 0.95,
+                        maxWidth: "65%",
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {siteName},&nbsp;{weatherData.location}
+                    </div>
+                  </>
+                )}
+                <div>
+                  {" "}
+                  <span
+                    style={{
+                      fontSize: 30,
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      color: "#ffffff",
+                      textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
+                      letterSpacing: "-2px",
+                      right: 9,
+                    }}
+                    className=" position-relative"
+                  >
+                    {weatherData.temperature ?? "--"}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 300,
+                      right: 12,
+                      opacity: 0.85,
+                    }}
+                    className=" position-absolute"
+                  >
+                    °C
+                  </span>
+                </div>
+              </div>
+              {/* <div
             style={{
               fontSize: 13,
               opacity: 0.65,
@@ -418,102 +431,102 @@ export default function Weather({
           >
             Feels like {fmt(weatherData.temperature, "°C")}
           </div> */}
-        </div>
+            </div>
 
-        {/* ── row 3: divider ── */}
-        <div
-          style={{
-            height: 1,
-            // background: "rgba(255,255,255,0.12)",
-            margin: "14px 0",
-            flexShrink: 0,
-          }}
-        />
-
-        {/* ── row 4: three stat pills ── */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 10,
-            flexShrink: 0,
-          }}
-        >
-          {[
-            {
-              icon: logo && (
-                <div className=" d-flex justify-content-center align-items-center  ">
-                  <img
-                    src={logo}
-                    alt="Site Logo"
-                    style={{
-                      width: "90%",
-                      height: 70,
-
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
-              ),
-              value: "",
-              label: "",
-            },
-            {
-              icon: "💧",
-              value: fmt(weatherData.humidity, "%"),
-              label: "Humidity",
-            },
-            {
-              icon: "💨",
-              value: fmt(weatherData.wind_speed, " m/s"),
-              label: "Wind",
-            },
-            {
-              icon: "☁️",
-              value: fmt(weatherData.cloudiness, "%"),
-              label: "Cloud cover",
-            },
-          ].map(({ icon, value, label }) => (
+            {/* ── row 3: divider ── */}
             <div
-              key={label}
               style={{
-                background: "rgba(255,255,255,0.10)",
-                backdropFilter: "blur(12px)",
-                // border: "1px solid rgba(255,255,255,0.16)",
-                borderRadius: 14,
-                padding: "12px 10px 10px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 3,
+                height: 1,
+                // background: "rgba(255,255,255,0.12)",
+                margin: "14px 0",
+                flexShrink: 0,
+              }}
+            />
+
+            {/* ── row 4: three stat pills ── */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 10,
+                flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 18 }}>{icon}</span>
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  color: "#fff",
-                  lineHeight: 1,
-                }}
-              >
-                {value}
-              </span>
-              <span
-                style={{
-                  fontSize: 10,
-                  opacity: 0.6,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {label}
-              </span>
+              {[
+                {
+                  icon: logo && (
+                    <div className=" d-flex justify-content-center align-items-center  ">
+                      <img
+                        src={logo}
+                        alt="Site Logo"
+                        style={{
+                          width: "90%",
+                          height: 70,
+
+                          objectFit: "contain",
+                        }}
+                      />
+                    </div>
+                  ),
+                  value: "",
+                  label: "",
+                },
+                {
+                  icon: "💧",
+                  value: fmt(weatherData.humidity, "%"),
+                  label: "Humidity",
+                },
+                {
+                  icon: "💨",
+                  value: fmt(weatherData.wind_speed, " m/s"),
+                  label: "Wind",
+                },
+                {
+                  icon: "☁️",
+                  value: fmt(weatherData.cloudiness, "%"),
+                  label: "Cloud cover",
+                },
+              ].map(({ icon, value, label }) => (
+                <div
+                  key={label}
+                  style={{
+                    background: "rgba(255,255,255,0.10)",
+                    backdropFilter: "blur(12px)",
+                    // border: "1px solid rgba(255,255,255,0.16)",
+                    borderRadius: 14,
+                    padding: "12px 10px 10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 3,
+                  }}
+                >
+                  <span style={{ fontSize: 18 }}>{icon}</span>
+                  <span
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: "#fff",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {value}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      opacity: 0.6,
+                      letterSpacing: "0.05em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {/* {logo && (
+            {/* {logo && (
             <img
               src={logo}
               alt="Site Logo"
@@ -529,33 +542,36 @@ export default function Weather({
             />
 
         )} */}
-        {/* ── spacer ── */}
-        <div style={{ flex: 1, minHeight: 0 }} />
+            {/* ── spacer ── */}
+            <div style={{ flex: 1, minHeight: 0 }} />
 
-        {/* ── row 5: timestamp ── */}
-        {timeStr && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
-              background: "rgba(0,0,0,0.28)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.10)",
-              borderRadius: 10,
-              padding: "7px 14px",
-              fontSize: 11,
-              opacity: 0.85,
-              letterSpacing: "0.03em",
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ opacity: 0.6 }}>🕐</span>
-            Last updated: <strong style={{ fontWeight: 600 }}>{timeStr}</strong>
+            {/* ── row 5: timestamp ── */}
+            {timeStr && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  background: "rgba(0,0,0,0.28)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  borderRadius: 10,
+                  padding: "7px 14px",
+                  fontSize: 11,
+                  opacity: 0.85,
+                  letterSpacing: "0.03em",
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ opacity: 0.6 }}>🕐</span>
+                Last updated:{" "}
+                <strong style={{ fontWeight: 600 }}>{timeStr}</strong>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }
