@@ -215,6 +215,8 @@ import ViewRobotCommisioningDoc from "./views/commisioning/ViewRobotCommisioning
 import UpdateRobotCommisioningDoc from "./views/commisioning/UpdateRobotCommisioningDoc";
 import SemiAutomaticRobot from "./views/master-admin/semi-robots/SemiAutomaticRobot";
 import AddSemiAutomaticRobot from "./views/master-admin/semi-robots/AddSemiAutomaticRobot";
+import RobotLocation from "./views/master-admin/robot-location/RobotLocation";
+import AddRobotLocation from "./views/master-admin/robot-location/AddRobotLocation";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2103,6 +2105,16 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <AddSemiAutomaticRobot />
+      </MasterAdminRoute>
+    ),
+  },
+
+  {
+    path: "/master-admin/robot-location",
+    name: "Robot Location",
+    element: (
+      <MasterAdminRoute>
+        <RobotLocation />
       </MasterAdminRoute>
     ),
   },
@@ -7420,16 +7432,24 @@ const routes = [
     ),
   },
 
-    {
-    path: "/site-technician/chat-with-console",
-    name: "Chat with Console",
+  {
+    path: "/site-technician/robot-location",
+    name: "Robot Location",
     element: (
       <SiteTechnicianRoute>
-        <OpenAiChat />
+        <RobotLocation />
       </SiteTechnicianRoute>
     ),
   },
-
+  {
+    path: "/site-technician/robot-location/:robot_no/:site_id",
+    name: "Create Robot Location",
+    element: (
+      <SiteTechnicianRoute>
+        <AddRobotLocation />
+      </SiteTechnicianRoute>
+    ),
+  },
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------

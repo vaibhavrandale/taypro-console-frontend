@@ -730,7 +730,7 @@ const _nav = [
 
       {
         component: CNavGroup,
-        name: "Robot Row Data",
+        name: "Robot Data",
         icon: (
           <CIcon
             icon={cilSettings}
@@ -741,8 +741,13 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "View Row Data",
+            name: "Row Data",
             to: "/master-admin/update-row-data",
+          },
+          {
+            component: CNavItem,
+            name: "Robot Locations",
+            to: "/master-admin/robot-location",
           },
         ],
       },
@@ -2668,7 +2673,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Row Data",
+        name: "Robot Data",
         icon: (
           <CIcon
             icon={cilSettings}
@@ -2679,8 +2684,13 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "View Row Data",
+            name: "Row Data",
             to: "/site-technician/update-row-data",
+          },
+          {
+            component: CNavItem,
+            name: "Robot Locations",
+            to: "/site-technician/robot-location",
           },
         ],
       },
