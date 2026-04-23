@@ -2118,6 +2118,15 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/robot-location/:robot_no/:site_id",
+    name: "Create Robot Location",
+    element: (
+      <MasterAdminRoute>
+        <AddRobotLocation />
+      </MasterAdminRoute>
+    ),
+  },
 
   // ------------------------master admin---------------------------------
 
