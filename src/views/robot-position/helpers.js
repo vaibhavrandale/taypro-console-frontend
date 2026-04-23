@@ -124,7 +124,13 @@ export const smoothScroll = (element, target, duration = 400) => {
 // };
 // ----------------------------new phase-----------------------
 
-export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = null) => {
+export const getRobotPhase = (
+  pt,
+  L,
+  cleaning,
+  trackDetails,
+  robotCreatedAt = null,
+) => {
   let phase,
     badgeColor,
     iconBorder,
@@ -135,27 +141,29 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = nu
     if (!cleaning?.finish || !cleaning?.finishAt) {
       return false;
     }
-    
+
     try {
       const finishDate = new Date(cleaning.finishAt);
       if (isNaN(finishDate.getTime())) {
         return false; // Invalid date
       }
-      
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       const finishDateOnly = new Date(finishDate);
       finishDateOnly.setHours(0, 0, 0, 0);
-      
+
       // If finish date is before today, it was finished yesterday or earlier
       const isPreviousDay = finishDateOnly.getTime() < today.getTime();
-      
+
       // Debug log (remove after testing)
       if (isPreviousDay) {
-        console.log(`✅ Cleaning finished on previous day: finishAt=${finishDateOnly.toISOString()}, today=${today.toISOString()}`);
+        console.log(
+          `✅ Cleaning finished on previous day: finishAt=${finishDateOnly.toISOString()}, today=${today.toISOString()}`,
+        );
       }
-      
+
       return isPreviousDay;
     } catch (e) {
       console.error("Error checking finish date:", e);
@@ -165,7 +173,8 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = nu
 
   // ✅ If cleaning finished yesterday or earlier, treat as "not started today"
   // Check if finishAt is from a previous day (regardless of start status, as start might still be true from yesterday)
-  const isFinishedFromPreviousDay = cleaning?.finish && isFinishedYesterdayOrEarlier();
+  const isFinishedFromPreviousDay =
+    cleaning?.finish && isFinishedYesterdayOrEarlier();
 
   // --- Determine last effective point (latest progress) ---
   const points = trackDetails.map((t) => t.point).sort((a, b) => a - b);
@@ -185,8 +194,8 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = nu
         effectivePoint >= 20 && effectivePoint <= 29
           ? (effectivePoint - 19) / (29 - 19) // forward
           : effectivePoint >= 31 && effectivePoint <= 40
-          ? (effectivePoint - 29) / (40 - 29) // reverse
-          : 0,
+            ? (effectivePoint - 29) / (40 - 29) // reverse
+            : 0,
       effectivePoint,
     };
   } else if (cleaning?.battery_dead && cleaning.finish) {
@@ -222,8 +231,8 @@ export const getRobotPhase = (pt, L, cleaning, trackDetails, robotCreatedAt = nu
         effectivePoint >= 20 && effectivePoint <= 29
           ? (effectivePoint - 19) / (29 - 19) // forward
           : effectivePoint >= 31 && effectivePoint <= 40
-          ? (effectivePoint - 29) / (40 - 29) // reverse
-          : 0,
+            ? (effectivePoint - 29) / (40 - 29) // reverse
+            : 0,
       effectivePoint,
     };
   } else if (effectivePoint !== 40 && cleaning.finish) {
@@ -304,7 +313,7 @@ export const getCleaningPercentage = (pt, robot) => {
   let percentage = 0;
   let distance = 0;
   const totalSteps = 20;
-  
+
   // ✅ If cleaning is finished (uplink 16 or metrics received), always return 100%
   if (robot.cleaning?.finish === true) {
     return {
@@ -314,7 +323,7 @@ export const getCleaningPercentage = (pt, robot) => {
       percentage: 100,
     };
   }
-  
+
   // ✅ Find highest point from track_details (19-40) instead of using last point
   let highestPoint = pt;
   if (robot.track_details && robot.track_details.length > 0) {
@@ -325,7 +334,7 @@ export const getCleaningPercentage = (pt, robot) => {
       highestPoint = Math.max(...validPoints);
     }
   }
-  
+
   // Use highest point for calculation
   if (highestPoint >= 20 && highestPoint <= 29) {
     distance = highestPoint - 19;

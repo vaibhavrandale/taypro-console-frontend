@@ -2558,7 +2558,7 @@ export default function ClientAdminDashboard() {
             zIndex: 200,
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "end",
             padding: "0 10px",
             height: 50,
             // background: "rgba(16,25,54,.94)",
@@ -2566,7 +2566,7 @@ export default function ClientAdminDashboard() {
             borderBottom: `1px solid ${T.border}`,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span className="pulse-dot" />
             <span style={{ fontSize: 13, color: T.textMid }}>
               Hello,&nbsp;
@@ -2576,19 +2576,9 @@ export default function ClientAdminDashboard() {
               &nbsp;—&nbsp;
               <span style={{ color: T.cyan }}>{greeting()}</span>
             </span>
-          </div>
+          </div> */}
 
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span
-              style={{
-                fontSize: 11,
-                color: T.textDim,
-                textTransform: "uppercase",
-                letterSpacing: ".8px",
-              }}
-            >
-              Site
-            </span>
             {loadingSiteIds ? (
               <Skel h={32} w={160} r={8} />
             ) : (

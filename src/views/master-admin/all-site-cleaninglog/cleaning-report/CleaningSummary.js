@@ -581,7 +581,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
@@ -633,6 +633,7 @@ const CleaningSummary = () => {
   const { site_id } = useParams();
 
   const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   // Main table search
@@ -684,11 +685,11 @@ const CleaningSummary = () => {
 
     fetchData();
   }, [authtoken, site_id, month, year]);
-  const handleViewDetails = (date, type, robots) => {
-    setModalSearch("");
-    setModalData({ date, type, robots });
-    setModalVisible(true);
-  };
+  // const handleViewDetails = (date, type, robots) => {
+  //   setModalSearch("");
+  //   setModalData({ date, type, robots });
+  //   setModalVisible(true);
+  // };
 
   const filteredMainData = data.filter((item) =>
     item.date.toLowerCase().includes(mainSearch.toLowerCase()),
@@ -736,6 +737,30 @@ const CleaningSummary = () => {
       );
     }
   };
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  }
 
   return (
     <>
@@ -862,25 +887,41 @@ const CleaningSummary = () => {
                 <CTableHead color="light">
                   <CTableRow>
                     <CTableHeaderCell>#</CTableHeaderCell>
-                    <CTableHeaderCell>Date</CTableHeaderCell>
-                    <CTableHeaderCell>Robots Availability</CTableHeaderCell>
-                    <CTableHeaderCell>Successful Cleanings</CTableHeaderCell>
-                    <CTableHeaderCell>Failed Cleanings</CTableHeaderCell>
-                    <CTableHeaderCell>Uptime</CTableHeaderCell>
-                    <CTableHeaderCell>Technician Remarks</CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Date
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Robots Availability
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Availibility Uptime
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Successful Cleanings
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Failed Cleanings
+                    </CTableHeaderCell>
+
+                    <CTableHeaderCell className="text-center">
+                      Cleaning Uptime
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Technician Remarks
+                    </CTableHeaderCell>
                     <CTableHeaderCell>Actions</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
                   {loading ? (
                     <CTableRow>
-                      <CTableHeaderCell colSpan="8" className="text-center">
+                      <CTableHeaderCell colSpan="9" className="text-center">
                         <LoadingSpinner />
                       </CTableHeaderCell>
                     </CTableRow>
                   ) : error ? (
                     <CTableRow>
-                      <CTableHeaderCell colSpan="8" className="text-center">
+                      <CTableHeaderCell colSpan="9" className="text-center">
                         {error}
                       </CTableHeaderCell>
                     </CTableRow>
@@ -888,22 +929,49 @@ const CleaningSummary = () => {
                     filteredMainData.map((item, index) => (
                       <CTableRow key={item.date}>
                         <CTableDataCell>{index + 1}</CTableDataCell>
-                        <CTableDataCell>
+                        <CTableDataCell className="text-center">
                           {new Date(item.date).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "numeric",
                           })}
                         </CTableDataCell>
-                        <CTableDataCell>{item.available_robots}</CTableDataCell>
-                        <CTableDataCell>{item.success_count}</CTableDataCell>
-                        <CTableDataCell>{item.failure_count}</CTableDataCell>
-                        <CTableDataCell>
-                          {item.uptime_percentage
-                            ? `${item.uptime_percentage}%`
-                            : "N/A"}
+                        <CTableDataCell
+                          style={{ minWidth: "150px" }}
+                          className="text-center"
+                        >
+                          {item.available_robots}
                         </CTableDataCell>
-                        <CTableDataCell>
+                        <CTableDataCell
+                          style={{ minWidth: "150px" }}
+                          className="text-center"
+                        >
+                          {item.availibility_uptime_percentage
+                            ? `${item.availibility_uptime_percentage}%`
+                            : "0%"}
+                        </CTableDataCell>
+                        <CTableDataCell
+                          style={{ minWidth: "150px" }}
+                          className="text-center"
+                        >
+                          {item.success_count}
+                        </CTableDataCell>
+                        <CTableDataCell
+                          style={{ minWidth: "150px" }}
+                          className="text-center"
+                        >
+                          {item.failure_count}
+                        </CTableDataCell>
+
+                        <CTableDataCell
+                          style={{ minWidth: "150px" }}
+                          className="text-center"
+                        >
+                          {item.cleaning_uptime_percentage
+                            ? `${item.cleaning_uptime_percentage}%`
+                            : "0%"}
+                        </CTableDataCell>
+                        <CTableDataCell style={{ minWidth: "250px" }}>
                           {item.dpr && (
                             <>
                               <span className="fw-bold text-success">
@@ -913,41 +981,20 @@ const CleaningSummary = () => {
                             </>
                           )}
                         </CTableDataCell>
-                        <CTableDataCell>
-                          <CButton
-                            color="success"
+                        <CTableDataCell className="text-center">
+                          <Link
                             size="sm"
-                            className="m-1"
-                            onClick={() =>
-                              handleViewDetails(
-                                item.date,
-                                "success",
-                                item.success_robots,
-                              )
-                            }
+                            className="m-1 btn btn-sm"
+                            to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}/${new Date(item.date).toISOString().split("T")[0]}`}
                           >
-                            Success Robots
-                          </CButton>
-                          <CButton
-                            color="danger"
-                            className="m-1"
-                            size="sm"
-                            onClick={() =>
-                              handleViewDetails(
-                                item.date,
-                                "failure",
-                                item.failure_robots,
-                              )
-                            }
-                          >
-                            Failure Robots
-                          </CButton>
+                            View Log
+                          </Link>
                         </CTableDataCell>
                       </CTableRow>
                     ))
                   ) : (
                     <CTableRow>
-                      <CTableDataCell colSpan="8" className="text-center">
+                      <CTableDataCell colSpan="9" className="text-center">
                         No records found for the selected month and year.
                       </CTableDataCell>
                     </CTableRow>
@@ -1026,13 +1073,17 @@ const CleaningSummary = () => {
               {filteredModalRobots.length > 0 ? (
                 filteredModalRobots.map((robot, index) => (
                   <CTableRow key={index}>
-                    <CTableDataCell>{index + 1}</CTableDataCell>
-                    {/* <CTableDataCell>{robot._id}</CTableDataCell> */}
-                    <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                    <CTableDataCell className="text-center">
+                      {index + 1}
+                    </CTableDataCell>
+                    {/* <CTableDataCell className="text-center">{robot._id}</CTableDataCell> */}
+                    <CTableDataCell className="text-center">
+                      {robot.robot_no}
+                    </CTableDataCell>
 
                     {modalData.type === "success" ? (
                       <>
-                        <CTableDataCell>
+                        <CTableDataCell className="text-center">
                           {robot.cleaning.startAt
                             ? new Date(robot.cleaning.startAt).toLocaleString(
                                 "en-GB",
@@ -1048,7 +1099,7 @@ const CleaningSummary = () => {
                               )
                             : "N/A"}
                         </CTableDataCell>
-                        <CTableDataCell>
+                        <CTableDataCell className="text-center">
                           {robot.cleaning.finishAt
                             ? new Date(robot.cleaning.finishAt).toLocaleString(
                                 "en-GB",
