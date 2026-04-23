@@ -619,7 +619,7 @@ export default function MasterAdminDashboard() {
                   delay={80}
                   right={
                     <Link
-                      to={`/client-admin/site-management/block-management/${site_id}`}
+                      to={`/master-admin/site-management/block-management/${site_id}`}
                       style={{
                         fontSize: 11,
                         color: T.cyan,
@@ -668,7 +668,7 @@ export default function MasterAdminDashboard() {
                   right={
                     <>
                       <Link
-                        to={`/client-admin/cleaning-log-sites/daywise-cleaning/${site_id}/${date}`}
+                        to={`/master-admin/all-site-cleaning-log/sitewise-cleaning-log/${site_id}/${date}`}
                         style={{
                           fontSize: 11,
                           color: T.cyan,
@@ -683,7 +683,7 @@ export default function MasterAdminDashboard() {
                         Log →
                       </Link>
                       <Link
-                        to={`/client-admin/cleaning-log-sites/cleaning-report/${site_id}`}
+                        to={`/master-admin/all-site-cleaning-log/cleaning-report/${site_id}`}
                         style={{
                           fontSize: 11,
                           color: T.cyan,
