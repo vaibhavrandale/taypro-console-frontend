@@ -697,6 +697,7 @@ import {
 } from "recharts";
 import Weather from "../client-admin/weather/Weather";
 import { Link } from "react-router-dom";
+import GatewayMap from "../../components/GatewayMap";
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS
@@ -1070,20 +1071,20 @@ const reducer = (state, action) => {
         loadingSiteDetails: false,
         siteDetailsError: action.payload,
       };
-    case "FETCH_WEATHER_REQUEST":
-      return { ...state, loadingWeatherData: true };
-    case "FETCH_WEATHER_SUCCESS":
-      return {
-        ...state,
-        loadingWeatherData: false,
-        weatherData: action.payload,
-      };
-    case "FETCH_WEATHER_FAIL":
-      return {
-        ...state,
-        loadingWeatherData: false,
-        errorWeatherData: action.payload,
-      };
+    // case "FETCH_WEATHER_REQUEST":
+    //   return { ...state, loadingWeatherData: true };
+    // case "FETCH_WEATHER_SUCCESS":
+    //   return {
+    //     ...state,
+    //     loadingWeatherData: false,
+    //     weatherData: action.payload,
+    //   };
+    // case "FETCH_WEATHER_FAIL":
+    //   return {
+    //     ...state,
+    //     loadingWeatherData: false,
+    //     errorWeatherData: action.payload,
+    //   };
     default:
       return state;
   }
@@ -1099,24 +1100,24 @@ export default function SiteTechnicianDashboard() {
   const [state, dispatch] = useReducer(reducer, {
     siteIds: [],
     siteDetails: {},
-    weatherData: {},
+    // weatherData: {},
     loadingSiteIds: false,
     loadingSiteDetails: false,
-    loadingWeatherData: true,
+    // loadingWeatherData: true,
     errorSiteIds: "",
     siteDetailsError: "",
-    errorWeatherData: "",
+    // errorWeatherData: "",
   });
 
   const {
     siteIds,
     siteDetails,
-    weatherData,
+    // weatherData,
     loadingSiteIds,
     loadingSiteDetails,
-    loadingWeatherData,
+    // loadingWeatherData,
     siteDetailsError,
-    errorWeatherData,
+    // errorWeatherData,
   } = state;
 
   const [site_id, setSiteid] = useState(
@@ -1131,8 +1132,11 @@ export default function SiteTechnicianDashboard() {
   const [gateways, setGateways] = useState([]);
   const [robotsData, setRobots] = useState([]);
   const [siteCoords, setSiteCoords] = useState({});
+  const [weatherData, setWeatherData] = useState({});
   const [mapLoaded, setMapLoaded] = useState(false);
   const isMobile = window.innerWidth < 768;
+
+  const [showMapModal, setShowMapModal] = useState(false);
   const fetchSiteDetails = async () => {
     dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
     try {
@@ -1146,6 +1150,7 @@ export default function SiteTechnicianDashboard() {
       setRobots(d.robots);
       setGateways(d.gateways);
       setBlocks(d.blockWiseCleaning);
+      setWeatherData(d.weather);
       setCleaning(d.cleaning || { completed: 0, inprogress: 0, failure: 0 });
     } catch (e) {
       dispatch({
@@ -1155,42 +1160,46 @@ export default function SiteTechnicianDashboard() {
     }
   };
 
-  const fetchWeather = async () => {
-    dispatch({ type: "FETCH_WEATHER_REQUEST" });
-    try {
-      const { data } = await axios.get(
-        `/api/v1/weatherdata/client/${site_id}`,
-        {
+  useEffect(() => {
+    const fetchSiteIds = async () => {
+      dispatch({ type: "FETCH_SITEID_REQUEST" });
+      try {
+        const { data } = await axios.get(`/api/v1/sites`, {
           headers: { Authorization: `Bearer ${authtoken}` },
-        },
-      );
-      dispatch({ type: "FETCH_WEATHER_SUCCESS", payload: data.data });
-    } catch (e) {
-      dispatch({
-        type: "FETCH_WEATHER_FAIL",
-        payload: e.response?.data?.message || e.message,
-      });
-    }
-  };
+        });
+        dispatch({ type: "FETCH_SITEID_SUCCESS", payload: data.data });
+      } catch (e) {
+        dispatch({
+          type: "FETCH_SITEID_FAIL",
+          payload: e.response?.data?.error || e.message,
+        });
+      }
+    };
+    fetchSiteIds();
+  }, [authtoken]);
 
-  const fetchSiteIds = async () => {
-    dispatch({ type: "FETCH_SITEID_REQUEST" });
-    try {
-      const { data } = await axios.get(`/api/v1/sites`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
-      });
-      dispatch({ type: "FETCH_SITEID_SUCCESS", payload: data.data });
-    } catch (e) {
-      dispatch({
-        type: "FETCH_SITEID_FAIL",
-        payload: e.response?.data?.error || e.message,
-      });
-    }
-  };
+  // const fetchWeather = async () => {
+  //   dispatch({ type: "FETCH_WEATHER_REQUEST" });
+  //   try {
+  //     const { data } = await axios.get(
+  //       `/api/v1/weatherdata/client/${site_id}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //       },
+  //     );
+  //     dispatch({ type: "FETCH_WEATHER_SUCCESS", payload: data.data });
+  //   } catch (e) {
+  //     dispatch({
+  //       type: "FETCH_WEATHER_FAIL",
+  //       payload: e.response?.data?.message || e.message,
+  //     });
+  //   }
+  // };
+
   useEffect(() => {
     fetchSiteDetails();
-    fetchWeather();
-    fetchSiteIds();
+    // fetchWeather();
+
     setMapLoaded(false);
   }, [authtoken, site_id]);
 
@@ -1200,9 +1209,9 @@ export default function SiteTechnicianDashboard() {
   const totalRobots = robotsData.length;
   const onlineRobs = robotsData.filter((r) => r.lora_state === 1).length;
   const offlineRobs = robotsData.filter((r) => r.lora_state === 0).length;
-  const mapSrc = `https://maps.google.com/maps?hl=en&q=${siteCoords.latitude},${siteCoords.longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
+  // const mapSrc = `https://maps.google.com/maps?hl=en&q=${siteCoords.latitude},${siteCoords.longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
 
-  const isLoading = loadingSiteDetails || loadingWeatherData;
+  const isLoading = loadingSiteDetails;
 
   const getWeatherType = () => {
     const cloudiness = weatherData && weatherData?.cloudiness;
@@ -1428,38 +1437,6 @@ export default function SiteTechnicianDashboard() {
                     />
                   </div>
                 </KpiCard>
-                {/* <KpiCard label="Today's Cleaning" icon="🧹" delay={0}>
-                  <Link
-                    className="d-flex justify-content-end align-items-center"
-                    to="/site-technician/cleaning-log-sites/avaada_agar"
-                  >
-                    Log
-                  </Link>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      gap: 7,
-                      marginTop: 9,
-                    }}
-                  >
-                    <MiniStat
-                      label="Completed"
-                      value={cleaning.completed}
-                      color={T.green}
-                    />
-                    <MiniStat
-                      label="Running"
-                      value={cleaning.inprogress}
-                      color={T.amber}
-                    />
-                    <MiniStat
-                      label="Failed"
-                      value={cleaning.failure}
-                      color={T.red}
-                    />
-                  </div>
-                </KpiCard> */}
 
                 <KpiCard
                   label="Today's Cleaning"
@@ -1649,237 +1626,49 @@ export default function SiteTechnicianDashboard() {
               <Card delay={200}>
                 <CardHead
                   icon="📍"
-                  title="Site Location"
+                  title="Gateway Coverage"
                   badge={site_id}
                   right={
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 5 }}
-                    >
-                      <span
-                        className="pulse-dot"
-                        style={{ width: 6, height: 6 }}
-                      />
-                      <span
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        onClick={() => setShowMapModal(true)}
                         style={{
                           fontSize: 11,
-                          color: T.green,
-                          fontWeight: 500,
+                          padding: "5px 10px",
+                          borderRadius: 6,
+                          border: "1px solid rgba(56,189,248,.3)",
+                          background: "rgba(56,189,248,.1)",
+                          color: "#38BDF8",
+                          cursor: "pointer",
                         }}
                       >
-                        Live
-                      </span>
+                        ⛶ Fullscreen
+                      </button>
                     </div>
                   }
                 />
-                <div
-                  style={{
-                    position: "relative",
-                    height: 360,
-                    overflow: "hidden",
-                  }}
-                >
-                  {!mapLoaded && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: T.surfaceHi,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 10,
-                        zIndex: 2,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: "50%",
-                          border: `2px solid ${T.border}`,
-                          borderTop: `2px solid ${T.cyan}`,
-                          animation: "spin 1s linear infinite",
-                        }}
-                      />
-                      <span style={{ fontSize: 12, color: T.textDim }}>
-                        Loading map…
-                      </span>
-                    </div>
-                  )}
-                  <iframe
-                    title="Satellite Map"
-                    src={mapSrc}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, display: "block" }}
-                    onLoad={() => setMapLoaded(true)}
-                    allowFullScreen
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      pointerEvents: "none",
-                      background:
-                        "linear-gradient(to bottom,rgba(16,25,54,.28) 0%,transparent 18%,transparent 80%,rgba(16,25,54,.38) 100%)",
-                    }}
-                  />
-                </div>
+
+                <GatewayMap
+                  gateways={gateways}
+                  authtoken={authtoken}
+                  site_id={site_id}
+                  T={T} // your existing token object
+                  height={360} // optional, defaults to 360
+                  radiusKm={1.5} // optional, defaults to 2
+                />
               </Card>
             )}
 
-            {loadingWeatherData ? (
+            {loadingSiteDetails ? (
               <CardSkeleton height={416} />
-            ) : errorWeatherData ? (
-              <Card delay={260}>
-                <CardHead icon="🌤" title="Current Weather" />
-                <ErrorState message="Weather data unavailable. Please contact admin." />
-              </Card>
             ) : (
               <Weather
+                siteDetailsError={siteDetailsError}
                 weatherType={weatherType} // "sunny"|"rainy"|"cloudy"|"foggy"
                 weatherData={weatherData} // full API response object
                 siteName={weatherData?.siteName}
                 logo={siteDetails.logo}
               />
-              // <Card delay={260}>
-              //   <CardHead
-              //     icon="🌤"
-              //     title="Current Weather"
-              //     badge={[weatherData.siteName, weatherData.location]
-              //       .filter(Boolean)
-              //       .join(", ")}
-              //   />
-              //   <div style={{ padding: "20px 20px 18px" }}>
-              //     <div
-              //       style={{
-              //         display: "flex",
-              //         justifyContent: "space-between",
-              //         alignItems: "flex-start",
-              //         marginBottom: 18,
-              //       }}
-              //     >
-              //       <div>
-              //         <div
-              //           style={{
-              //             fontSize: 62,
-              //             fontWeight: 700,
-              //             // fontFamily: T.mono,
-              //             lineHeight: 1,
-              //             color: T.text,
-              //           }}
-              //         >
-              //           {weatherData.temperature}
-              //           <span style={{ fontSize: 26, color: T.textMid }}>
-              //             °
-              //           </span>
-              //         </div>
-              //         <div
-              //           style={{
-              //             fontSize: 14,
-              //             color: T.textMid,
-              //             marginTop: 5,
-              //             textTransform: "capitalize",
-              //           }}
-              //         >
-              //           {weatherData.description}
-              //         </div>
-              //         <div
-              //           style={{ fontSize: 11, color: T.cyan, marginTop: 3 }}
-              //         >
-              //           Feels like {weatherData.feelsLike}°C
-              //         </div>
-              //       </div>
-              //       <div
-              //         style={{
-              //           width: 74,
-              //           height: 74,
-              //           borderRadius: "50%",
-              //           background: T.cyanDim,
-              //           border: `1px solid rgba(56,189,248,.18)`,
-              //           display: "flex",
-              //           alignItems: "center",
-              //           justifyContent: "center",
-              //           fontSize: 30,
-              //         }}
-              //       >
-              //         {wxIcon(weatherData.description, weatherData.is_rain)}
-              //       </div>
-              //     </div>
-
-              //     <div
-              //       style={{
-              //         display: "grid",
-              //         gridTemplateColumns: "1fr 1fr",
-              //         gap: 9,
-              //       }}
-              //     >
-              //       {[
-              //         {
-              //           icon: "💧",
-              //           label: "Humidity",
-              //           value: `${weatherData.humidity}%`,
-              //         },
-              //         {
-              //           icon: "💨",
-              //           label: "Wind",
-              //           value: `${weatherData.wind_speed ?? weatherData.windSpeed} km/h`,
-              //         },
-              //         {
-              //           icon: "☁️",
-              //           label: "Cloudiness",
-              //           value: `${weatherData.cloudiness}%`,
-              //         },
-              //         {
-              //           icon: "🔬",
-              //           label: "Pressure",
-              //           value: `${weatherData.pressure} hPa`,
-              //         },
-              //       ].map((s, i) => (
-              //         <div
-              //           key={i}
-              //           style={{
-              //             background: T.surfaceHi,
-              //             border: `1px solid ${T.border}`,
-              //             borderRadius: 10,
-              //             padding: "11px 13px",
-              //             display: "flex",
-              //             alignItems: "center",
-              //             gap: 10,
-              //           }}
-              //         >
-              //           <span style={{ fontSize: 18, lineHeight: 1 }}>
-              //             {s.icon}
-              //           </span>
-              //           <div>
-              //             <div
-              //               style={{
-              //                 fontSize: 10,
-              //                 color: T.textDim,
-              //                 textTransform: "uppercase",
-              //                 letterSpacing: ".7px",
-              //                 marginBottom: 3,
-              //               }}
-              //             >
-              //               {s.label}
-              //             </div>
-              //             <div
-              //               style={{
-              //                 fontSize: 17,
-              //                 fontWeight: 600,
-              //                 // fontFamily: T.mono,
-              //                 color: T.text,
-              //               }}
-              //             >
-              //               {s.value}
-              //             </div>
-              //           </div>
-              //         </div>
-              //       ))}
-              //     </div>
-              //   </div>
-              // </Card>
             )}
           </section>
 
@@ -2211,6 +2000,63 @@ export default function SiteTechnicianDashboard() {
           )}
         </main>
       </div>
+
+      {showMapModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.85)",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* HEADER */}
+          <div
+            style={{
+              height: 50,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 16px",
+              borderBottom: `1px solid ${T.border}`,
+              background: "#0f172a",
+            }}
+          >
+            <span style={{ fontSize: 13, color: T.text }}>
+              📍 Full Map View — {site_id}
+            </span>
+
+            <button
+              onClick={() => setShowMapModal(false)}
+              style={{
+                fontSize: 12,
+                padding: "6px 12px",
+                borderRadius: 6,
+                border: "1px solid #ff4d4d",
+                background: "rgba(255,77,77,.1)",
+                color: "#ff4d4d",
+                cursor: "pointer",
+              }}
+            >
+              ✕ Close
+            </button>
+          </div>
+
+          {/* FULLSCREEN MAP */}
+          <div style={{ flex: 1 }}>
+            <GatewayMap
+              gateways={gateways}
+              authtoken={authtoken}
+              site_id={site_id}
+              T={T}
+              height={"100%"} // 🔥 important
+              radiusKm={1.5}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

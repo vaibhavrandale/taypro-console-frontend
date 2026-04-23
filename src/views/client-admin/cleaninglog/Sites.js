@@ -70,7 +70,7 @@ const Sites = () => {
           headers: { Authorization: `Bearer ${authtoken}` },
         });
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -99,7 +99,7 @@ const Sites = () => {
   const filteredData = sites.filter(
     (site) =>
       site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      site.location.toLowerCase().includes(searchTerm.toLowerCase())
+      site.location.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {
@@ -142,6 +142,7 @@ const Sites = () => {
   } else if (userInfo?.role === "Project User") {
     adminroute = "project-user";
   }
+  const date = new Date().toISOString().split("T")[0];
 
   return (
     <div className="">
@@ -194,7 +195,7 @@ const Sites = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
-                    to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site.site_id}`}
+                    to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site.site_id}/${date}`}
                   >
                     Manage
                   </Link>
