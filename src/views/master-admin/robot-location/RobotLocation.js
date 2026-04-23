@@ -203,7 +203,6 @@ const RobotLocation = () => {
                 <CTableDataCell>{item.robot.block}</CTableDataCell>
                 <CTableDataCell>{item.robot.lora_no}</CTableDataCell>
                 <CTableDataCell>{item.robot.deveui}</CTableDataCell>
-
                 <CTableDataCell>
                   {item.location?.image ? (
                     <a
@@ -217,21 +216,18 @@ const RobotLocation = () => {
                     <CBadge color="secondary">Pending</CBadge>
                   )}
                 </CTableDataCell>
-
                 <CTableDataCell>
                   {item.location ? (
-                    <a
+                    <Link
                       href={`https://www.google.com/maps?q=${item.location.latitude},${item.location.longitude}`}
                       target="_blank"
-                      rel="noopener noreferrer"
                     >
-                      <Link color="info">View Location</Link>
-                    </a>
+                      View Location
+                    </Link>
                   ) : (
                     <CBadge color="secondary">Pending</CBadge>
                   )}
                 </CTableDataCell>
-
                 <CTableDataCell>
                   {item.location ? (
                     <CBadge color="success">Created</CBadge>
