@@ -271,7 +271,8 @@ const RobotLocation = () => {
             <CTableHeaderCell>Lora No</CTableHeaderCell>
             <CTableHeaderCell>Deveui</CTableHeaderCell>
             <CTableHeaderCell>View Image</CTableHeaderCell>
-            <CTableHeaderCell>Location</CTableHeaderCell>
+            <CTableHeaderCell>Gps Location</CTableHeaderCell>
+            <CTableHeaderCell>Map Url Location</CTableHeaderCell>
 
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
@@ -307,24 +308,35 @@ const RobotLocation = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <CBadge color="info">View Image</CBadge>
+                      <CBadge color="info">Image</CBadge>
                     </a>
                   ) : (
                     <CBadge color="secondary">Pending</CBadge>
                   )}
                 </CTableDataCell>
+
                 <CTableDataCell>
                   {item.location ? (
                     <Link
                       to={`https://www.google.com/maps?q=${item.location.latitude},${item.location.longitude}`}
                       target="_blank"
                     >
-                      View Location
+                      View
                     </Link>
                   ) : (
                     <CBadge color="secondary">Pending</CBadge>
                   )}
                 </CTableDataCell>
+                <CTableDataCell>
+                  {item.location?.location?.map_url ? (
+                    <Link to={item.location.location.map_url} target="_blank">
+                      View
+                    </Link>
+                  ) : (
+                    <CBadge color="secondary">Pending</CBadge>
+                  )}
+                </CTableDataCell>
+
                 <CTableDataCell>
                   {item.location ? (
                     <>

@@ -101,6 +101,7 @@ const AddRobotLocation = () => {
   const [coords, setCoords] = useState(null);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsError, setGpsError] = useState("");
+  const [map_url, setMap_url] = useState("");
 
   /* Camera */
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -162,43 +163,43 @@ const AddRobotLocation = () => {
     setCoords(null);
     setAccuracy(null);
 
-    // watchIdRef.current = navigator.geolocation.watchPosition(
-    //   ({ coords: c }) => {
-    //     setCoords({ lat: c.latitude, lng: c.longitude });
-    //     setAccuracy(Math.round(c.accuracy));
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      ({ coords: c }) => {
+        setCoords({ lat: c.latitude, lng: c.longitude });
+        setAccuracy(Math.round(c.accuracy));
 
-    //     // Stop watching once accuracy is good enough
-    //     if (c.accuracy <= ACCURACY_THRESHOLD) {
-    //       stopWatch();
-    //     }
-    //   },
-    //   (err) => {
-    //     setGpsError(err.message || "Unable to get location.");
-    //     stopWatch();
-    //   },
-    //   {
-    //     enableHighAccuracy: true,
-    //     timeout: 30000, // longer timeout for GPS lock
-    //     maximumAge: 0, // ← CRITICAL: never use a cached position
-    //   },
-    // );
-
-    navigator.geolocation.watchPosition(
-      (pos) =>
-        console.log({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          accuracy: pos.coords.accuracy, // metres
-          source:
-            pos.coords.accuracy < 30
-              ? "GPS"
-              : pos.coords.accuracy < 200
-                ? "WiFi"
-                : "IP",
-        }),
-      (err) => console.error(err.code, err.message),
-      { enableHighAccuracy: true, maximumAge: 0 },
+        // Stop watching once accuracy is good enough
+        if (c.accuracy <= ACCURACY_THRESHOLD) {
+          stopWatch();
+        }
+      },
+      (err) => {
+        setGpsError(err.message || "Unable to get location.");
+        stopWatch();
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000, // longer timeout for GPS lock
+        maximumAge: 0, // ← CRITICAL: never use a cached position
+      },
     );
+
+    // navigator.geolocation.watchPosition(
+    //   (pos) =>
+    //     console.log({
+    //       lat: pos.coords.latitude,
+    //       lng: pos.coords.longitude,
+    //       accuracy: pos.coords.accuracy, // metres
+    //       source:
+    //         pos.coords.accuracy < 30
+    //           ? "GPS"
+    //           : pos.coords.accuracy < 200
+    //             ? "WiFi"
+    //             : "IP",
+    //     }),
+    //   (err) => console.error(err.code, err.message),
+    //   { enableHighAccuracy: true, maximumAge: 0 },
+    // );
     // Safety: stop after 30s regardless
     setTimeout(() => {
       if (watchIdRef.current != null) stopWatch();
@@ -346,6 +347,7 @@ const AddRobotLocation = () => {
           latitude: coords.lat,
           longitude: coords.lng,
           image: uploadedImageUrl,
+          map_url: map_url,
         },
         { headers: { Authorization: `Bearer ${authtoken}` } },
       );
@@ -402,6 +404,7 @@ const AddRobotLocation = () => {
     gpsBox: {
       display: "flex",
       alignItems: "center",
+      flexWrap: "wrap",
       gap: 12,
       padding: "0.75rem 1rem",
       borderRadius: "0.6rem",
@@ -628,12 +631,12 @@ const AddRobotLocation = () => {
                     marginBottom: 8,
                   }}
                 >
-                  ⚠ Low accuracy ({accuracy}m). Enter coordinates manually if
-                  needed:
+                  ⚠ Low accuracy ({accuracy}m).
                 </p>
                 <div style={{ display: "flex", gap: 8 }}>
                   <input
                     type="number"
+                    readOnly
                     step="any"
                     placeholder="Latitude"
                     defaultValue={coords.lat}
@@ -655,6 +658,7 @@ const AddRobotLocation = () => {
                   />
                   <input
                     type="number"
+                    readOnly
                     step="any"
                     placeholder="Longitude"
                     defaultValue={coords.lng}
@@ -891,6 +895,24 @@ const AddRobotLocation = () => {
             {state.submitError}
           </CAlert>
         )}
+
+        <input
+          type="string"
+          placeholder="Paste Map URL"
+          value={map_url}
+          onChange={(e) => setMap_url(e.target.value)}
+          style={{
+            flex: 1,
+            padding: "6px 10px",
+            borderRadius: "0.4rem",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            color: "#f1f5f9",
+            width: "100%",
+            marginTop: "1rem",
+            fontSize: "0.82rem",
+          }}
+        />
 
         {/* Submit */}
         <button
