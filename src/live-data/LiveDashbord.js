@@ -231,7 +231,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
       onClick={onClick}
       style={{
         background: isSelected ? HEALTH_BG[h] : "rgba(255,255,255,0.025)",
-        border: `1px solid ${isSelected ? HEALTH_BORDER[h] : "rgba(255,255,255,0.06)"}`,
+        // border: `1px solid ${isSelected ? HEALTH_BORDER[h] : "rgba(255,255,255,0.06)"}`,
         borderRadius: 10,
         padding: "10px 12px",
         cursor: "pointer",
@@ -239,6 +239,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
         animation: `fadeUp 0.4s ease ${animDelay}s both`,
         position: "relative",
         overflow: "hidden",
+        height: "100%",
       }}
     >
       {/* Health accent line */}
@@ -249,9 +250,9 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
           top: 0,
           bottom: 0,
           width: 3,
-          background: HEALTH_COLOR[h],
+          //   background: HEALTH_COLOR[h],
           borderRadius: "10px 0 0 10px",
-          boxShadow: `0 0 8px ${HEALTH_COLOR[h]}66`,
+          //   boxShadow: `0 0 8px ${HEALTH_COLOR[h]}66`,
         }}
       />
 
@@ -269,7 +270,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
           <div
             style={{
               fontSize: 11,
-              fontWeight: 700,
+              //   fontWeight: 700,
               color: "#d8e8f5",
               //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 0.3,
@@ -510,13 +511,13 @@ const DetailPanel = ({ data }) => {
         <div
           style={{
             fontSize: 20,
-            fontWeight: 800,
+            // fontWeight: 800,
             color: "#eef4ff",
             //fontFamily: "'Barlow Condensed', sans-serif",
             lineHeight: 1.2,
           }}
         >
-          {site.siteName}
+          {site.siteName},<span className="ms-1">{site.location}</span>
         </div>
         <div
           style={{
@@ -527,7 +528,7 @@ const DetailPanel = ({ data }) => {
             letterSpacing: 0.5,
           }}
         >
-          📍 {site.location} &nbsp;·&nbsp;
+          &nbsp;&nbsp;
           <span style={{ textTransform: "uppercase", color: "#f5a623" }}>
             {site.site_type}
           </span>
@@ -1301,16 +1302,16 @@ const LiveDashboard = () => {
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:rgba(255,255,255,0.02); }
         ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:2px; }
-        .site-card-hover:hover { border-color:rgba(255,255,255,0.15) !important; background:rgba(255,255,255,0.05) !important; }
+        .site-card-hover:hover { border-color:rgba(255,255,255,0.15) !important; background:rgba(255,255,255,0.05) !important; border-radius:10px  !important}
       `}</style>
 
       <div
         style={{
           width: "100vw",
           height: "100vh",
-          background: "#070b12",
-          backgroundImage:
-            "radial-gradient(ellipse at 15% 15%, rgba(245,166,35,0.05) 0%,transparent 55%), radial-gradient(ellipse at 85% 85%, rgba(34,120,200,0.05) 0%,transparent 55%), radial-gradient(ellipse at 50% 50%, rgba(255,51,85,0.02) 0%,transparent 70%)",
+          //   background: "#070b12",
+          //   backgroundImage:
+          //     "radial-gradient(ellipse at 15% 15%, rgba(245,166,35,0.05) 0%,transparent 55%), radial-gradient(ellipse at 85% 85%, rgba(34,120,200,0.05) 0%,transparent 55%), radial-gradient(ellipse at 50% 50%, rgba(255,51,85,0.02) 0%,transparent 70%)",
           //fontFamily: "'Barlow Condensed',sans-serif",
           color: "#e8f0fa",
           display: "flex",
