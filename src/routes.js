@@ -7592,7 +7592,7 @@ const routes = [
   },
   //hre
   {
-    path: "/client-admin/cleaning-log-sites/daywise-cleaning/:site_id",
+    path: "/client-admin/cleaning-log-sites/daywise-cleaning/:site_id/:date",
     name: "Cleaning Log",
     element: (
       <ClientAdminRoute>
