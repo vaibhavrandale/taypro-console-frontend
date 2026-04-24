@@ -13,6 +13,7 @@ import ResetPassword from "./views/pages/reset-password/ResetPassword";
 import ForgotPassword from "./views/pages/reset-password/ForgotPassword";
 import NetworkStatus from "./views/NetworkStatus";
 import RobotData from "./RobotData";
+import LiveDashboard from "./live-data/LiveDashbord";
 
 // import UserBasedLinkDashboard from './views/dashboard/UserBasedLinkDashboard';
 
@@ -65,6 +66,12 @@ const App = () => {
             path="/robot-data/:robot_no"
             name="Robot Data"
             element={<RobotData />}
+          />
+          <Route
+            exact
+            path="/live-data"
+            name="Live Data"
+            element={<LiveDashboard />}
           />
           <Route
             exact
