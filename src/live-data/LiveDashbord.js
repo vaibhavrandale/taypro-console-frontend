@@ -271,7 +271,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
               fontSize: 11,
               fontWeight: 700,
               color: "#d8e8f5",
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 0.3,
               whiteSpace: "nowrap",
               overflow: "hidden",
@@ -288,7 +288,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
               color: "#667788",
               letterSpacing: 1,
               marginTop: 1,
-              fontFamily: "'DM Mono', monospace",
+              //fontFamily: "'DM Mono', monospace",
             }}
           >
             📍{site.location}
@@ -303,7 +303,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
             background: `${HEALTH_COLOR[h]}18`,
             color: HEALTH_COLOR[h],
             letterSpacing: 1,
-            fontFamily: "'Barlow Condensed', sans-serif",
+            //fontFamily: "'Barlow Condensed', sans-serif",
             flexShrink: 0,
             marginLeft: 4,
           }}
@@ -379,7 +379,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
             style={{
               fontSize: 9,
               color: "#445566",
-              fontFamily: "'DM Mono', monospace",
+              //fontFamily: "'DM Mono', monospace",
             }}
           >
             {pct}% online
@@ -388,7 +388,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
             style={{
               fontSize: 9,
               color: "#445566",
-              fontFamily: "'DM Mono', monospace",
+              //fontFamily: "'DM Mono', monospace",
             }}
           >
             {/* ✅ Safe: shows — if weather is null */}
@@ -416,7 +416,7 @@ const Metric = ({ icon, val, label, color }) => (
         fontSize: 12,
         fontWeight: 800,
         color,
-        fontFamily: "'DM Mono', monospace",
+        //fontFamily: "'DM Mono', monospace",
         lineHeight: 1,
       }}
     >
@@ -428,7 +428,7 @@ const Metric = ({ icon, val, label, color }) => (
         color: "#445566",
         letterSpacing: 0.5,
         marginTop: 1,
-        fontFamily: "'Barlow Condensed', sans-serif",
+        //fontFamily: "'Barlow Condensed', sans-serif",
       }}
     >
       {icon}
@@ -501,7 +501,7 @@ const DetailPanel = ({ data }) => {
               fontWeight: 700,
               color: HEALTH_COLOR[h],
               letterSpacing: 2,
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
             }}
           >
             {HEALTH_LABEL[h]}
@@ -512,7 +512,7 @@ const DetailPanel = ({ data }) => {
             fontSize: 20,
             fontWeight: 800,
             color: "#eef4ff",
-            fontFamily: "'Barlow Condensed', sans-serif",
+            //fontFamily: "'Barlow Condensed', sans-serif",
             lineHeight: 1.2,
           }}
         >
@@ -523,7 +523,7 @@ const DetailPanel = ({ data }) => {
             fontSize: 11,
             color: "#8899aa",
             marginTop: 4,
-            fontFamily: "'DM Mono', monospace",
+            //fontFamily: "'DM Mono', monospace",
             letterSpacing: 0.5,
           }}
         >
@@ -589,7 +589,7 @@ const DetailPanel = ({ data }) => {
                 fontSize: 19,
                 fontWeight: 800,
                 color: "#eef4ff",
-                fontFamily: "'DM Mono', monospace",
+                //fontFamily: "'DM Mono', monospace",
                 lineHeight: 1,
               }}
             >
@@ -605,7 +605,7 @@ const DetailPanel = ({ data }) => {
             style={{
               fontSize: 11,
               color: "#8899aa",
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 2,
               textTransform: "uppercase",
               marginBottom: 8,
@@ -631,7 +631,7 @@ const DetailPanel = ({ data }) => {
                 style={{
                   fontSize: 10,
                   color: "#667788",
-                  fontFamily: "'Barlow Condensed', sans-serif",
+                  //fontFamily: "'Barlow Condensed', sans-serif",
                   letterSpacing: 1,
                 }}
               >
@@ -642,7 +642,7 @@ const DetailPanel = ({ data }) => {
                   fontSize: 16,
                   fontWeight: 800,
                   color: col,
-                  fontFamily: "'DM Mono', monospace",
+                  //fontFamily: "'DM Mono', monospace",
                 }}
               >
                 {v}
@@ -667,7 +667,7 @@ const DetailPanel = ({ data }) => {
             style={{
               fontSize: 10,
               color: "#8899aa",
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 2,
               textTransform: "uppercase",
               marginBottom: 10,
@@ -693,7 +693,7 @@ const DetailPanel = ({ data }) => {
                 style={{
                   fontSize: 10,
                   color: "#556677",
-                  fontFamily: "'Barlow Condensed', sans-serif",
+                  //fontFamily: "'Barlow Condensed', sans-serif",
                 }}
               >
                 {l}
@@ -703,7 +703,7 @@ const DetailPanel = ({ data }) => {
                   fontSize: 18,
                   fontWeight: 800,
                   color: v > 0 ? col : "#2a3a4a",
-                  fontFamily: "'DM Mono', monospace",
+                  //fontFamily: "'DM Mono', monospace",
                   lineHeight: 1,
                 }}
               >
@@ -726,7 +726,7 @@ const DetailPanel = ({ data }) => {
             style={{
               fontSize: 10,
               color: "#8899aa",
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 2,
               textTransform: "uppercase",
               marginBottom: 8,
@@ -740,7 +740,7 @@ const DetailPanel = ({ data }) => {
                 style={{
                   fontSize: 30,
                   fontWeight: 800,
-                  fontFamily: "'DM Mono', monospace",
+                  //fontFamily: "'DM Mono', monospace",
                   color: "#f5a623",
                   lineHeight: 1,
                 }}
@@ -759,7 +759,7 @@ const DetailPanel = ({ data }) => {
                   color: "#667788",
                   textTransform: "capitalize",
                   margin: "3px 0 6px",
-                  fontFamily: "'Barlow Condensed', sans-serif",
+                  //fontFamily: "'Barlow Condensed', sans-serif",
                 }}
               >
                 {wIcon(w.description)} {w.description || "—"}
@@ -785,7 +785,7 @@ const DetailPanel = ({ data }) => {
                     style={{
                       fontSize: 10,
                       color: "#556677",
-                      fontFamily: "'DM Mono', monospace",
+                      //fontFamily: "'DM Mono', monospace",
                     }}
                   >
                     {ico} {val}
@@ -811,7 +811,7 @@ const DetailPanel = ({ data }) => {
                   fontSize: 9,
                   color: "#445566",
                   letterSpacing: 2,
-                  fontFamily: "'Barlow Condensed', sans-serif",
+                  //fontFamily: "'Barlow Condensed', sans-serif",
                 }}
               >
                 NO DATA
@@ -834,7 +834,7 @@ const DetailPanel = ({ data }) => {
           style={{
             fontSize: 10,
             color: "#8899aa",
-            fontFamily: "'Barlow Condensed', sans-serif",
+            //fontFamily: "'Barlow Condensed', sans-serif",
             letterSpacing: 2,
             textTransform: "uppercase",
             marginBottom: 8,
@@ -896,7 +896,7 @@ const DetailPanel = ({ data }) => {
                     fontSize: 12,
                     fontWeight: 700,
                     color: "#d8e8f5",
-                    fontFamily: "'Barlow Condensed', sans-serif",
+                    //fontFamily: "'Barlow Condensed', sans-serif",
                   }}
                 >
                   {t.username}
@@ -905,7 +905,7 @@ const DetailPanel = ({ data }) => {
                   style={{
                     fontSize: 9,
                     color: "#667788",
-                    fontFamily: "'DM Mono', monospace",
+                    //fontFamily: "'DM Mono', monospace",
                   }}
                 >
                   In: {fmtTime(t.punchin_time)}
@@ -929,7 +929,7 @@ const DetailPanel = ({ data }) => {
               padding: "8px",
               color: "#f5a623",
               fontSize: 11,
-              fontFamily: "'Barlow Condensed', sans-serif",
+              ////fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 1,
               opacity: 0.7,
             }}
@@ -966,7 +966,7 @@ const DetailPanel = ({ data }) => {
             style={{
               fontSize: 11,
               color: "#aabbc8",
-              fontFamily: "'DM Mono', monospace",
+              //fontFamily: "'DM Mono', monospace",
             }}
           >
             {gateways[0]?.gateway_name || "—"}
@@ -980,7 +980,7 @@ const DetailPanel = ({ data }) => {
             fontSize: 10,
             fontWeight: 700,
             color: gateways[0]?.gateway_status ? "#22dd88" : "#ff3355",
-            fontFamily: "'Barlow Condensed', sans-serif",
+            //fontFamily: "'Barlow Condensed', sans-serif",
             letterSpacing: 1,
           }}
         >
@@ -1001,7 +1001,7 @@ const DetailPanel = ({ data }) => {
           style={{
             fontSize: 10,
             color: "#8899aa",
-            fontFamily: "'Barlow Condensed', sans-serif",
+            //fontFamily: "'Barlow Condensed', sans-serif",
             letterSpacing: 2,
             textTransform: "uppercase",
             marginBottom: 8,
@@ -1040,7 +1040,7 @@ const DetailPanel = ({ data }) => {
                   style={{
                     fontSize: 11,
                     color: "#aabbc8",
-                    fontFamily: "'DM Mono', monospace",
+                    //fontFamily: "'DM Mono', monospace",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -1052,7 +1052,7 @@ const DetailPanel = ({ data }) => {
                   style={{
                     fontSize: 9,
                     color: "#445566",
-                    fontFamily: "'DM Mono', monospace",
+                    //fontFamily: "'DM Mono', monospace",
                   }}
                 >
                   Last uplink: {fmtTime(gw.last_uplink)}
@@ -1063,7 +1063,7 @@ const DetailPanel = ({ data }) => {
                   fontSize: 10,
                   fontWeight: 700,
                   color: gw.gateway_status ? "#22dd88" : "#ff3355",
-                  fontFamily: "'Barlow Condensed', sans-serif",
+                  //fontFamily: "'Barlow Condensed', sans-serif",
                   letterSpacing: 1,
                   flexShrink: 0,
                 }}
@@ -1079,7 +1079,7 @@ const DetailPanel = ({ data }) => {
               padding: "8px",
               color: "#445566",
               fontSize: 11,
-              fontFamily: "'Barlow Condensed', sans-serif",
+              //fontFamily: "'Barlow Condensed', sans-serif",
               letterSpacing: 1,
               opacity: 0.7,
             }}
@@ -1107,7 +1107,7 @@ const FleetStat = ({ label, value, color, sub }) => (
       style={{
         fontSize: 26,
         fontWeight: 800,
-        fontFamily: "'DM Mono', monospace",
+        //fontFamily: "'DM Mono', monospace",
         color: color || "#eef4ff",
         lineHeight: 1,
       }}
@@ -1120,7 +1120,7 @@ const FleetStat = ({ label, value, color, sub }) => (
         color: "#667788",
         letterSpacing: 2,
         textTransform: "uppercase",
-        fontFamily: "'Barlow Condensed', sans-serif",
+        //fontFamily: "'Barlow Condensed', sans-serif",
         marginTop: 2,
       }}
     >
@@ -1131,7 +1131,7 @@ const FleetStat = ({ label, value, color, sub }) => (
         style={{
           fontSize: 9,
           color: "#445566",
-          fontFamily: "'DM Mono', monospace",
+          //fontFamily: "'DM Mono', monospace",
         }}
       >
         {sub}
@@ -1167,7 +1167,7 @@ const AlertTicker = ({ criticals }) => {
           animation: "ticker 150s linear infinite",
           fontSize: 11,
           color: "#ff5577",
-          fontFamily: "'DM Mono', monospace",
+          //fontFamily: "'DM Mono', monospace",
           letterSpacing: 1,
           paddingLeft: "100%",
         }}
@@ -1311,7 +1311,7 @@ const LiveDashboard = () => {
           background: "#070b12",
           backgroundImage:
             "radial-gradient(ellipse at 15% 15%, rgba(245,166,35,0.05) 0%,transparent 55%), radial-gradient(ellipse at 85% 85%, rgba(34,120,200,0.05) 0%,transparent 55%), radial-gradient(ellipse at 50% 50%, rgba(255,51,85,0.02) 0%,transparent 70%)",
-          fontFamily: "'Barlow Condensed',sans-serif",
+          //fontFamily: "'Barlow Condensed',sans-serif",
           color: "#e8f0fa",
           display: "flex",
           flexDirection: "column",
@@ -1435,7 +1435,7 @@ const LiveDashboard = () => {
                 fontSize: 9,
                 color: "#556677",
                 letterSpacing: 2,
-                fontFamily: "'DM Mono',monospace",
+                //fontFamily: "'DM Mono',monospace",
               }}
             >
               {apiError ? "DEMO" : "LIVE"}
@@ -1448,7 +1448,7 @@ const LiveDashboard = () => {
               style={{
                 fontSize: 22,
                 fontWeight: 800,
-                fontFamily: "'DM Mono',monospace",
+                //fontFamily: "'DM Mono',monospace",
                 letterSpacing: -1,
                 lineHeight: 1,
               }}
@@ -1485,7 +1485,7 @@ const LiveDashboard = () => {
               fontSize: 10,
               color: "#445566",
               letterSpacing: 2,
-              fontFamily: "'Barlow Condensed',sans-serif",
+              //fontFamily: "'Barlow Condensed',sans-serif",
               marginRight: 4,
             }}
           >
@@ -1510,7 +1510,7 @@ const LiveDashboard = () => {
                 fontWeight: 700,
                 letterSpacing: 1,
                 cursor: "pointer",
-                fontFamily: "'Barlow Condensed',sans-serif",
+                //fontFamily: "'Barlow Condensed',sans-serif",
                 transition: "all 0.2s",
               }}
             >
@@ -1524,7 +1524,7 @@ const LiveDashboard = () => {
               marginLeft: "auto",
               fontSize: 9,
               color: "#334455",
-              fontFamily: "'DM Mono',monospace",
+              //fontFamily: "'DM Mono',monospace",
             }}
           >
             {filtered.length} sites shown · auto-cycling detail every{" "}
@@ -1644,7 +1644,7 @@ const LiveDashboard = () => {
                     fontSize: 9,
                     color: "#445566",
                     letterSpacing: 3,
-                    fontFamily: "'Barlow Condensed',sans-serif",
+                    //fontFamily: "'Barlow Condensed',sans-serif",
                     textTransform: "uppercase",
                     marginBottom: 10,
                     display: "flex",
