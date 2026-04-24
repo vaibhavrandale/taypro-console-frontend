@@ -1195,9 +1195,7 @@ const LiveDashboard = () => {
   /* ── Fetch & normalise ── */
   const fetchData = useCallback(async () => {
     try {
-      const r = await fetch(
-        "http://localhost:5500/api/v1/sites/today/live-data",
-      );
+      const r = await fetch("/api/v1/sites/today/live-data");
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = await r.json();
       const arr = Array.isArray(j) ? j : j.data || [];
