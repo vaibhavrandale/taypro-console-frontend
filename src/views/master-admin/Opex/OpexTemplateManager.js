@@ -220,9 +220,10 @@ const OpexTemplateManager = () => {
         { start_date: startDate },
         {
           headers: {
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 
@@ -254,9 +255,10 @@ const OpexTemplateManager = () => {
         { reason }, // ✅ PUT body goes here
         {
           headers: {
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 
@@ -309,7 +311,10 @@ const OpexTemplateManager = () => {
       const response = await axios.put(
         `/api/v1/opex/generate-certificate/${opexData._id}/${site_id}`,
         { cyclesArray: selectedCycles.map((cycle) => cycle._id) },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -337,9 +342,10 @@ const OpexTemplateManager = () => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
       console.log(response.data);

@@ -113,8 +113,9 @@ const UpdateMicrofiberdata = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
 

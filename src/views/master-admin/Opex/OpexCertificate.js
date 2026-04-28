@@ -287,10 +287,11 @@ const OpexCertificate = () => {
         newdata,
         {
           headers: {
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json", // use JSON content type
             // "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         },
       );
 
@@ -336,8 +337,9 @@ const OpexCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
       dispatch({ type: "UPLOAD_TAYPRO_SIGN_SUCCESS" });
@@ -365,8 +367,9 @@ const OpexCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
       dispatch({ type: "UPLOAD_CLIENT_SIGN_SUCCESS" });
@@ -394,8 +397,9 @@ const OpexCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
       console.log(data.url);

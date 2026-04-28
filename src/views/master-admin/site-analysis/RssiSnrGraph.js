@@ -103,9 +103,10 @@ const RssiSnrGraph = () => {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 
@@ -148,9 +149,10 @@ const RssiSnrGraph = () => {
         `/api/v1/rawcleaninglogs/daily-signal-stats`,
         payload,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 

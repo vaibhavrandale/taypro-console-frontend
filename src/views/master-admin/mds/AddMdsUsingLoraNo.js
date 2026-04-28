@@ -156,7 +156,10 @@ const AddMdsUsingLoraNo = () => {
         const result = await axios.post(
           `/api/v1/mds-device/getAll-mds`,
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_MDS_SUCCESS",
@@ -214,7 +217,10 @@ const AddMdsUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/mds-device/create-mds",
         { ...formData, block: "Block-1" },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       toast.success(`MDS ${formData.mds_no} added successfully!`);
       dispatch({
@@ -248,7 +254,10 @@ const AddMdsUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/mds-device/create-mds-using-manual-data",
         manualMdsData,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       toast.success(`MDS ${manualMdsData.mds_no} added successfully!`);
       dispatch({

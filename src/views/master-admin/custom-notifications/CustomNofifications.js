@@ -99,7 +99,10 @@ export default function CustomNotifications() {
       const res = await axios.post(
         "/api/v1/customnotifications/list",
         { pg: page, limit },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -166,7 +169,10 @@ export default function CustomNotifications() {
       const res = await axios.put(
         `/api/v1/customnotifications/${selectedItem._id}`,
         editForm,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       let message = res.data.message;
 
@@ -238,7 +244,10 @@ export default function CustomNotifications() {
       const res = await axios.delete(
         `/api/v1/customnotifications/${id}`,
 
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       let message = res.data.message;
 

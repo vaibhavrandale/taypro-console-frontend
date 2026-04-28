@@ -215,7 +215,10 @@ const UpdateRobotRowData = () => {
           row_number: formData.row_number,
           row_length: formData.row_length,
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(response.data.message);

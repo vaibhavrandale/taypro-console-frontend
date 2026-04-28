@@ -54,7 +54,10 @@ const ClientFeedback = () => {
         const res = await axios.post(
           "/api/v1/customer-feedback/get-all",
           { month, year },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         dispatch({

@@ -70,7 +70,10 @@ const RobotTrackingBatteryGraph = () => {
     try {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
     } catch (error) {

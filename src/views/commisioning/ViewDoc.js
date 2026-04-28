@@ -329,7 +329,7 @@ const ViewDoc = () => {
           <RobotSelectionModal
             commisioning_doc_id={id}
             site_id={certificate?.site_id}
-            authtoken={authtoken}
+            // authtoken={authtoken}
             visible={showModal}
             certificate_robots={robots}
             onClose={() => setShowModal(false)}

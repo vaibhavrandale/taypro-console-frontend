@@ -149,7 +149,10 @@ const ActivateRobots = () => {
       await axios.put(
         "/api/v1/robots/activate",
         { deveuiArray: selectedRobots.map((robot) => robot.deveui) },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "ACTIVATE_ROBOTS_SUCCESS", payload: selectedRobots });

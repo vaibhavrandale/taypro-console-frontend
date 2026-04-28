@@ -114,9 +114,10 @@ const Notifications = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const result = await axios.post("/api/v1/notifications", pagination, {
-          headers: {
-            Authorization: `Bearer ${authtoken}`, // Attach Authorization token
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`, // Attach Authorization token
+          // },
+          withCredentials: true,
         });
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit),
@@ -199,9 +200,10 @@ const Notifications = () => {
         `/api/v1/notifications/read-allnotifications-by-user`, // API call with notification ID
         {},
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`, // Authorization header
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`, // Authorization header
+          // },
+          withCredentials: true,
         },
       );
 

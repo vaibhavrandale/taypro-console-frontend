@@ -137,7 +137,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -148,7 +148,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -159,7 +159,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -170,7 +170,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -181,7 +181,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -192,7 +192,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -204,7 +204,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -215,7 +215,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}
@@ -226,7 +226,7 @@ const MisDashboard = () => {
                 createdAt={report.createdAt}
                 updatedAt={report.updatedAt}
                 _id={report._id}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 refreshReports={fetchMisReports} // 👈 Pass refresh callback
               />
             )}

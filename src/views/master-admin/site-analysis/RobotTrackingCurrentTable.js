@@ -86,9 +86,10 @@ const RobotTrackingCurrentTable = () => {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 
@@ -125,7 +126,10 @@ const RobotTrackingCurrentTable = () => {
       const result = await axios.post(
         "/api/v1/robot-tracking/avg-current",
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "FETCH_STATS_SUCCESS", payload: result.data.data });
