@@ -27,9 +27,10 @@ const Home = () => {
     const fetchJobs = async () => {
       try {
         const res = await axios.get("/api/v1/ai-model", {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         });
         setJobs(res.data.data || []);
         setLoading(false);
