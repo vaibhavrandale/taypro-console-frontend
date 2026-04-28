@@ -90,7 +90,7 @@ const Mdstimer = () => {
 
   const [site_id, setSiteId] = useState("all");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
@@ -118,7 +118,8 @@ const Mdstimer = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -139,8 +140,9 @@ const Mdstimer = () => {
         const result = await axios.get(
           `/api/v1/mds-device/get-mds-timers/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -154,13 +156,13 @@ const Mdstimer = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
     fetchSiteIds();
     fetchAllTimers();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const handleViewClick = (robot) => {
     setSelectedRobot(robot);
@@ -172,7 +174,7 @@ const Mdstimer = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {

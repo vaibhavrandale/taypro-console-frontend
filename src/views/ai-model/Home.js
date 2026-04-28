@@ -20,7 +20,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 const Home = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     setLoading(true);
@@ -39,7 +39,7 @@ const Home = () => {
     };
 
     fetchJobs();
-  }, [authtoken]);
+  }, []);
 
   const statusColor = {
     done: "success",

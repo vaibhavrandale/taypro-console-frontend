@@ -114,7 +114,7 @@
 //     subscriptiondata: {},
 //   });
 
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const { site_id } = useParams();
 
 //   const [startDate, setStartDate] = useState(
@@ -193,7 +193,7 @@
 //     };
 
 //     fetchCleaningLogs();
-//   }, [site_id, startDate, authtoken]);
+//   }, [site_id, startDate]);
 
 //   const exportToExcel = () => {
 //     if (
@@ -1454,7 +1454,7 @@ const SitewaiseLog = () => {
     subscriptiondata: {},
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const { site_id } = useParams();
 
@@ -1495,9 +1495,10 @@ const SitewaiseLog = () => {
             date: startDate,
           },
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         );
 
@@ -1537,7 +1538,7 @@ const SitewaiseLog = () => {
     };
 
     fetchCleaningLogs();
-  }, [site_id, startDate, authtoken]);
+  }, [site_id, startDate]);
 
   const exportToExcel = () => {
     if (
@@ -2667,7 +2668,7 @@ const SitewaiseLog = () => {
               <Logmodal
                 _id={selectedLogId}
                 modalState={modalOpen}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 userInfo={userInfo}
                 onClose={() => setModalOpen(false)}
               />

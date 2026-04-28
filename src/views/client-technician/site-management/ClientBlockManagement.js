@@ -54,7 +54,7 @@ const ClientBlockManagement = () => {
     loading: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [visible, setVisible] = useState(false);
@@ -68,8 +68,9 @@ const ClientBlockManagement = () => {
         const result = await axios.get(
           `/api/v1/robots/site-management/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -92,7 +93,7 @@ const ClientBlockManagement = () => {
     };
 
     fetchData();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const filteredRobots = Array.isArray(robots)
     ? robots.filter(
@@ -100,7 +101,7 @@ const ClientBlockManagement = () => {
           robot.robot_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           robot.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           robot.block?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.company?.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.company?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
   const stopCommand = async () => {
@@ -109,11 +110,12 @@ const ClientBlockManagement = () => {
         `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       toast.success(
-        response.data.message || "Stop Command sent to all Robots successfully"
+        response.data.message || "Stop Command sent to all Robots successfully",
       );
     } catch (error) {
       toast.error(error.message || "Failed to send stop command");

@@ -54,7 +54,7 @@ const reducer = (state, action) => {
 
 const ViewMaterialRequest = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [{ loading, material, error, approveLoading }, dispatch] = useReducer(
@@ -76,7 +76,8 @@ const ViewMaterialRequest = () => {
 
     try {
       const res = await axios.get(`/api/v1/material-requests/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({
@@ -95,7 +96,7 @@ const ViewMaterialRequest = () => {
 
   useEffect(() => {
     fetchMaterial();
-  }, [id, authtoken]);
+  }, [id]);
 
   // ================= APPROVE =================
   const handleApprove = async () => {

@@ -76,7 +76,7 @@ const CreateMaterialRequest = () => {
   });
 
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   // ================= FORM =================
@@ -113,7 +113,8 @@ const CreateMaterialRequest = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
 
       const { data } = await axios.get(`/api/v1/sites`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       const sitesData = data.data;
@@ -143,7 +144,8 @@ const CreateMaterialRequest = () => {
         `/api/v1/service-inventory/get-inventory`,
         { pg: 1, limit: 100 },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -258,7 +260,8 @@ const CreateMaterialRequest = () => {
       };
 
       const res = await axios.post("/api/v1/material-requests", payload, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "CREATE_SUCCESS" });

@@ -56,10 +56,10 @@ const BatteryAndTemperature = () => {
       robots: [],
       loadingRobots: true,
       errorRobot: "",
-    }
+    },
   );
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [robot_no, setRobotNo] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -69,7 +69,8 @@ const BatteryAndTemperature = () => {
         dispatch({ type: "FETCH_ROBOT_REQUEST" });
 
         const result = await axios.get(`/api/v1/robots/get-robots-no`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -82,20 +83,20 @@ const BatteryAndTemperature = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
 
     fetchRobots();
-  }, [authtoken]);
+  }, []);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setRobotNo(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {
@@ -115,8 +116,9 @@ const BatteryAndTemperature = () => {
         `/api/v1/debuglogs/get-robotdetails-datewise`,
         { robot_no, date },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       const [robotEntry] = response.data.data;
       dispatch({ type: "FETCH_SUCCESS", payload: robotEntry || null });

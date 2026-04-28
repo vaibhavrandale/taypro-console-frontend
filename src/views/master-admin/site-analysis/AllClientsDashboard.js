@@ -48,7 +48,7 @@ const AllClientDashboard = () => {
     hasPrevPage: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,11 +66,12 @@ const AllClientDashboard = () => {
           `/api/v1/clients/get-clients`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         dispatch({
           type: "FETCH_SUCCESS",
@@ -87,13 +88,13 @@ const AllClientDashboard = () => {
     };
 
     fetchClients();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const filteredData = clients
     ? clients.filter(
         (item) =>
           item.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.client_id.toLowerCase().includes(searchTerm.toLowerCase())
+          item.client_id.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 

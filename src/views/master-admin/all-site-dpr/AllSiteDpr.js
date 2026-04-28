@@ -58,7 +58,7 @@
 //     },
 //   );
 
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const userInfo = useSelector((state) => state.userInfo);
 
 //   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -94,14 +94,15 @@
 //   useEffect(() => {
 //     fetchDprMonthWise();
 //     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [month, year, site_id, authtoken]);
+//   }, [month, year, site_id]);
 
 //   useEffect(() => {
 //     const fetchSiteIds = async () => {
 //       dispatch({ type: "FETCH_SITEID_REQUEST" });
 //       try {
 //         const result = await axios.get(`/api/v1/sites`, {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 
 //         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
@@ -117,7 +118,8 @@
 //     };
 
 //     fetchSiteIds();
-//   }, [authtoken]);
+//   }, []
+// );
 
 //   const openModal = (dpr) => {
 //     setSelectedInventory(dpr);
@@ -755,7 +757,6 @@
 
 // export default AllSiteDpr;
 
-
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -787,42 +788,78 @@ import { cilX } from "@coreui/icons";
 // ─── All metric definitions in one place ─────────────────────────────────────
 const METRICS = [
   // Operational
-  { label: "Robots Uptime (%)",        field: "robots_uptime",                   group: "Operational" },
-  { label: "Robots Availability",       field: "robots_availability",             group: "Operational" },
-  { label: "Online Operational",        field: "online_operational",              group: "Operational" },
-  { label: "Manual Operational",        field: "manual_operational",              group: "Operational" },
-  { label: "Unoperational",             field: "unoperational",                   group: "Operational" },
-  { label: "Running Robots",            field: "total_running_robots",            group: "Operational" },
-  { label: "Failed Robots",             field: "total_failed_robots",             group: "Operational" },
+  { label: "Robots Uptime (%)", field: "robots_uptime", group: "Operational" },
+  {
+    label: "Robots Availability",
+    field: "robots_availability",
+    group: "Operational",
+  },
+  {
+    label: "Online Operational",
+    field: "online_operational",
+    group: "Operational",
+  },
+  {
+    label: "Manual Operational",
+    field: "manual_operational",
+    group: "Operational",
+  },
+  { label: "Unoperational", field: "unoperational", group: "Operational" },
+  {
+    label: "Running Robots",
+    field: "total_running_robots",
+    group: "Operational",
+  },
+  {
+    label: "Failed Robots",
+    field: "total_failed_robots",
+    group: "Operational",
+  },
   // Breakdown reasons
-  { label: "Oxidation",                 field: "due_to_oxidation",                group: "Breakdown" },
-  { label: "Offline",                   field: "due_to_offline",                  group: "Breakdown" },
-  { label: "Transit Online→Offline",    field: "due_to_transit",                  group: "Breakdown" },
-  { label: "Battery Dead",              field: "due_to_battery_issue",            group: "Breakdown" },
-  { label: "Vegetation",                field: "due_to_vegetation",               group: "Breakdown" },
-  { label: "Client Reasons",            field: "due_to_client",                   group: "Breakdown" },
-  { label: "Service Reasons",           field: "due_to_service",                  group: "Breakdown" },
-  { label: "Timer",                     field: "due_to_timer",                    group: "Breakdown" },
-  { label: "Breakdown",                 field: "due_to_breakdown",                group: "Breakdown" },
-  { label: "Material Unavailability",   field: "due_to_material_unavailability",  group: "Breakdown" },
+  { label: "Oxidation", field: "due_to_oxidation", group: "Breakdown" },
+  { label: "Offline", field: "due_to_offline", group: "Breakdown" },
+  {
+    label: "Transit Online→Offline",
+    field: "due_to_transit",
+    group: "Breakdown",
+  },
+  { label: "Battery Dead", field: "due_to_battery_issue", group: "Breakdown" },
+  { label: "Vegetation", field: "due_to_vegetation", group: "Breakdown" },
+  { label: "Client Reasons", field: "due_to_client", group: "Breakdown" },
+  { label: "Service Reasons", field: "due_to_service", group: "Breakdown" },
+  { label: "Timer", field: "due_to_timer", group: "Breakdown" },
+  { label: "Breakdown", field: "due_to_breakdown", group: "Breakdown" },
+  {
+    label: "Material Unavailability",
+    field: "due_to_material_unavailability",
+    group: "Breakdown",
+  },
   // Preventive Maintenance
-  { label: "PM Auto Attempted",         field: "pm_automatic_attempted",          group: "PM" },
-  { label: "PM Auto Completed",         field: "pm_automatic_completed",          group: "PM" },
-  { label: "PM Semi-Auto Attempted",    field: "pm_semi_auto_attempted",          group: "PM" },
-  { label: "PM Semi-Auto Completed",    field: "pm_semi_auto_completed",          group: "PM" },
-  { label: "Total PM Done",             field: "total_pm_done",                   group: "PM" },
+  { label: "PM Auto Attempted", field: "pm_automatic_attempted", group: "PM" },
+  { label: "PM Auto Completed", field: "pm_automatic_completed", group: "PM" },
+  {
+    label: "PM Semi-Auto Attempted",
+    field: "pm_semi_auto_attempted",
+    group: "PM",
+  },
+  {
+    label: "PM Semi-Auto Completed",
+    field: "pm_semi_auto_completed",
+    group: "PM",
+  },
+  { label: "Total PM Done", field: "total_pm_done", group: "PM" },
   // Tickets
-  { label: "Tickets Raised",            field: "tickets_raised",                  group: "Tickets" },
-  { label: "Tickets Closed",            field: "tickets_closed",                  group: "Tickets" },
-  { label: "Tickets Pending",           field: "tickets_pending",                 group: "Tickets" },
+  { label: "Tickets Raised", field: "tickets_raised", group: "Tickets" },
+  { label: "Tickets Closed", field: "tickets_closed", group: "Tickets" },
+  { label: "Tickets Pending", field: "tickets_pending", group: "Tickets" },
 ];
 
 // Group colour accents (light tints for the sticky label column)
 const GROUP_COLORS = {
   Operational: "#e8f4fd",
-  Breakdown:   "#fdf0e8",
-  PM:          "#edf7ed",
-  Tickets:     "#f9f0fd",
+  Breakdown: "#fdf0e8",
+  PM: "#edf7ed",
+  Tickets: "#f9f0fd",
 };
 
 const reducer = (state, action) => {
@@ -845,27 +882,29 @@ const reducer = (state, action) => {
 };
 
 const AllSiteDpr = () => {
-  const [{ dprs, loadingDprs, loadingSiteIds, siteIds }, dispatch] =
-    useReducer(reducer, {
+  const [{ dprs, loadingDprs, loadingSiteIds, siteIds }, dispatch] = useReducer(
+    reducer,
+    {
       dprs: [],
       loadingDprs: true,
       error: "",
       siteIds: [],
       loadingSiteIds: true,
       sitesError: "",
-    });
+    },
+  );
 
-  const authtoken = useSelector((state) => state.authtoken);
-  const userInfo  = useSelector((state) => state.userInfo);
+  // const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
 
-  const [month, setMonth]               = useState(new Date().getMonth() + 1);
-  const [year, setYear]                 = useState(new Date().getFullYear());
-  const [site_id, setSiteId]            = useState("all");
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [site_id, setSiteId] = useState("all");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSite, setSelectedSite] = useState(null);
 
   let adminroute = "";
-  if      (userInfo.role === "Master Admin")  adminroute = "master-admin";
+  if (userInfo.role === "Master Admin") adminroute = "master-admin";
   else if (userInfo.role === "Service Admin") adminroute = "service-admin";
   else if (userInfo.role === "Project Admin") adminroute = "project-admin";
 
@@ -876,7 +915,10 @@ const AllSiteDpr = () => {
       const result = await axios.post(
         "/api/v1/techniciandprs/monthly",
         { month, year, siteId: site_id },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "FETCH_DPR_SUCCESS", payload: result.data.data });
     } catch (err) {
@@ -886,14 +928,17 @@ const AllSiteDpr = () => {
     }
   };
 
-  useEffect(() => { fetchDprMonthWise(); }, [month, year, site_id, authtoken]); // eslint-disable-line
+  useEffect(() => {
+    fetchDprMonthWise();
+  }, [month, year, site_id]); // eslint-disable-line
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get("/api/v1/sites", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
       } catch (err) {
@@ -903,7 +948,7 @@ const AllSiteDpr = () => {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   // ─── FIX 3: derive headers DIRECTLY from backend order ──────────────────────
   // The backend already emits month_wise_data in the correct order with week
@@ -912,7 +957,7 @@ const AllSiteDpr = () => {
   const buildHeaders = () => {
     if (!dprs.length) return [];
     return dprs[0].month_wise_data.map((entry) => ({
-      key:  entry.date || entry.week,   // exact key used in entryMap
+      key: entry.date || entry.week, // exact key used in entryMap
       type: entry.date ? "date" : "week",
       value: entry.date || entry.week,
     }));
@@ -935,10 +980,16 @@ const AllSiteDpr = () => {
 
   // ─── Export ──────────────────────────────────────────────────────────────────
   const exportToExcel = () => {
-    if (!dprs.length) { toast.error("No data to export"); return; }
+    if (!dprs.length) {
+      toast.error("No data to export");
+      return;
+    }
 
     const headerRow = [
-      "Sr No.", "Site Name", "Robots Details", "Robots Qty",
+      "Sr No.",
+      "Site Name",
+      "Robots Details",
+      "Robots Qty",
       ...headers.map((h) => h.value),
     ];
 
@@ -950,23 +1001,34 @@ const AllSiteDpr = () => {
           ri === 0 ? si + 1 : "",
           ri === 0 ? site.site_id : "",
           metric.label,
-          ri === 0 ? site.total_robots : "",   // ← FIX 2 applied in export too
+          ri === 0 ? site.total_robots : "", // ← FIX 2 applied in export too
           ...headers.map((h) => entryMap[metric.field]?.[h.key] ?? ""),
         ]);
       });
     });
 
     const aoa = [["DPR Report"], [], headerRow, ...dataRows];
-    const ws  = XLSX.utils.aoa_to_sheet(aoa);
-    const wb  = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "DPR");
     XLSX.writeFile(wb, `DPR_${month}_${year}.xlsx`);
   };
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────
   const MONTH_NAMES = [
-    "","Jan","Feb","Mar","Apr","May","Jun",
-    "Jul","Aug","Sep","Oct","Nov","Dec",
+    "",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   // ─── Render ──────────────────────────────────────────────────────────────────
@@ -1002,7 +1064,9 @@ const AllSiteDpr = () => {
                 <>
                   <option value="all">All Sites</option>
                   {siteIds?.map((s) => (
-                    <option key={s.site_id} value={s.site_id}>{s.site_id}</option>
+                    <option key={s.site_id} value={s.site_id}>
+                      {s.site_id}
+                    </option>
                   ))}
                 </>
               )}
@@ -1015,7 +1079,9 @@ const AllSiteDpr = () => {
               onChange={(e) => setMonth(Number(e.target.value))}
             >
               {MONTH_NAMES.slice(1).map((name, i) => (
-                <option key={i + 1} value={i + 1}>{name}</option>
+                <option key={i + 1} value={i + 1}>
+                  {name}
+                </option>
               ))}
             </CFormSelect>
           </CCol>
@@ -1027,7 +1093,11 @@ const AllSiteDpr = () => {
             >
               {Array.from({ length: 10 }, (_, i) => {
                 const y = new Date().getFullYear() - i;
-                return <option key={y} value={y}>{y}</option>;
+                return (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                );
               })}
             </CFormSelect>
           </CCol>
@@ -1036,11 +1106,7 @@ const AllSiteDpr = () => {
 
       {/* ── Table ── */}
       <div style={{ overflowX: "auto", overflowY: "auto", maxHeight: "75vh" }}>
-        <CTable
-          bordered
-          hover
-          style={{ minWidth: "1400px", marginBottom: 0 }}
-        >
+        <CTable bordered hover style={{ minWidth: "1400px", marginBottom: 0 }}>
           {/* ── Single header row (rowSpan removed from Action — FIX 4) ── */}
           <CTableHead
             color="secondary"
@@ -1048,23 +1114,21 @@ const AllSiteDpr = () => {
           >
             <CTableRow>
               {/* Fixed left columns */}
-              <CTableHeaderCell
-                style={{ ...stickyCell(0), minWidth: 40 }}
-              >
+              <CTableHeaderCell style={{ ...stickyCell(0), minWidth: 40 }}>
                 Sr.
               </CTableHeaderCell>
-              <CTableHeaderCell
-                style={{ ...stickyCell(40), minWidth: 110 }}
-              >
+              <CTableHeaderCell style={{ ...stickyCell(40), minWidth: 110 }}>
                 Site
               </CTableHeaderCell>
-              <CTableHeaderCell
-                style={{ ...stickyCell(150), minWidth: 170 }}
-              >
+              <CTableHeaderCell style={{ ...stickyCell(150), minWidth: 170 }}>
                 Metric
               </CTableHeaderCell>
               <CTableHeaderCell
-                style={{ ...stickyCell(320), minWidth: 70, textAlign: "center" }}
+                style={{
+                  ...stickyCell(320),
+                  minWidth: 70,
+                  textAlign: "center",
+                }}
               >
                 Qty
               </CTableHeaderCell>
@@ -1086,14 +1150,20 @@ const AllSiteDpr = () => {
                   }}
                 >
                   {h.type === "date"
-                    ? h.value.slice(0, 2)   // show "DD-MM" only
+                    ? h.value.slice(0, 2) // show "DD-MM" only
                     : h.value}
                 </CTableHeaderCell>
               ))}
 
               <CTableHeaderCell
-                style={{ minWidth: 70, textAlign: "center",
-                  position: "sticky", top: 0, zIndex: 5, background: "#e9ecef" }}
+                style={{
+                  minWidth: 70,
+                  textAlign: "center",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 5,
+                  background: "#e9ecef",
+                }}
               >
                 Action
               </CTableHeaderCell>
@@ -1113,7 +1183,7 @@ const AllSiteDpr = () => {
 
                 return METRICS.map((row, rowIndex, arr) => {
                   const isFirst = rowIndex === 0;
-                  const isLast  = rowIndex === arr.length - 1;
+                  const isLast = rowIndex === arr.length - 1;
                   // const groupBg = GROUP_COLORS[row.group] || "#fff";
 
                   return (
@@ -1190,16 +1260,18 @@ const AllSiteDpr = () => {
                       {/* Data cells */}
                       {headers.map((h) => {
                         const val = entryMap[row.field]?.[h.key];
-                        const isEmpty = val === "" || val === undefined || val === null;
+                        const isEmpty =
+                          val === "" || val === undefined || val === null;
                         return (
                           <CTableDataCell
                             key={h.key}
                             style={{
                               textAlign: "center",
                               minWidth: h.type === "week" ? 80 : 70,
-                              background: h.type === "week"
-                                ? "rgba(255,242,0,0.25)"
-                                : "transparent",
+                              background:
+                                h.type === "week"
+                                  ? "rgba(255,242,0,0.25)"
+                                  : "transparent",
                               color: isEmpty ? "#ccc" : undefined,
                               fontWeight: h.type === "week" ? 600 : 400,
                             }}
@@ -1213,11 +1285,17 @@ const AllSiteDpr = () => {
                       {isFirst && (
                         <CTableDataCell
                           rowSpan={arr.length}
-                          style={{ textAlign: "center", verticalAlign: "middle" }}
+                          style={{
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
                         >
                           <button
                             className="btn btn-outline-primary btn-sm"
-                            onClick={() => { setSelectedSite(site); setModalVisible(true); }}
+                            onClick={() => {
+                              setSelectedSite(site);
+                              setModalVisible(true);
+                            }}
                           >
                             View
                           </button>
@@ -1229,7 +1307,10 @@ const AllSiteDpr = () => {
               })
             ) : (
               <CTableRow>
-                <CTableDataCell colSpan={headers.length + 5} className="text-center py-4 text-muted">
+                <CTableDataCell
+                  colSpan={headers.length + 5}
+                  className="text-center py-4 text-muted"
+                >
                   No Data Found
                 </CTableDataCell>
               </CTableRow>
@@ -1239,10 +1320,15 @@ const AllSiteDpr = () => {
       </div>
 
       {/* ── Detail Modal ── */}
-      <CModal visible={modalVisible} onClose={() => setModalVisible(false)} size="xl">
+      <CModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        size="xl"
+      >
         <CModalHeader closeButton={false}>
           <CModalTitle>
-            DPR Details — <CBadge color="success">{selectedSite?.site_id}</CBadge>
+            DPR Details —{" "}
+            <CBadge color="success">{selectedSite?.site_id}</CBadge>
           </CModalTitle>
           <button
             type="button"
@@ -1258,18 +1344,31 @@ const AllSiteDpr = () => {
           {selectedSite && (
             <>
               <div className="d-flex gap-4 mb-3">
-                <p className="mb-0"><strong>Site ID:</strong> {selectedSite.site_id}</p>
+                <p className="mb-0">
+                  <strong>Site ID:</strong> {selectedSite.site_id}
+                </p>
                 <p className="mb-0">
                   <strong>Total Robots:</strong>{" "}
                   <CBadge color="warning">{selectedSite.total_robots}</CBadge>
                 </p>
               </div>
 
-              <div style={{ overflowX: "auto", maxHeight: "55vh", overflowY: "auto" }}>
+              <div
+                style={{
+                  overflowX: "auto",
+                  maxHeight: "55vh",
+                  overflowY: "auto",
+                }}
+              >
                 <CTable striped bordered small>
-                  <CTableHead color="dark" style={{ position: "sticky", top: 0 }}>
+                  <CTableHead
+                    color="dark"
+                    style={{ position: "sticky", top: 0 }}
+                  >
                     <CTableRow>
-                      <CTableHeaderCell style={{ minWidth: 120 }}>Metric</CTableHeaderCell>
+                      <CTableHeaderCell style={{ minWidth: 120 }}>
+                        Metric
+                      </CTableHeaderCell>
                       {selectedSite.month_wise_data.map((entry, i) => (
                         <CTableHeaderCell
                           key={i}
@@ -1304,7 +1403,9 @@ const AllSiteDpr = () => {
                               key={i}
                               style={{
                                 textAlign: "center",
-                                background: entry.week ? "rgba(255,242,0,0.2)" : undefined,
+                                background: entry.week
+                                  ? "rgba(255,242,0,0.2)"
+                                  : undefined,
                                 fontWeight: entry.week ? 600 : 400,
                               }}
                             >
@@ -1322,7 +1423,11 @@ const AllSiteDpr = () => {
         </CModalBody>
 
         <CModalFooter>
-          <CButton size="sm" color="secondary" onClick={() => setModalVisible(false)}>
+          <CButton
+            size="sm"
+            color="secondary"
+            onClick={() => setModalVisible(false)}
+          >
             Close
           </CButton>
         </CModalFooter>
@@ -1336,14 +1441,14 @@ const stickyCell = (left) => ({
   position: "sticky",
   left,
   zIndex: 4,
-
 });
 
-const groupDot = (group) => ({
-  Operational: "#3b82f6",
-  Breakdown:   "#f97316",
-  PM:          "#22c55e",
-  Tickets:     "#a855f7",
-}[group] || "#999");
+const groupDot = (group) =>
+  ({
+    Operational: "#3b82f6",
+    Breakdown: "#f97316",
+    PM: "#22c55e",
+    Tickets: "#a855f7",
+  })[group] || "#999";
 
 export default AllSiteDpr;

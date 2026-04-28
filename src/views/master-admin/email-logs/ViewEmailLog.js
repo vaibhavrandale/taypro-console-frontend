@@ -29,7 +29,7 @@ const ViewEmailLog = () => {
     loading: true,
     error: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchEmailLog = async () => {
@@ -40,10 +40,11 @@ const ViewEmailLog = () => {
           `/api/v1/email-logs/${id}`,
 
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
+          },
         );
         console.log(result);
 
@@ -59,12 +60,12 @@ const ViewEmailLog = () => {
         });
 
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchEmailLog();
-  }, [authtoken, id]);
+  }, [id]);
 
   return (
     <div>

@@ -59,7 +59,7 @@ const ViewProjectClosureDocument = () => {
     adminroute = "project-user";
   }
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const contentRef = useRef();
 
@@ -78,7 +78,8 @@ const ViewProjectClosureDocument = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/projectdocs/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -94,7 +95,7 @@ const ViewProjectClosureDocument = () => {
     };
 
     fetchProjectHandoverDoc();
-  }, [id, authtoken]);
+  }, [id]);
 
   const approveHandoverDoc = async (data) => {
     dispatch({ type: "SUBMIT_REQUEST" });
@@ -103,14 +104,15 @@ const ViewProjectClosureDocument = () => {
         `/api/v1/projectdocs/change-status/${data._id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({
         type: "SUBMIT_SUCCESS",
       });
       toast.success(
-        result.data.message || "Project Handover Approved Successfully."
+        result.data.message || "Project Handover Approved Successfully.",
       );
 
       navigate(`/${adminroute}/project-handover`);
@@ -121,7 +123,7 @@ const ViewProjectClosureDocument = () => {
           error.response?.data?.error || "Failed to send an approval request",
       });
       toast.error(
-        error.response?.data?.error || "Failed to send an approval request"
+        error.response?.data?.error || "Failed to send an approval request",
       );
     }
   };

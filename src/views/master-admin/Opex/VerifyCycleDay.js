@@ -63,7 +63,7 @@ const VerifyCycleDay = () => {
     remarks: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId, dayId } = useParams();
 
   useEffect(() => {
@@ -73,8 +73,9 @@ const VerifyCycleDay = () => {
         const result = await axios.get(
           `/api/v1/opex/${moduleId}/cycle/${cycleId}/day/${dayId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         console.log(result.data.data);
 
@@ -93,7 +94,7 @@ const VerifyCycleDay = () => {
     };
 
     fetchCycle();
-  }, [authtoken, moduleId, cycleId, dayId]);
+  }, [moduleId, cycleId, dayId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,8 +106,9 @@ const VerifyCycleDay = () => {
 
         formData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -362,7 +364,7 @@ const VerifyCycleDay = () => {
                               minute: "2-digit",
                               second: "2-digit",
                               hour12: true,
-                            }
+                            },
                           )}
                         </span>
                       </span>
@@ -373,7 +375,7 @@ const VerifyCycleDay = () => {
                                 new Date(day.verified_by.verified_at),
                                 {
                                   addSuffix: true,
-                                }
+                                },
                               )
                             : "NA"}
                         </span>
@@ -390,7 +392,7 @@ const VerifyCycleDay = () => {
                       dangerouslySetInnerHTML={{
                         __html: `<span class="text-warning bg-warning p-1 rounded-1">Details</span> :&nbsp; ${day.verified_by.details.replace(
                           /, /g,
-                          ",<br>"
+                          ",<br>",
                         )}`,
                       }}
                     >
@@ -434,7 +436,7 @@ const VerifyCycleDay = () => {
                         {day.client_verified_by.name} -{" "}
                         <span className="text-muted small">
                           {new Date(
-                            day.client_verified_by.verified_at
+                            day.client_verified_by.verified_at,
                           ).toLocaleString("en-GB", {
                             day: "2-digit",
                             month: "2-digit",
@@ -453,7 +455,7 @@ const VerifyCycleDay = () => {
                                 new Date(day.client_verified_by.verified_at),
                                 {
                                   addSuffix: true,
-                                }
+                                },
                               )
                             : "NA"}
                         </span>
@@ -470,7 +472,7 @@ const VerifyCycleDay = () => {
                       dangerouslySetInnerHTML={{
                         __html: `<span class="text-warning bg-warning p-1 rounded-1">Details</span> :&nbsp; ${day.client_verified_by.details.replace(
                           /, /g,
-                          ",<br>"
+                          ",<br>",
                         )}`,
                       }}
                     >

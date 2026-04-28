@@ -126,7 +126,7 @@ const UploadImages = () => {
     loadingAttachments: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId, dayId } = useParams();
 
   const [image, setImage] = useState("");
@@ -137,8 +137,9 @@ const UploadImages = () => {
         const response = await axios.get(
           `/api/v1/opex/fetch-attachments/${moduleId}/${cycleId}/${dayId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -155,7 +156,7 @@ const UploadImages = () => {
     };
 
     fetchAttachments();
-  }, [moduleId, cycleId, dayId, authtoken]);
+  }, [moduleId, cycleId, dayId]);
   console.log(image);
 
   const handleFileChange = async (e) => {
@@ -175,9 +176,9 @@ const UploadImages = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       dispatch({ type: "UPLOAD_SUCCESS" });
@@ -191,8 +192,9 @@ const UploadImages = () => {
         `/api/v1/opex/attachments/${moduleId}/${cycleId}/${dayId}`,
         { url: data.url },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       if (response.status === 201 || response.status === 200) {
@@ -285,7 +287,7 @@ const UploadImages = () => {
                         minute: "2-digit",
                         second: "2-digit",
                         hour12: true,
-                      }
+                      },
                     )}
                   </p>
                 </CCarouselCaption>

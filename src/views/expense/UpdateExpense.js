@@ -58,7 +58,7 @@ const UpdateExpense = () => {
     });
 
   const { id } = useParams(); // expense claim ID from URL
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   // const isTechnician = userInfo?.role === "Site Technician";
@@ -114,7 +114,8 @@ const UpdateExpense = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const { data } = await axios.get(`/api/v1/expenseclaims/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -135,13 +136,13 @@ const UpdateExpense = () => {
           payload: error.response?.data.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data.message || error.response?.data?.error
+          error.response?.data.message || error.response?.data?.error,
         );
       }
     };
 
     fetchExpense();
-  }, [id, authtoken, userInfo.role, navigate, adminroute]);
+  }, [id, , userInfo.role, navigate, adminroute]);
 
   const handleFormChange = (e) => {
     // const { name, value } = e.target;
@@ -172,7 +173,8 @@ const UpdateExpense = () => {
       };
 
       const result = await axios.put(`/api/v1/expenseclaims/${id}`, payload, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -219,7 +221,7 @@ const UpdateExpense = () => {
 
         const { data } = await axios.post(
           "/api/v1/image-upload/expense-claim",
-          formData
+          formData,
         );
 
         updatedItems[index][field] = data.url; // Save the uploaded file URL
@@ -294,7 +296,7 @@ const UpdateExpense = () => {
   const calculateTotals = () => {
     const totalClaimed = expenseItems.reduce(
       (sum, item) => sum + parseFloat(item.amount || 0),
-      0
+      0,
     );
     return {
       total_claimed_amount: parseFloat(totalClaimed.toFixed(2)),
@@ -462,7 +464,7 @@ const UpdateExpense = () => {
                             idx !== index &&
                             itm.expense_date === item.expense_date &&
                             itm.expense_type === item.expense_type &&
-                            item.expense_type !== ""
+                            item.expense_type !== "",
                         );
 
                         return (
@@ -477,7 +479,7 @@ const UpdateExpense = () => {
                                     handleExpenseItemChange(
                                       index,
                                       "expense_date",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required
@@ -491,7 +493,7 @@ const UpdateExpense = () => {
                                     handleExpenseItemChange(
                                       index,
                                       "expense_type",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required
@@ -505,7 +507,7 @@ const UpdateExpense = () => {
                                             idx !== index &&
                                             itm.expense_date ===
                                               item.expense_date &&
-                                            itm.expense_type === type
+                                            itm.expense_type === type,
                                         );
                                       return (
                                         <option
@@ -516,7 +518,7 @@ const UpdateExpense = () => {
                                           {type}
                                         </option>
                                       );
-                                    }
+                                    },
                                   )}
                                 </select>
                               </td>
@@ -529,7 +531,7 @@ const UpdateExpense = () => {
                                     handleExpenseItemChange(
                                       index,
                                       "description",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required
@@ -544,7 +546,7 @@ const UpdateExpense = () => {
                                     handleExpenseItemChange(
                                       index,
                                       "amount",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   required
@@ -589,7 +591,7 @@ const UpdateExpense = () => {
                                       handleExpenseItemChange(
                                         index,
                                         "file",
-                                        e.target.files[0]
+                                        e.target.files[0],
                                       )
                                     }
                                   />

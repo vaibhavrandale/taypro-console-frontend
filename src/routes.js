@@ -1104,7 +1104,7 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/master-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Master Admin Sitewise Cleaning Log",
     element: (
       <MasterAdminRoute>
@@ -3640,7 +3640,7 @@ const routes = [
     ),
   },
   {
-    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
       <ProjectAdminRoute>
@@ -4572,7 +4572,7 @@ const routes = [
     ),
   },
   {
-    path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project User Sitewise Cleaning Log",
     element: (
       <ProjectUserRoute>
@@ -5465,7 +5465,7 @@ const routes = [
     ),
   },
   {
-    path: "/service-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/service-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Service Admin Sitewise Cleaning Log",
     element: (
       <ServiceAdminRoute>
@@ -6488,7 +6488,7 @@ const routes = [
     ),
   },
   {
-    path: "/service-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id",
+    path: "/service-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Service User Sitewise Cleaning Log",
     element: (
       <ServiceUserRoute>
@@ -7456,6 +7456,15 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <AddRobotLocation />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/chat-with-console",
+    name: "Chat with Console  ",
+    element: (
+      <SiteTechnicianRoute>
+        <OpenAiChat />
       </SiteTechnicianRoute>
     ),
   },

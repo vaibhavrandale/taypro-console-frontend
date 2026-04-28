@@ -69,7 +69,7 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
@@ -114,12 +114,13 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
           `/api/v1/preventivemaintenances/get-preventivemaintenances`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -143,13 +144,13 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
     };
 
     fetchPreventivemaintenances();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const FilteredPreventivemaintenances = preventivemaintanance
     ? preventivemaintanance.filter(
         (robot) =>
           robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.site_id.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -349,7 +350,7 @@ const PreventiveMaintenanceTechnicianDashboard = () => {
                           "oiling_need_for_bearing_condition_image",
                           "physical_condition_of_channel_image",
                           "physical_condition_of_transPipe_image",
-                        ].includes(key)
+                        ].includes(key),
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">

@@ -38,7 +38,7 @@ const reducer = (state, action) => {
 const UpdateClientTicketClient = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [state, dispatch] = useReducer(reducer, {
     ticket: {},
@@ -53,7 +53,8 @@ const UpdateClientTicketClient = () => {
     const fetchTicket = async () => {
       try {
         const { data } = await axios.get(`/api/v1/clienttickets/${id}`, {
-          headers: { authorization: `Bearer ${authtoken}` },
+          // // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_TICKET_SUCCESS", payload: data.data });
@@ -66,7 +67,7 @@ const UpdateClientTicketClient = () => {
       }
     };
     fetchTicket();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -79,7 +80,8 @@ const UpdateClientTicketClient = () => {
       formData;
     try {
       await axios.put(`/api/v1/clienttickets/${id}`, updatedTicket, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Ticket updated successfully");
       dispatch({ type: "UPDATE_TICKET_SUCCESS" });

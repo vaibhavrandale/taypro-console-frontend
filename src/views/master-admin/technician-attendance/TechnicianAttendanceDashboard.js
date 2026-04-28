@@ -56,7 +56,7 @@ const TechnicianAttendanceDashboard = () => {
     hasPrevPage: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -80,7 +80,8 @@ const TechnicianAttendanceDashboard = () => {
           `/api/v1/technician-attendance/${month}/${year}`,
           { pg: page, limit: limit },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -104,7 +105,7 @@ const TechnicianAttendanceDashboard = () => {
     };
 
     fetchAttendance();
-  }, [authtoken, limit, month, page, year]);
+  }, [limit, month, page, year]);
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month, 0).getDate();

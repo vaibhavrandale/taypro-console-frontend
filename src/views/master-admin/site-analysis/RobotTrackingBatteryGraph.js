@@ -62,7 +62,7 @@ const RobotTrackingBatteryGraph = () => {
     },
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
 
   const fetchRobots = async () => {
@@ -70,7 +70,7 @@ const RobotTrackingBatteryGraph = () => {
     try {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -101,8 +101,9 @@ const RobotTrackingBatteryGraph = () => {
         "/api/v1/robot-tracking/avg-battery",
         payload, // <-- this is the body
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "FETCH_STATS_SUCCESS", payload: result.data.data });
@@ -141,7 +142,7 @@ const RobotTrackingBatteryGraph = () => {
 
     const startValues = statsData.map((item) => item.battey_at_start);
     const reverseValues = statsData.map(
-      (item) => item.battery_at_revesere_station
+      (item) => item.battery_at_revesere_station,
     );
     const finishValues = statsData.map((item) => item.battery_at_finish);
     const avgValues = statsData.map((item) => item.avg_battery);
@@ -154,7 +155,7 @@ const RobotTrackingBatteryGraph = () => {
 
   useEffect(() => {
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   return (
     <div className="container-fluid">

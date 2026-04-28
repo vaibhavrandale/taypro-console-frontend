@@ -117,7 +117,7 @@ const ClientCleaningLog = () => {
     subscriptiondata: {},
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const { site_id, date } = useParams();
   const [startDate, setStartDate] = useState(
@@ -157,9 +157,10 @@ const ClientCleaningLog = () => {
             date: startDate,
           },
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         );
 
@@ -199,7 +200,7 @@ const ClientCleaningLog = () => {
     };
 
     fetchCleaningLogs();
-  }, [site_id, startDate, authtoken]);
+  }, [site_id, startDate]);
 
   const exportToExcel = () => {
     if (
@@ -1499,7 +1500,7 @@ const ClientCleaningLog = () => {
               <Logmodal
                 _id={selectedLogId}
                 modalState={modalOpen}
-                authtoken={authtoken}
+                // authtoken={authtoken}
                 userInfo={userInfo}
                 onClose={() => setModalOpen(false)}
               />

@@ -63,7 +63,7 @@ const MqttDashboard = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
@@ -72,7 +72,8 @@ const MqttDashboard = () => {
 
       try {
         const response = await axios.get(`/api/v1/mqtt-event-logs`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const result = response.data.data;
@@ -91,7 +92,7 @@ const MqttDashboard = () => {
       }
     };
     fetchSubscriptions();
-  }, [authtoken]);
+  }, []);
   useEffect(() => {
     socket.emit("event");
   }, []);

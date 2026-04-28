@@ -52,7 +52,7 @@ const RobotActivity = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
@@ -72,12 +72,13 @@ const RobotActivity = () => {
           `/api/v1/robot-notification`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -97,13 +98,13 @@ const RobotActivity = () => {
           payload: error.response?.data.error || error.response?.data.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
 
     fetchRobotActivity();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const handlePageInputChange = (e) => setPageInput(e.target.value);
 

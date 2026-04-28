@@ -108,7 +108,7 @@ const CommisioningDashboard = () => {
     certificatesError: "",
   });
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("all");
   // let site_id = "avaada_soyegaon";
 
@@ -117,7 +117,8 @@ const CommisioningDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -132,7 +133,7 @@ const CommisioningDashboard = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -141,7 +142,8 @@ const CommisioningDashboard = () => {
         const result = await axios.get(
           `/api/v1/commisioning-docs/commisioned-sitewise-robots/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -167,7 +169,8 @@ const CommisioningDashboard = () => {
         const result = await axios.get(
           `/api/v1/commisioning-certificates/sitewise-certificates/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -189,7 +192,7 @@ const CommisioningDashboard = () => {
 
     fetchRobots();
     fetchCertificates();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   let adminroute = "";
 

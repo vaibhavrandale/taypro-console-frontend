@@ -96,7 +96,7 @@ const reducer = (state, action) => {
 
 const ClientAssignedSites = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const API_BASE_URL = "/api/v1";
 
   const initialState = {
@@ -155,7 +155,8 @@ const ClientAssignedSites = () => {
           `${API_BASE_URL}/sites/get-sites/${id}`,
           { pg: page, limit: limit },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -183,7 +184,7 @@ const ClientAssignedSites = () => {
       }
     };
     fetchClientSites();
-  }, [authtoken, id, limit, page]);
+  }, [id, limit, page]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -200,7 +201,8 @@ const ClientAssignedSites = () => {
 
       dispatch({ type: "ADD_SITE_START" });
       const response = await axios.post(`${API_BASE_URL}/sites`, filderedData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "ADD_SITE_SUCCESS", payload: response.data.data });
       dispatch({ type: "RESET_FORM" }); // 👈 add this here
@@ -233,7 +235,8 @@ const ClientAssignedSites = () => {
       dispatch({ type: "DELETE_REQUEST" });
 
       await axios.delete(`${API_BASE_URL}/sites/${site._id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success(

@@ -90,7 +90,7 @@ const ActiveRobots = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     let pagination = {
@@ -101,10 +101,11 @@ const ActiveRobots = () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.post(`/api/v1/robots/active`, pagination, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -125,20 +126,23 @@ const ActiveRobots = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter robots based on search term
   const filteredRobots = robots.filter(
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.lora_no?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      robot.lora_no
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   // Open modal with selected robot data
@@ -177,8 +181,9 @@ const ActiveRobots = () => {
         `/api/v1/robots/deactivate-and-delete-from-lns`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -271,7 +276,7 @@ const ActiveRobots = () => {
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
             {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role
+              userInfo?.role,
             ) && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
@@ -281,7 +286,7 @@ const ActiveRobots = () => {
               <CTableDataCell
                 colSpan={
                   ["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   )
                     ? 6
                     : 7
@@ -295,7 +300,7 @@ const ActiveRobots = () => {
               <CTableDataCell
                 colSpan={
                   ["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   )
                     ? 6
                     : 7
@@ -320,7 +325,7 @@ const ActiveRobots = () => {
                   )}
                 </CTableDataCell>
                 {!["Master User", "Project User", "Service User"].includes(
-                  userInfo?.role
+                  userInfo?.role,
                 ) && (
                   <CTableDataCell>
                     <CButton

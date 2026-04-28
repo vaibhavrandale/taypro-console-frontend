@@ -60,7 +60,7 @@ const SitesCoordinates = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -81,12 +81,13 @@ const SitesCoordinates = () => {
           `/api/v1/technician-attendance/get-user-attendance`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -110,10 +111,10 @@ const SitesCoordinates = () => {
     };
 
     fetchAttendance();
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
 
   const filteredAttendance = attendances.filter((attendance) =>
-    attendance.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+    attendance.site_id.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {
@@ -237,7 +238,7 @@ const SitesCoordinates = () => {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
-                      }
+                      },
                     )
                   ) : (
                     <CBadge color="warning">N/A</CBadge>

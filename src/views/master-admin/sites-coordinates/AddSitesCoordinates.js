@@ -62,7 +62,7 @@ const reducer = (state, action) => {
 
 //to add new site coordinates
 const AddSitesCoordinates = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -106,7 +106,8 @@ const AddSitesCoordinates = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -121,7 +122,7 @@ const AddSitesCoordinates = () => {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const handleChange = (e) => {
     dispatch({
@@ -136,7 +137,7 @@ const AddSitesCoordinates = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -160,7 +161,8 @@ const AddSitesCoordinates = () => {
     };
     try {
       await axios.post("/api/v1/sites-coordinates", newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Site Coordinates Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });

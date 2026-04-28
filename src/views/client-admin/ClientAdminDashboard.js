@@ -412,7 +412,7 @@ const reducer = (state, action) => {
    MAIN DASHBOARD
 ══════════════════════════════════════════════ */
 export default function ClientAdminDashboard() {
-  const authtoken = useSelector((s) => s.authtoken);
+  // const authtoken = useSelector((s) => s.authtoken);
   const userInfo = useSelector((s) => s.userInfo);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -458,7 +458,10 @@ export default function ClientAdminDashboard() {
       try {
         const { data } = await axios.get(
           `/api/v1/sites-coordinates/site-details/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
         const d = data.data;
         dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
@@ -481,7 +484,8 @@ export default function ClientAdminDashboard() {
         const { data } = await axios.get(
           `/api/v1/weatherdata/client/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         dispatch({ type: "FETCH_WEATHER_SUCCESS", payload: data.data });
@@ -497,7 +501,8 @@ export default function ClientAdminDashboard() {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const { data } = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: data.data });
       } catch (e) {
@@ -512,7 +517,7 @@ export default function ClientAdminDashboard() {
     fetchWeather();
     fetchSiteIds();
     setMapLoaded(false);
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   /* derived */
   const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);
@@ -962,7 +967,7 @@ export default function ClientAdminDashboard() {
 
                 <GatewayMap
                   gateways={gateways}
-                  authtoken={authtoken}
+                  // authtoken={authtoken}
                   site_id={site_id}
                   T={T} // your existing token object
                   height={360} // optional, defaults to 360
@@ -1306,7 +1311,7 @@ export default function ClientAdminDashboard() {
           <div style={{ flex: 1 }}>
             <GatewayMap
               gateways={gateways}
-              authtoken={authtoken}
+              // authtoken={authtoken}
               site_id={site_id}
               T={T}
               height={"100%"} // 🔥 important

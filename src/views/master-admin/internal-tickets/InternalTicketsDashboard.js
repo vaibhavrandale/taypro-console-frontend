@@ -74,7 +74,7 @@ const InternalTicketsDashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -91,11 +91,11 @@ const InternalTicketsDashboard = () => {
         const result = await axios.post(
           `/api/v1/internaltickets/get-internaltickets`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -119,7 +119,7 @@ const InternalTicketsDashboard = () => {
     };
 
     fetchInternalTickets();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   /** 🔍 Search Function */
   const filteredTickets = internal_tickets.filter(
@@ -128,7 +128,7 @@ const InternalTicketsDashboard = () => {
       ticket.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   /** ✏️ Open Update Modal */
@@ -237,8 +237,8 @@ const InternalTicketsDashboard = () => {
                       ticket.priority === "Critical"
                         ? "danger"
                         : ticket.priority === "High"
-                        ? "warning"
-                        : "blue"
+                          ? "warning"
+                          : "blue"
                     }
                   >
                     {ticket.priority}
@@ -250,8 +250,8 @@ const InternalTicketsDashboard = () => {
                       ticket.status === "Resolved"
                         ? "success"
                         : ticket.status === "Open"
-                        ? "danger"
-                        : "warning"
+                          ? "danger"
+                          : "warning"
                     }
                   >
                     {ticket.status}
@@ -373,8 +373,8 @@ const InternalTicketsDashboard = () => {
                           formData.status === "Resolved"
                             ? "success"
                             : formData.status === "Open"
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                       >
                         {formData.status}

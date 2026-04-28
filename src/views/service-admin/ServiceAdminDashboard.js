@@ -498,7 +498,8 @@ export default function MasterAdminDashboard() {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
         setSiteid(result.data.data[0]?.site_id || "");
@@ -510,7 +511,7 @@ export default function MasterAdminDashboard() {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -541,7 +542,7 @@ export default function MasterAdminDashboard() {
     fetchSiteDetails();
 
     setMapLoaded(false);
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   /* derived */
   const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);

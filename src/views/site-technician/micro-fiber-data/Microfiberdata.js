@@ -77,7 +77,7 @@ const reducer = (state, action) => {
 
 const Microfiberdata = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [loadedImages, setLoadedImages] = useState({});
 
@@ -92,7 +92,7 @@ const Microfiberdata = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       dispatch({
@@ -113,14 +113,14 @@ const Microfiberdata = () => {
       toast.error(
         error.response?.data?.error ||
           error.response?.data?.message ||
-          "Failed to fetch Micro Fiber data"
+          "Failed to fetch Micro Fiber data",
       );
     }
   };
 
   useEffect(() => {
     if (userInfo._id) fetchData(1);
-  }, [authtoken, userInfo._id]);
+  }, [userInfo._id]);
 
   const lastCardRef = useCallback(
     (node) => {
@@ -135,13 +135,13 @@ const Microfiberdata = () => {
 
       if (node) observer.current.observe(node);
     },
-    [state.loading, state.hasMore, state.page]
+    [state.loading, state.hasMore, state.page],
   );
 
   const filteredData = state.microfiberData.filter(
     (item) =>
       item.site_id.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(state.searchTerm.toLowerCase())
+      item.category.toLowerCase().includes(state.searchTerm.toLowerCase()),
   );
 
   return (
@@ -273,8 +273,8 @@ const Microfiberdata = () => {
                     state.selectedItem.category === "Good"
                       ? "success"
                       : state.selectedItem.category === "Bad"
-                      ? "danger"
-                      : "warning"
+                        ? "danger"
+                        : "warning"
                   }
                   className="px-3 py-2 fs-6"
                 >

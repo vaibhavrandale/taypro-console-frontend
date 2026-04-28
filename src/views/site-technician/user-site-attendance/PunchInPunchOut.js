@@ -140,7 +140,7 @@ const PunchInPunchOut = () => {
   const [geoLoading, setGeoLoading] = useState(true);
   const [canPunchIn, setCanPunchIn] = useState(false);
   const [canPunchOut, setCanPunchOut] = useState(false);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [sites, setSites] = useState([]);
   const [inTime, setinTime] = useState(new Date());
@@ -158,7 +158,10 @@ const PunchInPunchOut = () => {
     try {
       const data = await axios.get(
         "/api/v1/technician-attendance/punchstatus",
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       setinTime(data?.data?.data?.punchin_time);
@@ -180,7 +183,10 @@ const PunchInPunchOut = () => {
       const res = await axios.post(
         "/api/v1/sites-coordinates/get-by-siteId",
         { site_id: selectedId },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SET_SITE_COORDINATES", payload: res.data.data });
 
@@ -217,7 +223,7 @@ const PunchInPunchOut = () => {
           setGeoLoading(false);
           // Even if geolocation fails, show the map
           dispatch({ type: "SET_MAP_READY", payload: true });
-        }
+        },
       );
     } catch (error) {
       toast.error(error.response.data.message || error.response.data.error);
@@ -269,7 +275,7 @@ const PunchInPunchOut = () => {
             value: position.coords.longitude.toString(),
           });
         },
-        (err) => console.error("Punch-out location error:", err)
+        (err) => console.error("Punch-out location error:", err),
       );
     }
   }, [punchedIn, punchedOut]);
@@ -301,7 +307,7 @@ const PunchInPunchOut = () => {
       liveLocation.lng,
       selectedSiteData.latitude,
       selectedSiteData.longitude,
-      selectedSiteData.radius
+      selectedSiteData.radius,
     );
     setCanPunchIn(within);
   }, [liveLocation, selectedSiteData]);
@@ -317,7 +323,7 @@ const PunchInPunchOut = () => {
       liveLocation.lng,
       selectedSiteData.latitude,
       selectedSiteData.longitude,
-      selectedSiteData.radius
+      selectedSiteData.radius,
     );
     setCanPunchOut(within);
   }, [liveLocation, selectedSiteData, punchedIn, punchedOut]);
@@ -342,7 +348,7 @@ const PunchInPunchOut = () => {
       parseFloat(punchin_location.lng),
       selectedSiteData.latitude,
       selectedSiteData.longitude,
-      selectedSiteData.radius
+      selectedSiteData.radius,
     );
 
     if (!within) {
@@ -370,7 +376,7 @@ const PunchInPunchOut = () => {
       parseFloat(punchout_location.lng),
       selectedSiteData.latitude,
       selectedSiteData.longitude,
-      selectedSiteData.radius
+      selectedSiteData.radius,
     );
 
     if (!within) {
@@ -414,7 +420,10 @@ const PunchInPunchOut = () => {
             lng: parseFloat(punchin_location.lng),
           },
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "PUNCH_SUCCESS", isPunchIn: true });
@@ -443,7 +452,10 @@ const PunchInPunchOut = () => {
             lng: parseFloat(punchout_location.lng),
           },
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "PUNCH_SUCCESS", isPunchIn: false });
@@ -534,9 +546,10 @@ const PunchInPunchOut = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPLOAD_USER_IMAGE_SUCCESS" });
       setUploadedImageUrl(data.url);
@@ -547,7 +560,7 @@ const PunchInPunchOut = () => {
       });
       toast.error("Upload failed");
     }
-  }, [capturedImage, authtoken]);
+  }, [capturedImage]);
 
   return (
     <div className="my-2">
@@ -670,11 +683,11 @@ const PunchInPunchOut = () => {
                       liveLocation
                         ? [liveLocation.lat, liveLocation.lng]
                         : selectedSiteData
-                        ? [
-                            selectedSiteData.latitude,
-                            selectedSiteData.longitude,
-                          ]
-                        : [0, 0]
+                          ? [
+                              selectedSiteData.latitude,
+                              selectedSiteData.longitude,
+                            ]
+                          : [0, 0]
                     }
                     zoom={14}
                     scrollWheelZoom={false}

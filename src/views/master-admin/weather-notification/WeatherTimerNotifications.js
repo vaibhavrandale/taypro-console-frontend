@@ -29,7 +29,7 @@ const WeatherTimerNotifications = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0],
   );
@@ -44,9 +44,10 @@ const WeatherTimerNotifications = () => {
         const response = await axios.get(
           `/api/v1/weathertimerupdatenotification/get-weather-timer-update-notification/${startDate}/${endDate}`,
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         );
         dispatch({
@@ -70,7 +71,7 @@ const WeatherTimerNotifications = () => {
     };
 
     fetchTimerLogs();
-  }, [startDate, endDate, authtoken]);
+  }, [startDate, endDate]);
 
   // ... rest of the component remains the same ...
   const exportToExcel = () => {

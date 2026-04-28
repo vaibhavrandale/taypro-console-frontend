@@ -86,13 +86,13 @@ const MonthlySiteReport = () => {
     subscriptionStatus: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("");
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
@@ -103,7 +103,8 @@ const MonthlySiteReport = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         console.log(res);
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
@@ -126,7 +127,8 @@ const MonthlySiteReport = () => {
       dispatch({ type: "FETCH_MONTHLYREPORT_REQUEST" });
       try {
         const res = await axios.post(`/api/v1/monthlysitereports`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         console.log(res);
 
@@ -155,7 +157,7 @@ const MonthlySiteReport = () => {
 
     fetchSites();
     fetchMonthlyReport();
-  }, [authtoken, endDate, limit, page, site_id, startDate]);
+  }, [endDate, limit, page, site_id, startDate]);
 
   const exportMonthlyReportToExcel = () => {
     if (!monthlyreports || monthlyreports.length === 0) {
@@ -173,7 +175,7 @@ const MonthlySiteReport = () => {
           {
             month: "long",
             year: "numeric",
-          }
+          },
         )}`,
       ]);
       mergedData.push([]);
@@ -232,7 +234,7 @@ const MonthlySiteReport = () => {
         wb,
         `Monthly_Report_${site_id || "All"}_${startDate || "Start"}_to_${
           endDate || "End"
-        }.xlsx`
+        }.xlsx`,
       );
       toast.success("Monthly report Excel downloaded successfully!");
     } catch (error) {
@@ -454,7 +456,7 @@ const MonthlySiteReport = () => {
                                       }}
                                     >
                                       {new Date(
-                                        robot.createdAt
+                                        robot.createdAt,
                                       ).toLocaleString()}
                                     </div>
                                   </CCardBody>

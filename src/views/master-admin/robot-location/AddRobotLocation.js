@@ -211,38 +211,35 @@ const AddRobotLocation = () => {
   }, [requestLocation]);
 
   /* ── upload to cloudinary ── */
-  const uploadToCloudinary = useCallback(
-    async (dataUrl) => {
-      const blob = dataUrlToBlob(dataUrl);
-      const form = new FormData();
-      form.append("file", blob, "robot_location.jpg");
+  const uploadToCloudinary = useCallback(async (dataUrl) => {
+    const blob = dataUrlToBlob(dataUrl);
+    const form = new FormData();
+    form.append("file", blob, "robot_location.jpg");
 
-      dispatch({ type: "UPLOAD_REQ" });
-      try {
-        const { data } = await axios.post(
-          "/api/v1/image-upload/user-images",
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${authtoken}`,
-            },
+    dispatch({ type: "UPLOAD_REQ" });
+    try {
+      const { data } = await axios.post(
+        "/api/v1/image-upload/user-images",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authtoken}`,
           },
-        );
-        const url = data.url || data.secure_url || "";
-        setUploadedImageUrl(url);
-        dispatch({ type: "UPLOAD_OK" });
-        toast.success("Image uploaded ✓");
-        return url;
-      } catch (err) {
-        const msg = err.response?.data?.error || "Image upload failed";
-        dispatch({ type: "UPLOAD_ERR", payload: msg });
-        toast.error(msg);
-        return "";
-      }
-    },
-    [authtoken],
-  );
+        },
+      );
+      const url = data.url || data.secure_url || "";
+      setUploadedImageUrl(url);
+      dispatch({ type: "UPLOAD_OK" });
+      toast.success("Image uploaded ✓");
+      return url;
+    } catch (err) {
+      const msg = err.response?.data?.error || "Image upload failed";
+      dispatch({ type: "UPLOAD_ERR", payload: msg });
+      toast.error(msg);
+      return "";
+    }
+  }, []);
 
   /* ── camera ── */
   const openCamera = useCallback(async () => {

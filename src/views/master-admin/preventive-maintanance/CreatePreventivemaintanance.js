@@ -112,7 +112,7 @@
 
 // const CreatePreventiveMaintenance = () => {
 //   const [state, dispatch] = useReducer(reducer, initialState);
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const navigate = useNavigate();
 //   const [loading, setLoading] = useState(false);
 //   const [searchTerm, setSearchTerm] = useState("");
@@ -125,7 +125,8 @@
 //         const result = await axios.get(
 //           "/api/v1/robots/get-robots/robots-without-pg",
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         dispatch({
@@ -145,7 +146,8 @@
 //       }
 //     };
 //     fetchRobots();
-//   }, [authtoken]);
+//   }, []
+// );
 
 //   const handleSearchChange = (e) => {
 //     const value = e.target.value;
@@ -231,7 +233,8 @@
 //       dispatch({ type: "ADD_PM_REQUEST" });
 
 //       const data = await axios.post("/api/v1/preventivemaintenances", state, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 //       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
 //       toast.success("Preventive Maintenance Created Successfully!");
@@ -504,7 +507,7 @@
 
 // const CreatePreventiveMaintenance = () => {
 //   const [state, dispatch] = useReducer(reducer, initialState);
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const navigate = useNavigate();
 //   const [loading, setLoading] = useState(false);
 //   const [searchTerm, setSearchTerm] = useState("");
@@ -525,7 +528,8 @@
 //         const result = await axios.get(
 //           "/api/v1/robots/get-robots/robots-without-pg",
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         dispatch({
@@ -545,7 +549,8 @@
 //       }
 //     };
 //     fetchRobots();
-//   }, [authtoken]);
+//   }, []
+// );
 
 //   // Listen for messages from the camera app
 //   useEffect(() => {
@@ -717,7 +722,8 @@
 //       dispatch({ type: "ADD_PM_REQUEST" });
 
 //       const data = await axios.post("/api/v1/preventivemaintenances", state, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 //       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
 //       toast.success("Preventive Maintenance Created Successfully!");
@@ -1080,7 +1086,7 @@ const reducer = (state, action) => {
 
 const CreatePreventiveMaintenance = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -1108,8 +1114,9 @@ const CreatePreventiveMaintenance = () => {
         const result = await axios.get(
           "/api/v1/robots/get-robots/robots-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -1123,12 +1130,12 @@ const CreatePreventiveMaintenance = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchRobots();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (cameraModalVisible) {
@@ -1140,7 +1147,7 @@ const CreatePreventiveMaintenance = () => {
           try {
             setLoadingCamera(true);
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
             );
             const data = await response.json();
 
@@ -1163,7 +1170,7 @@ const CreatePreventiveMaintenance = () => {
             lng: "N/A",
             name: "Location not available",
           });
-        }
+        },
       );
     }
   }, [cameraModalVisible]);
@@ -1215,7 +1222,7 @@ const CreatePreventiveMaintenance = () => {
 
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
           );
           const data = await response.json();
 
@@ -1236,7 +1243,7 @@ const CreatePreventiveMaintenance = () => {
       (error) => {
         console.error("Error fetching location:", error);
         setLocation({ lat: null, lng: null, name: "Location not available" });
-      }
+      },
     );
   };
   useEffect(() => {
@@ -1292,7 +1299,7 @@ const CreatePreventiveMaintenance = () => {
           }
         },
         "image/jpeg",
-        0.8
+        0.8,
       );
     }
   };
@@ -1310,9 +1317,10 @@ const CreatePreventiveMaintenance = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       if (data?.url) {
@@ -1416,7 +1424,8 @@ const CreatePreventiveMaintenance = () => {
       dispatch({ type: "ADD_PM_REQUEST" });
 
       const data = await axios.post("/api/v1/preventivemaintenances", state, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
       toast.success(data.data.message);

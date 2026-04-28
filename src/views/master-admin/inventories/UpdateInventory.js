@@ -43,7 +43,7 @@ const UpdateInventory = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -80,8 +80,9 @@ const UpdateInventory = () => {
         const { data } = await axios.get(
           `/api/v1/service-inventory/get-one/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setInventoryData(data.data);
@@ -95,7 +96,7 @@ const UpdateInventory = () => {
     };
 
     fetchInventory();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -121,7 +122,8 @@ const UpdateInventory = () => {
       } = inventoryData;
 
       await axios.put(`/api/v1/service-inventory/${id}`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

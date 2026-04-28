@@ -57,7 +57,7 @@ const SubscriptionViewPage = () => {
     error: "",
   });
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [downloadingInvoiceIds, setDownloadingInvoiceIds] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
   useEffect(() => {
@@ -68,7 +68,8 @@ const SubscriptionViewPage = () => {
         const response = await axios.get(
           `/api/v1/client-subscription/get-subscriptions`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -90,7 +91,7 @@ const SubscriptionViewPage = () => {
       }
     };
     fetchSubscriptions();
-  }, [id, authtoken]);
+  }, [id]);
 
   let adminroute = "";
 

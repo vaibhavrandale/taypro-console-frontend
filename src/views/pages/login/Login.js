@@ -41,79 +41,133 @@ const Login = () => {
     }
     setEmail("");
     setPassword("");
-  }, [userInfo, authtoken, navigate]);
+  }, [userInfo, , navigate]);
+
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await axios.post("/api/v1/auth/sign-in", {
+  //       email,
+  //       password,
+  //     });
+  //     // ✅ Dispatch to Redux
+  //     dispatch({
+  //       type: "EMP_SIGNIN",
+  //       payload: data.data.user,
+  //       token: data.data.token,
+  //     });
+  //     localStorage.setItem("userInfo", JSON.stringify(data.data.user));
+  //     localStorage.setItem("authtoken", JSON.stringify(data.data.token));
+
+  //     if (data.data.user.role === "Master Admin") {
+  //       adminroute = "master-admin";
+  //     } else if (data.data.user.role === "Service Admin") {
+  //       adminroute = "service-admin";
+  //     } else if (data.data.user.role === "Project Admin") {
+  //       adminroute = "project-admin";
+  //     } else if (data.data.user.role === "Client Admin") {
+  //       adminroute = "client-admin";
+  //     } else if (data.data.user.role === "Site Incharge") {
+  //       adminroute = "site-incharge";
+  //     } else if (data.data.user.role === "Site Technician") {
+  //       adminroute = "site-technician";
+  //     } else if (data.data.user.role === "Client Site Technician") {
+  //       adminroute = "client-site-technician";
+  //     } else if (data.data.user.role === "Master User") {
+  //       adminroute = "master-user";
+  //     } else if (data.data.user.role === "Service User") {
+  //       adminroute = "service-user";
+  //     } else if (data.data.user.role === "Project User") {
+  //       adminroute = "project-user";
+  //     } else if (data.data.user.role === "Opex Client Admin") {
+  //       adminroute = "opex-client-admin";
+  //     } else if (data.data.user.role === "Opex Site Technician") {
+  //       adminroute = "opex-site-technician";
+  //     } else if (data.data.user.role === "Sales Admin") {
+  //       adminroute = "sales-admin";
+  //     } else if (data.data.user.role === "Hr Admin") {
+  //       adminroute = "hr-admin";
+  //     } else if (data.data.user.role === "Accounts Admin") {
+  //       adminroute = "accounts-admin";
+  //     } else if (
+  //       data.data.user.role ===
+  //       "Research And Development And Product Development Admin"
+  //     ) {
+  //       adminroute = "research-and-development-and-product-development-admin";
+  //     } else if (data.data.user.role === "Supply Chain And Logistics Admin") {
+  //       adminroute = "supply-chain-and-logistics-admin";
+  //     } else if (data.data.user.role === "Production And Operations Admin") {
+  //       adminroute = "production-and-operations-admin";
+  //     } else if (data.data.user.role === "Quality Admin") {
+  //       adminroute = "quality-admin";
+  //     } else if (data.data.user.role === "Factory Admin") {
+  //       adminroute = "factory-admin";
+  //     }
+
+  //     // "Opex Client Admin", "Opex Site Technician"
+
+  //     // toast.success(`Login Successfull!`);
+  //     toast.success(`Welcome Back!  ${data.data.user.username}`);
+  //     navigate(`/${adminroute}/dashboard`);
+  //   } catch (error) {
+  //     toast.error(error.response.data.error);
+  //   }
+  //   setLoading(false);
+  // };
+
+  const ROLE_ROUTE_MAP = {
+    "Master Admin": "master-admin",
+    "Service Admin": "service-admin",
+    "Project Admin": "project-admin",
+    "Client Admin": "client-admin",
+    "Site Incharge": "site-incharge",
+    "Site Technician": "site-technician",
+    "Client Site Technician": "client-site-technician",
+    "Master User": "master-user",
+    "Service User": "service-user",
+    "Project User": "project-user",
+    "Opex Client Admin": "opex-client-admin",
+    "Opex Site Technician": "opex-site-technician",
+    "Sales Admin": "sales-admin",
+    "Hr Admin": "hr-admin",
+    "Accounts Admin": "accounts-admin",
+    "Research And Development And Product Development Admin":
+      "research-and-development-and-product-development-admin",
+    "Supply Chain And Logistics Admin": "supply-chain-and-logistics-admin",
+    "Production And Operations Admin": "production-and-operations-admin",
+    "Quality Admin": "quality-admin",
+    "Factory Admin": "factory-admin",
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/v1/auth/sign-in", {
-        email,
-        password,
-      });
-      // ✅ Dispatch to Redux
-      dispatch({
-        type: "EMP_SIGNIN",
-        payload: data.data.user,
-        token: data.data.token,
-      });
-      localStorage.setItem("userInfo", JSON.stringify(data.data.user));
-      localStorage.setItem("authtoken", JSON.stringify(data.data.token));
+      const { data } = await axios.post(
+        "/api/v1/auth/sign-in",
+        { email, password },
+        { withCredentials: true }, // ✅ required to send/receive cookies
+      );
 
-      if (data.data.user.role === "Master Admin") {
-        adminroute = "master-admin";
-      } else if (data.data.user.role === "Service Admin") {
-        adminroute = "service-admin";
-      } else if (data.data.user.role === "Project Admin") {
-        adminroute = "project-admin";
-      } else if (data.data.user.role === "Client Admin") {
-        adminroute = "client-admin";
-      } else if (data.data.user.role === "Site Incharge") {
-        adminroute = "site-incharge";
-      } else if (data.data.user.role === "Site Technician") {
-        adminroute = "site-technician";
-      } else if (data.data.user.role === "Client Site Technician") {
-        adminroute = "client-site-technician";
-      } else if (data.data.user.role === "Master User") {
-        adminroute = "master-user";
-      } else if (data.data.user.role === "Service User") {
-        adminroute = "service-user";
-      } else if (data.data.user.role === "Project User") {
-        adminroute = "project-user";
-      } else if (data.data.user.role === "Opex Client Admin") {
-        adminroute = "opex-client-admin";
-      } else if (data.data.user.role === "Opex Site Technician") {
-        adminroute = "opex-site-technician";
-      } else if (data.data.user.role === "Sales Admin") {
-        adminroute = "sales-admin";
-      } else if (data.data.user.role === "Hr Admin") {
-        adminroute = "hr-admin";
-      } else if (data.data.user.role === "Accounts Admin") {
-        adminroute = "accounts-admin";
-      } else if (
-        data.data.user.role ===
-        "Research And Development And Product Development Admin"
-      ) {
-        adminroute = "research-and-development-and-product-development-admin";
-      } else if (data.data.user.role === "Supply Chain And Logistics Admin") {
-        adminroute = "supply-chain-and-logistics-admin";
-      } else if (data.data.user.role === "Production And Operations Admin") {
-        adminroute = "production-and-operations-admin";
-      } else if (data.data.user.role === "Quality Admin") {
-        adminroute = "quality-admin";
-      } else if (data.data.user.role === "Factory Admin") {
-        adminroute = "factory-admin";
+      const user = data.data.user;
+
+      // ✅ Redux only — no localStorage
+      dispatch({ type: "EMP_SIGNIN", payload: user });
+
+      adminroute = ROLE_ROUTE_MAP[user.role];
+      if (!adminroute) {
+        toast.error("Unknown role. Please contact support.");
+        return;
       }
 
-      // "Opex Client Admin", "Opex Site Technician"
-
-      // toast.success(`Login Successfull!`);
-      toast.success(`Welcome Back!  ${data.data.user.username}`);
+      toast.success(`Welcome Back! ${user.username}`);
       navigate(`/${adminroute}/dashboard`);
     } catch (error) {
-      toast.error(error.response.data.error);
+      toast.error(error.response?.data?.error ?? "Login failed");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

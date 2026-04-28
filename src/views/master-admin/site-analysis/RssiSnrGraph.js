@@ -87,7 +87,7 @@ const RssiSnrGraph = () => {
     },
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [availableTopics, setAvailableTopics] = useState([
     "Cleaning Log",
@@ -106,7 +106,7 @@ const RssiSnrGraph = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       // const robotsList = result?.data?.data?.data || [];
@@ -151,7 +151,7 @@ const RssiSnrGraph = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       dispatch({
@@ -193,7 +193,7 @@ const RssiSnrGraph = () => {
     if (filters.date) {
       const labels = statsData.map(
         (item, index) =>
-          moment(item.date).format("HH:mm:ss") || `Record ${index + 1}`
+          moment(item.date).format("HH:mm:ss") || `Record ${index + 1}`,
       );
       const rssiValues = statsData.map((item) => item.rssi);
       const snrValues = statsData.map((item) => item.snr);
@@ -204,7 +204,7 @@ const RssiSnrGraph = () => {
     // For month query (daily averages)
     if (filters.month) {
       const labels = statsData.map((item) =>
-        moment(item.date).format("MMM DD")
+        moment(item.date).format("MMM DD"),
       );
       const rssiValues = statsData.map((item) => item.avg_rssi);
       const snrValues = statsData.map((item) => item.avg_snr);
@@ -219,7 +219,7 @@ const RssiSnrGraph = () => {
 
   useEffect(() => {
     fetchRobots();
-  }, [authtoken, userInfo]);
+  }, [userInfo]);
 
   return (
     <div className="container-fluid">

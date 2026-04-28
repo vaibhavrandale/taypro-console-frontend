@@ -61,7 +61,7 @@ const CreateInternalTicket = () => {
     fetchusersloading: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -105,8 +105,9 @@ const CreateInternalTicket = () => {
           "/api/v1/users/get-all-internal-users-without-pg",
 
           {
-            headers: { authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         ); // Replace with your API endpoint
 
         const data = result.data.data;
@@ -123,7 +124,7 @@ const CreateInternalTicket = () => {
     };
 
     fetchUsers();
-  }, [authtoken]); // Runs only once on mount
+  }, []); // Runs only once on mount
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -132,7 +133,7 @@ const CreateInternalTicket = () => {
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
     const departmentData = departments.find(
-      (dept) => dept.department === selectedDepartment
+      (dept) => dept.department === selectedDepartment,
     );
 
     setFormData((prev) => ({
@@ -153,11 +154,11 @@ const CreateInternalTicket = () => {
     }
 
     const filteredUserEmails = users.filter((user) =>
-      user.email.toLowerCase().includes(term)
+      user.email.toLowerCase().includes(term),
     );
 
     const filteredDepartmentEmails = departments.filter((dept) =>
-      dept.email.toLowerCase().includes(term)
+      dept.email.toLowerCase().includes(term),
     );
 
     const combinedResults = [
@@ -203,7 +204,8 @@ const CreateInternalTicket = () => {
       dispatch({ type: "CREATE_TICKET_REQUEST" });
 
       const response = await axios.post("/api/v1/internaltickets", formData, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({
@@ -242,9 +244,10 @@ const CreateInternalTicket = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
+            withCredentials: true,
           },
-        }
+        },
       );
 
       // ✅ Update uploaded image dynamically for the specific field

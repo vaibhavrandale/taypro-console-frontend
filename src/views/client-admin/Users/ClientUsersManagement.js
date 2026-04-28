@@ -91,7 +91,7 @@ const reducer = (state, action) => {
         ...state,
         updatingUserLoading: false,
         users: state.users.map((user) =>
-          user._id === action.payload._id ? action.payload : user
+          user._id === action.payload._id ? action.payload : user,
         ),
       };
 
@@ -132,7 +132,7 @@ const reducer = (state, action) => {
         ...state,
         removesiteloading: false,
         assigned_sites: state.assigned_sites.filter(
-          (site) => site._id !== action.payload
+          (site) => site._id !== action.payload,
         ), // ✅ Remove site
       };
     case "REMOVE_SITE_FAIL":
@@ -182,7 +182,7 @@ const ClientUsersManagement = () => {
     hasPrevPage: false,
   });
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -213,11 +213,12 @@ const ClientUsersManagement = () => {
           "/api/v1/users/get-external-users",
           pagination,
           {
-            headers: { authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         ); // Replace with your API endpoint
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -243,7 +244,8 @@ const ClientUsersManagement = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -259,7 +261,7 @@ const ClientUsersManagement = () => {
     };
     fetchSites();
     fetchUsers();
-  }, [authtoken, limit, page, userInfo]); // Runs only once on mount
+  }, [limit, page, userInfo]); // Runs only once on mount
 
   // Open Update Modal and Set Selected User Data
   const openModal = (user) => {
@@ -329,8 +331,9 @@ const ClientUsersManagement = () => {
         "/api/v1/users/create-external-user",
         newdata,
         {
-          headers: { authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       if (response.status === 201 || response.status === 200) {
@@ -362,7 +365,7 @@ const ClientUsersManagement = () => {
           (user.role || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
           (user.department || "")
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -397,7 +400,7 @@ const ClientUsersManagement = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
 
@@ -429,8 +432,9 @@ const ClientUsersManagement = () => {
         `/api/v1/users/${formData._id}`,
         newdata,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -464,8 +468,9 @@ const ClientUsersManagement = () => {
           siteId: selectedSite,
         },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       ); // Replace with your API endpoint
       if (response.data.success) {
         dispatch({
@@ -490,7 +495,7 @@ const ClientUsersManagement = () => {
   const handleRemoveSite = async (sitedata) => {
     if (
       !window.confirm(
-        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`
+        `Are you sure you want to remove site 🚨 ${sitedata.site_id}?`,
       )
     ) {
       return;
@@ -506,8 +511,9 @@ const ClientUsersManagement = () => {
           siteId: sitedata._id,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       if (response.data.success) {
@@ -521,7 +527,7 @@ const ClientUsersManagement = () => {
 
         // ✅ Update UI without refresh
         setAssignedSites((prevSites) =>
-          prevSites.filter((site) => site._id !== sitedata._id)
+          prevSites.filter((site) => site._id !== sitedata._id),
         );
       }
     } catch (error) {

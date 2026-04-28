@@ -80,11 +80,11 @@ const UpdateTechnicianPreventivemaintanance = () => {
       error: "",
       updateLoading: false,
       loadingUpload: {},
-    }
+    },
   );
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [formData, setFormData] = useState({});
   const [loadingCamera, setLoadingCamera] = useState(false);
 
@@ -103,8 +103,9 @@ const UpdateTechnicianPreventivemaintanance = () => {
         const response = await axios.get(
           `/api/v1/preventivemaintenances/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         const data = response.data?.data || {};
         dispatch({ type: "FETCH_SUCCESS" }); // Show loading
@@ -116,7 +117,7 @@ const UpdateTechnicianPreventivemaintanance = () => {
     };
 
     fetchMaintenance();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -136,7 +137,10 @@ const UpdateTechnicianPreventivemaintanance = () => {
 
         filteredFormData,
 
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" }); // Show loading
       toast.success("Preventive Maintenance updated successfully!");
@@ -144,7 +148,7 @@ const UpdateTechnicianPreventivemaintanance = () => {
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", error: error.response?.data?.error });
       toast.error(
-        error.response?.data?.error || "Failed to update maintenance"
+        error.response?.data?.error || "Failed to update maintenance",
       );
     }
   };
@@ -166,9 +170,10 @@ const UpdateTechnicianPreventivemaintanance = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       if (data?.url) {
@@ -200,7 +205,7 @@ const UpdateTechnicianPreventivemaintanance = () => {
           try {
             setLoadingCamera(true);
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
             );
             const data = await response.json();
 
@@ -223,7 +228,7 @@ const UpdateTechnicianPreventivemaintanance = () => {
             lng: "N/A",
             name: "Location not available",
           });
-        }
+        },
       );
     }
   }, [cameraModalVisible]);
@@ -319,7 +324,7 @@ const UpdateTechnicianPreventivemaintanance = () => {
           }
         },
         "image/jpeg",
-        0.8
+        0.8,
       );
     }
   };
@@ -337,9 +342,10 @@ const UpdateTechnicianPreventivemaintanance = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       if (data?.url) {

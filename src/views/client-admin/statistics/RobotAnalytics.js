@@ -77,7 +77,7 @@ const RobotAnalytics = () => {
 
   const today = new Date();
   const last7 = new Date();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   last7.setDate(today.getDate() - 7);
 
@@ -125,7 +125,8 @@ const RobotAnalytics = () => {
             endDate,
           },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         const resData = result.data;
@@ -156,7 +157,7 @@ const RobotAnalytics = () => {
     };
 
     fetchRobotAnalytics();
-  }, [startDate, endDate, authtoken, selectedRobot]);
+  }, [startDate, endDate, , selectedRobot]);
   useEffect(() => {
     if (debouncedSearch && debouncedSearch.length > 0) {
       const filtered =

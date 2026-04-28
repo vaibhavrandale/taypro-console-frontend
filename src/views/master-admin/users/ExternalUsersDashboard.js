@@ -184,7 +184,7 @@ const ExternalUsersDashboard = () => {
     hasPrevPage: false,
   });
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -230,7 +230,8 @@ const ExternalUsersDashboard = () => {
           "/api/v1/users/get-external-users",
           pagination,
           {
-            headers: { authorization: `Bearer ${authtoken}` },
+            // headers: { authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         ); // Replace with your API endpoint
         let total = Math.ceil(
@@ -260,7 +261,8 @@ const ExternalUsersDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -276,7 +278,7 @@ const ExternalUsersDashboard = () => {
     };
     fetchSites();
     fetchUsers();
-  }, [authtoken, limit, page, userInfo]); // Runs only once on mount
+  }, [limit, page, userInfo]); // Runs only once on mount
 
   const openModal = (user) => {
     setSelectedUser(user);
@@ -323,7 +325,8 @@ const ExternalUsersDashboard = () => {
       dispatch({ type: "ADD_USER_REQUEST" });
       const newdata = { ...formData, profile_image: image };
       const response = await axios.post("/api/v1/users", newdata, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       if (response.status === 201 || response.status === 200) {
@@ -422,7 +425,8 @@ const ExternalUsersDashboard = () => {
         `/api/v1/users/${formData._id}`,
         newdata,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -457,7 +461,8 @@ const ExternalUsersDashboard = () => {
           siteId: selectedSite,
         },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       ); // Replace with your API endpoint
       if (response.data.success) {
@@ -498,7 +503,8 @@ const ExternalUsersDashboard = () => {
           siteId: sitedata._id,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

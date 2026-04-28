@@ -35,7 +35,7 @@ const ViewDownlink = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchDownlink = async () => {
@@ -43,7 +43,8 @@ const ViewDownlink = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const { data } = await axios.get(`/api/v1/downlinks/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -57,7 +58,7 @@ const ViewDownlink = () => {
     };
 
     fetchDownlink();
-  }, [id, authtoken]);
+  }, [id]);
 
   return (
     <div className="container mt-4">

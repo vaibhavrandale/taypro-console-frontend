@@ -50,7 +50,7 @@ const reducer = (state, action) => {
 
 const ViewExpenseClaim = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [{ loading, expense, error, approveLoading, approveError }, dispatch] =
     useReducer(reducer, {
       loading: false,
@@ -69,7 +69,8 @@ const ViewExpenseClaim = () => {
     dispatch({ type: "FETCH_EXPENSE_REQUEST" });
     try {
       const res = await axios.get(`/api/v1/expenseclaims/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "FETCH_EXPENSE_SUCCESS", payload: res.data.data });
     } catch (err) {
@@ -83,7 +84,7 @@ const ViewExpenseClaim = () => {
 
   useEffect(() => {
     fetchExpense();
-  }, [authtoken, id]);
+  }, [id]);
 
   const handleApproveAndPushToERP = async (id) => {
     try {
@@ -94,7 +95,10 @@ const ViewExpenseClaim = () => {
       const response = await axios.put(
         `/api/v1/expenseclaims/approve/${id}`,
         { console_status: "Approved", remark: remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       console.log(response.data.frappe_response.data.name);
 

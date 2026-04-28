@@ -109,7 +109,7 @@ const UserBasedLinkDashboard = () => {
   //   timerError: "",
   // });
 
-  // const authtoken = useSelector((state) => state.authtoken);
+  //// const authtoken = useSelector((state) => state.authtoken);
 
   const userInfo = useSelector((state) => state.userInfo);
   // const [latestFeedback, setLatestFeedback] = useState(null);
@@ -135,7 +135,8 @@ const UserBasedLinkDashboard = () => {
   //       const result = await axios.get(
   //         `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
   //         {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
+  //           // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //         }
   //       );
   //       // console.log(result.data.data);
@@ -172,7 +173,8 @@ const UserBasedLinkDashboard = () => {
   //         const result = await axios.get(
   //           `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
   //           {
-  //             headers: { Authorization: `Bearer ${authtoken}` },
+  //             // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //           }
   //         );
   //         dispatch({
@@ -195,7 +197,7 @@ const UserBasedLinkDashboard = () => {
   //   }
 
   //   fetchTimerData();
-  // }, [authtoken, navigate, userInfo]);
+  // }, [ navigate, userInfo]);
 
   if (!userInfo) {
     return null; // Prevent rendering if user isn't loaded
@@ -289,7 +291,8 @@ const UserBasedLinkDashboard = () => {
   //       `/api/v1/customer-feedback/${latestfeedback._id}`,
   //       formData,
   //       {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //       }
   //     );
 
@@ -315,7 +318,8 @@ const UserBasedLinkDashboard = () => {
   //       `/api/v1/timerexecutionnotifications/${timernotification._id}`,
   //       {},
   //       {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //       }
   //     );
 
@@ -429,7 +433,7 @@ const UserBasedLinkDashboard = () => {
         `Please wait while we redirect you to your opex dashboard!`,
         {
           duration: 4000,
-        }
+        },
       );
       navigate(`/${adminroute}/dashboard`);
     }, 1000);

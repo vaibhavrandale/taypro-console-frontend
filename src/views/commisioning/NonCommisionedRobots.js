@@ -103,7 +103,7 @@ const NonCommisionedRobots = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   // let site_id = "avaada_soyegaon";
 
@@ -114,7 +114,8 @@ const NonCommisionedRobots = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -128,7 +129,7 @@ const NonCommisionedRobots = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -137,7 +138,8 @@ const NonCommisionedRobots = () => {
         const result = await axios.get(
           `/api/v1/commisioning-docs/non-commisioned-robots/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -158,7 +160,7 @@ const NonCommisionedRobots = () => {
     };
 
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   // Filter robots based on search term
   const filteredRobots = robots.filter(
@@ -207,7 +209,8 @@ const NonCommisionedRobots = () => {
         `/api/v1/commisioning-docs`,
         { _id: id },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

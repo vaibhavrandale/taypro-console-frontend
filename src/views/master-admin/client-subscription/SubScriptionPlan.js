@@ -114,7 +114,7 @@ const SubScriptionPlan = () => {
     updateLoading: false,
     updateError: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [visible, setVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
@@ -140,9 +140,10 @@ const SubScriptionPlan = () => {
 
       try {
         const data = await axios.get("/api/v1/subscription-plans", {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         });
         console.log(data.data.data);
         dispatch({
@@ -336,9 +337,9 @@ const SubScriptionPlan = () => {
         `/api/v1/subscription-plans/${editingPlanId}`,
         payload,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
         },
       );
 

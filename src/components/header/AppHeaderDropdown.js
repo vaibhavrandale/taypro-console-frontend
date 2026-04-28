@@ -29,7 +29,7 @@ const AppHeaderDropdown = () => {
   });
 
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -59,7 +59,8 @@ const AppHeaderDropdown = () => {
   //     try {
   //       dispatch({ type: "FETCH_USER_REQUEST" });
   //       const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: (true,
   //       });
   //       dispatch({ type: "FETCH_USER_SUCCESS", payload: response.data.data });
   //     } catch (error) {
@@ -80,7 +81,7 @@ const AppHeaderDropdown = () => {
   //   if (!user?._id) {
   //     fetchUserDetails();
   //   }
-  // }, [authtoken, userInfo, navigate, user?._id]);
+  // }, [ userInfo, navigate, user?._id]);
 
   // Close dropdown on outside click
 
@@ -96,7 +97,8 @@ const AppHeaderDropdown = () => {
         dispatch({ type: "FETCH_USER_REQUEST" });
 
         const response = await axios.get(`/api/v1/users/${userInfo._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_USER_SUCCESS", payload: response.data.data });
@@ -126,7 +128,7 @@ const AppHeaderDropdown = () => {
     if (!userInfo || !userInfo._id) {
       fetchUserDetails();
     }
-  }, [authtoken, dispatch, navigate, userInfo]);
+  }, [dispatch, navigate, userInfo]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -138,15 +140,19 @@ const AppHeaderDropdown = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const LogoutHandler = () => {
+  const LogoutHandler = async () => {
     dispatch({ type: "EMP_SIGNOUT" });
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("selectedChatId");
-    localStorage.removeItem("authtoken");
-    localStorage.removeItem("robots");
-    localStorage.removeItem("gateways");
-    navigate("/login");
-    toast.success("Logged out Successfully!");
+    const response = await axios.post(`/api/v1/auth/sign-out`);
+    console.log(response.status);
+    if (response.status === 200) {
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("selectedChatId");
+      // localStorage.removeItem("authtoken");
+      localStorage.removeItem("robots");
+      localStorage.removeItem("gateways");
+      navigate("/login");
+      toast.success(response.data.message);
+    }
   };
 
   const image =

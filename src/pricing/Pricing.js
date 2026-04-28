@@ -178,7 +178,7 @@ const Pricing = () => {
     plans: [],
   });
   const [isYearly, setIsYearly] = useState(false);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   /* ===========================
      FETCH DATA
   =========================== */
@@ -188,9 +188,10 @@ const Pricing = () => {
 
       try {
         const data = await axios.get("/api/v1/subscription-plans", {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         });
 
         dispatch({

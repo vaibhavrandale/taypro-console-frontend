@@ -32,7 +32,7 @@ const KeyMaintenanceMatrixOverview = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchParameters = async () => {
@@ -41,8 +41,9 @@ const KeyMaintenanceMatrixOverview = () => {
         const response = await axios.get(
           "/api/v1/servicetickets/by-fault-type",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_PARAMETERS_SUCCESS",
@@ -54,7 +55,7 @@ const KeyMaintenanceMatrixOverview = () => {
     };
 
     fetchParameters();
-  }, [authtoken]);
+  }, []);
 
   return (
     <div className="mt-4" style={{ width: "100%" }}>

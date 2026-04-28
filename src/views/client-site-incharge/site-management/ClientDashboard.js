@@ -51,14 +51,15 @@ const ClientDashboard = () => {
     loadingAllSites: true,
     error: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchAllSites = async () => {
       dispatch({ type: "FETCH_ALLSITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites/site/all-sites-data`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_ALLSITES_SUCCESS",
@@ -75,7 +76,7 @@ const ClientDashboard = () => {
       }
     };
     fetchAllSites();
-  }, [authtoken]);
+  }, []);
 
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
@@ -376,7 +377,7 @@ const ClientDashboard = () => {
                                 .includes(searchTerm.toLowerCase()) ||
                               robot.last_status
                                 .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
+                                .includes(searchTerm.toLowerCase()),
                           ).length > 0 ? (
                             site.robots
                               .filter(
@@ -393,7 +394,7 @@ const ClientDashboard = () => {
                                       .includes(searchTerm.toLowerCase()) ||
                                     robot.last_status
                                       .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
+                                      .includes(searchTerm.toLowerCase())),
                               )
                               .map((robot, index) => (
                                 <CTableRow key={robot.robot_no}>
@@ -436,7 +437,7 @@ const ClientDashboard = () => {
                                     {robot.last_uplink === null
                                       ? "Robot is not yet activated"
                                       : new Date(
-                                          robot.last_uplink
+                                          robot.last_uplink,
                                         ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>
@@ -540,7 +541,7 @@ const ClientDashboard = () => {
                                 .includes(searchTerm.toLowerCase()) ||
                               robot.last_status
                                 .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
+                                .includes(searchTerm.toLowerCase()),
                           ).length > 0 ? (
                             site.robots
                               .filter(
@@ -557,7 +558,7 @@ const ClientDashboard = () => {
                                       .includes(searchTerm.toLowerCase()) ||
                                     robot.last_status
                                       .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
+                                      .includes(searchTerm.toLowerCase())),
                               )
                               .map((robot, index) => (
                                 <CTableRow key={robot.robot_no}>

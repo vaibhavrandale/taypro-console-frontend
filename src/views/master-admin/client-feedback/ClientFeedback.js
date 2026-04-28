@@ -35,7 +35,7 @@ const ClientFeedback = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   /* ================= FILTERS ================= */
   const [siteId, setSiteId] = useState("");
@@ -77,7 +77,7 @@ const ClientFeedback = () => {
     };
 
     fetchFeedbacks();
-  }, [authtoken, month, year]);
+  }, [month, year]);
 
   /* ================= FRONTEND FILTERING ================= */
   // const filteredFeedbacks = feedbacks.filter((f) => {

@@ -42,7 +42,7 @@ const OpexManageCycle = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
 
   const userInfo = useSelector((state) => state.userInfo);
@@ -54,8 +54,9 @@ const OpexManageCycle = () => {
         const result = await axios.get(
           `/api/v1/opex/${moduleId}/cycle/${cycleId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_SUCCESS",
@@ -71,13 +72,13 @@ const OpexManageCycle = () => {
     };
 
     fetchCycle();
-  }, [authtoken, moduleId, cycleId]);
+  }, [moduleId, cycleId]);
 
   const calculateProgress = () => {
     if (!cycle || !cycle.day_wise_data) return 0;
     const totalCleaned = cycle.day_wise_data.reduce(
       (sum, day) => sum + day.modules_cleaned_for_day,
-      0
+      0,
     );
     return (totalCleaned / cycle.modules_planned) * 100;
   };
@@ -286,7 +287,7 @@ const OpexManageCycle = () => {
                         <CTableDataCell>
                           {!day.is_verified &&
                             !["Master User", "Project User"].includes(
-                              userInfo?.role
+                              userInfo?.role,
                             ) && (
                               <Link
                                 to={`verify-day/${day._id}`}
@@ -319,7 +320,7 @@ const OpexManageCycle = () => {
                     <CTableDataCell>
                       {cycle.day_wise_data.reduce(
                         (acc, d) => acc + d.modules_cleaned_for_day,
-                        0
+                        0,
                       )}
                     </CTableDataCell>
                     <CTableDataCell>

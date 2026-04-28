@@ -62,7 +62,7 @@ const RobotTrackingCurrentGraph = () => {
     },
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
 
   // Fetch all robots for the selected site
@@ -71,7 +71,7 @@ const RobotTrackingCurrentGraph = () => {
     try {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -103,8 +103,9 @@ const RobotTrackingCurrentGraph = () => {
         "/api/v1/robot-tracking/avg-current",
         payload,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "FETCH_STATS_SUCCESS", payload: result.data.data });
@@ -140,7 +141,7 @@ const RobotTrackingCurrentGraph = () => {
 
     // const labels = statsData.map((item) => item.robot_no || "Robot");
     const labels = statsData.map(
-      (item) => `${item.date || "Date"} (${item.robot_no || "Robot"})`
+      (item) => `${item.date || "Date"} (${item.robot_no || "Robot"})`,
     );
 
     const avgBrushValues = statsData.map((item) => item.avg_brush_current);
@@ -167,7 +168,7 @@ const RobotTrackingCurrentGraph = () => {
 
   useEffect(() => {
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   return (
     <div className="container-fluid">

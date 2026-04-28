@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // ✅ Delete Gateway from LNS server
-export const deleteGatewayFromLns = async (gateway_id, authtoken, reason) => {
+export const deleteGatewayFromLns = async (gateway_id, reason) => {
   if (!reason || reason.trim() === "") {
     toast.error("Reason is required.");
     return;
@@ -12,13 +12,14 @@ export const deleteGatewayFromLns = async (gateway_id, authtoken, reason) => {
     const res = await axios.delete(
       `/api/v1/gateways/delete-lns/${gateway_id}`,
       {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
         data: { reason },
-      }
+      },
     );
 
     toast.success(
-      res.data.message || `Gateway ${gateway_id} deleted from LNS.`
+      res.data.message || `Gateway ${gateway_id} deleted from LNS.`,
     );
   } catch (error) {
     toast.error(error.response?.data?.message || "Error deleting from LNS.");
@@ -26,11 +27,7 @@ export const deleteGatewayFromLns = async (gateway_id, authtoken, reason) => {
 };
 
 // ✅ Delete Gateway from Database
-export const deleteGatewayFromDatabase = async (
-  gateway_id,
-  authtoken,
-  reason
-) => {
+export const deleteGatewayFromDatabase = async (gateway_id, reason) => {
   if (!reason || reason.trim() === "") {
     toast.error("Reason is required.");
     return;
@@ -40,17 +37,18 @@ export const deleteGatewayFromDatabase = async (
     const res = await axios.delete(
       `/api/v1/gateways/delete/${gateway_id}`, // ✅ corrected endpoint
       {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
         data: { reason },
-      }
+      },
     );
 
     toast.success(
-      res.data.message || `Gateway ${gateway_id} deleted from Database.`
+      res.data.message || `Gateway ${gateway_id} deleted from Database.`,
     );
   } catch (error) {
     toast.error(
-      error.response?.data?.message || "Error deleting from Database."
+      error.response?.data?.message || "Error deleting from Database.",
     );
   }
 };

@@ -135,7 +135,7 @@ const RobotOperating = () => {
   const [text, setText] = useState("");
   const [base64Text, setBase64Text] = useState("");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [pageInput, setPageInput] = useState("");
@@ -222,7 +222,8 @@ const RobotOperating = () => {
         const response = await axios.get(
           `/api/v1/robots/get-robotsno-by-site-and-block/${site_id}/${block}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         // robots/site/taypro_office/Block-1/
@@ -244,7 +245,7 @@ const RobotOperating = () => {
     };
 
     getRobots();
-  }, [block, site_id, authtoken]);
+  }, [block, site_id]);
 
   useEffect(() => {
     let pagination = {
@@ -259,7 +260,8 @@ const RobotOperating = () => {
           `/api/v1/downlinks/get-downlinks`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -290,7 +292,7 @@ const RobotOperating = () => {
     } else {
       getDownlinks();
     }
-  }, [successDelete, authtoken, page, limit]);
+  }, [successDelete, page, limit]);
 
   useEffect(() => {
     const getRobot = async () => {
@@ -299,7 +301,8 @@ const RobotOperating = () => {
         const response = await axios.get(
           `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -315,7 +318,7 @@ const RobotOperating = () => {
     };
 
     getRobot();
-  }, [authtoken, robot_no]);
+  }, [robot_no]);
 
   const filteredDownlink = downlinks.filter((item) =>
     item.downlink.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -329,7 +332,8 @@ const RobotOperating = () => {
     ) {
       try {
         await axios.delete(`/api/v1/downlinks/${downlink._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         toast.success("Downlink deleted successfully");
@@ -362,7 +366,8 @@ const RobotOperating = () => {
           lora_no: robot.lora_no,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -417,7 +422,8 @@ const RobotOperating = () => {
         "/api/v1/robots/custom-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -457,7 +463,8 @@ const RobotOperating = () => {
 
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

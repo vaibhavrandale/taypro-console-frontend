@@ -47,7 +47,7 @@ const UpdateTimer = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   const [showModal, setShowModal] = useState(false);
@@ -66,7 +66,8 @@ const UpdateTimer = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const data = await axios.get(`/api/v1/timers/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data.data });
@@ -91,7 +92,7 @@ const UpdateTimer = () => {
     };
 
     fetchTimer();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,7 +121,8 @@ const UpdateTimer = () => {
       dispatch({ type: "UPDATE_REQUEST" });
 
       const result = await axios.put(`/api/v1/timers/${id}`, timerData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

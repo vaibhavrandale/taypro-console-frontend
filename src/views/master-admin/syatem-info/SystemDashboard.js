@@ -95,7 +95,7 @@ const SystemDashboard = () => {
     sysInfo: {},
     fetchSysInfoError: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [refreshKey, setRefreshKey] = useState(0);
   useEffect(() => {
     const fetchSysInfo = async () => {
@@ -105,8 +105,9 @@ const SystemDashboard = () => {
           `/api/v1/sysinfo`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         // console.log(result);
 
@@ -130,7 +131,8 @@ const SystemDashboard = () => {
     //       `/api/v1/sysinfo-logs`,
 
     //       {
-    //         headers: { Authorization: `Bearer ${authtoken}` },
+    //         // headers: { Authorization: `Bearer ${authtoken}` },
+    // withCredentials: true,
     //       }
     //     );
     //     console.log(result);
@@ -152,7 +154,8 @@ const SystemDashboard = () => {
       dispatch({ type: "FETCH_SYS_INFO_LOGS_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sysinfo-logs?range=10m`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -169,12 +172,12 @@ const SystemDashboard = () => {
 
     fetchSysInfo();
     fetchSysInfoLogs();
-  }, [authtoken, refreshKey]);
+  }, [refreshKey]);
 
   if (!sysInfo) return null;
 
   const memoryPercent = Math.round(
-    (sysInfo.memory_mb?.used / sysInfo.memory_mb?.total) * 100
+    (sysInfo.memory_mb?.used / sysInfo.memory_mb?.total) * 100,
   );
 
   return (

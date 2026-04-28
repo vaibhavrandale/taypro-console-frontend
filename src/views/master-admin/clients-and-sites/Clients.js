@@ -68,7 +68,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         clients: state.clients.map((client) =>
-          client._id === action.payload._id ? action.payload : client
+          client._id === action.payload._id ? action.payload : client,
         ),
         updateClientLoading: false,
       };
@@ -136,7 +136,7 @@ const Clients = () => {
     submitLoading: false,
     success: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -164,11 +164,12 @@ const Clients = () => {
           `/api/v1/clients/get-clients`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
@@ -193,7 +194,7 @@ const Clients = () => {
     };
 
     fetchClients();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Function to generate client_id from client_name
   const generateClientID = (name) => {
@@ -235,7 +236,8 @@ const Clients = () => {
     const newdata = { ...formData, logo: clientLogo };
     try {
       await axios.post("/api/v1/clients", newdata, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success("Client Added Successfully");
@@ -261,8 +263,9 @@ const Clients = () => {
         `/api/v1/clients/${client._id}`,
         formData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       // Update local state with the modified ticket
@@ -281,7 +284,7 @@ const Clients = () => {
     ? clients.filter(
         (item) =>
           item.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.client_id.toLowerCase().includes(searchTerm.toLowerCase())
+          item.client_id.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -349,7 +352,7 @@ const Clients = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
 

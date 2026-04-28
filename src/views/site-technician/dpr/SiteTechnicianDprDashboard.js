@@ -96,7 +96,7 @@
 //     loadingFields: false,
 //     siteIds: [],
 //   });
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 
 //   const [searchTerm, setSearchTerm] = useState("");
 //   const [site_id, setSiteId] = useState("all");
@@ -126,7 +126,8 @@
 //       dispatch({ type: "FETCH_SITEID_REQUEST" });
 //       try {
 //         const result = await axios.get(`/api/v1/sites`, {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 //         dispatch({
 //           type: "FETCH_SITEID_SUCCESS",
@@ -157,7 +158,8 @@
 //           `/api/v1/techniciandprs/site-date-wise`,
 //           data,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 
@@ -195,7 +197,7 @@
 //     }
 
 //     fetchSiteIds();
-//   }, [successDelete, authtoken, limit, page, fromDate, toDate, site_id]);
+//   }, [successDelete,, limit, page, fromDate, toDate, site_id]);
 
 //   const filteredInventories = (dprs || []).filter((dpr) =>
 //     dpr.site_id?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -559,10 +561,10 @@ const AllSiteDpr = () => {
       siteIds: [],
       loadingSiteIds: true,
       sitesError: "",
-    }
+    },
   );
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -584,7 +586,11 @@ const AllSiteDpr = () => {
       const result = await axios.post(
         "/api/v1/techniciandprs/monthly",
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          //   headers: { Authorization: `Bearer ${authtoken}`
+          // }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "FETCH_DPR_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -599,14 +605,15 @@ const AllSiteDpr = () => {
   useEffect(() => {
     fetchDprMonthWise();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [month, year, site_id, authtoken]);
+  }, [month, year, site_id]);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
@@ -616,13 +623,13 @@ const AllSiteDpr = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
 
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const openModal = (dpr) => {
     setSelectedInventory(dpr);
@@ -647,7 +654,7 @@ const AllSiteDpr = () => {
           dateObj: new Date(
             parseInt(entry.date.split("-")[2]),
             parseInt(entry.date.split("-")[1]) - 1,
-            parseInt(entry.date.split("-")[0])
+            parseInt(entry.date.split("-")[0]),
           ),
         });
       } else if (entry.week) {

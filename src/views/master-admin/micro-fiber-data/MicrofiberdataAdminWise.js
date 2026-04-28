@@ -89,7 +89,7 @@ const MicrofiberdataAdminWise = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [site_id, setSiteId] = useState("all");
   const [loadedImages, setLoadedImages] = useState({});
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const observer = useRef();
 
@@ -99,8 +99,9 @@ const MicrofiberdataAdminWise = () => {
       const res = await axios.get(
         `/api/v1/microfiberdata/get-by-siteId/${site_id}?page=${page}&limit=8`,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({
         type: "FETCH_SUCCESS",
@@ -129,7 +130,7 @@ const MicrofiberdataAdminWise = () => {
     if (userInfo._id && state.page === 1) {
       fetchData();
     }
-  }, [site_id, authtoken, userInfo._id]);
+  }, [site_id, , userInfo._id]);
 
   const lastCardRef = useCallback(
     (node) => {
@@ -144,13 +145,13 @@ const MicrofiberdataAdminWise = () => {
 
       if (node) observer.current.observe(node);
     },
-    [state.loading, state.hasMore, state.page]
+    [state.loading, state.hasMore, state.page],
   );
 
   const filteredData = state.microfiberData.filter(
     (item) =>
       item.site_id.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(state.searchTerm.toLowerCase())
+      item.category.toLowerCase().includes(state.searchTerm.toLowerCase()),
   );
 
   useEffect(() => {
@@ -158,7 +159,8 @@ const MicrofiberdataAdminWise = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
       } catch (err) {
@@ -170,7 +172,7 @@ const MicrofiberdataAdminWise = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   return (
     <div className="p-2">
@@ -303,8 +305,8 @@ const MicrofiberdataAdminWise = () => {
                     state.selectedItem.category === "Good"
                       ? "success"
                       : state.selectedItem.category === "Bad"
-                      ? "danger"
-                      : "warning"
+                        ? "danger"
+                        : "warning"
                   }
                   className="px-3 py-2 fs-6"
                 >

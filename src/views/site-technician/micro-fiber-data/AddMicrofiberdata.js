@@ -52,7 +52,7 @@ const reducer = (state, action) => {
 };
 
 const AddMicrofiberdata = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -74,7 +74,8 @@ const AddMicrofiberdata = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         console.log(res.data.data);
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
@@ -87,7 +88,7 @@ const AddMicrofiberdata = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   const handleChange = (e) => {
     dispatch({
@@ -114,7 +115,7 @@ const AddMicrofiberdata = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setImage(data.url);
@@ -135,7 +136,7 @@ const AddMicrofiberdata = () => {
     e.preventDefault();
     if (!site_id || !image || !state.microfiberdata.category) {
       toast.error(
-        "All fields are required.Please fill out the form completely."
+        "All fields are required.Please fill out the form completely.",
       );
       return;
     }
@@ -152,8 +153,9 @@ const AddMicrofiberdata = () => {
         "/api/v1/microfiberdata/create-microfiberdata",
         newdata,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       toast.success("Micro Fiber Data Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });

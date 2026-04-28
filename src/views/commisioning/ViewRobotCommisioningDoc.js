@@ -52,14 +52,15 @@
 //     loadingDoc: false,
 //     doc: {},
 //   });
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   //   const userInfo = useSelector((state) => state.userInfo);
 //   useEffect(() => {
 //     const fetchRobots = async () => {
 //       dispatch({ type: "FETCH_ROBOT_COMMISION_DOC_REQUEST" });
 //       try {
 //         const result = await axios.get(`/api/v1/commisioning-docs//${id}`, {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 //         console.log(result.data.data);
 //         dispatch({
@@ -79,7 +80,7 @@
 //     };
 
 //     fetchRobots();
-//   }, [authtoken, id]);
+//   }, [ id]);
 
 //   return (
 //     <CRow>
@@ -386,14 +387,15 @@ const ViewRobotCommisioningDoc = () => {
     loadingDoc: false,
     doc: {},
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchDoc = async () => {
       dispatch({ type: "FETCH_ROBOT_COMMISION_DOC_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/commisioning-docs/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_ROBOT_COMMISION_DOC_SUCCESS",
@@ -407,7 +409,7 @@ const ViewRobotCommisioningDoc = () => {
       }
     };
     fetchDoc();
-  }, [authtoken, id]);
+  }, [id]);
 
   if (loadingDoc) return <LoadingSpinner />;
   if (docError)

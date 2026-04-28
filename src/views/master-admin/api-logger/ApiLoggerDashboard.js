@@ -64,7 +64,7 @@ const ApiLoggerDashboard = () => {
   const [selectedUserName, setSelectedUserName] = useState("");
   const [selectedEndpoint, setSelectedEndpoint] = useState(null);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   // Modal state
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -77,7 +77,8 @@ const ApiLoggerDashboard = () => {
         dispatch({ type: "FETCH_LOGS_REQUEST" });
 
         const result = await axios.get("/api/v1/api-logger/user-wise", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -99,7 +100,7 @@ const ApiLoggerDashboard = () => {
     };
 
     fetchLogs();
-  }, [authtoken, refreshKey]);
+  }, [refreshKey]);
 
   // Fetch logs when modal opens
   useEffect(() => {

@@ -46,7 +46,7 @@ const reducer = (state, action) => {
 };
 
 const CreateGateway = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -95,7 +95,8 @@ const CreateGateway = () => {
     const fetchSites = async () => {
       try {
         const { data } = await axios.get("/api/v1/sites", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "SET_SITES", payload: data.data });
@@ -105,14 +106,15 @@ const CreateGateway = () => {
     };
 
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
       await axios.post("/api/v1/gateways", state.gatewayData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Gateway Created Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });

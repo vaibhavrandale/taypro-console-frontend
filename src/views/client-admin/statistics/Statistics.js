@@ -93,7 +93,7 @@
 //     new Date().toISOString().split("T")[0],
 //   );
 
-// const authtoken = useSelector((state) => state.authtoken);
+//// const authtoken = useSelector((state) => state.authtoken);
 // const userInfo = useSelector((state) => state.userInfo);
 //   // const [site_id, setSiteId] = useState(
 //   //   userInfo.assigned_sites[0].site_id || "abc"
@@ -106,7 +106,8 @@
 //     //     const response = await axios.get(
 //     //       `/api/v1/robots/sitewise-battery-status/${site_id}`,
 //     //       {
-//     //         headers: { Authorization: `Bearer ${authtoken}` },
+//     //         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //     //       },
 //     //     );
 
@@ -132,7 +133,8 @@
 //       dispatch({ type: "FETCH_SITEID_REQUEST" });
 //       try {
 //         const result = await axios.get(`/api/v1/sites`, {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 //         dispatch({
 //           type: "FETCH_SITEID_SUCCESS",
@@ -151,7 +153,7 @@
 
 //     fetchSiteIds();
 //     // fetchBatteryRobots();
-//   }, [authtoken, site_id]);
+//   }, [ site_id]);
 
 //   // useEffect(() => {
 //   //   const fetchCleaningRobots = async () => {
@@ -160,7 +162,8 @@
 //   //       const response = await axios.get(
 //   //         `/api/v1/cleaninglogs/calculated-distance/${startDate}/${endDate}/${site_id}`,
 //   //         {
-//   //           headers: { Authorization: `Bearer ${authtoken}` },
+//   //           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //   //         },
 //   //       );
 
@@ -179,7 +182,7 @@
 //   //   };
 
 //   //   fetchCleaningRobots();
-//   // }, [authtoken, endDate, site_id, startDate]);
+//   // }, [ endDate, site_id, startDate]);
 
 //   // const handleSiteNameChange = (e) => {
 //   //   const selectedSiteId = e.target.value;

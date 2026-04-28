@@ -13,7 +13,7 @@ import {
   CFormInput,
   CBadge,
 } from "@coreui/react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -68,7 +68,7 @@ const RobotCommands = () => {
     sendDownLinkError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   // const userInfo = useSelector((state) => state.userInfo);
   const [site_id, setSiteId] = useState();
   const [selectedRobots, setSelectedRobots] = useState([]);
@@ -79,7 +79,8 @@ const RobotCommands = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
       } catch (err) {
@@ -91,7 +92,7 @@ const RobotCommands = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -100,7 +101,10 @@ const RobotCommands = () => {
       try {
         const res = await axios.get(
           `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: res.data.data });
@@ -113,7 +117,7 @@ const RobotCommands = () => {
       }
     };
     fetchRobots();
-  }, [site_id, authtoken]);
+  }, [site_id]);
 
   const handleCheckboxChange = (robot) => {
     setSelectedRobots((prev) =>
@@ -154,7 +158,10 @@ const RobotCommands = () => {
         // "/api/v1/robots/send-downlink-in-bulk",
         "/api/v1/robots/send-mqtt-multicast-downlink",
         robotdownlink,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
       const cmd =

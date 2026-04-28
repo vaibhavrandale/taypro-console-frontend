@@ -53,7 +53,7 @@ const UserPerformance = () => {
       error: "",
     });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
@@ -63,8 +63,9 @@ const UserPerformance = () => {
         const result = await axios.get(
           `/api/v1/userperformances/get-by-userId/${userInfo._id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_USER_PERFORMANCE_SUCCESS",
@@ -80,7 +81,7 @@ const UserPerformance = () => {
     };
 
     fetchUserPerformance();
-  }, [authtoken, userInfo._id]);
+  }, [userInfo._id]);
 
   const getPointColor = (points) => {
     if (points >= 0) return "success";
@@ -160,7 +161,7 @@ const UserPerformance = () => {
               height={10}
               value={Math.min(
                 Math.abs(userPerformance.employee_points) / 10,
-                100
+                100,
               )}
               color={getPointColor(userPerformance.employee_points)}
             />

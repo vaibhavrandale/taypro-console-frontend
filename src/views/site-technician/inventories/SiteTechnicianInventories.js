@@ -116,7 +116,7 @@ const SiteTechnicianInventories = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -148,12 +148,13 @@ const SiteTechnicianInventories = () => {
           `/api/v1/service-inventory/get-sitewise-inventory`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -180,14 +181,14 @@ const SiteTechnicianInventories = () => {
     } else {
       fetchInventories();
     }
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
 
   const filteredInventories = inventories.filter(
     (inventory) =>
       inventory.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inventory.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inventory.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase())
+      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Open modal and load inventory data
@@ -221,12 +222,13 @@ const SiteTechnicianInventories = () => {
     }
     if (
       window.confirm(
-        `Are you sure you want to delete Inventory item - ${inventory.item_name}`
+        `Are you sure you want to delete Inventory item - ${inventory.item_name}`,
       )
     ) {
       try {
         await axios.delete(`/api/v1/service-inventory/${inventory._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         toast.success("Service Inventory deleted successfully");
@@ -253,7 +255,7 @@ const SiteTechnicianInventories = () => {
         "Site Id": item.site_id,
         Quantity: item.quantity,
         Threshold: item.threshold,
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Service Inventories");

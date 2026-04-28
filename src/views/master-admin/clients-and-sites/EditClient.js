@@ -50,7 +50,7 @@ const EditClient = () => {
   );
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [formData, setFormData] = useState({
     client_name: "",
     client_id: "",
@@ -66,7 +66,8 @@ const EditClient = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const { data } = await axios.get(`/api/v1/sites/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -95,7 +96,7 @@ const EditClient = () => {
     };
 
     fetchSite();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleFileChange = (e) => {
     setLogoFile(e.target.files[0]);
@@ -116,16 +117,18 @@ const EditClient = () => {
           formDataUpload,
           {
             headers: {
-              Authorization: `Bearer ${authtoken}`,
+              // Authorization: `Bearer ${authtoken}`,
               "Content-Type": "multipart/form-data",
             },
+            withCredentials: true,
           },
         );
         updatedData.logo = uploadRes.data.url;
       }
 
       const response = await axios.put(`/api/v1/sites/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS", payload: response.data });

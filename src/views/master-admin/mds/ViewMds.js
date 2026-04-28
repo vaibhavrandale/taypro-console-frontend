@@ -35,7 +35,7 @@ const ViewMds = () => {
     mdsError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   let adminroute = "";
@@ -60,7 +60,8 @@ const ViewMds = () => {
       dispatch({ type: "FETCH_MDS_REQUEST" });
       try {
         const data = await axios.get(`/api/v1/mds-device/get-mds/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_MDS_SUCCESS", payload: data.data });
       } catch (error) {
@@ -69,12 +70,12 @@ const ViewMds = () => {
           payload: error.response?.data?.error || "Failed to fetch MDS Device",
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
     fetchMds();
-  }, [authtoken, id]);
+  }, [id]);
 
   const formatValue = (key, value) => {
     if (typeof value === "boolean") {

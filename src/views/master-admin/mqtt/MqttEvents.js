@@ -35,7 +35,7 @@ const MqttEvents = () => {
   });
   const robots = JSON.parse(localStorage.getItem("robots")) || [];
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
@@ -45,7 +45,8 @@ const MqttEvents = () => {
         const response = await axios.get(
           `/api/v1/mqtt-event-logs/robotwise/count`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -65,7 +66,7 @@ const MqttEvents = () => {
       }
     };
     fetchSubscriptions();
-  }, [authtoken]);
+  }, []);
   const getStatus = (count) => {
     if (count >= 30) return { label: "High", color: "danger" };
     if (count >= 20) return { label: "Medium", color: "warning" };

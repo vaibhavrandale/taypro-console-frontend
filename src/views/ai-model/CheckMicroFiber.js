@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 import LastActivity from "../../components/LastActivity";
 
 const CheckMicroFiber = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState("");
@@ -59,8 +59,9 @@ const CheckMicroFiber = () => {
       const res = await axios.post("/api/v1/ai-model", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${authtoken}`,
+          // Authorization: `Bearer ${authtoken}`,
         },
+        withCredentials: true,
       });
 
       const jobId = res.data.data._id;
@@ -70,9 +71,10 @@ const CheckMicroFiber = () => {
       // const pollResult = async (retries = 10, delay = 3000) => {
       //   for (let i = 0; i < retries; i++) {
       const jobRes = await axios.get(`/api/v1/ai-model/${jobId}`, {
-        headers: {
-          Authorization: `Bearer ${authtoken}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${authtoken}`,
+        // },
+        withCredentials: true,
       });
       const job = jobRes.data.data;
 
@@ -155,8 +157,8 @@ const CheckMicroFiber = () => {
                       jobData.overall === "done"
                         ? "success"
                         : jobData.overall === "error"
-                        ? "danger"
-                        : "warning"
+                          ? "danger"
+                          : "warning"
                     }`}
                   >
                     {jobData.overall.toUpperCase()}
@@ -171,8 +173,8 @@ const CheckMicroFiber = () => {
                       key === "good"
                         ? "success"
                         : key === "moderate"
-                        ? "warning"
-                        : "danger"
+                          ? "warning"
+                          : "danger"
                     }
                     className="me-2 text-capitalize"
                     key={key}

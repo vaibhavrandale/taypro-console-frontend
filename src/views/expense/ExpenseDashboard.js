@@ -97,7 +97,7 @@ const ExpenseDashboard = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
@@ -124,9 +124,10 @@ const ExpenseDashboard = () => {
         `/api/v1/expenseclaims/get-expense-claims`,
         pagination,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 
@@ -163,7 +164,10 @@ const ExpenseDashboard = () => {
       const result = await axios.put(
         `/api/v1/expenseclaims/delete-expense/${id}`,
         { reason },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "DELETE_EXPENSE_SUCCESS", payload: id });
@@ -180,7 +184,7 @@ const ExpenseDashboard = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [authtoken, page, limit]);
+  }, [page, limit]);
 
   const filteredData = expenses?.filter(
     (expense) =>
@@ -225,7 +229,10 @@ const ExpenseDashboard = () => {
       const response = await axios.put(
         `/api/v1/expenseclaims/approve/${id}`,
         { console_status: "Approved", remark: remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       console.log(response.data.frappe_response.data.name);
 

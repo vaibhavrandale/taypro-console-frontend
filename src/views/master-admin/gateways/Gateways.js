@@ -95,7 +95,7 @@ const Gateways = () => {
     loadingFields: false,
     siteIds: [],
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [selectedGateway, setSelectedGateway] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -142,11 +142,12 @@ const Gateways = () => {
         };
 
         const result = await axios.post(`/api/v1/gateways/get-gateways`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.data.total) / Number(result.data.data.limit)
+          Number(result.data.data.total) / Number(result.data.data.limit),
         );
 
         let next = result.data.data.hasNextPage;
@@ -167,13 +168,13 @@ const Gateways = () => {
           payload: error.response?.data?.error || "Failed to fetch DPR by Date",
         });
         toast.error(
-          error.response?.data?.error || "Failed to fetch DPR by Date"
+          error.response?.data?.error || "Failed to fetch DPR by Date",
         );
       }
     };
 
     fetchGateways();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const Gateways = gateways.filter(
     (gateway) =>
@@ -184,7 +185,7 @@ const Gateways = () => {
       gateway.gateway_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       gateway.gateway_id_in_lns_server
         .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+        .includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {
@@ -214,7 +215,7 @@ const Gateways = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gateways</h2>
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             to={`/${adminroute}/all-site-gateways/create-new-gateway`}
@@ -316,7 +317,7 @@ const Gateways = () => {
                     }}
                     className={
                       ["Master User", "Project User", "Service User"].includes(
-                        userInfo?.role
+                        userInfo?.role,
                       )
                         ? "d-flex justify-content-center"
                         : ""
@@ -339,7 +340,7 @@ const Gateways = () => {
 
                     {/* Show other buttons only if user is not in restricted roles */}
                     {!["Master User", "Project User", "Service User"].includes(
-                      userInfo?.role
+                      userInfo?.role,
                     ) && (
                       <>
                         <Link
@@ -478,14 +479,14 @@ const Gateways = () => {
                 if (gatewayDeleteType === "lns") {
                   await deleteGatewayFromLns(
                     selectedGateway.gateway_id,
-                    authtoken,
-                    gatewayDeleteReason
+
+                    gatewayDeleteReason,
                   );
                 } else {
                   await deleteGatewayFromDatabase(
                     selectedGateway.gateway_id,
-                    authtoken,
-                    gatewayDeleteReason
+
+                    gatewayDeleteReason,
                   );
                 }
               } catch (error) {

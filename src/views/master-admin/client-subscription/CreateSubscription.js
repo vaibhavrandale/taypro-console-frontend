@@ -79,7 +79,7 @@ const CreateSubscription = () => {
     subPlansError: "",
     subPlans: [],
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -111,7 +111,8 @@ const CreateSubscription = () => {
       dispatch({ type: "FETCH_CLIENTS_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/clients/get-all-clients`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_CLIENTS_SUCCESS",
@@ -133,7 +134,8 @@ const CreateSubscription = () => {
       dispatch({ type: "FETCH_SUB_PLANS_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/subscription-plans`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SUB_PLANS_SUCCESS",
@@ -150,7 +152,7 @@ const CreateSubscription = () => {
       }
     };
     subscriptionPlans();
-  }, [authtoken]);
+  }, []);
 
   const plan =
     subPlans &&
@@ -201,7 +203,8 @@ const CreateSubscription = () => {
         "/api/v1/client-subscription",
         subscriptionData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
       dispatch({ type: "CREATE_SUCCESS" });

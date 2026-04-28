@@ -81,7 +81,7 @@ const GenerateNewCertificate = () => {
 
   const [selectedRobots, setSelectedRobots] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("all");
 
   let adminroute = "";
@@ -117,7 +117,8 @@ const GenerateNewCertificate = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -131,7 +132,7 @@ const GenerateNewCertificate = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -140,7 +141,8 @@ const GenerateNewCertificate = () => {
         const result = await axios.get(
           `/api/v1/commisioning-docs/commisioned-sitewise-not-incertificates-robots/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -161,7 +163,7 @@ const GenerateNewCertificate = () => {
     };
 
     fetchRobots();
-  }, [adminroute, authtoken, site_id]);
+  }, [adminroute, , site_id]);
 
   const handleSiteNameChange = (e) => {
     const selectedSiteId = e.target.value;
@@ -215,7 +217,8 @@ const GenerateNewCertificate = () => {
         `/api/v1/commisioning-certificates`,
         { robots: selectedRobots, signatures },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

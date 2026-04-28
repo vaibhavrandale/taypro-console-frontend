@@ -101,7 +101,7 @@ const MdsOperating = () => {
     mdsDevice: {},
     loadingMdsDevices: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   // const [loadingRow, setLoadingRow] = useState(null);
   const navigate = useNavigate();
@@ -117,8 +117,9 @@ const MdsOperating = () => {
         const response = await axios.get(
           `/api/v1/mds-device/get-mds-by-site-and-block/${site_id}/${block}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         const mdsData = response.data.data; // Ensure correct data access
 
@@ -132,7 +133,7 @@ const MdsOperating = () => {
     };
 
     getMds();
-  }, [block, site_id, authtoken]);
+  }, [block, site_id]);
 
   useEffect(() => {
     const getSingleMds = async () => {
@@ -141,8 +142,9 @@ const MdsOperating = () => {
         const response = await axios.get(
           `/api/v1/mds-device/get-mds-using-mds-no/${mds_no}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -160,7 +162,7 @@ const MdsOperating = () => {
     };
 
     getSingleMds();
-  }, [authtoken, mds_no]);
+  }, [mds_no]);
 
   const sendsingleDownlink = async (command, index) => {
     // setLoadingRow(index);
@@ -176,8 +178,9 @@ const MdsOperating = () => {
         "/api/v1/robots/send-mqtt-downlink",
         mdsdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -208,8 +211,9 @@ const MdsOperating = () => {
         "/api/v1/robots/send-mqtt-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -238,8 +242,9 @@ const MdsOperating = () => {
         "/api/v1/mds-device/send-mqtt-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       toast.success(data.data.message);
@@ -551,7 +556,7 @@ const MdsOperating = () => {
                                   new Date(mdsDevice.last_uplink),
                                   {
                                     addSuffix: true,
-                                  }
+                                  },
                                 )}
                               </span>
                             </span>
@@ -729,7 +734,7 @@ const MdsOperating = () => {
                         <div className="d-flex flex-column">
                           {!mdsDevice.robot.last_uplink ||
                           isNaN(
-                            new Date(mdsDevice.robot.last_uplink).getTime()
+                            new Date(mdsDevice.robot.last_uplink).getTime(),
                           ) ? (
                             <CBadge color="danger" shape="rounded-pill">
                               Robot is not activated
@@ -741,7 +746,7 @@ const MdsOperating = () => {
                                 <span className="text-white mx-2">
                                   {formatDistanceToNow(
                                     new Date(mdsDevice.robot.last_uplink),
-                                    { addSuffix: true }
+                                    { addSuffix: true },
                                   )}
                                 </span>
                               </span>
@@ -759,7 +764,7 @@ const MdsOperating = () => {
                               <span>
                                 (
                                 {new Date(
-                                  mdsDevice.robot.last_uplink
+                                  mdsDevice.robot.last_uplink,
                                 ).toLocaleString()}
                                 )
                               </span>

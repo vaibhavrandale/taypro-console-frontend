@@ -50,7 +50,7 @@ const Sites = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [pageInput, setPageInput] = useState("");
 
@@ -67,7 +67,8 @@ const Sites = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         let total = Math.ceil(
           Number(result.data.total) / Number(result.data.limit),
@@ -93,7 +94,7 @@ const Sites = () => {
     };
 
     fetchDownlink();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter table rows based on search term
   const filteredData = sites.filter(

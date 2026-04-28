@@ -34,7 +34,7 @@ const UpdateDownlink = () => {
   });
 
   const { site_id, block, robot_no, id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [downlinkData, setDownlinkData] = useState({
@@ -50,7 +50,8 @@ const UpdateDownlink = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/downlinks/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setDownlinkData(data.data);
@@ -64,7 +65,7 @@ const UpdateDownlink = () => {
     };
 
     fetchDownlink();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,14 +84,15 @@ const UpdateDownlink = () => {
         downlinkData;
 
       await axios.put(`/api/v1/downlinks/${id}`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Downlink updated successfully");
 
       navigate(
-        `/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}`
+        `/master-admin/site-management/block-management/${site_id}/${block}/${robot_no}`,
       );
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: "Update failed" });

@@ -77,7 +77,7 @@ const UpdateProjectClosureForm = () => {
   ]);
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -138,7 +138,8 @@ const UpdateProjectClosureForm = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/projectdocs/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -157,7 +158,7 @@ const UpdateProjectClosureForm = () => {
     };
 
     fetchProjectHandoverDoc();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -172,8 +173,8 @@ const UpdateProjectClosureForm = () => {
     const { name, value } = e.target;
     setRobotDetails((prevRobotDetails) =>
       prevRobotDetails.map((robot, i) =>
-        i === index ? { ...robot, [name]: value } : robot
-      )
+        i === index ? { ...robot, [name]: value } : robot,
+      ),
     );
   };
 
@@ -236,9 +237,10 @@ const UpdateProjectClosureForm = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       setImage(data.url);
@@ -272,7 +274,8 @@ const UpdateProjectClosureForm = () => {
         handover_checklist: checkListDetails,
       };
       await axios.put(`/api/v1/projectdocs/${id}`, newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import {
   CCard,
   CCardBody,
@@ -9,14 +8,11 @@ import {
   CRow,
   CCol,
   CBadge,
-  CListGroup,
-  CListGroupItem,
   CSpinner,
   CAlert,
   CModal,
   CModalHeader,
   CModalBody,
-  CButton,
 } from "@coreui/react";
 import LastActivity from "../../components/LastActivity";
 
@@ -28,7 +24,7 @@ const statusColor = {
 
 const ViewMicrofiber = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,9 +40,10 @@ const ViewMicrofiber = () => {
     const fetchJob = async () => {
       try {
         const res = await axios.get(`/api/v1/ai-model/${id}`, {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         });
         setJob(res.data.data);
       } catch (error) {
@@ -57,7 +54,7 @@ const ViewMicrofiber = () => {
     };
 
     fetchJob();
-  }, [id, authtoken]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -92,8 +89,8 @@ const ViewMicrofiber = () => {
                   job.overall === "done"
                     ? "success"
                     : job.overall === "error"
-                    ? "danger"
-                    : "warning"
+                      ? "danger"
+                      : "warning"
                 }`}
                 className="text-uppercase"
               >

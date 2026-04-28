@@ -99,7 +99,7 @@ const ShiftBlockwiseRobots = () => {
   });
 
   const [selectedRobots, setSelectedRobots] = useState([]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [pageInput, setPageInput] = useState("");
@@ -123,7 +123,8 @@ const ShiftBlockwiseRobots = () => {
           `/api/v1/robots/site/${site_id}`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -156,7 +157,8 @@ const ShiftBlockwiseRobots = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -173,7 +175,7 @@ const ShiftBlockwiseRobots = () => {
 
     fetchRobots();
     fetchSites();
-  }, [authtoken, limit, page, site_id]);
+  }, [limit, page, site_id]);
 
   const fetchRobots = async () => {
     dispatch({ type: "FETCH_ROBOTS_REQUEST" });
@@ -183,7 +185,8 @@ const ShiftBlockwiseRobots = () => {
         `/api/v1/robots/site/${site_id}`,
         pagination,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -241,7 +244,8 @@ const ShiftBlockwiseRobots = () => {
           block: targetBlock,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

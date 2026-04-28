@@ -76,7 +76,7 @@ const RobotTrackingCurrentTable = () => {
     },
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -89,7 +89,7 @@ const RobotTrackingCurrentTable = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       // const robotsList = result?.data?.data?.data || [];
@@ -125,7 +125,7 @@ const RobotTrackingCurrentTable = () => {
       const result = await axios.post(
         "/api/v1/robot-tracking/avg-current",
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({ type: "FETCH_STATS_SUCCESS", payload: result.data.data });
@@ -154,7 +154,7 @@ const RobotTrackingCurrentTable = () => {
 
   useEffect(() => {
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const filteredData = statsData.filter((item) => {
     const term = searchTerm.toLowerCase();

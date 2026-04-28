@@ -72,7 +72,7 @@ const ScadaDashboard = () => {
 
   const site_id = "taypro_office";
   const invertor_id = "INV01";
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   useEffect(() => {
     socket.emit("scada-join-site", site_id);
 
@@ -86,7 +86,8 @@ const ScadaDashboard = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/scada-master-data/${site_id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -108,7 +109,8 @@ const ScadaDashboard = () => {
       dispatch({ type: "FETCH_LOGS_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/scada-logs/${invertor_id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -128,7 +130,7 @@ const ScadaDashboard = () => {
 
     fetchScadaData();
     fetchScadaLogsData();
-  }, [authtoken, site_id]);
+  }, [site_id]);
   useEffect(() => {
     const handleScadaEvent = (msg) => {
       if (msg.site_id !== site_id) return;

@@ -104,7 +104,7 @@ const MdsDashboard = () => {
     mdsError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [site_id, setSiteId] = useState("");
@@ -119,7 +119,8 @@ const MdsDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const siteData = res.data.data || [];
@@ -137,7 +138,7 @@ const MdsDashboard = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (site_id) {
@@ -159,7 +160,8 @@ const MdsDashboard = () => {
             date: date,
           },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -178,7 +180,8 @@ const MdsDashboard = () => {
           const response = await axios.get(
             `/api/v1/mds-device/get-mdsno-by-site-and-block/${site_id}/Block-1`,
             {
-              headers: { Authorization: `Bearer ${authtoken}` },
+              // headers: { Authorization: `Bearer ${authtoken}` },
+              withCredentials: true,
             },
           );
           dispatch({
@@ -194,7 +197,7 @@ const MdsDashboard = () => {
       fetchAllmdsdevices();
     }
     fetchmdsTracking();
-  }, [authtoken, date, site_id]);
+  }, [date, site_id]);
 
   mdsRef.current = mdsdevices;
 

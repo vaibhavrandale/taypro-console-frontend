@@ -88,7 +88,7 @@ const InActiveMds = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,12 +100,13 @@ const InActiveMds = () => {
           `/api/v1/mds-device/inactive`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -125,19 +126,19 @@ const InActiveMds = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchMdsDevices();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const filteredMds = mdsDevices.filter(
     (mds) =>
       mds.mds_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mds.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mds.lora_no.toLowerCase().includes(searchTerm.toLowerCase())
+      mds.lora_no.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const openModal = (mds) => {
@@ -170,7 +171,8 @@ const InActiveMds = () => {
       } = formData;
 
       await axios.put(`/api/v1/mds-device/activate`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -234,7 +236,7 @@ const InActiveMds = () => {
       <div className="d-flex justify-content-between align-items-center">
         <h2>All Inactive MDS Devices</h2>
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             className="btn btn-sm btn-danger text-white"
@@ -267,7 +269,7 @@ const InActiveMds = () => {
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
             {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role
+              userInfo?.role,
             ) && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
@@ -295,7 +297,7 @@ const InActiveMds = () => {
                   )}
                 </CTableDataCell>
                 {!["Master User", "Project User", "Service User"].includes(
-                  userInfo?.role
+                  userInfo?.role,
                 ) && (
                   <CTableDataCell>
                     <CButton

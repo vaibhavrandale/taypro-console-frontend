@@ -66,7 +66,7 @@ const ServiceTicketsFaultDashboard = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -97,7 +97,7 @@ const ServiceTicketsFaultDashboard = () => {
         const result = await axios.post(
           `/api/v1/serviceticketsfaults/get-serviceticketsfaults`,
           { pg: page, limit: limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         dispatch({
@@ -119,17 +119,18 @@ const ServiceTicketsFaultDashboard = () => {
     };
 
     fetchServiceTicketsFaults();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const filteredFaults = servicetickets_fault.filter((fault) =>
-    fault.fault_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    fault.fault_name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const openViewModal = async (id) => {
     setViewModalVisible(true);
     try {
       const res = await axios.get(`/api/v1/serviceticketsfaults/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       setViewFault(res.data.data);
     } catch (error) {
@@ -160,7 +161,7 @@ const ServiceTicketsFaultDashboard = () => {
 
       <div className="d-flex justify-content-end my-2 align-items-center">
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             to={`/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard/create-serviceticket-fault`}
@@ -213,7 +214,7 @@ const ServiceTicketsFaultDashboard = () => {
                 <CTableDataCell>
                   {fault.last_activity?.[0]?.timestamp
                     ? new Date(
-                        fault.last_activity[0].timestamp
+                        fault.last_activity[0].timestamp,
                       ).toLocaleString()
                     : "N/A"}
                 </CTableDataCell>
@@ -228,7 +229,7 @@ const ServiceTicketsFaultDashboard = () => {
                   </CButton>
 
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <Link
                       className="m-1 btn btn-sm btn-primary text-decoration-none"
@@ -317,7 +318,7 @@ const ServiceTicketsFaultDashboard = () => {
                     <CTableDataCell>
                       {viewFault.last_activity?.[0]?.timestamp
                         ? new Date(
-                            viewFault.last_activity[0].timestamp
+                            viewFault.last_activity[0].timestamp,
                           ).toLocaleString()
                         : "N/A"}
                     </CTableDataCell>

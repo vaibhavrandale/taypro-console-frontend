@@ -30,7 +30,7 @@ const reducer = (state, action) => {
 
 const NewDownlink = () => {
   const { site_id, block, robot_no } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -61,7 +61,8 @@ const NewDownlink = () => {
     }
     try {
       await axios.post("/api/v1/downlinks", state.downlinkData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success("Downlink added successfully");

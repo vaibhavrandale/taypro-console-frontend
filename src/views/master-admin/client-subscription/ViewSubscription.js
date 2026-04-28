@@ -51,7 +51,7 @@ const reducer = (state, action) => {
           invoice: state.subscription.invoice.map((inv) =>
             inv.invoice_id === action.payload.invoice_id
               ? { ...inv, status: action.payload.status }
-              : inv
+              : inv,
           ),
         },
       };
@@ -74,7 +74,7 @@ const reducer = (state, action) => {
 
 const ViewSubscription = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -95,7 +95,8 @@ const ViewSubscription = () => {
       setError(null);
       try {
         const response = await axios.get(`/api/v1/client-subscription/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "SET_SUBSCRIPTION", payload: response.data });
       } catch (err) {
@@ -107,7 +108,7 @@ const ViewSubscription = () => {
       }
     };
     fetchSubscription();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleOpenStatusModal = (subscriptionId, invoiceId, currentStatus) => {
     setSelectedStatus(currentStatus);
@@ -126,8 +127,9 @@ const ViewSubscription = () => {
         `/api/v1/client-subscription/update-payment-status/${subscription_id}/${invoice_id}`,
         { status: selectedStatus },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({
         type: "UPDATE_SUCCESS",
@@ -169,7 +171,7 @@ const ViewSubscription = () => {
     igst,
     place_of_supply,
     status,
-    transaction_id
+    transaction_id,
   ) => {
     const headerBase64 = await getBase64ImageFromURL(headerImage);
     const footerBase64 = await getBase64ImageFromURL(footerImage);
@@ -351,8 +353,8 @@ const ViewSubscription = () => {
                     subscription.subscription_status === "subscribed"
                       ? "success"
                       : subscription.subscription_status === "expired"
-                      ? "warning"
-                      : "danger"
+                        ? "warning"
+                        : "danger"
                   }
                   className="px-3 py-1"
                 >
@@ -365,7 +367,7 @@ const ViewSubscription = () => {
               <small className="text-muted">Start Date</small>
               <div className="fw-bold">
                 {moment(subscription.subscription_start_date).format(
-                  "DD-MM-YYYY"
+                  "DD-MM-YYYY",
                 )}
               </div>
             </CCol>
@@ -373,7 +375,7 @@ const ViewSubscription = () => {
               <small className="text-muted">End Date</small>
               <div className="fw-bold">
                 {moment(subscription.subscription_end_date).format(
-                  "DD-MM-YYYY"
+                  "DD-MM-YYYY",
                 )}
               </div>
             </CCol>
@@ -462,7 +464,7 @@ const ViewSubscription = () => {
                           handleOpenStatusModal(
                             subscription._id,
                             invoice.invoice_id,
-                            invoice.status
+                            invoice.status,
                           )
                         }
                       >
@@ -488,7 +490,7 @@ const ViewSubscription = () => {
                             invoice.tax_details.igst,
                             invoice.tax_details.place_of_supply,
                             invoice.status,
-                            invoice.transaction_id
+                            invoice.transaction_id,
                           )
                         }
                       >

@@ -105,7 +105,7 @@ const RobotTracker = () => {
   const pageRef = useRef(null);
   const [site_id, setSiteId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [selectedRobotId, setSelectedRobotId] = useState(null);
   const [selectedBlock, setSelectedBlock] = useState("");
@@ -127,7 +127,8 @@ const RobotTracker = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const siteData = res.data.data || [];
@@ -145,7 +146,7 @@ const RobotTracker = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (site_id) {
@@ -181,7 +182,8 @@ const RobotTracker = () => {
             date: date,
           },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -203,7 +205,7 @@ const RobotTracker = () => {
     } else {
       fetchRobotTracking();
     }
-  }, [authtoken, date, site_id, deleteSuccess]);
+  }, [date, site_id, deleteSuccess]);
 
   // ✅ Keep robotsRef in sync with robots state for smooth scroll
   useEffect(() => {
@@ -357,7 +359,8 @@ const RobotTracker = () => {
     dispatch({ type: "DELETE_REQUEST" });
     try {
       const response = await axios.delete(`/api/v1/robot-tracking/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "DELETE_SUCCESS", deleteSuccess: true });
       toast.success(response.data.message);

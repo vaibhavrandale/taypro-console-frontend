@@ -79,7 +79,7 @@ const FaultyInventory = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [siteId, setSiteId] = useState("all");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -112,12 +112,13 @@ const FaultyInventory = () => {
           `/api/v1/faulty-inventory`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -143,7 +144,8 @@ const FaultyInventory = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -159,7 +161,7 @@ const FaultyInventory = () => {
     };
     fetchInventories(); // 👈 Add this!
     fetchSites();
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
   const filteredInventories = inventories.filter((inventory) => {
     const matchesSite = siteId === "all" || inventory.site_id === siteId;
     const matchesSearch =

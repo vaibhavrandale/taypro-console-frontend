@@ -42,8 +42,8 @@ const reducer = (state, action) => {
         inactiverobots: state.inactiverobots.filter(
           (robot) =>
             !action.payload.some(
-              (activated) => activated.deveui === robot.deveui
-            )
+              (activated) => activated.deveui === robot.deveui,
+            ),
         ),
         activatedRobots: [...state.activatedRobots, ...action.payload],
       };
@@ -80,7 +80,7 @@ const ActivateRobots = () => {
   });
 
   const [selectedRobots, setSelectedRobots] = useState([]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -94,11 +94,12 @@ const ActivateRobots = () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.post(`/api/v1/robots/inactive`, pagination, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -118,20 +119,20 @@ const ActivateRobots = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // ✅ Handle Checkbox Selection
   const handleCheckboxChange = (robot) => {
     setSelectedRobots((prev) =>
       prev.some((r) => r.deveui === robot.deveui)
         ? prev.filter((r) => r.deveui !== robot.deveui)
-        : [...prev, robot]
+        : [...prev, robot],
     );
   };
 
@@ -148,7 +149,7 @@ const ActivateRobots = () => {
       await axios.put(
         "/api/v1/robots/activate",
         { deveuiArray: selectedRobots.map((robot) => robot.deveui) },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({ type: "ACTIVATE_ROBOTS_SUCCESS", payload: selectedRobots });
@@ -276,7 +277,7 @@ const ActivateRobots = () => {
                   <CTableDataCell>
                     <CFormCheck
                       checked={selectedRobots.some(
-                        (r) => r.deveui === robot.deveui
+                        (r) => r.deveui === robot.deveui,
                       )}
                       onChange={() => handleCheckboxChange(robot)}
                     />

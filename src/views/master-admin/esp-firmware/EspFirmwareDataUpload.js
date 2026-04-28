@@ -100,7 +100,7 @@ const EspFirmwareDataUpload = () => {
     espFirmwareDataError: "",
     espFirmwares: [],
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [espFirmwareFile, setEspFirmwareFile] = useState("");
   const [fileName, setFileName] = useState("");
@@ -110,7 +110,8 @@ const EspFirmwareDataUpload = () => {
       dispatch({ type: "FETCH_ESPFIRMWARE_DATA_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/espfirmwares`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_ESPFIRMWARE_DATA_SUCCESS",
@@ -126,7 +127,7 @@ const EspFirmwareDataUpload = () => {
     };
 
     fetchEspFirmwareData();
-  }, [authtoken]);
+  }, []);
 
   const handleEspFirmwareData = async (e) => {
     const file = e.target.files[0];
@@ -141,9 +142,10 @@ const EspFirmwareDataUpload = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       console.log(data.url);
       dispatch({ type: "UPLOAD_ESPFIRMWARE_DATA_SUCCESS" });
@@ -166,7 +168,8 @@ const EspFirmwareDataUpload = () => {
   //   try {
   //     dispatch({ type: "ADD_ESPFIRMWARE_DATA_REQUEST" });
   //     const response = await axios.post(`/api/v1/espfirmwares`, data, {
-  //       headers: { authorization: `Bearer ${authtoken}` },
+  //       // headers: { authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //     });
 
   //     dispatch({
@@ -189,7 +192,8 @@ const EspFirmwareDataUpload = () => {
     try {
       dispatch({ type: "ADD_ESPFIRMWARE_DATA_REQUEST" });
       const response = await axios.post(`/api/v1/espfirmwares`, data, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       console.log(response.data.data);
 

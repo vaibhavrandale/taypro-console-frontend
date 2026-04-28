@@ -24,10 +24,10 @@ const GenerateReport = () => {
       reportLoading: false,
       reportError: "",
       reports: [],
-    }
+    },
   );
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const months = [
@@ -46,7 +46,7 @@ const GenerateReport = () => {
   ];
   const years = Array.from(
     { length: 5 },
-    (_, i) => new Date().getFullYear() - i
+    (_, i) => new Date().getFullYear() - i,
   );
   useEffect(() => {
     const fetchReports = async () => {
@@ -57,8 +57,9 @@ const GenerateReport = () => {
           { month, year },
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -71,12 +72,12 @@ const GenerateReport = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchReports();
-  }, [authtoken, month, year]);
+  }, [month, year]);
 
   return (
     <div>

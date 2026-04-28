@@ -223,7 +223,7 @@ const UsersDashboard = () => {
     adminroute = "service-user";
   }
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -253,7 +253,8 @@ const UsersDashboard = () => {
           "/api/v1/users/get-internal-users",
           pagination,
           {
-            headers: { authorization: `Bearer ${authtoken}` },
+            // headers: { authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         let total = Math.ceil(
@@ -283,7 +284,8 @@ const UsersDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -299,7 +301,7 @@ const UsersDashboard = () => {
     };
     fetchSites();
     fetchUsers();
-  }, [authtoken, limit, page, userInfo]);
+  }, [limit, page, userInfo]);
 
   const openModal = (user) => {
     setSelectedUser(user);
@@ -351,7 +353,8 @@ const UsersDashboard = () => {
       dispatch({ type: "ADD_USER_REQUEST" });
       const newdata = { ...formData, profile_image: image };
       const response = await axios.post("/api/v1/users", newdata, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       if (response.status === 201 || response.status === 200) {
@@ -439,7 +442,8 @@ const UsersDashboard = () => {
         `/api/v1/users/${formData._id}`,
         newdata,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -475,7 +479,8 @@ const UsersDashboard = () => {
           siteId: selectedSite,
         },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
       if (response.data.success) {
@@ -515,7 +520,8 @@ const UsersDashboard = () => {
           siteId: sitedata._id,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

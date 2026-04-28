@@ -77,7 +77,7 @@ const ProjectClosureDashboard = () => {
     hasPrevPage: false,
   });
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -117,12 +117,13 @@ const ProjectClosureDashboard = () => {
           `/api/v1/projectdocs/get-all-project-docs`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -146,13 +147,14 @@ const ProjectClosureDashboard = () => {
             "Failed to fetch Project Handover Docs",
         });
         toast.error(
-          error.response?.data?.error || "Failed to fetch Project Handover Docs"
+          error.response?.data?.error ||
+            "Failed to fetch Project Handover Docs",
         );
       }
     };
 
     fetchProjectDocs();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const updateApprovalSentStatus = async (data) => {
     dispatch({ type: "SUBMIT_REQUEST" });
@@ -161,14 +163,15 @@ const ProjectClosureDashboard = () => {
         `/api/v1/projectdocs/project-doc/send-for-approval/${data._id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({
         type: "SUBMIT_SUCCESS",
       });
       toast.success(
-        result.data.message || "Approval request sent successfully."
+        result.data.message || "Approval request sent successfully.",
       );
       setFormData(result.data.data);
       setModalVisible(false);
@@ -180,7 +183,7 @@ const ProjectClosureDashboard = () => {
           error.response?.data?.error || "Failed to send an approval request",
       });
       toast.error(
-        error.response?.data?.error || "Failed to send an approval request"
+        error.response?.data?.error || "Failed to send an approval request",
       );
     }
   };
@@ -189,7 +192,7 @@ const ProjectClosureDashboard = () => {
     (doc) =>
       doc.project_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doc.project_location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.prepared_by.toLowerCase().includes(searchTerm.toLowerCase())
+      doc.prepared_by.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Open modal and load doc data
@@ -327,7 +330,7 @@ const ProjectClosureDashboard = () => {
                   {/* 🔴 Show "Send to Service Team" only if not sent OR user is Admin */}
                   {!doc.is_sent_for_approval &&
                     ["Master Admin", "Project Admin"].includes(
-                      userInfo.role
+                      userInfo.role,
                     ) && (
                       <Link
                         className="btn btn-sm btn-danger m-1 text-white"

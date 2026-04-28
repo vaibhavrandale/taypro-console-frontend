@@ -74,7 +74,7 @@ const ClientTicketsDashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -108,12 +108,12 @@ const ClientTicketsDashboard = () => {
         const result = await axios.post(
           `/api/v1/clienttickets/get-all`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         // Handle totalPages, hasNextPage, and hasPrevPage logic
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -134,14 +134,14 @@ const ClientTicketsDashboard = () => {
           payload: error.response.data.error,
         });
         toast.error(
-          error.response.data.error || "Failed to fetch the Client Tickets"
+          error.response.data.error || "Failed to fetch the Client Tickets",
         );
       }
     };
 
     // Reset the delete state if successDelete flag is true
     fetchClientTickets();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   /** 🔍 Search Function */
   const filteredTickets = client_tickets.filter(
@@ -149,7 +149,7 @@ const ClientTicketsDashboard = () => {
       ticket.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ticket.created_by.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   /** ✏️ Open Update Modal */
@@ -177,138 +177,137 @@ const ClientTicketsDashboard = () => {
   };
 
   const getTimeDifference = (start, end) => {
-  if (!start || !end) return "NA";
+    if (!start || !end) return "NA";
 
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
 
-  const diffMs = endDate - startDate;
+    const diffMs = endDate - startDate;
 
-  const minutes = Math.floor(diffMs / (1000 * 60));
-  const hours = Math.floor(diffMs / (1000 * 60 * 60));
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
 
-  if (minutes < 60) return `${minutes} min`;
-  if (hours < 24) return `${hours} hr`;
-  if (days < 30) return `${days} day${days > 1 ? "s" : ""}`;
-  if (months < 12) return `${months} month${months > 1 ? "s" : ""}`;
+    if (minutes < 60) return `${minutes} min`;
+    if (hours < 24) return `${hours} hr`;
+    if (days < 30) return `${days} day${days > 1 ? "s" : ""}`;
+    if (months < 12) return `${months} month${months > 1 ? "s" : ""}`;
 
-  return `${years} year${years > 1 ? "s" : ""}`;
-};
-const exportToCSV = () => {
-  if (!filteredTickets || filteredTickets.length === 0) {
-    toast.error("No data to export");
-    return;
-  }
-
-  const makeHyperlink = (url, label = "View") => {
-    if (!url) return "";
-    return `=HYPERLINK("${url}","${label}")`;
+    return `${years} year${years > 1 ? "s" : ""}`;
   };
+  const exportToCSV = () => {
+    if (!filteredTickets || filteredTickets.length === 0) {
+      toast.error("No data to export");
+      return;
+    }
 
-  const headers = [
-    "Ticket ID",
-    "Site ID",
-    "Subject",
-    "Description",
-    "Status",
+    const makeHyperlink = (url, label = "View") => {
+      if (!url) return "";
+      return `=HYPERLINK("${url}","${label}")`;
+    };
 
-    "Created By Name",
-    "Created By Email",
-    "Created By Designation",
+    const headers = [
+      "Ticket ID",
+      "Site ID",
+      "Subject",
+      "Description",
+      "Status",
 
-    "Resolution Notes",
+      "Created By Name",
+      "Created By Email",
+      "Created By Designation",
 
-    "Resolved By Name",
-    "Resolved By Email",
-    "Resolved By Role",
+      "Resolution Notes",
 
-    "Created At",
-    "Updated At",
-    "Resolved At",
-    "Resolution Time",
+      "Resolved By Name",
+      "Resolved By Email",
+      "Resolved By Role",
 
-    "Creation Image 1",
-    "Creation Image 2",
-    "Resolution Image 1",
-    "Resolution Image 2",
-  ];
+      "Created At",
+      "Updated At",
+      "Resolved At",
+      "Resolution Time",
 
-  const rows = filteredTickets.map((ticket) => [
-    ticket.ticket_id,
-    ticket.site_id,
-    ticket.subject,
-    ticket.description,
-    ticket.status,
+      "Creation Image 1",
+      "Creation Image 2",
+      "Resolution Image 1",
+      "Resolution Image 2",
+    ];
 
-    ticket.created_by?.name || "",
-    ticket.created_by?.email || "",
-    ticket.created_by?.designation || "",
+    const rows = filteredTickets.map((ticket) => [
+      ticket.ticket_id,
+      ticket.site_id,
+      ticket.subject,
+      ticket.description,
+      ticket.status,
 
-    ticket.resolution_notes || "",
+      ticket.created_by?.name || "",
+      ticket.created_by?.email || "",
+      ticket.created_by?.designation || "",
 
-    ticket.resolved_by?.name || "",
-    ticket.resolved_by?.email || "",
-    ticket.resolved_by?.role || "",
+      ticket.resolution_notes || "",
 
-    new Date(ticket.createdAt).toLocaleString("en-GB"),
-    new Date(ticket.updatedAt).toLocaleString("en-GB"),
-    ticket.resolved_at
-      ? new Date(ticket.resolved_at).toLocaleString("en-GB")
-      : "NA",
+      ticket.resolved_by?.name || "",
+      ticket.resolved_by?.email || "",
+      ticket.resolved_by?.role || "",
 
-    ticket.status === "Resolved"
-      ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
-      : "NA",
+      new Date(ticket.createdAt).toLocaleString("en-GB"),
+      new Date(ticket.updatedAt).toLocaleString("en-GB"),
+      ticket.resolved_at
+        ? new Date(ticket.resolved_at).toLocaleString("en-GB")
+        : "NA",
 
-    makeHyperlink(ticket.creation_image1, "View Image"),
-    makeHyperlink(ticket.creation_image2, "View Image"),
-    makeHyperlink(ticket.resolution_image1, "View Image"),
-    makeHyperlink(ticket.resolution_image2, "View Image"),
-  ]);
+      ticket.status === "Resolved"
+        ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
+        : "NA",
 
-  const csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers, ...rows]
-      .map((row) =>
-        row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")
-      )
-      .join("\n");
+      makeHyperlink(ticket.creation_image1, "View Image"),
+      makeHyperlink(ticket.creation_image2, "View Image"),
+      makeHyperlink(ticket.resolution_image1, "View Image"),
+      makeHyperlink(ticket.resolution_image2, "View Image"),
+    ]);
 
-  const link = document.createElement("a");
-  link.href = encodeURI(csvContent);
-  link.download = `client_tickets_full_${Date.now()}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((row) =>
+          row
+            .map((value) => `"${String(value).replace(/"/g, '""')}"`)
+            .join(","),
+        )
+        .join("\n");
+
+    const link = document.createElement("a");
+    link.href = encodeURI(csvContent);
+    link.download = `client_tickets_full_${Date.now()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="">
       <h2 className="text-center">Client Tickets</h2>
-     <div className="d-flex justify-content-end my-2 align-items-center">
-  <div>
-    {!["Master User", "Project User", "Service User"].includes(
-      userInfo?.role
-    ) && (
-      <Link
-        to="create-new-client-ticket"
-        className="btn btn-sm btn-primary me-2"
-      >
-        NEW
-      </Link>
-    )}
-  </div>
+      <div className="d-flex justify-content-end my-2 align-items-center">
+        <div>
+          {!["Master User", "Project User", "Service User"].includes(
+            userInfo?.role,
+          ) && (
+            <Link
+              to="create-new-client-ticket"
+              className="btn btn-sm btn-primary me-2"
+            >
+              NEW
+            </Link>
+          )}
+        </div>
 
-  <button
-    className="btn btn-sm btn-success"
-    onClick={exportToCSV}
-  >
-    Export 
-  </button>
-</div>
+        <button className="btn btn-sm btn-success" onClick={exportToCSV}>
+          Export
+        </button>
+      </div>
 
       {/* 🔍 Search Input */}
       <CRow className="justify-content-end">
@@ -339,7 +338,9 @@ const exportToCSV = () => {
               Created By
             </CTableHeaderCell>
             <CTableHeaderCell>Created Date</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "200px" }}>Resolved By</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "200px" }}>
+              Resolved By
+            </CTableHeaderCell>
             <CTableHeaderCell>Resolved Date</CTableHeaderCell>
             <CTableHeaderCell>Resolving Time Duration</CTableHeaderCell>
             <CTableHeaderCell style={{ minWidth: "200px" }}>
@@ -390,61 +391,61 @@ const exportToCSV = () => {
                       ticket.status === "Resolved"
                         ? "success"
                         : ticket.status === "Open"
-                        ? "danger"
-                        : "warning"
+                          ? "danger"
+                          : "warning"
                     }
                   >
                     {ticket.status}
                   </CBadge>
                 </CTableDataCell>
                 <CTableDataCell>{ticket.created_by.name}</CTableDataCell>
-               
+
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  
-                        {new Date(ticket.createdAt).toLocaleString("en-GB", {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        })}
-                    
+                  {new Date(ticket.createdAt).toLocaleString("en-GB", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true,
+                  })}
                 </CTableDataCell>
-              <CTableDataCell>{
-                  ticket.status==="Resolved"?ticket.resolved_by.name:<CBadge
-                    color={
-                      ticket.status === "Resolved"
-                        ? "success"
-                        : ticket.status === "Open"
-                        ? "danger"
-                        : "warning"
-                    }
-                  >
-                    {ticket.status}
-                  </CBadge>
-                  }</CTableDataCell>
+                <CTableDataCell>
+                  {ticket.status === "Resolved" ? (
+                    ticket.resolved_by.name
+                  ) : (
+                    <CBadge
+                      color={
+                        ticket.status === "Resolved"
+                          ? "success"
+                          : ticket.status === "Open"
+                            ? "danger"
+                            : "warning"
+                      }
+                    >
+                      {ticket.status}
+                    </CBadge>
+                  )}
+                </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  
-                        {
-                        ticket.status==="Resolved"?
-                        new Date(ticket.resolved_at).toLocaleString("en-GB", {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true,
-                        }):"NA"}
-                    
+                  {ticket.status === "Resolved"
+                    ? new Date(ticket.resolved_at).toLocaleString("en-GB", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })
+                    : "NA"}
                 </CTableDataCell>
-                 <CTableDataCell style={{ minWidth: "150px" }}>
-  {ticket.status === "Resolved"
-    ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
-    : "NA"}
-</CTableDataCell>
+                <CTableDataCell style={{ minWidth: "150px" }}>
+                  {ticket.status === "Resolved"
+                    ? getTimeDifference(ticket.createdAt, ticket.resolved_at)
+                    : "NA"}
+                </CTableDataCell>
                 <CTableDataCell>
                   <Link
                     className="btn btn-sm btn-secondary m-1"
@@ -540,8 +541,8 @@ const exportToCSV = () => {
                           formData.status === "Resolved"
                             ? "success"
                             : formData.status === "Open"
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                         className="px-3 py-2"
                       >
@@ -561,7 +562,7 @@ const exportToCSV = () => {
                         minute: "2-digit",
                         second: "2-digit",
                         hour12: true,
-                      }
+                      },
                     ),
                     ...(formData.status === "Resolved" && {
                       "Resolved By": formData.resolved_by?.name || "--",

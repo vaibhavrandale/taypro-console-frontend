@@ -41,7 +41,7 @@ const reducer = (state, action) => {
 };
 
 const CreateNewServiceTicketFault = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -88,12 +88,13 @@ const CreateNewServiceTicketFault = () => {
     };
     try {
       await axios.post("/api/v1/serviceticketsfaults", newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Service Ticket Fault Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
       navigate(
-        `/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard`
+        `/${adminroute}/serviceticket-fault/service-tickets-fault-dashboard`,
       );
     } catch (error) {
       dispatch({

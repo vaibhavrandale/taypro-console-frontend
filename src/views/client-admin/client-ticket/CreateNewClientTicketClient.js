@@ -76,7 +76,7 @@ const CreateNewClientTicketClient = () => {
     site_id: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -107,7 +107,8 @@ const CreateNewClientTicketClient = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -122,7 +123,7 @@ const CreateNewClientTicketClient = () => {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -163,8 +164,9 @@ const CreateNewClientTicketClient = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
 
@@ -192,8 +194,9 @@ const CreateNewClientTicketClient = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
 
@@ -235,9 +238,10 @@ const CreateNewClientTicketClient = () => {
 
     try {
       await axios.post("/api/v1/clienttickets", payload, {
-        headers: {
-          Authorization: `Bearer ${authtoken}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${authtoken}`,
+        // },
+        withCredentials: true,
       });
 
       toast.success("Ticket submitted successfully!");

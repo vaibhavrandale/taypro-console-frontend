@@ -130,14 +130,15 @@ const AddMdsUsingLoraNo = () => {
   const [page] = useState(1);
   const [limit] = useState(10);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
       } catch (error) {
@@ -155,7 +156,7 @@ const AddMdsUsingLoraNo = () => {
         const result = await axios.post(
           `/api/v1/mds-device/getAll-mds`,
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
         dispatch({
           type: "FETCH_MDS_SUCCESS",
@@ -172,7 +173,7 @@ const AddMdsUsingLoraNo = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -183,8 +184,9 @@ const AddMdsUsingLoraNo = () => {
         const result = await axios.get(
           `/api/v1/loraconfigurations/fetch-all-loras`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_LORACONFIG_SUCCESS",
@@ -202,7 +204,7 @@ const AddMdsUsingLoraNo = () => {
     fetchSiteIds();
     fetchloraconfigurations();
     fetchMdsDevices();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -212,7 +214,7 @@ const AddMdsUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/mds-device/create-mds",
         { ...formData, block: "Block-1" },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       toast.success(`MDS ${formData.mds_no} added successfully!`);
       dispatch({
@@ -238,7 +240,7 @@ const AddMdsUsingLoraNo = () => {
       !manualMdsData.site_id
     ) {
       return toast.error(
-        "Please fill all required fields (MDS ID, Deveui, Site)"
+        "Please fill all required fields (MDS ID, Deveui, Site)",
       );
     }
     dispatch({ type: "ADD_MDS_MANUAL_REQUEST" });
@@ -246,7 +248,7 @@ const AddMdsUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/mds-device/create-mds-using-manual-data",
         manualMdsData,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       toast.success(`MDS ${manualMdsData.mds_no} added successfully!`);
       dispatch({
@@ -270,10 +272,10 @@ const AddMdsUsingLoraNo = () => {
 
   const assignedLoraNos = mdsDevices.map((mds) => mds.lora_no);
   const availableLoraConfig = lora_configuration.filter(
-    (lora) => !assignedLoraNos.includes(lora.serial)
+    (lora) => !assignedLoraNos.includes(lora.serial),
   );
   const filteredLoraConfig = availableLoraConfig.filter((lora) =>
-    lora.serial.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    lora.serial.toString().toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSearchChange = (e) => {

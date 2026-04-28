@@ -64,15 +64,15 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
       pmloading: true,
       error: "",
     });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [site_id, setSiteId] = useState("all");
 
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   useEffect(() => {
@@ -80,7 +80,8 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -102,8 +103,9 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
           `/api/v1/preventivemaintenances/sites-with-date/${startDate}/${endDate}/${site_id}`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -124,7 +126,7 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
     };
     fetchSites();
     fetchPreventivemaintenances();
-  }, [authtoken, endDate, site_id, startDate]);
+  }, [endDate, site_id, startDate]);
 
   const handleSiteNameChange = (e) => {
     const selectedSiteId = e.target.value;
@@ -159,7 +161,7 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
 
     saveAs(
       data,
-      `${site_id}_${startDate}_${endDate}_Site_Preventive_Maintenance.xlsx`
+      `${site_id}_${startDate}_${endDate}_Site_Preventive_Maintenance.xlsx`,
     );
   };
 
@@ -353,7 +355,7 @@ const ViewTechnicianPreventivemaintananceQuaterly = () => {
                               {record.is_nutbolt_loose ? "Yes" : "No"}
                             </CTableDataCell>
                           </CTableRow>
-                        ))
+                        )),
                       )
                     ) : (
                       <CTableRow>
