@@ -638,7 +638,7 @@ export default function MasterAdminDashboard() {
           <section
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: 11,
               marginBottom: 14,
             }}

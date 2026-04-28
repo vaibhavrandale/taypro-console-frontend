@@ -136,6 +136,8 @@ const AllSiteCleaningLog = () => {
     adminroute = "project-user";
   }
 
+  const date = new Date().toISOString().split("T")[0];
+
   return (
     <div className="">
       <h2 className="blinker-semibold">All Sites Cleaning Log</h2>
@@ -187,7 +189,7 @@ const AllSiteCleaningLog = () => {
                     color="success"
                     size="sm"
                     className="btn btn-success btn-sm m-1"
-                    to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}`}
+                    to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site.site_id}/${date}`}
                   >
                     Manage
                   </Link>

@@ -559,132 +559,132 @@
 //         }}
 //       >
 //         {/* ══ TOP BAR ══ */}
-//         <header
-//           style={{
-//             position: "sticky",
-//             top: 0,
-//             zIndex: 200,
-//             display: "flex",
-//             flexDirection: isMobile ? "column" : "row", // ✅ KEY
-//             alignItems: isMobile ? "center" : "center",
-//             justifyContent: isMobile ? "center" : "space-between",
-//             padding: "8px 12px", // ✅ flexible padding
-//             minHeight: 50, // ❌ remove fixed height
-//             backdropFilter: "blur(20px)",
-//             borderBottom: `1px solid ${T.border}`,
-//             rowGap: 6, // ✅ spacing when wrapped
-//           }}
-//         >
-//           <div
-//             style={{
-//               // display: "flex",
-//               // alignItems: "center",
-//               // flex: "1 1 200px", // ✅ responsive grow/shrink
-//               // minWidth: 0, // ✅ prevents overflow
-//               display: "flex",
-//               alignItems: "center",
-//               justifyContent: isMobile ? "center" : "flex-start", // ✅ center
-//               width: "100%",
-//               textAlign: isMobile ? "center" : "left", // ✅ important
-//             }}
-//           >
-//             <div
-//               style={{
-//                 fontSize: 13,
-//                 color: T.textMid,
-//                 whiteSpace: "nowrap",
-//                 overflow: "hidden",
-//                 textOverflow: "ellipsis", // ✅ truncate long username
-//               }}
-//             >
-//               Hello,&nbsp;
-//               <strong style={{ color: T.text, fontWeight: 600 }}>
-//                 {userInfo.username}
-//               </strong>
-//               &nbsp;—&nbsp;
-//               <span style={{ color: T.cyan }}>{greeting()}</span>
-//             </div>
-//           </div>
-//           <div
-//             style={{
-//               // display: "flex",
-//               // alignItems: "center",
+// <header
+//   style={{
+//     position: "sticky",
+//     top: 0,
+//     zIndex: 200,
+//     display: "flex",
+//     flexDirection: isMobile ? "column" : "row", // ✅ KEY
+//     alignItems: isMobile ? "center" : "center",
+//     justifyContent: isMobile ? "center" : "space-between",
+//     padding: "8px 12px", // ✅ flexible padding
+//     minHeight: 50, // ❌ remove fixed height
+//     backdropFilter: "blur(20px)",
+//     borderBottom: `1px solid ${T.border}`,
+//     rowGap: 6, // ✅ spacing when wrapped
+//   }}
+// >
+//   <div
+//     style={{
+//       // display: "flex",
+//       // alignItems: "center",
+//       // flex: "1 1 200px", // ✅ responsive grow/shrink
+//       // minWidth: 0, // ✅ prevents overflow
+//       display: "flex",
+//       alignItems: "center",
+//       justifyContent: isMobile ? "center" : "flex-start", // ✅ center
+//       width: "100%",
+//       textAlign: isMobile ? "center" : "left", // ✅ important
+//     }}
+//   >
+//     <div
+//       style={{
+//         fontSize: 13,
+//         color: T.textMid,
+//         whiteSpace: "nowrap",
+//         overflow: "hidden",
+//         textOverflow: "ellipsis", // ✅ truncate long username
+//       }}
+//     >
+//       Hello,&nbsp;
+//       <strong style={{ color: T.text, fontWeight: 600 }}>
+//         {userInfo.username}
+//       </strong>
+//       &nbsp;—&nbsp;
+//       <span style={{ color: T.cyan }}>{greeting()}</span>
+//     </div>
+//   </div>
+//   <div
+//     style={{
+//       // display: "flex",
+//       // alignItems: "center",
 
-//               // gap: 8,
-//               // flex: "1 1 200px",
-//               // justifyContent: "flex-end",
-//               // flexWrap: "wrap", // ✅ wrap on mobile
-//               display: "flex",
-//               alignItems: "center",
-//               justifyContent: isMobile ? "center" : "flex-end", // ✅ center
-//               gap: 8,
-//               flexWrap: "wrap",
-//               width: isMobile ? "100%" : "auto", // ✅ full width for centering
-//             }}
-//           >
-//             {/* <span
-//               style={{
-//                 fontSize: 11,
-//                 color: T.textDim,
-//                 textTransform: "uppercase",
-//                 letterSpacing: ".8px",
-//               }}
-//             >
-//               Site
-//             </span> */}
-//             <Link
-//               to="/site-technician/punch-in-punch-out"
-//               style={{
-//                 padding: "6px 12px",
-//                 borderRadius: 8,
-//                 background: "#6366F1",
-//                 color: "#fff",
-//                 fontSize: 12,
-//                 textDecoration: "none",
-//               }}
-//             >
-//               Punch
-//             </Link>
-//             {loadingSiteIds ? (
-//               <Skel h={32} w={120} r={8} />
-//             ) : (
-//               <select
-//                 className="site-sel"
-//                 style={{
-//                   maxWidth: isMobile ? "140px" : "180px", // ✅ prevent overflow
-//                 }}
-//                 value={site_id}
-//                 onChange={(e) => setSiteid(e.target.value)}
-//               >
-//                 {siteIds.map((s) => (
-//                   <option key={s.site_id} value={s.site_id}>
-//                     {s.site_id}
-//                   </option>
-//                 ))}
-//               </select>
-//             )}
-//             <button
-//               onClick={fetchSiteDetails}
-//               disabled={loadingSiteDetails}
-//               style={{
-//                 background: T.cyanDim,
-//                 border: `1px solid ${T.border}`,
-//                 color: T.cyan,
-//                 borderRadius: 8,
-//                 padding: "6px 10px",
-//                 fontSize: 12,
-//                 display: "flex",
-//                 alignItems: "center",
-//                 gap: 6,
-//                 whiteSpace: "nowrap", // ✅ prevents breaking
-//                 opacity: loadingSiteDetails ? 0.6 : 1,
-//                 cursor: loadingSiteDetails ? "not-allowed" : "pointer",
-//               }}
-//             >
-//               {loadingSiteDetails ? "Refreshing..." : "🔄 Refresh"}
-//             </button>
-//           </div>
-//         </header>
+//       // gap: 8,
+//       // flex: "1 1 200px",
+//       // justifyContent: "flex-end",
+//       // flexWrap: "wrap", // ✅ wrap on mobile
+//       display: "flex",
+//       alignItems: "center",
+//       justifyContent: isMobile ? "center" : "flex-end", // ✅ center
+//       gap: 8,
+//       flexWrap: "wrap",
+//       width: isMobile ? "100%" : "auto", // ✅ full width for centering
+//     }}
+//   >
+//     {/* <span
+//       style={{
+//         fontSize: 11,
+//         color: T.textDim,
+//         textTransform: "uppercase",
+//         letterSpacing: ".8px",
+//       }}
+//     >
+//       Site
+//     </span> */}
+//     <Link
+//       to="/site-technician/punch-in-punch-out"
+//       style={{
+//         padding: "6px 12px",
+//         borderRadius: 8,
+//         background: "#6366F1",
+//         color: "#fff",
+//         fontSize: 12,
+//         textDecoration: "none",
+//       }}
+//     >
+//       Punch
+//     </Link>
+//     {loadingSiteIds ? (
+//       <Skel h={32} w={120} r={8} />
+//     ) : (
+//       <select
+//         className="site-sel"
+//         style={{
+//           maxWidth: isMobile ? "140px" : "180px", // ✅ prevent overflow
+//         }}
+//         value={site_id}
+//         onChange={(e) => setSiteid(e.target.value)}
+//       >
+//         {siteIds.map((s) => (
+//           <option key={s.site_id} value={s.site_id}>
+//             {s.site_id}
+//           </option>
+//         ))}
+//       </select>
+//     )}
+//     <button
+//       onClick={fetchSiteDetails}
+//       disabled={loadingSiteDetails}
+//       style={{
+//         background: T.cyanDim,
+//         border: `1px solid ${T.border}`,
+//         color: T.cyan,
+//         borderRadius: 8,
+//         padding: "6px 10px",
+//         fontSize: 12,
+//         display: "flex",
+//         alignItems: "center",
+//         gap: 6,
+//         whiteSpace: "nowrap", // ✅ prevents breaking
+//         opacity: loadingSiteDetails ? 0.6 : 1,
+//         cursor: loadingSiteDetails ? "not-allowed" : "pointer",
+//       }}
+//     >
+//       {loadingSiteDetails ? "Refreshing..." : "🔄 Refresh"}
+//     </button>
+//   </div>
+// </header>
 
 //         {/* ══ MAIN CONTENT ══ */}
 //         <main
@@ -2018,29 +2018,28 @@ export default function SiteTechnicianDashboard() {
   const [siteCoords, setSiteCoords] = useState({});
   const [mapLoaded, setMapLoaded] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  const fetchSiteDetails = async () => {
+    dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
+    try {
+      const { data } = await axios.get(
+        `/api/v1/sites-coordinates/site-details/${site_id}`,
+        { headers: { Authorization: `Bearer ${authtoken}` } },
+      );
+      const d = data.data;
+      dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
+      setSiteCoords(d.coordinates);
+      setRobots(d.robots);
+      setGateways(d.gateways);
+      setBlocks(d.blockWiseCleaning);
+      setCleaning(d.cleaning || { completed: 0, inprogress: 0, failure: 0 });
+    } catch (e) {
+      dispatch({
+        type: "FETCH_SITE_DETAILS_FAIL",
+        payload: e.response?.data?.message || e.message,
+      });
+    }
+  };
   useEffect(() => {
-    const fetchSiteDetails = async () => {
-      dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
-      try {
-        const { data } = await axios.get(
-          `/api/v1/sites-coordinates/site-details/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
-        );
-        const d = data.data;
-        dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
-        setSiteCoords(d.coordinates);
-        setRobots(d.robots);
-        setGateways(d.gateways);
-        setBlocks(d.blockWiseCleaning);
-        setCleaning(d.cleaning || { completed: 0, inprogress: 0, failure: 0 });
-      } catch (e) {
-        dispatch({
-          type: "FETCH_SITE_DETAILS_FAIL",
-          payload: e.response?.data?.message || e.message,
-        });
-      }
-    };
-
     const fetchWeather = async () => {
       dispatch({ type: "FETCH_WEATHER_REQUEST" });
       try {
@@ -2106,7 +2105,7 @@ export default function SiteTechnicianDashboard() {
 
   const weatherType = getWeatherType();
   const date = new Date().toISOString().split("T")[0];
-
+  const isMobile = window.innerWidth < 768;
   return (
     <>
       <style>{CSS}</style>
@@ -2119,7 +2118,7 @@ export default function SiteTechnicianDashboard() {
         }}
       >
         {/* ══ TOP BAR ══ */}
-        <header
+        {/* <header
           style={{
             position: "sticky",
             top: 0,
@@ -2134,17 +2133,7 @@ export default function SiteTechnicianDashboard() {
             borderBottom: `1px solid ${T.border}`,
           }}
         >
-          {/* <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span className="pulse-dot" />
-            <span style={{ fontSize: 13, color: T.textMid }}>
-              Hello,&nbsp;
-              <strong style={{ color: T.text, fontWeight: 600 }}>
-                {userInfo.username}
-              </strong>
-              &nbsp;—&nbsp;
-              <span style={{ color: T.cyan }}>{greeting()}</span>
-            </span>
-          </div> */}
+          
 
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {loadingSiteIds ? (
@@ -2163,8 +2152,136 @@ export default function SiteTechnicianDashboard() {
               </select>
             )}
           </div>
+        </header> */}
+
+        <header
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 200,
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row", // ✅ KEY
+            alignItems: isMobile ? "center" : "center",
+            justifyContent: isMobile ? "center" : "space-between",
+            padding: "8px 12px", // ✅ flexible padding
+            minHeight: 50, // ❌ remove fixed height
+            backdropFilter: "blur(20px)",
+            borderBottom: `1px solid ${T.border}`,
+            rowGap: 6, // ✅ spacing when wrapped
+          }}
+        >
+          <div
+            style={{
+              // display: "flex",
+              // alignItems: "center",
+              // flex: "1 1 200px", // ✅ responsive grow/shrink
+              // minWidth: 0, // ✅ prevents overflow
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isMobile ? "center" : "flex-start", // ✅ center
+              width: "100%",
+              textAlign: isMobile ? "center" : "left", // ✅ important
+            }}
+          >
+            <div
+              style={{
+                fontSize: 13,
+                color: T.textMid,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis", // ✅ truncate long username
+              }}
+            >
+              Hello,&nbsp;
+              <strong style={{ color: T.text, fontWeight: 600 }}>
+                {userInfo.username}
+              </strong>
+              &nbsp;—&nbsp;
+              <span style={{ color: T.cyan }}>{greeting()}</span>
+            </div>
+          </div>
+          <div
+            style={{
+              // display: "flex",
+              // alignItems: "center",
+
+              // gap: 8,
+              // flex: "1 1 200px",
+              // justifyContent: "flex-end",
+              // flexWrap: "wrap", // ✅ wrap on mobile
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isMobile ? "center" : "flex-end", // ✅ center
+              gap: 8,
+              flexWrap: "wrap",
+              width: isMobile ? "100%" : "auto", // ✅ full width for centering
+            }}
+          >
+            {/* <span
+              style={{
+                fontSize: 11,
+                color: T.textDim,
+                textTransform: "uppercase",
+                letterSpacing: ".8px",
+              }}
+            >
+              Site
+            </span> */}
+            <Link
+              to="/site-technician/punch-in-punch-out"
+              style={{
+                padding: "6px 12px",
+                borderRadius: 8,
+                background: "#6366F1",
+                color: "#fff",
+                fontSize: 12,
+                textDecoration: "none",
+              }}
+            >
+              Punch
+            </Link>
+            {loadingSiteIds ? (
+              <Skel h={32} w={120} r={8} />
+            ) : (
+              <select
+                className="site-sel"
+                style={{
+                  maxWidth: isMobile ? "140px" : "180px", // ✅ prevent overflow
+                }}
+                value={site_id}
+                onChange={(e) => setSiteid(e.target.value)}
+              >
+                {siteIds.map((s) => (
+                  <option key={s.site_id} value={s.site_id}>
+                    {s.site_id}
+                  </option>
+                ))}
+              </select>
+            )}
+            <button
+              onClick={fetchSiteDetails}
+              disabled={loadingSiteDetails}
+              style={{
+                background: T.cyanDim,
+                border: `1px solid ${T.border}`,
+                color: T.cyan,
+                borderRadius: 8,
+                padding: "6px 10px",
+                fontSize: 12,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                whiteSpace: "nowrap", // ✅ prevents breaking
+                opacity: loadingSiteDetails ? 0.6 : 1,
+                cursor: loadingSiteDetails ? "not-allowed" : "pointer",
+              }}
+            >
+              {loadingSiteDetails ? "Refreshing..." : "🔄 Refresh"}
+            </button>
+          </div>
         </header>
 
+        {/* ══ MAIN CONTENT ══ */}
         {/* ══ MAIN CONTENT ══ */}
         <main
           style={{
@@ -2177,7 +2294,8 @@ export default function SiteTechnicianDashboard() {
           <section
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
+              // gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: 11,
               marginBottom: 14,
             }}
@@ -2194,7 +2312,7 @@ export default function SiteTechnicianDashboard() {
                   delay={80}
                   right={
                     <Link
-                      to={`/client-admin/site-management/block-management/${site_id}`}
+                      to={`/site-technician/site-management/block-management/${site_id}`}
                       style={{
                         fontSize: 11,
                         color: T.cyan,
@@ -2241,38 +2359,21 @@ export default function SiteTechnicianDashboard() {
                   icon="🧹"
                   delay={0}
                   right={
-                    <>
-                      <Link
-                        to={`/client-admin/cleaning-log-sites/daywise-cleaning/${site_id}/${date}`}
-                        style={{
-                          fontSize: 11,
-                          color: T.cyan,
-                          textDecoration: "none",
-                          padding: "2px 6px",
-                          borderRadius: 6,
-                          border: `1px solid ${T.border}`,
-                          background: T.cyanDim,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Log →
-                      </Link>
-                      <Link
-                        to={`/client-admin/cleaning-log-sites/cleaning-report/${site_id}`}
-                        style={{
-                          fontSize: 11,
-                          color: T.cyan,
-                          textDecoration: "none",
-                          padding: "2px 6px",
-                          borderRadius: 6,
-                          border: `1px solid ${T.border}`,
-                          background: T.cyanDim,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Report →
-                      </Link>
-                    </>
+                    <Link
+                      to={`/site-technician/cleaning-log-sites/${site_id}`}
+                      style={{
+                        fontSize: 11,
+                        color: T.cyan,
+                        textDecoration: "none",
+                        padding: "2px 6px",
+                        borderRadius: 6,
+                        border: `1px solid ${T.border}`,
+                        background: T.cyanDim,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Log →
+                    </Link>
                   }
                 >
                   <div
@@ -2426,71 +2527,6 @@ export default function SiteTechnicianDashboard() {
           </section>
 
           {/* MAP + WEATHER */}
-          {/* <section
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 13,
-              marginBottom: 13,
-            }}
-          >
-            {loadingSiteDetails ? (
-              <CardSkeleton height={416} />
-            ) : (
-              <Card delay={200}>
-                <CardHead
-                  icon="📍"
-                  title="Site Location"
-                  badge={site_id}
-                  right={
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button
-                        onClick={() => setShowMapModal(true)}
-                        style={{
-                          fontSize: 11,
-                          padding: "5px 10px",
-                          borderRadius: 6,
-                          border: "1px solid rgba(56,189,248,.3)",
-                          background: "rgba(56,189,248,.1)",
-                          color: "#38BDF8",
-                          cursor: "pointer",
-                        }}
-                      >
-                        ⛶ Fullscreen
-                      </button>
-                    </div>
-                  }
-                />
-
-                <GatewayMap
-                  gateways={gateways}
-                  authtoken={authtoken}
-                  site_id={site_id}
-                  T={T} // your existing token object
-                  height={360} // optional, defaults to 360
-                  radiusKm={1.5} // optional, defaults to 2
-                />
-              </Card>
-            )}
-
-            {loadingWeatherData ? (
-              <CardSkeleton height={416} />
-            ) : errorWeatherData ? (
-              <Card delay={260}>
-                <CardHead icon="🌤" title="Current Weather" />
-                <ErrorState message="Weather data unavailable. Please contact admin." />
-              </Card>
-            ) : (
-              <Weather
-                weatherType={weatherType} // "sunny"|"rainy"|"cloudy"|"foggy"
-                weatherData={weatherData} // full API response object
-                siteName={weatherData?.siteName}
-                logo={siteDetails.logo}
-              />
-            )}
-          </section> */}
-
-          {/* MAP + WEATHER */}
           <section
             style={{
               display: "grid",
@@ -2556,7 +2592,8 @@ export default function SiteTechnicianDashboard() {
           <section
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              // gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
               gap: 13,
               marginBottom: 13,
             }}
@@ -2613,6 +2650,59 @@ export default function SiteTechnicianDashboard() {
                           <Tooltip content={<PieTip />} />
                         </PieChart>
                       </ResponsiveContainer>
+                      {/* <div
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 7,
+                        }}
+                      >
+                        {blockWiseCleaning.map((b, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: 2,
+                                flexShrink: 0,
+                                background: [
+                                  T.cyan,
+                                  T.green,
+                                  T.purple,
+                                  T.amber,
+                                  "#FF6B35",
+                                ][i % 5],
+                              }}
+                            />
+                            <span
+                              style={{
+                                flex: 1,
+                                fontSize: 12,
+                                color: T.textMid,
+                              }}
+                            >
+                              {b.block}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                // fontFamily: T.mono,
+                                color: T.text,
+                              }}
+                            >
+                              {fmtNum(b.areaCleaned)} m²
+                            </span>
+                          </div>
+                        ))}
+                      </div> */}
                     </div>
                   )}
                 </div>

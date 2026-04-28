@@ -3650,7 +3650,7 @@ const routes = [
   },
 
   {
-    path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/cleaning-report/:site_id",
+    path: "/project-admin/all-site-cleaning-log/cleaning-report/:site_id",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
       <ProjectAdminRoute>
