@@ -83,7 +83,7 @@ const ThermalImageData = () => {
       }
     };
 
-    if (authtoken) fetchSites();
+    fetchSites();
   }, []);
 
   // Fetch Thermal Images

@@ -89,9 +89,10 @@ const Microfiberdata = () => {
       const res = await axios.get(
         `/api/v1/microfiberdata/${userInfo._id}?page=${page}&limit=10`,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 

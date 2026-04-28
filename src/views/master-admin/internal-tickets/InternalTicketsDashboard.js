@@ -91,7 +91,10 @@ const InternalTicketsDashboard = () => {
         const result = await axios.post(
           `/api/v1/internaltickets/get-internaltickets`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(

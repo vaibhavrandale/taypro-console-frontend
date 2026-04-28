@@ -219,9 +219,10 @@ export default function ChatDashboard() {
           "/api/v1/users/get-all-internal-users-without-pg",
 
           {
-            headers: {
-              authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         ); // Replace with your API endpoint
 
@@ -797,8 +798,9 @@ export default function ChatDashboard() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
 

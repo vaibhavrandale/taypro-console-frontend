@@ -154,7 +154,10 @@ const ActivateMds = () => {
       await axios.put(
         "/api/v1/mds-device/activate",
         { deveuiArray: selectedMds.map((mds) => mds.deveui) },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "ACTIVATE_MDS_SUCCESS", payload: selectedMds });

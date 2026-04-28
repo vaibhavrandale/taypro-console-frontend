@@ -106,7 +106,10 @@ const ViewMaterialRequest = () => {
       const res = await axios.put(
         `/api/v1/material-requests/approve/${id}`,
         { remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "APPROVE_SUCCESS" });

@@ -91,9 +91,10 @@ const EmailLogs = () => {
           `/api/v1/email-logs/get-all-email-logs`,
           pagination,
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         );
 

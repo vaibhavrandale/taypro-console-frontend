@@ -69,7 +69,10 @@ const TimerExecutionNotificationView = () => {
         const res = await axios.post(
           "/api/v1/timerexecutionnotifications/get-all",
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         const totalPagesCalc = Math.ceil(

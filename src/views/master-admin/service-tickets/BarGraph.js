@@ -60,7 +60,10 @@ const BarGraph = () => {
         dispatch({ type: "FETCH_SERVICE_TICKET_COUNT_REQUEST" });
         const response = await axios.get(
           `/api/v1/servicetickets/service-ticket-count/${year}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_SERVICE_TICKET_COUNT_SUCCESS",

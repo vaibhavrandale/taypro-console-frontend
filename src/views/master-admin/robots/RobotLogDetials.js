@@ -60,7 +60,7 @@ const RobotLogDetails = () => {
   );
   const [isFetchingSites, setIsFetchingSites] = useState(false);
   useEffect(() => {
-    if (!authtoken) return;
+    // if (!authtoken) return;
 
     let isMounted = true; // avoid state updates after unmount
 
@@ -72,7 +72,10 @@ const RobotLogDetails = () => {
         const sitesResponse = await axios.post(
           "/api/v1/sites/get-sites",
           { pg: 1, limit: 1000 },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         if (!isMounted) return;
@@ -94,7 +97,10 @@ const RobotLogDetails = () => {
           `/api/v1/debuglogs/uplink-summary-count/${
             siteId || "all"
           }/${startDate}/${endDate}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         if (!isMounted) return;

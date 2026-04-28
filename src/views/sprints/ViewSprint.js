@@ -190,9 +190,10 @@ const ViewSprint = () => {
           "/api/v1/users/get-all-internal-users-without-pg",
 
           {
-            headers: {
-              authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         ); // Replace with your API endpoint
 
@@ -238,7 +239,10 @@ const ViewSprint = () => {
       const response = await axios.put(
         `/api/v1/sprint-tracking/update-sprint/${selectedTask._id}/${sprint._id}`,
         { progress, status: status, remarks: remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "PROGRESS_UPDATE_SUCCESS", successProgress: true });
       toast.success(response.data.message);
@@ -265,7 +269,10 @@ const ViewSprint = () => {
           title: title,
           description: description,
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "TASK_UPDATE_SUCCESS", successTask: true });
       toast.success(response.data.message);
@@ -305,7 +312,10 @@ const ViewSprint = () => {
           remarks: Addremark,
           github_pull_request: "",
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       console.log(data);
       dispatch({

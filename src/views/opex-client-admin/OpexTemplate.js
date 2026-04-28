@@ -206,7 +206,10 @@ const OpexTemplate = () => {
       const response = await axios.put(
         `/api/v1/opex/client-verify-cycle/${opexData._id}/${cycleId}`,
         {}, // Empty payload as per your API
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({

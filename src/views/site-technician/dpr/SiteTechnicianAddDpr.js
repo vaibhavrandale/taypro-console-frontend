@@ -638,7 +638,10 @@ const SiteTechnicianAddDpr = () => {
       const result = await axios.post(
         "/api/v1/openai/summarize",
         { text },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       const improved = result.data?.summarizedText;
       if (improved) {

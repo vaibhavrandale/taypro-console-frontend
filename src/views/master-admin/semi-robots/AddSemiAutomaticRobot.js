@@ -100,7 +100,10 @@ const AddSemiAutomaticRobot = () => {
       const response = await axios.post(
         "/api/v1/robots/create-semi-automatic-robot",
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);

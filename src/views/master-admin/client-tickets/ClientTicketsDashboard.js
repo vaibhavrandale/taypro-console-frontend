@@ -108,7 +108,10 @@ const ClientTicketsDashboard = () => {
         const result = await axios.post(
           `/api/v1/clienttickets/get-all`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         // Handle totalPages, hasNextPage, and hasPrevPage logic

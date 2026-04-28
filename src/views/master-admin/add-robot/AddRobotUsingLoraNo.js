@@ -153,7 +153,10 @@ const AddRobotUsingLoraNo = () => {
         const result = await axios.post(
           `/api/v1/robots/get-robots`,
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -211,7 +214,10 @@ const AddRobotUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/robots",
         { ...formData, robot_type: "Automatic", block: "Block-1" },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       toast.success(`Robot ${formData.robot_no} added successfully!`);
       dispatch({
@@ -242,7 +248,10 @@ const AddRobotUsingLoraNo = () => {
       const response = await axios.post(
         "/api/v1/robots/create-robot-using-manual-data",
         manualRRobotData,
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);
       dispatch({

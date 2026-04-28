@@ -92,9 +92,10 @@ const CreateSprint = () => {
           "/api/v1/users/get-all-internal-users-without-pg",
 
           {
-            headers: {
-              authorization: `Bearer ${authtoken}`,
-            },
+            // headers: {
+            //   authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
           },
         ); // Replace with your API endpoint
 

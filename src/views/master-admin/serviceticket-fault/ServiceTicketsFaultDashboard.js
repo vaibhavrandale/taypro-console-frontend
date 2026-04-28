@@ -97,7 +97,10 @@ const ServiceTicketsFaultDashboard = () => {
         const result = await axios.post(
           `/api/v1/serviceticketsfaults/get-serviceticketsfaults`,
           { pg: page, limit: limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         dispatch({
