@@ -69,7 +69,7 @@ const reducer = (state, action) => {
 const ClientRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [siteRobots, setSiteRobots] = useState([]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   let start = "C1";
   let stop = "CC";
@@ -92,7 +92,8 @@ const ClientRobotOperating = () => {
         const response = await axios.get(
           `/api/v1/robots/site/${site_id}/${block}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         // robots/site/taypro_office/Block-1/
@@ -124,7 +125,7 @@ const ClientRobotOperating = () => {
     };
 
     getRobots();
-  }, [block, site_id, authtoken]);
+  }, [block, site_id]);
 
   // ✅ Ensure robots exist before filtering
   const Robotdata =
@@ -153,7 +154,8 @@ const ClientRobotOperating = () => {
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success(data.data.message);
@@ -187,7 +189,8 @@ const ClientRobotOperating = () => {
         "/api/v1/robots/multicast-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

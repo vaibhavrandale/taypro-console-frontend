@@ -32,7 +32,7 @@ const reducer = (state, action) => {
 };
 const ViewGateway = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [{ gateway, error, loading }, dispatch] = useReducer(reducer, {
     gateway: {},
@@ -46,7 +46,8 @@ const ViewGateway = () => {
 
       try {
         const res = await axios.get(`/api/v1/gateways/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         console.log(res.data.data);
         dispatch({
@@ -63,7 +64,7 @@ const ViewGateway = () => {
     };
 
     fetchGateway();
-  }, [authtoken, id]);
+  }, [id]);
 
   return (
     <div>

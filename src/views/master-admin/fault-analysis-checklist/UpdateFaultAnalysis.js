@@ -52,7 +52,7 @@ const UpdateFaultAnalysisChecklist = () => {
 
   const [checklistId, setChecklistId] = useState(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const navigate = useNavigate();
 
@@ -61,7 +61,8 @@ const UpdateFaultAnalysisChecklist = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const { data } = await axios.get(`/api/v1/faultanalysis/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         const checklist = data.data[0]; // get first match
         setChecklistId(checklist._id);
@@ -77,7 +78,7 @@ const UpdateFaultAnalysisChecklist = () => {
     };
 
     fetchChecklist();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleFieldChange = (index, key, value) => {
     const updated = [...formData.checklist_fields];
@@ -109,7 +110,7 @@ const UpdateFaultAnalysisChecklist = () => {
 
   const deleteRow = (index) => {
     const updatedFields = formData.checklist_fields.filter(
-      (_, i) => i !== index
+      (_, i) => i !== index,
     );
     setFormData({ ...formData, checklist_fields: updatedFields });
   };
@@ -122,8 +123,9 @@ const UpdateFaultAnalysisChecklist = () => {
         `/api/v1/faultanalysis/${checklistId}`,
         { checklist_fields: formData.checklist_fields },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SUBMIT_SUCCESS" });
       toast.success("Checklist updated successfully");

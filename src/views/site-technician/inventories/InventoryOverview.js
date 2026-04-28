@@ -25,7 +25,7 @@ const InventoryOverview = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -34,8 +34,9 @@ const InventoryOverview = () => {
         const response = await axios.get(
           "/api/v1/service-inventory/site-wise-inventory",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -51,7 +52,7 @@ const InventoryOverview = () => {
     };
 
     fetchInventory();
-  }, [authtoken]);
+  }, []);
 
   const chartColors = [
     "#FF5733",
@@ -91,7 +92,7 @@ const InventoryOverview = () => {
         inventoryData.map((site, index) => {
           const itemLabels = site.items.map(
             (item) =>
-              `${item.item_name} | Qty: ${item.quantity} | Thresh: ${item.threshold}`
+              `${item.item_name} | Qty: ${item.quantity} | Thresh: ${item.threshold}`,
           );
           const itemValues = site.items.map((item) => item.quantity);
 
@@ -114,7 +115,7 @@ const InventoryOverview = () => {
                             data: itemValues,
                             backgroundColor: chartColors.slice(
                               0,
-                              itemLabels.length
+                              itemLabels.length,
                             ),
                           },
                         ],

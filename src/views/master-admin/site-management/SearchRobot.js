@@ -41,7 +41,7 @@ const SearchRobot = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,8 +56,9 @@ const SearchRobot = () => {
           `/api/v1/robots/get-robots-no`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -74,14 +75,14 @@ const SearchRobot = () => {
     };
 
     fetchRobots();
-  }, [authtoken]);
+  }, []);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {

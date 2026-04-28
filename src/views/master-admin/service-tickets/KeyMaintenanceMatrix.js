@@ -100,7 +100,7 @@ const KeyMaintenanceMatrix = () => {
     hasPrevPage: false,
     siteIds: [],
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -140,11 +140,12 @@ const KeyMaintenanceMatrix = () => {
           `/api/v1/servicetickets/service-ticket-parameters`,
           data,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
 
         dispatch({
@@ -165,7 +166,7 @@ const KeyMaintenanceMatrix = () => {
         });
         toast.error(
           error.response?.data?.error ||
-            "Failed to fetch Key Maintenance Matrices"
+            "Failed to fetch Key Maintenance Matrices",
         );
       }
     };
@@ -174,7 +175,8 @@ const KeyMaintenanceMatrix = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -190,12 +192,12 @@ const KeyMaintenanceMatrix = () => {
     };
     fetchParameters();
     fetchSiteIds();
-  }, [authtoken, limit, page, site_id]);
+  }, [limit, page, site_id]);
 
   const filteredProjectDocs = parameters.filter(
     (doc) =>
       doc.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.robot_no.toLowerCase().includes(searchTerm.toLowerCase())
+      doc.robot_no.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {
@@ -219,7 +221,7 @@ const KeyMaintenanceMatrix = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -247,7 +249,7 @@ const KeyMaintenanceMatrix = () => {
         "MTTR (Average Time to Repair)": item.mttr,
         "Failure Rate info": item.failure_rate_info,
         Reliability: item.reliability,
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Maintenance Matrix");

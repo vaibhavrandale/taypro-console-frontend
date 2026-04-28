@@ -96,7 +96,7 @@ const RobotRow = ({ robot, index }) => {
   const [selectedRobotNo, setSelectedRobotNo] = useState(null);
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const oneWayDistance = robot.row_length || 0;
@@ -165,7 +165,7 @@ const RobotRow = ({ robot, index }) => {
           setAtDS(true);
           setDistance(0);
           setTotalCovered(
-            Math.round(robot.calculated_distance || oneWayDistance * 2)
+            Math.round(robot.calculated_distance || oneWayDistance * 2),
           );
           setIsStuckNow(false);
           setStuckLocation("");
@@ -184,7 +184,7 @@ const RobotRow = ({ robot, index }) => {
           setAtDS(true);
           setDistance(0);
           setTotalCovered(
-            Math.round(robot.calculated_distance || oneWayDistance * 2)
+            Math.round(robot.calculated_distance || oneWayDistance * 2),
           );
           setIsStuckNow(false);
           setStuckLocation("");
@@ -205,14 +205,14 @@ const RobotRow = ({ robot, index }) => {
 
         const cancelledDistanceCovered = Math.min(
           cancelledTime * speedInMetersPerSecond, // ✅ correct conversion
-          oneWayDistance * 2
+          oneWayDistance * 2,
         );
 
         // Work out location text
         let cancelledLocation;
         if (cancelledDistanceCovered < oneWayDistance) {
           cancelledLocation = `At ${Math.round(
-            cancelledDistanceCovered
+            cancelledDistanceCovered,
           )} m from DS`;
         } else if (cancelledDistanceCovered === oneWayDistance) {
           cancelledLocation = "At RS";
@@ -255,7 +255,7 @@ const RobotRow = ({ robot, index }) => {
 
       const liveDistanceCovered = Math.min(
         elapsedTime * speedInMetersPerSecond, // ✅ correct conversion
-        oneWayDistance * 2
+        oneWayDistance * 2,
       );
       let currentLocation;
       if (liveDistanceCovered < oneWayDistance) {
@@ -282,7 +282,7 @@ const RobotRow = ({ robot, index }) => {
           new Date(robot.calculated_finish_timestamp).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-          })
+          }),
         );
       }
     };
@@ -299,19 +299,19 @@ const RobotRow = ({ robot, index }) => {
 
   const percent = Math.min(
     100,
-    Math.max(0, (distance / robot.row_length) * 100)
+    Math.max(0, (distance / robot.row_length) * 100),
   );
 
   const isRunning = !atDS && !isStuckNow && !isCancelledNow;
   const robotColor = isStuckNow
     ? "#FF0000" // Red for stuck
     : atDS
-    ? "#4CAF50" // Green for at DS
-    : isRunning
-    ? "#FFA000" // Orange for running
-    : isCancelledNow
-    ? "#ff0000ab" // crimson for cleaning cancelled
-    : "#0D47A1"; // Blue for default
+      ? "#4CAF50" // Green for at DS
+      : isRunning
+        ? "#FFA000" // Orange for running
+        : isCancelledNow
+          ? "#ff0000ab" // crimson for cleaning cancelled
+          : "#0D47A1"; // Blue for default
 
   const handleRobotClick = async (robot_no) => {
     setSelectedRobotNo(robot_no);
@@ -321,8 +321,9 @@ const RobotRow = ({ robot, index }) => {
       const response = await axios.get(
         `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: response.data.data });
     } catch (error) {
@@ -349,7 +350,8 @@ const RobotRow = ({ robot, index }) => {
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success(data.data.message);
@@ -654,10 +656,10 @@ const RobotRow = ({ robot, index }) => {
                         const d = new Date(robotDetails.manufactured_date);
                         return `${String(d.getDate()).padStart(
                           2,
-                          "0"
+                          "0",
                         )}-${String(d.getMonth() + 1).padStart(
                           2,
-                          "0"
+                          "0",
                         )}-${d.getFullYear()}`;
                       })()
                     : "N/A",
@@ -714,7 +716,7 @@ const RobotPosition = () => {
     subscriptionStatus: "",
     subscriptiondata: {},
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [site_id, setSiteId] = useState("all");
 
   useEffect(() => {
@@ -726,8 +728,9 @@ const RobotPosition = () => {
         const result = await axios.get(
           `/api/v1/robotpositiontracker/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -742,7 +745,7 @@ const RobotPosition = () => {
           subscriptionStatus: error.response?.data.subscriptionStatus,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -756,14 +759,15 @@ const RobotPosition = () => {
     return () => {
       clearInterval(intervalId); // cleanup on unmount
     };
-  }, [authtoken, site_id]); // 🔁 include `site_id` if it can change
+  }, [site_id]); // 🔁 include `site_id` if it can change
 
   useEffect(() => {
     const fetchSites = async () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -779,7 +783,7 @@ const RobotPosition = () => {
     };
 
     fetchSites();
-  }, [authtoken]);
+  }, []);
   // 🔁 include `site_id` if it can change
   const handleSiteNameChange = (e) => {
     const selectedSiteId = e.target.value;

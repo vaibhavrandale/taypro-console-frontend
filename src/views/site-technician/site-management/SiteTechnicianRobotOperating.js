@@ -78,7 +78,7 @@
 // const SiteTechnicianRobotOperating = () => {
 //   const { site_id, block, robot_no } = useParams();
 //   const [siteRobots, setSiteRobots] = useState([]);
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 
 //   let start = "C1";
 //   let stop = "CC";
@@ -105,7 +105,8 @@
 //         const response = await axios.get(
 //           `/api/v1/robots/site/${site_id}/${block}`,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         const robotsData = response.data.data; // Ensure correct data access
@@ -141,7 +142,8 @@
 //         const response = await axios.get(
 //           `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 
@@ -157,7 +159,7 @@
 //     };
 //     getRobots();
 //     getRobot();
-//   }, [block, site_id, authtoken, robot_no]);
+//   }, [block, site_id,, robot_no]);
 
 //   // ✅ Ensure robots exist before filtering
 //   const Robotdata =
@@ -186,7 +188,8 @@
 //     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
 //     try {
 //       const data = await axios.post("/api/v1/robots/downlink", robotdownlink, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 
 //       toast.success(data.data.message);
@@ -220,7 +223,8 @@
 //         "/api/v1/robots/multicast-downlink",
 //         robotdownlink,
 //         {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+// headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         }
 //       );
 
@@ -626,7 +630,7 @@ const reducer = (state, action) => {
 const SiteTechnicianRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [siteRobots, setSiteRobots] = useState([]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   let start = "11";
@@ -673,7 +677,8 @@ const SiteTechnicianRobotOperating = () => {
         const response = await axios.get(
           `/api/v1/robots/site/${site_id}/${block}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         const robotsData = response.data.data; // Ensure correct data access
@@ -709,7 +714,8 @@ const SiteTechnicianRobotOperating = () => {
         const response = await axios.get(
           `/api/v1/robots/get-robot-using-robot-no/${robot_no}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -725,7 +731,7 @@ const SiteTechnicianRobotOperating = () => {
     };
     getRobots();
     getRobot();
-  }, [block, site_id, authtoken, robot_no]);
+  }, [block, site_id, , robot_no]);
 
   // ✅ Ensure robots exist before filtering
   // const Robotdata =
@@ -762,7 +768,8 @@ const SiteTechnicianRobotOperating = () => {
           lora_no: robot.lora_no,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -798,7 +805,8 @@ const SiteTechnicianRobotOperating = () => {
         "/api/v1/robots/send-mqtt-multicast-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

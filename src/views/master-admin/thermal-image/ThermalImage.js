@@ -67,14 +67,15 @@ const reducer = (state, action) => {
 const ThermalImageData = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [siteId, setSiteId] = useState("all");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   // Fetch Site List
   useEffect(() => {
     const fetchSites = async () => {
       try {
         const res = await axios.get("/api/v1/sites", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "SET_SITES", payload: res.data.data });
       } catch (error) {
@@ -83,7 +84,7 @@ const ThermalImageData = () => {
     };
 
     if (authtoken) fetchSites();
-  }, [authtoken]);
+  }, []);
 
   // Fetch Thermal Images
   useEffect(() => {
@@ -93,8 +94,9 @@ const ThermalImageData = () => {
         const res = await axios.get(
           `/api/v1/thermalimages/get-by-siteid/${siteId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
       } catch (error) {
@@ -107,7 +109,7 @@ const ThermalImageData = () => {
     };
 
     fetchImages();
-  }, [authtoken, siteId]);
+  }, [siteId]);
 
   const filteredData = state.thermalImages.filter(
     (item) =>
@@ -115,7 +117,7 @@ const ThermalImageData = () => {
       item.device_id.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
       item.thermal_image_id
         .toLowerCase()
-        .includes(state.searchTerm.toLowerCase())
+        .includes(state.searchTerm.toLowerCase()),
   );
 
   return (

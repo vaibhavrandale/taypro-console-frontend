@@ -69,7 +69,7 @@ const FaultAnalysisChecklist = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
@@ -89,12 +89,13 @@ const FaultAnalysisChecklist = () => {
           `/api/v1/service-items/get-service-items`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -126,8 +127,9 @@ const FaultAnalysisChecklist = () => {
         const { data } = await axios.get(
           `/api/v1/faultanalysis/all-components`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         const ids = data.data.map((checklist) => checklist.component._id);
         console.log(ids);
@@ -138,13 +140,13 @@ const FaultAnalysisChecklist = () => {
     };
 
     fetchChecklistComponentIds();
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
     (serviceItem) =>
       serviceItem.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      serviceItem.item_code.toLowerCase().includes(searchTerm.toLowerCase())
+      serviceItem.item_code.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {
@@ -250,7 +252,7 @@ const FaultAnalysisChecklist = () => {
                 <CTableDataCell>{serviceItem.item_description}</CTableDataCell>
                 <CTableDataCell>
                   {!existingChecklistItemIds.includes(
-                    String(serviceItem._id)
+                    String(serviceItem._id),
                   ) && (
                     <Link
                       className="btn btn-sm btn-secondary m-1"
@@ -263,7 +265,7 @@ const FaultAnalysisChecklist = () => {
                   )}
 
                   {existingChecklistItemIds.includes(
-                    String(serviceItem._id)
+                    String(serviceItem._id),
                   ) && (
                     <Link
                       className="btn btn-sm btn-warning m-1"

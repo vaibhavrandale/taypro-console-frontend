@@ -55,12 +55,12 @@ const UpdateRobotTracking = () => {
       fetchloading: true,
       updateloading: false,
       error: "",
-    }
+    },
   );
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   // Local state
   const [formData, setFormData] = useState({
@@ -140,7 +140,8 @@ const UpdateRobotTracking = () => {
 
       try {
         const response = await axios.get(`/api/v1/robot-tracking/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -170,7 +171,7 @@ const UpdateRobotTracking = () => {
     };
 
     fetchRobot();
-  }, [id, authtoken]);
+  }, [id]);
 
   // Handlers
   const handleChange = (e) => {
@@ -200,7 +201,7 @@ const UpdateRobotTracking = () => {
     setFormData({
       ...formData,
       last_activity: formData.last_activity.map((a, index) =>
-        index === i ? { ...a, [field]: value } : a
+        index === i ? { ...a, [field]: value } : a,
       ),
     });
 
@@ -230,7 +231,8 @@ const UpdateRobotTracking = () => {
       }));
 
       await axios.put(`/api/v1/robot-tracking/${id}`, cleanFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -346,7 +348,7 @@ const UpdateRobotTracking = () => {
                               <CFormInput
                                 type="datetime-local"
                                 value={convertISOtoLocalInput(
-                                  formData.cleaning[key]
+                                  formData.cleaning[key],
                                 )}
                                 onChange={(e) =>
                                   handleCleaningChange(key, e.target.value)
@@ -410,7 +412,7 @@ const UpdateRobotTracking = () => {
                         onChange={(e) =>
                           handleUplinkChange(
                             "timestamp",
-                            new Date(e.target.value)
+                            new Date(e.target.value),
                           )
                         }
                       />
@@ -444,7 +446,7 @@ const UpdateRobotTracking = () => {
                                     handleTrackChange(
                                       i,
                                       "point",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -458,7 +460,7 @@ const UpdateRobotTracking = () => {
                                     handleTrackChange(
                                       i,
                                       "timestamp",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -471,7 +473,7 @@ const UpdateRobotTracking = () => {
                                     handleTrackChange(
                                       i,
                                       "reached_to_next_point",
-                                      e.target.checked
+                                      e.target.checked,
                                     )
                                   }
                                 />
@@ -485,7 +487,7 @@ const UpdateRobotTracking = () => {
                                     handleTrackChange(
                                       i,
                                       "next_point",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -522,7 +524,7 @@ const UpdateRobotTracking = () => {
                                     handleActivityChange(
                                       i,
                                       "data",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -535,7 +537,7 @@ const UpdateRobotTracking = () => {
                                     handleActivityChange(
                                       i,
                                       "topic",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -548,7 +550,7 @@ const UpdateRobotTracking = () => {
                                     handleActivityChange(
                                       i,
                                       "details",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />
@@ -562,7 +564,7 @@ const UpdateRobotTracking = () => {
                                     handleActivityChange(
                                       i,
                                       "timestamp",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                 />

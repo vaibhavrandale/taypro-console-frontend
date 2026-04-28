@@ -79,14 +79,15 @@ const SiteTechnicianTimers = () => {
   const [site_id, setSiteId] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -111,11 +112,12 @@ const SiteTechnicianTimers = () => {
         };
 
         const result = await axios.post(`/api/v1/robots/get-timer`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -139,7 +141,7 @@ const SiteTechnicianTimers = () => {
     };
     fetchSiteIds();
     fetchAllTimers();
-  }, [authtoken, limit, page, site_id]);
+  }, [limit, page, site_id]);
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -167,7 +169,7 @@ const SiteTechnicianTimers = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -285,7 +287,7 @@ const SiteTechnicianTimers = () => {
                         </Link>
                       </CTableDataCell>
                     </CTableRow>
-                  ))
+                  )),
                 )
               ) : (
                 <CTableRow>

@@ -48,7 +48,7 @@ const RobotSidebar = ({
     robot.createdAt, // ✅ Pass createdAt to check if document is from today
   );
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [commandButton, setCommandButton] = useState(null);
 
   // Command codes
@@ -70,7 +70,8 @@ const RobotSidebar = ({
           lora_no: robot.lora_no,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

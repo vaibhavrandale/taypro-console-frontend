@@ -71,7 +71,7 @@ const reducer = (state, action) => {
 ══════════════════════════════════════════════════════════════ */
 export default function GatewayMap({
   gateways = [],
-  authtoken,
+
   site_id,
   T: tokens,
   height = 360,
@@ -111,7 +111,8 @@ export default function GatewayMap({
       const res = await axios.get(
         `/api/v1/robot-locations/only-locations/${site_id}`,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
       console.log(res.data.data);
@@ -122,7 +123,7 @@ export default function GatewayMap({
         payload: e.response?.data?.message || e.message,
       });
     }
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   useEffect(() => {
     fetchRobots();
@@ -313,7 +314,9 @@ export default function GatewayMap({
           <span style="color:#8899bb">DevEUI:</span> ${robot?.deveui ?? "—"}<br/>
           <span style="color:#8899bb">LoRa No:</span> ${robot?.lora_no ?? "—"}<br/>
           <span style="color:#8899bb">Last Gateway:</span>
-          <span style="color:${gwColor}">${gwName}</span>
+          <span style="color:${gwColor}">${gwName}</span><br/>
+           <span style="color:#8899bb">Open in map: </span>
+           <span ><a href="https://www.google.com/maps?q=${lat},${lng}" target="blank">View</a> </span>
         </div>`,
         { closeButton: false, className: "gw-popup" },
       );

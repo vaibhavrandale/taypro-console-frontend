@@ -54,7 +54,7 @@ const CreateExpense = () => {
   const userInfo = useSelector((state) => state.userInfo);
 
   const [visible, setVisible] = useState(false);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   let adminroute = "";
 
   if (userInfo?.role === "Master Admin") {
@@ -245,8 +245,9 @@ const CreateExpense = () => {
               {
                 headers: {
                   "Content-Type": "multipart/form-data",
-                  Authorization: `Bearer ${authtoken}`,
+                  // Authorization: `Bearer ${authtoken}`,
                 },
+                withCredentials: true,
               },
             );
             item.file = data.url; // assume server returns { url: "..." }
@@ -301,8 +302,9 @@ const CreateExpense = () => {
       const { data } = await axios.post("/api/v1/expenseclaims", payload, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authtoken}`,
+          // Authorization: `Bearer ${authtoken}`,
         },
+        withCredentials: true,
       });
       console.log(data);
 

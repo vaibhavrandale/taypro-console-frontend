@@ -82,7 +82,7 @@ const reducer = (state, action) => {
         ...state,
         updatingLora: false,
         lora_configuration: state.lora_configuration.map((config) =>
-          config.deveui === action.payload.deveui ? action.payload : config
+          config.deveui === action.payload.deveui ? action.payload : config,
         ),
       };
 
@@ -119,7 +119,7 @@ const LoraConfiguration = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -146,12 +146,13 @@ const LoraConfiguration = () => {
           `/api/v1/loraconfigurations/get-loraconfigurations`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -178,7 +179,8 @@ const LoraConfiguration = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -195,7 +197,7 @@ const LoraConfiguration = () => {
 
     fetchloraconfigurations();
     fetchSites();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Open Modal and Set Selected Item Data
   const openModal = (item) => {
@@ -228,8 +230,9 @@ const LoraConfiguration = () => {
         "/api/v1/loraconfigurations",
         deveuiObj,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       toast.success(response.data.message);
@@ -266,8 +269,9 @@ const LoraConfiguration = () => {
         `/api/v1/loraconfigurations/${formData._id}`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -276,7 +280,7 @@ const LoraConfiguration = () => {
       });
 
       toast.success(
-        `${filteredFormData.serial} Lora Configuration updated successfully!`
+        `${filteredFormData.serial} Lora Configuration updated successfully!`,
       );
       setModalVisible(false);
     } catch (error) {
@@ -302,7 +306,7 @@ const LoraConfiguration = () => {
 
   const uniqueSitenames = sites.filter(
     (value, index, self) =>
-      index === self.findIndex((t) => t.site_id === value.site_id)
+      index === self.findIndex((t) => t.site_id === value.site_id),
   );
 
   const handlePageInputChange = (e) => {
@@ -456,8 +460,8 @@ const LoraConfiguration = () => {
                       item.status === "available"
                         ? "warning"
                         : item.status === "in-use"
-                        ? "success"
-                        : "danger"
+                          ? "success"
+                          : "danger"
                     }
                   >
                     {" "}
@@ -514,9 +518,8 @@ const LoraConfiguration = () => {
                     ) : (
                       <span className="badge bg-success">
                         {new Date(
-                          item.last_activity[
-                            item.last_activity.length - 1
-                          ].timestamp
+                          item.last_activity[item.last_activity.length - 1]
+                            .timestamp,
                         ).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "long",

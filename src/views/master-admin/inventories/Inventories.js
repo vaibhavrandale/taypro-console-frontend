@@ -137,7 +137,7 @@ const Inventories = () => {
     hasPrevPage: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -170,12 +170,13 @@ const Inventories = () => {
           `/api/v1/service-inventory/get-inventory`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -202,7 +203,8 @@ const Inventories = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -223,7 +225,7 @@ const Inventories = () => {
       fetchInventories();
     }
     fetchSites();
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
   const filteredInventories = inventories.filter((inventory) => {
     // Apply site filter first
     if (siteId !== "all" && inventory.site_id !== siteId) {
@@ -271,12 +273,13 @@ const Inventories = () => {
     }
     if (
       window.confirm(
-        `Are you sure you want to delete Inventory item - ${inventory.item_name}`
+        `Are you sure you want to delete Inventory item - ${inventory.item_name}`,
       )
     ) {
       try {
         await axios.delete(`/api/v1/service-inventory/${inventory._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         toast.success("Service Inventory deleted successfully");
@@ -303,7 +306,7 @@ const Inventories = () => {
         "Site Id": item.site_id,
         Quantity: item.quantity,
         Threshold: item.threshold,
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Service Inventories");
@@ -451,7 +454,7 @@ const Inventories = () => {
                   </Link>
 
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <Link
                       color="danger"
@@ -566,7 +569,7 @@ const ServiceItems = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -595,12 +598,13 @@ const ServiceItems = () => {
           `/api/v1/service-items/get-service-items`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -627,13 +631,13 @@ const ServiceItems = () => {
     } else {
       fetchServiceItems();
     }
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
     (serviceItem) =>
       serviceItem.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      serviceItem.item_code.toLowerCase().includes(searchTerm.toLowerCase())
+      serviceItem.item_code.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Open modal and load items data
@@ -667,12 +671,13 @@ const ServiceItems = () => {
     }
     if (
       window.confirm(
-        `Are you sure you want to delete Service item - ${serviceItem.item_name}`
+        `Are you sure you want to delete Service item - ${serviceItem.item_name}`,
       )
     ) {
       try {
         await axios.delete(`/api/v1/service-items/${serviceItem._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         toast.success("Service Item deleted successfully");
@@ -698,7 +703,7 @@ const ServiceItems = () => {
         "Item Code": item.item_code,
         "Item Description": item.item_description,
         "Item Image": "View Image",
-      }))
+      })),
     );
 
     // Get the range of the worksheet
@@ -852,7 +857,7 @@ const ServiceItems = () => {
 
                   {/* Hide Update button for Master User, Project User, Service User */}
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <Link
                       className="btn btn-sm btn-warning m-1"
@@ -864,7 +869,7 @@ const ServiceItems = () => {
 
                   {/* Hide Delete button for Master User, Project User, Service User */}
                   {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
+                    userInfo?.role,
                   ) && (
                     <Link
                       color="danger"

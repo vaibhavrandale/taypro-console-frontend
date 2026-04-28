@@ -92,7 +92,7 @@ const InActiveRobots = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,11 +104,12 @@ const InActiveRobots = () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.post(`/api/v1/robots/inactive`, pagination, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -129,13 +130,13 @@ const InActiveRobots = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter active robots
 
@@ -144,7 +145,10 @@ const InActiveRobots = () => {
     (robot) =>
       robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
       robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.lora_no?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      robot.lora_no
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   // Open modal with selected robot data
@@ -182,8 +186,9 @@ const InActiveRobots = () => {
         `/api/v1/robots/activate-and-add-in-lns`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -247,7 +252,7 @@ const InActiveRobots = () => {
       <div className="d-flex justify-content-between align-items-center">
         <h2>All InActive Robots</h2>
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             className="btn btn-sm btn-danger text-white"
@@ -281,7 +286,7 @@ const InActiveRobots = () => {
 
             {/* Hide Action column for restricted users */}
             {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role
+              userInfo?.role,
             ) && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
@@ -309,7 +314,7 @@ const InActiveRobots = () => {
                   )}
                 </CTableDataCell>
                 {!["Master User", "Project User", "Service User"].includes(
-                  userInfo?.role
+                  userInfo?.role,
                 ) && (
                   <CTableDataCell>
                     <CButton

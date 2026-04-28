@@ -51,7 +51,7 @@ const SubscriptionDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { loading, error, subscriptions } = state;
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const userInfo = useSelector((state) => state.userInfo);
@@ -80,7 +80,8 @@ const SubscriptionDashboard = () => {
       try {
         const response = await axios.get(`/api/v1/client-subscription`, {
           pagination,
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const total = Math.ceil(Number(response?.data?.total) / Number(limit));
@@ -113,7 +114,7 @@ const SubscriptionDashboard = () => {
       }
     };
     fetchSubscriptions();
-  }, [authtoken, page, limit]);
+  }, [page, limit]);
 
   // Filter table rows based on search term
   const filteredData = subscriptions.filter(

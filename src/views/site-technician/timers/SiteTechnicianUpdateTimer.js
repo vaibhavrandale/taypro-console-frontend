@@ -40,7 +40,7 @@
 //   });
 
 //   const { block, site_id } = useParams();
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const navigate = useNavigate();
 
 //   const [timerData, setTimerData] = useState({
@@ -60,7 +60,8 @@
 //         const { data } = await axios.get(
 //           `/api/v1/robots/get-timer-by-siteid-block/${block}/${site_id}`,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           },
 //         );
 
@@ -86,7 +87,7 @@
 //     };
 
 //     fetchTimer();
-//   }, [block, site_id, authtoken]);
+//   }, [block, site_id]);
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
@@ -106,7 +107,8 @@
 //         `/api/v1/robots/update-timer-blockwise/${block}/${site_id}`,
 //         timerData,
 //         {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         },
 //       );
 
@@ -286,7 +288,7 @@ const SiteTechnicianUpdateTimer = () => {
   });
 
   const { block, site_id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   const [showModal, setShowModal] = useState(false);
@@ -307,7 +309,8 @@ const SiteTechnicianUpdateTimer = () => {
         const { data } = await axios.get(
           `/api/v1/robots/get-timer-by-siteid-block/${block}/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -333,7 +336,7 @@ const SiteTechnicianUpdateTimer = () => {
     };
 
     fetchTimer();
-  }, [block, site_id, authtoken]);
+  }, [block, site_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -362,7 +365,8 @@ const SiteTechnicianUpdateTimer = () => {
         `/api/v1/robots/update-timer-blockwise/${block}/${site_id}`,
         timerData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

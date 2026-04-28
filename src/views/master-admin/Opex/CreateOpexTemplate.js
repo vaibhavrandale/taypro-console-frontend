@@ -46,7 +46,7 @@ const reducer = (state, action) => {
 const OpexTemplateCreate = () => {
   const navigate = useNavigate();
   const { site_id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -108,7 +108,7 @@ const OpexTemplateCreate = () => {
               block_no: `Block-${currentBlocks + i + 1}`,
               no_of_robots: "",
               no_of_manpower: "",
-            })
+            }),
           );
           newData.blocks_data = [...prev.blocks_data, ...newBlocks];
         } else if (blockCount < currentBlocks) {
@@ -139,7 +139,7 @@ const OpexTemplateCreate = () => {
           acc.manpower += parseInt(block.no_of_manpower || 0);
           return acc;
         },
-        { robots: 0, manpower: 0 }
+        { robots: 0, manpower: 0 },
       );
 
       setFormData((prev) => ({
@@ -159,9 +159,10 @@ const OpexTemplateCreate = () => {
     try {
       const response = await axios.post("/api/v1/opex", formData, {
         headers: {
-          Authorization: `Bearer ${authtoken}`,
+          // Authorization: `Bearer ${authtoken}`,
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       });
       console.log(response.data.message);
 
@@ -332,7 +333,7 @@ const OpexTemplateCreate = () => {
                             handleBlockChange(
                               index,
                               "no_of_robots",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           required
@@ -347,7 +348,7 @@ const OpexTemplateCreate = () => {
                             handleBlockChange(
                               index,
                               "no_of_manpower",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           required

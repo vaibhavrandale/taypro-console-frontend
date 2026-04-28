@@ -49,7 +49,7 @@ const MdsLog = () => {
     // sitesError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const today = new Date().toISOString().split("T")[0];
   const { site_id } = useParams();
   const [fromDate, setFromDate] = useState(today);
@@ -59,7 +59,8 @@ const MdsLog = () => {
   //       dispatch({ type: "FETCH_SITES_REQUEST" });
   //       try {
   //         const res = await axios.get(`/api/v1/sites`, {
-  //           headers: { Authorization: `Bearer ${authtoken}` },
+  //           // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //         });
 
   //         const siteData = res.data.data || [];
@@ -77,7 +78,8 @@ const MdsLog = () => {
   //       }
   //     };
   //     fetchSites();
-  //   }, [authtoken]);
+  //   }, []
+  // );
   useEffect(() => {
     // if (!site_id) return;
     // if (site_id) {
@@ -92,7 +94,8 @@ const MdsLog = () => {
             toDate,
           },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -113,7 +116,7 @@ const MdsLog = () => {
     };
     fetchMdsLgs();
     // }
-  }, [authtoken, fromDate, site_id, toDate]);
+  }, [fromDate, site_id, toDate]);
 
   const formatTime = (date) =>
     date ? new Date(date).toLocaleString("en-IN") : "-";

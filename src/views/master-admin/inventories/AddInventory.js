@@ -80,7 +80,7 @@ const reducer = (state, action) => {
 
 //to create a new inventory
 const NewInventory = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -130,7 +130,8 @@ const NewInventory = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/service-items`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -149,7 +150,8 @@ const NewInventory = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -165,7 +167,7 @@ const NewInventory = () => {
     };
     fetchSites();
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const handleChange = (e) => {
     dispatch({
@@ -180,7 +182,7 @@ const NewInventory = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = state.sites.find(
-      (site) => site.item_name.toString() === selectedSiteName
+      (site) => site.item_name.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -201,7 +203,7 @@ const NewInventory = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -230,7 +232,8 @@ const NewInventory = () => {
     };
     try {
       await axios.post("/api/v1/service-inventory", newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Inventory Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });

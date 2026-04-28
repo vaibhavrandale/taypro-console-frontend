@@ -30,7 +30,7 @@ const reducer = (state, action) => {
 
 // ---------- MIS Dashboard ----------
 const MisDashboard = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [{ loading, misreports, error }, dispatch] = useReducer(reducer, {
     misreports: [],
@@ -44,7 +44,8 @@ const MisDashboard = () => {
     dispatch({ type: "FETCH_REQUEST" });
     try {
       const result = await axios.get(`/api/v1/mis-report-router`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       const data = result.data.data;
       console.log(result.data.data);
@@ -59,7 +60,7 @@ const MisDashboard = () => {
   };
   useEffect(() => {
     fetchMisReports();
-  }, [authtoken]);
+  }, []);
   const departments = [
     { value: "Sales", label: "Sales" },
     { value: "Production_and_operations", label: "Production & Operations" },

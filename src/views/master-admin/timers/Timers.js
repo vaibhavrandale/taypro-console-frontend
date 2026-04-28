@@ -128,7 +128,7 @@ const Timers = () => {
 
   const [site_id, setSiteId] = useState("all");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [selectedRows, setSelectedRows] = useState([]);
   const [targetSite, setTargetSite] = useState("");
   const [viewModalVisible, setViewModalVisible] = useState(false);
@@ -161,7 +161,8 @@ const Timers = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -176,7 +177,7 @@ const Timers = () => {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     const fetchAllTimers = async () => {
@@ -186,7 +187,8 @@ const Timers = () => {
           `/api/v1/timers`,
           { site_id },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         // console.log(result.data.data);
@@ -205,7 +207,7 @@ const Timers = () => {
     };
 
     fetchAllTimers();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const handleCheckboxChange = (site) => {
     setSelectedRows((prev) => {
@@ -235,7 +237,8 @@ const Timers = () => {
         "/api/v1/timers/enable-disable/edit",
         { ids: siteIdsToUpdate },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

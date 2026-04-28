@@ -73,7 +73,7 @@ const CreateNewClientTicket = () => {
     site_id: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -102,7 +102,8 @@ const CreateNewClientTicket = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -117,7 +118,7 @@ const CreateNewClientTicket = () => {
       }
     };
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -128,7 +129,7 @@ const CreateNewClientTicket = () => {
 
     const selectedSiteName = e.target.value;
     const selectedSite = siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName
+      (site) => site.site_id.toString() === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -152,7 +153,8 @@ const CreateNewClientTicket = () => {
       dispatch({ type: "CREATE_TICKET_REQUEST" });
 
       const response = await axios.post("/api/v1/clienttickets", data, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({

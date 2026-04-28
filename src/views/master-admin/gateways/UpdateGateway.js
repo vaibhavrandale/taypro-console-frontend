@@ -41,7 +41,7 @@ const AssignGateway = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [gatewayData, setGatewayData] = useState({
     gateway_id: "",
@@ -79,7 +79,8 @@ const AssignGateway = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/gateways/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         setGatewayData(data.data);
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
@@ -88,7 +89,7 @@ const AssignGateway = () => {
       }
     };
     fetchGateway();
-  }, [id, authtoken]);
+  }, [id]);
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -107,7 +108,8 @@ const AssignGateway = () => {
         gatewayData;
 
       const result = await axios.put(`/api/v1/gateways/${id}`, filteredData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

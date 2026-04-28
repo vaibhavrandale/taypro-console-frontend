@@ -6,7 +6,13 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import "./openai.css";
 
-const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId, onClose }) => {
+const ChatSidebar = ({
+  chats,
+  setChats,
+  activeChatId,
+  setActiveChatId,
+  onClose,
+}) => {
   const authtoken = useSelector((s) => s.authtoken);
   const [loading, setLoading] = useState(false);
 
@@ -14,14 +20,15 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId, onClose }
     try {
       setLoading(true);
       const res = await axios.get("/api/v1/openai/chats", {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       setChats(res.data.data || []);
     } catch (err) {
       toast.error(
         err.response?.data?.err ||
           err.response?.data?.message ||
-          "Failed to load chats"
+          "Failed to load chats",
       );
     } finally {
       setLoading(false);
@@ -78,7 +85,13 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId, onClose }
       {/* ── Chat list ─────────────────────────── */}
       <div className="gpt-sidebar-list">
         {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: 20,
+            }}
+          >
             <LoadingSpinner />
           </div>
         ) : chats.length > 0 ? (
@@ -91,7 +104,12 @@ const ChatSidebar = ({ chats, setChats, activeChatId, setActiveChatId, onClose }
             >
               <MessageSquare
                 size={13}
-                style={{ display: "inline", marginRight: 7, opacity: 0.5, flexShrink: 0 }}
+                style={{
+                  display: "inline",
+                  marginRight: 7,
+                  opacity: 0.5,
+                  flexShrink: 0,
+                }}
               />
               {chat.title}
             </div>

@@ -127,14 +127,15 @@ const AddRobotUsingLoraNo = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
       } catch (error) {
@@ -180,7 +181,8 @@ const AddRobotUsingLoraNo = () => {
         const result = await axios.get(
           `/api/v1/loraconfigurations/fetch-all-loras`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         dispatch({
@@ -199,7 +201,7 @@ const AddRobotUsingLoraNo = () => {
     fetchSiteIds();
     fetchloraconfigurations();
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

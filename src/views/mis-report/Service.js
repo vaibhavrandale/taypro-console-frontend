@@ -30,7 +30,7 @@ export default function Service({
   data,
   last_activity,
   createdAt,
-  authtoken,
+
   refreshReports,
   updatedAt,
   _id,
@@ -88,8 +88,8 @@ export default function Service({
       // 🔥 Exclude non-updatable fields like last_activity
       const filteredData = Object.fromEntries(
         Object.entries(updatedData).filter(
-          ([key]) => !["last_activity"].includes(key)
-        )
+          ([key]) => !["last_activity"].includes(key),
+        ),
       );
 
       // Format updates for backend
@@ -118,8 +118,9 @@ export default function Service({
         `/api/v1/mis-report-router/${_id}`,
         payload,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       setHRAndAdminData(updatedData);
@@ -158,7 +159,7 @@ export default function Service({
             <span className="text-success">
               {data.is_filled
                 ? ` | Filled on: ${new Date(
-                    data.is_filled_at
+                    data.is_filled_at,
                   ).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "short",

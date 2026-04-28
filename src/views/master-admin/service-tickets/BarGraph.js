@@ -50,7 +50,7 @@ const BarGraph = () => {
     });
 
   const [year, setYear] = useState(new Date().getFullYear());
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [chartType, setChartType] = useState("bar");
   const [siteId, setSiteId] = useState("");
 
@@ -60,7 +60,7 @@ const BarGraph = () => {
         dispatch({ type: "FETCH_SERVICE_TICKET_COUNT_REQUEST" });
         const response = await axios.get(
           `/api/v1/servicetickets/service-ticket-count/${year}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
         dispatch({
           type: "FETCH_SERVICE_TICKET_COUNT_SUCCESS",
@@ -75,7 +75,7 @@ const BarGraph = () => {
     };
 
     fetchServiceticketCount();
-  }, [authtoken, year]);
+  }, [year]);
 
   const monthNames = [
     "",
@@ -132,7 +132,7 @@ const BarGraph = () => {
   ];
   // Get unique sites
   const uniqueSites = Array.from(
-    new Set(serviceticketcount.map((item) => item.siteid))
+    new Set(serviceticketcount.map((item) => item.siteid)),
   );
 
   const chartLabels = monthNames.slice(1); // Jan to Dec

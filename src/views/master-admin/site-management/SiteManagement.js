@@ -49,7 +49,7 @@ const SiteManagement = () => {
     });
   const [searchTerm, setSearchTerm] = useState("");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -65,11 +65,12 @@ const SiteManagement = () => {
         dispatch({ type: "FETCH_REQUEST" });
 
         const result = await axios.post(`/api/v1/sites/get-sites`, pagination, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -92,13 +93,13 @@ const SiteManagement = () => {
     };
 
     fetchDownlink();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter table rows based on search term
   const filteredData = sites.filter(
     (site) =>
       site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      site.location.toLowerCase().includes(searchTerm.toLowerCase())
+      site.location.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {

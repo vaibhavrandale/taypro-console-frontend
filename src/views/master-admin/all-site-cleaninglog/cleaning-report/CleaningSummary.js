@@ -58,7 +58,7 @@
 //   });
 //   const { site_id } = useParams();
 
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const [month, setMonth] = useState(new Date().getMonth() + 1);
 //   const [year, setYear] = useState(new Date().getFullYear());
 //   // Main table search
@@ -87,7 +87,8 @@
 //           `/api/v1/robot-tracking/monthly/report`,
 //           data,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           },
 //         );
 
@@ -111,7 +112,7 @@
 //     };
 
 //     fetchData();
-//   }, [authtoken, site_id, month, year]);
+//   }, [ site_id, month, year]);
 //   const handleViewDetails = (date, type, robots) => {
 //     setModalSearch("");
 //     setModalData({ date, type, robots });
@@ -135,7 +136,8 @@
 //       };
 
 //       const response = await axios.post(`/api/v1/robot-tracking/export`, data, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         responseType: "blob",
 //       });
 
@@ -632,7 +634,7 @@ const CleaningSummary = () => {
   });
   const { site_id } = useParams();
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -659,7 +661,8 @@ const CleaningSummary = () => {
           year: year,
         };
         const result = await axios.post(`/api/v1/robot-tracking/uptime`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         // console.log(result.data);
         dispatch({
@@ -684,7 +687,7 @@ const CleaningSummary = () => {
     };
 
     fetchData();
-  }, [authtoken, site_id, month, year]);
+  }, [site_id, month, year]);
   // const handleViewDetails = (date, type, robots) => {
   //   setModalSearch("");
   //   setModalData({ date, type, robots });
@@ -708,7 +711,8 @@ const CleaningSummary = () => {
       };
 
       const response = await axios.post(`/api/v1/robot-tracking/export`, data, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
         responseType: "blob",
       });
 

@@ -54,12 +54,12 @@ const UpdateMds = () => {
       fetchloading: true,
       updateloading: false,
       error: "",
-    }
+    },
   );
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
@@ -67,7 +67,8 @@ const UpdateMds = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const response = await axios.get(`/api/v1/mds-device/get-mds/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
@@ -80,7 +81,7 @@ const UpdateMds = () => {
     };
 
     fetchMds();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -126,7 +127,8 @@ const UpdateMds = () => {
       } = formData;
 
       await axios.put(`/api/v1/mds-device/update-mds/${id}`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -252,7 +254,7 @@ const UpdateMds = () => {
                                     handleRowChange(
                                       index,
                                       "row_length",
-                                      e.target.value
+                                      e.target.value,
                                     )
                                   }
                                   placeholder="Enter row length"

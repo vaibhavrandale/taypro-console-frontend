@@ -37,7 +37,7 @@ const AddDayInCycle = () => {
     error: "",
   });
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
   const [formData, setFormData] = useState({
     is_cleaning_done: false,
@@ -56,7 +56,10 @@ const AddDayInCycle = () => {
       const response = await axios.put(
         `/api/v1/opex/${moduleId}/cycle/${cycleId}/addday`,
         formData,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}`  }
+          withCredentials: true,
+        },
       );
       console.log(response.data);
 

@@ -41,7 +41,7 @@ function chatReducer(state, action) {
         messages: state.messages.map((msg) =>
           msg.id === action.id
             ? { ...msg, content: msg.content + action.chunk }
-            : msg
+            : msg,
         ),
       };
     case "SET_QUESTION":
@@ -114,7 +114,8 @@ const ChatWindow = ({
       dispatch({ type: "LOAD_CHAT_START" });
       try {
         const res = await axios.get(`/api/v1/openai/${activeChatId}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         const msgs =
           res.data?.data?.messages?.map((m, i) => ({
@@ -130,7 +131,7 @@ const ChatWindow = ({
       }
     };
     load();
-  }, [activeChatId, authtoken]);
+  }, [activeChatId]);
 
   /* ── Translate ───────────────────────────────── */
   const translateToHindi = async (text, messageId) => {
@@ -139,7 +140,7 @@ const ChatWindow = ({
       const res = await axios.post(
         "/api/v1/openai/translate",
         { text },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       return res.data?.translated || text;
     } catch {
@@ -158,8 +159,14 @@ const ChatWindow = ({
     const uid = `user-${Date.now()}`;
     const aid = `assistant-${Date.now()}`;
 
-    dispatch({ type: "ADD_MESSAGE", payload: { id: uid, role: "user", content: question } });
-    dispatch({ type: "ADD_MESSAGE", payload: { id: aid, role: "assistant", content: "" } });
+    dispatch({
+      type: "ADD_MESSAGE",
+      payload: { id: uid, role: "user", content: question },
+    });
+    dispatch({
+      type: "ADD_MESSAGE",
+      payload: { id: aid, role: "assistant", content: "" },
+    });
     dispatch({ type: "SET_QUESTION", payload: "" });
     dispatch({ type: "SEND_START" });
 
@@ -222,13 +229,12 @@ const ChatWindow = ({
   };
 
   const visibleMessages = state.messages.filter(
-    (m) => m.role === "user" || m.content?.trim() !== ""
+    (m) => m.role === "user" || m.content?.trim() !== "",
   );
 
   /* ═══════════════════ RENDER ════════════════════ */
   return (
     <div className="gpt-main">
-
       {/* ── Top header bar ──────────────────────── */}
       <div className="gpt-header">
         <button
@@ -257,7 +263,13 @@ const ChatWindow = ({
       {/* ── Messages area ───────────────────────── */}
       <div className="gpt-messages">
         {state.loadingChat ? (
-          <div style={{ display: "flex", justifyContent: "center", paddingTop: 60 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: 60,
+            }}
+          >
             <LoadingSpinner />
           </div>
         ) : visibleMessages.length === 0 ? (
@@ -287,10 +299,7 @@ const ChatWindow = ({
           /* ── Message list ─────────────────────── */
           <>
             {visibleMessages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`gpt-msg-wrap ${msg.role}`}
-              >
+              <div key={msg.id} className={`gpt-msg-wrap ${msg.role}`}>
                 <div className="gpt-msg-inner">
                   {/* Avatar */}
                   <div className={`gpt-avatar ${msg.role}`}>
@@ -303,9 +312,7 @@ const ChatWindow = ({
 
                   {/* Bubble / content */}
                   {msg.role === "user" ? (
-                    <div className="gpt-user-bubble">
-                      {msg.content}
-                    </div>
+                    <div className="gpt-user-bubble">{msg.content}</div>
                   ) : (
                     <div className="gpt-assistant-content">
                       {msg.content?.trim() && <MessageRenderer msg={msg} />}
@@ -330,7 +337,7 @@ const ChatWindow = ({
                             onClick={async () => {
                               const hindi = await translateToHindi(
                                 msg.content,
-                                msg.id
+                                msg.id,
                               );
                               speak(hindi);
                             }}

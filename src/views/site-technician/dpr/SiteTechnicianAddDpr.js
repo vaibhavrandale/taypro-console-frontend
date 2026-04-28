@@ -136,7 +136,7 @@ const reducer = (state, action) => {
     case "UPDATE_BREAKDOWN_REASON":
       const updatedReasons = state.dprData.breakdown_reasons.map(
         (reason, index) =>
-          index === action.index ? { ...reason, ...action.payload } : reason
+          index === action.index ? { ...reason, ...action.payload } : reason,
       );
       return {
         ...state,
@@ -152,7 +152,7 @@ const reducer = (state, action) => {
         dprData: {
           ...state.dprData,
           breakdown_reasons: state.dprData.breakdown_reasons.filter(
-            (_, index) => index !== action.index
+            (_, index) => index !== action.index,
           ),
         },
       };
@@ -177,7 +177,7 @@ const reducer = (state, action) => {
       const updatedBreakdownReasons = [...state.dprData.breakdown_reasons];
       updatedBreakdownReasons[action.reasonIndex].robots =
         updatedBreakdownReasons[action.reasonIndex].robots.filter(
-          (_, robotIndex) => robotIndex !== action.robotIndex
+          (_, robotIndex) => robotIndex !== action.robotIndex,
         );
       updatedBreakdownReasons[action.reasonIndex].count =
         updatedBreakdownReasons[action.reasonIndex].robots.length;
@@ -256,7 +256,7 @@ const reducer = (state, action) => {
 };
 
 const SiteTechnicianAddDpr = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -346,8 +346,9 @@ const SiteTechnicianAddDpr = () => {
         const result = await axios.get(
           `/api/v1/users/role/sitetechnician/${selectedSiteId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_TECHNICIAN_SUCCESS",
@@ -366,8 +367,9 @@ const SiteTechnicianAddDpr = () => {
         const robotResult = await axios.get(
           `/api/v1/robots/get-all-robots-sitewise/${selectedSiteId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -398,7 +400,8 @@ const SiteTechnicianAddDpr = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const sitesData = result.data.data;
@@ -425,14 +428,14 @@ const SiteTechnicianAddDpr = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
 
     fetchSiteIds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authtoken]);
+  }, []);
 
   // Calculate total operational robots when operational details change
   useEffect(() => {
@@ -535,8 +538,9 @@ const SiteTechnicianAddDpr = () => {
           robot_type: pmType,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({
         type: "FETCH_PM_DETAILS_SUCCESS",
@@ -634,7 +638,7 @@ const SiteTechnicianAddDpr = () => {
       const result = await axios.post(
         "/api/v1/openai/summarize",
         { text },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       const improved = result.data?.summarizedText;
       if (improved) {
@@ -647,7 +651,7 @@ const SiteTechnicianAddDpr = () => {
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to improve comments."
+        error.response?.data?.message || "Failed to improve comments.",
       );
     } finally {
       setSummarizingComments(false);
@@ -665,7 +669,8 @@ const SiteTechnicianAddDpr = () => {
 
     try {
       await axios.post("/api/v1/techniciandprs", newdata, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Daily Progress Report Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
@@ -682,7 +687,7 @@ const SiteTechnicianAddDpr = () => {
         });
 
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       } else {
         dispatch({
@@ -825,7 +830,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "robots_operational_details",
                         "ready_for_operational",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -846,7 +851,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "robots_operational_details",
                         "online_operational",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -867,7 +872,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "robots_operational_details",
                         "manual_operational",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -887,7 +892,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "robots_operational_details",
                         "unoperational",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -945,7 +950,7 @@ const SiteTechnicianAddDpr = () => {
                             "preventive_maintenance_status",
                             "automatic",
                             "attempted",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                         min="0"
@@ -965,7 +970,7 @@ const SiteTechnicianAddDpr = () => {
                             "preventive_maintenance_status",
                             "automatic",
                             "completed",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                         min="0"
@@ -1006,7 +1011,7 @@ const SiteTechnicianAddDpr = () => {
                                 ×
                               </CButton>
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     )}
@@ -1035,7 +1040,7 @@ const SiteTechnicianAddDpr = () => {
                             "preventive_maintenance_status",
                             "semi_automatic",
                             "attempted",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                         min="0"
@@ -1055,7 +1060,7 @@ const SiteTechnicianAddDpr = () => {
                             "preventive_maintenance_status",
                             "semi_automatic",
                             "completed",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value),
                           )
                         }
                         min="0"
@@ -1096,7 +1101,7 @@ const SiteTechnicianAddDpr = () => {
                                 ×
                               </CButton>
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     )}
@@ -1130,7 +1135,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "ticket_details",
                         "total_raised",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -1148,7 +1153,7 @@ const SiteTechnicianAddDpr = () => {
                       handleNestedChange(
                         "ticket_details",
                         "total_closed",
-                        parseInt(e.target.value)
+                        parseInt(e.target.value),
                       )
                     }
                     min="0"
@@ -1234,7 +1239,7 @@ const SiteTechnicianAddDpr = () => {
                                 updateBreakdownReason(
                                   index,
                                   "reason",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               className="w-50"
@@ -1259,7 +1264,7 @@ const SiteTechnicianAddDpr = () => {
                                 updateBreakdownReason(
                                   index,
                                   "count",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               style={{ backgroundColor: "#f8f9fa" }}
@@ -1312,7 +1317,7 @@ const SiteTechnicianAddDpr = () => {
                                     onClick={() =>
                                       removeRobotFromBreakdown(
                                         index,
-                                        robotIndex
+                                        robotIndex,
                                       )
                                     }
                                   >
@@ -1339,7 +1344,9 @@ const SiteTechnicianAddDpr = () => {
                     size="sm"
                     variant="outline"
                     onClick={summarizeComments}
-                    disabled={summarizingComments || !state.dprData.comments?.trim()}
+                    disabled={
+                      summarizingComments || !state.dprData.comments?.trim()
+                    }
                     title="Improve text using AI"
                     className="m-1"
                   >
@@ -1395,7 +1402,7 @@ const SiteTechnicianAddDpr = () => {
                             <CTableDataCell>
                               <CFormCheck
                                 checked={state.dprData.technician_present.some(
-                                  (t) => t.technician_id === tech._id
+                                  (t) => t.technician_id === tech._id,
                                 )}
                                 onChange={(e) => {
                                   const updatedList = e.target.checked
@@ -1411,7 +1418,7 @@ const SiteTechnicianAddDpr = () => {
                                         },
                                       ]
                                     : state.dprData.technician_present.filter(
-                                        (t) => t.technician_id !== tech._id
+                                        (t) => t.technician_id !== tech._id,
                                       );
                                   dispatch({
                                     type: "SET_FIELD",
@@ -1516,7 +1523,7 @@ const SiteTechnicianAddDpr = () => {
                         onClick={() => {
                           addPMRobot(pmRobot);
                           toast.success(
-                            `Added ${pmRobot.robot_no} to ${selectedPMType} PM`
+                            `Added ${pmRobot.robot_no} to ${selectedPMType} PM`,
                           );
                         }}
                         disabled={state.dprData.preventive_maintenance_status[
@@ -1605,7 +1612,7 @@ const SiteTechnicianAddDpr = () => {
                           onClick={() => {
                             addRobotToBreakdown(selectedBreakdownIndex, robot);
                             toast.success(
-                              `Added ${robot.robot_no} to breakdown reason`
+                              `Added ${robot.robot_no} to breakdown reason`,
                             );
                           }}
                           disabled={

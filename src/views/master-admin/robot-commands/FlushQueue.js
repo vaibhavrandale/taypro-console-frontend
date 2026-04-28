@@ -68,7 +68,7 @@ const FlushQueue = () => {
     flushError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   // const userInfo = useSelector((state) => state.userInfo);
   const [site_id, setSiteId] = useState();
   const [selectedRobots, setSelectedRobots] = useState([]);
@@ -80,7 +80,8 @@ const FlushQueue = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
       } catch (err) {
@@ -92,7 +93,7 @@ const FlushQueue = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -101,7 +102,10 @@ const FlushQueue = () => {
       try {
         const res = await axios.get(
           `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: res.data.data });
@@ -114,7 +118,7 @@ const FlushQueue = () => {
       }
     };
     fetchRobots();
-  }, [site_id, authtoken]);
+  }, [site_id]);
 
   const handleCheckboxChange = (robot) => {
     setSelectedRobots((prev) =>
@@ -148,7 +152,10 @@ const FlushQueue = () => {
         // "/api/v1/robots/send-downlink-in-bulk",
         "/api/v1/robots/flush-queue",
         { deveuiList },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SEND_FLUSH_SUCCESS" });
 

@@ -89,7 +89,7 @@ const ActiveMds = () => {
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
@@ -101,12 +101,13 @@ const ActiveMds = () => {
           `/api/v1/mds-device/active`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         const total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         dispatch({
           type: "FETCH_MDS_SUCCESS",
@@ -123,19 +124,19 @@ const ActiveMds = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchMdsDevices();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter MDS devices based on search term
   const filteredMds = mdsDevices.filter(
     (mds) =>
       mds.mds_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mds.deveui?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mds.lora_no?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      mds.lora_no?.toString().toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Open modal
@@ -170,8 +171,9 @@ const ActiveMds = () => {
         `/api/v1/mds-device/delete-from-lns-and-deactivate`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -255,7 +257,7 @@ const ActiveMds = () => {
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
             {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role
+              userInfo?.role,
             ) && <CTableHeaderCell>Action</CTableHeaderCell>}{" "}
           </CTableRow>
         </CTableHead>

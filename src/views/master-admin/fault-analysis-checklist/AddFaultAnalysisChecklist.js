@@ -48,7 +48,7 @@ const AddFaultAnalysisChecklist = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
   if (userInfo.role === "Master Admin") {
@@ -95,7 +95,7 @@ const AddFaultAnalysisChecklist = () => {
 
   const deleteRow = (index) => {
     const updatedFields = formData.checklist_fields.filter(
-      (_, i) => i !== index
+      (_, i) => i !== index,
     );
     setFormData({ ...formData, checklist_fields: updatedFields });
   };
@@ -109,7 +109,8 @@ const AddFaultAnalysisChecklist = () => {
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
       await axios.post("/api/v1/faultanalysis", formData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "SUBMIT_SUCCESS" });
       toast.success("Checklist created successfully");

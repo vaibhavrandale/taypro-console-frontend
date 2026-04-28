@@ -68,7 +68,7 @@ const Robots = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,12 +115,13 @@ const Robots = () => {
           `/api/v1/robots/get-robots`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -140,13 +141,13 @@ const Robots = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter robots based on search term
   const filteredRobots = robots.filter((robot) =>
@@ -154,8 +155,8 @@ const Robots = () => {
       (robot?.[field] ?? "")
         .toString()
         .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    )
+        .includes(searchTerm.toLowerCase()),
+    ),
   );
 
   const handlePageInputChange = (e) => {
@@ -471,14 +472,13 @@ const Robots = () => {
                   await deleteRobotFromLns(
                     selectedRobot.robot_no,
                     selectedRobot.deveui,
-                    authtoken,
-                    deleteReason
+                    deleteReason,
                   );
                 } else {
                   await deleteRobotFromDatabase(
                     selectedRobot.robot_no,
-                    authtoken,
-                    deleteReason
+
+                    deleteReason,
                   );
                 }
               } finally {
@@ -505,7 +505,6 @@ const Robots = () => {
         limit={limit}
         handleLimitChange={setLimit} // New prop
       />
-      {/* view Modal */}
       <CModal
         size="xl"
         scrollable

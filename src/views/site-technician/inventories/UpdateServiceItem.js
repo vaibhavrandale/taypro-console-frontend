@@ -48,7 +48,7 @@ const UpdateServiceItem = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -65,7 +65,8 @@ const UpdateServiceItem = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/service-items/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setServiceItemData(data.data);
@@ -80,7 +81,7 @@ const UpdateServiceItem = () => {
     };
 
     fetchServiceItem();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -107,7 +108,7 @@ const UpdateServiceItem = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setImage(data.url);
@@ -141,7 +142,8 @@ const UpdateServiceItem = () => {
 
       const newData = { ...filteredFormData, item_image: image };
       await axios.put(`/api/v1/service-items/${id}`, newData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

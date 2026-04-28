@@ -107,7 +107,7 @@ const UpdateMaterialRequest = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   // ================= FORM =================
@@ -140,7 +140,8 @@ const UpdateMaterialRequest = () => {
         dispatch({ type: "FETCH_MATERIAL_REQUEST" });
 
         const { data } = await axios.get(`/api/v1/material-requests/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_MATERIAL_SUCCESS", payload: data.data });
@@ -169,7 +170,8 @@ const UpdateMaterialRequest = () => {
       try {
         dispatch({ type: "FETCH_SITES_REQUEST" });
         const { data } = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: data.data });
@@ -190,7 +192,8 @@ const UpdateMaterialRequest = () => {
           `/api/v1/service-inventory/get-inventory`,
           { pg: 1, limit: 100 },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -205,7 +208,7 @@ const UpdateMaterialRequest = () => {
     fetchMaterial();
     fetchSites();
     fetchInventories();
-  }, [authtoken, id, navigate]);
+  }, [id, navigate]);
 
   // ================= HANDLERS =================
   const handleFormChange = (e) => {
@@ -309,7 +312,8 @@ const UpdateMaterialRequest = () => {
         `/api/v1/material-requests/${id}`,
         payload,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

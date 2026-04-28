@@ -49,7 +49,7 @@ const reducer = (state, action) => {
         cycle: {
           ...state.cycle,
           day_wise_data: state.cycle.day_wise_data.map((day) =>
-            day._id === action.payload._id ? action.payload : day
+            day._id === action.payload._id ? action.payload : day,
           ),
         },
       };
@@ -76,7 +76,7 @@ const OpexCycleData = () => {
       verifyError: "",
     });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId } = useParams();
   const userInfo = useSelector((state) => state.userInfo);
 
@@ -92,8 +92,9 @@ const OpexCycleData = () => {
         const result = await axios.get(
           `/api/v1/opex/${moduleId}/cycle/${cycleId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_SUCCESS",
@@ -109,7 +110,7 @@ const OpexCycleData = () => {
     };
 
     fetchCycle();
-  }, [authtoken, moduleId, cycleId]);
+  }, [moduleId, cycleId]);
 
   const handleClientVerifyDay = async (e, dayId) => {
     e.preventDefault();
@@ -118,7 +119,10 @@ const OpexCycleData = () => {
       const response = await axios.put(
         `/api/v1/opex/${moduleId}/cycle/${cycleId}/day/${dayId}/client-verify-day`,
         { client_remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       console.log(response);
 
@@ -141,7 +145,7 @@ const OpexCycleData = () => {
     if (!cycle || !cycle.day_wise_data) return 0;
     const totalCleaned = cycle.day_wise_data.reduce(
       (sum, day) => sum + day.modules_cleaned_for_day,
-      0
+      0,
     );
 
     return (totalCleaned / cycle.modules_planned) * 100;

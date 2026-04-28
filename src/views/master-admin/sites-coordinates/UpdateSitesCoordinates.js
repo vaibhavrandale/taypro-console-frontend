@@ -42,7 +42,7 @@ const UpdateSitesCoordinates = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -71,8 +71,9 @@ const UpdateSitesCoordinates = () => {
         const { data } = await axios.get(
           `/api/v1/sites-coordinates/get-by-siteId/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
         setCoordinatesData(data.data);
@@ -86,7 +87,7 @@ const UpdateSitesCoordinates = () => {
     };
 
     fetchCoordinates();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -106,7 +107,8 @@ const UpdateSitesCoordinates = () => {
         coordinatesData;
 
       await axios.put(`/api/v1/sites-coordinates/${id}`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({ type: "UPDATE_SUCCESS" });

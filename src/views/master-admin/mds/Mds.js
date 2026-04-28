@@ -106,7 +106,7 @@ const Mds = () => {
     robots: [],
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -159,12 +159,13 @@ const Mds = () => {
           `/api/v1/mds-device/getAll-mds`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
 
         dispatch({
@@ -182,13 +183,13 @@ const Mds = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchMds();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   useEffect(() => {
     const fetchRobotsBySite = async () => {
@@ -197,8 +198,9 @@ const Mds = () => {
         const result = await axios.get(
           `/api/v1/robots/get-all-robots-sitewise/${selectedMds.site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -216,7 +218,7 @@ const Mds = () => {
     if (assignModalVisible && selectedMds?.site_id) {
       fetchRobotsBySite();
     }
-  }, [assignModalVisible, selectedMds, authtoken]);
+  }, [assignModalVisible, selectedMds]);
   // ---------------------------------------------------------------------------------
 
   // --- Add this function for assigning robot to selected MDS ---
@@ -234,7 +236,10 @@ const Mds = () => {
           mds_id: mds._id,
           robot_no: robotNo,
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}`      }
+          withCredentials: true,
+        },
       );
 
       toast.success(response.data?.message || "Robot assigned successfully!");
@@ -244,7 +249,7 @@ const Mds = () => {
       toast.error(
         error.response?.data?.message ||
           error.response?.data?.error ||
-          "Failed to assign robot."
+          "Failed to assign robot.",
       );
     } finally {
       setAssignRobotLoading(false);
@@ -257,8 +262,8 @@ const Mds = () => {
       (mds?.[field] ?? "")
         .toString()
         .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    )
+        .includes(searchTerm.toLowerCase()),
+    ),
   );
 
   const handlePageInputChange = (e) => {
@@ -564,15 +569,10 @@ const Mds = () => {
                   await deleteMdsFromLns(
                     selectedMds.mds_no,
                     selectedMds.deveui,
-                    authtoken,
-                    deleteReason
+                    deleteReason,
                   );
                 } else if (deleteType === "db") {
-                  await deleteMdsFromDatabase(
-                    selectedMds.mds_no,
-                    authtoken,
-                    deleteReason
-                  );
+                  await deleteMdsFromDatabase(selectedMds.mds_no, deleteReason);
                 }
 
                 // Optional: Remove deleted MDS from state instantly
@@ -580,7 +580,7 @@ const Mds = () => {
                   type: "FETCH_MDS_SUCCESS",
                   payload: {
                     data: mdsDevices.filter(
-                      (d) => d.mds_no !== selectedMds.mds_no
+                      (d) => d.mds_no !== selectedMds.mds_no,
                     ),
                     totalPages,
                     hasNextPage,

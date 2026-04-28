@@ -88,7 +88,7 @@ const reducer = (state, action) => {
 const SiteTechnicianUpdateServiceTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
 
@@ -124,8 +124,9 @@ const SiteTechnicianUpdateServiceTicket = () => {
         const response = await axios.get(
           `/api/v1/servicetickets/getone/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
@@ -139,8 +140,9 @@ const SiteTechnicianUpdateServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -162,8 +164,9 @@ const SiteTechnicianUpdateServiceTicket = () => {
           `/api/v1/service-inventory`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
@@ -180,7 +183,7 @@ const SiteTechnicianUpdateServiceTicket = () => {
     fetchTicket();
     fetchAllFaults();
     fetchInventories();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -195,11 +198,12 @@ const SiteTechnicianUpdateServiceTicket = () => {
 
     try {
       await axios.put(`/api/v1/servicetickets/${id}`, filteredFormData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(
-        `${filteredFormData.ticket_id} Service ticket updated successfully`
+        `${filteredFormData.ticket_id} Service ticket updated successfully`,
       );
       navigate(`/${adminroute}/service-tickets`);
     } catch (error) {
@@ -233,7 +237,7 @@ const SiteTechnicianUpdateServiceTicket = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       // ✅ Update uploaded image dynamically for the specific field
@@ -535,7 +539,7 @@ const SiteTechnicianUpdateServiceTicket = () => {
                       value={formData.part_replaced_id}
                       onChange={(e) => {
                         const selectedPart = state.inventories.find(
-                          (inv) => inv.item_id === e.target.value
+                          (inv) => inv.item_id === e.target.value,
                         );
 
                         setFormData({

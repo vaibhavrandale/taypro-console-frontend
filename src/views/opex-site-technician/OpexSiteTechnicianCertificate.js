@@ -169,7 +169,7 @@ const OpexSiteTechnicianCertificate = () => {
   });
 
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [image, setImage] = useState("");
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -189,8 +189,9 @@ const OpexSiteTechnicianCertificate = () => {
           `/api/v1/opex-certificate/get-opex-certificate/${id}`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_CERTIFICATE_SUCCESS",
@@ -205,12 +206,12 @@ const OpexSiteTechnicianCertificate = () => {
         });
         toast.certificateError(
           certificateError.response.data.certificateError ||
-            certificateError.response.data.message
+            certificateError.response.data.message,
         );
       }
     };
     fetchOpexCertificate();
-  }, [authtoken, id]);
+  }, [id]);
 
   const handleAdd = async () => {
     try {
@@ -219,8 +220,9 @@ const OpexSiteTechnicianCertificate = () => {
         `/api/v1/opex-certificate/upload-taypro-sign/${certificate._id}`,
         { sign_url: image },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -265,11 +267,12 @@ const OpexSiteTechnicianCertificate = () => {
         newdata,
         {
           headers: {
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
             "Content-Type": "application/json", // use JSON content type
             // "Content-Type": "multipart/form-data",
           },
-        }
+          withCredentials: true,
+        },
       );
 
       console.log(response);
@@ -314,9 +317,10 @@ const OpexSiteTechnicianCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPLOAD_TAYPRO_SIGN_SUCCESS" });
       setImage(data.url);
@@ -343,9 +347,10 @@ const OpexSiteTechnicianCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPLOAD_CLIENT_SIGN_SUCCESS" });
       setClientImage(data.url);
@@ -372,9 +377,10 @@ const OpexSiteTechnicianCertificate = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       console.log(data.url);
       dispatch({ type: "UPLOAD_CLIENT_HARDCOPY_SUCCESS" });
@@ -412,7 +418,7 @@ const OpexSiteTechnicianCertificate = () => {
         "style",
         `background-color: white !important;
          color: #000 !important;
-         border: 1px solid #000 !important;`
+         border: 1px solid #000 !important;`,
       );
       clone.querySelectorAll("table, th, td").forEach((el) => {
         el.style.backgroundColor = "white";
@@ -469,7 +475,7 @@ const OpexSiteTechnicianCertificate = () => {
       }
 
       pdf.save(
-        `Opex_Certificate_${certificate.certificate_month}_${certificate.certificate_year}.pdf`
+        `Opex_Certificate_${certificate.certificate_month}_${certificate.certificate_year}.pdf`,
       );
 
       setLoadingPdf(false);
@@ -621,7 +627,7 @@ const OpexSiteTechnicianCertificate = () => {
                         Date -{" "}
                         {new Date(
                           0,
-                          certificate.certificate_month - 1
+                          certificate.certificate_month - 1,
                         ).toLocaleString("en-US", { month: "long" })}{" "}
                         {certificate.certificate_year}
                       </td>
@@ -791,7 +797,7 @@ const OpexSiteTechnicianCertificate = () => {
                             >
                               {cycle.cycle_start_date
                                 ? new Date(
-                                    cycle.cycle_start_date
+                                    cycle.cycle_start_date,
                                   ).toLocaleString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
@@ -812,7 +818,7 @@ const OpexSiteTechnicianCertificate = () => {
                                       day: "2-digit",
                                       month: "2-digit",
                                       year: "numeric",
-                                    }
+                                    },
                                   )
                                 : "N/A"}
                             </td>
@@ -968,7 +974,7 @@ const OpexSiteTechnicianCertificate = () => {
                               certificate.client_verification
                                 .signed_hard_copy &&
                               certificate.client_verification.signed_hard_copy.endsWith(
-                                ".pdf"
+                                ".pdf",
                               ) && (
                                 <span style={{ marginLeft: "5px" }}>
                                   Manually Verified
@@ -1037,7 +1043,7 @@ const OpexSiteTechnicianCertificate = () => {
 
                   {certificate.client_verification?.signed_hard_copy &&
                     certificate.client_verification?.signed_hard_copy.endsWith(
-                      ".pdf"
+                      ".pdf",
                     ) && (
                       <Link
                         to={`${certificate.client_verification.signed_hard_copy}?fl_attachment=true`}

@@ -61,11 +61,11 @@ const RobotTrackingLog = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
 
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
   useEffect(() => {
@@ -80,10 +80,11 @@ const RobotTrackingLog = () => {
             date: startDate,
           },
           {
-            headers: {
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
+            // headers: {
+            //   Authorization: `Bearer ${authtoken}`,
+            // },
+            withCredentials: true,
+          },
         );
 
         const data = result.data.data;
@@ -99,13 +100,13 @@ const RobotTrackingLog = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
 
     fetchCleaningLogs();
-  }, [site_id, startDate, authtoken]);
+  }, [site_id, startDate]);
 
   // ✅ Place this at the top of your component function, before the `return`:
   const cleaningSuccessMap = {};
@@ -223,7 +224,7 @@ const RobotTrackingLog = () => {
                             minute: "2-digit",
                             second: "2-digit",
                             hour12: true,
-                          }
+                          },
                         )
                       ) : log.cleaning.battery_dead ? (
                         <CBadge color="danger">Battery Dead</CBadge>

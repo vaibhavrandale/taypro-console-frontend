@@ -70,7 +70,7 @@ const SiteTechnicianBlockManagement = () => {
     commandError: "",
   });
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [visible, setVisible] = useState(false);
@@ -84,7 +84,8 @@ const SiteTechnicianBlockManagement = () => {
         const result = await axios.get(
           `/api/v1/robots/site-management/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -108,7 +109,7 @@ const SiteTechnicianBlockManagement = () => {
     };
 
     fetchData();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const filteredRobots = Array.isArray(robots)
     ? robots
@@ -131,7 +132,8 @@ const SiteTechnicianBlockManagement = () => {
   //       `/api/v1/robots/stop-cleaning-by-site/${site_id}`,
   //       {},
   //       {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //       }
   //     );
   //     toast.success(
@@ -166,7 +168,8 @@ const SiteTechnicianBlockManagement = () => {
         "/api/v1/robots/send-mqtt-multicast-downlink",
         robotdownlink,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

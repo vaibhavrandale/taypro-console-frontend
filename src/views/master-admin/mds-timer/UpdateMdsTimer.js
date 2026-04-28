@@ -51,7 +51,7 @@ const UpdateMdsTimer = () => {
   });
 
   const { block, site_id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   const [showModal, setShowModal] = useState(false);
@@ -73,8 +73,9 @@ const UpdateMdsTimer = () => {
         const data = await axios.get(
           `/api/v1/mds-device/mds-timers/${block}/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         console.log(data.data.data[0]);
 
@@ -100,7 +101,7 @@ const UpdateMdsTimer = () => {
     };
 
     fetchTimer();
-  }, [block, site_id, authtoken]);
+  }, [block, site_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -129,8 +130,9 @@ const UpdateMdsTimer = () => {
         `/api/v1/mds-device/update-mds-timers/${block}/${site_id}`,
         timerData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });

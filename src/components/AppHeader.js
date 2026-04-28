@@ -207,7 +207,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
   });
   const notificationsFetched = useRef(false);
   const robotsGatewaysFetched = useRef(false); // New ref for robots/gateways
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [count, setCount] = useState(0);
   const headerRef = useRef();
@@ -255,7 +255,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         const result = await axios.get(
           `/api/v1/timerexecutionnotifications/get-by-userId/${userInfo._id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         // console.log(result.data.data);
@@ -303,7 +304,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           const result = await axios.get(
             `/api/v1/customer-feedback/get-customer-feedback-by-user-latest/${userInfo._id}`,
             {
-              headers: { Authorization: `Bearer ${authtoken}` },
+              // headers: { Authorization: `Bearer ${authtoken}` },
+              withCredentials: true,
             },
           );
 
@@ -332,7 +334,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         const response = await axios.get(
           `/api/v1/robots/get-gateways-and-robots`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         // console.log(response.data.robots);
@@ -366,7 +369,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         const response = await axios.get(
           "/api/v1/notifications/get-ten-notifications",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -387,7 +391,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         const response = await axios.get(
           "/api/v1/customnotifications/active/latest/unread",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -446,7 +451,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
       fetchCustomNotifications();
       robotsGatewaysFetched.current = true;
     }
-  }, [authtoken, userInfo, navigate]);
+  }, [userInfo, navigate]);
 
   if (!userInfo) return null;
   const notificationPage =
@@ -512,9 +517,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         `/api/v1/notifications/notification-readby-user/${notify._id}`, // API call with notification ID
         { read: true }, // Sending "read" status in the request body
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`, // Authorization header
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`, // Authorization header
+          // },
+          withCredentials: true,
         },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -615,7 +621,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         `/api/v1/customer-feedback/${latestfeedback._id}`,
         formData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -667,7 +674,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         `/api/v1/timerexecutionnotifications/mark-allnotification/as-read`,
         { allUnreadTmerNotifications },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -771,7 +779,8 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
         `/api/v1/customnotifications/read/${customNotificationData._id}`,
         { feedback },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

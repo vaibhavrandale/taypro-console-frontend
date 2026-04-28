@@ -40,7 +40,7 @@ const SiteTechnicianSearchRobot = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobot, setFilteredRobot] = useState([]);
@@ -54,8 +54,9 @@ const SiteTechnicianSearchRobot = () => {
           `/api/v1/robots/get-robots-no`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -72,14 +73,14 @@ const SiteTechnicianSearchRobot = () => {
     };
 
     fetchRobots();
-  }, [authtoken]);
+  }, []);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {

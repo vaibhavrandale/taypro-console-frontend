@@ -50,7 +50,7 @@ const SprintDashboard = () => {
     reportError: "",
     reports: [],
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   // const userInfo = useSelector((state) => state.userInfo);
   useEffect(() => {
@@ -58,7 +58,8 @@ const SprintDashboard = () => {
       dispatch({ type: "FETCH_SPRINTS_REQUEST" });
       try {
         const { data } = await axios.get("/api/v1/sprint-tracking", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SPRINTS_SUCCESS", payload: data.data });
@@ -68,12 +69,12 @@ const SprintDashboard = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchSprints();
-  }, [authtoken]);
+  }, []);
 
   const { sprints, loading, error } = state;
 

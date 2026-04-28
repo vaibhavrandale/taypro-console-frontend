@@ -97,7 +97,7 @@
 // const SiteTechnicianResolveServiceTicket = () => {
 //   const { id } = useParams();
 //   const navigate = useNavigate();
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const [state, dispatch] = useReducer(reducer, {
 //     ticket: {},
 //     inventories: [],
@@ -127,7 +127,8 @@
 //         const response = await axios.get(
 //           `/api/v1/servicetickets/getone/${id}`,
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -142,7 +143,8 @@
 //         const response = await axios.get(
 //           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         dispatch({
@@ -164,7 +166,8 @@
 //           `/api/v1/service-inventory`,
 
 //           {
-//             headers: { Authorization: `Bearer ${authtoken}` },
+//             // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //           }
 //         );
 //         dispatch({
@@ -182,7 +185,7 @@
 //     fetchTicket();
 //     fetchAllFaults();
 //     fetchInventories();
-//   }, [id, authtoken]);
+//   }, [id]);
 
 //   const handleChange = (e) => {
 //     // setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -198,7 +201,8 @@
 //       setChecklistFieldLoading(true);
 
 //       const result = await axios.get(`/api/v1/faultanalysis/${item_id}`, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 
 //       const fields = result.data.data?.[0]?.checklist_fields || [];
@@ -240,7 +244,8 @@
 //         `/api/v1/servicetickets/resolve/${id}`,
 //         filteredFormData,
 //         {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         }
 //       );
 //       dispatch({ type: "UPDATE_SUCCESS" });
@@ -945,7 +950,7 @@ const reducer = (state, action) => {
 const SiteTechnicianResolveServiceTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [state, dispatch] = useReducer(reducer, {
     ticket: {},
     inventories: [],
@@ -987,8 +992,9 @@ const SiteTechnicianResolveServiceTicket = () => {
         const response = await axios.get(
           `/api/v1/servicetickets/getone/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
@@ -1002,8 +1008,9 @@ const SiteTechnicianResolveServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_FAULTS_SUCCESS",
@@ -1021,7 +1028,8 @@ const SiteTechnicianResolveServiceTicket = () => {
       dispatch({ type: "FETCH_INVENTORY_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/service-inventory`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
@@ -1038,7 +1046,7 @@ const SiteTechnicianResolveServiceTicket = () => {
     fetchTicket();
     fetchAllFaults();
     fetchInventories();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
@@ -1058,13 +1066,14 @@ const SiteTechnicianResolveServiceTicket = () => {
 
   const handleOpenChecklistModal = async (
     item_id,
-    isReopeningModal = false
+    isReopeningModal = false,
   ) => {
     try {
       setChecklistFieldLoading(true);
 
       const result = await axios.get(`/api/v1/faultanalysis/${item_id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       const fields = result.data.data?.[0]?.checklist_fields || [];
@@ -1123,12 +1132,13 @@ const SiteTechnicianResolveServiceTicket = () => {
         `/api/v1/servicetickets/resolve/${id}`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(
-        `${filteredFormData.ticket_id} Service ticket Resolved successfully`
+        `${filteredFormData.ticket_id} Service ticket Resolved successfully`,
       );
       navigate(`/site-technician/service-tickets`);
     } catch (error) {
@@ -1183,7 +1193,7 @@ const SiteTechnicianResolveServiceTicket = () => {
   const filteredInventories = state.inventories?.filter((inv) =>
     `${inv.item_name} ${inv.item_code}`
       .toLowerCase()
-      .includes(searchInventoryTerm.toLowerCase())
+      .includes(searchInventoryTerm.toLowerCase()),
   );
 
   const isTicketResolved = formData.ticket_resolved === true;
@@ -1216,7 +1226,7 @@ const SiteTechnicianResolveServiceTicket = () => {
             const lat = pos.coords.latitude.toFixed(6);
             const lng = pos.coords.longitude.toFixed(6);
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
             );
             const data = await response.json();
             setLocation({
@@ -1240,7 +1250,7 @@ const SiteTechnicianResolveServiceTicket = () => {
             lng: null,
             name: "Location not available",
           });
-        }
+        },
       );
     }
   }, [cameraModalVisible]);
@@ -1322,7 +1332,7 @@ const SiteTechnicianResolveServiceTicket = () => {
           }
         },
         "image/jpeg",
-        0.8
+        0.8,
       );
     }
   };
@@ -1338,9 +1348,10 @@ const SiteTechnicianResolveServiceTicket = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       setFormData((prev) => ({
         ...prev,
@@ -1611,7 +1622,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                 onClick={() =>
                                   handleOpenChecklistModal(
                                     formData.part_replaced_id,
-                                    true
+                                    true,
                                   )
                                 }
                                 title="View saved checklist"
@@ -1655,7 +1666,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                       });
 
                                       handleOpenChecklistModal(
-                                        inventory.item_id
+                                        inventory.item_id,
                                       );
                                     }}
                                   >
@@ -1714,7 +1725,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                           .map(
                                             (word) =>
                                               word.charAt(0).toUpperCase() +
-                                              word.slice(1)
+                                              word.slice(1),
                                           )
                                           .join(" ")}
                                         :
@@ -1732,7 +1743,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                         onChange={(e) =>
                                           updateChecklistResponse(
                                             field.field_name,
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                       />
@@ -1752,7 +1763,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                           onChange={(e) =>
                                             updateChecklistResponse(
                                               field.field_name,
-                                              e.target.checked ? "Yes" : "No"
+                                              e.target.checked ? "Yes" : "No",
                                             )
                                           }
                                         />
@@ -1766,7 +1777,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                             .map(
                                               (word) =>
                                                 word.charAt(0).toUpperCase() +
-                                                word.slice(1)
+                                                word.slice(1),
                                             )
                                             .join(" ")}
                                         </CFormLabel>
@@ -1783,7 +1794,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                         onChange={(e) =>
                                           updateChecklistResponse(
                                             field.field_name,
-                                            e.target.value
+                                            e.target.value,
                                           )
                                         }
                                       >
@@ -1808,7 +1819,7 @@ const SiteTechnicianResolveServiceTicket = () => {
                                 disabled={
                                   checklistFields.length === 0 || // no fields at all
                                   Object.values(checklistResponses).every(
-                                    (val) => !val || val.trim() === ""
+                                    (val) => !val || val.trim() === "",
                                   )
                                 }
                               >

@@ -95,7 +95,7 @@ const OpexTemplate = () => {
     verifyError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   // const [opexActivity, setOpexActivity] = useState([]);
   const userInfo = useSelector((state) => state.userInfo);
 
@@ -106,7 +106,7 @@ const OpexTemplate = () => {
   const [selectedYear, setSelectedYear] = useState(String(currentYear));
 
   const [site_id, setSiteid] = useState(
-    userInfo.assigned_sites[0]?.site_id || "abc"
+    userInfo.assigned_sites[0]?.site_id || "abc",
   );
   let adminroute = "";
   if (userInfo.role === "Opex Client Admin") {
@@ -127,7 +127,8 @@ const OpexTemplate = () => {
         dispatch({ type: "FETCH_OPEX_REQUEST" });
         try {
           const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           });
 
           dispatch({
@@ -150,7 +151,8 @@ const OpexTemplate = () => {
         dispatch({ type: "FETCH_SITEID_REQUEST" });
         try {
           const result = await axios.get(`/api/v1/sites`, {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           });
           dispatch({
             type: "FETCH_SITEID_SUCCESS",
@@ -167,7 +169,7 @@ const OpexTemplate = () => {
       fetchOpexData();
       fetchSiteIds();
     }
-  }, [authtoken, site_id, userInfo]);
+  }, [site_id, userInfo]);
 
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
@@ -175,7 +177,7 @@ const OpexTemplate = () => {
     const selectedSiteName = e.target.value;
 
     const selectedSite = siteIds.find(
-      (site) => site.site_id === selectedSiteName
+      (site) => site.site_id === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -204,7 +206,7 @@ const OpexTemplate = () => {
       const response = await axios.put(
         `/api/v1/opex/client-verify-cycle/${opexData._id}/${cycleId}`,
         {}, // Empty payload as per your API
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({
@@ -235,7 +237,7 @@ const OpexTemplate = () => {
 
   const years = [
     ...new Set(
-      opexData?.cycles?.map((c) => new Date(c.start_date).getFullYear())
+      opexData?.cycles?.map((c) => new Date(c.start_date).getFullYear()),
     ),
   ];
   const filteredCycles = opexData?.cycles?.filter((cycle) => {
@@ -428,7 +430,7 @@ const OpexTemplate = () => {
                         <CTableRow key={index}>
                           <CTableDataCell>
                             {new Date(
-                              block.verified_by.timestamp
+                              block.verified_by.timestamp,
                             ).toLocaleString("en-GB", {
                               month: "long",
                               year: "numeric",
@@ -440,7 +442,7 @@ const OpexTemplate = () => {
                           </CTableDataCell>
                           <CTableDataCell>
                             {new Date(
-                              block.verified_by.timestamp
+                              block.verified_by.timestamp,
                             ).toLocaleString("en-GB", {
                               day: "2-digit",
                               month: "2-digit",

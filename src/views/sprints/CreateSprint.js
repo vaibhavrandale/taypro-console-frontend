@@ -66,7 +66,7 @@ const CreateSprint = () => {
     createError: "",
     createLoading: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -95,7 +95,7 @@ const CreateSprint = () => {
             headers: {
               authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         ); // Replace with your API endpoint
 
         dispatch({
@@ -111,7 +111,7 @@ const CreateSprint = () => {
     };
 
     fetchUsers();
-  }, [authtoken]); // Runs only once on mount
+  }, []); // Runs only once on mount
 
   // Handle input changes for tasks
   const handleTaskChange = (index, field, value) => {
@@ -155,7 +155,8 @@ const CreateSprint = () => {
 
   //     try {
   //       const response = await axios.post("/api/v1/sprint-tracking", body, {
-  //         headers: { Authorization: `Bearer ${authtoken}` },
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  // withCredentials: true,
   //       });
   //       toast.success("Sprint created successfully!");
   //       console.log(response.data);
@@ -193,7 +194,8 @@ const CreateSprint = () => {
 
     try {
       const response = await axios.post("/api/v1/sprint-tracking", body, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({
         type: "CREATE_SUCCESS",

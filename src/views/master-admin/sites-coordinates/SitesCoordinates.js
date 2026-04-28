@@ -77,7 +77,7 @@ const SitesCoordinates = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -109,7 +109,8 @@ const SitesCoordinates = () => {
           `/api/v1/sites-coordinates/get-all`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -141,7 +142,7 @@ const SitesCoordinates = () => {
     } else {
       fetchInventories();
     }
-  }, [successDelete, authtoken, limit, page]);
+  }, [successDelete, , limit, page]);
 
   const filteredCoordinates = coordinates.filter(
     (coordinates) =>
@@ -187,7 +188,8 @@ const SitesCoordinates = () => {
     ) {
       try {
         await axios.delete(`/api/v1/sites-coordinates/${coordinates._id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         toast.success(

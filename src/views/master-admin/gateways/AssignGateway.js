@@ -34,7 +34,7 @@ const AssignGateway = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [formData, setFormData] = useState({
@@ -59,7 +59,8 @@ const AssignGateway = () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`/api/v1/gateways/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data.data });
 
@@ -73,7 +74,7 @@ const AssignGateway = () => {
     };
 
     fetchGateway();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -91,8 +92,9 @@ const AssignGateway = () => {
         `/api/v1/gateways/assign-to-gateway`,
         formData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(data.message);

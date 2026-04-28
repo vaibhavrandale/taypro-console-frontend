@@ -39,7 +39,7 @@ const reducer = (state, action) => {
 
 const ClientSitesDashboard = () => {
   const { clientId } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [state, dispatch] = useReducer(reducer, {
     sites: [],
     loading: true,
@@ -65,11 +65,12 @@ const ClientSitesDashboard = () => {
           `/api/v1/sites/get-sites/${clientId}`,
           { pg: page, limit: limit },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         dispatch({
           type: "FETCH_SUCCESS",
@@ -91,17 +92,17 @@ const ClientSitesDashboard = () => {
         toast.error(
           error.response?.data?.error ||
             error.response?.data?.message ||
-            error.message
+            error.message,
         );
       }
     };
     fetchClientSites();
-  }, [authtoken, clientId, limit, page]);
+  }, [clientId, limit, page]);
 
   const filteredSites = sites.filter(
     (site) =>
       site.siteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      site.location.toLowerCase().includes(searchTerm.toLowerCase())
+      site.location.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handlePageInputChange = (e) => {

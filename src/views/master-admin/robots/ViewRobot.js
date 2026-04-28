@@ -35,7 +35,7 @@ const ViewRobot = () => {
     robotError: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -58,7 +58,8 @@ const ViewRobot = () => {
       dispatch({ type: "FETCH_ROBOT_REQUEST" });
       try {
         const data = await axios.get(`/api/v1/robots/get-one/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_ROBOT_SUCCESS", payload: data.data });
       } catch (error) {
@@ -72,7 +73,7 @@ const ViewRobot = () => {
       }
     };
     fetchRobot();
-  }, [authtoken, id]);
+  }, [id]);
 
   const formatValue = (key, value) => {
     if (typeof value === "boolean") {

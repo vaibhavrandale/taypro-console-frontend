@@ -165,7 +165,7 @@ const OpexTemplateManager = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleteReason, setDeleteReason] = useState("");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
   if (userInfo.role === "Master Admin") {
@@ -190,7 +190,8 @@ const OpexTemplateManager = () => {
     dispatch({ type: "FETCH_OPEX_REQUEST" });
     try {
       const result = await axios.get(`/api/v1/opex/site/${site_id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({
@@ -208,7 +209,7 @@ const OpexTemplateManager = () => {
 
   useEffect(() => {
     fetchOpexData();
-  }, [authtoken]);
+  }, []);
 
   const handleCreateCycle = async (id) => {
     dispatch({ type: "CREATE_REQUEST" });

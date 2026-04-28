@@ -81,7 +81,7 @@ const WeatherDashboard = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [selectedSite, setSelectedSite] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -96,7 +96,8 @@ const WeatherDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const response = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: response.data.data });
 
@@ -114,7 +115,7 @@ const WeatherDashboard = () => {
     };
 
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!selectedSite) return;
@@ -129,7 +130,10 @@ const WeatherDashboard = () => {
             pg: page,
             limit: limit,
           },
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            //  headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -153,7 +157,7 @@ const WeatherDashboard = () => {
     };
 
     fetchWeatherData();
-  }, [selectedSite, page, limit, authtoken]);
+  }, [selectedSite, page, limit]);
 
   const handleSiteChange = (e) => {
     setSelectedSite(e.target.value);

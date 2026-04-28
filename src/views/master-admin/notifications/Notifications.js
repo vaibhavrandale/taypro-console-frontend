@@ -76,7 +76,7 @@ const Notifications = () => {
     loadingUpdate: false,
     updateError: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -119,7 +119,7 @@ const Notifications = () => {
           },
         });
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -143,7 +143,7 @@ const Notifications = () => {
     };
 
     fetchNotifications();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const filteredNotifications = notifications.filter((notification) => {
     const action = notification.action ? notification.action.toLowerCase() : "";
@@ -202,7 +202,7 @@ const Notifications = () => {
           headers: {
             Authorization: `Bearer ${authtoken}`, // Authorization header
           },
-        }
+        },
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });

@@ -97,7 +97,7 @@ const reducer = (state, action) => {
 const ResolveServiceTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [state, dispatch] = useReducer(reducer, {
     ticket: {},
     inventories: [],
@@ -142,8 +142,9 @@ const ResolveServiceTicket = () => {
         const response = await axios.get(
           `/api/v1/servicetickets/getone/${id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
         setFormData(response.data.data);
@@ -157,8 +158,9 @@ const ResolveServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -180,8 +182,9 @@ const ResolveServiceTicket = () => {
           `/api/v1/service-inventory`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
@@ -198,7 +201,7 @@ const ResolveServiceTicket = () => {
     fetchTicket();
     fetchAllFaults();
     fetchInventories();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -208,7 +211,10 @@ const ResolveServiceTicket = () => {
     try {
       const result = await axios.get(
         `/api/v1/faultanalysis/${formData.part_replaced_id}`,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       const fields = result.data.data?.[0]?.checklist_fields || [];
       setChecklistFields(fields);
@@ -223,7 +229,7 @@ const ResolveServiceTicket = () => {
     setChecklistResponses((prev) => {
       const updated = [...prev];
       const index = updated.findIndex(
-        (item) => Object.keys(item)[0] === fieldName
+        (item) => Object.keys(item)[0] === fieldName,
       );
 
       if (index !== -1) {
@@ -248,12 +254,13 @@ const ResolveServiceTicket = () => {
         `/api/v1/servicetickets/resolve/${id}`,
         filteredFormData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(
-        `${filteredFormData.ticket_id} Service ticket Resolved successfully`
+        `${filteredFormData.ticket_id} Service ticket Resolved successfully`,
       );
       navigate(`/${adminroute}/service-tickets`);
     } catch (error) {
@@ -285,9 +292,10 @@ const ResolveServiceTicket = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       // ✅ Update uploaded image dynamically for the specific field
@@ -307,7 +315,7 @@ const ResolveServiceTicket = () => {
   const filteredInventories = state.inventories?.filter((inv) =>
     `${inv.item_name} ${inv.item_code}`
       .toLowerCase()
-      .includes(searchInventoryTerm.toLowerCase())
+      .includes(searchInventoryTerm.toLowerCase()),
   );
 
   const isTicketResolved = formData.ticket_resolved === true;
@@ -319,7 +327,7 @@ const ResolveServiceTicket = () => {
 
   // Checklist is considered saved if partChecklist has been set at all
   const isChecklistSaved = partChecklist.some(
-    (entry) => entry.part_id === formData.part_replaced_id
+    (entry) => entry.part_id === formData.part_replaced_id,
   );
 
   const enableUpdateTicket =
@@ -719,7 +727,7 @@ const ResolveServiceTicket = () => {
                       .replace(/_/g, " ")
                       .split(" ")
                       .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1),
                       )
                       .join(" ")}
                     :
@@ -746,7 +754,7 @@ const ResolveServiceTicket = () => {
                       onChange={(e) =>
                         updateChecklistResponse(
                           field.field_name,
-                          e.target.checked ? "Yes" : "No"
+                          e.target.checked ? "Yes" : "No",
                         )
                       }
                     />
@@ -755,7 +763,8 @@ const ResolveServiceTicket = () => {
                         .replace(/_/g, " ")
                         .split(" ")
                         .map(
-                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                          (word) =>
+                            word.charAt(0).toUpperCase() + word.slice(1),
                         )
                         .join(" ")}
                     </CFormLabel>
@@ -810,7 +819,7 @@ const ResolveServiceTicket = () => {
             disabled={
               checklistFields.length === 0 ||
               Object.values(checklistResponses).every(
-                (val) => !val || String(val).trim() === ""
+                (val) => !val || String(val).trim() === "",
               )
             }
           >

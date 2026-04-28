@@ -41,7 +41,9 @@ const reducer = (state, action) => {
         loadingActivateMds: false,
         inactiveMds: state.inactiveMds.filter(
           (mds) =>
-            !action.payload.some((activated) => activated.deveui === mds.deveui)
+            !action.payload.some(
+              (activated) => activated.deveui === mds.deveui,
+            ),
         ),
         activatedMds: [...state.activatedMds, ...action.payload],
       };
@@ -78,7 +80,7 @@ const ActivateMds = () => {
   });
 
   const [selectedMds, setSelectedMds] = useState([]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
 
   const [page, setPage] = useState(1);
@@ -96,12 +98,13 @@ const ActivateMds = () => {
           `/api/v1/mds-device/inactive`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -121,20 +124,20 @@ const ActivateMds = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
 
     fetchMds();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // ✅ Handle Checkbox Selection
   const handleCheckboxChange = (mds) => {
     setSelectedMds((prev) =>
       prev.some((r) => r.deveui === mds.deveui)
         ? prev.filter((r) => r.deveui !== mds.deveui)
-        : [...prev, mds]
+        : [...prev, mds],
     );
   };
 
@@ -151,7 +154,7 @@ const ActivateMds = () => {
       await axios.put(
         "/api/v1/mds-device/activate",
         { deveuiArray: selectedMds.map((mds) => mds.deveui) },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
 
       dispatch({ type: "ACTIVATE_MDS_SUCCESS", payload: selectedMds });

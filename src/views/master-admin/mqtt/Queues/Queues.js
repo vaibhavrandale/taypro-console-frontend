@@ -55,7 +55,7 @@ const Queues = ({ deveui }) => {
       flushError: "",
     });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchQueues = async () => {
@@ -64,7 +64,8 @@ const Queues = ({ deveui }) => {
         const response = await axios.get(
           `/api/v1/robots/get-queues/${deveui}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         dispatch({ type: "FETCH_SUCCESS", payload: response.data.data });
@@ -75,7 +76,7 @@ const Queues = ({ deveui }) => {
       }
     };
     fetchQueues();
-  }, [deveui, authtoken]);
+  }, [deveui]);
 
   const handleFlushQueue = async () => {
     if (!deveui) {
@@ -90,7 +91,10 @@ const Queues = ({ deveui }) => {
         // "/api/v1/robots/send-downlink-in-bulk",
         "/api/v1/robots/flush-queue",
         { deveuiList: [deveui] },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SEND_FLUSH_SUCCESS" });
 

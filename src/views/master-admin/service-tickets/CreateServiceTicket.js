@@ -90,7 +90,7 @@ const CreateServiceTicket = () => {
     ticket_generated_images5: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
   const [uploadingFields, setUploadingFields] = useState({});
@@ -124,8 +124,9 @@ const CreateServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/robots/get-robots/robots-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -147,8 +148,9 @@ const CreateServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -164,7 +166,7 @@ const CreateServiceTicket = () => {
     };
     fetchAllRobots();
     fetchAllFaults();
-  }, [authtoken]);
+  }, []);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
@@ -173,7 +175,7 @@ const CreateServiceTicket = () => {
       const filtered = robots.filter(
         (robot) =>
           robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(value.toLowerCase())
+          robot.site_id.toLowerCase().includes(value.toLowerCase()),
       );
 
       setFilteredRobots(filtered);
@@ -186,7 +188,7 @@ const CreateServiceTicket = () => {
     setFaultSearchTerm(value);
     if (value.length > 0) {
       const filtered = serviceticketsfault.filter((fault) =>
-        fault.fault_name.toLowerCase().includes(value.toLowerCase())
+        fault.fault_name.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredFaults(filtered);
     } else {
@@ -212,10 +214,11 @@ const CreateServiceTicket = () => {
 
     try {
       const response = await axios.post("/api/v1/servicetickets", formData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success(
-        `${response.data.data.ticket_id}, Ticket Created Successfully!`
+        `${response.data.data.ticket_id}, Ticket Created Successfully!`,
       );
       setLoading(false);
       navigate(`/${adminroute}/service-tickets`);
@@ -256,7 +259,7 @@ const CreateServiceTicket = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       // ✅ Update uploaded image dynamically for the specific field

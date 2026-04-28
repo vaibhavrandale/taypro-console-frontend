@@ -96,7 +96,6 @@ const RobotSelectionModal = ({
   onClose,
   // onSelect,
   site_id,
-  authtoken,
   commisioning_doc_id,
   certificate_robots,
   fetchCertificates,
@@ -134,7 +133,8 @@ const RobotSelectionModal = ({
       const result = await axios.get(
         `/api/v1/commisioning-docs/commisioned-sitewise-not-incertificates-robots/${site_id}`,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -190,7 +190,8 @@ const RobotSelectionModal = ({
         `/api/v1/commisioning-certificates/add-robots/${commisioning_doc_id}`,
         { robots: selectedrobots },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -223,7 +224,8 @@ const RobotSelectionModal = ({
         `/api/v1/commisioning-certificates/remove-robots/${commisioning_doc_id}`,
         { robot_nos: removeSelected }, // ✅ multiple remove
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

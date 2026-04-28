@@ -101,7 +101,7 @@
 
 // const CreateTechnicianPreventivemaintanance = () => {
 //   const [state, dispatch] = useReducer(reducer, initialState);
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 //   const navigate = useNavigate();
 //   const [loading, setLoading] = useState(false);
 //   const [robots, setRobots] = useState([]);
@@ -112,7 +112,8 @@
 //     const fetchRobots = async () => {
 //       try {
 //         const { data } = await axios.get("/api/v1/robots/get-robots-no", {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 //         setRobots(data.data);
 //       } catch (error) {
@@ -122,7 +123,8 @@
 //       }
 //     };
 //     fetchRobots();
-//   }, [authtoken]);
+//   }, []
+// );
 
 //   const handleSearchChange = (e) => {
 //     const value = e.target.value;
@@ -251,7 +253,8 @@
 //       dispatch({ type: "ADD_PM_REQUEST" });
 
 //       const data = await axios.post("/api/v1/preventivemaintenances", state, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 //       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
 //       toast.success("Preventive Maintenance Created Successfully!");
@@ -523,7 +526,7 @@ const reducer = (state, action) => {
 
 const CreateTechnicianPreventivemaintanance = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -544,7 +547,8 @@ const CreateTechnicianPreventivemaintanance = () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.get("/api/v1/robots/get-robots-no", {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
@@ -558,12 +562,12 @@ const CreateTechnicianPreventivemaintanance = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchRobots();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (cameraModalVisible) {
@@ -575,7 +579,7 @@ const CreateTechnicianPreventivemaintanance = () => {
           try {
             setLoadingCamera(true);
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
             );
             const data = await response.json();
 
@@ -599,7 +603,7 @@ const CreateTechnicianPreventivemaintanance = () => {
             name: "Location not available",
           });
           setLoadingCamera(false);
-        }
+        },
       );
     }
   }, [cameraModalVisible]);
@@ -689,7 +693,7 @@ const CreateTechnicianPreventivemaintanance = () => {
           }
         },
         "image/jpeg",
-        0.8
+        0.8,
       );
     }
   };
@@ -707,9 +711,10 @@ const CreateTechnicianPreventivemaintanance = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       if (data?.url) {
@@ -812,7 +817,8 @@ const CreateTechnicianPreventivemaintanance = () => {
       dispatch({ type: "ADD_PM_REQUEST" });
 
       const data = await axios.post("/api/v1/preventivemaintenances", state, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "ADD_PM_SUCCESS", payload: data.data });
       toast.success(data.data.message);

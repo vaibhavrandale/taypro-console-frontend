@@ -153,7 +153,7 @@ export default function ChatDashboard() {
   const [textMessage, setTextMessage] = useState("");
   const messagesEndRef = useRef(null); // Ref to scroll to the bottom of the chat
   const [showUserModal, setShowUserModal] = useState(false);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -174,17 +174,18 @@ export default function ChatDashboard() {
         (message) =>
           message.send_by.email !== userInfo.email &&
           !message.read_status &&
-          message._id
+          message._id,
       ).length;
     },
-    [userInfo.email]
+    [userInfo.email],
   );
 
   const fetchChats = useCallback(async () => {
     dispatch({ type: "FETCH_CHAT_REQUEST" });
     try {
       const result = await axios.get("/api/v1/chats/get-all-chats", {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       dispatch({
@@ -208,7 +209,7 @@ export default function ChatDashboard() {
       });
       toast.error(error.response?.data?.error || error.response?.data?.message);
     }
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -221,7 +222,7 @@ export default function ChatDashboard() {
             headers: {
               authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         ); // Replace with your API endpoint
 
         dispatch({
@@ -238,7 +239,7 @@ export default function ChatDashboard() {
 
     fetchUsers();
     fetchChats();
-  }, [authtoken, fetchChats]); // Runs only once on mount
+  }, [fetchChats]); // Runs only once on mount
 
   useEffect(() => {
     socket.on("updateOnlineUsers", (users) => {
@@ -339,8 +340,9 @@ export default function ChatDashboard() {
         "/api/v1/chats",
         { id: user._id },
         {
-          headers: { authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       dispatch({
@@ -355,7 +357,7 @@ export default function ChatDashboard() {
     } catch (error) {
       console.error(
         "Error fetching users:",
-        error.response.data.error || error.response.data.message
+        error.response.data.error || error.response.data.message,
       );
       dispatch({
         type: "CREATE_CHAT_FAIL",
@@ -366,7 +368,7 @@ export default function ChatDashboard() {
   };
 
   const filteredUsers = users.filter(
-    (user) => user.designation !== "Site Technician"
+    (user) => user.designation !== "Site Technician",
   );
 
   // const sendMessage = (chat) => {
@@ -461,7 +463,7 @@ export default function ChatDashboard() {
               chat: [...c.chat, newMsg],
               updatedAt: new Date(),
             }
-          : c
+          : c,
       ),
     });
 
@@ -508,13 +510,13 @@ export default function ChatDashboard() {
                       msg.send_by.email === userInfo.email &&
                       msg.message === message.message &&
                       Math.abs(
-                        new Date(msg.timestamp) - new Date(message.timestamp)
+                        new Date(msg.timestamp) - new Date(message.timestamp),
                       ) < 2000;
                     return isOptimistic ? message : msg;
                   }),
                   updatedAt: message.timestamp,
                 }
-              : chat
+              : chat,
           ),
         });
         return;
@@ -536,7 +538,7 @@ export default function ChatDashboard() {
                 chat: [...chat.chat, message],
                 updatedAt: message.timestamp,
               }
-            : chat
+            : chat,
         ),
       });
     });
@@ -595,7 +597,7 @@ export default function ChatDashboard() {
         if (!prev || prev._id !== chatId) return prev;
         const updatedChat = prev.chat.map((m) => {
           const update = updates.find(
-            (u) => String(u.messageId) === String(m._id)
+            (u) => String(u.messageId) === String(m._id),
           );
           return update
             ? { ...m, read_status: true, read_by: update.read_by }
@@ -613,18 +615,18 @@ export default function ChatDashboard() {
                 ...c,
                 chat: c.chat.map((m) => {
                   const update = updates.find(
-                    (u) => String(u.messageId) === String(m._id)
+                    (u) => String(u.messageId) === String(m._id),
                   );
                   return update
                     ? { ...m, read_status: true, read_by: update.read_by }
                     : m;
                 }),
               }
-            : c
+            : c,
         ),
       }));
     },
-    [dispatch]
+    [dispatch],
   ); // Add dispatch as dependency
 
   useEffect(() => {
@@ -674,7 +676,7 @@ export default function ChatDashboard() {
 
       const unreadIds = selectedChat.chat
         .filter(
-          (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id
+          (m) => m.send_by.email !== userInfo.email && !m.read_status && m._id,
         )
         .map((m) => m._id);
 
@@ -797,7 +799,7 @@ export default function ChatDashboard() {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       dispatch({ type: "UPLOAD_CHAT_ATTACHMENT_SUCCESS" });
@@ -843,7 +845,7 @@ export default function ChatDashboard() {
                 chat: [...c.chat, newMsg],
                 updatedAt: new Date(),
               }
-            : c
+            : c,
         ),
       });
 
@@ -1154,8 +1156,8 @@ export default function ChatDashboard() {
                               {otherTyping
                                 ? "typing..."
                                 : isUserOnline(otherUser.user_id)
-                                ? "Online"
-                                : "Offline"}
+                                  ? "Online"
+                                  : "Offline"}
                             </small>
                           </div>
                         </>
@@ -1179,7 +1181,7 @@ export default function ChatDashboard() {
                   >
                     {selectedChat.chat
                       .sort(
-                        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+                        (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
                       )
                       .map((msg, idx) => (
                         <div

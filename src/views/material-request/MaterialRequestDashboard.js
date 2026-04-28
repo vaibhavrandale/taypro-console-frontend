@@ -118,7 +118,7 @@ const MaterialRequestDashboard = () => {
   const [remark, setRemark] = useState("");
   const [deleteReason, setDeleteReason] = useState("");
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   // const navigate = useNavigate();
@@ -141,9 +141,10 @@ const MaterialRequestDashboard = () => {
         `/api/v1/material-requests/get-material-requests`,
         Paginations,
         {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         },
       );
 
@@ -178,7 +179,7 @@ const MaterialRequestDashboard = () => {
   useEffect(() => {
     fetchMaterials();
     fetchSummary();
-  }, [page, limit, authtoken]);
+  }, [page, limit]);
 
   // ================= SEARCH =================
   const filteredData = materials?.filter(
@@ -210,7 +211,10 @@ const MaterialRequestDashboard = () => {
       const res = await axios.put(
         `/api/v1/material-requests/approve/${id}`,
         { remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "APPROVE_SUCCESS" });
@@ -235,7 +239,10 @@ const MaterialRequestDashboard = () => {
       const res = await axios.put(
         `/api/v1/material-requests/delete-material/${id}`,
         { reason: deleteReason },
-        { headers: { Authorization: `Bearer ${authtoken}` } },
+        {
+          //  headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
 
       dispatch({ type: "DELETE_SUCCESS", payload: id });
@@ -255,7 +262,8 @@ const MaterialRequestDashboard = () => {
       const { data } = await axios.get(
         "/api/v1/material-requests/get-erp-material-requests-status/summary",
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 

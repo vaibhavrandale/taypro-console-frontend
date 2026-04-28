@@ -41,7 +41,7 @@ const reducer = (state, action) => {
 const UpdateInternalTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [state, dispatch] = useReducer(reducer, {
     ticket: {},
@@ -73,7 +73,8 @@ const UpdateInternalTicket = () => {
     const fetchTicket = async () => {
       try {
         const { data } = await axios.get(`/api/v1/internaltickets/${id}`, {
-          headers: { authorization: `Bearer ${authtoken}` },
+          // headers: { authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_TICKET_SUCCESS", payload: data.data });
@@ -86,7 +87,7 @@ const UpdateInternalTicket = () => {
       }
     };
     fetchTicket();
-  }, [id, authtoken]);
+  }, [id]);
 
   // const handleChange = (e) => {
   //   setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -123,7 +124,8 @@ const UpdateInternalTicket = () => {
 
     try {
       await axios.put(`/api/v1/internaltickets/${id}`, updatedTicket, {
-        headers: { authorization: `Bearer ${authtoken}` },
+        // headers: { authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Ticket updated successfully");
       dispatch({ type: "UPDATE_TICKET_SUCCESS" });
@@ -154,9 +156,10 @@ const UpdateInternalTicket = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
 
       // ✅ Update uploaded image dynamically for the specific field

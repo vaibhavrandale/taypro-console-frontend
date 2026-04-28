@@ -63,7 +63,7 @@ const reducer = (state, action) => {
 };
 
 const NewProjectClosure = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -201,7 +201,7 @@ const NewProjectClosure = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setImage(data.filePath); // data.filePath = '/uploads/filename.pdf'
@@ -233,7 +233,8 @@ const NewProjectClosure = () => {
     };
     try {
       await axios.post("/api/v1/projectdocs", newdata, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Project Closure Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });
@@ -755,7 +756,7 @@ const NewProjectClosure = () => {
                             handleRobotChange(
                               index,
                               "automatic",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
@@ -769,7 +770,7 @@ const NewProjectClosure = () => {
                             handleRobotChange(
                               index,
                               "semi_automatic",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
@@ -835,7 +836,7 @@ const NewProjectClosure = () => {
                             handleHandoverChange(
                               index,
                               "task_name",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
@@ -849,7 +850,7 @@ const NewProjectClosure = () => {
                             handleHandoverChange(
                               index,
                               "status",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
@@ -863,7 +864,7 @@ const NewProjectClosure = () => {
                             handleHandoverChange(
                               index,
                               "remark",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />

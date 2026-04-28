@@ -75,7 +75,7 @@ const reducer = (state, action) => {
 
 const UpdateDpr = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -117,7 +117,8 @@ const UpdateDpr = () => {
       dispatch({ type: "FETCH_DPR_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/techniciandprs/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_DPR_SUCCESS", payload: result.data.data });
@@ -132,7 +133,8 @@ const UpdateDpr = () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITEID_SUCCESS",
@@ -148,7 +150,7 @@ const UpdateDpr = () => {
     };
     fetchSiteIds();
     fetchDprDetails();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleChange = (e) => {
     dispatch({ type: "SET_FIELD", name: e.target.name, value: e.target.value });
@@ -171,8 +173,9 @@ const UpdateDpr = () => {
         `/api/v1/techniciandprs/${id}`,
         updatedData,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
       toast.success(result.data.message);
       dispatch({ type: "UPDATE_SUCCESS" });
@@ -329,7 +332,7 @@ const UpdateDpr = () => {
                         <CTableDataCell>
                           <CFormCheck
                             checked={state.dprData.technician_present.some(
-                              (t) => t.technician_id === tech._id
+                              (t) => t.technician_id === tech._id,
                             )}
                             onChange={(e) => {
                               const updatedList = e.target.checked
@@ -345,7 +348,7 @@ const UpdateDpr = () => {
                                     },
                                   ]
                                 : state.dprData.technician_present.filter(
-                                    (t) => t.technician_id !== tech._id // Match correctly
+                                    (t) => t.technician_id !== tech._id, // Match correctly
                                   );
 
                               dispatch({

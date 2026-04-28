@@ -56,7 +56,7 @@ const TimerExecutionNotificationView = () => {
     hasPrevPage: false,
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
@@ -69,11 +69,11 @@ const TimerExecutionNotificationView = () => {
         const res = await axios.post(
           "/api/v1/timerexecutionnotifications/get-all",
           { pg: page, limit },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         const totalPagesCalc = Math.ceil(
-          Number(res.data.totalCount) / Number(res.data.limit)
+          Number(res.data.totalCount) / Number(res.data.limit),
         );
 
         dispatch({
@@ -96,7 +96,7 @@ const TimerExecutionNotificationView = () => {
     };
 
     fetchData();
-  }, [authtoken, page, limit]);
+  }, [page, limit]);
 
   const handlePageInputChange = (e) => setPageInput(e.target.value);
   const handlePageChange = (newPage) => {

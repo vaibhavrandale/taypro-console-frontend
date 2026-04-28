@@ -76,7 +76,7 @@ const Profile = () => {
   });
 
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
@@ -88,7 +88,8 @@ const Profile = () => {
     try {
       dispatch({ type: "FETCH_USER_REQUEST" });
       const { data } = await axios.get(`/api/v1/users/${userInfo._id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "FETCH_USER_SUCCESS", payload: data.data });
     } catch (err) {
@@ -97,7 +98,7 @@ const Profile = () => {
         payload: err.response?.data?.message || "Fetch failed",
       });
     }
-  }, [userInfo._id, authtoken]);
+  }, [userInfo._id]);
 
   useEffect(() => {
     fetchUserDetails();
@@ -135,9 +136,10 @@ const Profile = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
+            // Authorization: `Bearer ${authtoken}`,
           },
-        }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "UPLOAD_USER_IMAGE_SUCCESS" });
       setUploadedImageUrl(data.url);
@@ -148,7 +150,7 @@ const Profile = () => {
       });
       toast.error("Upload failed");
     }
-  }, [capturedImage, authtoken]);
+  }, [capturedImage]);
 
   const handleSaveImage = useCallback(async () => {
     if (!uploadedImageUrl) return;
@@ -157,7 +159,10 @@ const Profile = () => {
       const { data } = await axios.post(
         "/api/v1/users/save-image",
         { userId: userInfo._id, image: uploadedImageUrl },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` }
+          withCredentials: true,
+        },
       );
       dispatch({ type: "SAVE_USER_IMAGE_SUCCESS" });
       toast.success(data.message);
@@ -176,7 +181,7 @@ const Profile = () => {
       });
       toast.error(err.response?.data?.error || "Save failed");
     }
-  }, [uploadedImageUrl, userInfo._id, authtoken, fetchUserDetails]);
+  }, [uploadedImageUrl, userInfo._id, fetchUserDetails]);
 
   useEffect(() => {
     if (uploadedImageUrl && !uploadingImage && !uploadError) {
@@ -258,7 +263,7 @@ const Profile = () => {
                                   minute: "2-digit",
                                   second: "2-digit",
                                   hour12: true,
-                                }
+                                },
                               )
                             : "N/A",
                         ],

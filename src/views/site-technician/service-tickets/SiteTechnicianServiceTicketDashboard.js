@@ -113,7 +113,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState({});
@@ -137,7 +137,8 @@ const SiteTechnicianServiceTicketDashboard = () => {
     try {
       dispatch({ type: "FETCH_TICKET_REQUEST" });
       const response = await axios.get(`/api/v1/servicetickets/getone/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       let result = response.data.data;
@@ -158,7 +159,8 @@ const SiteTechnicianServiceTicketDashboard = () => {
     try {
       dispatch({ type: "UPDATE_TICKET_REQUEST" });
       await axios.put(`/api/v1/servicetickets/${id}`, formData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       setModalVisible(false);
 
@@ -166,7 +168,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
       dispatch({
         type: "UPDATE_TICKET_SUCCESS",
         payload: servicetickets.map((ticket) =>
-          ticket.id === id ? { ...ticket, ...formData } : ticket
+          ticket.id === id ? { ...ticket, ...formData } : ticket,
         ),
       });
     } catch (error) {
@@ -192,12 +194,13 @@ const SiteTechnicianServiceTicketDashboard = () => {
           `/api/v1/servicetickets/get-sitewise-servicetickets`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
@@ -222,7 +225,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
     };
 
     fetchServicetickets();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const filteredData = servicetickets
     ? servicetickets.filter(
@@ -230,7 +233,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
           item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+          item.site_id.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -525,7 +528,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
                         </CTableDataCell>
                       </CTableRow>
                       {serviceticket.part_checklist.some(
-                        (item) => item.checklist
+                        (item) => item.checklist,
                       ) && (
                         <CTableRow>
                           <CTableHeaderCell>
@@ -544,11 +547,11 @@ const SiteTechnicianServiceTicketDashboard = () => {
                                           </strong>{" "}
                                           {value}
                                         </li>
-                                      )
+                                      ),
                                     )}
                                   </span>
                                 </div>
-                              ) : null
+                              ) : null,
                             )}
                           </CTableDataCell>
                         </CTableRow>

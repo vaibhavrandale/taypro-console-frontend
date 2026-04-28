@@ -85,7 +85,7 @@ const SiteAnalytics = () => {
   // const site_id = "avaada_agar";
   const today = new Date();
   const last7 = new Date();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   last7.setDate(today.getDate() - 7);
 
   const formatDate = (d) => d.toISOString().slice(0, 10);
@@ -99,7 +99,8 @@ const SiteAnalytics = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const response = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: response.data.data });
 
@@ -116,7 +117,7 @@ const SiteAnalytics = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!selectedSite) return;
@@ -132,7 +133,8 @@ const SiteAnalytics = () => {
             endDate,
           },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
         const resData = result.data.data;
@@ -157,7 +159,7 @@ const SiteAnalytics = () => {
     };
 
     fetchRobotAnalytics();
-  }, [startDate, endDate, authtoken, selectedSite]);
+  }, [startDate, endDate, , selectedSite]);
 
   const handleSiteChange = (e) => {
     setSelectedSite(e.target.value);

@@ -47,7 +47,7 @@ const reducer = (state, action) => {
 };
 
 const UpdateMicrofiberdata = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -67,10 +67,12 @@ const UpdateMicrofiberdata = () => {
       try {
         const [siteRes, microfiberRes] = await Promise.all([
           axios.get(`/api/v1/sites`, {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           }),
           axios.get(`/api/v1/microfiberdata/get-by-id/${id}`, {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           }),
         ]);
 
@@ -86,7 +88,7 @@ const UpdateMicrofiberdata = () => {
     };
 
     fetchData();
-  }, [authtoken, id]);
+  }, [id]);
 
   const handleChange = (e) => {
     dispatch({
@@ -113,7 +115,7 @@ const UpdateMicrofiberdata = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       dispatch({
@@ -147,7 +149,7 @@ const UpdateMicrofiberdata = () => {
       !state.microfiberdata.image
     ) {
       toast.error(
-        "All fields are required. Please fill out the form completely."
+        "All fields are required. Please fill out the form completely.",
       );
       return;
     }
@@ -155,7 +157,8 @@ const UpdateMicrofiberdata = () => {
 
     try {
       await axios.put(`/api/v1/microfiberdata/${id}`, state.microfiberdata, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success("Micro Fiber Data updated successfully!");

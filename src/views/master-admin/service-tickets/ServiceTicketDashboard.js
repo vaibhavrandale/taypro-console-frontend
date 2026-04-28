@@ -119,15 +119,15 @@ const ServiceTicketDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const openViewModal = async (id) => {
     setViewModalVisible(true);
@@ -135,7 +135,8 @@ const ServiceTicketDashboard = () => {
     try {
       dispatch({ type: "FETCH_TICKET_REQUEST" });
       const response = await axios.get(`/api/v1/servicetickets/getone/${id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       let result = response.data.data;
@@ -163,12 +164,13 @@ const ServiceTicketDashboard = () => {
           `/api/v1/servicetickets/get-servicetickets`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
         let next = response.data.hasNextPage;
         let prev = response.data.hasPrevPage;
@@ -193,7 +195,7 @@ const ServiceTicketDashboard = () => {
     };
 
     fetchServicetickets();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // const filteredData = servicetickets
   //   ? servicetickets.filter(
@@ -257,7 +259,7 @@ const ServiceTicketDashboard = () => {
         "Fault Type": item.fault_type,
         Status: item.ticket_resolved ? "Resolved" : "Open",
         Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
-      }))
+      })),
     );
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Service Ticket");
@@ -284,7 +286,7 @@ const ServiceTicketDashboard = () => {
               KEY MAINTENANCE MATRIX
             </Link>
             {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role
+              userInfo?.role,
             ) && (
               <Link
                 to="create-new-ticket"

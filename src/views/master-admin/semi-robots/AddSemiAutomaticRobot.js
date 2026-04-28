@@ -56,14 +56,15 @@ const AddSemiAutomaticRobot = () => {
     site_id: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
       } catch (error) {
@@ -78,7 +79,7 @@ const AddSemiAutomaticRobot = () => {
     };
 
     fetchSiteIds();
-  }, [authtoken]);
+  }, []);
 
   const addRobotUsingManualData = async (e) => {
     e.preventDefault();

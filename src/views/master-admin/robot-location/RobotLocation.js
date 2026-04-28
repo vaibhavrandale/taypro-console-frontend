@@ -100,7 +100,7 @@ const RobotLocation = () => {
     // successDelete: false,
   });
   const [site_id, setSiteId] = useState("");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
@@ -109,7 +109,8 @@ const RobotLocation = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         const siteData = result.data.data || [];
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: siteData });
@@ -125,7 +126,7 @@ const RobotLocation = () => {
       }
     };
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -136,7 +137,8 @@ const RobotLocation = () => {
           `/api/v1/robot-locations/${site_id}`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -156,7 +158,7 @@ const RobotLocation = () => {
     };
 
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   // Filter robots based on search term
   const filteredRobots = data.filter((item) =>
@@ -182,7 +184,8 @@ const RobotLocation = () => {
       dispatch({ type: "DELETE_REQUEST" });
 
       await axios.delete(`/api/v1/robot-locations/${location._id}`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
 
       toast.success("Robot location deleted successfully");
@@ -273,6 +276,8 @@ const RobotLocation = () => {
             <CTableHeaderCell>View Image</CTableHeaderCell>
             <CTableHeaderCell>Gps Location</CTableHeaderCell>
             <CTableHeaderCell>Map Url Location</CTableHeaderCell>
+            <CTableHeaderCell>Created By</CTableHeaderCell>
+            <CTableHeaderCell>Created At</CTableHeaderCell>
 
             <CTableHeaderCell>Action</CTableHeaderCell>
           </CTableRow>
@@ -280,14 +285,14 @@ const RobotLocation = () => {
         <CTableBody>
           {fetchrobotsLoading ? (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
+              <CTableDataCell colSpan="11" className="text-center fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : robotsError ? (
             <CTableRow>
               <CTableDataCell
-                colSpan="9"
+                colSpan="11"
                 className="text-center text-danger fw-bold"
               >
                 {robotsError}
@@ -328,15 +333,38 @@ const RobotLocation = () => {
                   )}
                 </CTableDataCell>
                 <CTableDataCell>
-                  {item.location?.location?.map_url ? (
-                    <Link to={item.location.location.map_url} target="_blank">
+                  {item.location?.map_url ? (
+                    <Link to={item.location.map_url} target="_blank">
                       View
                     </Link>
                   ) : (
                     <CBadge color="secondary">Pending</CBadge>
                   )}
                 </CTableDataCell>
-
+                <CTableDataCell>
+                  {item.location ? (
+                    item.location.last_activity?.[0].name
+                  ) : (
+                    <CBadge color="secondary">Pending</CBadge>
+                  )}
+                </CTableDataCell>
+                <CTableDataCell>
+                  {item.location ? (
+                    new Date(
+                      item.location.last_activity?.[0].timestamp,
+                    ).toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    })
+                  ) : (
+                    <CBadge color="secondary">Pending</CBadge>
+                  )}
+                </CTableDataCell>
                 <CTableDataCell>
                   {item.location ? (
                     <>
@@ -370,7 +398,7 @@ const RobotLocation = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center">
+              <CTableDataCell colSpan="11" className="text-center">
                 No robots found.
               </CTableDataCell>
             </CTableRow>

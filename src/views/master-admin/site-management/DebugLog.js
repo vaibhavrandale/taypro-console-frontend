@@ -80,13 +80,13 @@ const DebugLog = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   let adminroute = "";
 
   if (userInfo?.role === "Master Admin") {
@@ -130,18 +130,19 @@ const DebugLog = () => {
           `/api/v1/debuglogs/get-debug-logs`,
           requestBody,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         if (!response.data.success) {
           throw new Error(
-            response.data.message || "Failed to fetch debug logs"
+            response.data.message || "Failed to fetch debug logs",
           );
         }
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
 
         dispatch({
@@ -167,7 +168,8 @@ const DebugLog = () => {
         dispatch({ type: "FETCH_ROBOT_REQUEST" });
 
         const result = await axios.get(`/api/v1/robots/get-robots-no`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -180,22 +182,13 @@ const DebugLog = () => {
           payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
-          error.response?.data?.error || error.response?.data?.message
+          error.response?.data?.error || error.response?.data?.message,
         );
       }
     };
     fetchRobots();
     fetchDebugLogs();
-  }, [
-    authtoken,
-    robot_no,
-    site_id,
-    page,
-    limit,
-    fetchBySite,
-    startDate,
-    endDate,
-  ]);
+  }, [, robot_no, site_id, page, limit, fetchBySite, startDate, endDate]);
 
   const filteredLogs = debuglogs.filter(
     (log) =>
@@ -204,7 +197,7 @@ const DebugLog = () => {
       (log.data && log.data.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (log.deveui &&
         log.deveui.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase()))
+      (log.topic && log.topic.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   const exportToExcel = () => {
@@ -231,14 +224,14 @@ const DebugLog = () => {
         Topic: log.topic || "N/A",
         SNR: log.snr || "N/A",
         RSSI: log.rssi || "N/A",
-      }))
+      })),
     );
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Debug Logs");
     XLSX.writeFile(
       workbook,
-      `DebugLogs_${fetchBySite ? site_id : robot_no}.xlsx`
+      `DebugLogs_${fetchBySite ? site_id : robot_no}.xlsx`,
     );
   };
 
@@ -247,7 +240,7 @@ const DebugLog = () => {
     setRobotNo(value);
     if (value.length > 0) {
       const filtered = robots.filter((robot) =>
-        robot.robot_no?.toLowerCase().includes(value.toLowerCase())
+        robot.robot_no?.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredRobot(filtered);
     } else {
@@ -259,7 +252,7 @@ const DebugLog = () => {
     setRobotNo(robot.robot_no);
     setFilteredRobot([]);
     navigate(
-      `/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}/debug_logs`
+      `/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}/debug_logs`,
     );
   };
 

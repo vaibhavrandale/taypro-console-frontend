@@ -69,7 +69,7 @@ const PreventiveMaintanancrDashboard = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [pageInput, setPageInput] = useState("");
@@ -114,12 +114,13 @@ const PreventiveMaintanancrDashboard = () => {
           `/api/v1/preventivemaintenances/get-preventivemaintenances`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -143,13 +144,13 @@ const PreventiveMaintanancrDashboard = () => {
     };
 
     fetchPreventivemaintenances();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const FilteredPreventivemaintenances = preventivemaintanance
     ? preventivemaintanance.filter(
         (robot) =>
           robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.site_id.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 
@@ -205,7 +206,7 @@ const PreventiveMaintanancrDashboard = () => {
           View Sitewise
         </Link>
         {!["Master User", "Project User", "Service User"].includes(
-          userInfo?.role
+          userInfo?.role,
         ) && (
           <Link
             className="btn btn-sm btn-primary m-1"
@@ -360,7 +361,7 @@ const PreventiveMaintanancrDashboard = () => {
                           "physical_condition_of_top_bottom_cover_image",
                           "oiling_need_for_bearing_condition_image",
                           "oiling_need_for_coupling_image",
-                        ].includes(key)
+                        ].includes(key),
                     )
                     .map(([key, value]) => (
                       <CTableRow key={key} className="align-middle">

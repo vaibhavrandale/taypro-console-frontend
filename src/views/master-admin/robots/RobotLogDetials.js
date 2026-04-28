@@ -47,16 +47,16 @@ const RobotLogDetails = () => {
     data: {},
     error: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [chartType, setChartType] = useState("bar");
   const [siteId, setSiteId] = useState("all");
   const [siteOptions, setSiteOptions] = useState([]);
   const [robotNo, setRobotNo] = useState("");
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [isFetchingSites, setIsFetchingSites] = useState(false);
   useEffect(() => {
@@ -72,7 +72,7 @@ const RobotLogDetails = () => {
         const sitesResponse = await axios.post(
           "/api/v1/sites/get-sites",
           { pg: 1, limit: 1000 },
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         if (!isMounted) return;
@@ -94,7 +94,7 @@ const RobotLogDetails = () => {
           `/api/v1/debuglogs/uplink-summary-count/${
             siteId || "all"
           }/${startDate}/${endDate}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } }
+          { headers: { Authorization: `Bearer ${authtoken}` } },
         );
 
         if (!isMounted) return;
@@ -127,7 +127,7 @@ const RobotLogDetails = () => {
           }
           combinedTotals.total = Object.values(combinedTotals).reduce(
             (a, b) => a + b,
-            0
+            0,
           );
           transformed["all"] = combinedTotals;
         } else {
@@ -162,7 +162,7 @@ const RobotLogDetails = () => {
     return () => {
       isMounted = false; // cleanup flag to prevent setting state after unmount
     };
-  }, [authtoken, siteId, startDate, endDate]);
+  }, [siteId, startDate, endDate]);
 
   const exportEntirePayloadToExcel = () => {
     if (!data || Object.keys(data).length === 0) {
@@ -197,7 +197,7 @@ const RobotLogDetails = () => {
         ["End Date:", endDate],
         ["Site ID:", siteId],
       ],
-      { origin: "A1" }
+      { origin: "A1" },
     );
 
     const workbook = XLSX.utils.book_new();
@@ -227,7 +227,7 @@ const RobotLogDetails = () => {
       return {};
     if (robotNo) return data[siteId][robotNo] || {};
     const allRobots = Object.keys(data[siteId]).filter(
-      (key) => key !== "siteTotals"
+      (key) => key !== "siteTotals",
     );
     const combined = {};
     for (const robot of allRobots) {
@@ -530,7 +530,7 @@ const RobotLogDetails = () => {
                           siteLabels.map((key) => siteData[key] || 0),
                           siteId === "all"
                             ? "All Sites Combined"
-                            : `Site: ${siteId.replace(/_/g, " ")}`
+                            : `Site: ${siteId.replace(/_/g, " ")}`,
                         )}
                       </CCol>
                       <CCol
@@ -580,9 +580,9 @@ const RobotLogDetails = () => {
                             ? `Robot ${robotNo}`
                             : `All Robots Combined at Site: ${siteId.replace(
                                 /_/g,
-                                " "
+                                " ",
                               )}`,
-                          true
+                          true,
                         )}
                       </CCol>
                     </CRow>

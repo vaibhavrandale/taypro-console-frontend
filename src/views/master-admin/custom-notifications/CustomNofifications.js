@@ -64,7 +64,7 @@ export default function CustomNotifications() {
     hasNextPage,
     hasPrevPage,
   } = state;
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -120,7 +120,7 @@ export default function CustomNotifications() {
   };
   useEffect(() => {
     fetchNotifications();
-  }, [authtoken, page, limit]);
+  }, [page, limit]);
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -205,7 +205,8 @@ export default function CustomNotifications() {
     try {
       setAdding(true);
       const res = await axios.post("/api/v1/customnotifications", addForm, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       console.log(res);
       setAddForm(emptyAddForm);

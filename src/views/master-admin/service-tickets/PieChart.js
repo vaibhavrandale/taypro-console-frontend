@@ -44,14 +44,15 @@
 //     error: "",
 //   });
 
-//   const authtoken = useSelector((state) => state.authtoken);
+//  // const authtoken = useSelector((state) => state.authtoken);
 
 //   useEffect(() => {
 //     const fetchFaultCounts = async () => {
 //       try {
 //         dispatch({ type: "FETCH_FAULT_REQUEST" });
 //         const response = await axios.get("/api/v1/servicetickets/faultcount", {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 
 //         let result = response.data.data; // Expecting array of objects { count, fault_type }
@@ -74,7 +75,8 @@
 //       try {
 //         dispatch({ type: "FETCH_SITEWISE_TICKET_REQUEST" });
 //         const response = await axios.get("/api/v1/servicetickets/siteresolve", {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 
 //         dispatch({
@@ -89,7 +91,8 @@
 //       }
 //     };
 //     fetchFSitewiseTickets();
-//   }, [authtoken]);
+//   }, []
+// );
 
 //   // Ensure serviceticketsfaulycount is not empty before accessing
 //   const faultLabels = Object.keys(serviceticketsfaulycount || {});
@@ -403,7 +406,7 @@ const PieChart = () => {
     error: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+ // const authtoken = useSelector((state) => state.authtoken);
 
   // 🔹 states for dynamic chart type
   const [siteChartType, setSiteChartType] = React.useState("bar");
@@ -415,10 +418,12 @@ const PieChart = () => {
         dispatch({ type: "FETCH_REQUEST" });
         const [sitewiseRes, faultRes] = await Promise.all([
           axios.get("/api/v1/servicetickets/siteresolve", {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           }),
           axios.get("/api/v1/servicetickets/faultcount", {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           }),
         ]);
 
@@ -441,7 +446,8 @@ const PieChart = () => {
     };
 
     fetchData();
-  }, [authtoken]);
+  }, []
+);
 
   const siteLabels = data.sitewise?.map((s) => s.site_id) || [];
   const siteData = data.sitewise?.map((s) => s.total_tickets) || [];

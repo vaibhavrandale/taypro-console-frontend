@@ -290,7 +290,8 @@
 //       dispatch({ type: "FETCH_REQUEST" });
 //       try {
 //         const res = await axios.get(`/api/v1/commisioning-docs/${id}`, {
-//           headers: { Authorization: `Bearer ${authtoken}` },
+//           // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //         });
 //         const data = res.data.data;
 //         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -302,7 +303,7 @@
 //       }
 //     };
 //     fetchDoc();
-//   }, [authtoken, id]);
+//   }, [ id]);
 
 //   const buildForm = (d) => ({
 //     robot_no: d.robot_no,
@@ -343,7 +344,8 @@
 //     dispatch({ type: "UPDATE_REQUEST" });
 //     try {
 //       await axios.put(`/api/v1/commisioning-docs/${id}`, form, {
-//         headers: { Authorization: `Bearer ${authtoken}` },
+//         // headers: { Authorization: `Bearer ${authtoken}` },
+// withCredentials: true,
 //       });
 //       dispatch({ type: "UPDATE_SUCCESS" });
 //       toast.success("Commissioning doc updated successfully!");
@@ -1357,7 +1359,8 @@ const UpdateRobotCommisioningDoc = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/commisioning-docs/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         const data = res.data.data;
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -1373,7 +1376,7 @@ const UpdateRobotCommisioningDoc = () => {
       }
     };
     fetchDoc();
-  }, [authtoken, id]);
+  }, [id]);
 
   const sendsingleDownlink = async (command, index) => {
     setCommandButton(index);
@@ -1389,7 +1392,8 @@ const UpdateRobotCommisioningDoc = () => {
           lora_no: doc.lora_no,
         },
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
@@ -1468,7 +1472,8 @@ const UpdateRobotCommisioningDoc = () => {
     dispatch({ type: "UPDATE_REQUEST" });
     try {
       await axios.put(`/api/v1/commisioning-docs/${id}`, form, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Commissioning doc updated successfully!");

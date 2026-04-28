@@ -61,7 +61,7 @@ const reducer = (state, action) => {
 };
 
 const OpexSiteTechnicianDashboard = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [
     {
@@ -89,7 +89,7 @@ const OpexSiteTechnicianDashboard = () => {
   });
 
   const [site_id, setSiteid] = useState(
-    userInfo.assigned_sites[0]?.site_id || "abc"
+    userInfo.assigned_sites[0]?.site_id || "abc",
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -99,7 +99,8 @@ const OpexSiteTechnicianDashboard = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -119,8 +120,9 @@ const OpexSiteTechnicianDashboard = () => {
           `/api/v1/sites-coordinates/get-by-siteId`,
           { site_id },
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -141,8 +143,9 @@ const OpexSiteTechnicianDashboard = () => {
         const response = await axios.get(
           `/api/v1/weatherdata/client/${site_id}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_WEATHER_SUCCESS",
@@ -159,7 +162,7 @@ const OpexSiteTechnicianDashboard = () => {
     fetchSiteCoordinates();
     fetchWeatherData();
     fetchSites();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   const handleSiteNameChange = (e) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
@@ -167,7 +170,7 @@ const OpexSiteTechnicianDashboard = () => {
     const selectedSiteName = e.target.value;
 
     const selectedSite = sites.find(
-      (site) => site.site_id === selectedSiteName
+      (site) => site.site_id === selectedSiteName,
     );
 
     if (selectedSite) {
@@ -265,7 +268,7 @@ const OpexSiteTechnicianDashboard = () => {
                     ) : (
                       GoogleMapEmbed(
                         coordinates ? coordinates.latitude : "28.6131016",
-                        coordinates ? coordinates.longitude : "77.2230819"
+                        coordinates ? coordinates.longitude : "77.2230819",
                       )
                     )}
                   </div>
@@ -392,7 +395,7 @@ const OpexSiteTechnicianDashboard = () => {
                               <div className="text-muted small">
                                 Wind @{" "}
                                 {new Date(
-                                  weather?.createdAt
+                                  weather?.createdAt,
                                 ).toLocaleTimeString()}
                               </div>
                             </CCardBody>

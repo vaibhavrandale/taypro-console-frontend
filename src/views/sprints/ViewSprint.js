@@ -106,7 +106,7 @@ const statusColors = {
 
 const ViewSprint = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userId = useSelector((state) => state.userInfo?._id); // current logged-in user
 
   const [
@@ -163,7 +163,8 @@ const ViewSprint = () => {
       dispatch({ type: "FETCH_SPRINT_REQUEST" });
       try {
         const { data } = await axios.get(`/api/v1/sprint-tracking/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({ type: "FETCH_SPRINT_SUCCESS", payload: data.data });
@@ -173,7 +174,7 @@ const ViewSprint = () => {
           payload: error.response?.data?.message || error.response?.data?.error,
         });
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
@@ -192,7 +193,7 @@ const ViewSprint = () => {
             headers: {
               authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         ); // Replace with your API endpoint
 
         dispatch({
@@ -208,7 +209,7 @@ const ViewSprint = () => {
     };
 
     fetchUsers();
-  }, [id, authtoken, successProgress, successTask, AddTaskSuccess]);
+  }, [id, , successProgress, successTask, AddTaskSuccess]);
 
   // group tasks by status
   // const getTasksByStatus = (status) =>
@@ -237,7 +238,7 @@ const ViewSprint = () => {
       const response = await axios.put(
         `/api/v1/sprint-tracking/update-sprint/${selectedTask._id}/${sprint._id}`,
         { progress, status: status, remarks: remark },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "PROGRESS_UPDATE_SUCCESS", successProgress: true });
       toast.success(response.data.message);
@@ -264,7 +265,7 @@ const ViewSprint = () => {
           title: title,
           description: description,
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "TASK_UPDATE_SUCCESS", successTask: true });
       toast.success(response.data.message);
@@ -304,7 +305,7 @@ const ViewSprint = () => {
           remarks: Addremark,
           github_pull_request: "",
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       console.log(data);
       dispatch({
@@ -689,7 +690,7 @@ const ViewSprint = () => {
                                 dangerouslySetInnerHTML={{
                                   __html: selectedTask.description.replace(
                                     /, /g,
-                                    ",<br>"
+                                    ",<br>",
                                   ),
                                 }}
                               >
@@ -714,8 +715,8 @@ const ViewSprint = () => {
                                     selectedTask.priority === "high"
                                       ? "danger"
                                       : selectedTask.priority === "medium"
-                                      ? "warning"
-                                      : "success"
+                                        ? "warning"
+                                        : "success"
                                   }
                                   className="px-3 py-1 my-2"
                                 >
@@ -763,7 +764,7 @@ const ViewSprint = () => {
                                   {selectedTask.deadline
                                     ? new Date(
                                         selectedTask.deadline ||
-                                          selectedTask.deadline
+                                          selectedTask.deadline,
                                       ).toLocaleDateString("en-GB", {
                                         day: "2-digit",
                                         month: "2-digit",
@@ -794,7 +795,7 @@ const ViewSprint = () => {
                                   dangerouslySetInnerHTML={{
                                     __html: selectedTask.remarks.replace(
                                       /, /g,
-                                      ",<br>"
+                                      ",<br>",
                                     ),
                                   }}
                                 >

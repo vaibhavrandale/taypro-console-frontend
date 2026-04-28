@@ -109,7 +109,7 @@ const UpdateRobotRowData = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [visible, setVisible] = useState(false);
   const [lastActivityVisible, setLastActivityVisible] = useState(false);
@@ -126,12 +126,13 @@ const UpdateRobotRowData = () => {
         `/api/v1/robots/site/${site_id}`,
         pagination,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       let total = Math.ceil(
-        Number(result.data.total) / Number(result.data.limit)
+        Number(result.data.total) / Number(result.data.limit),
       );
       let next = result.data.hasNextPage;
       let prev = result.data.hasPrevPage;
@@ -158,7 +159,8 @@ const UpdateRobotRowData = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_SITES_SUCCESS",
@@ -175,7 +177,7 @@ const UpdateRobotRowData = () => {
 
     fetchRobots();
     fetchSites();
-  }, [authtoken, limit, page, site_id]);
+  }, [limit, page, site_id]);
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -213,7 +215,7 @@ const UpdateRobotRowData = () => {
           row_number: formData.row_number,
           row_length: formData.row_length,
         },
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(response.data.message);

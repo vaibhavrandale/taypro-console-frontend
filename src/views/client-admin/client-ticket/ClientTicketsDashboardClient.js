@@ -14,16 +14,16 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CTooltip,
+  // CTooltip,
   CImage,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { formatDistanceToNow } from "date-fns";
+// import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 import LastActivity from "../../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
@@ -74,7 +74,7 @@ const ClientTicketsDashboardClient = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [formData, setFormData] = useState({});
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -91,7 +91,10 @@ const ClientTicketsDashboardClient = () => {
         const result = await axios.post(
           `/api/v1/clienttickets/get-all`,
           pagination,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` }
+            withCredentials: true,
+          },
         );
 
         // Handle totalPages, hasNextPage, and hasPrevPage logic
@@ -124,7 +127,7 @@ const ClientTicketsDashboardClient = () => {
 
     // Reset the delete state if successDelete flag is true
     fetchClientTickets();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   /** 🔍 Search Function */
   const filteredTickets = client_tickets.filter(

@@ -43,7 +43,7 @@ const reducer = (state, action) => {
 };
 
 const NewServiceItem = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, {
@@ -85,7 +85,7 @@ const NewServiceItem = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
 
       setImage(data.url);
@@ -126,7 +126,8 @@ const NewServiceItem = () => {
     const newdata = { ...state.serviceItemData, item_image: image };
     try {
       await axios.post("/api/v1/service-items", newdata, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success("Service Item Added Successfully!");
       dispatch({ type: "SUBMIT_SUCCESS" });

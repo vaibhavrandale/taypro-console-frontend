@@ -50,7 +50,7 @@ const ViewTechnicianDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { moduleId, cycleId, dayId } = useParams();
 
   useEffect(() => {
@@ -60,8 +60,9 @@ const ViewTechnicianDetails = () => {
         const result = await axios.get(
           `/api/v1/opex/${moduleId}/cycle/${cycleId}/day/${dayId}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
         dispatch({
           type: "FETCH_SUCCESS",
@@ -74,7 +75,7 @@ const ViewTechnicianDetails = () => {
       }
     };
     fetchCycle();
-  }, [authtoken, moduleId, cycleId, dayId]);
+  }, [moduleId, cycleId, dayId]);
 
   const handleImageClick = (file) => {
     setSelectedFile(file);
@@ -193,7 +194,7 @@ const ViewTechnicianDetails = () => {
                                   hour: "numeric",
                                   minute: "2-digit",
                                   hour12: true,
-                                }
+                                },
                               )}
                             </CTableDataCell>
                             <CTableDataCell>
@@ -207,7 +208,7 @@ const ViewTechnicianDetails = () => {
                                     hour: "numeric",
                                     minute: "2-digit",
                                     hour12: true,
-                                  }
+                                  },
                                 )
                               ) : (
                                 <CBadge color="warning">No Data</CBadge>
@@ -297,7 +298,7 @@ const ViewTechnicianDetails = () => {
                                   </div>
                                   <small className="text-muted">
                                     {new Date(
-                                      file.uploaded_by.timestamp
+                                      file.uploaded_by.timestamp,
                                     ).toLocaleString("en-GB", {
                                       day: "2-digit",
                                       month: "2-digit",
@@ -354,7 +355,7 @@ const ViewTechnicianDetails = () => {
                               minute: "2-digit",
                               second: "2-digit",
                               hour12: true,
-                            }
+                            },
                           )}
                         </small>
                         <div
@@ -387,7 +388,7 @@ const ViewTechnicianDetails = () => {
                     <div className="">{selectedFile.uploaded_by.name}</div>
                     <small className="text-muted">
                       {new Date(
-                        selectedFile.uploaded_by.timestamp
+                        selectedFile.uploaded_by.timestamp,
                       ).toLocaleString("en-GB", {
                         day: "2-digit",
                         month: "2-digit",

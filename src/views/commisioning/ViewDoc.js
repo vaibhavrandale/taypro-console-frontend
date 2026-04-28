@@ -45,7 +45,7 @@ const ViewDoc = () => {
       certificateError: "",
     });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const { id } = useParams();
   const [showModal, setShowModal] = useState(false);
@@ -56,7 +56,8 @@ const ViewDoc = () => {
       const result = await axios.get(
         `/api/v1/commisioning-certificates/${id}`,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         },
       );
 
@@ -77,7 +78,7 @@ const ViewDoc = () => {
   };
   useEffect(() => {
     fetchCertificates();
-  }, [authtoken, id]);
+  }, [id]);
 
   // const data = commissioning_certificates.find((doc) => doc._id === id);
   // if (!data) return <div className="p-3">Document not found</div>;

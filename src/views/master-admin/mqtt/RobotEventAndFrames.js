@@ -66,7 +66,7 @@ const RobotEventAndFrames = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [visible, setVisible] = useState(false);
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
@@ -77,7 +77,8 @@ const RobotEventAndFrames = () => {
         const response = await axios.get(
           `/api/v1/mqtt-event-logs/${robot_no}/${deveui}`,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -97,7 +98,7 @@ const RobotEventAndFrames = () => {
       }
     };
     fetchSubscriptions();
-  }, [robot_no, deveui, authtoken]);
+  }, [robot_no, deveui]);
   useEffect(() => {
     socket.emit("join_device", deveui);
   }, [deveui]);

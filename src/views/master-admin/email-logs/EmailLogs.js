@@ -57,7 +57,7 @@ const EmailLogs = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -94,7 +94,7 @@ const EmailLogs = () => {
             headers: {
               Authorization: `Bearer ${authtoken}`,
             },
-          }
+          },
         );
 
         const responseData = result?.data || {};
@@ -118,12 +118,12 @@ const EmailLogs = () => {
         });
 
         toast.error(
-          error.response?.data?.message || error.response?.data?.error
+          error.response?.data?.message || error.response?.data?.error,
         );
       }
     };
     fetchEmailLogs();
-  }, [authtoken, page, limit]);
+  }, [page, limit]);
 
   // const filteredData = React.useMemo(() => {
   //   return (logs || []).filter((log) => {

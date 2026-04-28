@@ -67,7 +67,7 @@ const RssiSnrTable = () => {
     },
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
 
   const [availableTopics] = useState([
@@ -82,7 +82,7 @@ const RssiSnrTable = () => {
     try {
       const result = await axios.get(
         `/api/v1/robots/get-all-robots-sitewise/${site_id}`,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -115,7 +115,7 @@ const RssiSnrTable = () => {
       const result = await axios.post(
         `/api/v1/rawcleaninglogs/daily-signal-stats`,
         payload,
-        { headers: { Authorization: `Bearer ${authtoken}` } }
+        { headers: { Authorization: `Bearer ${authtoken}` } },
       );
       dispatch({ type: "FETCH_STATS_SUCCESS", payload: result.data.data });
     } catch (error) {
@@ -145,7 +145,7 @@ const RssiSnrTable = () => {
 
   useEffect(() => {
     fetchRobots();
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   return (
     <div className="container-fluid">

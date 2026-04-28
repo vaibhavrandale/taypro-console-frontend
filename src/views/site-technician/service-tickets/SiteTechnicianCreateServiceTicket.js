@@ -95,7 +95,7 @@ const SiteTechnicianCreateServiceTicket = () => {
     ticket_generated_images5: "",
   });
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRobots, setFilteredRobots] = useState([]);
   const [uploadingFields, setUploadingFields] = useState({});
@@ -120,8 +120,9 @@ const SiteTechnicianCreateServiceTicket = () => {
           `/api/v1/robots/get-robots-no`,
 
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -142,8 +143,9 @@ const SiteTechnicianCreateServiceTicket = () => {
         const response = await axios.get(
           "/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         dispatch({
@@ -159,14 +161,14 @@ const SiteTechnicianCreateServiceTicket = () => {
     };
     fetchRobots();
     fetchAllFaults();
-  }, [authtoken]);
+  }, []);
 
   const handleFaultSearchChange = (e) => {
     const value = e.target.value;
     setFaultSearchTerm(value);
     if (value.length > 0) {
       const filtered = serviceticketsfault.filter((fault) =>
-        fault.fault_name.toLowerCase().includes(value.toLowerCase())
+        fault.fault_name.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredFaults(filtered);
     } else {
@@ -186,7 +188,7 @@ const SiteTechnicianCreateServiceTicket = () => {
       const filtered = robots.filter(
         (robot) =>
           robot.robot_no.toLowerCase().includes(value.toLowerCase()) ||
-          robot.site_id.toLowerCase().includes(value.toLowerCase())
+          robot.site_id.toLowerCase().includes(value.toLowerCase()),
       );
 
       setFilteredRobots(filtered);
@@ -208,10 +210,11 @@ const SiteTechnicianCreateServiceTicket = () => {
 
     try {
       const response = await axios.post("/api/v1/servicetickets", formData, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       toast.success(
-        `${response.data.data.ticket_id}, Ticket Created Successfully!`
+        `${response.data.data.ticket_id}, Ticket Created Successfully!`,
       );
       setLoading(false);
       navigate(`/site-technician/service-tickets`);
@@ -322,7 +325,7 @@ const SiteTechnicianCreateServiceTicket = () => {
           try {
             setLoadingCamera(true);
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
             );
             const data = await response.json();
             setLocation({
@@ -342,7 +345,7 @@ const SiteTechnicianCreateServiceTicket = () => {
             lng: "N/A",
             name: "Location not available",
           });
-        }
+        },
       );
     }
   }, [cameraModalVisible]);
@@ -433,7 +436,7 @@ const SiteTechnicianCreateServiceTicket = () => {
           }
         },
         "image/jpeg",
-        0.8
+        0.8,
       );
     }
   };
@@ -451,7 +454,7 @@ const SiteTechnicianCreateServiceTicket = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${authtoken}`,
           },
-        }
+        },
       );
       setFormData((prevData) => ({
         ...prevData,

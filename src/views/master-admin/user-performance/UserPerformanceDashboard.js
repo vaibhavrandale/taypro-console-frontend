@@ -48,7 +48,7 @@ const UserPerformanceDashboard = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const userInfo = useSelector((state) => state.userInfo);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   let adminroute = "";
 
   if (userInfo?.role === "Master Admin") {
@@ -80,8 +80,9 @@ const UserPerformanceDashboard = () => {
         const response = await axios.get(
           "/api/v1/users/get-all-site-technicians",
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         // Ensure payload is the array, not an object
@@ -102,13 +103,13 @@ const UserPerformanceDashboard = () => {
         toast.error(
           error.response?.data?.message ||
             error.response?.data?.error ||
-            "Failed to fetch technicians"
+            "Failed to fetch technicians",
         );
       }
     };
 
     fetchAllSiteTechnicians();
-  }, [authtoken]);
+  }, []);
 
   const filteredTechnicians = Array.isArray(technicians)
     ? technicians.filter(
@@ -119,7 +120,7 @@ const UserPerformanceDashboard = () => {
           technician.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           technician.designation
             ?.toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       )
     : [];
 

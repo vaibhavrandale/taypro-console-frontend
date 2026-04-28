@@ -76,7 +76,7 @@ const TimerCommandSentLog = () => {
   });
   const [site_id, setSiteId] = useState("taypro_office");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
@@ -85,7 +85,8 @@ const TimerCommandSentLog = () => {
       dispatch({ type: "FETCH_SITES_REQUEST" });
       try {
         const res = await axios.get(`/api/v1/sites`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         const siteData = res.data.data || [];
@@ -104,7 +105,7 @@ const TimerCommandSentLog = () => {
     };
 
     fetchSites();
-  }, [authtoken]);
+  }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -121,12 +122,13 @@ const TimerCommandSentLog = () => {
           `/api/v1/timercommandsentlog/${site_id}/${date}`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit)
+          Number(response.data.total) / Number(response.data.limit),
         );
 
         dispatch({
@@ -147,7 +149,7 @@ const TimerCommandSentLog = () => {
     };
 
     fetchTimerLogs();
-  }, [site_id, date, page, limit, authtoken]);
+  }, [site_id, date, page, limit]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -157,7 +159,7 @@ const TimerCommandSentLog = () => {
         .toString()
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      log.block.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      log.block.toString().toLowerCase().includes(searchTerm.toLowerCase()),
   );
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);

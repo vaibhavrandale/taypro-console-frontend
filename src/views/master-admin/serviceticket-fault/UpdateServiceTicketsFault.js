@@ -17,7 +17,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const UpdateServiceTicketsFault = () => {
   const { id } = useParams();
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,8 @@ const UpdateServiceTicketsFault = () => {
     const fetchFaultData = async () => {
       try {
         const response = await axios.get(`/api/v1/serviceticketsfaults/${id}`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         if (response.data.success) {
           const fault = response.data.data;
@@ -37,7 +38,7 @@ const UpdateServiceTicketsFault = () => {
         }
       } catch (error) {
         toast.error(
-          error?.response?.data?.error || "Failed to fetch fault details"
+          error?.response?.data?.error || "Failed to fetch fault details",
         );
       } finally {
         setLoading(false);
@@ -45,7 +46,7 @@ const UpdateServiceTicketsFault = () => {
     };
 
     fetchFaultData();
-  }, [id, authtoken]);
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,8 +60,9 @@ const UpdateServiceTicketsFault = () => {
         `/api/v1/serviceticketsfaults/${id}`,
         payload,
         {
-          headers: { Authorization: `Bearer ${authtoken}` },
-        }
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
       );
 
       if (response.data.success) {
@@ -69,7 +71,7 @@ const UpdateServiceTicketsFault = () => {
       }
     } catch (error) {
       toast.error(
-        error?.response?.data?.error || "Failed to update fault details"
+        error?.response?.data?.error || "Failed to update fault details",
       );
     }
   };

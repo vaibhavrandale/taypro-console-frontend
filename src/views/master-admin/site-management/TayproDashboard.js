@@ -51,14 +51,15 @@ const TayproDashboard = () => {
     loadingAllSites: true,
     error: "",
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   useEffect(() => {
     const fetchAllSites = async () => {
       dispatch({ type: "FETCH_ALLSITES_REQUEST" });
       try {
         const result = await axios.get(`/api/v1/sites/site/all-sites-data`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
         dispatch({
           type: "FETCH_ALLSITES_SUCCESS",
@@ -75,7 +76,7 @@ const TayproDashboard = () => {
       }
     };
     fetchAllSites();
-  }, [authtoken]);
+  }, []);
 
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
@@ -84,7 +85,7 @@ const TayproDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   /** 🔍 Search Function */
   const filteredSites = allSites?.sites?.filter((site) =>
-    site.siteName.toLowerCase().includes(MastersearchTerm.toLowerCase())
+    site.siteName.toLowerCase().includes(MastersearchTerm.toLowerCase()),
   );
   return loadingAllSites ? (
     <div className=" d-flex justify-content-center">
@@ -279,7 +280,7 @@ const TayproDashboard = () => {
                                 .includes(searchTerm.toLowerCase()) ||
                               robot.last_status
                                 .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
+                                .includes(searchTerm.toLowerCase()),
                           ).length > 0 ? (
                             site.robots
                               .filter(
@@ -296,7 +297,7 @@ const TayproDashboard = () => {
                                       .includes(searchTerm.toLowerCase()) ||
                                     robot.last_status
                                       .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
+                                      .includes(searchTerm.toLowerCase())),
                               )
                               .map((robot, index) => (
                                 <CTableRow key={robot.robot_no}>
@@ -339,7 +340,7 @@ const TayproDashboard = () => {
                                     {robot.last_uplink === null
                                       ? "Robot is not yet activated"
                                       : new Date(
-                                          robot.last_uplink
+                                          robot.last_uplink,
                                         ).toLocaleString("en-GB", {
                                           day: "2-digit",
                                           month: "2-digit",
@@ -457,7 +458,7 @@ const TayproDashboard = () => {
                                 .includes(searchTerm.toLowerCase()) ||
                               robot.last_status
                                 .toLowerCase()
-                                .includes(searchTerm.toLowerCase())
+                                .includes(searchTerm.toLowerCase()),
                           ).length > 0 ? (
                             site.robots
                               .filter(
@@ -474,7 +475,7 @@ const TayproDashboard = () => {
                                       .includes(searchTerm.toLowerCase()) ||
                                     robot.last_status
                                       .toLowerCase()
-                                      .includes(searchTerm.toLowerCase()))
+                                      .includes(searchTerm.toLowerCase())),
                               )
                               .map((robot, index) => (
                                 <CTableRow key={robot.robot_no}>
@@ -517,7 +518,7 @@ const TayproDashboard = () => {
                                     {robot.last_uplink === null
                                       ? "Robot is not yet activated"
                                       : new Date(
-                                          robot.last_uplink
+                                          robot.last_uplink,
                                         ).toLocaleString()}
                                   </CTableDataCell>
                                 </CTableRow>

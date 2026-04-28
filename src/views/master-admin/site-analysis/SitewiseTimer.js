@@ -94,7 +94,7 @@ const SitewiseTimer = () => {
   // const [site_id, setSiteId] = useState("");
   // const [page, setPage] = useState(1);
   // const [limit, setLimit] = useState(10);
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
@@ -122,7 +122,8 @@ const SitewiseTimer = () => {
     //   dispatch({ type: "FETCH_SITEID_REQUEST" });
     //   try {
     //     const result = await axios.get(`/api/v1/sites`, {
-    //       headers: { Authorization: `Bearer ${authtoken}` },
+    //       // headers: { Authorization: `Bearer ${authtoken}` },
+    // withCredentials: true,
     //     });
     //     dispatch({
     //       type: "FETCH_SITEID_SUCCESS",
@@ -147,11 +148,12 @@ const SitewiseTimer = () => {
         };
 
         const result = await axios.post(`/api/v1/robots/get-timer`, data, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -175,7 +177,7 @@ const SitewiseTimer = () => {
     };
     // fetchSiteIds();
     fetchAllTimers();
-  }, [authtoken, SiteId]);
+  }, [SiteId]);
 
   const handleViewClick = (robot) => {
     setSelectedRobot(robot);
@@ -306,7 +308,7 @@ const SitewiseTimer = () => {
                         </Link>
                       </CTableDataCell>
                     </CTableRow>
-                  ))
+                  )),
                 )
               ) : (
                 <CTableRow>

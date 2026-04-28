@@ -38,7 +38,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-const Logmodal = ({ _id, modalState, onClose, authtoken, userInfo }) => {
+const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
   const [{ loading, log, error }, dispatch] = React.useReducer(reducer, {
     loading: false,
     log: null,
@@ -53,9 +53,10 @@ const Logmodal = ({ _id, modalState, onClose, authtoken, userInfo }) => {
         dispatch({ type: "FETCH_LOG_DETAILS_REQUEST" });
         // 🔁 Replace with your API
         const res = await axios.get(`/api/v1/robot-tracking/${_id}`, {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${authtoken}`,
+          // },
+          withCredentials: true,
         });
         console.log(res);
         dispatch({ type: "FETCH_LOG_DETAILS_SUCCESS", payload: res.data.data });
@@ -71,7 +72,7 @@ const Logmodal = ({ _id, modalState, onClose, authtoken, userInfo }) => {
     if (modalState) {
       fetchLogDetails();
     }
-  }, [_id, authtoken, modalState]);
+  }, [_id, modalState]);
 
   const handleRobotClick = (robot) => {
     toast.success(`Data for Robot ${log.robot_no} clicked!`);

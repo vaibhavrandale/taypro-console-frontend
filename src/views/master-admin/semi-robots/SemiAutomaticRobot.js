@@ -77,7 +77,7 @@ const SemiAutomaticRobot = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -124,7 +124,8 @@ const SemiAutomaticRobot = () => {
           `/api/v1/robots/get-semi-automatic-robots`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -155,7 +156,7 @@ const SemiAutomaticRobot = () => {
     };
 
     fetchRobots();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   // Filter robots based on search term
   const filteredRobots = robots.filter((robot) =>
@@ -441,7 +442,6 @@ const SemiAutomaticRobot = () => {
                 // ✅ Only delete from database (LNS removed)
                 await deleteRobotFromDatabase(
                   selectedRobot.robot_no,
-                  authtoken,
                   deleteReason,
                 );
               } finally {

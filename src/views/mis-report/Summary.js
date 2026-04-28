@@ -27,7 +27,7 @@ const reducer = (state, action) => {
   }
 };
 const Summary = () => {
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [{ loading, misreports, error }, dispatch] = useReducer(reducer, {
     misreports: [],
     loading: false,
@@ -38,7 +38,8 @@ const Summary = () => {
     dispatch({ type: "FETCH_REQUEST" });
     try {
       const result = await axios.get(`/api/v1/mis-report-router`, {
-        headers: { Authorization: `Bearer ${authtoken}` },
+        // headers: { Authorization: `Bearer ${authtoken}` },
+        withCredentials: true,
       });
       const data = result.data.data[0];
       console.log(result.data.data);
@@ -53,7 +54,7 @@ const Summary = () => {
   };
   useEffect(() => {
     fetchMisReports();
-  }, [authtoken]);
+  }, []);
 
   const renderDepartmentTable = (deptData) => {
     if (!deptData) return <p>No data available.</p>;
@@ -67,7 +68,7 @@ const Summary = () => {
           "is_filled",
           "is_filled_at",
           "last_activity",
-        ].includes(key)
+        ].includes(key),
     );
 
     return (
@@ -308,7 +309,7 @@ const Summary = () => {
 
           <CTabPanel className="p-3" itemKey="rnd">
             {renderDepartmentTable(
-              misreports?.Research_and_development_and_product_development
+              misreports?.Research_and_development_and_product_development,
             )}
           </CTabPanel>
 

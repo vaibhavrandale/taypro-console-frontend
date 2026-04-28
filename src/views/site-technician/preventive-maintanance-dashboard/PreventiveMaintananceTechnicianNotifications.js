@@ -54,7 +54,7 @@ const PreventiveMaintananceTechnicianNotifications = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [pageInput, setPageInput] = useState("");
@@ -72,12 +72,13 @@ const PreventiveMaintananceTechnicianNotifications = () => {
           `/api/v1/preventivemaintenances-notification`,
           pagination,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
-          }
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
         );
 
         let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit)
+          Number(result.data.total) / Number(result.data.limit),
         );
         let next = result.data.hasNextPage;
         let prev = result.data.hasPrevPage;
@@ -101,7 +102,7 @@ const PreventiveMaintananceTechnicianNotifications = () => {
     };
 
     fetchPreventivemaintenances();
-  }, [authtoken, limit, page]);
+  }, [limit, page]);
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -125,7 +126,7 @@ const PreventiveMaintananceTechnicianNotifications = () => {
         (robot) =>
           robot.pm_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          robot.message.toLowerCase().includes(searchTerm.toLowerCase())
+          robot.message.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     : [];
 

@@ -134,7 +134,7 @@ const CleaningLog = () => {
     adminroute = "project-user";
   }
 
-  const authtoken = useSelector((state) => state.authtoken);
+  // const authtoken = useSelector((state) => state.authtoken);
 
   // ✅ Extract fetchCleaningLogs function to be reusable
   const fetchCleaningLogs = useCallback(
@@ -164,7 +164,8 @@ const CleaningLog = () => {
           `/api/v1/rawcleaninglogs/get-raw-cleaning-logs`,
           requestBody,
           {
-            headers: { Authorization: `Bearer ${authtoken}` },
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
           },
         );
 
@@ -192,16 +193,7 @@ const CleaningLog = () => {
         }
       }
     },
-    [
-      authtoken,
-      limit,
-      page,
-      robot_no,
-      site_id,
-      fetchBySite,
-      startDate,
-      endDate,
-    ],
+    [, limit, page, robot_no, site_id, fetchBySite, startDate, endDate],
   );
 
   // ✅ Initial fetch and when dependencies change
@@ -211,7 +203,8 @@ const CleaningLog = () => {
         dispatch({ type: "FETCH_ROBOT_REQUEST" });
 
         const result = await axios.get(`/api/v1/robots/get-robots-no`, {
-          headers: { Authorization: `Bearer ${authtoken}` },
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
         });
 
         dispatch({
@@ -231,7 +224,7 @@ const CleaningLog = () => {
     fetchRobots();
     fetchCleaningLogs();
   }, [
-    authtoken,
+    ,
     limit,
     page,
     robot_no,
