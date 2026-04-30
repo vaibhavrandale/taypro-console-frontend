@@ -2457,6 +2457,29 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Robot Data",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Row Data",
+            to: "/service-admin/update-row-data",
+          },
+          {
+            component: CNavItem,
+            name: "Robot Locations",
+            to: "/service-admin/robot-location",
+          },
+        ],
+      },
     ],
   },
 
