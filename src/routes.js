@@ -21,7 +21,7 @@ import ClientDashboard from "./views/client-admin/site-management/ClientDashboar
 import ClientSiteManagement from "./views/client-admin/site-management/ClientSiteManagement";
 import ClientBlockManagement from "./views/client-admin/site-management/ClientBlockManagement";
 import ClientRobotOperating from "./views/client-admin/site-management/ClientRobotOperating";
-import ClientTimers from "./views/client-admin/timers/ClientTimers";
+// import ClientTimers from "./views/client-admin/timers/ClientTimers";
 import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 import Sites from "./views/client-admin/cleaninglog/Sites";
@@ -32,8 +32,8 @@ import AllSiteData from "./views/site-technician/AllSiteData";
 import SiteTechnicianSiteManagement from "./views/site-technician/site-management/SiteTechnicianSiteManagement";
 import SiteTechnicianBlockManagement from "./views/site-technician/site-management/SiteTechnicianBlockManagement";
 import SiteTechnicianRobotOperating from "./views/site-technician/site-management/SiteTechnicianRobotOperating";
-import SiteTechnicianTimers from "./views/site-technician/timers/SiteTechnicianTimers";
-import SiteTechnicianUpdateTimer from "./views/site-technician/timers/SiteTechnicianUpdateTimer";
+// import SiteTechnicianTimers from "./views/site-technician/timers/SiteTechnicianTimers";
+// import SiteTechnicianUpdateTimer from "./views/site-technician/timers/SiteTechnicianUpdateTimer";
 import SiteTechnicianSites from "./views/site-technician/cleaninglog/SiteTechnicianSites";
 import SiteTechnicianCleaningLog from "./views/site-technician/cleaninglog/SiteTechnicianCleaningLog";
 import SiteTechnicianServiceTicketDashboard from "./views/site-technician/service-tickets/SiteTechnicianServiceTicketDashboard";
@@ -197,7 +197,7 @@ import UpdateMdsTimer from "./views/master-admin/mds-timer/UpdateMdsTimer";
 import CleaningSummary from "./views/master-admin/all-site-cleaninglog/cleaning-report/CleaningSummary";
 import MqttEvents from "./views/master-admin/mqtt/MqttEvents";
 import MdsLog from "./views/mds-tracking/MdsLog";
-import Service from "./views/mis-report/Service";
+// import Service from "./views/mis-report/Service";
 import ScadaDashboard from "./views/scada/ScadaDashboard";
 import OpenAiChat from "./views/openai/OpenAiChat";
 import SubScriptionPlan from "./views/master-admin/client-subscription/SubScriptionPlan";
@@ -4144,6 +4144,16 @@ const routes = [
     ),
   },
   {
+    // path: "/master-admin/event-and-frames/:deveui",
+    path: "/project-admin/site-management/block-management/:site_id/:block/:robot_no/event-and-frames/:deveui",
+    name: "Robot Event and Frames",
+    element: (
+      <ProjectAdminRoute>
+        <RobotEventAndFrames />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/mds-tracker",
     name: "MDS Tracker",
     element: (
@@ -5060,6 +5070,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <MdsEventAndFrames />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/site-management/block-management/:site_id/:block/:robot_no/event-and-frames/:deveui",
+    name: "Robot Event and Frames",
+    element: (
+      <ProjectUserRoute>
+        <RobotEventAndFrames />
       </ProjectUserRoute>
     ),
   },
@@ -6170,6 +6189,26 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  {
+    path: "/service-admin/robot-location",
+    name: "Robot Location",
+    element: (
+      <ServiceAdminRoute>
+        <RobotLocation />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/robot-location/:robot_no/:site_id",
+    name: "Create Robot Location",
+    element: (
+      <ServiceAdminRoute>
+        <AddRobotLocation />
+      </ServiceAdminRoute>
+    ),
+  },
+
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
   {
