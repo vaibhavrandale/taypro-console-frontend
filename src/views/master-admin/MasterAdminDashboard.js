@@ -1068,6 +1068,18 @@ export default function MasterAdminDashboard() {
                             >
                               {g.gateway_status ? "online" : "offline"}
                             </span>
+                            <span
+                              className="status-badge"
+                              style={{
+                                background: g.gateway_status
+                                  ? T.greenDim
+                                  : T.redDim,
+                                color: g.gateway_status ? T.green : T.red,
+                                border: `1px solid ${g.gateway_status ? "rgba(52,211,153,.2)" : "rgba(248,113,113,.2)"}`,
+                              }}
+                            >
+                              {g.robot_count}
+                            </span>
                           </div>
                         ))}
                       </div>
