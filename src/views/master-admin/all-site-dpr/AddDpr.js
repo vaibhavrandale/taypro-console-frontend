@@ -950,7 +950,7 @@ const AddDpr = () => {
     dispatch({ type: "FETCH_PM_DETAILS_REQUEST" });
     try {
       const result = await axios.post(
-        `/api/v1/techniciandprs/get-PM-robots-details`,
+        `/api/v1/techniciandprs/get-pm-robots-details`,
         {
           date: state.dprData.report_date,
           robot_type: pmType,

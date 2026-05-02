@@ -193,6 +193,17 @@ export default function GatewayMap({
       const color = isOnline ? CLR.gwOnline : CLR.gwOffline;
       const name = gw.gateway_name?.trim() || "Gateway";
       const lnsId = gw.gateway_id_in_lns_server;
+      const totalRobots = gw.robot_count;
+      const last_uplink = gw.last_uplink
+        ? new Date(gw.last_uplink).toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "—";
 
       if (lnsId) {
         gwById[lnsId] = { lat, lng, name, isOnline };
@@ -221,19 +232,21 @@ export default function GatewayMap({
 
       const marker = L.marker([lat, lng], { icon }).addTo(map);
 
+      // <span style="color:#8899bb">Lat:</span> ${lat.toFixed(5)}<br/>
+      // <span style="color:#8899bb">Lng:</span> ${lng.toFixed(5)}<br/>
       marker.bindPopup(
         `<div style="font-family:monospace;font-size:12px;background:#0f172a;
           color:#e2e8f0;border:1px solid ${color};border-radius:6px;
           padding:8px 10px;min-width:170px;line-height:1.7;">
           <strong style="color:${color}">📡 ${name}</strong><br/>
           <span style="color:#8899bb">LNS ID:</span> ${lnsId ?? "—"}<br/>
-          <span style="color:#8899bb">Lat:</span> ${lat.toFixed(5)}<br/>
-          <span style="color:#8899bb">Lng:</span> ${lng.toFixed(5)}<br/>
+          <span style="color:#8899bb">Connected Robots:</span> ${totalRobots}<br/>
           <span style="color:#8899bb">Status:</span>
-         
           <span style="color:${color}">${isOnline ? "Online" : "Offline"}</span><br/>
            <span style="color:#8899bb">Open in map: </span>
-           <span ><a href="https://www.google.com/maps?q=${lat},${lng}" target="blank">View</a> </span>
+           <span ><a href="https://www.google.com/maps?q=${lat},${lng}" target="blank">View</a> </span><br/>
+           <span style="color:#8899bb">Last Uplink At:</span>
+          <span style="color:${color}">${last_uplink}</span>
         </div>`,
         { closeButton: false, className: "gw-popup" },
       );
