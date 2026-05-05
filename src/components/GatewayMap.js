@@ -75,7 +75,7 @@ export default function GatewayMap({
   site_id,
   T: tokens,
   height = 360,
-  radiusKm = 2,
+  radiusKm = 1,
 }) {
   const [state, dispatch] = useReducer(reducer, {
     data: [],
