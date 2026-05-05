@@ -930,7 +930,7 @@ export default function MasterAdminDashboard() {
                   site_id={site_id}
                   T={T} // your existing token object
                   height={360} // optional, defaults to 360
-                  radiusKm={1.5} // optional, defaults to 2
+                  radiusKm={1} // optional, defaults to 2
                 />
               </Card>
             )}
@@ -1286,7 +1286,7 @@ export default function MasterAdminDashboard() {
               site_id={site_id}
               T={T}
               height={"100%"} // 🔥 important
-              radiusKm={1.5}
+              radiusKm={1}
             />
           </div>
         </div>
