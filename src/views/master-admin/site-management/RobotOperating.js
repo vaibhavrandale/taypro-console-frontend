@@ -168,8 +168,8 @@ const RobotOperating = () => {
   // let cleaningStart = "C1";
   let weatherLockEnable = "WE";
   let weatherLockDisable = "WD";
-  let testModeOn = "TS";
-  let testModeOff = "TC";
+  let testModeOn = "1A";
+  let testModeOff = "1B";
   let setDockAtLeft = "65"; //D@
   let setDockAtRight = "64";
 
