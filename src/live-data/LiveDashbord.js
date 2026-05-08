@@ -650,7 +650,7 @@ const DetailPanel = ({ data }) => {
                   background: "rgba(255,255,255,0.04)",
                   border: `1px solid ${color}22`,
                   borderRadius: 12,
-                  padding: "10px 12px",
+                  padding: "10px 10px",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
@@ -689,7 +689,7 @@ const DetailPanel = ({ data }) => {
                   /> */}
                   <span
                     style={{
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: 800,
                       color,
                       lineHeight: 1,
@@ -898,81 +898,99 @@ const DetailPanel = ({ data }) => {
             //fontFamily: "'Barlow Condensed', sans-serif",
             letterSpacing: 2,
             textTransform: "uppercase",
-            marginBottom: 8,
+            marginBottom: 4,
           }}
         >
           👷 On-Site Technicians
         </div>
-        {techs.length > 0 ? (
-          techs.slice(0, 3).map((t, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: i < techs.length - 1 ? 6 : 0,
-              }}
-            >
-              {/* ✅ Show profile image if available, else emoji avatar */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          {techs.length > 0 ? (
+            techs.slice(0, 3).map((t, i) => (
               <div
+                key={i}
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  background: t.profile_image
-                    ? "transparent"
-                    : "rgba(245,166,35,0.15)",
-                  border: "1px solid rgba(245,166,35,0.3)",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 14,
-                  flexShrink: 0,
-                  overflow: "hidden",
+                  gap: 8,
+                  marginBottom: i < techs.length - 1 ? 2 : 0,
                 }}
               >
-                {t.profile_image ? (
-                  <img
-                    src={t.profile_image}
-                    alt=""
+                {/* ✅ Show profile image if available, else emoji avatar */}
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: t.profile_image
+                      ? "transparent"
+                      : "rgba(245,166,35,0.15)",
+                    border: "1px solid rgba(245,166,35,0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 14,
+                    flexShrink: 0,
+                    overflow: "hidden",
+                  }}
+                >
+                  {t.profile_image ? (
+                    <img
+                      src={t.profile_image}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentNode.textContent = "👷";
+                      }}
+                    />
+                  ) : (
+                    "👷"
+                  )}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "50%",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#d8e8f5",
+                      //fontFamily: "'Barlow Condensed', sans-serif",
                     }}
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                      e.target.parentNode.textContent = "👷";
+                  >
+                    {t.username}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 9,
+                      color: "#fff",
+                      //fontFamily: "'DM Mono', monospace",
                     }}
-                  />
-                ) : (
-                  "👷"
-                )}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: "#d8e8f5",
-                    //fontFamily: "'Barlow Condensed', sans-serif",
-                  }}
-                >
-                  {t.username}
+                  >
+                    IN: {fmtTime(t.punchin_time)}
+                  </div>
+                  {t.punchout_time && (
+                    <div
+                      style={{
+                        fontSize: 9,
+                        color: "#fff",
+                        //fontFamily: "'DM Mono', monospace",
+                      }}
+                    >
+                      OUT: {fmtTime(t.punchout_time)}
+                    </div>
+                  )}
                 </div>
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: "#667788",
-                    //fontFamily: "'DM Mono', monospace",
-                  }}
-                >
-                  In: {fmtTime(t.punchin_time)}
-                </div>
-              </div>
-              <div
+                {/* <div
                 style={{
                   width: 6,
                   height: 6,
@@ -980,24 +998,25 @@ const DetailPanel = ({ data }) => {
                   background: "#22dd88",
                   boxShadow: "0 0 6px #22dd88",
                 }}
-              />
+              /> */}
+              </div>
+            ))
+          ) : (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "8px",
+                color: "#f5a623",
+                fontSize: 11,
+                ////fontFamily: "'Barlow Condensed', sans-serif",
+                letterSpacing: 1,
+                opacity: 0.7,
+              }}
+            >
+              ⚠ No technician on-site today
             </div>
-          ))
-        ) : (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "8px",
-              color: "#f5a623",
-              fontSize: 11,
-              ////fontFamily: "'Barlow Condensed', sans-serif",
-              letterSpacing: 1,
-              opacity: 0.7,
-            }}
-          >
-            ⚠ No technician on-site today
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Gateway */}
@@ -1754,12 +1773,12 @@ const LiveDashboard = () => {
             style={{
               flex: "0 0 38%",
               overflowY: "auto",
-              padding: "14px 16px 14px 14px",
+              padding: "10px 16px 14px 14px",
             }}
           >
             {!loading && detailData && (
               <>
-                <div
+                {/* <div
                   style={{
                     fontSize: 9,
                     color: "#fff",
@@ -1784,7 +1803,7 @@ const LiveDashboard = () => {
                         : "🟢"}{" "}
                     priority
                   </span>
-                </div>
+                </div> */}
                 <DetailPanel data={detailData} />
               </>
             )}
