@@ -482,56 +482,125 @@ const DetailPanel = ({ data }) => {
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 6,
+            justifyContent: "space-between",
           }}
         >
+          <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 6,
+              }}
+            >
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: HEALTH_COLOR[h],
+                  boxShadow: `0 0 12px ${HEALTH_COLOR[h]}`,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: HEALTH_COLOR[h],
+                  letterSpacing: 2,
+                  //fontFamily: "'Barlow Condensed', sans-serif",
+                }}
+              >
+                {HEALTH_LABEL[h]}
+              </span>
+            </div>
+            <div
+              style={{
+                fontSize: 20,
+                // fontWeight: 800,
+                color: "#eef4ff",
+                //fontFamily: "'Barlow Condensed', sans-serif",
+                lineHeight: 1.2,
+              }}
+            >
+              {site.siteName},<span className="ms-1">{site.location}</span>
+            </div>
+            <div
+              style={{
+                fontSize: 11,
+                color: "#8899aa",
+                marginTop: 4,
+                //fontFamily: "'DM Mono', monospace",
+                letterSpacing: 0.5,
+              }}
+            >
+              &nbsp;&nbsp;
+              <span style={{ textTransform: "uppercase", color: "#f5a623" }}>
+                {site.site_type}
+              </span>
+            </div>
+          </div>
+
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: HEALTH_COLOR[h],
-              boxShadow: `0 0 12px ${HEALTH_COLOR[h]}`,
-            }}
-          />
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: HEALTH_COLOR[h],
-              letterSpacing: 2,
-              //fontFamily: "'Barlow Condensed', sans-serif",
+              position: "relative",
+              width: 84,
+              height: 84,
+              flexShrink: 0,
             }}
           >
-            {HEALTH_LABEL[h]}
-          </span>
-        </div>
-        <div
-          style={{
-            fontSize: 20,
-            // fontWeight: 800,
-            color: "#eef4ff",
-            //fontFamily: "'Barlow Condensed', sans-serif",
-            lineHeight: 1.2,
-          }}
-        >
-          {site.siteName},<span className="ms-1">{site.location}</span>
-        </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: "#8899aa",
-            marginTop: 4,
-            //fontFamily: "'DM Mono', monospace",
-            letterSpacing: 0.5,
-          }}
-        >
-          &nbsp;&nbsp;
-          <span style={{ textTransform: "uppercase", color: "#f5a623" }}>
-            {site.site_type}
-          </span>
+            <svg width="84" height="84" style={{ transform: "rotate(-90deg)" }}>
+              <circle
+                cx="42"
+                cy="42"
+                r="38"
+                fill="none"
+                stroke="rgba(255,255,255,0.06)"
+                strokeWidth="8"
+              />
+              <circle
+                cx="42"
+                cy="42"
+                r="38"
+                fill="none"
+                stroke={pct > 50 ? "#22dd88" : pct > 20 ? "#f5a623" : "#ff3355"}
+                strokeWidth="8"
+                strokeDasharray={circumference}
+                strokeDashoffset={circumference * (1 - pct / 100)}
+                strokeLinecap="round"
+                style={{
+                  transition: "stroke-dashoffset 1s ease",
+                  filter: `drop-shadow(0 0 6px ${pct > 50 ? "#22dd88" : pct > 20 ? "#f5a623" : "#ff3355"})`,
+                }}
+              />
+            </svg>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 19,
+                  fontWeight: 800,
+                  color: "#eef4ff",
+                  //fontFamily: "'DM Mono', monospace",
+                  lineHeight: 1,
+                }}
+              >
+                {pct}%
+              </span>
+              <span style={{ fontSize: 8, color: "#8899aa", letterSpacing: 1 }}>
+                ONLINE
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -547,60 +616,6 @@ const DetailPanel = ({ data }) => {
           gap: 18,
         }}
       >
-        <div
-          style={{ position: "relative", width: 84, height: 84, flexShrink: 0 }}
-        >
-          <svg width="84" height="84" style={{ transform: "rotate(-90deg)" }}>
-            <circle
-              cx="42"
-              cy="42"
-              r="38"
-              fill="none"
-              stroke="rgba(255,255,255,0.06)"
-              strokeWidth="8"
-            />
-            <circle
-              cx="42"
-              cy="42"
-              r="38"
-              fill="none"
-              stroke={pct > 50 ? "#22dd88" : pct > 20 ? "#f5a623" : "#ff3355"}
-              strokeWidth="8"
-              strokeDasharray={circumference}
-              strokeDashoffset={circumference * (1 - pct / 100)}
-              strokeLinecap="round"
-              style={{
-                transition: "stroke-dashoffset 1s ease",
-                filter: `drop-shadow(0 0 6px ${pct > 50 ? "#22dd88" : pct > 20 ? "#f5a623" : "#ff3355"})`,
-              }}
-            />
-          </svg>
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              style={{
-                fontSize: 19,
-                fontWeight: 800,
-                color: "#eef4ff",
-                //fontFamily: "'DM Mono', monospace",
-                lineHeight: 1,
-              }}
-            >
-              {pct}%
-            </span>
-            <span style={{ fontSize: 8, color: "#8899aa", letterSpacing: 1 }}>
-              ONLINE
-            </span>
-          </div>
-        </div>
         <div style={{ flex: 1 }}>
           <div
             style={{
@@ -614,49 +629,54 @@ const DetailPanel = ({ data }) => {
           >
             🤖 Robot Fleet
           </div>
-          {[
-            ["Online", r.online, "#22dd88"],
-            ["Offline", r.offline, "#ff3355"],
-            ["Total", total, "#aabbcc"],
-          ].map(([l, v, col]) => (
-            <div
-              key={l}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 4,
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 10,
-                  color: "#667788",
-                  //fontFamily: "'Barlow Condensed', sans-serif",
-                  letterSpacing: 1,
-                }}
-              >
-                {l}
-              </span>
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 800,
-                  color: col,
-                  //fontFamily: "'DM Mono', monospace",
-                }}
-              >
-                {v}
-              </span>
-            </div>
-          ))}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 4,
+            }}
+          >
+            {[
+              ["Online ", r.online, "#22dd88"],
+              ["Offline ", r.offline, "#ff3355"],
+              ["Total ", total, "#aabbcc"],
+              ["completed ", c.completed, "#22dd88"],
+              ["in-progress ", c.inprogress, "#f5a623"],
+              ["failed ", c.failure, "#ff3355"],
+            ].map(([l, v, col]) => (
+              <div key={l}>
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: "#667788",
+                    //fontFamily: "'Barlow Condensed', sans-serif",
+                    letterSpacing: 1,
+                  }}
+                >
+                  {l}
+                </span>
+                <span
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 800,
+                    color: col,
+                    //fontFamily: "'DM Mono', monospace",
+                  }}
+                >
+                  {v}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Cleaning + Weather row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div style={{}}>
         {/* Cleaning */}
-        <div
+        {/* <div
           style={{
             background: "rgba(255,255,255,0.03)",
             border: "1px solid rgba(255,255,255,0.07)",
@@ -712,7 +732,7 @@ const DetailPanel = ({ data }) => {
               </span>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Weather — fully null-safe */}
         <div
@@ -736,7 +756,13 @@ const DetailPanel = ({ data }) => {
             🌤 Weather
           </div>
           {weather ? (
-            <>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <div
                 style={{
                   fontSize: 30,
@@ -744,6 +770,7 @@ const DetailPanel = ({ data }) => {
                   //fontFamily: "'DM Mono', monospace",
                   color: "#f5a623",
                   lineHeight: 1,
+                  marginRight: 90,
                 }}
               >
                 {/* ✅ Safe: w.temperature may be int or float */}
@@ -756,10 +783,11 @@ const DetailPanel = ({ data }) => {
               </div>
               <div
                 style={{
-                  fontSize: 10,
+                  fontSize: 18,
                   color: "#667788",
                   textTransform: "capitalize",
                   margin: "3px 0 6px",
+                  marginRight: 12,
                   //fontFamily: "'Barlow Condensed', sans-serif",
                 }}
               >
@@ -784,8 +812,9 @@ const DetailPanel = ({ data }) => {
                   <div
                     key={ico}
                     style={{
-                      fontSize: 10,
+                      fontSize: 18,
                       color: "#556677",
+                      marginRight: 12,
                       //fontFamily: "'DM Mono', monospace",
                     }}
                   >
@@ -793,7 +822,7 @@ const DetailPanel = ({ data }) => {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           ) : (
             /* ✅ Graceful empty state when weather is null */
             <div
@@ -802,7 +831,7 @@ const DetailPanel = ({ data }) => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                height: 80,
+                height: 20,
                 gap: 6,
               }}
             >
@@ -1286,7 +1315,34 @@ const LiveDashboard = () => {
   const criticals = sites.filter((d) => getHealth(d) === "critical");
   const warnings = sites.filter((d) => getHealth(d) === "warning");
   const healthyCount = sites.filter((d) => getHealth(d) === "healthy");
+  // ADD THESE THREE:
+  const totalCompleted = sites.reduce(
+    (a, d) => a + (d.cleaning_data?.completed || 0),
+    0,
+  );
+  const totalInProgress = sites.reduce(
+    (a, d) => a + (d.cleaning_data?.inprogress || 0),
+    0,
+  );
+  const gateway_totals = sites.reduce(
+    (a, d) =>
+      a +
+      (d.gateways?.filter((g) => g.gateway_status === true).length || 0) +
+      (d.gateways?.filter((g) => g.gateway_status === false).length || 0),
+    0,
+  );
 
+  const totalOnline = sites.reduce(
+    (a, d) =>
+      a + (d.gateways?.filter((g) => g.gateway_status === true).length || 0),
+    0,
+  );
+
+  const totalOffline = sites.reduce(
+    (a, d) =>
+      a + (d.gateways?.filter((g) => g.gateway_status === false).length || 0),
+    0,
+  );
   const detailData = priorityList[selected] || sorted[0];
 
   return (
@@ -1405,6 +1461,29 @@ const LiveDashboard = () => {
               color={totalFailures > 0 ? "#ff3355" : "#334455"}
             />
             <FleetStat
+              label="Completed"
+              value={totalCompleted}
+              color="#22dd88"
+            />
+            <FleetStat
+              label="In Progress"
+              value={totalInProgress}
+              color={totalInProgress > 0 ? "#f5a623" : "#334455"}
+            />
+            <FleetStat
+              label="Gateway Online"
+              value={totalOnline || 0}
+              color="#22dd88"
+              sub={`/ ${gateway_totals || 0} total`}
+            />
+
+            <FleetStat
+              label="Gateway Offline"
+              value={totalOffline || 0}
+              color="#ff4d4f"
+              sub={`/ ${gateway_totals || 0} total`}
+            />
+            <FleetStat
               label="On-Site Techs"
               value={totalTechs}
               color="#f5a623"
@@ -1413,7 +1492,7 @@ const LiveDashboard = () => {
           <div style={{ flex: 1 }} />
 
           {/* Live status */}
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -1441,14 +1520,14 @@ const LiveDashboard = () => {
             >
               {apiError ? "DEMO" : "LIVE"}
             </span>
-          </div>
+          </div> */}
 
           {/* Clock */}
           <div style={{ textAlign: "right" }}>
             <div
               style={{
                 fontSize: 22,
-                fontWeight: 800,
+                fontWeight: 500,
                 //fontFamily: "'DM Mono',monospace",
                 letterSpacing: -1,
                 lineHeight: 1,
@@ -1523,8 +1602,8 @@ const LiveDashboard = () => {
           <span
             style={{
               marginLeft: "auto",
-              fontSize: 9,
-              color: "#334455",
+              fontSize: 12,
+              color: "#fff",
               //fontFamily: "'DM Mono',monospace",
             }}
           >
@@ -1643,7 +1722,7 @@ const LiveDashboard = () => {
                 <div
                   style={{
                     fontSize: 9,
-                    color: "#445566",
+                    color: "#fff",
                     letterSpacing: 3,
                     //fontFamily: "'Barlow Condensed',sans-serif",
                     textTransform: "uppercase",
@@ -1654,7 +1733,7 @@ const LiveDashboard = () => {
                   }}
                 >
                   <span>Site Detail</span>
-                  <span style={{ color: "#334455" }}>
+                  <span style={{ color: "#fff" }}>
                     {priorityList.indexOf(detailData) + 1} /{" "}
                     {priorityList.length}
                     &nbsp;·&nbsp;
