@@ -155,6 +155,12 @@ export const ASCII_METRIC_MAP = {
     type: "reset",
     unit: "",
   },
+  JK: {
+    desc: "Firmware",
+    code: "CM",
+    type: "reset",
+    unit: "",
+  },
 };
 
 /* ===================== DECODER ===================== */
@@ -172,8 +178,21 @@ export function decodeRobotPayload(base64) {
 
       return {
         base64,
-        description: `Firmware : ${fwRaw} | PCB Version : ${pcbRaw}`,
+        description: `Bat: 12V | Firmware : ${fwRaw} | PCB Version : ${pcbRaw}`,
         code: "XV",
+        type: "reset",
+        dynamic: false,
+        unit: null,
+      };
+    }
+    if (ascii && ascii.includes("JK")) {
+      const [pcbRaw, fwRaw] = ascii.split("JK");
+
+      return {
+        base64,
+        // description: `Firmware : ${fwRaw} | PCB Version : ${pcbRaw}`,
+        description: `Bat: 24V | PCB: V${pcbRaw}  |  Firmware: V${fwRaw}`,
+        code: "JK",
         type: "reset",
         dynamic: false,
         unit: null,
