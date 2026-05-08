@@ -630,42 +630,74 @@ const DetailPanel = ({ data }) => {
           </div>
           <div
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 4,
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 10,
+              marginBottom: 6,
             }}
           >
             {[
-              ["Online ", r.online, "#22dd88"],
-              ["Offline ", r.offline, "#ff3355"],
-              ["Total ", total, "#aabbcc"],
-              ["completed ", c.completed, "#22dd88"],
-              ["in-progress ", c.inprogress, "#f5a623"],
-              ["failed ", c.failure, "#ff3355"],
-            ].map(([l, v, col]) => (
-              <div key={l}>
-                <span
+              ["📦", "Total", total, "#aabbcc"],
+              ["🤖", "Online", r.online, "#22dd88"],
+              ["🔴", "Offline", r.offline, "#ff3355"],
+              ["✅", "Completed", c.completed, "#22dd88"],
+              ["🟡", "In Progress", c.inprogress, "#f5a623"],
+              ["❌", "Failed", c.failure, "#ff3355"],
+            ].map(([icon, label, value, color]) => (
+              <div
+                key={label}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: `1px solid ${color}22`,
+                  borderRadius: 12,
+                  padding: "10px 12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  transition: "all 0.25s ease",
+                  backdropFilter: "blur(4px)",
+                }}
+                className="metric-card"
+              >
+                <div
                   style={{
-                    fontSize: 12,
-                    color: "#667788",
-                    //fontFamily: "'Barlow Condensed', sans-serif",
-                    letterSpacing: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: 6,
                   }}
                 >
-                  {l}
-                </span>
-                <span
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 800,
-                    color: col,
-                    //fontFamily: "'DM Mono', monospace",
-                  }}
-                >
-                  {v}
-                </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: "#7f8ea3",
+                      letterSpacing: 1,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {icon} {label}
+                  </span>
+
+                  {/* <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: color,
+                      boxShadow: `0 0 10px ${color}`,
+                    }}
+                  /> */}
+                  <span
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 800,
+                      color,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {value}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -834,11 +866,11 @@ const DetailPanel = ({ data }) => {
                 gap: 6,
               }}
             >
-              <span style={{ fontSize: 24 }}>🌫</span>
+              {/* <span style={{ fontSize: 24 }}>🌫</span> */}
               <span
                 style={{
                   fontSize: 9,
-                  color: "#445566",
+                  color: "#fff",
                   letterSpacing: 2,
                   //fontFamily: "'Barlow Condensed', sans-serif",
                 }}
@@ -963,7 +995,7 @@ const DetailPanel = ({ data }) => {
               opacity: 0.7,
             }}
           >
-            ⚠ No technician on-site
+            ⚠ No technician on-site today
           </div>
         )}
       </div>
@@ -1038,84 +1070,93 @@ const DetailPanel = ({ data }) => {
         >
           📡 Gateways ({gateways.length})
         </div>
-        {gateways.length > 0 ? (
-          gateways.map((gw, i) => (
-            <div
-              key={gw.gateway_name || i}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "6px 0",
-                borderBottom:
-                  i < gateways.length - 1
-                    ? "1px solid rgba(255,255,255,0.04)"
-                    : "none",
-              }}
-            >
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {gateways.length > 0 ? (
+            gateways.map((gw, i) => (
               <div
+                key={gw.gateway_name || i}
                 style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  flexShrink: 0,
-                  background: gw.gateway_status ? "#22dd88" : "#ff3355",
-                  boxShadow: `0 0 8px ${gw.gateway_status ? "#22dd88" : "#ff3355"}88`,
-                  animation: "pulse 2s infinite",
-                }}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "#aabbc8",
-                    //fontFamily: "'DM Mono', monospace",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {gw.gateway_name || `Gateway ${i + 1}`}
-                </div>
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: "#445566",
-                    //fontFamily: "'DM Mono', monospace",
-                  }}
-                >
-                  Last uplink: {fmtTime(gw.last_uplink)}
-                </div>
-              </div>
-              <span
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: gw.gateway_status ? "#22dd88" : "#ff3355",
-                  //fontFamily: "'Barlow Condensed', sans-serif",
-                  letterSpacing: 1,
-                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "6px 0",
+                  borderBottom:
+                    i < gateways.length - 1
+                      ? "1px solid rgba(255,255,255,0.04)"
+                      : "none",
                 }}
               >
-                {gw.gateway_status ? "ONLINE" : "OFFLINE"}
-              </span>
+                <div
+                  style={{
+                    width: 15,
+                    height: 15,
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                    background: gw.gateway_status ? "#22dd88" : "#ff3355",
+                    boxShadow: `0 0 8px ${gw.gateway_status ? "#22dd88" : "#ff3355"}88`,
+                    animation: "pulse 2s infinite",
+                  }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "#fff",
+                      //fontFamily: "'DM Mono', monospace",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {gw.gateway_name || `Gateway ${i + 1}`}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 9,
+                      color: "#b4b4b5",
+                      //fontFamily: "'DM Mono', monospace",
+                    }}
+                  >
+                    {fmtTime(gw.last_uplink)}
+                  </div>
+                </div>
+                {/* <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: gw.gateway_status ? "#22dd88" : "#ff3355",
+                    //fontFamily: "'Barlow Condensed', sans-serif",
+                    letterSpacing: 1,
+                    flexShrink: 0,
+                  }}
+                >
+                  {gw.gateway_status ? "ONLINE" : "OFFLINE"}
+                </span> */}
+              </div>
+            ))
+          ) : (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "8px",
+                color: "#445566",
+                fontSize: 11,
+                //fontFamily: "'Barlow Condensed', sans-serif",
+                letterSpacing: 1,
+                opacity: 0.7,
+              }}
+            >
+              No gateways configured
             </div>
-          ))
-        ) : (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "8px",
-              color: "#445566",
-              fontSize: 11,
-              //fontFamily: "'Barlow Condensed', sans-serif",
-              letterSpacing: 1,
-              opacity: 0.7,
-            }}
-          >
-            No gateways configured
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1754,7 +1795,7 @@ const LiveDashboard = () => {
         {/* {!loading && <AlertTicker criticals={criticals} />} */}
 
         {/* ── FOOTER ── */}
-        <div
+        {/* <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -1771,7 +1812,7 @@ const LiveDashboard = () => {
           <span style={{ fontSize: 8, color: "#1a2530", letterSpacing: 3 }}>
             LOBBY DISPLAY v3.1 · {sites.length} SITES MONITORED
           </span>
-        </div>
+        </div> */}
       </div>
     </>
   );
