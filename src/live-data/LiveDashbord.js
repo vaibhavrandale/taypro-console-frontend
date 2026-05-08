@@ -131,12 +131,11 @@ const getHealth = (d) => {
   const { cleaning_data: c, robot_data: r, gateways, technician_data: t } = d;
   if (
     c.failure > 0 ||
-    !gateways[0]?.gateway_status ||
+    gateways.some((g) => g.gateway_status === false) ||
     (r.offline > 0 && r.online)
   )
     return "critical";
-  if (t.length === 0 || c.inprogress > 2 || r.online < r.offline * 0.2)
-    return "warning";
+  if (t.length === 0 || r.online < r.offline * 0.2) return "warning";
   return "healthy";
 };
 
