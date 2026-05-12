@@ -280,8 +280,10 @@ export default function GatewayMap({
       if (!isMounted.current || !leafletMap.current) return;
       if (!robot) return;
 
-      const lat = parseFloat(robot.latitude);
-      const lng = parseFloat(robot.longitude);
+      // const lat = parseFloat(robot.latitude);
+      const lat = parseFloat(robot.location?.latitude);
+      // const lng = parseFloat(robot.longitude);
+      const lng = parseFloat(robot.location?.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
 
       const robotNo = robot.robot_no?.trim() || "Robot";
