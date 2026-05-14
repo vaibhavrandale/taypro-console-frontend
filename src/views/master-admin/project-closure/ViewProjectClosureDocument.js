@@ -502,8 +502,8 @@ const ViewProjectClosureDocument = () => {
               <tbody>
                 <tr>
                   <td>Project&nbsp;&nbsp;Team&nbsp;&nbsp;Lead</td>
-                  <td>Jitesh&nbsp;&nbsp;Kute</td>
-                  <td>jitesh.kute@taypro.in</td>
+                  <td>Tejas&nbsp;&nbsp;Mane</td>
+                  <td>tejas.mane@taypro.in</td>
                 </tr>
                 <tr>
                   <td>Asst.&nbsp;&nbsp;Service&nbsp;&nbsp;Manager</td>
