@@ -744,7 +744,7 @@ const RobotOperating = () => {
                         <h6 className=" mb-0">{robot.robot_no}</h6>
                         <span className="px-2 py-1">
                           🔋 {robot.battery_voltage}
-                          <span className="mx-1">%</span>
+                          <span className="mx-1">%</span>{" "}
                         </span>
                       </div>
 
@@ -822,9 +822,12 @@ const RobotOperating = () => {
                         </div>
                         {/* Middle Row: Stuck Count */}
                         <div className="">
-                          <span className="text-danger fw-semibold">
+                          {/* <span className="text-danger fw-semibold">
                             SC: {robot.stuck_count}
-                          </span>
+                          </span> */}
+                          <CBadge color="warning" shape="rounded-pill">
+                            {robot.battery_type}
+                          </CBadge>
                         </div>
                       </div>
 

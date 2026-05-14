@@ -218,7 +218,7 @@ export default function GatewayMap({
           <div style="position:absolute;top:50%;left:50%;
             transform:translate(-50%,-50%);
             width:14px;height:14px;border-radius:50%;
-            background:${color};border:2px solid #fff;
+            background:${color};border:2px solid #f6f6f6;
             box-shadow:0 0 10px ${color},0 0 20px ${color};"></div>
         </div>`;
 
@@ -272,6 +272,21 @@ export default function GatewayMap({
       layers.current.push(marker, circle);
       bounds.push([lat, lng]);
     });
+    const gatewayColors = [
+      "rgba(240, 140, 25, 0.95)",
+      "rgb(57, 214, 0)",
+      "rgb(84, 126, 243)",
+      "rgb(255, 242, 0)",
+      "rgb(255, 0, 255)",
+      "rgb(0, 255, 255)",
+    ];
+
+    /* create dynamic color map */
+    const gatewayColorMap = {};
+
+    Object.keys(gwById).forEach((gatewayId, index) => {
+      gatewayColorMap[gatewayId] = gatewayColors[index % gatewayColors.length];
+    });
 
     /* ═══ ROBOTS ════════════════════════════════════════════ */
     // ✅ NEW — flat object shape from updated API
@@ -280,8 +295,10 @@ export default function GatewayMap({
       if (!isMounted.current || !leafletMap.current) return;
       if (!robot) return;
 
-      const lat = parseFloat(robot.latitude);
-      const lng = parseFloat(robot.longitude);
+      // const lat = parseFloat(robot.latitude);
+      const lat = parseFloat(robot.location?.latitude);
+      // const lng = parseFloat(robot.longitude);
+      const lng = parseFloat(robot.location?.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
 
       const robotNo = robot.robot_no?.trim() || "Robot";
@@ -343,11 +360,11 @@ export default function GatewayMap({
 
       layers.current.push(robotMarker);
       bounds.push([lat, lng]);
-
+      const lineColor = gatewayColorMap[lastGw];
       /* ── link line: robot → matched gateway ────────────── */
       if (matchedGw && gwCoords[lastGw]) {
         const line = L.polyline([[lat, lng], gwCoords[lastGw]], {
-          color: CLR.link,
+          color: lineColor,
           weight: 1.5,
           opacity: 1,
           dashArray: "4 8",
