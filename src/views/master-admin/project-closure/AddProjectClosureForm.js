@@ -205,7 +205,7 @@ const NewProjectClosure = () => {
         },
       );
 
-      setImage(data.filePath); // data.filePath = '/uploads/filename.pdf'
+      setImage(data.url); // data.url = '/uploads/filename.pdf'
       toast.success("File uploaded successfully.");
     } catch (err) {
       console.error(err);
@@ -893,33 +893,37 @@ const NewProjectClosure = () => {
                   ))}
                 </CTableBody>
               </CTable>
-
-              {[
-                "is_portal_access_provided",
-                "is_client_training_conducted",
-                "is_technician_training_conducted",
-              ].map((field) => (
-                <CCol key={field} md={3} className="my-2">
-                  <div className="flex items-center space-x-2 my-2">
-                    <CFormCheck
-                      id={field}
-                      name={field}
-                      checked={state.projectDocData[field] || false}
-                      onChange={handleChange}
-                    />
-                    &nbsp;&nbsp;
-                    <CFormLabel htmlFor={field}>
-                      {field.replace(/_/g, " ").toUpperCase()}
-                    </CFormLabel>
-                  </div>
-                </CCol>
-              ))}
-
+              <div className="d-flex flex-column  justify-content-start ">
+                {[
+                  "is_portal_access_provided",
+                  "is_client_training_conducted",
+                  "is_technician_training_conducted",
+                ].map((field) => (
+                  <CCol
+                    key={field}
+                    md={3}
+                    className="d-flex flex-column   my-2"
+                  >
+                    <div className="flex items-center  my-2">
+                      <CFormCheck
+                        id={field}
+                        name={field}
+                        checked={state.projectDocData[field] || false}
+                        onChange={handleChange}
+                      />
+                      &nbsp;&nbsp;
+                      <CFormLabel htmlFor={field}>
+                        {field.replace(/_/g, " ").toUpperCase()}
+                      </CFormLabel>
+                    </div>
+                  </CCol>
+                ))}
+              </div>
               <CCol md="3">
                 <div className="mb-3">
                   <CFormLabel className="form-CFormLabel">
                     Upload Commissioning Document
-                  </CFormLabel>
+                  </CFormLabel>{" "}
                   <div className="container-btn-file p-2 m-2 w-80">
                     <CIcon icon={cilCloudUpload} className="upload-icon" />
                     <CFormInput
