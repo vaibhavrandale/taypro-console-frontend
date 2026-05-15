@@ -138,6 +138,7 @@ const Login = () => {
     "Production And Operations Admin": "production-and-operations-admin",
     "Quality Admin": "quality-admin",
     "Factory Admin": "factory-admin",
+    "Design Admin": "design-admin",
   };
 
   const handleLogin = async (e) => {

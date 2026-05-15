@@ -141,3 +141,8 @@ export function FactoryAdminRoute({ children }) {
   const userInfo = useSelector((state) => state.userInfo);
   return userInfo && userInfo.role === "Factory Admin" ? children : <Page404 />;
 }
+
+export function DesignAdminRoute({ children }) {
+  const userInfo = useSelector((state) => state.userInfo);
+  return userInfo && userInfo.role === "Design Admin" ? children : <Page404 />;
+}
