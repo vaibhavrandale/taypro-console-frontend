@@ -20,6 +20,7 @@ import {
   CFormInput,
   CModalFooter,
   CButton,
+  CFormSelect,
 } from "@coreui/react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -52,15 +53,44 @@ const TayproDashboard = () => {
     error: "",
   });
   // const authtoken = useSelector((state) => state.authtoken);
+  const [robot_type, setRobotType] = useState("Automatic");
+  // useEffect(() => {
+  //   const fetchAllSites = async () => {
+  //     dispatch({ type: "FETCH_ALLSITES_REQUEST" });
+  //     try {
+  //       const result = await axios.get(`/api/v1/sites/site/all-sites-data`, {
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  //         withCredentials: true,
+  //       });
+  //       dispatch({
+  //         type: "FETCH_ALLSITES_SUCCESS",
+  //         payload: {
+  //           data: result.data.data,
+  //         },
+  //       });
+  //     } catch (error) {
+  //       dispatch({
+  //         type: "FETCH_ALLSITES_FAIL",
+  //         payload: "Failed to fetch All Sites Data",
+  //       });
+  //       toast.error("Failed to fetch All Sites Data");
+  //     }
+  //   };
+  //   fetchAllSites();
+  // }, []);
 
   useEffect(() => {
     const fetchAllSites = async () => {
       dispatch({ type: "FETCH_ALLSITES_REQUEST" });
       try {
-        const result = await axios.get(`/api/v1/sites/site/all-sites-data`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
+        const result = await axios.get(
+          `/api/v1/sites/site/all-sites-data/${robot_type}`,
+
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
+        );
         dispatch({
           type: "FETCH_ALLSITES_SUCCESS",
           payload: {
@@ -76,7 +106,7 @@ const TayproDashboard = () => {
       }
     };
     fetchAllSites();
-  }, []);
+  }, [robot_type]);
 
   // ✅ Separate state for Online & Offline modals
   const [activeOnlineSite, setActiveOnlineSite] = useState(null);
@@ -119,7 +149,19 @@ const TayproDashboard = () => {
           </CCard>
         </CCol>
       </CRow>
-      <CRow className="my-1 d-flex justify-content-end">
+
+      <CRow className="my-1 d-flex justify-content-end align-items-center">
+        <CCol xs="auto">
+          <CFormSelect
+            size="sm"
+            value={robot_type}
+            onChange={(e) => setRobotType(e.target.value)}
+            style={{ minWidth: 120 }}
+          >
+            <option value="Semi-Automatic"> Semi-Automatic </option>
+            <option value="Automatic"> Automatic </option>
+          </CFormSelect>
+        </CCol>
         <CCol md={4} className="my-2">
           <CFormInput
             type="text"
