@@ -411,6 +411,10 @@ export const role_permissions = [
     permissions: [],
   },
   {
+    role: "Design Admin",
+    permissions: [],
+  },
+  {
     role: "Production And Operations Admin",
     permissions: [],
   },
@@ -534,6 +538,12 @@ export const service_user_role_permissions = [
   },
   {
     role: "Client Site Technician",
+  },
+];
+
+export const design_user_role_permissions = [
+  {
+    role: "Design Admin",
   },
 ];
 //done

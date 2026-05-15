@@ -2753,6 +2753,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "POC",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "POC",
+            to: "/site-technician/poc-dashboard",
+          },
+        ],
+      },
     ],
   },
 
@@ -4843,6 +4861,48 @@ const _nav = [
   },
 
   // ------------------factory admin--------------------------------------------
+
+  // --------------------Design admin-------------------------------------------
+  {
+    component: CNavGroup,
+    name: "Design Admin",
+    to: "design-admin/dashboard",
+    icon: (
+      <CIcon
+        icon={cilPuzzle}
+        customClassName="nav-icon"
+        style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      />
+    ),
+    items: [
+      {
+        component: CNavItem,
+        name: "Dashboard",
+        to: "/design-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilSpeedometer}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "POC",
+        to: "/design-admin/poc",
+        icon: (
+          <CIcon
+            icon={cilGraph}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+    ],
+  },
+
+  // ------------------Design admin--------------------------------------------
 ];
 
 export default _nav;

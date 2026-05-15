@@ -66,6 +66,7 @@ import {
   ResearchAndDevelopmentAndProductDevelopmentAdminRoute,
   HRAndAdminRoute,
   FactoryAdminRoute,
+  DesignAdminRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -217,6 +218,12 @@ import SemiAutomaticRobot from "./views/master-admin/semi-robots/SemiAutomaticRo
 import AddSemiAutomaticRobot from "./views/master-admin/semi-robots/AddSemiAutomaticRobot";
 import RobotLocation from "./views/master-admin/robot-location/RobotLocation";
 import AddRobotLocation from "./views/master-admin/robot-location/AddRobotLocation";
+import DesignDashboard from "./views/design-admin/DesignDashboard";
+import PocDashboard from "./views/design-admin/poc/PocDashboard";
+import NomenClatureDashboard from "./views/nomenclature/NomenClatureDashboard";
+import CreateNomenClature from "./views/nomenclature/CreateNomenClature";
+import UpdatenomenClature from "./views/nomenclature/UpdatenomenClature";
+import ViewNomenClature from "./views/nomenclature/ViewNomenClature";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -7507,6 +7514,43 @@ const routes = [
       </SiteTechnicianRoute>
     ),
   },
+
+  {
+    path: "/site-technician/poc-dashboard",
+    name: "POC Dashboard",
+    element: (
+      <SiteTechnicianRoute>
+        <NomenClatureDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/create-nomenclature",
+    name: "Create Nomenclature",
+    element: (
+      <SiteTechnicianRoute>
+        <CreateNomenClature />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/update-nomenclature/:id",
+    name: "Update Nomenclature",
+    element: (
+      <SiteTechnicianRoute>
+        <UpdatenomenClature />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/view-nomenclature/:id",
+    name: "View Nomenclature",
+    element: (
+      <SiteTechnicianRoute>
+        <ViewNomenClature />
+      </SiteTechnicianRoute>
+    ),
+  },
   //------------------------service Site Technician---------------------------------
 
   // ------------------------client admin---------------------------------
@@ -8441,6 +8485,38 @@ const routes = [
     ),
   },
   // --------------------------Factory Admin------------------------------------
+
+  // --------------------------Design Admin------------------------------------
+  {
+    path: "/design-admin/dashboard",
+    name: "Design Admin Dashboard",
+    element: (
+      <DesignAdminRoute>
+        <DesignDashboard />
+      </DesignAdminRoute>
+    ),
+  },
+
+  {
+    path: "/design-admin/profile-tab",
+    name: "Design Admin Profile",
+    element: (
+      <DesignAdminRoute>
+        <Profile />
+      </DesignAdminRoute>
+    ),
+  },
+  {
+    path: "/design-admin/poc",
+    name: "Design Admin POC",
+    element: (
+      <DesignAdminRoute>
+        <PocDashboard />
+      </DesignAdminRoute>
+    ),
+  },
+
+  // --------------------------Design Admin------------------------------------
 ];
 
 export default routes;

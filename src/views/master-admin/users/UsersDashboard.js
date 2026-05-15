@@ -34,6 +34,7 @@ import {
   role_permissions,
   service_role_permissions,
   service_user_role_permissions,
+  design_user_role_permissions,
 } from "../../../data";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import axios from "axios";
@@ -204,6 +205,8 @@ const UsersDashboard = () => {
     roles = service_user_role_permissions;
   } else if (userInfo.role === "Project User") {
     roles = projects_user_role_permissions;
+  } else if (userInfo.role === "Design Admin") {
+    roles = design_user_role_permissions;
   } else {
     roles = service_role_permissions;
   }
