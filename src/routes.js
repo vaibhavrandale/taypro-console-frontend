@@ -2134,6 +2134,44 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  // ------------------------poc------------------------------
+  {
+    path: "/master-admin/poc-dashboard",
+    name: "POC Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <NomenClatureDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/create-nomenclature",
+    name: "Create Nomenclature",
+    element: (
+      <MasterAdminRoute>
+        <CreateNomenClature />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/update-nomenclature/:id",
+    name: "Update Nomenclature",
+    element: (
+      <MasterAdminRoute>
+        <UpdatenomenClature />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/view-nomenclature/:id",
+    name: "View Nomenclature",
+    element: (
+      <MasterAdminRoute>
+        <ViewNomenClature />
+      </MasterAdminRoute>
+    ),
+  },
+  // ------------------------poc------------------------------
 
   // ------------------------master admin---------------------------------
 
@@ -4287,6 +4325,45 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+
+  // ------------------------poc------------------------------
+  {
+    path: "/project-admin/poc-dashboard",
+    name: "POC Dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <NomenClatureDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/create-nomenclature",
+    name: "Create Nomenclature",
+    element: (
+      <ProjectAdminRoute>
+        <CreateNomenClature />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/update-nomenclature/:id",
+    name: "Update Nomenclature",
+    element: (
+      <ProjectAdminRoute>
+        <UpdatenomenClature />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/view-nomenclature/:id",
+    name: "View Nomenclature",
+    element: (
+      <ProjectAdminRoute>
+        <ViewNomenClature />
+      </ProjectAdminRoute>
+    ),
+  },
+  // ------------------------poc------------------------------
   //------------------------project admin---------------------------------
 
   //------------------------project user---------------------------------
@@ -6215,6 +6292,45 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  // ------------------------poc------------------------------
+  {
+    path: "/service-admin/poc-dashboard",
+    name: "POC Dashboard",
+    element: (
+      <ServiceAdminRoute>
+        <NomenClatureDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/create-nomenclature",
+    name: "Create Nomenclature",
+    element: (
+      <ServiceAdminRoute>
+        <CreateNomenClature />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/update-nomenclature/:id",
+    name: "Update Nomenclature",
+    element: (
+      <ServiceAdminRoute>
+        <UpdatenomenClature />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/view-nomenclature/:id",
+    name: "View Nomenclature",
+    element: (
+      <ServiceAdminRoute>
+        <ViewNomenClature />
+      </ServiceAdminRoute>
+    ),
+  },
+  // ------------------------poc------------------------------
 
   //------------------------service admin---------------------------------
   //------------------------service user---------------------------------
@@ -8506,15 +8622,45 @@ const routes = [
       </DesignAdminRoute>
     ),
   },
+
+  // ------------------------poc------------------------------
   {
-    path: "/design-admin/poc",
-    name: "Design Admin POC",
+    path: "/design-admin/poc-dashboard",
+    name: "POC Dashboard",
     element: (
       <DesignAdminRoute>
-        <PocDashboard />
+        <NomenClatureDashboard />
       </DesignAdminRoute>
     ),
   },
+  {
+    path: "/design-admin/create-nomenclature",
+    name: "Create Nomenclature",
+    element: (
+      <DesignAdminRoute>
+        <CreateNomenClature />
+      </DesignAdminRoute>
+    ),
+  },
+  {
+    path: "/design-admin/update-nomenclature/:id",
+    name: "Update Nomenclature",
+    element: (
+      <DesignAdminRoute>
+        <UpdatenomenClature />
+      </DesignAdminRoute>
+    ),
+  },
+  {
+    path: "/design-admin/view-nomenclature/:id",
+    name: "View Nomenclature",
+    element: (
+      <DesignAdminRoute>
+        <ViewNomenClature />
+      </DesignAdminRoute>
+    ),
+  },
+  // ------------------------poc------------------------------
 
   // --------------------------Design Admin------------------------------------
 ];

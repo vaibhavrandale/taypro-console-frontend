@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CCard,
   CCardBody,
@@ -885,6 +885,30 @@ const ViewNomenClature = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Design Admin") {
+    adminroute = "design-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  }
+
   return (
     <>
       <style>{`*{box-sizing:border-box;}
@@ -983,14 +1007,20 @@ const ViewNomenClature = () => {
                 </div>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <CButton className="bs" onClick={copyId}>
+                {/* <CButton className="bs" onClick={copyId}>
                   <CIcon
                     icon={copied ? cilCheck : cilCopy}
                     size="sm"
                     style={{ marginRight: 4 }}
                   />
                   {copied ? "Copied!" : `#${id}`}
-                </CButton>
+                </CButton> */}
+                <Link
+                  to={`/${adminroute}/update-nomenclature/${nomenclature._id}`}
+                  className="btn btn-sm btn-secondary text-decoration-none"
+                >
+                  Update
+                </Link>
                 <CButton
                   className="bp"
                   onClick={refetch}
@@ -1331,10 +1361,8 @@ const ViewNomenClature = () => {
                           // fontFamily: "'DM Sans',sans-serif",
                         }}
                       >
-                        Dimension {activeKey} ·{" "}
-                        {act.unit === "°"
-                          ? "Angular measurement"
-                          : "Linear measurement"}
+                        {act.description ||
+                          "No additional description available."}
                       </div>
                     </div>
                   )}
@@ -1475,6 +1503,7 @@ const ViewNomenClature = () => {
             // style={{
             //   backdropFilter: "blur(8px)",
             // }}
+            scrollable
           >
             <CModalHeader
               style={{

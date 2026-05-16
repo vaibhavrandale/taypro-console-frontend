@@ -4890,7 +4890,7 @@ const _nav = [
       {
         component: CNavItem,
         name: "POC",
-        to: "/design-admin/poc",
+        to: "/design-admin/poc-dashboard",
         icon: (
           <CIcon
             icon={cilGraph}
