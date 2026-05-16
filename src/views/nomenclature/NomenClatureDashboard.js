@@ -17,6 +17,7 @@ import {
   CFormInput,
   CRow,
   CCol,
+  CBadge,
 } from "@coreui/react";
 
 import toast from "react-hot-toast";
@@ -156,8 +157,8 @@ const NomenClatureDashboard = () => {
     adminroute = "service-admin";
   } else if (userInfo?.role === "Project Admin") {
     adminroute = "project-admin";
-  } else if (userInfo?.role === "Client Admin") {
-    adminroute = "client-admin";
+  } else if (userInfo?.role === "Design Admin") {
+    adminroute = "design-admin";
   } else if (userInfo?.role === "Site Incharge") {
     adminroute = "site-incharge";
   } else if (userInfo?.role === "Site Technician") {
@@ -170,16 +171,28 @@ const NomenClatureDashboard = () => {
     adminroute = "service-user";
   }
 
+  const filteredNomenclatures = nomenclatures.filter((nomenclature) => {
+    const siteName = nomenclature.site.site_name.toLowerCase();
+    const mmsType = nomenclature.mms_type.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    return siteName.includes(search) || mmsType.includes(search);
+  });
+
   return (
     <div className="p-2">
-      <h2 className="text-center">All Nomenclatures</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="text-center">All Nomenclatures</h2>
+        <Link className="btn btn-sm" to={`/${adminroute}/create-nomenclature`}>
+          Create
+        </Link>
+      </div>
 
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
         <CCol md={4}>
           <CFormInput
             type="text"
-            placeholder="Search: Robot No, Version, Lora No, Deveui, Site ID"
+            placeholder="Search by Site Name or MMS Type"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -192,15 +205,20 @@ const NomenClatureDashboard = () => {
           <CTableRow>
             <CTableHeaderCell>#</CTableHeaderCell>
 
-            <CTableHeaderCell style={{ minWidth: "340px" }}>
+            <CTableHeaderCell style={{ minWidth: "240px" }}>
               site_id
             </CTableHeaderCell>
 
-            <CTableHeaderCell style={{ minWidth: "340px" }}>
+            <CTableHeaderCell style={{ minWidth: "240px" }}>
               MMS Type Name
             </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "340px" }}>
+            <CTableHeaderCell style={{ minWidth: "270px" }}>
               Status
+            </CTableHeaderCell>
+            <CTableHeaderCell>Created By</CTableHeaderCell>
+            <CTableHeaderCell>Created At</CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "170px" }}>
+              Action
             </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -218,8 +236,8 @@ const NomenClatureDashboard = () => {
                 {error}
               </CTableDataCell>
             </CTableRow>
-          ) : nomenclatures.length > 0 ? (
-            nomenclatures.map((nomenclature, index) => (
+          ) : filteredNomenclatures.length > 0 ? (
+            filteredNomenclatures.map((nomenclature, index) => (
               <CTableRow key={nomenclature._id}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>
@@ -229,10 +247,59 @@ const NomenClatureDashboard = () => {
                     {nomenclature.site.site_name}
                   </Link>
                 </CTableDataCell>
+                <CTableDataCell>{nomenclature.mms_type}</CTableDataCell>
                 <CTableDataCell>
-                  {nomenclature.mms_type},{nomenclature.mms_type_name}
+                  <CBadge
+                    color={
+                      nomenclature.status === "Approved" ? "success" : "warning"
+                    }
+                  >
+                    {nomenclature.status}
+                  </CBadge>
                 </CTableDataCell>
-                <CTableDataCell>{nomenclature.status}</CTableDataCell>
+                <CTableDataCell>
+                  {nomenclature.last_activity[0]?.name}
+                </CTableDataCell>
+                <CTableDataCell>
+                  {new Date(nomenclature.createdAt).toLocaleDateString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                      minute: "2-digit",
+                      hour: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    },
+                  )}
+                </CTableDataCell>
+
+                <CTableDataCell>
+                  <div className="d-flex justify-content-center gap-2">
+                    {/* Update Button */}
+                    <Link
+                      to={`/${adminroute}/view-nomenclature/${nomenclature._id}`}
+                      className="btn btn-sm btn-secondary text-decoration-none"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      to={`/${adminroute}/update-nomenclature/${nomenclature._id}`}
+                      className="btn btn-sm btn-secondary text-decoration-none"
+                    >
+                      Update
+                    </Link>
+
+                    {/* Delete Button */}
+                    {/* <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDeleteClick(nomenclature)}
+                    >
+                      Delete
+                    </button> */}
+                  </div>
+                </CTableDataCell>
               </CTableRow>
             ))
           ) : (
