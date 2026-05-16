@@ -52,6 +52,36 @@ const CLR = {
   link: "rgba(255,255,255,0.35)",
 };
 
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  // ✅ Validate
+  if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
+    return 0;
+  }
+
+  const toRad = (value) => {
+    return (value * Math.PI) / 180;
+  };
+
+  const earthRadius = 6371; // KM
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = earthRadius * c;
+
+  // ✅ Return rounded value
+  return Number(distance.toFixed(2));
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ROBOTS_REQUEST":
@@ -334,7 +364,12 @@ export default function GatewayMap({
       });
 
       const robotMarker = L.marker([lat, lng], { icon: robotIcon }).addTo(map);
-
+      const distance = calculateDistance(
+        lat,
+        lng,
+        gwById[lastGw]?.lat,
+        gwById[lastGw]?.lng,
+      );
       robotMarker.bindPopup(
         `<div style="font-family:monospace;font-size:12px;background:#0f172a;
           color:#e2e8f0;border:1px solid ${CLR.robot};border-radius:6px;
@@ -345,6 +380,8 @@ export default function GatewayMap({
           <span style="color:#8899bb">LoRa No:</span> ${robot?.lora_no ?? "—"}<br/>
           <span style="color:#8899bb">Last Gateway:</span>
           <span style="color:${gwColor}">${gwName}</span><br/>
+          <span style="color:#8899bb">Distance From Gateway:</span>
+          <span style="color:${CLR.robot}">${distance} km</span><br/>
            <span style="color:#8899bb">Open in map: </span>
            <span ><a href="https://www.google.com/maps?q=${lat},${lng}" target="blank">View</a> </span>
         </div>`,
