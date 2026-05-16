@@ -120,10 +120,22 @@ const UpdatenomenClature = () => {
     });
   };
 
-  const handleNomenclatureChange = (index, value) => {
+  // const handleNomenclatureChange = (index, value) => {
+  //   const updatedNomenclature = [...formData.nomenclature];
+
+  //   updatedNomenclature[index].value = value;
+  //   updatedNomenclature[index].description = description;
+
+  //   setFormData({
+  //     ...formData,
+  //     nomenclature: updatedNomenclature,
+  //   });
+  // };
+
+  const handleNomenclatureChange = (index, field, value) => {
     const updatedNomenclature = [...formData.nomenclature];
 
-    updatedNomenclature[index].value = value;
+    updatedNomenclature[index][field] = value;
 
     setFormData({
       ...formData,
@@ -304,15 +316,46 @@ const UpdatenomenClature = () => {
                     <CCardBody>
                       <CFormLabel className="fw-bold">{item.name}</CFormLabel>
 
-                      <p className="text-muted small mb-2">
-                        {item.description}
-                      </p>
+                      <p className="text-muted small mb-2">Value</p>
 
-                      <CFormInput
+                      {/* <CFormInput
                         type="text"
                         value={item.value || ""}
                         onChange={(e) =>
                           handleNomenclatureChange(index, e.target.value)
+                        }
+                      />
+                      <CFormInput
+                        type="text"
+                        value={item.description || ""}
+                        onChange={(e) =>
+                          handleNomenclatureChange(index, e.target.value)
+                        }
+                      /> */}
+
+                      <CFormInput
+                        className="m-1"
+                        type="text"
+                        value={item.value || ""}
+                        onChange={(e) =>
+                          handleNomenclatureChange(
+                            index,
+                            "value",
+                            e.target.value,
+                          )
+                        }
+                      />
+                      <p className="text-muted small mb-2">Description</p>
+                      <CFormInput
+                        className="m-1"
+                        type="text"
+                        value={item.description || ""}
+                        onChange={(e) =>
+                          handleNomenclatureChange(
+                            index,
+                            "description",
+                            e.target.value,
+                          )
                         }
                       />
 

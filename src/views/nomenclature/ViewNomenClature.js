@@ -1361,10 +1361,8 @@ const ViewNomenClature = () => {
                           // fontFamily: "'DM Sans',sans-serif",
                         }}
                       >
-                        Dimension {activeKey} ·{" "}
-                        {act.unit === "°"
-                          ? "Angular measurement"
-                          : "Linear measurement"}
+                        {act.description ||
+                          "No additional description available."}
                       </div>
                     </div>
                   )}

@@ -183,6 +183,20 @@ function reducer(state, action) {
           ),
         },
       };
+    case "SET_NOMENCLATURE_DESCRIPTION":
+      return {
+        ...state,
+
+        formData: {
+          ...state.formData,
+
+          nomenclature: state.formData.nomenclature.map((item) =>
+            item.key === action.key
+              ? { ...item, description: action.value }
+              : item,
+          ),
+        },
+      };
 
     case "SET_NOMENCLATURE_UPLOADING":
       return {
@@ -309,6 +323,13 @@ const NomenclatureField = ({ field, dispatch }) => {
       value: e.target.value,
     });
 
+  const handleDescriptionChange = (e) =>
+    dispatch({
+      type: "SET_NOMENCLATURE_DESCRIPTION",
+      key: field.key,
+      value: e.target.value,
+    });
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
 
@@ -359,9 +380,9 @@ const NomenclatureField = ({ field, dispatch }) => {
         <span className="nc-field-name">{field.name}</span>
       </div>
 
-      {field.description && (
+      {/* {field.description && (
         <div className="nc-field-desc">{field.description}</div>
-      )}
+      )} */}
 
       <CRow className="g-2 align-items-center mt-1">
         <CCol md={4}>
@@ -371,7 +392,18 @@ const NomenclatureField = ({ field, dispatch }) => {
               placeholder="Enter value"
               value={field.value}
               onChange={handleValueChange}
-              type={"text"}
+              type="text"
+            />
+          </CInputGroup>
+        </CCol>
+        <CCol md={4}>
+          <CInputGroup size="sm">
+            <CInputGroupText>Description</CInputGroupText>
+            <CFormInput
+              placeholder="Enter description"
+              value={field.description}
+              onChange={handleDescriptionChange}
+              type="text"
             />
           </CInputGroup>
         </CCol>
