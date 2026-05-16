@@ -15,9 +15,6 @@ import {
   CModalHeader,
   CModal,
   CModalTitle,
-  CCarousel,
-  CCarouselItem,
-  CImage,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import {
@@ -32,6 +29,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
 import NomenclatureChat from "./NomenclatureChat";
 import { useSelector } from "react-redux";
+import { MountingDiagram, MountingTopView } from "./MMSDiagram";
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
@@ -1081,13 +1079,28 @@ const ViewNomenClature = () => {
                     ) : (
                       <>
                         <div style={{ height: 290 }}>
-                          <SolarDiagram
+                          {/* <SolarDiagram
                             dimensions={dims}
+                            activeKey={activeKey}
+                            onSelect={sel}
+                          /> */}
+
+                          {/* // In render: */}
+                          <MountingDiagram
+                            mmsType={nom?.type} // e.g. "2p", "tracker", "3p-3l"
+                            dims={dims}
+                            activeKey={activeKey}
+                            onSelect={sel}
+                          />
+
+                          <MountingTopView
+                            mmsType={nom?.type}
+                            nom={nom}
                             activeKey={activeKey}
                             onSelect={sel}
                           />
                         </div>
-                        <hr
+                        {/* <hr
                           style={{ borderColor: "#1e3a5f", margin: "12px 0" }}
                         />
                         <div className="sl">Top View — Panel Module Layout</div>
@@ -1108,7 +1121,11 @@ const ViewNomenClature = () => {
                         >
                           Click any label on the diagram to highlight its
                           specification →
-                        </p>
+                        </p> */}
+                        {/* <span>
+                          {MMS_LABELS[nom?.type?.toLowerCase()] ||
+                            "Mounting Structure — Side View"}
+                        </span> */}
                       </>
                     )}
                   </CCardBody>
