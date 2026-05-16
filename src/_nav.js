@@ -823,6 +823,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "POC",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "POC",
+            to: "/master-admin/poc-dashboard",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -1679,6 +1697,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "POC",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "POC",
+            to: "/project-admin/poc-dashboard",
+          },
+        ],
+      },
     ],
   },
 
@@ -2477,6 +2513,24 @@ const _nav = [
             component: CNavItem,
             name: "Robot Locations",
             to: "/service-admin/robot-location",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "POC",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "POC",
+            to: "/service-admin/poc-dashboard",
           },
         ],
       },
