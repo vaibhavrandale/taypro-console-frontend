@@ -729,7 +729,7 @@ const PunchInPunchOut = () => {
                   >
                     {/* ✅ Dark Street Map */}
                     <TileLayer
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                      url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
                       attribution="Tiles &copy; Esri"
                     />
 
