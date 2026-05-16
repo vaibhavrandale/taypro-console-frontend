@@ -678,6 +678,40 @@ const PunchInPunchOut = () => {
                     </div>
                   </div>
                 ) : (
+                  // <MapContainer
+                  //   center={
+                  //     liveLocation
+                  //       ? [liveLocation.lat, liveLocation.lng]
+                  //       : selectedSiteData
+                  //         ? [
+                  //             selectedSiteData.latitude,
+                  //             selectedSiteData.longitude,
+                  //           ]
+                  //         : [0, 0]
+                  //   }
+                  //   zoom={14}
+                  //   scrollWheelZoom={false}
+                  //   style={{ height: "100%", width: "100%" }}
+                  // >
+                  //   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  //   {selectedSiteData && (
+                  //     <Circle
+                  //       center={[
+                  //         selectedSiteData.latitude,
+                  //         selectedSiteData.longitude,
+                  //       ]}
+                  //       radius={selectedSiteData.radius}
+                  //       pathOptions={{
+                  //         color: "#2aba47ff",
+                  //         fillColor: "#00FF00",
+                  //         fillOpacity: 0.1,
+                  //       }}
+                  //     />
+                  //   )}
+                  //   {liveLocation && (
+                  //     <Marker position={[liveLocation.lat, liveLocation.lng]} />
+                  //   )}
+                  // </MapContainer>
                   <MapContainer
                     center={
                       liveLocation
@@ -693,7 +727,13 @@ const PunchInPunchOut = () => {
                     scrollWheelZoom={false}
                     style={{ height: "100%", width: "100%" }}
                   >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {/* ✅ Dark Street Map */}
+                    <TileLayer
+                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                      attribution="Tiles &copy; Esri"
+                    />
+
+                    {/* ✅ Geofence Radius */}
                     {selectedSiteData && (
                       <Circle
                         center={[
@@ -702,12 +742,14 @@ const PunchInPunchOut = () => {
                         ]}
                         radius={selectedSiteData.radius}
                         pathOptions={{
-                          color: "#2aba47ff",
-                          fillColor: "#00FF00",
-                          fillOpacity: 0.1,
+                          color: "#22c55e",
+                          fillColor: "#22c55e",
+                          fillOpacity: 0.15,
                         }}
                       />
                     )}
+
+                    {/* ✅ Robot Live Location */}
                     {liveLocation && (
                       <Marker position={[liveLocation.lat, liveLocation.lng]} />
                     )}
