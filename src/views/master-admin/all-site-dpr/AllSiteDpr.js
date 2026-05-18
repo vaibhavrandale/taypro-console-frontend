@@ -500,9 +500,21 @@ const AllSiteDpr = () => {
 
                       {/* Data cells */}
                       {headers.map((h) => {
+                        // console.log(entryMap);
+                        // const val = entryMap[row.field]?.[h.key];
+                        // const isEmpty =
+                        //   val === "" || val === undefined || val === null;
+                        const entry = site.month_wise_data.find(
+                          (item) => (item.date || item.week) === h.key,
+                        );
+
                         const val = entryMap[row.field]?.[h.key];
+
+                        const dprId = entry?._id;
+
                         const isEmpty =
                           val === "" || val === undefined || val === null;
+
                         return (
                           <CTableDataCell
                             key={h.key}
@@ -517,7 +529,15 @@ const AllSiteDpr = () => {
                               fontWeight: h.type === "week" ? 600 : 400,
                             }}
                           >
-                            {isEmpty ? "–" : val}
+                            {dprId ? (
+                              <Link to={`/master-admin/update-dpr/${dprId}`}>
+                                {isEmpty ? "–" : val}
+                              </Link>
+                            ) : isEmpty ? (
+                              "–"
+                            ) : (
+                              val
+                            )}
                           </CTableDataCell>
                         );
                       })}

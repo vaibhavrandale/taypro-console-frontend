@@ -21,8 +21,8 @@ import {
   cilSun,
   cilReload,
   cilWarning,
-  cilCopy,
-  cilCheck,
+  // cilCopy,
+  // cilCheck,
   cilX,
 } from "@coreui/icons";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -55,46 +55,46 @@ const reducer = (state, action) => {
 };
 
 // ─── Mock (fallback for dev) ───────────────────────────────────────────────────
-const MOCK = {
-  _id: "2P001A",
-  name: "2P MMS Nomenclature Details",
-  projectNo: "2P",
-  drawingNo: "2P001A",
-  scale: "GL-TPL",
-  drawnBy: "SP-TPL",
-  revision: "00",
-  date: "13/06/2023",
-  status: "Active",
-  type: "2P Fixed Tilt",
-  tableNo1Rows: 2,
-  tableNo1Cols: 3,
-  tableNo2Rows: 3,
-  tableNo2Cols: 3,
-  dimensions: {
-    A: { label: "Solar Module Dimension", value: "1722", unit: "mm" },
-    B: {
-      label: "Solar Module Vertical Gap Dimension",
-      value: "20",
-      unit: "mm",
-    },
-    C: { label: "Table Width Dimension", value: "3464", unit: "mm" },
-    D: { label: "Back Ground Clearance Dimension", value: "1500", unit: "mm" },
-    E: { label: "Front Ground Clearance Dimension", value: "300", unit: "mm" },
-    F: { label: "Solar Module Height Dimension", value: "1134", unit: "mm" },
-    G: {
-      label: "Solar Module Frame Cross Section Dimension",
-      value: "35",
-      unit: "mm",
-    },
-    H: { label: "Inter Table Gap Dimension", value: "20", unit: "mm" },
-    I: {
-      label: "Solar Module Gap Horizontal Dimension",
-      value: "10",
-      unit: "mm",
-    },
-    J: { label: "Tilt Angle", value: "25", unit: "°" },
-  },
-};
+// const MOCK = {
+//   _id: "2P001A",
+//   name: "2P MMS Nomenclature Details",
+//   projectNo: "2P",
+//   drawingNo: "2P001A",
+//   scale: "GL-TPL",
+//   drawnBy: "SP-TPL",
+//   revision: "00",
+//   date: "13/06/2023",
+//   status: "Active",
+//   type: "2P Fixed Tilt",
+//   tableNo1Rows: 2,
+//   tableNo1Cols: 3,
+//   tableNo2Rows: 3,
+//   tableNo2Cols: 3,
+//   dimensions: {
+//     A: { label: "Solar Module Dimension", value: "1722", unit: "mm" },
+//     B: {
+//       label: "Solar Module Vertical Gap Dimension",
+//       value: "20",
+//       unit: "mm",
+//     },
+//     C: { label: "Table Width Dimension", value: "3464", unit: "mm" },
+//     D: { label: "Back Ground Clearance Dimension", value: "1500", unit: "mm" },
+//     E: { label: "Front Ground Clearance Dimension", value: "300", unit: "mm" },
+//     F: { label: "Solar Module Height Dimension", value: "1134", unit: "mm" },
+//     G: {
+//       label: "Solar Module Frame Cross Section Dimension",
+//       value: "35",
+//       unit: "mm",
+//     },
+//     H: { label: "Inter Table Gap Dimension", value: "20", unit: "mm" },
+//     I: {
+//       label: "Solar Module Gap Horizontal Dimension",
+//       value: "10",
+//       unit: "mm",
+//     },
+//     J: { label: "Tilt Angle", value: "25", unit: "°" },
+//   },
+// };
 
 // ─── Colour palette per label ──────────────────────────────────────────────────
 const DIM_COLORS = {
@@ -113,546 +113,546 @@ const DIM_COLORS = {
 // ═══════════════════════════════════════════════════════════════════════════════
 // SVG — Side-view mounting structure diagram
 // ═══════════════════════════════════════════════════════════════════════════════
-const SolarDiagram = ({ dimensions: dims, activeKey, onSelect }) => {
-  const tilt = parseFloat(dims?.J?.value || 25);
-  const col = (k) => (activeKey === k ? DIM_COLORS[k] : "#334155");
-  const lw = (k) => (activeKey === k ? 2.2 : 1);
-  const fs = (k) => (activeKey === k ? 13 : 10);
-  const fw = (k) => (activeKey === k ? 700 : 500);
-  const fc = (k) => (activeKey === k ? DIM_COLORS[k] : "#94a3b8");
-  const cur = { cursor: "pointer" };
+// const SolarDiagram = ({ dimensions: dims, activeKey, onSelect }) => {
+//   const tilt = parseFloat(dims?.J?.value || 25);
+//   const col = (k) => (activeKey === k ? DIM_COLORS[k] : "#334155");
+//   const lw = (k) => (activeKey === k ? 2.2 : 1);
+//   const fs = (k) => (activeKey === k ? 13 : 10);
+//   const fw = (k) => (activeKey === k ? 700 : 500);
+//   const fc = (k) => (activeKey === k ? DIM_COLORS[k] : "#94a3b8");
+//   const cur = { cursor: "pointer" };
 
-  return (
-    <svg viewBox="0 0 520 290" style={{ width: "100%", height: "100%" }}>
-      <defs>
-        <linearGradient id="panelG" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1e4080" />
-          <stop offset="100%" stopColor="#0f2744" />
-        </linearGradient>
-        <linearGradient id="bgG" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#060f1e" />
-          <stop offset="100%" stopColor="#0a1628" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2.5" result="cb" />
-          <feMerge>
-            <feMergeNode in="cb" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <marker
-          id="arr"
-          markerWidth="5"
-          markerHeight="5"
-          refX="2.5"
-          refY="2.5"
-          orient="auto"
-        >
-          <path d="M0,0 L5,2.5 L0,5 Z" fill="#475569" />
-        </marker>
-        {Object.entries(DIM_COLORS).map(([k, c]) => (
-          <marker
-            key={k}
-            id={`arr${k}`}
-            markerWidth="5"
-            markerHeight="5"
-            refX="2.5"
-            refY="2.5"
-            orient="auto"
-          >
-            <path d="M0,0 L5,2.5 L0,5 Z" fill={c} />
-          </marker>
-        ))}
-      </defs>
+//   return (
+//     <svg viewBox="0 0 520 290" style={{ width: "100%", height: "100%" }}>
+//       <defs>
+//         <linearGradient id="panelG" x1="0%" y1="0%" x2="100%" y2="100%">
+//           <stop offset="0%" stopColor="#1e4080" />
+//           <stop offset="100%" stopColor="#0f2744" />
+//         </linearGradient>
+//         <linearGradient id="bgG" x1="0%" y1="0%" x2="0%" y2="100%">
+//           <stop offset="0%" stopColor="#060f1e" />
+//           <stop offset="100%" stopColor="#0a1628" />
+//         </linearGradient>
+//         <filter id="glow">
+//           <feGaussianBlur stdDeviation="2.5" result="cb" />
+//           <feMerge>
+//             <feMergeNode in="cb" />
+//             <feMergeNode in="SourceGraphic" />
+//           </feMerge>
+//         </filter>
+//         <marker
+//           id="arr"
+//           markerWidth="5"
+//           markerHeight="5"
+//           refX="2.5"
+//           refY="2.5"
+//           orient="auto"
+//         >
+//           <path d="M0,0 L5,2.5 L0,5 Z" fill="#475569" />
+//         </marker>
+//         {Object.entries(DIM_COLORS).map(([k, c]) => (
+//           <marker
+//             key={k}
+//             id={`arr${k}`}
+//             markerWidth="5"
+//             markerHeight="5"
+//             refX="2.5"
+//             refY="2.5"
+//             orient="auto"
+//           >
+//             <path d="M0,0 L5,2.5 L0,5 Z" fill={c} />
+//           </marker>
+//         ))}
+//       </defs>
 
-      <rect width="520" height="290" fill="url(#bgG)" rx="10" />
+//       <rect width="520" height="290" fill="url(#bgG)" rx="10" />
 
-      {/* Sun */}
-      <circle
-        cx="470"
-        cy="42"
-        r="18"
-        fill="#fbbf24"
-        style={{ filter: "url(#glow)", opacity: 0.85 }}
-      />
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
-        <line
-          key={a}
-          x1={470 + 22 * Math.cos((a * Math.PI) / 180)}
-          y1={42 + 22 * Math.sin((a * Math.PI) / 180)}
-          x2={470 + 29 * Math.cos((a * Math.PI) / 180)}
-          y2={42 + 29 * Math.sin((a * Math.PI) / 180)}
-          stroke="#fbbf24"
-          strokeWidth="2"
-          strokeLinecap="round"
-          opacity="0.8"
-        />
-      ))}
-      {/* Solar rays */}
-      {[0, 1, 2, 3].map((i) => (
-        <line
-          key={i}
-          x1={430 - i * 18}
-          y1={70 + i * 12}
-          x2={280 - i * 14}
-          y2={172 + i * 6}
-          stroke="#fbbf24"
-          strokeWidth="0.7"
-          strokeDasharray="4,3"
-          opacity="0.18"
-        />
-      ))}
+//       {/* Sun */}
+//       <circle
+//         cx="470"
+//         cy="42"
+//         r="18"
+//         fill="#fbbf24"
+//         style={{ filter: "url(#glow)", opacity: 0.85 }}
+//       />
+//       {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+//         <line
+//           key={a}
+//           x1={470 + 22 * Math.cos((a * Math.PI) / 180)}
+//           y1={42 + 22 * Math.sin((a * Math.PI) / 180)}
+//           x2={470 + 29 * Math.cos((a * Math.PI) / 180)}
+//           y2={42 + 29 * Math.sin((a * Math.PI) / 180)}
+//           stroke="#fbbf24"
+//           strokeWidth="2"
+//           strokeLinecap="round"
+//           opacity="0.8"
+//         />
+//       ))}
+//       {/* Solar rays */}
+//       {[0, 1, 2, 3].map((i) => (
+//         <line
+//           key={i}
+//           x1={430 - i * 18}
+//           y1={70 + i * 12}
+//           x2={280 - i * 14}
+//           y2={172 + i * 6}
+//           stroke="#fbbf24"
+//           strokeWidth="0.7"
+//           strokeDasharray="4,3"
+//           opacity="0.18"
+//         />
+//       ))}
 
-      {/* Ground */}
-      <line
-        x1="20"
-        y1="240"
-        x2="440"
-        y2="240"
-        stroke="#1e3a5f"
-        strokeWidth="2"
-        strokeDasharray="5,3"
-      />
-      <text
-        x="444"
-        y="244"
-        fill="#475569"
-        fontSize="9"
-        // fontFamily="'Barlow Condensed',sans-serif"
-        fontWeight="600"
-      >
-        GL
-      </text>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-        <line
-          key={i}
-          x1={25 + i * 37}
-          y1="240"
-          x2={14 + i * 37}
-          y2="255"
-          stroke="#1e3a5f"
-          strokeWidth="1.5"
-        />
-      ))}
+//       {/* Ground */}
+//       <line
+//         x1="20"
+//         y1="240"
+//         x2="440"
+//         y2="240"
+//         stroke="#1e3a5f"
+//         strokeWidth="2"
+//         strokeDasharray="5,3"
+//       />
+//       <text
+//         x="444"
+//         y="244"
+//         fill="#475569"
+//         fontSize="9"
+//         // fontFamily="'Barlow Condensed',sans-serif"
+//         fontWeight="600"
+//       >
+//         GL
+//       </text>
+//       {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+//         <line
+//           key={i}
+//           x1={25 + i * 37}
+//           y1="240"
+//           x2={14 + i * 37}
+//           y2="255"
+//           stroke="#1e3a5f"
+//           strokeWidth="1.5"
+//         />
+//       ))}
 
-      {/* Mounting pole */}
-      <rect x="192" y="175" width="16" height="65" fill="#1a3a70" rx="2" />
-      <rect x="180" y="237" width="40" height="8" fill="#1a3a70" rx="2" />
+//       {/* Mounting pole */}
+//       <rect x="192" y="175" width="16" height="65" fill="#1a3a70" rx="2" />
+//       <rect x="180" y="237" width="40" height="8" fill="#1a3a70" rx="2" />
 
-      {/* Braces */}
-      <line
-        x1="200"
-        y1="205"
-        x2="135"
-        y2="240"
-        stroke="#2563eb"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        x1="200"
-        y1="205"
-        x2="272"
-        y2="240"
-        stroke="#2563eb"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
+//       {/* Braces */}
+//       <line
+//         x1="200"
+//         y1="205"
+//         x2="135"
+//         y2="240"
+//         stroke="#2563eb"
+//         strokeWidth="3"
+//         strokeLinecap="round"
+//       />
+//       <line
+//         x1="200"
+//         y1="205"
+//         x2="272"
+//         y2="240"
+//         stroke="#2563eb"
+//         strokeWidth="3"
+//         strokeLinecap="round"
+//       />
 
-      {/* ─── Panel group (tilted) ─── */}
-      <g transform={`rotate(-${tilt}, 200, 175)`}>
-        {/* Panel body */}
-        <rect
-          x="76"
-          y="150"
-          width="248"
-          height="58"
-          fill="url(#panelG)"
-          rx="3"
-          stroke={activeKey ? DIM_COLORS[activeKey] || "#2563eb" : "#2563eb"}
-          strokeWidth={activeKey ? 2 : 1}
-          style={{
-            filter: activeKey ? "url(#glow)" : "none",
-            transition: "stroke 0.3s",
-          }}
-        />
-        {/* Panel grid */}
-        {[0, 1, 2].map((ci) =>
-          [0].map((ri) => (
-            <rect
-              key={`${ci}${ri}`}
-              x={84 + ci * 80}
-              y={156}
-              width={72}
-              height={46}
-              fill="none"
-              stroke="#1e4a8a"
-              strokeWidth="0.8"
-              rx="1"
-            />
-          )),
-        )}
+//       {/* ─── Panel group (tilted) ─── */}
+//       <g transform={`rotate(-${tilt}, 200, 175)`}>
+//         {/* Panel body */}
+//         <rect
+//           x="76"
+//           y="150"
+//           width="248"
+//           height="58"
+//           fill="url(#panelG)"
+//           rx="3"
+//           stroke={activeKey ? DIM_COLORS[activeKey] || "#2563eb" : "#2563eb"}
+//           strokeWidth={activeKey ? 2 : 1}
+//           style={{
+//             filter: activeKey ? "url(#glow)" : "none",
+//             transition: "stroke 0.3s",
+//           }}
+//         />
+//         {/* Panel grid */}
+//         {[0, 1, 2].map((ci) =>
+//           [0].map((ri) => (
+//             <rect
+//               key={`${ci}${ri}`}
+//               x={84 + ci * 80}
+//               y={156}
+//               width={72}
+//               height={46}
+//               fill="none"
+//               stroke="#1e4a8a"
+//               strokeWidth="0.8"
+//               rx="1"
+//             />
+//           )),
+//         )}
 
-        {/* A — module length */}
-        <g onClick={() => onSelect("A")} style={cur}>
-          <line
-            x1="80"
-            y1="162"
-            x2="320"
-            y2="162"
-            stroke={col("A")}
-            strokeWidth={lw("A")}
-            markerEnd={`url(#arrA)`}
-            markerStart={`url(#arrA)`}
-          />
-          <text
-            x="198"
-            y="158"
-            textAnchor="middle"
-            // fontFamily="'Barlow Condensed',sans-serif"
-            fontSize={fs("A")}
-            fontWeight={fw("A")}
-            fill={fc("A")}
-          >
-            A
-          </text>
-        </g>
+//         {/* A — module length */}
+//         <g onClick={() => onSelect("A")} style={cur}>
+//           <line
+//             x1="80"
+//             y1="162"
+//             x2="320"
+//             y2="162"
+//             stroke={col("A")}
+//             strokeWidth={lw("A")}
+//             markerEnd={`url(#arrA)`}
+//             markerStart={`url(#arrA)`}
+//           />
+//           <text
+//             x="198"
+//             y="158"
+//             textAnchor="middle"
+//             // fontFamily="'Barlow Condensed',sans-serif"
+//             fontSize={fs("A")}
+//             fontWeight={fw("A")}
+//             fill={fc("A")}
+//           >
+//             A
+//           </text>
+//         </g>
 
-        {/* B — vertical gap */}
-        <g onClick={() => onSelect("B")} style={cur}>
-          <line
-            x1="70"
-            y1="150"
-            x2="70"
-            y2="208"
-            stroke={col("B")}
-            strokeWidth={lw("B")}
-            markerEnd={`url(#arrB)`}
-            markerStart={`url(#arrB)`}
-          />
-          <text
-            x="60"
-            y="185"
-            // fontFamily="'Barlow Condensed',sans-serif"
-            fontSize={fs("B")}
-            fontWeight={fw("B")}
-            fill={fc("B")}
-          >
-            B
-          </text>
-        </g>
+//         {/* B — vertical gap */}
+//         <g onClick={() => onSelect("B")} style={cur}>
+//           <line
+//             x1="70"
+//             y1="150"
+//             x2="70"
+//             y2="208"
+//             stroke={col("B")}
+//             strokeWidth={lw("B")}
+//             markerEnd={`url(#arrB)`}
+//             markerStart={`url(#arrB)`}
+//           />
+//           <text
+//             x="60"
+//             y="185"
+//             // fontFamily="'Barlow Condensed',sans-serif"
+//             fontSize={fs("B")}
+//             fontWeight={fw("B")}
+//             fill={fc("B")}
+//           >
+//             B
+//           </text>
+//         </g>
 
-        {/* G — frame cross section circle */}
-        <g onClick={() => onSelect("G")} style={cur}>
-          <circle
-            cx="76"
-            cy="150"
-            r="5"
-            fill="none"
-            stroke={col("G")}
-            strokeWidth={lw("G")}
-            style={{ filter: activeKey === "G" ? "url(#glow)" : "none" }}
-          />
-          <line
-            x1="63"
-            y1="137"
-            x2="76"
-            y2="150"
-            stroke={col("G")}
-            strokeWidth={lw("G")}
-          />
-          <text
-            x="50"
-            y="133"
-            // fontFamily="'Barlow Condensed',sans-serif"
-            fontSize={fs("G")}
-            fontWeight={fw("G")}
-            fill={fc("G")}
-          >
-            G
-          </text>
-        </g>
-      </g>
+//         {/* G — frame cross section circle */}
+//         <g onClick={() => onSelect("G")} style={cur}>
+//           <circle
+//             cx="76"
+//             cy="150"
+//             r="5"
+//             fill="none"
+//             stroke={col("G")}
+//             strokeWidth={lw("G")}
+//             style={{ filter: activeKey === "G" ? "url(#glow)" : "none" }}
+//           />
+//           <line
+//             x1="63"
+//             y1="137"
+//             x2="76"
+//             y2="150"
+//             stroke={col("G")}
+//             strokeWidth={lw("G")}
+//           />
+//           <text
+//             x="50"
+//             y="133"
+//             // fontFamily="'Barlow Condensed',sans-serif"
+//             fontSize={fs("G")}
+//             fontWeight={fw("G")}
+//             fill={fc("G")}
+//           >
+//             G
+//           </text>
+//         </g>
+//       </g>
 
-      {/* C — table width */}
-      <g onClick={() => onSelect("C")} style={cur}>
-        <line
-          x1="78"
-          y1="126"
-          x2="326"
-          y2="126"
-          stroke={col("C")}
-          strokeWidth={lw("C")}
-          markerEnd={`url(#arrC)`}
-          markerStart={`url(#arrC)`}
-        />
-        <text
-          x="200"
-          y="120"
-          textAnchor="middle"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontSize={fs("C")}
-          fontWeight={fw("C")}
-          fill={fc("C")}
-        >
-          C
-        </text>
-      </g>
+//       {/* C — table width */}
+//       <g onClick={() => onSelect("C")} style={cur}>
+//         <line
+//           x1="78"
+//           y1="126"
+//           x2="326"
+//           y2="126"
+//           stroke={col("C")}
+//           strokeWidth={lw("C")}
+//           markerEnd={`url(#arrC)`}
+//           markerStart={`url(#arrC)`}
+//         />
+//         <text
+//           x="200"
+//           y="120"
+//           textAnchor="middle"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontSize={fs("C")}
+//           fontWeight={fw("C")}
+//           fill={fc("C")}
+//         >
+//           C
+//         </text>
+//       </g>
 
-      {/* D — back clearance */}
-      <g onClick={() => onSelect("D")} style={cur}>
-        <line
-          x1="338"
-          y1="140"
-          x2="338"
-          y2="238"
-          stroke={col("D")}
-          strokeWidth={lw("D")}
-          markerEnd={`url(#arrD)`}
-          markerStart={`url(#arrD)`}
-        />
-        <text
-          x="346"
-          y="196"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontSize={fs("D")}
-          fontWeight={fw("D")}
-          fill={fc("D")}
-        >
-          D
-        </text>
-      </g>
+//       {/* D — back clearance */}
+//       <g onClick={() => onSelect("D")} style={cur}>
+//         <line
+//           x1="338"
+//           y1="140"
+//           x2="338"
+//           y2="238"
+//           stroke={col("D")}
+//           strokeWidth={lw("D")}
+//           markerEnd={`url(#arrD)`}
+//           markerStart={`url(#arrD)`}
+//         />
+//         <text
+//           x="346"
+//           y="196"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontSize={fs("D")}
+//           fontWeight={fw("D")}
+//           fill={fc("D")}
+//         >
+//           D
+//         </text>
+//       </g>
 
-      {/* E — front clearance */}
-      <g onClick={() => onSelect("E")} style={cur}>
-        <line
-          x1="62"
-          y1="220"
-          x2="62"
-          y2="238"
-          stroke={col("E")}
-          strokeWidth={lw("E")}
-          markerEnd={`url(#arrE)`}
-          markerStart={`url(#arrE)`}
-        />
-        <text
-          x="50"
-          y="233"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontSize={fs("E")}
-          fontWeight={fw("E")}
-          fill={fc("E")}
-        >
-          E
-        </text>
-      </g>
+//       {/* E — front clearance */}
+//       <g onClick={() => onSelect("E")} style={cur}>
+//         <line
+//           x1="62"
+//           y1="220"
+//           x2="62"
+//           y2="238"
+//           stroke={col("E")}
+//           strokeWidth={lw("E")}
+//           markerEnd={`url(#arrE)`}
+//           markerStart={`url(#arrE)`}
+//         />
+//         <text
+//           x="50"
+//           y="233"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontSize={fs("E")}
+//           fontWeight={fw("E")}
+//           fill={fc("E")}
+//         >
+//           E
+//         </text>
+//       </g>
 
-      {/* F — module height */}
-      <g onClick={() => onSelect("F")} style={cur}>
-        <line
-          x1="42"
-          y1="196"
-          x2="42"
-          y2="238"
-          stroke={col("F")}
-          strokeWidth={lw("F")}
-          markerEnd={`url(#arrF)`}
-          markerStart={`url(#arrF)`}
-        />
-        <text
-          x="30"
-          y="222"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontSize={fs("F")}
-          fontWeight={fw("F")}
-          fill={fc("F")}
-        >
-          F
-        </text>
-      </g>
+//       {/* F — module height */}
+//       <g onClick={() => onSelect("F")} style={cur}>
+//         <line
+//           x1="42"
+//           y1="196"
+//           x2="42"
+//           y2="238"
+//           stroke={col("F")}
+//           strokeWidth={lw("F")}
+//           markerEnd={`url(#arrF)`}
+//           markerStart={`url(#arrF)`}
+//         />
+//         <text
+//           x="30"
+//           y="222"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontSize={fs("F")}
+//           fontWeight={fw("F")}
+//           fill={fc("F")}
+//         >
+//           F
+//         </text>
+//       </g>
 
-      {/* J — tilt angle arc */}
-      <g onClick={() => onSelect("J")} style={cur}>
-        <path
-          d={`M 200 240 A 36 36 0 0 1 ${200 + 36 * Math.cos(((90 - tilt) * Math.PI) / 180)} ${240 - 36 * Math.sin(((90 - tilt) * Math.PI) / 180)}`}
-          fill="none"
-          stroke={col("J")}
-          strokeWidth={lw("J")}
-          strokeDasharray="3,2"
-        />
-        <text
-          x="218"
-          y="230"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontSize={fs("J")}
-          fontWeight={fw("J")}
-          fill={fc("J")}
-        >
-          J={tilt}°
-        </text>
-      </g>
+//       {/* J — tilt angle arc */}
+//       <g onClick={() => onSelect("J")} style={cur}>
+//         <path
+//           d={`M 200 240 A 36 36 0 0 1 ${200 + 36 * Math.cos(((90 - tilt) * Math.PI) / 180)} ${240 - 36 * Math.sin(((90 - tilt) * Math.PI) / 180)}`}
+//           fill="none"
+//           stroke={col("J")}
+//           strokeWidth={lw("J")}
+//           strokeDasharray="3,2"
+//         />
+//         <text
+//           x="218"
+//           y="230"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontSize={fs("J")}
+//           fontWeight={fw("J")}
+//           fill={fc("J")}
+//         >
+//           J={tilt}°
+//         </text>
+//       </g>
 
-      {/* Corner label */}
-      <text
-        x="16"
-        y="270"
-        fill="#1e3a5f"
-        fontSize="8"
-        // fontFamily="'Barlow Condensed',sans-serif"
-        fontWeight="700"
-        letterSpacing="2"
-      >
-        TAYPRO® 2P MMS
-      </text>
-    </svg>
-  );
-};
+//       {/* Corner label */}
+//       <text
+//         x="16"
+//         y="270"
+//         fill="#1e3a5f"
+//         fontSize="8"
+//         // fontFamily="'Barlow Condensed',sans-serif"
+//         fontWeight="700"
+//         letterSpacing="2"
+//       >
+//         TAYPRO® 2P MMS
+//       </text>
+//     </svg>
+//   );
+// };
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // SVG — Top-view table layout
 // ═══════════════════════════════════════════════════════════════════════════════
-const TableLayout = ({ nom, activeKey, onSelect }) => {
-  const r1 = nom?.tableNo1Rows || 2,
-    c1 = nom?.tableNo1Cols || 3;
-  const r2 = nom?.tableNo2Rows || 3,
-    c2 = nom?.tableNo2Cols || 3;
-  const cw = 42,
-    ch = 54,
-    g = 4;
-  const col = (k) => (activeKey === k ? DIM_COLORS[k] : "#334155");
-  const fc = (k) => (activeKey === k ? DIM_COLORS[k] : "#64748b");
-  const fw = (k) => (activeKey === k ? 700 : 500);
+// const TableLayout = ({ nom, activeKey, onSelect }) => {
+//   const r1 = nom?.tableNo1Rows || 2,
+//     c1 = nom?.tableNo1Cols || 3;
+//   const r2 = nom?.tableNo2Rows || 3,
+//     c2 = nom?.tableNo2Cols || 3;
+//   const cw = 42,
+//     ch = 54,
+//     g = 4;
+//   const col = (k) => (activeKey === k ? DIM_COLORS[k] : "#334155");
+//   const fc = (k) => (activeKey === k ? DIM_COLORS[k] : "#64748b");
+//   const fw = (k) => (activeKey === k ? 700 : 500);
 
-  return (
-    <svg viewBox="0 0 360 200" style={{ width: "100%", height: "100%" }}>
-      <rect width="360" height="200" fill="#060f1e" rx="8" />
+//   return (
+//     <svg viewBox="0 0 360 200" style={{ width: "100%", height: "100%" }}>
+//       <rect width="360" height="200" fill="#060f1e" rx="8" />
 
-      {/* TABLE-NO-1 */}
-      <text
-        x="12"
-        y="16"
-        fill="#475569"
-        fontSize="8"
-        // fontFamily="'Barlow Condensed',sans-serif"
-        fontWeight="600"
-        letterSpacing="1"
-      >
-        TABLE-NO-1
-      </text>
-      {Array.from({ length: r1 }).map((_, ri) =>
-        Array.from({ length: c1 }).map((_, ci) => (
-          <rect
-            key={`t1${ri}${ci}`}
-            x={12 + ci * (cw + g)}
-            y={22 + ri * (ch + g)}
-            width={cw}
-            height={ch}
-            fill="#0d1f3c"
-            stroke="#1e4080"
-            strokeWidth="1.2"
-            rx="2"
-          />
-        )),
-      )}
+//       {/* TABLE-NO-1 */}
+//       <text
+//         x="12"
+//         y="16"
+//         fill="#475569"
+//         fontSize="8"
+//         // fontFamily="'Barlow Condensed',sans-serif"
+//         fontWeight="600"
+//         letterSpacing="1"
+//       >
+//         TABLE-NO-1
+//       </text>
+//       {Array.from({ length: r1 }).map((_, ri) =>
+//         Array.from({ length: c1 }).map((_, ci) => (
+//           <rect
+//             key={`t1${ri}${ci}`}
+//             x={12 + ci * (cw + g)}
+//             y={22 + ri * (ch + g)}
+//             width={cw}
+//             height={ch}
+//             fill="#0d1f3c"
+//             stroke="#1e4080"
+//             strokeWidth="1.2"
+//             rx="2"
+//           />
+//         )),
+//       )}
 
-      {/* B arrow on left of table 1 */}
-      <g onClick={() => onSelect("B")} style={{ cursor: "pointer" }}>
-        <line
-          x1="8"
-          y1="22"
-          x2="8"
-          y2={22 + r1 * (ch + g) - g}
-          stroke={col("B")}
-          strokeWidth="1.2"
-        />
-        <text
-          x="2"
-          y={22 + (r1 * (ch + g)) / 2 + 4}
-          fill={fc("B")}
-          fontSize="10"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontWeight={fw("B")}
-        >
-          B
-        </text>
-      </g>
+//       {/* B arrow on left of table 1 */}
+//       <g onClick={() => onSelect("B")} style={{ cursor: "pointer" }}>
+//         <line
+//           x1="8"
+//           y1="22"
+//           x2="8"
+//           y2={22 + r1 * (ch + g) - g}
+//           stroke={col("B")}
+//           strokeWidth="1.2"
+//         />
+//         <text
+//           x="2"
+//           y={22 + (r1 * (ch + g)) / 2 + 4}
+//           fill={fc("B")}
+//           fontSize="10"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontWeight={fw("B")}
+//         >
+//           B
+//         </text>
+//       </g>
 
-      {/* H — inter-table gap (between table 1 and 2) */}
-      <g onClick={() => onSelect("H")} style={{ cursor: "pointer" }}>
-        <line
-          x1={12 + c1 * (cw + g)}
-          y1="180"
-          x2="185"
-          y2="180"
-          stroke={col("H")}
-          strokeWidth="1.2"
-          strokeDasharray="2,2"
-        />
-        <text
-          x={12 + c1 * (cw + g) + (185 - (12 + c1 * (cw + g))) / 2}
-          y="194"
-          textAnchor="middle"
-          fill={fc("H")}
-          fontSize="10"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontWeight={fw("H")}
-        >
-          ← H →
-        </text>
-      </g>
+//       {/* H — inter-table gap (between table 1 and 2) */}
+//       <g onClick={() => onSelect("H")} style={{ cursor: "pointer" }}>
+//         <line
+//           x1={12 + c1 * (cw + g)}
+//           y1="180"
+//           x2="185"
+//           y2="180"
+//           stroke={col("H")}
+//           strokeWidth="1.2"
+//           strokeDasharray="2,2"
+//         />
+//         <text
+//           x={12 + c1 * (cw + g) + (185 - (12 + c1 * (cw + g))) / 2}
+//           y="194"
+//           textAnchor="middle"
+//           fill={fc("H")}
+//           fontSize="10"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontWeight={fw("H")}
+//         >
+//           ← H →
+//         </text>
+//       </g>
 
-      {/* TABLE-NO-2 */}
-      <text
-        x="190"
-        y="16"
-        fill="#475569"
-        fontSize="8"
-        // fontFamily="'Barlow Condensed',sans-serif"
-        fontWeight="600"
-        letterSpacing="1"
-      >
-        TABLE-NO-2
-      </text>
-      {Array.from({ length: r2 }).map((_, ri) =>
-        Array.from({ length: c2 }).map((_, ci) => (
-          <rect
-            key={`t2${ri}${ci}`}
-            x={190 + ci * (cw + g)}
-            y={22 + ri * (ch + g)}
-            width={cw}
-            height={ch}
-            fill="#0d1f3c"
-            stroke="#1e4080"
-            strokeWidth="1.2"
-            rx="2"
-          />
-        )),
-      )}
+//       {/* TABLE-NO-2 */}
+//       <text
+//         x="190"
+//         y="16"
+//         fill="#475569"
+//         fontSize="8"
+//         // fontFamily="'Barlow Condensed',sans-serif"
+//         fontWeight="600"
+//         letterSpacing="1"
+//       >
+//         TABLE-NO-2
+//       </text>
+//       {Array.from({ length: r2 }).map((_, ri) =>
+//         Array.from({ length: c2 }).map((_, ci) => (
+//           <rect
+//             key={`t2${ri}${ci}`}
+//             x={190 + ci * (cw + g)}
+//             y={22 + ri * (ch + g)}
+//             width={cw}
+//             height={ch}
+//             fill="#0d1f3c"
+//             stroke="#1e4080"
+//             strokeWidth="1.2"
+//             rx="2"
+//           />
+//         )),
+//       )}
 
-      {/* I — horizontal gap top right */}
-      <g onClick={() => onSelect("I")} style={{ cursor: "pointer" }}>
-        <line
-          x1={190 + c2 * (cw + g)}
-          y1="20"
-          x2={190 + c2 * (cw + g)}
-          y2="26"
-          stroke={col("I")}
-          strokeWidth="1.2"
-        />
-        <text
-          x={190 + c2 * (cw + g) + 4}
-          y="18"
-          fill={fc("I")}
-          fontSize="10"
-          // fontFamily="'Barlow Condensed',sans-serif"
-          fontWeight={fw("I")}
-        >
-          I
-        </text>
-      </g>
-    </svg>
-  );
-};
+//       {/* I — horizontal gap top right */}
+//       <g onClick={() => onSelect("I")} style={{ cursor: "pointer" }}>
+//         <line
+//           x1={190 + c2 * (cw + g)}
+//           y1="20"
+//           x2={190 + c2 * (cw + g)}
+//           y2="26"
+//           stroke={col("I")}
+//           strokeWidth="1.2"
+//         />
+//         <text
+//           x={190 + c2 * (cw + g) + 4}
+//           y="18"
+//           fill={fc("I")}
+//           fontSize="10"
+//           // fontFamily="'Barlow Condensed',sans-serif"
+//           fontWeight={fw("I")}
+//         >
+//           I
+//         </text>
+//       </g>
+//     </svg>
+//   );
+// };
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Dimension card
@@ -793,7 +793,7 @@ const Chip = ({ label, value }) => (
 const ViewNomenClature = () => {
   const { id } = useParams();
   const [activeKey, setActiveKey] = useState(null);
-  const [copied, setCopied] = useState(false);
+  // const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const userInfo = useSelector((state) => state.userInfo);
 
@@ -895,11 +895,11 @@ const ViewNomenClature = () => {
   const act = activeKey ? dims[activeKey] : null;
   const sel = (k) => setActiveKey((p) => (p === k ? null : k));
 
-  const copyId = () => {
-    navigator.clipboard.writeText(nom?._id || id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  // const copyId = () => {
+  //   navigator.clipboard.writeText(nom?._id || id);
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 2000);
+  // };
 
   let adminroute = "";
 

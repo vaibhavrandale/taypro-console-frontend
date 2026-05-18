@@ -2136,8 +2136,8 @@ const routes = [
   },
   // ------------------------poc------------------------------
   {
-    path: "/master-admin/poc-dashboard",
-    name: "POC Dashboard",
+    path: "/master-admin/site-survey-dashboard",
+    name: "Site Survey Dashboard",
     element: (
       <MasterAdminRoute>
         <NomenClatureDashboard />
@@ -4328,8 +4328,8 @@ const routes = [
 
   // ------------------------poc------------------------------
   {
-    path: "/project-admin/poc-dashboard",
-    name: "POC Dashboard",
+    path: "/project-admin/site-survey-dashboard",
+    name: "Site Survey Dashboard",
     element: (
       <ProjectAdminRoute>
         <NomenClatureDashboard />
@@ -6295,8 +6295,8 @@ const routes = [
 
   // ------------------------poc------------------------------
   {
-    path: "/service-admin/poc-dashboard",
-    name: "POC Dashboard",
+    path: "/service-admin/site-survey-dashboard",
+    name: "Site Survey Dashboard",
     element: (
       <ServiceAdminRoute>
         <NomenClatureDashboard />
@@ -7632,8 +7632,8 @@ const routes = [
   },
 
   {
-    path: "/site-technician/poc-dashboard",
-    name: "POC Dashboard",
+    path: "/site-technician/site-survey-dashboard",
+    name: "Site Survey Dashboard",
     element: (
       <SiteTechnicianRoute>
         <NomenClatureDashboard />
@@ -8625,8 +8625,8 @@ const routes = [
 
   // ------------------------poc------------------------------
   {
-    path: "/design-admin/poc-dashboard",
-    name: "POC Dashboard",
+    path: "/design-admin/site-survey-dashboard",
+    name: "Site Survey Dashboard",
     element: (
       <DesignAdminRoute>
         <NomenClatureDashboard />

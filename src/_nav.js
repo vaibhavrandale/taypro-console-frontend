@@ -825,7 +825,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "POC",
+        name: "Site Survey",
         icon: (
           <CIcon
             icon={cilCheck}
@@ -836,8 +836,8 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "POC",
-            to: "/master-admin/poc-dashboard",
+            name: "Site Survey",
+            to: "/master-admin/site-survey-dashboard",
           },
         ],
       },
@@ -1699,7 +1699,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "POC",
+        name: "Site Survey",
         icon: (
           <CIcon
             icon={cilCheck}
@@ -1710,8 +1710,8 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "POC",
-            to: "/project-admin/poc-dashboard",
+            name: "Site Survey",
+            to: "/project-admin/site-survey-dashboard",
           },
         ],
       },
@@ -2518,7 +2518,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "POC",
+        name: "Site Survey",
         icon: (
           <CIcon
             icon={cilCheck}
@@ -2529,8 +2529,8 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "POC",
-            to: "/service-admin/poc-dashboard",
+            name: "Site Survey",
+            to: "/service-admin/site-survey-dashboard",
           },
         ],
       },
@@ -2809,7 +2809,7 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "POC",
+        name: "Site Survey",
         icon: (
           <CIcon
             icon={cilCheck}
@@ -2820,8 +2820,8 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "POC",
-            to: "/site-technician/poc-dashboard",
+            name: "Site Survey",
+            to: "/site-technician/site-survey-dashboard",
           },
         ],
       },
@@ -4943,8 +4943,8 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "POC",
-        to: "/design-admin/poc-dashboard",
+        name: "Site Survey",
+        to: "/design-admin/site-survey-dashboard",
         icon: (
           <CIcon
             icon={cilGraph}
