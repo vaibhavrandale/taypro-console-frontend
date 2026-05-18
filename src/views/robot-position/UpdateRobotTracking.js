@@ -313,6 +313,25 @@ const UpdateRobotTracking = () => {
                         />
                       </CCol>
                     ))}
+                    {/* IS DELETE CHECKBOX */}
+                    <CCol
+                      md={4}
+                      className="mb-3 my-4 d-flex align-items-center"
+                    >
+                      <CFormCheck
+                        className="ms-3"
+                        id="is_delete"
+                        name="is_delete"
+                        label="Is Delete"
+                        checked={formData.is_delete}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            is_delete: e.target.checked,
+                          }))
+                        }
+                      />
+                    </CCol>
                   </CRow>
                 </CTabPanel>
 

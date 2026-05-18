@@ -26,6 +26,7 @@ import Robot from "../../views/robot-position/Robot";
 import CleaningStatusCard from "../../views/robot-position/CleaningStatusCard";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilX, cilXCircle } from "@coreui/icons";
+import { Link } from "react-router-dom";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_LOG_DETAILS_REQUEST":
@@ -156,7 +157,16 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
 
             {/* 🔷 TRACK + VISUAL */}
             <CCard className="mb-3">
-              <CCardHeader>Robot Movement</CCardHeader>
+              <CCardHeader className="d-flex justify-content-between align-items-center">
+                <span>Robot Movement</span>
+
+                <Link
+                  to={`/master-admin/robots-tracker/update/${_id}`}
+                  className="btn btn-sm btn-primary"
+                >
+                  Update
+                </Link>
+              </CCardHeader>
               <CCardBody className="py-4 overflow-x-auto">
                 <Robot
                   robot={log}
