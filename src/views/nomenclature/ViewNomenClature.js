@@ -30,6 +30,7 @@ import LastActivity from "../../components/LastActivity";
 import NomenclatureChat from "./NomenclatureChat";
 import { useSelector } from "react-redux";
 import { MountingDiagram, MountingTopView } from "./MMSDiagram";
+import { Paperclip } from "lucide-react";
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
@@ -710,6 +711,19 @@ const DimCard = ({ letter, data, isActive, onClick }) => {
         >
           {data?.value ? `${data.value} ${data.unit}` : "—"}
         </div>
+        <div
+          style={{
+            // fontFamily: "'Barlow Condensed',sans-serif",
+            fontSize: "0.95rem",
+            fontWeight: 600,
+            color: isActive ? c : "#e2e8f0",
+            lineHeight: 1.2,
+          }}
+        >
+          {data.attachments?.length > 0 && (
+            <Paperclip className="text-warning" size={16} />
+          )}
+        </div>
       </div>
       <div
         style={{
@@ -785,6 +799,8 @@ const ViewNomenClature = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [showImagesModal, setShowImagesModal] = useState(false);
+  const [selectedReferenceFile, setSelectedReferenceFile] = useState(null);
+  const [showReferenceModal, setShowReferenceModal] = useState(false);
   const [{ nomenclatureError, nomenclature, loadingNomenclature }, dispatch] =
     useReducer(reducer, {
       nomenclature: null,
@@ -1174,10 +1190,9 @@ const ViewNomenClature = () => {
                 >
                   {/* Project meta */}
                   <CCard className="">
-                    <CCardHeader className=" d-flex justify-content-between align-items-center">
+                    <CCardHeader className="d-flex justify-content-between align-items-center">
                       <span
                         style={{
-                          // fontFamily: "'Barlow Condensed',sans-serif",
                           fontWeight: 600,
                           fontSize: ".88rem",
                           color: "#64748b",
@@ -1187,14 +1202,33 @@ const ViewNomenClature = () => {
                       >
                         Project Info
                       </span>
-                      <CButton
-                        className="btn btn-primary btn-sm m-1"
-                        onClick={() => {
-                          setShowModal(true); // ✅ Correct modal for approve
-                        }}
-                      >
-                        View Chats
-                      </CButton>
+
+                      <div className="d-flex align-items-center gap-2 flex-wrap">
+                        {/* Reference Files Button */}
+                        {nom?.reference_files?.length > 0 && (
+                          <CButton
+                            color="info"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedReferenceFile(nom.reference_files[0]);
+                              setShowReferenceModal(true);
+                            }}
+                          >
+                            View Reference File
+                          </CButton>
+                        )}
+
+                        {/* Chats Button */}
+                        <CButton
+                          color="primary"
+                          size="sm"
+                          onClick={() => {
+                            setShowModal(true);
+                          }}
+                        >
+                          View Chats
+                        </CButton>
+                      </div>
                     </CCardHeader>
                     <CCardBody
                       style={{ background: "#0a1628", padding: "14px 16px" }}
@@ -1632,6 +1666,86 @@ const ViewNomenClature = () => {
                     ))}
                   </div>
                 </>
+              )}
+            </CModalBody>
+          </CModal>
+
+          {/* MMS REFERENCE File MODAL  */}
+
+          <CModal
+            visible={showReferenceModal}
+            onClose={() => setShowReferenceModal(false)}
+            size="xl"
+            alignment="center"
+            backdrop="static"
+            scrollable
+          >
+            <CModalHeader
+              style={{
+                background: "#0a1628",
+                borderBottom: "1px solid #1e3a5f",
+              }}
+              closeButton={false}
+            >
+              <CModalTitle
+                style={{
+                  color: "#e2e8f0",
+                  fontWeight: 700,
+                }}
+              >
+                {selectedReferenceFile?.name || "Reference File"}
+              </CModalTitle>
+
+              <button
+                type="button"
+                className="border-0 ms-auto py-0 px-1"
+                onClick={() => setShowReferenceModal(false)}
+                style={{ background: "none", color: "#fff" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
+            </CModalHeader>
+
+            <CModalBody
+              style={{
+                background: "#060f1e",
+                padding: "20px",
+                minHeight: "80vh",
+              }}
+            >
+              {!selectedReferenceFile?.file ? (
+                <div
+                  style={{
+                    color: "#94a3b8",
+                    textAlign: "center",
+                    padding: "40px 0",
+                  }}
+                >
+                  No file available
+                </div>
+              ) : selectedReferenceFile.file.toLowerCase().includes(".pdf") ? (
+                <iframe
+                  src={selectedReferenceFile.file}
+                  title={selectedReferenceFile.name}
+                  width="100%"
+                  height="700px"
+                  style={{
+                    border: "none",
+                    borderRadius: "12px",
+                    background: "#fff",
+                  }}
+                />
+              ) : (
+                <img
+                  src={selectedReferenceFile.file}
+                  alt={selectedReferenceFile.name}
+                  style={{
+                    width: "100%",
+                    maxHeight: "700px",
+                    objectFit: "contain",
+                    borderRadius: "12px",
+                  }}
+                />
               )}
             </CModalBody>
           </CModal>
