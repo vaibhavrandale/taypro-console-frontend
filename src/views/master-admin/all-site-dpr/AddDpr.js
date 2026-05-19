@@ -448,8 +448,9 @@ const AddDpr = () => {
       ) : (
         <CForm>
           <div className="card">
-            <CRow className="g-2 align-items-center">
+            <CRow className="g-2 align-items-center m-2">
               <CCol xs="auto">
+                <label className="form-label">Select Site</label>
                 <CFormSelect
                   size="sm"
                   value={site_id}
@@ -476,6 +477,24 @@ const AddDpr = () => {
                     </>
                   )}
                 </CFormSelect>
+              </CCol>
+
+              <CCol md={3} className="">
+                <label className="form-label">Report Date</label>
+
+                <input
+                  type="date"
+                  className="form-control"
+                  name="new_report_date"
+                  value={
+                    formData.new_report_date
+                      ? new Date(formData.new_report_date)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={handleChange}
+                />
               </CCol>
             </CRow>
             {/* OPERATIONAL */}
