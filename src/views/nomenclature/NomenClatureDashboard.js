@@ -206,7 +206,10 @@ const NomenClatureDashboard = () => {
             <CTableHeaderCell>#</CTableHeaderCell>
 
             <CTableHeaderCell style={{ minWidth: "240px" }}>
-              site_id
+              Client
+            </CTableHeaderCell>
+            <CTableHeaderCell style={{ minWidth: "240px" }}>
+              Site & Location
             </CTableHeaderCell>
 
             <CTableHeaderCell style={{ minWidth: "240px" }}>
@@ -244,8 +247,11 @@ const NomenClatureDashboard = () => {
                   <Link
                     to={`/${adminroute}/view-nomenclature/${nomenclature._id}`}
                   >
-                    {nomenclature.site.site_name}
+                    {nomenclature.client.client_name}
                   </Link>
+                </CTableDataCell>
+                <CTableDataCell>
+                  {nomenclature.site.site_name}- {nomenclature.site.location}
                 </CTableDataCell>
                 <CTableDataCell>{nomenclature.mms_type}</CTableDataCell>
                 <CTableDataCell>

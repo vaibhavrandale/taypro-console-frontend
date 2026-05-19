@@ -426,15 +426,18 @@ const UserBasedLinkDashboard = () => {
       "Site Technician",
       "Opex Client Admin",
       "Opex Site Technician",
+      "Master User",
+      "Service User",
+      "Project User",
+      "Master Admin",
+      "Service Admin",
+      "Project Admin",
     ].includes(userInfo.role)
   ) {
     setTimeout(() => {
-      toast.success(
-        `Please wait while we redirect you to your opex dashboard!`,
-        {
-          duration: 4000,
-        },
-      );
+      toast.success(`Please wait while we redirect you to your dashboard!`, {
+        duration: 4000,
+      });
       navigate(`/${adminroute}/dashboard`);
     }, 1000);
   }

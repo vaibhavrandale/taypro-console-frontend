@@ -31,6 +31,7 @@ import NomenclatureChat from "./NomenclatureChat";
 import { useSelector } from "react-redux";
 import { MountingDiagram, MountingTopView } from "./MMSDiagram";
 import { Paperclip } from "lucide-react";
+import OfferBadge from "../../components/FireOfferBadge";
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
@@ -759,7 +760,7 @@ const Chip = ({ label, value }) => (
   <div
     style={{
       background: "#0d1f3c",
-      border: "1px solid #1e3a5f",
+      border: `1.5px solid ${label === "Remark" ? "green" : "#e2e8f0"}`,
       borderRadius: 8,
       padding: "6px 12px",
     }}
@@ -767,7 +768,7 @@ const Chip = ({ label, value }) => (
     <div
       style={{
         fontSize: "0.6rem",
-        color: "#475569",
+        color: label === "Remark" ? "white" : "#475569",
         // fontFamily: "'Barlow Condensed',sans-serif",
         letterSpacing: "0.1em",
         textTransform: "uppercase",
@@ -778,7 +779,8 @@ const Chip = ({ label, value }) => (
     <div
       style={{
         fontSize: "0.85rem",
-        color: "#e2e8f0",
+        // color: "#e2e8f0",
+        color: label === "Remark" ? "primary" : "#e2e8f0",
         // fontFamily: "'Barlow Condensed',sans-serif",
       }}
     >
@@ -845,6 +847,7 @@ const ViewNomenClature = () => {
         }),
 
         status: apiData.status,
+        remark: apiData.remark,
 
         type: apiData.mms_type,
 
@@ -1257,13 +1260,7 @@ const ViewNomenClature = () => {
                           <Chip label="MMS Type" value={nom?.type} />
                           <Chip
                             label="Created By"
-                            value={`${nom?.activities[0]?.name} , ${new Date(
-                              nom?.activities[0]?.timestamp,
-                            ).toLocaleDateString("en-GB", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "2-digit",
-                            })}`}
+                            value={`${nom?.activities[0]?.name} , (${nom?.activities[0]?.role})`}
                           />
                           <Chip
                             label="Timestamp"
@@ -1310,6 +1307,7 @@ const ViewNomenClature = () => {
                               {nom?.status || "Active"}
                             </CBadge>
                           </div>
+                          <Chip label="Remark" value={nom?.remark || "—"} />
                         </div>
                       )}
                     </CCardBody>
@@ -1385,6 +1383,9 @@ const ViewNomenClature = () => {
                             View Images
                           </CButton>
                         </div>
+                        {activeKey === "G" && (
+                          <OfferBadge percentage="MOST" text="IMP" size={80} />
+                        )}
                       </div>
 
                       <div
