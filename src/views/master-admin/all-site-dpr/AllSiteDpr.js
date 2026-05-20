@@ -530,7 +530,7 @@ const AllSiteDpr = () => {
                             }}
                           >
                             {dprId ? (
-                              <Link to={`/master-admin/update-dpr/${dprId}`}>
+                              <Link to={`/${adminroute}/update-dpr/${dprId}`}>
                                 {isEmpty ? "–" : val}
                               </Link>
                             ) : isEmpty ? (

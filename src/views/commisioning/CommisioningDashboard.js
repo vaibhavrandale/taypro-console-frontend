@@ -252,12 +252,16 @@ const CommisioningDashboard = () => {
           )}
         </CCol>
       </CRow>
-      <CTabs activeItemKey="comm-robots">
+      <CTabs
+        activeItemKey={`${userInfo?.type === "Internal" ? "comm-robots" : "comm-certificates"}`}
+      >
         {/* ✅ ONLY tabs here */}
         <CTabList variant="tabs" className="border-bottom">
-          <CTab itemKey="comm-robots" className="text-white">
-            Commisioned Robots
-          </CTab>
+          {userInfo?.type === "Internal" && (
+            <CTab itemKey="comm-robots" className="text-white">
+              Commisioned Robots
+            </CTab>
+          )}
           <CTab itemKey="comm-certificates" className="text-white">
             Commisioned Certificates
           </CTab>
@@ -286,20 +290,21 @@ const CommisioningDashboard = () => {
                   <CTableHeaderCell>Project Code</CTableHeaderCell>
                   <CTableHeaderCell>Client Name</CTableHeaderCell>
                   <CTableHeaderCell>Site Location</CTableHeaderCell>
+                  <CTableHeaderCell>Client Verification</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
 
               <CTableBody>
                 {loadingCertificates ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={5}>
+                    <CTableDataCell colSpan={6}>
                       {" "}
                       <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
                 ) : certificatesError ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={5}>
+                    <CTableDataCell colSpan={6}>
                       {" "}
                       <CAlert>{certificatesError}</CAlert>
                     </CTableDataCell>
@@ -318,11 +323,18 @@ const CommisioningDashboard = () => {
                       <CTableDataCell>{cert.project_code}</CTableDataCell>
                       <CTableDataCell>{cert.client_name}</CTableDataCell>
                       <CTableDataCell>{cert.site_location}</CTableDataCell>
+                      <CTableDataCell>
+                        {cert.signatures[1]?.verified ? (
+                          <CBadge color="success">Verified</CBadge>
+                        ) : (
+                          <CBadge color="danger">Pending</CBadge>
+                        )}
+                      </CTableDataCell>
                     </CTableRow>
                   ))
                 ) : (
                   <CTableRow>
-                    <CTableDataCell colSpan={5}>
+                    <CTableDataCell colSpan={6}>
                       No Certificate Found
                     </CTableDataCell>
                   </CTableRow>

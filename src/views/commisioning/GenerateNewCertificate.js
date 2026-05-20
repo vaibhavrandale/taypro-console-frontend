@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "GENERATE_CERTIFICATE_REQUEST":
@@ -109,7 +110,8 @@ const GenerateNewCertificate = () => {
   } else if (userInfo?.role === "Factory Admin") {
     adminroute = "factory-admin";
   }
-
+  const verificationBadge =
+    "https://res.cloudinary.com/decyim6cd/image/upload/v1779174523/VerificationLogo_ivhzxn.jpg";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -163,7 +165,7 @@ const GenerateNewCertificate = () => {
     };
 
     fetchRobots();
-  }, [adminroute, , site_id]);
+  }, [adminroute, site_id]);
 
   const handleSiteNameChange = (e) => {
     const selectedSiteId = e.target.value;
@@ -175,16 +177,23 @@ const GenerateNewCertificate = () => {
       for: "TAYPRO PVT LTD",
       name: userInfo?.username,
       designation: userInfo?.designation,
+      signature: userInfo?.signature ? userInfo.signature : verificationBadge, // You can add a signature URL or data here
+      verified: true,
+      verified_at: new Date().toLocaleString(),
     },
     {
       for: "RECEIVER",
       name: "",
       designation: "",
+      signature: "", // You can add a signature URL or data here
+      verified: false,
     },
     {
       for: "RECEIVER",
       name: "",
       designation: "",
+      signature: "", // You can add a signature URL or data here
+      verified: false,
     },
   ];
 

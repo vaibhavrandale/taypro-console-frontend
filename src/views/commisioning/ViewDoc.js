@@ -32,18 +32,47 @@ const reducer = (state, action) => {
         certificateError: action.payload,
       };
 
+    case "VERIFY_SIGNATURE_REQUEST":
+      return {
+        ...state,
+        loadingVerify: true,
+      };
+
+    case "VERIFY_SIGNATURE_SUCCESS":
+      return {
+        ...state,
+        loadingVerify: false,
+
+        certificate: {
+          ...state.certificate,
+
+          signatures: state.certificate.signatures.map((sig) =>
+            sig._id === action.payload._id ? action.payload : sig,
+          ),
+        },
+      };
+
+    case "VERIFY_SIGNATURE_FAIL":
+      return {
+        ...state,
+        loadingVerify: false,
+      };
+
     default:
       return state;
   }
 };
 
 const ViewDoc = () => {
-  const [{ loadingCertificate, certificate, certificateError }, dispatch] =
-    useReducer(reducer, {
-      certificate: {},
-      loadingCertificate: false,
-      certificateError: "",
-    });
+  const [
+    { loadingCertificate, certificate, certificateError, loadingVerify },
+    dispatch,
+  ] = useReducer(reducer, {
+    certificate: {},
+    loadingCertificate: false,
+    certificateError: "",
+    loadingVerify: false,
+  });
 
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
@@ -105,6 +134,46 @@ const ViewDoc = () => {
     ...new Set(sortedRobots.filter(Boolean).map((r) => r.system_code)),
   ].join(", ");
 
+  const verifyHandler = async (signatureid) => {
+    try {
+      dispatch({ type: "VERIFY_SIGNATURE_REQUEST" });
+
+      const signature = userInfo.signature
+        ? userInfo.signature
+        : "https://res.cloudinary.com/decyim6cd/image/upload/v1779174523/VerificationLogo_ivhzxn.jpg";
+
+      if (!signature) {
+        dispatch({ type: "VERIFY_SIGNATURE_FAIL" });
+        return;
+      }
+
+      const result = await axios.put(
+        `/api/v1/commisioning-certificates/${id}/${signatureid}/verify`,
+        {
+          signature,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      dispatch({
+        type: "VERIFY_SIGNATURE_SUCCESS",
+        payload: result.data.data,
+      });
+
+      toast.success(result.data.message);
+    } catch (e) {
+      dispatch({ type: "VERIFY_SIGNATURE_FAIL" });
+
+      toast.error(
+        e.response?.data?.message ||
+          e.response?.data?.error ||
+          "Verification failed",
+      );
+    }
+  };
+
   return (
     <>
       {loadingCertificate ? (
@@ -128,8 +197,21 @@ const ViewDoc = () => {
                   Add/ Remove Robots
                 </CButton>
               )}
+              {userInfo.role === "Client Admin" &&
+                !certificate?.signatures?.[1]?.verified && (
+                  <CButton
+                    className="btn btn-sm ms-2"
+                    disabled={loadingVerify}
+                    onClick={() =>
+                      verifyHandler(certificate?.signatures?.[1]?._id)
+                    }
+                  >
+                    {loadingVerify ? "Verifying..." : "Verify"}
+                  </CButton>
+                )}
             </div>
           </div>
+
           <div className="my-2 card rounded-0 doc-container">
             <div className="doc-body p-2">
               {/* HEADER */}
@@ -309,7 +391,21 @@ const ViewDoc = () => {
                   >
                     <div className="sign-title ">CHECKED BY</div>
                     <div className="sign-sub">For {item.for}</div>
-                    <div className="sign-line  border-top">Sign:</div>
+                    <div className="sign-line  border-top">
+                      Sign:{" "}
+                      {item.signature && (
+                        <img
+                          src={item.signature}
+                          alt="Signature"
+                          className="ms-2 mt-1"
+                          style={{
+                            height: "30px",
+                            width: "100px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      )}
+                    </div>
                     <div className="sign-line  border-top">
                       Name :<span className="ms-1">{item.name}</span>
                     </div>

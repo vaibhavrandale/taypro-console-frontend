@@ -724,7 +724,8 @@ const LoraConfiguration = () => {
                 </CCol>
               </CRow>
 
-              {userInfo.role === "Master Admin" && (
+              {(userInfo.role === "Master Admin" ||
+                userInfo.role === "Service Admin") && (
                 <CRow className="mt-3">
                   {" "}
                   <CCol md={6}>
