@@ -2534,6 +2534,54 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Robots Management",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          // {
+          //   component: CNavItem,
+          //   name: "Robots",
+          //   to: "/master-admin/robots",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Semi-Robots",
+          //   to: "/master-admin/semi-automatic-robots",
+          // },
+          {
+            component: CNavItem,
+            name: "Lora Configuration",
+            to: "/service-admin/lora-configuration",
+          },
+          {
+            component: CNavItem,
+            name: "Replace Lora",
+            to: "/service-admin/replace-lora/active-robots",
+          },
+          // {
+          //   component: CNavItem,
+          //   name: "Robot Battery Temperature",
+          //   to: "/master-admin/robot-battery-temperature",
+          // },
+          // {
+          //   component: CNavItem,
+          //   name: "Robot Commands",
+          //   to: "/master-admin/robot-commands",
+          // },
+          {
+            component: CNavItem,
+            name: "Flush Queue",
+            to: "/service-admin/flush-queues",
+          },
+        ],
+      },
     ],
   },
 
@@ -4213,7 +4261,7 @@ const _nav = [
       // ⚙️ Deployment
       {
         component: CNavGroup,
-        name: "Deployment",
+        name: "Commisioning",
         icon: <Settings size={20} style={{ color: "rgb(57, 214, 0)" }} />,
         items: [
           {

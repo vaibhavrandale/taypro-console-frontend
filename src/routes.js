@@ -6330,6 +6330,43 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  {
+    path: "/service-admin/lora-configuration",
+    name: "Lora Configuration",
+    element: (
+      <ServiceAdminRoute>
+        <LoraConfiguration />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-lora",
+    name: "Replace Lora",
+    element: (
+      <ServiceAdminRoute>
+        <ReplaceLora />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-lora/in-active-robots",
+    name: "In Active Robots",
+    element: (
+      <ServiceAdminRoute>
+        <InActiveRobots />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/replace-lora/active-robots",
+    name: "Active Robots",
+    element: (
+      <ServiceAdminRoute>
+        <ActiveRobots />
+      </ServiceAdminRoute>
+    ),
+  },
   // ------------------------poc------------------------------
 
   //------------------------service admin---------------------------------
