@@ -3613,6 +3613,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/clients-data-dashboard/edit-client/:id",
+    name: "Edit Client",
+    element: (
+      <ProjectAdminRoute>
+        <EditClient />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/robots/shift-block-wise",
     name: "Shift Block Wise Robot",
     element: (

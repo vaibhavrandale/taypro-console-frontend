@@ -367,7 +367,7 @@ const ClientAssignedSites = () => {
                                 payload: site,
                               });
                               navigate(
-                                `/master-admin/clients-data-dashboard/edit-client/${site._id}`,
+                                `/${adminroute}/clients-data-dashboard/edit-client/${site?._id}`,
                               );
                             }}
                           >
