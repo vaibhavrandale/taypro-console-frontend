@@ -3406,6 +3406,24 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/add-robot/add-semi-automatic-robot",
+    name: "Add Semi Robot",
+    element: (
+      <ProjectAdminRoute>
+        <AddSemiAutomaticRobot />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/semi-automatic-robots",
+    name: "Add Semi Robot",
+    element: (
+      <ProjectAdminRoute>
+        <SemiAutomaticRobot />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/robot-commands",
     name: "Robot Commands",
     element: (
@@ -3591,6 +3609,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <ClientAssignedSites />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/clients-data-dashboard/edit-client/:id",
+    name: "Edit Client",
+    element: (
+      <ProjectAdminRoute>
+        <EditClient />
       </ProjectAdminRoute>
     ),
   },

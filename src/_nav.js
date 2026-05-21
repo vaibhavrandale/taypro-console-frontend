@@ -1508,6 +1508,11 @@ const _nav = [
             name: "Weather Data ",
             to: "/project-admin/weather-data-sitewise",
           },
+          {
+            component: CNavItem,
+            name: "Semi Robots",
+            to: "/project-admin/semi-automatic-robots",
+          },
         ],
       },
 
