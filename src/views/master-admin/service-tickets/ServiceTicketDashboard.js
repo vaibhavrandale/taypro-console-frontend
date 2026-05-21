@@ -212,14 +212,17 @@ const ServiceTicketDashboard = () => {
     ? servicetickets.filter((item) => {
         const createdAtDate = new Date(item.createdAt)
           .toISOString()
-          .split("T")[0]; // format as YYYY-MM-DD
+          .split("T")[0];
 
         return (
           (item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.site_id.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            item.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (searchTerm.toLowerCase() === "open" && !item.ticket_resolved) ||
+            (searchTerm.toLowerCase() === "resolved" &&
+              item.ticket_resolved)) &&
           createdAtDate >= startDate &&
           createdAtDate <= endDate
         );
