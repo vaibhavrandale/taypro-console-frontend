@@ -652,7 +652,7 @@ const CreateNomenclature = () => {
 
         .nc-field-key-badge { font-size: 10px; letter-spacing: 0.5px; padding: 2px 6px; }
 
-        .nc-field-name { font-weight: 600; font-size: 13.5px; color: #212529; }
+        .nc-field-name { font-weight: 600; font-size: 13.5px; color: #f5ecec; }
 
         .nc-field-desc { font-size: 12px; color: #6c757d; margin-bottom: 4px; }
 
@@ -734,7 +734,7 @@ const CreateNomenclature = () => {
 
           text-align: center; padding: 32px 0;
 
-          color: #adb5bd; font-size: 14px;
+          color: #bdb0ad; font-size: 14px;
 
         }
 

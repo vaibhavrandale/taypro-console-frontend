@@ -47,6 +47,7 @@ const AddSemiAutomaticRobot = () => {
 
   const { robots, loadingAddRobotManual, loadingSites, sites } = state;
   const navigate = useNavigate();
+  const userInfo = useSelector((state) => state.userInfo);
 
   const [manualRRobotData, setManualRobotData] = useState({
     robot_no: "",
@@ -108,7 +109,7 @@ const AddSemiAutomaticRobot = () => {
 
       toast.success(`Robot ${manualRRobotData.robot_no} added successfully!`);
       // i want navigate to this link master-admin/semi-automatic-robots
-      navigate("/master-admin/semi-automatic-robots");
+      navigate(`/${adminroute}/semi-automatic-robots`);
       dispatch({
         type: "ADD_ROBOT_MANUAL_SUCCESS",
         payload: [...robots, response.data.data],
@@ -130,6 +131,31 @@ const AddSemiAutomaticRobot = () => {
     }
   };
 
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
   return (
     <>
       <CCard className="p-3 mt-3">

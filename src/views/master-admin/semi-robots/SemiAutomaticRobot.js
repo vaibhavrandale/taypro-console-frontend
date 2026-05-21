@@ -214,7 +214,8 @@ const SemiAutomaticRobot = () => {
       <h2 className="text-center">All Robots</h2>
       <div className="d-flex justify-content-end mb-3">
         {/* Add Robot - Only Master Admin */}
-        {userInfo?.role === "Master Admin" && (
+        {(userInfo?.role === "Master Admin" ||
+          userInfo?.role === "Project Admin") && (
           <Link
             className="btn btn-sm btn-success m-1"
             to={`/${adminroute}/add-robot/add-semi-automatic-robot`}
