@@ -135,7 +135,7 @@ const getHealth = (d) => {
     (r.offline > 0 && r.online)
   )
     return "critical";
-  if (t.length === 0 || r.online < r.offline * 0.2) return "warning";
+  if (r.online < r.offline * 0.2) return "warning";
   return "healthy";
 };
 
@@ -204,6 +204,7 @@ const wIcon = (desc = "") => {
 ══════════════════════════════════════════════ */
 const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
   const h = getHealth(data);
+  console.log("Rendering SiteCard for", data.site.siteName, "with health", h);
   const {
     robot_data: r,
     cleaning_data: c,
