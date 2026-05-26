@@ -41,6 +41,7 @@ import {
 import { Link } from "react-router-dom";
 import GatewayMap from "../../components/GatewayMap";
 import Weather from "../client-admin/weather/Weather";
+import SiteSelect from "../../components/SiteSelect";
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS
@@ -458,25 +459,25 @@ export default function MasterAdminDashboard() {
   const [showMapModal, setShowMapModal] = useState(false);
   const [site_id, setSiteid] = useState("");
 
-  useEffect(() => {
-    const fetchSiteIds = async () => {
-      dispatch({ type: "FETCH_SITEID_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
-        setSiteid(result.data.data[0]?.site_id || "");
-      } catch (e) {
-        dispatch({
-          type: "FETCH_SITEID_FAIL",
-          payload: e.response?.data?.error || e.message,
-        });
-      }
-    };
-    fetchSiteIds();
-  }, []);
+  // useEffect(() => {
+  //   const fetchSiteIds = async () => {
+  //     dispatch({ type: "FETCH_SITEID_REQUEST" });
+  //     try {
+  //       const result = await axios.get(`/api/v1/sites`, {
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  //         withCredentials: true,
+  //       });
+  //       dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
+  //       setSiteid(result.data.data[0]?.site_id || "");
+  //     } catch (e) {
+  //       dispatch({
+  //         type: "FETCH_SITEID_FAIL",
+  //         payload: e.response?.data?.error || e.message,
+  //       });
+  //     }
+  //   };
+  //   fetchSiteIds();
+  // }, []);
 
   useEffect(() => {
     if (!site_id) return;
@@ -507,7 +508,7 @@ export default function MasterAdminDashboard() {
     fetchSiteDetails();
 
     setMapLoaded(false);
-  }, [site_id]);
+  }, [authtoken, site_id]);
 
   /* derived */
   const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);
@@ -576,17 +577,20 @@ export default function MasterAdminDashboard() {
             {loadingSiteIds ? (
               <Skel h={32} w={160} r={8} />
             ) : (
-              <select
-                className="site-sel"
-                value={site_id}
-                onChange={(e) => setSiteid(e.target.value)}
-              >
-                {siteIds.map((s) => (
-                  <option key={s.site_id} value={s.site_id}>
-                    {s.site_id}
-                  </option>
-                ))}
-              </select>
+              // <select
+              //   className="site-sel"
+              //   value={site_id}
+              //   onChange={(e) => setSiteid(e.target.value)}
+              // >
+              //   {siteIds.map((s) => (
+              //     <option key={s.site_id} value={s.site_id}>
+              //       {s.site_id}
+              //     </option>
+              //   ))}
+              // </select>
+              <div>
+                <SiteSelect value={site_id} onChange={setSiteid} />
+              </div>
             )}
           </div>
         </header>

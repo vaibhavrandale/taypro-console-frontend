@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import SiteSelect from "../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -266,19 +267,22 @@ const GenerateNewCertificate = () => {
           ) : sitesError ? (
             <CAlert>{sitesError}</CAlert>
           ) : sites?.length > 0 ? (
-            <CFormSelect
-              name="site_id"
-              value={site_id}
-              onChange={handleSiteNameChange}
-            >
-              <option value="all">All Data</option>
-              {sites.map((item) => (
-                <option key={item.site_id} value={item.site_id}>
-                  {item.site_id}
-                </option>
-              ))}
-            </CFormSelect>
+            <div>
+              <SiteSelect value={site_id} onChange={setSiteId} />
+            </div>
           ) : (
+            // <CFormSelect
+            //   name="site_id"
+            //   value={site_id}
+            //   onChange={handleSiteNameChange}
+            // >
+            //   <option value="all">All Data</option>
+            //   {sites.map((item) => (
+            //     <option key={item.site_id} value={item.site_id}>
+            //       {item.site_id}
+            //     </option>
+            //   ))}
+            // </CFormSelect>
             <p>No SItes Found</p>
           )}
 
