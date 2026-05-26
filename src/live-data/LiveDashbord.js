@@ -179,7 +179,7 @@ const fmtClock = (d) =>
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: false,
+    hour12: true,
   });
 const fmtDate = (d) =>
   d.toLocaleDateString("en-IN", {
@@ -963,7 +963,7 @@ const DetailPanel = ({ data }) => {
                   <div
                     style={{
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 500,
                       color: "#d8e8f5",
                       //fontFamily: "'Barlow Condensed', sans-serif",
                     }}
@@ -1273,6 +1273,7 @@ const AlertTicker = ({ criticals }) => {
 ══════════════════════════════════════════════ */
 const LiveDashboard = () => {
   const [sites, setSites] = useState([]);
+  const [maxData, setmaxData] = useState({});
   const [selected, setSelected] = useState(0);
   const [now, setNow] = useState(new Date());
   const [loading, setLoading] = useState(true);
@@ -1289,6 +1290,7 @@ const LiveDashboard = () => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = await r.json();
       const arr = Array.isArray(j) ? j : j.data || [];
+      setmaxData(j.all_site);
       if (!arr.length) throw new Error("empty response");
 
       // ✅ Normalise each site: guarantee weather is either an object or null (never undefined)
@@ -1548,6 +1550,11 @@ const LiveDashboard = () => {
               value={totalTechs}
               color="#f5a623"
             />
+            <FleetStat
+              label="Max Online"
+              value={maxData.max_online_robots || 0}
+              color="#22dd88"
+            />
           </div>
           <div style={{ flex: 1 }} />
 
@@ -1589,7 +1596,7 @@ const LiveDashboard = () => {
                 fontSize: 22,
                 fontWeight: 500,
                 //fontFamily: "'DM Mono',monospace",
-                letterSpacing: -1,
+                letterSpacing: 1,
                 lineHeight: 1,
               }}
             >

@@ -18,11 +18,12 @@ import {
 } from "@coreui/react";
 import React, { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import { commissioning_certificates, robot_commissioning_doc } from "./cdata";
+// import { commissioning_certificates, robot_commissioning_doc } from "./cdata";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import SiteSelect from "../../components/SiteSelect";
 
 // status: "completed", // pending | in_progress | completed | failed
 const reducer = (state, action) => {
@@ -235,20 +236,23 @@ const CommisioningDashboard = () => {
           ) : sitesError ? (
             <CAlert>{sitesError}</CAlert>
           ) : (
-            <CFormSelect
-              name="site_id"
-              value={site_id}
-              onChange={handleSiteNameChange}
-            >
-              <option value="all">All Data</option>
+            <div>
+              <SiteSelect value={site_id} onChange={setSiteId} />
+            </div>
+            // <CFormSelect
+            //   name="site_id"
+            //   value={site_id}
+            //   onChange={handleSiteNameChange}
+            // >
+            //   <option value="all">All Data</option>
 
-              {sites?.length > 0 &&
-                sites.map((item) => (
-                  <option key={item.site_id} value={item.site_id}>
-                    {item.site_id}
-                  </option>
-                ))}
-            </CFormSelect>
+            //   {sites?.length > 0 &&
+            //     sites.map((item) => (
+            //       <option key={item.site_id} value={item.site_id}>
+            //         {item.site_id}
+            //       </option>
+            //     ))}
+            // </CFormSelect>
           )}
         </CCol>
       </CRow>

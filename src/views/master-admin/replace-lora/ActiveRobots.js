@@ -188,7 +188,7 @@ const ActiveRobots = () => {
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success(`${filteredFormData.robot_no}  updated successfully!`);
-      navigate("/master-admin/replace-lora/in-active-robots"); // Redirect after update
+      navigate(`/${adminroute}/replace-lora/in-active-robots`); // Redirect after update
     } catch (error) {
       dispatch({
         type: "UPDATE_FAIL",
