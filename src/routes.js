@@ -224,6 +224,8 @@ import NomenClatureDashboard from "./views/nomenclature/NomenClatureDashboard";
 import CreateNomenClature from "./views/nomenclature/CreateNomenClature";
 import UpdatenomenClature from "./views/nomenclature/UpdatenomenClature";
 import ViewNomenClature from "./views/nomenclature/ViewNomenClature";
+import MMSDashboard from "./views/mms/MMSDashboard";
+import ViewMms from "./views/mms/ViewMms";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2171,6 +2173,27 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+
+  // --------------------------poc mms---------------------------
+  {
+    path: "/master-admin/mms-survey-dashboard",
+    name: "MMS Survey Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <MMSDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mms-survey-dashboard/view-mms-survey/:id",
+    name: "View MMS Survey",
+    element: (
+      <MasterAdminRoute>
+        <ViewMms />
+      </MasterAdminRoute>
+    ),
+  },
+  // --------------------------poc mms---------------------------
   // ------------------------poc------------------------------
 
   // ------------------------master admin---------------------------------
