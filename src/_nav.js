@@ -836,8 +836,13 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "Site Survey",
+            name: "Nomenclature Survey",
             to: "/master-admin/site-survey-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "MMS Survey",
+            to: "/master-admin/mms-survey-dashboard",
           },
         ],
       },
