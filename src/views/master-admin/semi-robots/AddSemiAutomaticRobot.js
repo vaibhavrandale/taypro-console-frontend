@@ -14,15 +14,16 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+import SiteSelect from "../../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_SITEID_REQUEST":
-      return { ...state, loadingSites: true, error: "" };
-    case "FETCH_SITEID_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSites: false, error: action.payload };
+    // case "FETCH_SITEID_REQUEST":
+    //   return { ...state, loadingSites: true, error: "" };
+    // case "FETCH_SITEID_SUCCESS":
+    //   return { ...state, loadingSites: false, sites: action.payload };
+    // case "FETCH_SITEID_FAIL":
+    //   return { ...state, loadingSites: false, error: action.payload };
 
     case "ADD_ROBOT_MANUAL_REQUEST":
       return { ...state, loadingAddRobotManual: true, error: "" };
@@ -40,47 +41,47 @@ const AddSemiAutomaticRobot = () => {
   const [state, dispatch] = useReducer(reducer, {
     robots: [],
     loadingAddRobotManual: false,
-    sites: [],
-    loadingSites: false,
-    error: "",
+    // sites: [],
+    // loadingSites: false,
+    // error: "",
   });
 
   const { robots, loadingAddRobotManual, loadingSites, sites } = state;
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
-
+  const [site_id, setSiteId] = useState("");
   const [manualRRobotData, setManualRobotData] = useState({
     robot_no: "",
     block: "Block-1",
     deveui: "",
     robot_type: "Semi-Automatic",
-    site_id: "",
+    site_id: site_id,
   });
 
   // const authtoken = useSelector((state) => state.authtoken);
 
-  useEffect(() => {
-    const fetchSiteIds = async () => {
-      dispatch({ type: "FETCH_SITEID_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_SITEID_FAIL",
-          payload: error.response?.data?.message || error.response?.data?.error,
-        });
-        toast.error(
-          error.response?.data?.message || error.response?.data?.error,
-        );
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSiteIds = async () => {
+  //     dispatch({ type: "FETCH_SITEID_REQUEST" });
+  //     try {
+  //       const result = await axios.get(`/api/v1/sites/semi/automatic`, {
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  //         withCredentials: true,
+  //       });
+  //       dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
+  //     } catch (error) {
+  //       dispatch({
+  //         type: "FETCH_SITEID_FAIL",
+  //         payload: error.response?.data?.message || error.response?.data?.error,
+  //       });
+  //       toast.error(
+  //         error.response?.data?.message || error.response?.data?.error,
+  //       );
+  //     }
+  //   };
 
-    fetchSiteIds();
-  }, []);
+  //   fetchSiteIds();
+  // }, []);
 
   const addRobotUsingManualData = async (e) => {
     e.preventDefault();
@@ -199,7 +200,7 @@ const AddSemiAutomaticRobot = () => {
 
                 <CCol md={3}>
                   <label>Site ID</label>
-                  <CFormSelect
+                  {/* <CFormSelect
                     value={manualRRobotData.site_id}
                     onChange={(e) =>
                       setManualRobotData({
@@ -214,7 +215,16 @@ const AddSemiAutomaticRobot = () => {
                         {item.site_id}
                       </option>
                     ))}
-                  </CFormSelect>
+                  </CFormSelect> */}
+                  <SiteSelect
+                    value={site_id}
+                    onChange={(e) =>
+                      setManualRobotData({
+                        ...manualRRobotData,
+                        site_id: site_id,
+                      })
+                    }
+                  />
                 </CCol>
               </CRow>
 
