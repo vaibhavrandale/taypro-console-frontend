@@ -226,6 +226,8 @@ import UpdatenomenClature from "./views/nomenclature/UpdatenomenClature";
 import ViewNomenClature from "./views/nomenclature/ViewNomenClature";
 import MMSDashboard from "./views/mms/MMSDashboard";
 import ViewMms from "./views/mms/ViewMms";
+import CreateMmsStructure from "./views/mms/CreateMmms";
+import UpdateMms from "./views/mms/UpdateMms";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -2190,6 +2192,24 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ViewMms />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/create-mms-structure",
+    name: "Create MMS Structure",
+    element: (
+      <MasterAdminRoute>
+        <CreateMmsStructure />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/mms-survey-dashboard/update-mms/:id",
+    name: "Update MMS Structure",
+    element: (
+      <MasterAdminRoute>
+        <UpdateMms />
       </MasterAdminRoute>
     ),
   },

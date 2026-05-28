@@ -157,7 +157,7 @@ const MMSDashboard = () => {
     <div className="p-2">
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="text-center">All MMS Surveys</h2>
-        <Link className="btn btn-sm" to={`/${adminroute}/create-mms`}>
+        <Link className="btn btn-sm" to={`/${adminroute}/create-mms-structure`}>
           Create
         </Link>
       </div>
