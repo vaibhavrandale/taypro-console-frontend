@@ -180,7 +180,7 @@ const DimAnnotation = ({
   const leaderX = side === "right" ? bx : bx + boxW;
   const leaderY = ly;
 
-  const displayVal = unit ? `${value} ${unit}` : value;
+  const displayVal = unit ? `${value} ${id === "per_type" ? "" : unit}` : value;
 
   return (
     <g
@@ -200,13 +200,24 @@ const DimAnnotation = ({
         opacity={active ? 0.9 : 0.6}
       />
       {/* Pointer dot */}
-      <circle
+      {/* <circle
         cx={px}
         cy={py}
         r={active ? 5 : 3.5}
         fill={active ? color : "#fff"}
         stroke={color}
         strokeWidth={1.8}
+      /> */}
+      {/* Arrow indicator */}
+      <line
+        x1={px - 14}
+        y1={py - 14}
+        x2={px}
+        y2={py}
+        stroke={color}
+        strokeWidth={active ? 2.2 : 1.6}
+        markerEnd="url(#annotationArrow)"
+        opacity={active ? 1 : 0.85}
       />
       {/* Label box */}
       <rect
@@ -233,7 +244,7 @@ const DimAnnotation = ({
         fill={active ? "#fff" : color}
         pointerEvents="none"
       >
-        {label}: {displayVal}
+        {label}&nbsp;: {displayVal}
       </text>
     </g>
   );
@@ -513,6 +524,17 @@ const ViewMms = ({ id: propId }) => {
 
     // ── PERLIN annotations (green) ─────────────────────────────────────
     {
+      id: "per_type",
+      px: 400,
+      py: 50,
+      lx: 450,
+      ly: 58,
+      label: "Perlin Type",
+      value: per.type,
+      color: "#059669",
+      side: "center",
+    },
+    {
       id: "per_height",
       px: 510,
       py: 250,
@@ -536,11 +558,11 @@ const ViewMms = ({ id: propId }) => {
     },
     {
       id: "per_flange",
-      px: 268,
-      py: 255,
-      lx: 88,
-      ly: 242,
-      label: "Flange L",
+      px: 525,
+      py: 265,
+      lx: 570,
+      ly: 95,
+      label: "Flange L (w to w)",
       value: per.perlin_dimension?.flenge_length?.value,
       color: "#10b981",
       side: "right",
@@ -549,8 +571,8 @@ const ViewMms = ({ id: propId }) => {
       id: "per_thickness",
       px: 310,
       py: 278,
-      lx: 88,
-      ly: 265,
+      lx: 70,
+      ly: 95,
       label: "Perlin T",
       value: per.perlin_dimension?.thickness?.value,
       color: "#10b981",
@@ -911,8 +933,7 @@ const ViewMms = ({ id: propId }) => {
               style={{ width: "100%", height: "100%", display: "block" }}
               preserveAspectRatio="xMidYMid meet"
             >
-              <defs>
-                {/* Arrow marker */}
+              {/* <defs>
                 <marker
                   id="arr"
                   markerWidth="6"
@@ -922,6 +943,32 @@ const ViewMms = ({ id: propId }) => {
                   orient="auto"
                 >
                   <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8" />
+                </marker>
+              </defs> */}
+              <defs>
+                {/* Dimension arrow */}
+                <marker
+                  id="arr"
+                  markerWidth="6"
+                  markerHeight="6"
+                  refX="3"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8" />
+                </marker>
+
+                {/* Annotation Arrow */}
+                <marker
+                  id="annotationArrow"
+                  markerWidth="10"
+                  markerHeight="10"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L0,6 L9,3 z" fill="context-stroke" />
                 </marker>
               </defs>
 

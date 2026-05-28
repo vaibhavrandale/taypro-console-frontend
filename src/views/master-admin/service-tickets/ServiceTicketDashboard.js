@@ -246,6 +246,17 @@ const ServiceTicketDashboard = () => {
     }
   };
 
+  const TImetoResolvedTicket = (createdAt, resolvedAt) => {
+    const createdDate = moment(createdAt);
+    const resolvedDate = moment(resolvedAt);
+    const duration = moment.duration(resolvedDate.diff(createdDate));
+    const days = Math.floor(duration.asDays());
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+    const seconds = duration.seconds();
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  };
+
   const exportToExcel = () => {
     if (filteredData.length === 0) {
       toast.error("No data available for export.");
@@ -260,8 +271,14 @@ const ServiceTicketDashboard = () => {
         "Robot No": item.robot_no,
         "Site Id": item.site_id,
         "Fault Type": item.fault_type,
-        Status: item.ticket_resolved ? "Resolved" : "Open",
-        Date: moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
+        Status: item.ticket_resolved ? "RESOLVED" : "OPEN",
+        "Created Date": moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
+        "Resolved Date": item.ticket_resolved
+          ? moment(item.ticket_resolved_at).format("DD/MM/YYYY hh:mm A")
+          : "OPEN",
+        "Time to Resolve": item.ticket_resolved
+          ? TImetoResolvedTicket(item.createdAt, item.ticket_resolved_at)
+          : "OPEN",
       })),
     );
     const workbook = XLSX.utils.book_new();
