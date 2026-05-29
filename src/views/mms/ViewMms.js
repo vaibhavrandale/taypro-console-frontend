@@ -1,67 +1,17 @@
-// import axios from "axios";
-// import React, { useEffect, useReducer } from "react";
-// import { useParams } from "react-router-dom";
-// // ─── Reducer ──────────────────────────────────────────────────────────────────
-// const reducer = (state, action) => {
-//   switch (action.type) {
-//     case "FETCH_MMS_REQUEST":
-//       return { ...state, loadingMMS: true, error: "" };
-//     case "FETCH_MMS_SUCCESS":
-//       return {
-//         ...state,
-//         loadingMMS: false,
-//         mms: action.payload,
-//       };
-//     case "FETCH_MMS_FAIL":
-//       return {
-//         ...state,
-//         loadingMMS: false,
-//         error: action.payload,
-//       };
-//     default:
-//       return state;
-//   }
-// };
-// const ViewMms = () => {
-//   const { id } = useParams();
-//   const [{ mms, loadingMMS, error }, dispatch] = useReducer(reducer, {
-//     mms: null,
-//     loadingMMS: true,
-//     error: "",
-//   });
-
-//   const refetch = async () => {
-//     try {
-//       dispatch({ type: "FETCH_MMS_REQUEST" });
-//       const resp = await axios.get(`/api/v1/mms-structure/${id}`, {
-//         withCredentials: true,
-//       });
-
-//       dispatch({ type: "FETCH_MMS_SUCCESS", payload: resp.data });
-//     } catch (e) {
-//       // Dev fallback — remove in production
-//       //   dispatch({ type: "FETCH_MMS_SUCCESS", payload: MOCK });
-//       dispatch({
-//         type: "FETCH_MMS_FAIL",
-//         payload: e.response?.data?.message || e.response?.data?.error,
-//       });
-//       // toast.error(e.response?.data?.message);
-//     }
-//   };
-
-//   useEffect(() => {
-//     refetch();
-//   }, [id]); // eslint-disable-line
-
-//   return <div>ViewMms</div>;
-// };
-
-// export default ViewMms;
-
 import axios from "axios";
 import React, { useEffect, useReducer, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import mmsImage from "../../assets/images/mms.png";
+import LastActivity from "../../components/LastActivity";
+import {
+  CBadge,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalTitle,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK = {
   success: true,
@@ -166,6 +116,7 @@ const DimAnnotation = ({
   active,
   onEnter,
   onLeave,
+  onClick,
   id,
 }) => {
   const boxW = 148;
@@ -187,6 +138,7 @@ const DimAnnotation = ({
       style={{ cursor: "pointer" }}
       onMouseEnter={() => onEnter && onEnter(id)}
       onMouseLeave={() => onLeave && onLeave()}
+      onClick={onClick}
     >
       {/* Leader line */}
       <line
@@ -239,7 +191,7 @@ const DimAnnotation = ({
         y={by + boxH / 2 + 4}
         textAnchor="middle"
         fontSize={active ? 10 : 9.5}
-        fontFamily="'JetBrains Mono', monospace"
+        //fontFamily="'JetBrains Mono', monospace"
         fontWeight="700"
         fill={active ? "#fff" : color}
         pointerEvents="none"
@@ -296,7 +248,7 @@ const DimLine = ({
         y={my + 5}
         textAnchor="middle"
         fontSize={9}
-        fontFamily="monospace"
+        //fontFamily="monospace"
         fontWeight="700"
         fill={color}
       >
@@ -317,18 +269,15 @@ const SpecRow = ({ label, value, color }) => (
       borderBottom: "1px solid rgba(255,255,255,0.06)",
     }}
   >
-    <span style={{ color: "#94a3b8", fontSize: 10, letterSpacing: "0.02em" }}>
-      {label}
-    </span>
+    <span style={{ color: "#94a3b8", letterSpacing: "0.02em" }}>{label}</span>
     <span
       style={{
-        color: color || "#e2e8f0",
-        fontSize: 10,
+        // color: color || "#e2e8f0",
+
         fontWeight: 700,
-        background: "rgba(255,255,255,0.06)",
         padding: "1px 7px",
         borderRadius: 4,
-        fontFamily: "monospace",
+        //fontFamily: "monospace",
       }}
     >
       {value}
@@ -341,7 +290,7 @@ const SpecSection = ({ title, color, children }) => (
   <div style={{ marginBottom: 12 }}>
     <div
       style={{
-        fontSize: 9,
+        // fontSize: 9,
         fontWeight: 800,
         letterSpacing: "0.14em",
         color: color,
@@ -368,6 +317,10 @@ const ViewMms = ({ id: propId }) => {
   const [hovered, setHovered] = useState(null);
   const [showPanel, setShowPanel] = useState(true);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [attachmentModal, setAttachmentModal] = useState(false); // fixed typo
+  const [selectedImage, setSelectedImage] = useState(0); // was missing
+  const [modalAnnotation, setModalAnnotation] = useState(null); // replaces activeKey for modal
+  console.log(modalAnnotation);
   const svgRef = useRef(null);
 
   useEffect(() => {
@@ -391,14 +344,18 @@ const ViewMms = ({ id: propId }) => {
   const d = mms?.data || mms;
   if (!d) return null;
 
+  // const act = activeKey ? d[activeKey] : null;
+  // const sel = (k) => setActiveKey((p) => (p === k ? null : k));
+
   const col = d.column || {};
   const raf = d.rafter || {};
   const per = d.perlin || {};
   const bra = d.braces || {};
 
   const statusColor =
-    { draft: "#f59e0b", approved: "#10b981", rejected: "#ef4444" }[d.status] ||
-    "#6b7280";
+    { draft: "secondary", submitted: "success", rejected: "danger" }[
+      d.status
+    ] || "secondary";
 
   // ── SVG coordinate system: viewBox "0 0 1200 700" mapped to the clean 2P image ──
   // The image from image 2 reference: total height 2083mm, column above GL ~1197, pile depth ~500
@@ -408,125 +365,146 @@ const ViewMms = ({ id: propId }) => {
     // ── COLUMN annotations (blue) ──────────────────────────────────────
     {
       id: "col_total",
-      px: 588,
+      px: 288,
       py: 290,
       lx: 420,
       ly: 290,
       label: "Col. Total",
       value: col.total_length?.value,
-      color: "#1d4ed8",
+      color: "#2563eb",
       side: "left",
+      attatchments: col.total_length?.attatchments,
     },
     {
       id: "col_above_gl",
-      px: 590,
-      py: 360,
-      lx: 415,
-      ly: 360,
+      px: 288,
+      py: 320,
+      lx: 418,
+      ly: 320,
       label: "Above GL",
       value: col.upper_ground_length?.value,
       color: "#2563eb",
       side: "left",
+      attatchments: col.upper_ground_length?.attatchments,
     },
     {
       id: "col_pile",
-      px: 595,
-      py: 598,
+      px: 288,
+      py: 350,
       lx: 418,
-      ly: 598,
+      ly: 350,
       label: "Pile Depth",
       value: col.piling_depth_length?.value,
-      color: "#1e40af",
+      color: "#2563eb",
       side: "left",
+      attatchments: col.piling_depth_length?.attatchments,
     },
     {
       id: "col_dia",
-      px: 608,
-      py: 638,
-      lx: 430,
-      ly: 638,
+      px: 288,
+      py: 380,
+      lx: 418,
+      ly: 380,
       label: "Pile Ø",
       value: col.pilling_diameter?.value,
-      color: "#1e40af",
+      color: "#2563eb",
       side: "left",
+      attatchments: col.pilling_diameter?.attatchments,
     },
     {
       id: "col_section",
-      px: 624,
-      py: 450,
-      lx: 440,
-      ly: 450,
+      px: 288,
+      py: 410,
+      lx: 418,
+      ly: 410,
       label: "H×W×T",
       value: `${col.height?.value}×${col.width?.value}×${col.thickness?.value}`,
       unit: "",
-      color: "#3b82f6",
+      color: "#2563eb",
       side: "left",
+      attatchments: {
+        ...col.height?.attatchments,
+        ...col.width?.attatchments,
+        ...col.thickness?.attatchments,
+      },
     },
 
     // ── RAFTER annotations (purple) ────────────────────────────────────
     {
       id: "raf_total",
-      px: 720,
+      px: 920,
       py: 102,
-      lx: 760,
-      ly: 82,
+      lx: 870,
+      ly: 102,
       label: "Rafter L",
       value: raf.total_length?.value,
       color: "#7c3aed",
       side: "right",
+      attatchments: raf.total_length?.attatchments,
     },
     {
       id: "raf_section",
-      px: 680,
+      px: 920,
       py: 175,
-      lx: 760,
-      ly: 152,
+      lx: 870,
+      ly: 132,
       label: "H×W×T",
       value: `${raf.height?.value}×${raf.width?.value}×${raf.thickness?.value}`,
       unit: "",
       color: "#8b5cf6",
       side: "right",
+      attatchments:
+        {
+          ...raf.height?.attatchments,
+          ...raf.width?.attatchments,
+          ...raf.thickness?.attatchments,
+        } || [],
     },
     {
       id: "raf_pcount",
-      px: 810,
+      px: 920,
       py: 222,
       lx: 870,
-      ly: 202,
+      ly: 162,
       label: "Perlin Cnt",
-      value: raf.perlin_dimension?.perlin_count?.value,
-      unit: "pcs",
+      value: raf.perlin_dimension?.perlin_count.value,
+      unit: "nos",
       color: "#7c3aed",
       side: "right",
+      attatchments: raf.perlin_dimension?.perlin_count?.attatchments || [],
     },
     {
       id: "raf_pp_gap",
-      px: 755,
-      py: 248,
+      px: 920,
+      py: 195,
       lx: 870,
-      ly: 228,
+      ly: 192,
       label: "P→P Gap",
       value: raf.perlin_dimension?.perlin_to_perlin_gap?.value,
       color: "#6d28d9",
       side: "right",
+      attatchments:
+        raf.perlin_dimension?.perlin_to_perlin_gap?.attatchments || [],
     },
     {
       id: "raf_mp_gap",
-      px: 655,
-      py: 268,
+      px: 920,
+      py: 230,
       lx: 870,
-      ly: 255,
+      ly: 222,
       label: "Mod→P Gap",
       value: raf.perlin_dimension?.module_to_perlin_gap?.value,
       color: "#6d28d9",
       side: "right",
+      attatchments:
+        raf.perlin_dimension?.module_to_perlin_gap?.attatchments || [],
     },
 
     // ── PERLIN annotations (green) ─────────────────────────────────────
     {
       id: "per_type",
       px: 400,
-      py: 50,
+      py: 59,
       lx: 450,
       ly: 58,
       label: "Perlin Type",
@@ -569,8 +547,8 @@ const ViewMms = ({ id: propId }) => {
     },
     {
       id: "per_thickness",
-      px: 310,
-      py: 278,
+      px: 200,
+      py: 96,
       lx: 70,
       ly: 95,
       label: "Perlin T",
@@ -582,10 +560,10 @@ const ViewMms = ({ id: propId }) => {
     // ── BRACE A annotations (amber) ────────────────────────────────────
     {
       id: "brace_a",
-      px: 440,
-      py: 415,
-      lx: 262,
-      ly: 415,
+      px: 288,
+      py: 450,
+      lx: 418,
+      ly: 450,
       label: "Brace A",
       value: bra.a?.length?.value,
       color: "#d97706",
@@ -593,10 +571,10 @@ const ViewMms = ({ id: propId }) => {
     },
     {
       id: "brace_a_sec",
-      px: 470,
-      py: 445,
-      lx: 262,
-      ly: 445,
+      px: 288,
+      py: 480,
+      lx: 418,
+      ly: 480,
       label: "H×W×T",
       value: `${bra.a?.height?.value}×${bra.a?.width?.value}×${bra.a?.thickness?.value}`,
       unit: "",
@@ -607,8 +585,8 @@ const ViewMms = ({ id: propId }) => {
     // ── BRACE B annotations (red) ──────────────────────────────────────
     {
       id: "brace_b",
-      px: 800,
-      py: 492,
+      px: 910,
+      py: 480,
       lx: 870,
       ly: 475,
       label: "Brace B",
@@ -618,10 +596,10 @@ const ViewMms = ({ id: propId }) => {
     },
     {
       id: "brace_b_sec",
-      px: 820,
+      px: 940,
       py: 518,
       lx: 870,
-      ly: 502,
+      ly: 505,
       label: "H×W×T",
       value: `${bra.b?.height?.value}×${bra.b?.width?.value}×${bra.b?.thickness?.value}`,
       unit: "",
@@ -630,28 +608,28 @@ const ViewMms = ({ id: propId }) => {
     },
 
     // ── OVERALL DIMENSIONS (slate) ─────────────────────────────────────
-    {
-      id: "total_h",
-      px: 148,
-      py: 340,
-      lx: 0,
-      ly: 310,
-      label: "Total H",
-      value: "2083",
-      color: "#475569",
-      side: "right",
-    },
-    {
-      id: "low_h",
-      px: 1080,
-      py: 518,
-      lx: 1060,
-      ly: 495,
-      label: "Low H",
-      value: "520",
-      color: "#475569",
-      side: "right",
-    },
+    // {
+    //   id: "total_h",
+    //   px: 148,
+    //   py: 340,
+    //   lx: 0,
+    //   ly: 310,
+    //   label: "Total H",
+    //   value: "2083",
+    //   color: "#475569",
+    //   side: "right",
+    // },
+    // {
+    //   id: "low_h",
+    //   px: 1080,
+    //   py: 518,
+    //   lx: 1060,
+    //   ly: 495,
+    //   label: "Low H",
+    //   value: "520",
+    //   color: "#475569",
+    //   side: "right",
+    // },
     {
       id: "tilt_angle",
       px: 990,
@@ -664,130 +642,127 @@ const ViewMms = ({ id: propId }) => {
       color: "#64748b",
       side: "right",
     },
-    {
-      id: "gl_depth",
-      px: 610,
-      py: 670,
-      lx: 620,
-      ly: 658,
-      label: "GL Depth",
-      value: "250",
-      color: "#475569",
-      side: "right",
-    },
+    // {
+    //   id: "gl_depth",
+    //   px: 610,
+    //   py: 670,
+    //   lx: 620,
+    //   ly: 658,
+    //   label: "GL Depth",
+    //   value: "250",
+    //   color: "#475569",
+    //   side: "right",
+    // },
   ];
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#080f1a",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "'JetBrains Mono', 'Fira Mono', monospace",
-        color: "#e2e8f0",
-      }}
-    >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0d1a2d; }
-        ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
+    <>
+      <div
+        style={{
+          minHeight: "100vh",
+          // background: "#080f1a",
+          display: "flex",
+          flexDirection: "column",
+          //fontFamily: "'JetBrains Mono', 'Fira Mono', monospace",
+          // color: "#e2e8f0",
+        }}
+      >
+        <style>{`
+        
         .ann-label { transition: all 0.15s ease; }
         .ann-label:hover rect { filter: brightness(0.88); }
       `}</style>
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header
-        style={{
-          background: "linear-gradient(90deg, #060d1a, #0c1829)",
-          borderBottom: "1px solid #1e3a5f",
-          padding: "10px 20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexShrink: 0,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          {/* Blueprint grid icon */}
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: "linear-gradient(135deg, #1d4ed8, #7c3aed)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <rect
-                x="2"
-                y="2"
-                width="14"
-                height="14"
-                rx="2"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <line
-                x1="2"
-                y1="7"
-                x2="16"
-                y2="7"
-                stroke="white"
-                strokeWidth="1"
-              />
-              <line
-                x1="2"
-                y1="12"
-                x2="16"
-                y2="12"
-                stroke="white"
-                strokeWidth="1"
-              />
-              <line
-                x1="7"
-                y1="2"
-                x2="7"
-                y2="16"
-                stroke="white"
-                strokeWidth="1"
-              />
-              <line
-                x1="12"
-                y1="2"
-                x2="12"
-                y2="16"
-                stroke="white"
-                strokeWidth="1"
-              />
-            </svg>
-          </div>
-          <div>
+        {/* ── Header ──────────────────────────────────────────────────────── */}
+        <header
+          style={{
+            background: "linear-gradient(90deg, #060d1a, #0c1829)",
+            borderBottom: "1px solid #1e3a5f",
+            padding: "10px 10px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {/* Blueprint grid icon */}
             <div
               style={{
-                fontSize: 15,
-                fontWeight: 800,
-                color: "#f1f5f9",
-                letterSpacing: "0.05em",
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: "linear-gradient(135deg, #1d4ed8, #7c3aed)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
               }}
             >
-              {d.mms_id}
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect
+                  x="2"
+                  y="2"
+                  width="14"
+                  height="14"
+                  rx="2"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
+                <line
+                  x1="2"
+                  y1="7"
+                  x2="16"
+                  y2="7"
+                  stroke="white"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="2"
+                  y1="12"
+                  x2="16"
+                  y2="12"
+                  stroke="white"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="7"
+                  y1="2"
+                  x2="7"
+                  y2="16"
+                  stroke="white"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="12"
+                  y1="2"
+                  x2="12"
+                  y2="16"
+                  stroke="white"
+                  strokeWidth="1"
+                />
+              </svg>
             </div>
-            <div style={{ fontSize: 10, color: "#64748b", marginTop: 1 }}>
-              {d.mms_type_name} · {d.site?.site_name} · {d.site?.location}
+            <div>
+              <div
+                style={{
+                  fontSize: 15,
+                  fontWeight: 800,
+                  color: "#f1f5f9",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {d.mms_id}
+              </div>
+              <div style={{ marginTop: 1 }}>
+                {d.mms_type_name} · {d.site?.site_name} · {d.site?.location}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* <span
             style={{
               padding: "3px 10px",
               borderRadius: 20,
@@ -801,139 +776,141 @@ const ViewMms = ({ id: propId }) => {
             }}
           >
             {d.status}
-          </span>
-          <span
-            style={{
-              color: "#94a3b8",
-              fontSize: 10,
-              background: "#0e2040",
-              padding: "4px 12px",
-              borderRadius: 8,
-              border: "1px solid #1e3a5f",
-            }}
-          >
-            {d.client?.client_name}
-          </span>
-          <button
-            onClick={() => setShowPanel((p) => !p)}
-            style={{
-              background: "rgba(59,130,246,0.12)",
-              border: "1px solid rgba(59,130,246,0.35)",
-              color: "#60a5fa",
-              padding: "5px 14px",
-              borderRadius: 7,
-              cursor: "pointer",
-              fontSize: 10,
-              fontFamily: "monospace",
-              fontWeight: 700,
-            }}
-          >
-            {showPanel ? "Hide Specs" : "Show Specs"}
-          </button>
-        </div>
-      </header>
+          </span> */}
 
-      {/* ── Body ────────────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {/* Diagram area */}
-        <div
-          style={{
-            flex: 1,
-            padding: "12px 14px 8px",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
-          {/* Title strip */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 8,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div
-                style={{
-                  width: 3,
-                  height: 20,
-                  borderRadius: 2,
-                  background: "linear-gradient(180deg,#1d4ed8,#7c3aed)",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#cbd5e1",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                FRONT VIEW — 2P MMS STRUCTURE
-              </span>
-            </div>
-            {/* Legend */}
-            <div
+            <CBadge color={statusColor}>{d.status}</CBadge>
+            <span
               style={{
-                display: "flex",
-                gap: 12,
-                flexWrap: "wrap",
-                alignItems: "center",
+                color: "#94a3b8",
+                fontSize: 10,
+                background: "#0e2040",
+                padding: "4px 12px",
+                borderRadius: 8,
+                border: "1px solid #1e3a5f",
               }}
             >
-              {[
-                ["#1d4ed8", "Column"],
-                ["#7c3aed", "Rafter"],
-                ["#059669", "Perlin"],
-                ["#d97706", "Brace A"],
-                ["#dc2626", "Brace B"],
-                ["#475569", "Dimensions"],
-              ].map(([c, l]) => (
-                <span
-                  key={l}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 5,
-                    color: "#94a3b8",
-                    fontSize: 9,
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 14,
-                      height: 4,
-                      borderRadius: 2,
-                      background: c,
-                      display: "inline-block",
-                    }}
-                  />
-                  {l}
-                </span>
-              ))}
-            </div>
+              {d.client?.client_name}
+            </span>
+            <button
+              onClick={() => setShowPanel((p) => !p)}
+              style={{
+                background: "rgba(59,130,246,0.12)",
+                border: "1px solid rgba(59,130,246,0.35)",
+                color: "#60a5fa",
+                padding: "5px 14px",
+                borderRadius: 7,
+                cursor: "pointer",
+                fontSize: 10,
+                //fontFamily: "monospace",
+                fontWeight: 700,
+              }}
+            >
+              {showPanel ? "Hide Specs" : "Show Specs"}
+            </button>
           </div>
+        </header>
 
-          {/* SVG overlay on image */}
+        {/* ── Body ────────────────────────────────────────────────────────── */}
+        <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          {/* Diagram area */}
           <div
             style={{
               flex: 1,
-              position: "relative",
-              borderRadius: 10,
+              padding: "12px 14px 8px",
+              display: "flex",
+              flexDirection: "column",
               overflow: "hidden",
-              border: "1px solid #1e3a5f",
-              background: "#f8fafc",
             }}
           >
-            <svg
-              ref={svgRef}
-              viewBox="0 0 1200 700"
-              style={{ width: "100%", height: "100%", display: "block" }}
-              preserveAspectRatio="xMidYMid meet"
+            {/* Title strip */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 1,
+              }}
             >
-              {/* <defs>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div
+                  style={{
+                    width: 3,
+                    height: 20,
+                    borderRadius: 2,
+                    background: "linear-gradient(180deg,#1d4ed8,#7c3aed)",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "#cbd5e1",
+                    letterSpacing: "0.1em",
+                  }}
+                >
+                  FRONT VIEW — 2P MMS STRUCTURE
+                </span>
+              </div>
+              {/* Legend */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 12,
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                }}
+              >
+                {[
+                  ["#1d4ed8", "Column"],
+                  ["#7c3aed", "Rafter"],
+                  ["#059669", "Perlin"],
+                  ["#d97706", "Brace A"],
+                  ["#dc2626", "Brace B"],
+                  ["#475569", "Dimensions"],
+                ].map(([c, l]) => (
+                  <span
+                    key={l}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      color: "#94a3b8",
+                      fontSize: 9,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 14,
+                        height: 4,
+                        borderRadius: 2,
+                        background: c,
+                        display: "inline-block",
+                      }}
+                    />
+                    {l}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* SVG overlay on image */}
+            <div
+              style={{
+                flex: 1,
+                position: "relative",
+                borderRadius: 10,
+                overflow: "hidden",
+                border: "1px solid #1e3a5f",
+                background: "#f8fafc",
+              }}
+            >
+              <svg
+                ref={svgRef}
+                viewBox="0 0 1200 700"
+                style={{ width: "100%", height: "100%", display: "block" }}
+                preserveAspectRatio="xMidYMid meet"
+              >
+                {/* <defs>
                 <marker
                   id="arr"
                   markerWidth="6"
@@ -945,320 +922,325 @@ const ViewMms = ({ id: propId }) => {
                   <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8" />
                 </marker>
               </defs> */}
-              <defs>
-                {/* Dimension arrow */}
-                <marker
-                  id="arr"
-                  markerWidth="6"
-                  markerHeight="6"
-                  refX="3"
-                  refY="3"
-                  orient="auto"
-                >
-                  <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8" />
-                </marker>
+                <defs>
+                  {/* Dimension arrow */}
+                  <marker
+                    id="arr"
+                    markerWidth="6"
+                    markerHeight="6"
+                    refX="3"
+                    refY="3"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L6,3 L0,6 Z" fill="#94a3b8" />
+                  </marker>
 
-                {/* Annotation Arrow */}
-                <marker
-                  id="annotationArrow"
-                  markerWidth="10"
-                  markerHeight="10"
-                  refX="8"
-                  refY="3"
-                  orient="auto"
-                  markerUnits="strokeWidth"
-                >
-                  <path d="M0,0 L0,6 L9,3 z" fill="context-stroke" />
-                </marker>
-              </defs>
+                  {/* Annotation Arrow */}
+                  <marker
+                    id="annotationArrow"
+                    markerWidth="10"
+                    markerHeight="10"
+                    refX="8"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M0,0 L0,6 L9,3 z" fill="context-stroke" />
+                  </marker>
+                </defs>
 
-              {/* The actual structural image */}
-              <image
-                href={mmsImage}
-                x="80"
-                y="30"
-                width="1060"
-                height="640"
-                preserveAspectRatio="xMidYMid meet"
-                onLoad={() => setImgLoaded(true)}
-              />
-
-              {/* Semi-transparent white overlay to lighten image slightly for label readability */}
-              <rect
-                x="80"
-                y="30"
-                width="1060"
-                height="640"
-                fill="rgba(255,255,255,0.08)"
-              />
-
-              {/* Title watermark */}
-              <rect
-                x="870"
-                y="8"
-                width="322"
-                height="22"
-                rx="4"
-                fill="rgba(8,15,26,0.72)"
-              />
-              <text
-                x="1031"
-                y="24"
-                textAnchor="middle"
-                fontSize="10"
-                fontFamily="monospace"
-                fontWeight="700"
-                fill="#64748b"
-                letterSpacing="2"
-              >
-                FRONT VIEW — 2P MMS
-              </text>
-
-              {/* MMS ID badge */}
-              <rect
-                x="8"
-                y="8"
-                width="180"
-                height="22"
-                rx="4"
-                fill="rgba(29,78,216,0.2)"
-                stroke="rgba(29,78,216,0.5)"
-                strokeWidth="1"
-              />
-              <text
-                x="98"
-                y="23"
-                textAnchor="middle"
-                fontSize="9.5"
-                fontFamily="monospace"
-                fontWeight="800"
-                fill="#60a5fa"
-              >
-                {d.mms_id}
-              </text>
-
-              {/* ── Annotation dots + labels ─────────────────────────────── */}
-              {annotations.map((a) => (
-                <DimAnnotation
-                  key={a.id}
-                  {...a}
-                  active={hovered === a.id}
-                  onEnter={setHovered}
-                  onLeave={() => setHovered(null)}
+                {/* The actual structural image */}
+                <image
+                  href={mmsImage}
+                  x="80"
+                  y="30"
+                  width="1060"
+                  height="640"
+                  preserveAspectRatio="xMidYMid meet"
+                  onLoad={() => setImgLoaded(true)}
                 />
-              ))}
 
-              {/* ── Vertical dimension line for total height ─────────────── */}
-              <line
-                x1="100"
-                y1="98"
-                x2="100"
-                y2="630"
-                stroke="#475569"
-                strokeWidth="1.5"
-                strokeDasharray="4,2"
-                opacity="0.55"
-              />
-              <line
-                x1="94"
-                y1="98"
-                x2="106"
-                y2="98"
-                stroke="#475569"
-                strokeWidth="1.5"
-                opacity="0.7"
-              />
-              <line
-                x1="94"
-                y1="630"
-                x2="106"
-                y2="630"
-                stroke="#475569"
-                strokeWidth="1.5"
-                opacity="0.7"
-              />
-              <rect
-                x="52"
-                y="342"
-                width="42"
-                height="20"
-                rx="4"
-                fill="rgba(255,255,255,0.95)"
-                stroke="#475569"
-                strokeWidth="1"
-              />
-              <text
-                x="73"
-                y="356"
-                textAnchor="middle"
-                fontSize="9"
-                fontFamily="monospace"
-                fontWeight="700"
-                fill="#475569"
-              >
-                2083
-              </text>
+                {/* Semi-transparent white overlay to lighten image slightly for label readability */}
+                <rect
+                  x="80"
+                  y="30"
+                  width="1060"
+                  height="640"
+                  fill="rgba(255,255,255,0.08)"
+                />
 
-              {/* ── GL line label ─────────────────────────────────────────── */}
-              <text
-                x="130"
-                y="645"
-                fontSize="9"
-                fontFamily="monospace"
-                fontWeight="700"
-                fill="#374151"
-                opacity="0.8"
-              >
-                GL
-              </text>
-            </svg>
+                {/* Title watermark */}
+                <rect
+                  x="870"
+                  y="8"
+                  width="322"
+                  height="22"
+                  rx="4"
+                  fill="rgba(8,15,26,0.72)"
+                />
+                <text
+                  x="1031"
+                  y="24"
+                  textAnchor="middle"
+                  fontSize="10"
+                  //fontFamily="monospace"
+                  fontWeight="700"
+                  fill="#64748b"
+                  letterSpacing="2"
+                >
+                  FRONT VIEW — 2P MMS
+                </text>
+
+                {/* MMS ID badge */}
+                <rect
+                  x="8"
+                  y="8"
+                  width="180"
+                  height="22"
+                  rx="4"
+                  fill="rgba(29,78,216,0.2)"
+                  stroke="rgba(29,78,216,0.5)"
+                  strokeWidth="1"
+                />
+                <text
+                  x="98"
+                  y="23"
+                  textAnchor="middle"
+                  fontSize="9.5"
+                  //fontFamily="monospace"
+                  fontWeight="800"
+                  fill="#60a5fa"
+                >
+                  {d.mms_id}
+                </text>
+
+                {/* ── Annotation dots + labels ─────────────────────────────── */}
+                {annotations.map((a) => (
+                  <DimAnnotation
+                    key={a.id}
+                    {...a}
+                    active={hovered === a.id}
+                    onEnter={setHovered}
+                    onLeave={() => setHovered(null)}
+                    onClick={() => {
+                      setModalAnnotation(a); // store the full annotation object
+                      setSelectedImage(0); // reset to first image
+                      setAttachmentModal(true); // correct spelling
+                    }}
+                  />
+                ))}
+
+                {/* ── Vertical dimension line for total height ─────────────── */}
+                <line
+                  x1="100"
+                  y1="98"
+                  x2="100"
+                  y2="630"
+                  stroke="#475569"
+                  strokeWidth="1.5"
+                  strokeDasharray="4,2"
+                  opacity="0.55"
+                />
+                <line
+                  x1="94"
+                  y1="98"
+                  x2="106"
+                  y2="98"
+                  stroke="#475569"
+                  strokeWidth="1.5"
+                  opacity="0.7"
+                />
+                <line
+                  x1="94"
+                  y1="630"
+                  x2="106"
+                  y2="630"
+                  stroke="#475569"
+                  strokeWidth="1.5"
+                  opacity="0.7"
+                />
+                <rect
+                  x="52"
+                  y="342"
+                  width="42"
+                  height="20"
+                  rx="4"
+                  fill="rgba(255,255,255,0.95)"
+                  stroke="#475569"
+                  strokeWidth="1"
+                />
+                <text
+                  x="73"
+                  y="356"
+                  textAnchor="middle"
+                  fontSize="9"
+                  //fontFamily="monospace"
+                  fontWeight="700"
+                  fill="#475569"
+                >
+                  2083
+                </text>
+
+                {/* ── GL line label ─────────────────────────────────────────── */}
+                <text
+                  x="130"
+                  y="645"
+                  fontSize="9"
+                  //fontFamily="monospace"
+                  fontWeight="700"
+                  fill="#374151"
+                  opacity="0.8"
+                >
+                  GL
+                </text>
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {/* ── Side specs panel ─────────────────────────────────────────── */}
-        {showPanel && (
-          <aside
-            style={{
-              width: 236,
-              background: "#060d1a",
-              borderLeft: "1px solid #1e3a5f",
-              padding: "14px 12px",
-              overflowY: "auto",
-              flexShrink: 0,
-            }}
-          >
-            <div
+          {/* ── Side specs panel ─────────────────────────────────────────── */}
+          {showPanel && (
+            <aside
               style={{
-                fontSize: 9,
-                fontWeight: 800,
-                color: "#64748b",
-                letterSpacing: "0.18em",
-                marginBottom: 14,
+                width: 236,
+                background: "#060d1a",
+                borderLeft: "1px solid #1e3a5f",
+                padding: "14px 12px",
+                overflowY: "auto",
+                flexShrink: 0,
               }}
             >
-              SPECIFICATIONS
-            </div>
+              <div
+                style={{
+                  fontSize: 9,
+                  fontWeight: 800,
+                  color: "#64748b",
+                  letterSpacing: "0.18em",
+                  marginBottom: 14,
+                }}
+              >
+                SPECIFICATIONS
+              </div>
 
-            <SpecSection title="Column" color="#1d4ed8">
-              <SpecRow
-                label="Total Length"
-                value={`${col.total_length?.value} mm`}
-                color="#60a5fa"
-              />
-              <SpecRow
-                label="Above Ground"
-                value={`${col.upper_ground_length?.value} mm`}
-              />
-              <SpecRow
-                label="Pile Depth"
-                value={`${col.piling_depth_length?.value} mm`}
-              />
-              <SpecRow
-                label="Pile Ø"
-                value={`${col.pilling_diameter?.value} mm`}
-              />
-              <SpecRow
-                label="H × W × T"
-                value={`${col.height?.value}×${col.width?.value}×${col.thickness?.value}`}
-              />
-              <SpecRow
-                label="C-Bar H"
-                value={`${col.c_bar_height?.value} mm`}
-              />
-            </SpecSection>
+              <SpecSection title="Column" color="#1d4ed8">
+                <SpecRow
+                  label="Total Length"
+                  value={`${col.total_length?.value} mm`}
+                  color="#60a5fa"
+                />
+                <SpecRow
+                  label="Above Ground"
+                  value={`${col.upper_ground_length?.value} mm`}
+                />
+                <SpecRow
+                  label="Pile Depth"
+                  value={`${col.piling_depth_length?.value} mm`}
+                />
+                <SpecRow
+                  label="Pile Ø"
+                  value={`${col.pilling_diameter?.value} mm`}
+                />
+                <SpecRow
+                  label="H × W × T"
+                  value={`${col.height?.value}×${col.width?.value}×${col.thickness?.value}`}
+                />
+                <SpecRow
+                  label="C-Bar H"
+                  value={`${col.c_bar_height?.value} mm`}
+                />
+              </SpecSection>
 
-            <SpecSection title="Rafter" color="#7c3aed">
-              <SpecRow
-                label="Total Length"
-                value={`${raf.total_length?.value} mm`}
-                color="#a78bfa"
-              />
-              <SpecRow
-                label="H × W × T"
-                value={`${raf.height?.value}×${raf.width?.value}×${raf.thickness?.value}`}
-              />
-              <SpecRow
-                label="C-Bar H"
-                value={`${raf.c_bar_height?.value} mm`}
-              />
-              <SpecRow
-                label="Perlin Count"
-                value={`${raf.perlin_dimension?.perlin_count?.value} pcs`}
-              />
-              <SpecRow
-                label="P→P Gap"
-                value={`${raf.perlin_dimension?.perlin_to_perlin_gap?.value} mm`}
-              />
-              <SpecRow
-                label="Mod→P Gap"
-                value={`${raf.perlin_dimension?.module_to_perlin_gap?.value} mm`}
-              />
-              <SpecRow
-                label="Center P→P"
-                value={`${raf.perlin_dimension?.center_perlin_to_perlin_gap?.value} mm`}
-              />
-            </SpecSection>
+              <SpecSection title="Rafter" color="#7c3aed">
+                <SpecRow
+                  label="Total Length"
+                  value={`${raf.total_length?.value} mm`}
+                  color="#a78bfa"
+                />
+                <SpecRow
+                  label="H × W × T"
+                  value={`${raf.height?.value}×${raf.width?.value}×${raf.thickness?.value}`}
+                />
+                <SpecRow
+                  label="C-Bar H"
+                  value={`${raf.c_bar_height?.value} mm`}
+                />
+                <SpecRow
+                  label="Perlin Count"
+                  value={`${raf.perlin_dimension?.perlin_count?.value} pcs`}
+                />
+                <SpecRow
+                  label="P→P Gap"
+                  value={`${raf.perlin_dimension?.perlin_to_perlin_gap?.value} mm`}
+                />
+                <SpecRow
+                  label="Mod→P Gap"
+                  value={`${raf.perlin_dimension?.module_to_perlin_gap?.value} mm`}
+                />
+                <SpecRow
+                  label="Center P→P"
+                  value={`${raf.perlin_dimension?.center_perlin_to_perlin_gap?.value} mm`}
+                />
+              </SpecSection>
 
-            <SpecSection
-              title={`Perlin (${per.type || "C"}-Type)`}
-              color="#059669"
-            >
-              <SpecRow
-                label="Height"
-                value={`${per.perlin_dimension?.height?.value} mm`}
-                color="#34d399"
-              />
-              <SpecRow
-                label="Width"
-                value={`${per.perlin_dimension?.width?.value} mm`}
-              />
-              <SpecRow
-                label="Thickness"
-                value={`${per.perlin_dimension?.thickness?.value} mm`}
-              />
-              <SpecRow
-                label="C-Bar H"
-                value={`${per.perlin_dimension?.c_bar_height?.value} mm`}
-              />
-              <SpecRow
-                label="Flange L"
-                value={`${per.perlin_dimension?.flenge_length?.value} mm`}
-              />
-            </SpecSection>
+              <SpecSection
+                title={`Perlin (${per.type || "C"}-Type)`}
+                color="#059669"
+              >
+                <SpecRow
+                  label="Height"
+                  value={`${per.perlin_dimension?.height?.value} mm`}
+                  color="#34d399"
+                />
+                <SpecRow
+                  label="Width"
+                  value={`${per.perlin_dimension?.width?.value} mm`}
+                />
+                <SpecRow
+                  label="Thickness"
+                  value={`${per.perlin_dimension?.thickness?.value} mm`}
+                />
+                <SpecRow
+                  label="C-Bar H"
+                  value={`${per.perlin_dimension?.c_bar_height?.value} mm`}
+                />
+                <SpecRow
+                  label="Flange L"
+                  value={`${per.perlin_dimension?.flenge_length?.value} mm`}
+                />
+              </SpecSection>
 
-            <SpecSection title="Brace A" color="#d97706">
-              <SpecRow
-                label="Length"
-                value={`${bra.a?.length?.value} mm`}
-                color="#fbbf24"
-              />
-              <SpecRow
-                label="H × W × T"
-                value={`${bra.a?.height?.value}×${bra.a?.width?.value}×${bra.a?.thickness?.value}`}
-              />
-              <SpecRow
-                label="C-Bar H"
-                value={`${bra.a?.c_bar_height?.value} mm`}
-              />
-            </SpecSection>
+              <SpecSection title="Brace A" color="#d97706">
+                <SpecRow
+                  label="Length"
+                  value={`${bra.a?.length?.value} mm`}
+                  color="#fbbf24"
+                />
+                <SpecRow
+                  label="H × W × T"
+                  value={`${bra.a?.height?.value}×${bra.a?.width?.value}×${bra.a?.thickness?.value}`}
+                />
+                <SpecRow
+                  label="C-Bar H"
+                  value={`${bra.a?.c_bar_height?.value} mm`}
+                />
+              </SpecSection>
 
-            <SpecSection title="Brace B" color="#dc2626">
-              <SpecRow
-                label="Length"
-                value={`${bra.b?.length?.value} mm`}
-                color="#f87171"
-              />
-              <SpecRow
-                label="H × W × T"
-                value={`${bra.b?.height?.value}×${bra.b?.width?.value}×${bra.b?.thickness?.value}`}
-              />
-              <SpecRow
-                label="C-Bar H"
-                value={`${bra.b?.c_bar_height?.value} mm`}
-              />
-            </SpecSection>
+              <SpecSection title="Brace B" color="#dc2626">
+                <SpecRow
+                  label="Length"
+                  value={`${bra.b?.length?.value} mm`}
+                  color="#f87171"
+                />
+                <SpecRow
+                  label="H × W × T"
+                  value={`${bra.b?.height?.value}×${bra.b?.width?.value}×${bra.b?.thickness?.value}`}
+                />
+                <SpecRow
+                  label="C-Bar H"
+                  value={`${bra.b?.c_bar_height?.value} mm`}
+                />
+              </SpecSection>
 
-            {/* Activity log */}
+              {/* Activity log
             {d.last_activity?.length > 0 && (
               <div>
                 <div
@@ -1301,11 +1283,129 @@ const ViewMms = ({ id: propId }) => {
                   </div>
                 ))}
               </div>
-            )}
-          </aside>
-        )}
+            )} */}
+            </aside>
+          )}
+        </div>
       </div>
-    </div>
+      <LastActivity lastactivity={d.last_activity} />
+
+      <CModal
+        visible={attachmentModal}
+        onClose={() => setAttachmentModal(false)} // fixed typo
+        size="xl"
+        alignment="center"
+        backdrop="static"
+        scrollable
+      >
+        <CModalHeader
+          style={{ background: "#0a1628", borderBottom: "1px solid #1e3a5f" }}
+          closeButton={false}
+        >
+          <CModalTitle style={{ color: "#e2e8f0", fontWeight: 700 }}>
+            {modalAnnotation?.label} Images
+          </CModalTitle>
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setAttachmentModal(false)} // fixed typo
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody style={{ background: "#060f1e", padding: "20px" }}>
+          {!modalAnnotation?.attatchments?.length ? (
+            <div
+              style={{
+                color: "#94a3b8",
+                textAlign: "center",
+                padding: "40px 0",
+              }}
+            >
+              No images available
+            </div>
+          ) : (
+            <>
+              {/* MAIN IMAGE */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "500px",
+                  borderRadius: "14px",
+                  overflow: "hidden",
+                  marginBottom: "16px",
+                }}
+              >
+                <img
+                  src={modalAnnotation.attatchments[selectedImage]?.img}
+                  alt={modalAnnotation.attatchments[selectedImage]?.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+
+              {/* IMAGE TITLE */}
+              <div
+                style={{
+                  color: "#cbd5e1",
+                  fontSize: "0.95rem",
+                  marginBottom: "16px",
+                  textAlign: "center",
+                  fontWeight: 600,
+                }}
+              >
+                {modalAnnotation.attatchments[selectedImage]?.name}
+              </div>
+
+              {/* THUMBNAILS */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  overflowX: "auto",
+                  paddingBottom: "6px",
+                }}
+              >
+                {modalAnnotation.attatchments.map((attachment, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    style={{
+                      width: "90px",
+                      height: "90px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      border:
+                        selectedImage === index
+                          ? "2px solid #2563eb"
+                          : "1px solid #1e3a5f",
+                      flexShrink: 0,
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <img
+                      src={attachment?.img}
+                      alt={attachment?.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </CModalBody>
+      </CModal>
+    </>
   );
 };
 
