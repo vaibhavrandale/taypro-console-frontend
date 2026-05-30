@@ -180,7 +180,7 @@ const GenerateNewCertificate = () => {
       designation: userInfo?.designation,
       signature: userInfo?.signature ? userInfo.signature : verificationBadge, // You can add a signature URL or data here
       verified: true,
-      verified_at: new Date().toLocaleString(),
+      verified_at: new Date(),
     },
     {
       for: "RECEIVER",

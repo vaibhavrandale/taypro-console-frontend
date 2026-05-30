@@ -28,7 +28,7 @@ export default function SiteSelect({
         setSiteIds(formatted);
         // Default select first value
         if (formatted.length > 0) {
-          onChange(formatted[2].value);
+          onChange(formatted[0].value);
         }
       } catch (e) {
         console.log(e);
