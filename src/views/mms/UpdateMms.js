@@ -1003,7 +1003,7 @@ const UpdateMms = () => {
 
                       <CTableHeaderCell>Client</CTableHeaderCell>
 
-                      <CTableHeaderCell>Location</CTableHeaderCell>
+                      <CTableHeaderCell>Site Location</CTableHeaderCell>
 
                       <CTableHeaderCell>Created By</CTableHeaderCell>
 
