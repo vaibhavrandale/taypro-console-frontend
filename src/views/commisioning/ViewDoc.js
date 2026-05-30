@@ -5,14 +5,27 @@ import "./commisioning.css";
 // import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
 import Tayprofordarkbg from "../../assets/brand/logofordarkbg.png";
 import Tayproforwhitebg from "../../assets/brand/logoforwhitebg.png";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import RobotSelectionModal from "./RobotSelectionModal";
-import { CAlert, CButton } from "@coreui/react";
+import {
+  CAlert,
+  CBadge,
+  CButton,
+  CCol,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow,
+} from "@coreui/react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
+import CIcon from "@coreui/icons-react";
+import { cilCloudUpload, cilX } from "@coreui/icons";
 
 // status: "completed", // pending | in_progress | completed | failed
 const reducer = (state, action) => {
@@ -58,6 +71,13 @@ const reducer = (state, action) => {
         loadingVerify: false,
       };
 
+    case "ATTACH_CERT_REQUEST":
+      return { ...state, attachingCertLoading: true };
+    case "ATTACH_CERT_SUCCESS":
+      return { ...state, attachingCertLoading: false };
+    case "ATTACH_CERT_FAIL":
+      return { ...state, attachingCertLoading: false };
+
     default:
       return state;
   }
@@ -65,19 +85,29 @@ const reducer = (state, action) => {
 
 const ViewDoc = () => {
   const [
-    { loadingCertificate, certificate, certificateError, loadingVerify },
+    {
+      loadingCertificate,
+      certificate,
+      certificateError,
+      loadingVerify,
+      attachingCertLoading,
+    },
     dispatch,
   ] = useReducer(reducer, {
     certificate: {},
     loadingCertificate: false,
     certificateError: "",
     loadingVerify: false,
+    attachingCertLoading: false,
   });
 
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const { id } = useParams();
   const [showModal, setShowModal] = useState(false);
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [certificate_file, setCertificateFile] = useState("");
   const [selectedRobots, setSelectedRobots] = useState([]);
   const fetchCertificates = async () => {
     dispatch({ type: "FETCH_CERTIFICATES_REQUEST" });
@@ -174,6 +204,76 @@ const ViewDoc = () => {
     }
   };
 
+  const attachCertHandler = async (e) => {
+    try {
+      if (!certificate_file) {
+        toast.error("Please upload a certificate file first.");
+        return;
+      }
+      dispatch({ type: "ATTACH_CERT_REQUEST" });
+
+      const result = await axios.put(
+        `/api/v1/commisioning-certificates/${id}/attach-certificate`,
+        {
+          certificate_file,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      dispatch({
+        type: "ATTACH_CERT_SUCCESS",
+        payload: result.data.data,
+      });
+
+      toast.success(result.data.message);
+      fetchCertificates();
+      setShowAttachModal(false);
+    } catch (e) {
+      dispatch({ type: "ATTACH_CERT_FAIL" });
+
+      toast.error(
+        e.response?.data?.message ||
+          e.response?.data?.error ||
+          "Attachment failed",
+      );
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+
+    try {
+      setImageUploadLoading(true);
+
+      const { data } = await axios.post(
+        "/api/v1/image-upload/existing-commisioning-certificates",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Authorization: `Bearer ${authtoken}`,
+          },
+          withCredentials: true,
+        },
+      );
+
+      setCertificateFile(data.url);
+      toast.success(
+        "File uploaded successfully. Click Attach Certificate to add it.",
+      );
+    } catch (err) {
+      toast.error("File upload failed. Please try again.");
+    } finally {
+      setImageUploadLoading(false);
+    }
+  };
+
   return (
     <>
       {loadingCertificate ? (
@@ -209,6 +309,16 @@ const ViewDoc = () => {
                     {loadingVerify ? "Verifying..." : "Verify"}
                   </CButton>
                 )}
+
+              {userInfo.type === "Internal" && (
+                <CButton
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => setShowAttachModal(true)}
+                >
+                  View Certificate
+                </CButton>
+              )}
             </div>
           </div>
 
@@ -435,6 +545,184 @@ const ViewDoc = () => {
             //   setSelectedRobots(robots);
             // }}
           />
+
+          {/* -------------------------------attach certificate----------------------------------------------- */}
+          {/* <CModal visible={showAttachModal} size="lg" backdrop="static">
+            <CModalHeader
+              closeButton={false}
+              className="d-flex justify-content-between align-items-center"
+            >
+              <CModalTitle>Attached Certificate</CModalTitle>
+              <button
+                type="button"
+                className="border-0 ms-auto py-0 px-1"
+                onClick={() => setShowAttachModal(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
+            </CModalHeader>
+
+         
+            <CModalBody>
+              <CCol md="9">
+                {certificate_file || certificate.certificate_file ? (
+                  <div className="mb-3">
+                    <Link
+                      to={certificate.certificate_file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Uploaded File
+                    </Link>
+                  </div>
+                ) : null}
+              </CCol>
+              <CCol md="3">
+                <div className="mb-3">
+                  <label className="form-label">Upload File</label>
+                  <div className="container-btn-file p-2 m-2 w-80">
+                    <CIcon icon={cilCloudUpload} className="upload-icon" />
+                    <input
+                      type="file"
+                      name="item_image"
+                      onChange={handleImageUpload}
+                      className="mb-3 file"
+                      // disabled={uploading}
+                    />
+                  </div>
+
+                  {imageUploadLoading && <LoadingSpinner />}
+                </div>
+              </CCol>
+            </CModalBody>
+
+         
+            <CModalFooter>
+              <CButton
+                size="sm"
+                color="primary"
+                onClick={attachCertHandler}
+                disabled={attachingCertLoading}
+              >
+                {attachingCertLoading ? "Attaching..." : "Attach Certificate"}
+              </CButton>
+            </CModalFooter>
+          </CModal> */}
+
+          <CModal visible={showAttachModal} size="lg" backdrop="static">
+            <CModalHeader
+              closeButton={false}
+              className="d-flex justify-content-between align-items-center"
+            >
+              <CModalTitle>Attached Certificate</CModalTitle>
+              <button
+                type="button"
+                className="border-0 ms-auto py-0 px-1"
+                onClick={() => setShowAttachModal(false)}
+                style={{ background: "none" }}
+              >
+                <CIcon icon={cilX} size="lg" />
+              </button>
+            </CModalHeader>
+
+            {/* BODY */}
+            <CModalBody>
+              <div className="">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="mb-3 w-25">
+                    <label className="form-label">Upload File</label>
+                    <div className="container-btn-file p-2 m-2 w-80">
+                      <CIcon icon={cilCloudUpload} className="upload-icon" />
+                      <input
+                        type="file"
+                        name="item_image"
+                        onChange={handleImageUpload}
+                        accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg,application/pdf"
+                        className="mb-3 file"
+                      />
+                    </div>
+                    {imageUploadLoading && <LoadingSpinner />}
+                  </div>
+                  {(certificate_file || certificate.certificate_file) && (
+                    <CButton
+                      size="sm"
+                      color="primary"
+                      onClick={attachCertHandler}
+                      disabled={attachingCertLoading || imageUploadLoading}
+                    >
+                      {attachingCertLoading
+                        ? "Attaching..."
+                        : "Upload Certificate"}
+                    </CButton>
+                  )}
+                </div>
+                {certificate_file || certificate.certificate_file ? (
+                  <div className="mb-3">
+                    {(() => {
+                      const fileUrl =
+                        certificate_file || certificate?.certificate_file;
+                      if (!fileUrl) return null;
+
+                      const ext = fileUrl.split(".").pop().toLowerCase();
+                      const isImage = ["png", "jpg", "jpeg"].includes(ext);
+                      const isPdf = ext === "pdf";
+
+                      return (
+                        <div className="mb-3">
+                          {isImage && (
+                            <img
+                              src={fileUrl}
+                              alt="Certificate"
+                              style={{
+                                width: "100%",
+                                maxHeight: "500px",
+                                objectFit: "contain",
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                              }}
+                            />
+                          )}
+
+                          {isPdf && (
+                            <iframe
+                              src={fileUrl}
+                              title="Certificate PDF"
+                              width="100%"
+                              height="500px"
+                              style={{
+                                border: "1px solid #ccc",
+                                borderRadius: "4px",
+                              }}
+                            />
+                          )}
+
+                          {!isImage && !isPdf && (
+                            <Link
+                              to={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View Uploaded File
+                            </Link>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                ) : (
+                  <CBadge color="warning" className="p-2">
+                    No certificate file uploaded yet.
+                  </CBadge>
+                )}
+              </div>
+            </CModalBody>
+
+            {/* FOOTER */}
+            <CModalFooter></CModalFooter>
+          </CModal>
+
+          {/* -------------------------------attach certificate----------------------------------------------- */}
         </div>
       ) : (
         <span>No Certificate Found</span>

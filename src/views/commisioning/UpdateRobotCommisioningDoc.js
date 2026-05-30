@@ -1477,9 +1477,10 @@ const UpdateRobotCommisioningDoc = () => {
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Commissioning doc updated successfully!");
-      navigate(
-        `/${adminroute}/commissioning/view-robot-commisioning-doc/${id}`,
-      );
+      // navigate(
+      //   `/${adminroute}/commissioning/view-robot-commisioning-doc/${id}`,
+      // );
+      navigate(`/${adminroute}/commissioning/non-commisioned-robots`);
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error;
       dispatch({ type: "UPDATE_FAIL" });
