@@ -1,667 +1,3 @@
-// // import React from "react";
-
-// // const UpdateMms = () => {
-// //   return <div>UpdateMms</div>;
-// // };
-
-// // export default UpdateMms;
-
-// import React, { useEffect, useReducer, useState } from "react";
-// import { useNavigate, useParams } from "react-router-dom";
-// import axios from "axios";
-// import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
-
-// import {
-//   CButton,
-//   CCard,
-//   CCardBody,
-//   CCardHeader,
-//   CCol,
-//   CFormInput,
-//   CFormLabel,
-//   CFormSelect,
-//   CFormTextarea,
-//   CRow,
-// } from "@coreui/react";
-// import LoadingSpinner from "../../components/LoadingSpinner";
-
-// const reducer = (state, action) => {
-//   switch (action.type) {
-//     case "FETCH_REQUEST":
-//       return {
-//         ...state,
-//         fetchloading: true,
-//         error: "",
-//       };
-
-//     case "FETCH_SUCCESS":
-//       return {
-//         ...state,
-//         fetchloading: false,
-//         error: "",
-//       };
-
-//     case "FETCH_FAIL":
-//       return {
-//         ...state,
-//         fetchloading: false,
-//         error: action.payload,
-//       };
-
-//     case "UPDATE_REQUEST":
-//       return {
-//         ...state,
-//         updateloading: true,
-//       };
-
-//     case "UPDATE_SUCCESS":
-//       return {
-//         ...state,
-//         updateloading: false,
-//       };
-
-//     case "UPDATE_FAIL":
-//       return {
-//         ...state,
-//         updateloading: false,
-//         error: action.payload,
-//       };
-
-//     default:
-//       return state;
-//   }
-// };
-
-// const UpdateMms = () => {
-//   const [{ fetchloading, updateloading, error }, dispatch] = useReducer(
-//     reducer,
-//     {
-//       fetchloading: true,
-//       updateloading: false,
-//       error: "",
-//     },
-//   );
-
-//   const { id } = useParams();
-
-//   const navigate = useNavigate();
-
-//   const userInfo = useSelector((state) => state.userInfo);
-
-//   const [imageUploading, setImageUploading] = useState({});
-//   const [imageRemoving, setImageRemoving] = useState({});
-
-//   const [formData, setFormData] = useState({
-//     status: "",
-//     remark: "",
-//     tilt_angle: {},
-//     perlin: {},
-//     rafter: {},
-//     braces: {},
-//     column: {},
-//     site_survey: [],
-//   });
-
-//   /**
-//    * ADMIN ROUTE
-//    */
-
-//   let adminroute = "";
-
-//   if (userInfo?.role === "Master Admin") {
-//     adminroute = "master-admin";
-//   } else if (userInfo?.role === "Master User") {
-//     adminroute = "master-user";
-//   } else if (userInfo?.role === "Service Admin") {
-//     adminroute = "service-admin";
-//   } else if (userInfo?.role === "Project Admin") {
-//     adminroute = "project-admin";
-//   } else if (userInfo?.role === "Design Admin") {
-//     adminroute = "design-admin";
-//   } else if (userInfo?.role === "Site Incharge") {
-//     adminroute = "site-incharge";
-//   } else if (userInfo?.role === "Site Technician") {
-//     adminroute = "site-technician";
-//   } else if (userInfo?.role === "Client Site Technician") {
-//     adminroute = "client-site-technician";
-//   } else if (userInfo?.role === "Project User") {
-//     adminroute = "project-user";
-//   } else if (userInfo?.role === "Service User") {
-//     adminroute = "service-user";
-//   }
-
-//   /**
-//    * FETCH DATA
-//    */
-
-//   useEffect(() => {
-//     const fetchMmsStructure = async () => {
-//       dispatch({
-//         type: "FETCH_REQUEST",
-//       });
-
-//       try {
-//         const response = await axios.get(`/api/v1/mms-structure/${id}`, {
-//           withCredentials: true,
-//         });
-
-//         const data = response.data.data;
-
-//         setFormData({
-//           status: data.status || "",
-//           remark: data.remark || "",
-//           tilt_angle: data.tilt_angle || {},
-//           perlin: data.perlin || {},
-//           rafter: data.rafter || {},
-//           braces: data.braces || {},
-//           column: data.column || {},
-//           site_survey: data.site_survey || [],
-//         });
-
-//         dispatch({
-//           type: "FETCH_SUCCESS",
-//         });
-//       } catch (error) {
-//         dispatch({
-//           type: "FETCH_FAIL",
-//           payload: error.response?.data?.message || error.message,
-//         });
-
-//         toast.error(error.response?.data?.message || error.message);
-//       }
-//     };
-
-//     fetchMmsStructure();
-//   }, [id]);
-
-//   /**
-//    * NORMAL FIELD CHANGE
-//    */
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: value,
-//     }));
-//   };
-
-//   /**
-//    * UPDATE NESTED FIELD
-//    */
-
-//   const updateNestedField = (obj, path, value) => {
-//     const keys = path.split(".");
-
-//     const updated = { ...obj };
-
-//     let current = updated;
-
-//     for (let i = 0; i < keys.length - 1; i++) {
-//       current[keys[i]] = {
-//         ...current[keys[i]],
-//       };
-
-//       current = current[keys[i]];
-//     }
-
-//     current[keys[keys.length - 1]] = value;
-
-//     return updated;
-//   };
-
-//   /**
-//    * HANDLE FIELD CHANGE
-//    */
-
-//   const handleFieldChange = (path, value) => {
-//     setFormData((prev) => updateNestedField(prev, path, value));
-//   };
-
-//   /**
-//    * UPLOAD ATTACHMENT
-//    */
-
-//   const handleAttachmentUpload = async (e, path) => {
-//     const files = Array.from(e.target.files);
-
-//     if (!files.length) return;
-
-//     try {
-//       setImageUploading((prev) => ({
-//         ...prev,
-//         [path]: true,
-//       }));
-
-//       const uploadedAttachments = [];
-
-//       for (const file of files) {
-//         const bodyFormData = new FormData();
-
-//         bodyFormData.append("file", file);
-
-//         const response = await axios.post(
-//           `/api/v1/image-upload/mms-structure`,
-//           bodyFormData,
-//           {
-//             headers: {
-//               "Content-Type": "multipart/form-data",
-//             },
-//             withCredentials: true,
-//           },
-//         );
-
-//         uploadedAttachments.push({
-//           name: response.data.original_name || file.name,
-
-//           img: response.data.url,
-
-//           preview_url: response.data.preview_url || response.data.url,
-//         });
-//       }
-
-//       const currentAttachments =
-//         path.split(".").reduce((acc, key) => acc[key], formData)
-//           ?.attatchments || [];
-
-//       const updated = updateNestedField(formData, `${path}.attatchments`, [
-//         ...currentAttachments,
-//         ...uploadedAttachments,
-//       ]);
-
-//       setFormData(updated);
-
-//       toast.success("Attachments uploaded successfully!");
-//     } catch (error) {
-//       toast.error(
-//         error.response?.data?.message ||
-//           error.response?.data?.error ||
-//           "Failed to upload attachments",
-//       );
-//     } finally {
-//       setImageUploading((prev) => ({
-//         ...prev,
-//         [path]: false,
-//       }));
-//     }
-//   };
-
-//   /**
-//    * REMOVE ATTACHMENT
-//    */
-
-//   const handleRemoveAttachment = async (path, attachmentIndex) => {
-//     try {
-//       setImageRemoving((prev) => ({
-//         ...prev,
-//         [`${path}-${attachmentIndex}`]: true,
-//       }));
-
-//       const attachments =
-//         path.split(".").reduce((acc, key) => acc[key], formData)
-//           ?.attatchments || [];
-
-//       const updatedAttachments = attachments.filter(
-//         (_, idx) => idx !== attachmentIndex,
-//       );
-
-//       const updated = updateNestedField(
-//         formData,
-//         `${path}.attatchments`,
-//         updatedAttachments,
-//       );
-
-//       setFormData(updated);
-
-//       toast.success("Attachment removed successfully!");
-//     } catch (error) {
-//       toast.error("Failed to remove attachment");
-//     } finally {
-//       setImageRemoving((prev) => ({
-//         ...prev,
-//         [`${path}-${attachmentIndex}`]: false,
-//       }));
-//     }
-//   };
-
-//   /**
-//    * RENDER DYNAMIC FIELDS
-//    */
-
-//   const renderFields = (obj, parentPath = "") => {
-//     return Object.entries(obj).map(([key, value]) => {
-//       const currentPath = parentPath ? `${parentPath}.${key}` : key;
-
-//       /**
-//        * VALUE FIELD
-//        */
-
-//       if (typeof value === "object" && value !== null && "value" in value) {
-//         return (
-//           <CCol md={6} key={currentPath} className="mb-4">
-//             <CCard className="shadow-sm h-100">
-//               <CCardBody>
-//                 <CFormLabel className="fw-bold text-capitalize">
-//                   {key.replaceAll("_", " ")}
-//                 </CFormLabel>
-
-//                 <CFormInput
-//                   type="number"
-//                   value={value.value || ""}
-//                   onChange={(e) =>
-//                     handleFieldChange(`${currentPath}.value`, e.target.value)
-//                   }
-//                 />
-
-//                 {/* ATTACHMENTS */}
-//                 <div className="mt-3">
-//                   <div className="d-flex align-items-center gap-2">
-//                     <CFormInput
-//                       type="file"
-//                       multiple
-//                       onChange={(e) => handleAttachmentUpload(e, currentPath)}
-//                     />
-
-//                     {imageUploading[currentPath] && <LoadingSpinner />}
-//                   </div>
-
-//                   {Array.isArray(value.attatchments) &&
-//                     value.attatchments.length > 0 && (
-//                       <div className="d-flex flex-wrap gap-2 mt-3">
-//                         {value.attatchments.map((attachment, idx) => (
-//                           <div
-//                             key={idx}
-//                             className="position-relative border rounded p-1"
-//                           >
-//                             <img
-//                               src={attachment.preview_url || attachment.img}
-//                               alt={attachment.name}
-//                               width={100}
-//                               height={100}
-//                               className="rounded"
-//                               style={{
-//                                 objectFit: "cover",
-//                               }}
-//                             />
-
-//                             <button
-//                               type="button"
-//                               className="btn btn-danger btn-sm position-absolute top-0 end-0"
-//                               style={{
-//                                 padding: "2px 6px",
-//                                 fontSize: "10px",
-//                               }}
-//                               onClick={() =>
-//                                 handleRemoveAttachment(currentPath, idx)
-//                               }
-//                             >
-//                               {imageRemoving[`${currentPath}-${idx}`] ? (
-//                                 <LoadingSpinner />
-//                               ) : (
-//                                 "X"
-//                               )}
-//                             </button>
-//                           </div>
-//                         ))}
-//                       </div>
-//                     )}
-//                 </div>
-//               </CCardBody>
-//             </CCard>
-//           </CCol>
-//         );
-//       }
-
-//       /**
-//        * NESTED OBJECT
-//        */
-
-//       if (typeof value === "object" && value !== null) {
-//         return (
-//           <div key={currentPath}>
-//             <h5 className="mt-4 text-uppercase">{key.replaceAll("_", " ")}</h5>
-
-//             <CRow>{renderFields(value, currentPath)}</CRow>
-//           </div>
-//         );
-//       }
-
-//       /**
-//        * STRING FIELD
-//        */
-
-//       if (typeof value === "string") {
-//         return (
-//           <CCol md={12} key={currentPath} className="mb-3">
-//             <CFormLabel className="fw-bold text-capitalize">
-//               {key.replaceAll("_", " ")}
-//             </CFormLabel>
-
-//             <CFormTextarea
-//               rows={3}
-//               value={value}
-//               onChange={(e) => handleFieldChange(currentPath, e.target.value)}
-//             />
-//           </CCol>
-//         );
-//       }
-
-//       return null;
-//     });
-//   };
-
-//   /**
-//    * SUBMIT
-//    */
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     dispatch({
-//       type: "UPDATE_REQUEST",
-//     });
-
-//     try {
-//       await axios.put(`/api/v1/mms-structure/${id}`, formData, {
-//         withCredentials: true,
-//       });
-
-//       dispatch({
-//         type: "UPDATE_SUCCESS",
-//       });
-
-//       toast.success("MMS Structure updated successfully!");
-
-//       navigate(`/${adminroute}/view-mms-structure/${id}`);
-//     } catch (error) {
-//       dispatch({
-//         type: "UPDATE_FAIL",
-//         payload: error.response?.data?.message || error.message,
-//       });
-
-//       toast.error(error.response?.data?.message || error.message);
-//     }
-//   };
-
-//   /**
-//    * LOADING
-//    */
-
-//   if (fetchloading) {
-//     return <LoadingSpinner />;
-//   }
-
-//   /**
-//    * ERROR
-//    */
-
-//   if (error) {
-//     return <p className="text-danger text-center mt-3">{error}</p>;
-//   }
-
-//   return (
-//     <div className="update-robot-container px-3">
-//       <CCard className="w-100 shadow-sm rounded-lg">
-//         <CCardHeader>
-//           <h4 className="mb-0">Update MMS Structure</h4>
-//         </CCardHeader>
-
-//         <CCardBody>
-//           <form onSubmit={handleSubmit}>
-//             {/* STATUS + REMARK */}
-//             <CRow>
-//               <CCol md={6} className="mb-3">
-//                 <CFormLabel>Status</CFormLabel>
-
-//                 <CFormSelect
-//                   name="status"
-//                   value={formData.status}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="">Select Status</option>
-
-//                   <option value="draft">Draft</option>
-
-//                   <option value="completed">Completed</option>
-
-//                   <option value="submitted">Submitted</option>
-
-//                   <option value="approved">Approved</option>
-
-//                   <option value="rejected">Rejected</option>
-//                 </CFormSelect>
-//               </CCol>
-//               <CCol md={12} className="mb-4">
-//                 <CCard className="shadow-sm">
-//                   <CCardBody>
-//                     <CFormLabel className="fw-bold">Tilt Angle</CFormLabel>
-
-//                     <CFormInput
-//                       type="number"
-//                       value={formData?.tilt_angle?.value || ""}
-//                       onChange={(e) =>
-//                         handleFieldChange("tilt_angle.value", e.target.value)
-//                       }
-//                     />
-//                     {/* ATTACHMENTS */}
-//                     <div className="mt-3">
-//                       <div className="d-flex align-items-center gap-2">
-//                         <CFormInput
-//                           type="file"
-//                           multiple
-//                           onChange={(e) =>
-//                             handleAttachmentUpload(e, "tilt_angle")
-//                           }
-//                         />
-
-//                         {imageUploading["tilt_angle"] && <LoadingSpinner />}
-//                       </div>
-
-//                       {Array.isArray(formData?.tilt_angle?.attatchments) &&
-//                         formData.tilt_angle.attatchments.length > 0 && (
-//                           <div className="d-flex flex-wrap gap-2 mt-3">
-//                             {formData.tilt_angle.attatchments.map(
-//                               (attachment, idx) => (
-//                                 <div
-//                                   key={idx}
-//                                   className="position-relative border rounded p-1"
-//                                 >
-//                                   <img
-//                                     src={
-//                                       attachment.preview_url || attachment.img
-//                                     }
-//                                     alt={attachment.name}
-//                                     width={100}
-//                                     height={100}
-//                                     className="rounded"
-//                                     style={{
-//                                       objectFit: "cover",
-//                                     }}
-//                                   />
-
-//                                   <button
-//                                     type="button"
-//                                     className="btn btn-danger btn-sm position-absolute top-0 end-0"
-//                                     style={{
-//                                       padding: "2px 6px",
-//                                       fontSize: "10px",
-//                                     }}
-//                                     onClick={() =>
-//                                       handleRemoveAttachment("tilt_angle", idx)
-//                                     }
-//                                   >
-//                                     {imageRemoving[`tilt_angle-${idx}`] ? (
-//                                       <LoadingSpinner />
-//                                     ) : (
-//                                       "X"
-//                                     )}
-//                                   </button>
-//                                 </div>
-//                               ),
-//                             )}
-//                           </div>
-//                         )}
-//                     </div>
-//                   </CCardBody>
-//                 </CCard>
-//               </CCol>
-
-//               <CCol md={12} className="mb-3">
-//                 <CFormLabel>Remark</CFormLabel>
-
-//                 <CFormTextarea
-//                   rows={4}
-//                   name="remark"
-//                   value={formData.remark}
-//                   onChange={handleChange}
-//                 />
-//               </CCol>
-//             </CRow>
-
-//             {/* PERLIN */}
-//             <h4 className="mt-4 mb-3">Perlin</h4>
-
-//             <CRow>{renderFields(formData.perlin, "perlin")}</CRow>
-
-//             {/* RAFTER */}
-//             <h4 className="mt-4 mb-3">Rafter</h4>
-
-//             <CRow>{renderFields(formData.rafter, "rafter")}</CRow>
-
-//             {/* BRACES */}
-//             <h4 className="mt-4 mb-3">Braces</h4>
-
-//             <CRow>{renderFields(formData.braces, "braces")}</CRow>
-
-//             {/* COLUMN */}
-//             <h4 className="mt-4 mb-3">Column</h4>
-
-//             <CRow>{renderFields(formData.column, "column")}</CRow>
-
-//             {/* SUBMIT */}
-//             <div className="d-flex justify-content-end mt-4">
-//               <CButton type="submit" color="warning" size="sm" className="w-25">
-//                 {updateloading ? (
-//                   <>
-//                     Updating...
-//                     <LoadingSpinner />
-//                   </>
-//                 ) : (
-//                   "Update"
-//                 )}
-//               </CButton>
-//             </div>
-//           </form>
-//         </CCardBody>
-//       </CCard>
-//     </div>
-//   );
-// };
-
-// export default UpdateMms;
-
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -680,8 +16,27 @@ import {
   CRow,
   CSpinner,
   CBadge,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CTable,
+  CTabs,
+  CTabList,
+  CTab,
+  CTabContent,
+  CTabPanel,
+  CTableHead,
+  CTableRow,
+  CTableHeaderCell,
+  CFormCheck,
+  CTableBody,
+  CTableDataCell,
+  CModalFooter,
 } from "@coreui/react";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import CIcon from "@coreui/icons-react";
+import { cilX } from "@coreui/icons";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -733,6 +88,46 @@ const reducer = (state, action) => {
       return { ...state, fetchloading: false, error: "" };
     case "FETCH_FAIL":
       return { ...state, fetchloading: false, error: action.payload };
+
+    case "FETCH_NOTASSIGNED_REQUEST":
+      return { ...state, fetchMMSloading: true, notAssignedMMSerror: "" };
+    case "FETCH_NOTASSIGNED_SUCCESS":
+      return {
+        ...state,
+        fetchMMSloading: false,
+        notAssignedMMSerror: "",
+        notAssignedMMS: action.payload,
+      };
+    case "FETCH_NOTASSIGNED_FAIL":
+      return {
+        ...state,
+        fetchMMSloading: false,
+        notAssignedMMSerror: action.payload,
+      };
+    case "ASSIGN_NOMENCLATURE_REQUEST":
+      return { ...state, updateloading: true };
+
+    case "ASSIGN_NOMENCLATURE_SUCCESS":
+      return { ...state, updateloading: false };
+
+    case "ASSIGN_NOMENCLATURE_FAIL":
+      return {
+        ...state,
+        updateloading: false,
+        error: action.payload,
+      };
+    case "REMOVE_NOMENCLATURE_REQUEST":
+      return { ...state, removeloading: true };
+
+    case "REMOVE_NOMENCLATURE_SUCCESS":
+      return { ...state, removeloading: false };
+
+    case "REMOVE_NOMENCLATURE_FAIL":
+      return {
+        ...state,
+        removeloading: false,
+        error: action.payload,
+      };
     case "UPDATE_REQUEST":
       return { ...state, updateloading: true };
     case "UPDATE_SUCCESS":
@@ -1021,23 +416,38 @@ function SectionBlock({ sectionKey, children, defaultOpen = false }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const UpdateMms = () => {
-  const [{ fetchloading, updateloading, error }, dispatch] = useReducer(
-    reducer,
+  const [
     {
-      fetchloading: true,
-      updateloading: false,
-      error: "",
+      fetchloading,
+      updateloading,
+      error,
+      notAssignedMMSerror,
+      fetchMMSloading,
+      notAssignedMMS,
+      removeloading,
     },
-  );
+    dispatch,
+  ] = useReducer(reducer, {
+    fetchloading: true,
+    updateloading: false,
+    error: "",
+    fetchMMSloading: true,
+    notAssignedMMSerror: "",
+    notAssignedMMS: [],
+    removeloading: false,
+  });
 
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
   const adminroute = getAdminRoute(userInfo?.role);
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedIDS, setSelectedIDS] = useState([]);
+  const [activeTab, setActiveTab] = useState("available");
   const [imageUploading, setImageUploading] = useState({});
   const [imageRemoving, setImageRemoving] = useState({});
-
+  const [assignedMMS, setAssignedMMS] = useState([]);
+  const [removeSelected, setRemoveSelected] = useState([]);
   const [formData, setFormData] = useState({
     status: "",
     remark: "",
@@ -1048,35 +458,88 @@ const UpdateMms = () => {
     column: {},
     site_survey: [],
   });
+  const fetchData = async () => {
+    dispatch({ type: "FETCH_REQUEST" });
+    try {
+      const { data } = await axios.get(`/api/v1/mms-structure/${id}`, {
+        withCredentials: true,
+      });
+      const d = data.data;
+      setFormData({
+        status: d.status || "",
+        remark: d.remark || "",
+        tilt_angle: d.tilt_angle || { value: "", attatchments: [] },
+        perlin: d.perlin || {},
+        rafter: d.rafter || {},
+        braces: d.braces || {},
+        column: d.column || {},
+        site_survey: d.site_survey || [],
+      });
+      console.log(d.site_survey);
+      // assigned nomenclature
+      setAssignedMMS(d.site_survey || []);
+      dispatch({ type: "FETCH_SUCCESS" });
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      dispatch({ type: "FETCH_FAIL", payload: msg });
+      toast.error(msg);
+    }
+  };
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
+  const fetchNotAssignedMMS = async () => {
+    dispatch({ type: "FETCH_NOTASSIGNED_REQUEST" });
+    try {
+      const { data } = await axios.get(
+        `/api/v1/nomenclatures/not/assigned/mms`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      dispatch({ type: "FETCH_NOTASSIGNED_SUCCESS", payload: data.data });
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      dispatch({ type: "FETCH_NOTASSIGNED_FAIL", payload: msg });
+      // toast.error(msg);
+    }
+  };
+
+  const removeAssignedNomenclatureHandler = async () => {
+    try {
+      dispatch({ type: "REMOVE_NOMENCLATURE_REQUEST" });
+
+      await axios.put(
+        `/api/v1/mms-structure/remove-site-survey/${id}`,
+        {
+          site_survey: removeSelected,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      dispatch({ type: "REMOVE_NOMENCLATURE_SUCCESS" });
+
+      // toast.success(data.message);
+
+      setRemoveSelected([]);
+
+      // fetchAssignedMMS();
+      fetchNotAssignedMMS();
+      fetchData();
+    } catch (error) {
+      dispatch({
+        type: "REMOVE_NOMENCLATURE_FAIL",
+        payload: error.response?.data?.message,
+      });
+
+      toast.error(error.response?.data?.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      dispatch({ type: "FETCH_REQUEST" });
-      try {
-        const { data } = await axios.get(`/api/v1/mms-structure/${id}`, {
-          withCredentials: true,
-        });
-        const d = data.data;
-        setFormData({
-          status: d.status || "",
-          remark: d.remark || "",
-          tilt_angle: d.tilt_angle || { value: "", attatchments: [] },
-          perlin: d.perlin || {},
-          rafter: d.rafter || {},
-          braces: d.braces || {},
-          column: d.column || {},
-          site_survey: d.site_survey || [],
-        });
-        dispatch({ type: "FETCH_SUCCESS" });
-      } catch (err) {
-        const msg = err.response?.data?.message || err.message;
-        dispatch({ type: "FETCH_FAIL", payload: msg });
-        toast.error(msg);
-      }
-    };
     fetchData();
+    fetchNotAssignedMMS();
   }, [id]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
@@ -1163,6 +626,71 @@ const UpdateMms = () => {
     }
   };
 
+  //  MOdal handlers ////
+
+  const assignNomenclatureHandler = async () => {
+    try {
+      dispatch({ type: "ASSIGN_NOMENCLATURE_REQUEST" });
+
+      const res = await axios.put(
+        `/api/v1/mms-structure/assign-site-survey/${id}`,
+        {
+          site_survey: selectedIDS,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      dispatch({ type: "ASSIGN_NOMENCLATURE_SUCCESS" });
+
+      toast.success(res.data.message);
+
+      setSelectedIDS([]);
+      setShowModal(false);
+      fetchData();
+      fetchNotAssignedMMS();
+      // fetchAssignedMMS();
+      // fetchNotAssignedMMS();
+    } catch (error) {
+      dispatch({
+        type: "ASSIGN_NOMENCLATURE_FAIL",
+        payload:
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed",
+      });
+
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed",
+      );
+    }
+  };
+
+  const handleToggle = (nom) => {
+    setSelectedIDS((prev) =>
+      prev.includes(nom._id)
+        ? prev.filter((id) => id !== nom._id)
+        : [...prev, nom._id],
+    );
+  };
+
+  const handleSelectAllToremove = (checked) => {
+    if (checked) {
+      setRemoveSelected(assignedMMS.map((nom) => nom._id));
+    } else {
+      setRemoveSelected([]);
+    }
+  };
+
+  const handleRemoveToggle = (_id) => {
+    setRemoveSelected((prev) =>
+      prev.includes(_id) ? prev.filter((id) => id !== _id) : [...prev, _id],
+    );
+  };
+
   // ── Render fields recursively ──────────────────────────────────────────────
 
   const renderDimensionFields = (obj, parentPath, color) => {
@@ -1227,18 +755,32 @@ const UpdateMms = () => {
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIDS(notAssignedMMS.map((nom) => nom._id));
+    } else {
+      setSelectedIDS([]);
+    }
+  };
   return (
     <div style={S.page}>
       <CCard className="shadow-sm">
         <CCardHeader className="d-flex align-items-center justify-content-between">
           <h5 className="mb-0 fw-bold">Update MMS Structure</h5>
-          <CBadge
+          {/* <CBadge
             color="secondary"
             shape="rounded-pill"
             style={{ fontSize: 11 }}
           >
             {id}
-          </CBadge>
+          </CBadge>{" "} */}
+          <CButton
+            size="sm"
+            className="ms-2"
+            onClick={() => setShowModal(true)}
+          >
+            Assign Nomenclature
+          </CButton>
         </CCardHeader>
 
         <CCardBody>
@@ -1406,6 +948,271 @@ const UpdateMms = () => {
           </form>
         </CCardBody>
       </CCard>
+      <CModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        // looking too small
+        size="xl"
+        backdrop="static"
+      >
+        <CModalHeader
+          closeButton={false}
+          className="d-flex justify-content-between align-items-center"
+        >
+          <CModalTitle>Assign Nomenclature</CModalTitle>
+
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setShowModal(false)}
+            style={{ background: "none" }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+
+        <CModalBody>
+          <CTabs activeItemKey={activeTab} onActiveItemChange={setActiveTab}>
+            <CTabList variant="tabs">
+              <CTab itemKey="available">Available Nomenclature</CTab>
+              <CTab itemKey="added">Assigned Nomenclature</CTab>
+            </CTabList>
+
+            <CTabContent>
+              {/* ───────────────── AVAILABLE ───────────────── */}
+              <CTabPanel itemKey="available" className="p-3">
+                <CTable
+                  bordered
+                  hover
+                  responsive
+                  className="text-center align-middle"
+                >
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>
+                        <CFormCheck
+                          checked={
+                            notAssignedMMS.length > 0 &&
+                            selectedIDS.length === notAssignedMMS.length
+                          }
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                        />
+                      </CTableHeaderCell>
+
+                      <CTableHeaderCell>Nomenclature ID</CTableHeaderCell>
+
+                      <CTableHeaderCell>Client</CTableHeaderCell>
+
+                      <CTableHeaderCell>Location</CTableHeaderCell>
+
+                      <CTableHeaderCell>Created By</CTableHeaderCell>
+
+                      <CTableHeaderCell>Status</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+
+                  <CTableBody>
+                    {fetchMMSloading ? (
+                      <CTableRow>
+                        <CTableDataCell colSpan={6}>
+                          <LoadingSpinner />
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : notAssignedMMSerror ? (
+                      <CTableRow>
+                        <CTableDataCell colSpan={6} className="text-danger">
+                          {notAssignedMMSerror}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ) : notAssignedMMS.length > 0 ? (
+                      notAssignedMMS.map((nom) => (
+                        <CTableRow key={nom._id}>
+                          <CTableDataCell>
+                            <CFormCheck
+                              checked={selectedIDS.includes(nom._id)}
+                              onChange={() => handleToggle(nom)}
+                            />
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            <span
+                              style={{
+                                color: "#0d6efd",
+                                cursor: "pointer",
+                                fontWeight: 500,
+                              }}
+                              onClick={(e) => {
+                                navigate(
+                                  `/${adminroute}/view-nomenclature/${nom._id}`,
+                                );
+                              }}
+                            >
+                              {nom?.nomenclature_id || "-"}
+                            </span>
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.client?.client_name || "-"}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.site?.location || "-"}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.last_activity?.slice(-1)?.[0]?.name}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            <CBadge color="warning">
+                              {nom?.status || "-"}
+                            </CBadge>
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell colSpan={6}>
+                          No Nomenclature Available
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+                {/* add loading and error states here as well */}
+
+                <div className="d-flex justify-content-end mt-3">
+                  {/* <CButton
+                    updateloading={updateloading}
+                    color="warning"
+                    disabled={!selectedIDS.length}
+                    onClick={assignNomenclatureHandler}
+                  >
+                    Assign Selected
+                  </CButton> */}
+                  <CButton
+                    color="warning"
+                    disabled={!selectedIDS.length || updateloading}
+                    onClick={assignNomenclatureHandler}
+                  >
+                    {updateloading ? (
+                      <>
+                        <CSpinner size="sm" className="me-2" />
+                        Assigning...
+                      </>
+                    ) : (
+                      "Assign Selected"
+                    )}
+                  </CButton>
+                </div>
+              </CTabPanel>
+
+              {/* ───────────────── ASSIGNED ───────────────── */}
+              <CTabPanel itemKey="added" className="p-3">
+                <CTable
+                  bordered
+                  hover
+                  responsive
+                  className="text-center align-middle"
+                >
+                  <CTableHead color="secondary">
+                    <CTableRow>
+                      <CTableHeaderCell>
+                        <CFormCheck
+                          checked={
+                            assignedMMS.length > 0 &&
+                            removeSelected.length === assignedMMS.length
+                          }
+                          onChange={(e) =>
+                            handleSelectAllToremove(e.target.checked)
+                          }
+                        />
+                      </CTableHeaderCell>
+
+                      <CTableHeaderCell>Nomenclature ID</CTableHeaderCell>
+
+                      <CTableHeaderCell>Client</CTableHeaderCell>
+
+                      <CTableHeaderCell>Location</CTableHeaderCell>
+
+                      <CTableHeaderCell>Created By</CTableHeaderCell>
+
+                      <CTableHeaderCell>Status</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+
+                  <CTableBody>
+                    {assignedMMS?.length > 0 ? (
+                      assignedMMS.map((nom) => (
+                        <CTableRow key={nom._id}>
+                          <CTableDataCell>
+                            <CFormCheck
+                              checked={removeSelected.includes(nom._id)}
+                              onChange={() => handleRemoveToggle(nom._id)}
+                            />
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            <span
+                              style={{
+                                color: "#0d6efd",
+                                cursor: "pointer",
+
+                                fontWeight: 500,
+                              }}
+                              onClick={() =>
+                                navigate(
+                                  `/${adminroute}/view-nomenclature/${nom._id}`,
+                                )
+                              }
+                            >
+                              {nom?.nomenclature_id || "-"}
+                            </span>
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.client_name || "-"}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.site_location || "-"}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            {nom?.created_by || "-"}
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            <CBadge color="success">
+                              {nom?.status || "-"}
+                            </CBadge>
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    ) : (
+                      <CTableRow>
+                        <CTableDataCell colSpan={6}>
+                          No Assigned Nomenclature
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+
+                <div className="d-flex justify-content-end mt-3">
+                  <CButton
+                    color="danger"
+                    disabled={!removeSelected.length || removeloading}
+                    onClick={removeAssignedNomenclatureHandler}
+                  >
+                    Remove Selected
+                  </CButton>
+                </div>
+              </CTabPanel>
+            </CTabContent>
+          </CTabs>
+        </CModalBody>
+      </CModal>
     </div>
   );
 };
