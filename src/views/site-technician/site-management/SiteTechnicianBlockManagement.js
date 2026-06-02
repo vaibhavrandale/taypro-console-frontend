@@ -73,41 +73,40 @@ const SiteTechnicianBlockManagement = () => {
   // const authtoken = useSelector((state) => state.authtoken);
   const { site_id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const [blocksearchTerm, setblocksearchTerm] = useState("");
   const [visible, setVisible] = useState(false);
   const [sitename, setSitename] = useState("");
   const [sitelocation, setSitLocation] = useState("");
+  const fetchData = async () => {
+    dispatch({ type: "FETCH_BLOCKDATA_REQUEST" });
+    try {
+      const result = await axios.get(
+        `/api/v1/robots/site-management/${site_id}`,
+        {
+          // headers: { Authorization: `Bearer ${authtoken}` },
+          withCredentials: true,
+        },
+      );
 
+      dispatch({
+        type: "FETCH_BLOCKDATA_SUCCESS",
+        payload: {
+          robots: result.data.data.robots || [],
+          blocks: result.data.data.blocks || [],
+        },
+      });
+
+      setSitename(result.data.data?.site_name || "Unknown");
+      setSitLocation(result.data.data?.location || "Unknown");
+    } catch (error) {
+      dispatch({
+        type: "FETCH_BLOCKDATA_FAIL",
+        payload: error.response.data.message || "Failed to fetch data",
+      });
+      toast.error(error.response.data.message);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      dispatch({ type: "FETCH_BLOCKDATA_REQUEST" });
-      try {
-        const result = await axios.get(
-          `/api/v1/robots/site-management/${site_id}`,
-          {
-            // headers: { Authorization: `Bearer ${authtoken}` },
-            withCredentials: true,
-          },
-        );
-
-        dispatch({
-          type: "FETCH_BLOCKDATA_SUCCESS",
-          payload: {
-            robots: result.data.data.robots || [],
-            blocks: result.data.data.blocks || [],
-          },
-        });
-
-        setSitename(result.data.data?.site_name || "Unknown");
-        setSitLocation(result.data.data?.location || "Unknown");
-      } catch (error) {
-        dispatch({
-          type: "FETCH_BLOCKDATA_FAIL",
-          payload: error.response.data.message || "Failed to fetch data",
-        });
-        toast.error(error.response.data.message);
-      }
-    };
-
     fetchData();
   }, [site_id]);
 
@@ -196,6 +195,18 @@ const SiteTechnicianBlockManagement = () => {
       sensitivity: "base",
     }),
   );
+
+  // const filterredBlocks = sortedBlocks.filter((block) =>
+  //   block.block_name.toLowerCase().includes(searchTerm.toLowerCase()),
+  // );
+
+  const filterredBlocks = Array.isArray(sortedBlocks)
+    ? sortedBlocks.filter((robot) => {
+        const term = blocksearchTerm.toLowerCase();
+
+        return (robot.block_name || "").toLowerCase().includes(term);
+      })
+    : [];
 
   return (
     <div className="min-vh-90 d-flex flex-column align-items-center">
@@ -466,9 +477,29 @@ const SiteTechnicianBlockManagement = () => {
           Total Robots: <span>{robots.length}</span>
         </CBadge>
       </div>
+      <CRow className="mt-2 justify-content-center align-items-center">
+        <CCol xs={9} md={9}>
+          <CInputGroup>
+            <CFormInput
+              type="text"
+              placeholder="Search Block..."
+              value={blocksearchTerm}
+              onChange={(e) => setblocksearchTerm(e.target.value)}
+            />
+          </CInputGroup>
+        </CCol>
+        <CCol xs={3} md={3}>
+          <CButton
+            className="btn btn-secondary btn-sm"
+            onClick={() => fetchData()}
+          >
+            Refresh
+          </CButton>
+        </CCol>
+      </CRow>
       <CContainer>
-        <CRow className="mt-4 justify-content-center">
-          {sortedBlocks.map((block, index) => {
+        <CRow className="mt-2 justify-content-center">
+          {filterredBlocks.map((block, index) => {
             const robot = block.blockrobots
               ? block.blockrobots.sort((a, b) =>
                   (a.robot_no || "").localeCompare(b.robot_no || ""),
@@ -520,15 +551,22 @@ const SiteTechnicianBlockManagement = () => {
                             className={`tooltip-container m-1 badge p-2 rounded-1 ${
                               item.lora_state === 1 ? "bg-success" : "bg-danger"
                             }`}
+                            onClick={() =>
+                              navigate(
+                                `/site-technician/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`,
+                              )
+                            }
                           >
+                            <div>{item.robot_no.slice(-3)}</div>
+                            <hr className="my-1 text-white" />
+
                             <div
-                              onClick={() =>
-                                navigate(
-                                  `/site-technician/site-management/block-management/${site_id}/${block.block_name}/${item.robot_no}`,
-                                )
-                              }
+                              className="text-white"
+                              style={{
+                                fontSize: "10px",
+                              }}
                             >
-                              {item.robot_no.slice(-3)}
+                              {item.battery_voltage}%
                             </div>
                           </span>
                         </CTooltip>
