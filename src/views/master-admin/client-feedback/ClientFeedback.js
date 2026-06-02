@@ -5,6 +5,7 @@ import {
   CInputGroup,
   CFormInput,
   CFormSelect,
+  CButton,
 } from "@coreui/react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -104,13 +105,93 @@ const ClientFeedback = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const exportToCSV = () => {
+    if (!filteredFeedbacks || filteredFeedbacks.length === 0) {
+      toast.error("No data to export");
+      return;
+    }
+
+    const headers = [
+      "Feedback No",
+      "Site ID",
+      "Site Name",
+
+      "Customer Name",
+      "Customer Email",
+      "Customer Designation",
+      "Status",
+      "Portal Rating",
+      "Portal Feedback",
+      "Technician Rating",
+      "Technician Feedback",
+
+      "Service Rating",
+      "Service Feedback",
+
+      "Created At",
+      "Updated At",
+    ];
+
+    const rows = filteredFeedbacks.map((feedback) => [
+      feedback.customer_feedback_no || "",
+
+      feedback.user?.assigned_sites?.[0]?.site_id || "",
+      feedback.user?.assigned_sites?.[0]?.siteName || "",
+
+      feedback.user?.username || "",
+      feedback.user?.email || "",
+      feedback.user?.designation || "",
+      feedback.status ? "Submitted" : "Pending",
+      feedback.feedback_data?.rating || "",
+      feedback.feedback_data?.comments || "",
+
+      feedback.technician_feedback_data?.rating || "",
+      feedback.technician_feedback_data?.comments || "",
+
+      feedback.service_feedback_data?.rating || "",
+      feedback.service_feedback_data?.comments || "",
+
+      feedback.createdAt
+        ? new Date(feedback.createdAt).toLocaleString("en-GB")
+        : "",
+
+      feedback.updatedAt
+        ? new Date(feedback.updatedAt).toLocaleString("en-GB")
+        : "",
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((row) =>
+          row
+            .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
+            .join(","),
+        )
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `customer_feedbacks_${Date.now()}.csv`);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("CSV exported successfully");
+  };
+
   return (
     <div>
       <h2 className="text-center mb-4">Client Feedbacks</h2>
 
       {/* Top Bar */}
       <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-sm btn-primary">Export</Link>
+        <CButton color="primary" onClick={exportToCSV}>
+          Export to CSV
+        </CButton>
       </div>
 
       {/* ================= FILTER BAR ================= */}

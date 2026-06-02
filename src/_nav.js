@@ -2592,6 +2592,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Customer Feedback",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "All Feedbacks",
+            to: "/service-admin/customer-feedback",
+          },
+        ],
+      },
     ],
   },
 
