@@ -18,6 +18,7 @@ import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
 
 import { Link } from "react-router-dom";
 import FullScreen from "./FullScreen";
+import SiteSelect from "../../components/SiteSelect";
 // import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
@@ -95,7 +96,7 @@ const RobotTracker = () => {
     loadingDelete: false,
     // sites: [],
     // loadingSites: true,
-    sitesError: "",
+    // sitesError: "",
     subscriptiondata: {},
     subscriptionStatus: "",
     deleteSuccess: false,
@@ -103,7 +104,7 @@ const RobotTracker = () => {
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
   const pageRef = useRef(null);
-  const [site_id, setSiteId] = useState("all");
+  const [site_id, setSiteId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
@@ -122,31 +123,31 @@ const RobotTracker = () => {
     return [...existing, ...newItems];
   };
 
-  useEffect(() => {
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const res = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
+  // useEffect(() => {
+  //   const fetchSites = async () => {
+  //     dispatch({ type: "FETCH_SITES_REQUEST" });
+  //     try {
+  //       const res = await axios.get(`/api/v1/sites`, {
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  //         withCredentials: true,
+  //       });
 
-        const siteData = res.data.data || [];
-        dispatch({ type: "FETCH_SITES_SUCCESS", payload: siteData });
+  //       const siteData = res.data.data || [];
+  //       dispatch({ type: "FETCH_SITES_SUCCESS", payload: siteData });
 
-        // ✅ Immediately set siteId after fetching if user is External
-        if (siteData.length > 0) {
-          setSiteId(siteData[0].site_id);
-        }
-      } catch (err) {
-        const errorMsg =
-          err.response?.data?.error || err.response?.data?.message;
-        dispatch({ type: "FETCH_SITES_FAIL", payload: errorMsg });
-        toast.error(errorMsg);
-      }
-    };
-    fetchSites();
-  }, []);
+  //       // ✅ Immediately set siteId after fetching if user is External
+  //       if (siteData.length > 0) {
+  //         setSiteId(siteData[0].site_id);
+  //       }
+  //     } catch (err) {
+  //       const errorMsg =
+  //         err.response?.data?.error || err.response?.data?.message;
+  //       dispatch({ type: "FETCH_SITES_FAIL", payload: errorMsg });
+  //       toast.error(errorMsg);
+  //     }
+  //   };
+  //   fetchSites();
+  // }, []);
 
   useEffect(() => {
     if (site_id) {
@@ -444,26 +445,12 @@ const RobotTracker = () => {
         overflowX: "hidden",
       }}
     >
-      {(loadingSites || loading) && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh", // centers spinner vertically
-          }}
-        >
-          <LoadingSpinner />
-        </div>
-      )}
-
-      {!loadingSites && !loading && (
+      {
         <>
-          <CRow className=" justify-content-start align-items-center">
-            <CCol md={2} className="">
-              <h5 className=" text-center text-success">Live Robot Tracking</h5>
-            </CCol>
-
+          <div className="text-center my-2">
+            <h5 className=" text-center text-success">Robot Tracking</h5>
+          </div>
+          <CRow className="d-flex justify-content-center align-items-center">
             <CCol md={2} className="mb-2">
               <CFormSelect
                 id="blockSelect"
@@ -480,20 +467,8 @@ const RobotTracker = () => {
                 ))}
               </CFormSelect>
             </CCol>
-            <CCol md={2} className="mb-2">
-              <CFormSelect
-                id="siteSelect"
-                className="p-2"
-                value={site_id}
-                onChange={(e) => setSiteId(e.target.value)}
-              >
-                <option value="">Select Site</option>
-                {sites?.map((site, index) => (
-                  <option key={index} value={site.site_id}>
-                    {site.site_id}
-                  </option>
-                ))}
-              </CFormSelect>
+            <CCol md={3} className="mb-2">
+              <SiteSelect value={site_id} onChange={setSiteId} />
             </CCol>
             <CCol md={2} className="mb-2">
               <CFormInput
@@ -505,7 +480,7 @@ const RobotTracker = () => {
               />
             </CCol>
 
-            <CCol md={2} className="mb-2">
+            <CCol md={1} className="mb-2">
               <CInputGroup className="">
                 <CFormInput
                   type="text"
@@ -559,7 +534,7 @@ const RobotTracker = () => {
             totalDeleted={totalDeleted}
             userInfo={userInfo}
           /> */}
-          {sitesError && (
+          {/* {sitesError && (
             <div
               style={{
                 display: "flex",
@@ -572,13 +547,24 @@ const RobotTracker = () => {
                 {sitesError}
               </div>
             </div>
-          )}
+          )} */}
           <div className="custom-scrollbar">
-            {checkStatus.includes(subscriptionStatus) ? (
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100vh", // centers spinner vertically
+                }}
+              >
+                <LoadingSpinner />
+              </div>
+            ) : checkStatus.includes(subscriptionStatus) ? (
               <SubscriptionExpiryCard
                 data={subscriptiondata}
                 subscriptionStatus={subscriptionStatus}
-                error={error || sitesError}
+                error={error}
               />
             ) : (
               <div
@@ -624,7 +610,7 @@ const RobotTracker = () => {
             )}
           </div>
         </>
-      )}
+      }
 
       {/* Sidebar and Footer remain exactly the same */}
       {/* Sidebar */}
