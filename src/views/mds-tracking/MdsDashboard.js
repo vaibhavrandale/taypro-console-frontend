@@ -315,7 +315,7 @@ const MdsDashboard = () => {
 
           {/* Date */}
           <CCol xs={12} sm={6} md={2}>
-            <CFormLabel className="small">Date</CFormLabel>
+            <CFormLabel className="small">Date.</CFormLabel>
             <CFormInput
               type="date"
               value={date}
