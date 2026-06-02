@@ -839,6 +839,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             "Service User",
             "Project User",
             "Master User",
+            "Site Technician",
           ].includes(userInfo.role) && (
             <>
               <Link
@@ -850,7 +851,18 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
               <li className="nav-item py-1">
                 <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
               </li>
-
+            </>
+          )}
+          {[
+            "Master Admin",
+            "Project Admin",
+            "Service Admin",
+            "Service User",
+            "Project User",
+            "Master User",
+          ].includes(userInfo.role) && (
+            <>
+              {" "}
               <CDropdown variant="nav-item" placement="top-end">
                 <CDropdownToggle
                   caret={false}
@@ -1011,7 +1023,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   )}
                 </CDropdownMenu>
               </CDropdown>
-
               <li className="nav-item py-1">
                 <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
               </li>

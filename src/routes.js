@@ -7342,7 +7342,15 @@ const routes = [
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
-
+  {
+    path: "/site-technician/robot-activity",
+    name: "Robot Activity",
+    element: (
+      <SiteTechnicianRoute>
+        <RobotActivity />
+      </SiteTechnicianRoute>
+    ),
+  },
   {
     path: "/site-technician/dashboard",
     name: "Dashboard",

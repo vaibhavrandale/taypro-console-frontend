@@ -16,6 +16,7 @@ import {
   CInputGroup,
   CAvatar,
   CBadge,
+  CFormLabel,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
@@ -58,8 +59,16 @@ const RobotActivity = () => {
   const [pageInput, setPageInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // ✅ New Date Filter States
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
+
   useEffect(() => {
-    let pagination = {
+    let requestBody = {
       pg: page,
       limit: limit,
     };
@@ -67,10 +76,14 @@ const RobotActivity = () => {
     const fetchRobotActivity = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-
+        // ✅ Add Dates to Request
+        if (startDate && endDate) {
+          requestBody.startDate = startDate;
+          requestBody.endDate = endDate;
+        }
         const result = await axios.post(
           `/api/v1/robot-notification`,
-          pagination,
+          requestBody,
           {
             // headers: { Authorization: `Bearer ${authtoken}` },
             withCredentials: true,
@@ -104,7 +117,7 @@ const RobotActivity = () => {
     };
 
     fetchRobotActivity();
-  }, [limit, page]);
+  }, [endDate, limit, page, startDate]);
 
   const handlePageInputChange = (e) => setPageInput(e.target.value);
 
@@ -150,16 +163,49 @@ const RobotActivity = () => {
 
   return (
     <div>
+      <h3 className="mb-4 text-center">Robot Commands</h3>
       <CRow className="justify-content-end mb-3">
-        <CCol xs={12} sm={8} md={6} lg={4}>
-          <CInputGroup>
+        <CCol xs={12} sm={4} md={3} lg={2} className="mb-2 mb-sm-0">
+          {/* Start Date */}
+          <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
+            <label htmlFor="startDate" className="mb-1 fw-semibold">
+              Start Date
+            </label>
             <CFormInput
-              type="text"
-              placeholder="Search by Robot No, Command, Site ID, Sent By"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              id="startDate"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
             />
-          </CInputGroup>
+          </div>
+        </CCol>
+        <CCol xs={12} sm={4} md={3} lg={2} className="mb-2 mb-sm-0">
+          {/* End Date */}
+          <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
+            <label htmlFor="endDate" className="mb-1 fw-semibold">
+              End Date
+            </label>
+            <CFormInput
+              id="endDate"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </CCol>
+        <CCol xs={12} sm={8} md={6} lg={4}>
+          <div className="d-flex flex-column" style={{ minWidth: "150px" }}>
+            <label htmlFor="endDate" className="mb-1 fw-semibold">
+              Search
+            </label>
+          </div>
+          <CFormInput
+            id="searchInput"
+            type="text"
+            placeholder="Search by Robot No, Command, Site ID, Sent By"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </CCol>
       </CRow>
 
