@@ -46,12 +46,12 @@ const reducer = (state, action) => {
         // robots: state.robots.filter((r) => r._id !== action.payload), // remove deleted robot
       };
 
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, sitesError: "" };
-    case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, sitesError: action.payload };
+    // case "FETCH_SITES_REQUEST":
+    //   return { ...state, loadingSites: true, sitesError: "" };
+    // case "FETCH_SITES_SUCCESS":
+    //   return { ...state, loadingSites: false, sites: action.payload };
+    // case "FETCH_SITES_FAIL":
+    //   return { ...state, loadingSites: false, sitesError: action.payload };
 
     case "DELETE_FAIL":
       return { ...state, loadingDelete: false };
@@ -80,9 +80,9 @@ const RobotTracker = () => {
       robots,
       loading,
       loadingDelete,
-      loadingSites,
-      sites,
-      sitesError,
+      // loadingSites,
+      // sites,
+      // sitesError,
       subscriptiondata,
       subscriptionStatus,
       deleteSuccess,
@@ -93,8 +93,8 @@ const RobotTracker = () => {
     loading: true,
     error: "",
     loadingDelete: false,
-    sites: [],
-    loadingSites: true,
+    // sites: [],
+    // loadingSites: true,
     sitesError: "",
     subscriptiondata: {},
     subscriptionStatus: "",
@@ -103,7 +103,7 @@ const RobotTracker = () => {
   const scrollRefs = useRef({});
   const robotsRef = useRef([]);
   const pageRef = useRef(null);
-  const [site_id, setSiteId] = useState("");
+  const [site_id, setSiteId] = useState("all");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);

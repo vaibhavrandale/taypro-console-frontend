@@ -618,7 +618,7 @@ const UpdateMms = () => {
       });
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Updated successfully!");
-      navigate(`/${adminroute}/view-mms-structure/${id}`);
+      navigate(`/${adminroute}/mms-survey-dashboard`);
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
       dispatch({ type: "UPDATE_FAIL", payload: msg });
