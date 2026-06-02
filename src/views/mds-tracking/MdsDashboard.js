@@ -19,6 +19,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import MdsSidebar from "./MdsSidebar";
 import MdsGallery from "./MdsGallery";
+import SiteSelect from "../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -63,12 +64,12 @@ const reducer = (state, action) => {
         mdsError: action.payload,
       };
 
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, sitesError: "" };
-    case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, sitesError: action.payload };
+    // case "FETCH_SITES_REQUEST":
+    //   return { ...state, loadingSites: true, sitesError: "" };
+    // case "FETCH_SITES_SUCCESS":
+    //   return { ...state, loadingSites: false, sites: action.payload };
+    // case "FETCH_SITES_FAIL":
+    //   return { ...state, loadingSites: false, sitesError: action.payload };
     default:
       return state;
   }
@@ -82,9 +83,9 @@ const MdsDashboard = () => {
       mdsdevices,
       loading,
 
-      loadingSites,
-      sites,
-      sitesError,
+      // loadingSites,
+      // sites,
+      // sitesError,
       mdsError,
       allMdsDevices,
       mdsdevicesLoading,
@@ -92,13 +93,13 @@ const MdsDashboard = () => {
     dispatch,
   ] = useReducer(reducer, {
     mdsdevices: [],
-    loading: true,
+    loading: false,
     error: "",
     sendCommandError: "",
     sendingCommandloading: false,
-    sites: [],
-    loadingSites: true,
-    sitesError: "",
+    // sites: [],
+    // loadingSites: true,
+    // sitesError: "",
     allMdsDevices: [],
     mdsdevicesLoading: false,
     mdsError: "",
@@ -113,32 +114,6 @@ const MdsDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedMdsDeviceId, setSelectedMdsDeviceId] = useState(null);
   const mdsRef = useRef([]);
-
-  useEffect(() => {
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const res = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-
-        const siteData = res.data.data || [];
-        dispatch({ type: "FETCH_SITES_SUCCESS", payload: siteData });
-
-        // ✅ Immediately set siteId after fetching if user is External
-        if (siteData.length > 0) {
-          setSiteId(siteData[0].site_id);
-        }
-      } catch (err) {
-        const errorMsg =
-          err.response?.data?.error || err.response?.data?.message;
-        dispatch({ type: "FETCH_SITES_FAIL", payload: errorMsg });
-        toast.error(errorMsg);
-      }
-    };
-    fetchSites();
-  }, []);
 
   useEffect(() => {
     if (site_id) {
@@ -173,29 +148,29 @@ const MdsDashboard = () => {
     };
 
     // /get-mdsno-by-site-and-block/:site_id/:block
-    if (site_id) {
-      const fetchAllmdsdevices = async () => {
-        dispatch({ type: "FETCH_MDS_DEVICES_REQUEST" });
-        try {
-          const response = await axios.get(
-            `/api/v1/mds-device/get-mdsno-by-site-and-block/${site_id}/Block-1`,
-            {
-              // headers: { Authorization: `Bearer ${authtoken}` },
-              withCredentials: true,
-            },
-          );
-          dispatch({
-            type: "FETCH_MDS_DEVICES_SUCCESS",
-            payload: response.data.data,
-          });
-        } catch (err) {
-          const msg = err.response?.data?.error || err.response?.data?.message;
-          dispatch({ type: "FETCH_MDS_DEVICES_FAIL", payload: msg });
-          toast.error(msg);
-        }
-      };
-      fetchAllmdsdevices();
-    }
+    // if (site_id) {
+    const fetchAllmdsdevices = async () => {
+      dispatch({ type: "FETCH_MDS_DEVICES_REQUEST" });
+      try {
+        const response = await axios.get(
+          `/api/v1/mds-device/get-mdsno-by-site-and-block/${site_id}/Block-1`,
+          {
+            // headers: { Authorization: `Bearer ${authtoken}` },
+            withCredentials: true,
+          },
+        );
+        dispatch({
+          type: "FETCH_MDS_DEVICES_SUCCESS",
+          payload: response.data.data,
+        });
+      } catch (err) {
+        const msg = err.response?.data?.error || err.response?.data?.message;
+        dispatch({ type: "FETCH_MDS_DEVICES_FAIL", payload: msg });
+        toast.error(msg);
+      }
+    };
+    fetchAllmdsdevices();
+    // }
     fetchmdsTracking();
   }, [date, site_id]);
 
@@ -295,20 +270,78 @@ const MdsDashboard = () => {
 
   return (
     <div className="p-2" style={{ display: "flex", flexDirection: "column" }}>
-      {(loadingSites || loading) && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "70vh",
-          }}
-        >
+      <>
+        <CRow className="gx-2 gy-2 align-items-end m-2">
+          {/* Title */}
+          <CCol xs={12} md={4}>
+            <h5 className="fw-semibold text-success mb-0 text-center text-md-start">
+              MDS & Robot Tracking
+            </h5>
+          </CCol>
+
+          {/* Site Select */}
+          <CCol xs={12} sm={6} md={3}>
+            <CFormLabel className="small">Site</CFormLabel>
+            <SiteSelect value={site_id} onChange={setSiteId} />
+          </CCol>
+
+          {/* MDS Select */}
+          {allMdsDevices?.length > 0 && (
+            <CCol xs={12} sm={6} md={3}>
+              <CFormLabel className="small">MDS</CFormLabel>
+              <CFormSelect
+                value={mdsDevice}
+                onChange={(e) => {
+                  const selectedMds = allMdsDevices.find(
+                    (mds) => mds.mds_no === e.target.value,
+                  );
+                  if (selectedMds) {
+                    setMdsDevice(e.target.value);
+                    navigate(
+                      `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`,
+                    );
+                  }
+                }}
+              >
+                <option value="">Select MDS</option>
+                {allMdsDevices.map((mds) => (
+                  <option key={mds.mds_no} value={mds.mds_no}>
+                    {mds.mds_no}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+          )}
+
+          {/* Date */}
+          <CCol xs={12} sm={6} md={2}>
+            <CFormLabel className="small">Date</CFormLabel>
+            <CFormInput
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </CCol>
+
+          {/* Actions */}
+          <CCol xs={12} md={3} className="d-flex gap-2 justify-content-md-end">
+            {site_id && (
+              <Link
+                className="btn btn-outline-primary btn-sm"
+                target="_blank"
+                to={`/${adminroute}/mds-logs/${site_id}`}
+              >
+                View Logs
+              </Link>
+            )}
+
+            <MdsGallery />
+          </CCol>
+        </CRow>
+
+        {loading ? (
           <LoadingSpinner />
-        </div>
-      )}
-      {sitesError ||
-        (error && (
+        ) : error ? (
           <div
             style={{
               display: "flex",
@@ -317,346 +350,186 @@ const MdsDashboard = () => {
               height: "70vh",
             }}
           >
-            <h5 className="text-light">{sitesError || error}</h5>
+            <h5 className="text-light">{error}</h5>
           </div>
-        ))}
-      {!loadingSites && !loading && (
-        <>
-          {/* <CRow className="m-1 d-flex justify-content-between align-items-center">
-            <CCol md={3}>
-              <h5 className="text-light text-center text-success">
-                MDS And Robot Tracking
-              </h5>
-            </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                id="siteSelect"
-                className="p-2 m-2"
-                value={site_id}
-                onChange={(e) => setSiteId(e.target.value)}
+        ) : mdsdevices.length > 0 ? (
+          mdsdevices.map((data, index) => {
+            const totalRows = data?.no_of_rows;
+
+            //getMdsStatus helper usage
+            const { isDocked, isMoving } = getMdsStatus(data);
+
+            const activeMdsPosition = data?.mds_positions.find(
+              (p) => p.active || (p.robot_released && !p.robot_returned),
+            );
+
+            const activeRowNumber = isDocked
+              ? 1
+              : activeMdsPosition?.row_number || 1;
+
+            return (
+              <div
+                key={index}
+                onClick={() => handleOpenSidebar(data)}
+                className="mb-5 border p-3 rounded cursor-pointer"
               >
-                <option value="">Select Site</option>
-                {sites?.map((site, index) => (
-                  <option key={index} value={site.site_id}>
-                    {site.site_id}
-                  </option>
-                ))}
-              </CFormSelect>
-            </CCol>
+                <h6 className="mb-3">{data.mds_no}</h6>
+                <div className="d-flex justify-content-end align-items-center">
+                  <Link
+                    to={`/${adminroute}/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
+                    className="btn btn-primary btn-sm mb-2 d-flex align-items-center"
+                  >
+                    Command
+                    <FaArrowUp />
+                  </Link>
+                </div>
 
-            {allMdsDevices && allMdsDevices.length > 0 && (
-              <CCol md={3}>
-                <CFormSelect
-                  id="siteSelect"
-                  className="p-2 m-2"
-                  value={mdsDevice}
-                  onChange={(e) => {
-                    const selectedMds = allMdsDevices.find(
-                      (mds) => mds.mds_no === e.target.value,
-                    );
+                <div className="d-flex align-items-start">
+                  <MdsRailingTrack
+                    totalRows={totalRows}
+                    activeRow={activeRowNumber}
+                  />
 
-                    if (selectedMds) {
-                      setMdsDevice(e.target.value);
-                      navigate(
-                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`,
-                      );
-                    }
-                  }}
-                >
-                  <option value="">Select MDS</option>
-
-                  {allMdsDevices.map((mds, index) => (
-                    <option key={index} value={mds.mds_no}>
-                      {mds.mds_no}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-            )}
-            <CCol md={2}>
-              <CFormInput
-                type="date"
-                className="p-2 m-2"
-                placeholder="Search by Category..."
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </CCol>
-            {site_id && (
-              <CCol md={1}>
-                <Link
-                  className="btn btn-sm "
-                  target="blank"
-                  to={`/${adminroute}/mds-logs/${site_id}`}
-                >
-                  Logs
-                </Link>
-              </CCol>
-            )}
-            <CCol md={1}>
-              <MdsGallery />
-            </CCol>
-          </CRow> */}
-          <CRow className="gx-2 gy-2 align-items-end m-2">
-            {/* Title */}
-            <CCol xs={12} md={4}>
-              <h5 className="fw-semibold text-success mb-0 text-center text-md-start">
-                MDS & Robot Tracking
-              </h5>
-            </CCol>
-
-            {/* Site Select */}
-            <CCol xs={12} sm={6} md={3}>
-              <CFormLabel className="small">Site</CFormLabel>
-              <CFormSelect
-                value={site_id}
-                onChange={(e) => setSiteId(e.target.value)}
-              >
-                <option value="">Select Site</option>
-                {sites?.map((site) => (
-                  <option key={site.site_id} value={site.site_id}>
-                    {site.site_id}
-                  </option>
-                ))}
-              </CFormSelect>
-            </CCol>
-
-            {/* MDS Select */}
-            {allMdsDevices?.length > 0 && (
-              <CCol xs={12} sm={6} md={3}>
-                <CFormLabel className="small">MDS</CFormLabel>
-                <CFormSelect
-                  value={mdsDevice}
-                  onChange={(e) => {
-                    const selectedMds = allMdsDevices.find(
-                      (mds) => mds.mds_no === e.target.value,
-                    );
-                    if (selectedMds) {
-                      setMdsDevice(e.target.value);
-                      navigate(
-                        `/${adminroute}/mds/site-management/block-management/${selectedMds.site_id}/${selectedMds.block}/${selectedMds.mds_no}`,
-                      );
-                    }
-                  }}
-                >
-                  <option value="">Select MDS</option>
-                  {allMdsDevices.map((mds) => (
-                    <option key={mds.mds_no} value={mds.mds_no}>
-                      {mds.mds_no}
-                    </option>
-                  ))}
-                </CFormSelect>
-              </CCol>
-            )}
-
-            {/* Date */}
-            <CCol xs={12} sm={6} md={2}>
-              <CFormLabel className="small">Date</CFormLabel>
-              <CFormInput
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </CCol>
-
-            {/* Actions */}
-            <CCol
-              xs={12}
-              md={3}
-              className="d-flex gap-2 justify-content-md-end"
-            >
-              {site_id && (
-                <Link
-                  className="btn btn-outline-primary btn-sm"
-                  target="_blank"
-                  to={`/${adminroute}/mds-logs/${site_id}`}
-                >
-                  View Logs
-                </Link>
-              )}
-
-              <MdsGallery />
-            </CCol>
-          </CRow>
-
-          {mdsdevices.length > 0 ? (
-            mdsdevices.map((data, index) => {
-              const totalRows = data?.no_of_rows;
-
-              //getMdsStatus helper usage
-              const { isDocked, isMoving } = getMdsStatus(data);
-
-              const activeMdsPosition = data?.mds_positions.find(
-                (p) => p.active || (p.robot_released && !p.robot_returned),
-              );
-
-              const activeRowNumber = isDocked
-                ? 1
-                : activeMdsPosition?.row_number || 1;
-
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleOpenSidebar(data)}
-                  className="mb-5 border p-3 rounded cursor-pointer"
-                >
-                  <h6 className="mb-3">{data.mds_no}</h6>
-                  <div className="d-flex justify-content-end align-items-center">
-                    <Link
-                      to={`/${adminroute}/mds/site-management/block-management/${data.site_id}/${data.block}/${data.mds_no}`}
-                      className="btn btn-primary btn-sm mb-2 d-flex align-items-center"
-                    >
-                      Command
-                      <FaArrowUp />
-                    </Link>
-                  </div>
-
-                  <div className="d-flex align-items-start">
-                    <MdsRailingTrack
-                      totalRows={totalRows}
-                      activeRow={activeRowNumber}
-                    />
-
-                    <div className="d-flex flex-column ms-4">
-                      {data.rows.map((row, index) => {
-                        // helper functions to calculate robot position
-                        const { robotPos, showRobotOnMds } =
-                          calculateRobotPosition(
-                            row,
-                            activeRowNumber,
-                            isDocked,
-                            data,
-                          );
-
-                        const mdsPosition = data?.mds_positions.find(
-                          (p) => p.row_number === row.row_no,
+                  <div className="d-flex flex-column ms-4">
+                    {data.rows.map((row, index) => {
+                      // helper functions to calculate robot position
+                      const { robotPos, showRobotOnMds } =
+                        calculateRobotPosition(
+                          row,
+                          activeRowNumber,
+                          isDocked,
+                          data,
                         );
 
-                        const showMdsBridge =
-                          mdsPosition?.active ||
-                          (isDocked && row.row_no === 1) ||
-                          (isMoving && row.row_no === activeRowNumber);
+                      const mdsPosition = data?.mds_positions.find(
+                        (p) => p.row_number === row.row_no,
+                      );
 
-                        return (
-                          <div
-                            key={index}
-                            style={{ position: "relative", height: "70px" }}
-                          >
-                            <MdsRowTrack row={row} />
+                      const showMdsBridge =
+                        mdsPosition?.active ||
+                        (isDocked && row.row_no === 1) ||
+                        (isMoving && row.row_no === activeRowNumber);
 
-                            {/* Bridge */}
-                            {showMdsBridge && (
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  left: "-71px",
-                                  top: "0px",
-                                  width: "70px",
-                                  height: "39px",
-                                  borderRadius: "1px",
-                                  border: "1px solid grey",
-                                  transition: "width 0.5s linear",
-                                }}
+                      return (
+                        <div
+                          key={index}
+                          style={{ position: "relative", height: "70px" }}
+                        >
+                          <MdsRowTrack row={row} />
+
+                          {/* Bridge */}
+                          {showMdsBridge && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: "-71px",
+                                top: "0px",
+                                width: "70px",
+                                height: "39px",
+                                borderRadius: "1px",
+                                border: "1px solid grey",
+                                transition: "width 0.5s linear",
+                              }}
+                            >
+                              <span
+                                className="d-flex justify-content-center align-items-center ms-4"
+                                style={{ height: "100%" }}
                               >
-                                <span
-                                  className="d-flex justify-content-center align-items-center ms-4"
-                                  style={{ height: "100%" }}
-                                >
-                                  {row.row_no}
-                                </span>
-                              </div>
-                            )}
+                                {row.row_no}
+                              </span>
+                            </div>
+                          )}
 
-                            {/* Robot */}
-                            {row.row_no === activeRowNumber &&
-                              (isMoving || activeMdsPosition || isDocked) && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    top: "0px",
-                                    left: `${
-                                      showRobotOnMds ? -75 : robotPos * 5
-                                    }px`,
-                                    transition: "left 0.2s linear",
-                                    zIndex: 10,
-                                  }}
-                                >
-                                  <Robot />
-                                </div>
-                              )}
-
-                            {/* MDS visual */}
-                            {showMdsBridge && (
+                          {/* Robot */}
+                          {row.row_no === activeRowNumber &&
+                            (isMoving || activeMdsPosition || isDocked) && (
                               <div
                                 style={{
                                   position: "absolute",
                                   top: "0px",
-                                  left: "-71px",
-                                  width: "30px",
-                                  height: "39px",
-                                  background:
-                                    "linear-gradient(to bottom, #263238, #455A64, #263238)",
-                                  borderRadius: "1px",
-                                  boxShadow: "0 0 10px rgba(0,0,0,0.5)",
-                                  color: "#fff",
-                                  textAlign: "center",
-                                  fontSize: "12px",
-                                  lineHeight: "25px",
+                                  left: `${
+                                    showRobotOnMds ? -75 : robotPos * 5
+                                  }px`,
+                                  transition: "left 0.2s linear",
+                                  zIndex: 10,
                                 }}
                               >
-                                <span className="d-flex flex-column justify-content-start align-items-center">
-                                  MDS{" "}
-                                  <span className="d-flex">
-                                    {isDocked ? (
-                                      <span
-                                        style={{
-                                          color: "lime",
-                                          fontSize: "12px",
-                                          position: "relative",
-                                          top: "15px",
-                                        }}
-                                      >
-                                        Docked
-                                      </span>
-                                    ) : (
-                                      <span
-                                        style={{
-                                          width: "10px",
-                                          height: "10px",
-                                          backgroundColor: isMoving
-                                            ? "orange"
-                                            : "lime",
-                                          borderRadius: "50%",
-                                          display: "inline-block",
-                                        }}
-                                      />
-                                    )}
-                                  </span>
-                                </span>
+                                <Robot />
                               </div>
                             )}
-                          </div>
-                        );
-                      })}
-                    </div>
+
+                          {/* MDS visual */}
+                          {showMdsBridge && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: "0px",
+                                left: "-71px",
+                                width: "30px",
+                                height: "39px",
+                                background:
+                                  "linear-gradient(to bottom, #263238, #455A64, #263238)",
+                                borderRadius: "1px",
+                                boxShadow: "0 0 10px rgba(0,0,0,0.5)",
+                                color: "#fff",
+                                textAlign: "center",
+                                fontSize: "12px",
+                                lineHeight: "25px",
+                              }}
+                            >
+                              <span className="d-flex flex-column justify-content-start align-items-center">
+                                MDS{" "}
+                                <span className="d-flex">
+                                  {isDocked ? (
+                                    <span
+                                      style={{
+                                        color: "lime",
+                                        fontSize: "12px",
+                                        position: "relative",
+                                        top: "15px",
+                                      }}
+                                    >
+                                      Docked
+                                    </span>
+                                  ) : (
+                                    <span
+                                      style={{
+                                        width: "10px",
+                                        height: "10px",
+                                        backgroundColor: isMoving
+                                          ? "orange"
+                                          : "lime",
+                                        borderRadius: "50%",
+                                        display: "inline-block",
+                                      }}
+                                    />
+                                  )}
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <div
-              style={{
-                minHeight: "50vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <h5 className="text-light">No MDS Tracking Found at {date}</h5>
-            </div>
-          )}
-        </>
-      )}
+              </div>
+            );
+          })
+        ) : (
+          <div
+            style={{
+              minHeight: "50vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h5 className="text-light">No MDS Tracking Found at {date}</h5>
+          </div>
+        )}
+      </>
+
       {/* Sidebar component */}
       <MdsSidebar
         mds={selectedMDS}

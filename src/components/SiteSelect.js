@@ -27,7 +27,10 @@ export default function SiteSelect({
 
         setSiteIds(formatted);
         // Default select first value
-        if (formatted.length > 0) {
+        // if (formatted.length > 0) {
+        //   onChange(formatted[0].value);
+        // }
+        if (formatted.length > 0 && value === "all") {
           onChange(formatted[0].value);
         }
       } catch (e) {
@@ -38,7 +41,7 @@ export default function SiteSelect({
     };
 
     fetchSiteIds();
-  }, [onChange]);
+  }, []);
 
   const customStyles = {
     control: (provided, state) => ({

@@ -14,7 +14,6 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
-  CFormSelect,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -25,6 +24,7 @@ import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import SiteSelect from "../../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -41,12 +41,7 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAULTYINVENTORY_FAIL":
       return { ...state, loadingInventories: false, error: action.payload };
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, siteError: "" };
-    case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, siteError: action.payload };
+
     default:
       return state;
   }
@@ -58,9 +53,6 @@ const FaultyInventory = () => {
       error,
       inventories,
       loadingInventories,
-      sites,
-      loadingSites,
-      siteError,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -69,9 +61,7 @@ const FaultyInventory = () => {
     dispatch,
   ] = useReducer(reducer, {
     inventories: [],
-    sites: [],
-    loadingSites: true,
-    siteError: "",
+
     loading: true,
     loadingInventories: true,
     error: "",
@@ -140,28 +130,9 @@ const FaultyInventory = () => {
         toast.error("Failed to fetch Inventories");
       }
     };
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({
-          type: "FETCH_SITES_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_SITES_FAIL",
-          payload: error.response.data.error,
-        });
-        toast.error("Failed to fetch sites");
-      }
-    };
+
     fetchInventories(); // 👈 Add this!
-    fetchSites();
-  }, [successDelete, , limit, page]);
+  }, [successDelete, limit, page]);
   const filteredInventories = inventories.filter((inventory) => {
     const matchesSite = siteId === "all" || inventory.site_id === siteId;
     const matchesSearch =
@@ -220,18 +191,7 @@ const FaultyInventory = () => {
       {/* Search Input */}
       <CRow className="mb-3  justify-content-between align-items-center">
         <CCol md={4}>
-          <CFormSelect
-            value={siteId}
-            onChange={(e) => setSiteId(e.target.value)}
-            disabled={loadingSites}
-          >
-            <option value="all">All Sites</option>
-            {sites.map((site) => (
-              <option key={site._id} value={site.site_id}>
-                {site.site_id}
-              </option>
-            ))}
-          </CFormSelect>
+          <SiteSelect value={siteId} onChange={setSiteId} />
         </CCol>
         <CCol md={4}>
           <CFormInput

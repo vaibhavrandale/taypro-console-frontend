@@ -6437,6 +6437,15 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+  {
+    path: "/service-admin/customer-feedback",
+    name: "Customer Feedback",
+    element: (
+      <ServiceAdminRoute>
+        <ClientFeedback />
+      </ServiceAdminRoute>
+    ),
+  },
   // ------------------------poc------------------------------
 
   //------------------------service admin---------------------------------

@@ -20,7 +20,7 @@ import {
   CTabs,
   CImage,
   CBadge,
-  CFormSelect,
+  // CFormSelect,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -34,6 +34,7 @@ import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import image from "./tool.png";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import SiteSelect from "../../../components/SiteSelect";
 const InventoryTab = () => {
   return (
     <div>
@@ -87,12 +88,12 @@ const reducer = (state, action) => {
       };
     case "FETCH_SERVICEITEM_FAIL":
       return { ...state, loadingServiceItems: false, error: action.payload };
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, siteError: "" };
-    case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, siteError: action.payload };
+    // case "FETCH_SITES_REQUEST":
+    //   return { ...state, loadingSites: true, siteError: "" };
+    // case "FETCH_SITES_SUCCESS":
+    //   return { ...state, loadingSites: false, sites: action.payload };
+    // case "FETCH_SITES_FAIL":
+    //   return { ...state, loadingSites: false, siteError: action.payload };
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true, successDelete: false };
 
@@ -115,9 +116,9 @@ const Inventories = () => {
       error,
       inventories,
       loadingInventories,
-      sites,
-      loadingSites,
-      siteError,
+      // sites,
+      // loadingSites,
+      // siteError,
       totalPages,
       hasNextPage,
       hasPrevPage,
@@ -126,9 +127,9 @@ const Inventories = () => {
     dispatch,
   ] = useReducer(reducer, {
     inventories: [],
-    sites: [],
-    loadingSites: true,
-    siteError: "",
+    // sites: [],
+    // loadingSites: true,
+    // siteError: "",
     loading: true,
     loadingInventories: true,
     error: "",
@@ -199,33 +200,33 @@ const Inventories = () => {
       }
     };
 
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({
-          type: "FETCH_SITES_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_SITES_FAIL",
-          payload: error.response.data.error,
-        });
-        toast.error("Failed to fetch sites");
-      }
-    };
+    // const fetchSites = async () => {
+    //   dispatch({ type: "FETCH_SITES_REQUEST" });
+    //   try {
+    //     const result = await axios.get(`/api/v1/sites`, {
+    //       // headers: { Authorization: `Bearer ${authtoken}` },
+    //       withCredentials: true,
+    //     });
+    //     dispatch({
+    //       type: "FETCH_SITES_SUCCESS",
+    //       payload: result.data.data,
+    //     });
+    //   } catch (error) {
+    //     dispatch({
+    //       type: "FETCH_SITES_FAIL",
+    //       payload: error.response.data.error,
+    //     });
+    //     toast.error("Failed to fetch sites");
+    //   }
+    // };
 
     if (successDelete) {
       dispatch({ type: "DELETE_RESET" });
     } else {
       fetchInventories();
     }
-    fetchSites();
-  }, [successDelete, , limit, page]);
+    // fetchSites();
+  }, [successDelete, limit, page]);
   const filteredInventories = inventories.filter((inventory) => {
     // Apply site filter first
     if (siteId !== "all" && inventory.site_id !== siteId) {
@@ -349,7 +350,7 @@ const Inventories = () => {
       {/* Search Input */}
       <CRow className="mb-3  justify-content-between align-items-center">
         <CCol md={4}>
-          <CFormSelect
+          {/* <CFormSelect
             value={siteId}
             onChange={(e) => setSiteId(e.target.value)}
             disabled={loadingSites}
@@ -360,7 +361,8 @@ const Inventories = () => {
                 {site.site_id}
               </option>
             ))}
-          </CFormSelect>
+          </CFormSelect> */}
+          <SiteSelect value={siteId} onChange={setSiteId} />
         </CCol>
         <CCol md={4}>
           <CFormInput
@@ -631,7 +633,7 @@ const ServiceItems = () => {
     } else {
       fetchServiceItems();
     }
-  }, [successDelete, , limit, page]);
+  }, [successDelete, limit, page]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
