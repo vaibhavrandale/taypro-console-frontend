@@ -189,7 +189,9 @@ const ClientFeedback = () => {
 
       {/* Top Bar */}
       <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-sm btn-primary">Export</Link>
+        <CButton color="primary" onClick={exportToCSV}>
+          Export to CSV
+        </CButton>
       </div>
 
       {/* ================= FILTER BAR ================= */}
@@ -249,11 +251,6 @@ const ClientFeedback = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </CInputGroup>
-        </CCol>
-        <CCol xs={12} md={2}>
-          <CButton color="primary" onClick={exportToCSV}>
-            Export to CSV
-          </CButton>
         </CCol>
       </CRow>
 
