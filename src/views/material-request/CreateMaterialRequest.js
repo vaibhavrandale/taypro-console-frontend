@@ -315,18 +315,29 @@ const CreateMaterialRequest = () => {
       border: "none",
       borderRadius: "12px",
       minHeight: "26px",
-      minWidth: "70px", // <-- not minWdth
-    }),
-
-    menu: (provided) => ({
-      ...provided,
-      background: "#16213e",
-      borderRadius: "5px",
-      overflow: "hidden",
-
+      minWidth: "300px", // <-- not minWdth
       zIndex: 9999,
     }),
 
+    // menu: (provided) => ({
+    //   ...provided,
+    //   background: "#16213e",
+    //   borderRadius: "5px",
+    //   overflow: "hidden",
+
+    //   zIndex: 9999,
+    // }),
+
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 999999,
+    }),
+
+    menu: (base) => ({
+      ...base,
+      zIndex: 999999,
+      backgroundColor: "#16213e",
+    }),
     menuList: (provided) => ({
       ...provided,
       padding: "0px 0px 0px 0px",
@@ -499,34 +510,37 @@ const CreateMaterialRequest = () => {
               </CButton>
             </div>
 
-            <CTable bordered>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell>Item Code</CTableHeaderCell>
-                  <CTableHeaderCell>Item Name</CTableHeaderCell>
-                  <CTableHeaderCell>Quantity</CTableHeaderCell>
-                  <CTableHeaderCell>Action</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
+            <div>
+              <CTable bordered>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Item Code</CTableHeaderCell>
+                    <CTableHeaderCell style={{ minWidth: "300px" }}>
+                      Item Name
+                    </CTableHeaderCell>
+                    <CTableHeaderCell>Quantity</CTableHeaderCell>
+                    <CTableHeaderCell>Action</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
 
-              <CTableBody>
-                {serviceItemsLoading ? (
-                  <CTableRow>
-                    <CTableDataCell colSpan={4}>
-                      <LoadingSpinner />
-                    </CTableDataCell>
-                  </CTableRow>
-                ) : serviceItemsError ? (
-                  <CTableRow>
-                    <CTableDataCell colSpan={4}>
-                      {serviceItemsError}
-                    </CTableDataCell>
-                  </CTableRow>
-                ) : (
-                  items.map((item, index) => (
-                    <CTableRow key={index}>
-                      <CTableDataCell>
-                        {/* <CFormSelect
+                <CTableBody>
+                  {serviceItemsLoading ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={4}>
+                        <LoadingSpinner />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ) : serviceItemsError ? (
+                    <CTableRow>
+                      <CTableDataCell colSpan={4}>
+                        {serviceItemsError}
+                      </CTableDataCell>
+                    </CTableRow>
+                  ) : (
+                    items.map((item, index) => (
+                      <CTableRow key={index}>
+                        <CTableDataCell>
+                          {/* <CFormSelect
                           value={item.item_code}
                           onChange={(e) =>
                             handleItemChange(index, "item_code", e.target.value)
@@ -543,59 +557,61 @@ const CreateMaterialRequest = () => {
                             </option>
                           ))}
                         </CFormSelect> */}
-                        <Select
-                          styles={customStyles}
-                          placeholder="Search Item..."
-                          value={
-                            item.item_code
-                              ? {
-                                  value: item.item_code,
-                                  label: `${item.item_code} - ${item.item_name}`,
-                                }
-                              : null
-                          }
-                          onChange={(selected) =>
-                            handleItemChange(
-                              index,
-                              "item_code",
-                              selected ? selected.value : "",
-                            )
-                          }
-                          options={serviceItems?.map((serviceItem) => ({
-                            value: serviceItem.item_code,
-                            label: `${serviceItem.item_code} - ${serviceItem.item_name}`,
-                          }))}
-                        />
-                      </CTableDataCell>
+                          <Select
+                            className="z-4"
+                            styles={customStyles}
+                            placeholder="Search Item..."
+                            value={
+                              item.item_code
+                                ? {
+                                    value: item.item_code,
+                                    label: `${item.item_code} - ${item.item_name}`,
+                                  }
+                                : null
+                            }
+                            onChange={(selected) =>
+                              handleItemChange(
+                                index,
+                                "item_code",
+                                selected ? selected.value : "",
+                              )
+                            }
+                            options={serviceItems?.map((serviceItem) => ({
+                              value: serviceItem.item_code,
+                              label: `${serviceItem.item_code} - ${serviceItem.item_name}`,
+                            }))}
+                          />
+                        </CTableDataCell>
 
-                      <CTableDataCell>
-                        <CFormInput value={item.item_name} readOnly />
-                      </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput value={item.item_name} readOnly />
+                        </CTableDataCell>
 
-                      <CTableDataCell>
-                        <CFormInput
-                          type="number"
-                          value={item.qty}
-                          onChange={(e) =>
-                            handleItemChange(index, "qty", e.target.value)
-                          }
-                        />
-                      </CTableDataCell>
+                        <CTableDataCell>
+                          <CFormInput
+                            type="number"
+                            value={item.qty}
+                            onChange={(e) =>
+                              handleItemChange(index, "qty", e.target.value)
+                            }
+                          />
+                        </CTableDataCell>
 
-                      <CTableDataCell>
-                        <CButton
-                          color="danger"
-                          size="sm"
-                          onClick={() => removeItem(index)}
-                        >
-                          <MdDeleteOutline />
-                        </CButton>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))
-                )}
-              </CTableBody>
-            </CTable>
+                        <CTableDataCell>
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            onClick={() => removeItem(index)}
+                          >
+                            <MdDeleteOutline />
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  )}
+                </CTableBody>
+              </CTable>
+            </div>
           </div>
           {createError && <CAlert color="danger">{createError}</CAlert>}
           {/* SUBMIT */}
