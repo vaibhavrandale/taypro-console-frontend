@@ -6,6 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { GrAddCircle } from "react-icons/gr";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import Select from "react-select";
 import {
   CButton,
   CForm,
@@ -17,6 +18,8 @@ import {
   CTableDataCell,
   CFormTextarea,
   CAlert,
+  CTableHeaderCell,
+  CTableHead,
 } from "@coreui/react";
 
 const reducer = (state, action) => {
@@ -35,15 +38,19 @@ const reducer = (state, action) => {
     case "FETCH_SITES_FAIL":
       return { ...state, sitesLoading: false, sitesError: action.payload };
 
-    case "FETCH_INVENTORY_FETCH":
-      return { ...state, inventoryLoading: false };
-    case "FETCH_INVENTORY_SUCCESS":
-      return { ...state, inventories: action.payload, inventoryLoading: false };
-    case "FETCH_INVENTORY_FAIL":
+    case "FETCH_SERVICEITEM_FETCH":
+      return { ...state, serviceItemsLoading: false };
+    case "FETCH_SERVICEITEM_SUCCESS":
       return {
         ...state,
-        inventoryError: action.payload,
-        inventoryLoading: false,
+        serviceItems: action.payload,
+        serviceItemsLoading: false,
+      };
+    case "FETCH_SERVICEITEM_FAIL":
+      return {
+        ...state,
+        serviceItemsError: action.payload,
+        serviceItemsLoading: false,
       };
 
     default:
@@ -59,9 +66,9 @@ const CreateMaterialRequest = () => {
       sitesLoading,
       sites,
       sitesError,
-      inventoryLoading,
-      inventories,
-      inventoryError,
+      serviceItemsLoading,
+      serviceItems,
+      serviceItemsError,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -70,8 +77,8 @@ const CreateMaterialRequest = () => {
     sitesLoading: false,
     sites: [],
     sitesError: "",
-    inventoryLoading: false,
-    inventories: [],
+    serviceItemsLoading: false,
+    serviceItems: [],
     inventoryError: "",
   });
 
@@ -139,21 +146,21 @@ const CreateMaterialRequest = () => {
   };
   const fetchInventories = async () => {
     try {
-      dispatch({ type: "FETCH_INVENTORY_FETCH" });
-      const { data } = await axios.post(
-        `/api/v1/service-inventory/get-inventory`,
-        { pg: 1, limit: 100 },
+      dispatch({ type: "FETCH_SERVICEITEM_FETCH" });
+      const { data } = await axios.get(
+        `/api/v1/service-items`,
+
         {
           // headers: { Authorization: `Bearer ${authtoken}` },
           withCredentials: true,
         },
       );
 
-      dispatch({ type: "FETCH_INVENTORY_SUCCESS", payload: data.data });
+      dispatch({ type: "FETCH_SERVICEITEM_SUCCESS", payload: data.data });
     } catch (error) {
       toast.error(error.response.data.error || error.response.data.message);
       dispatch({
-        type: "FETCH_SITES_FAIL",
+        type: "FETCH_SERVICEITEM_FAIL",
         payload: error.response.data.error || error.response.data.message,
       });
     }
@@ -181,7 +188,7 @@ const CreateMaterialRequest = () => {
     const updated = [...items];
 
     if (field === "item_code") {
-      const selected = inventories.find((i) => i.item_code === value);
+      const selected = serviceItems.find((i) => i.item_code === value);
 
       updated[index].item_code = value;
       updated[index].item_name = selected?.item_name || "";
@@ -301,6 +308,78 @@ const CreateMaterialRequest = () => {
     adminroute = "project-user";
   }
 
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      background: "#111c44",
+      border: "none",
+      borderRadius: "12px",
+      minHeight: "26px",
+      minWidth: "70px", // <-- not minWdth
+    }),
+
+    menu: (provided) => ({
+      ...provided,
+      background: "#16213e",
+      borderRadius: "5px",
+      overflow: "hidden",
+
+      zIndex: 9999,
+    }),
+
+    menuList: (provided) => ({
+      ...provided,
+      padding: "0px 0px 0px 0px",
+      background: "#16213e",
+    }),
+
+    option: (provided, state) => ({
+      ...provided,
+      background: state.isSelected
+        ? "#00d4ff22"
+        : state.isFocused
+          ? "#1b2a52"
+          : "#16213e",
+      color: state.isSelected ? "#00d4ff" : "#ffffff",
+      padding: 8,
+      cursor: "pointer",
+      transition: "0.2s",
+    }),
+
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#ffffff",
+      fontWeight: 500,
+    }),
+
+    input: (provided) => ({
+      ...provided,
+      color: "#ffffff",
+    }),
+
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#94a3b8",
+    }),
+
+    dropdownIndicator: (provided, state) => ({
+      ...provided,
+      color: state.isFocused ? "#00d4ff" : "#94a3b8",
+      "&:hover": {
+        color: "#00d4ff",
+      },
+    }),
+
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+
+    noOptionsMessage: (provided) => ({
+      ...provided,
+      color: "#94a3b8",
+      padding: "0px 0px 0px 20px",
+    }),
+  };
   // ================= UI =================
   return (
     <div className="card">
@@ -421,34 +500,72 @@ const CreateMaterialRequest = () => {
             </div>
 
             <CTable bordered>
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>Item Code</CTableHeaderCell>
+                  <CTableHeaderCell>Item Name</CTableHeaderCell>
+                  <CTableHeaderCell>Quantity</CTableHeaderCell>
+                  <CTableHeaderCell>Action</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+
               <CTableBody>
-                {inventoryLoading ? (
+                {serviceItemsLoading ? (
                   <CTableRow>
-                    <CTableDataCell>
+                    <CTableDataCell colSpan={4}>
                       <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
-                ) : inventoryError ? (
+                ) : serviceItemsError ? (
                   <CTableRow>
-                    <CTableDataCell>{inventoryError}</CTableDataCell>
+                    <CTableDataCell colSpan={4}>
+                      {serviceItemsError}
+                    </CTableDataCell>
                   </CTableRow>
                 ) : (
                   items.map((item, index) => (
                     <CTableRow key={index}>
                       <CTableDataCell>
-                        <CFormSelect
+                        {/* <CFormSelect
                           value={item.item_code}
                           onChange={(e) =>
                             handleItemChange(index, "item_code", e.target.value)
                           }
+                          styles={customStyles}
                         >
                           <option value="">Select Item</option>
-                          {inventories?.map((inv) => (
-                            <option key={inv._id} value={inv.item_code}>
-                              {inv.item_code} - {inv.item_name}
+                          {serviceItems?.map((serviceItem) => (
+                            <option
+                              key={serviceItem._id}
+                              value={serviceItem.item_code}
+                            >
+                              {serviceItem.item_code} - {serviceItem.item_name}
                             </option>
                           ))}
-                        </CFormSelect>
+                        </CFormSelect> */}
+                        <Select
+                          styles={customStyles}
+                          placeholder="Search Item..."
+                          value={
+                            item.item_code
+                              ? {
+                                  value: item.item_code,
+                                  label: `${item.item_code} - ${item.item_name}`,
+                                }
+                              : null
+                          }
+                          onChange={(selected) =>
+                            handleItemChange(
+                              index,
+                              "item_code",
+                              selected ? selected.value : "",
+                            )
+                          }
+                          options={serviceItems?.map((serviceItem) => ({
+                            value: serviceItem.item_code,
+                            label: `${serviceItem.item_code} - ${serviceItem.item_name}`,
+                          }))}
+                        />
                       </CTableDataCell>
 
                       <CTableDataCell>
