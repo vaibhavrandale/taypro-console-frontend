@@ -91,7 +91,7 @@ const RobotTracker = () => {
     dispatch,
   ] = useReducer(reducer, {
     robots: [],
-    loading: true,
+    loading: false,
     error: "",
     loadingDelete: false,
     // sites: [],
