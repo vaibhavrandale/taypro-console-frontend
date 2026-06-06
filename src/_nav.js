@@ -43,7 +43,7 @@ import {
   Proportions,
   Wrench,
 } from "lucide-react";
-import { MdCircleNotifications } from "react-icons/md";
+// import { MdCircleNotifications } from "react-icons/md";
 
 const _nav = [
   // -----------------------------------master admin----------------------------------------
@@ -63,6 +63,18 @@ const _nav = [
         component: CNavItem,
         name: "Dashboard",
         to: "/master-admin/dashboard",
+        icon: (
+          <CIcon
+            icon={cilFactory}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Dashboard 2",
+        to: "/master-admin/dashboard-2",
         icon: (
           <CIcon
             icon={cilFactory}
@@ -846,6 +858,24 @@ const _nav = [
           },
         ],
       },
+      {
+        component: CNavGroup,
+        name: "Gateway Survey",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Gateway Survey",
+            to: "/master-admin/gateway-survey-dashboard",
+          },
+        ],
+      },
     ],
   },
   // -----------------------------------master admin----------------------------------------
@@ -1316,6 +1346,24 @@ const _nav = [
       />
     ),
     items: [
+      {
+        component: CNavGroup,
+        name: "Gateway Survey",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Gateway Survey",
+            to: "/project-admin/gateway-survey-dashboard",
+          },
+        ],
+      },
       {
         component: CNavItem,
         name: "Dashboard",
@@ -2050,6 +2098,24 @@ const _nav = [
     ),
     items: [
       {
+        component: CNavGroup,
+        name: "Gateway Survey",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Gateway Survey",
+            to: "/service-admin/gateway-survey-dashboard",
+          },
+        ],
+      },
+      {
         component: CNavItem,
         name: "Dashboard",
         to: "/service-admin/dashboard",
@@ -2628,6 +2694,24 @@ const _nav = [
       />
     ),
     items: [
+      {
+        component: CNavGroup,
+        name: "Gateway Survey",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Gateway Survey",
+            to: "/site-technician/gateway-survey-dashboard",
+          },
+        ],
+      },
       {
         component: CNavItem,
         name: "Dashboard",
