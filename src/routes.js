@@ -228,6 +228,10 @@ import MMSDashboard from "./views/mms/MMSDashboard";
 import ViewMms from "./views/mms/ViewMms";
 import CreateMmsStructure from "./views/mms/CreateMmms";
 import UpdateMms from "./views/mms/UpdateMms";
+import MasterAdminDashboardtow from "./views/master-admin/MasterAdminDashboardtow";
+import GatewaySurveyDashboard from "./views/master-admin/gateway-survey/GatewaySurveyDashboard";
+import CreateRobotReading from "./views/master-admin/gateway-survey/createRobotReading";
+import ViewGatewaySurvey from "./views/master-admin/gateway-survey/ViewGatewaySurvey";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -540,6 +544,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <MasterAdminDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/dashboard-2",
+    name: "Master Dashboard Two",
+    element: (
+      <MasterAdminRoute>
+        <MasterAdminDashboardtow />
       </MasterAdminRoute>
     ),
   },
@@ -2213,6 +2226,33 @@ const routes = [
       </MasterAdminRoute>
     ),
   },
+  {
+    path: "/master-admin/gateway-survey-dashboard",
+    name: "Gateway Survey Dashboard",
+    element: (
+      <MasterAdminRoute>
+        <GatewaySurveyDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/gateway-survey-dashboard/create-robot-survey/:id",
+    name: "Create Robot Survey",
+    element: (
+      <MasterAdminRoute>
+        <CreateRobotReading />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/gateway-survey-dashboard/view-gateway-survey/:id",
+    name: "View Gateway Survey",
+    element: (
+      <MasterAdminRoute>
+        <ViewGatewaySurvey />
+      </MasterAdminRoute>
+    ),
+  },
   // --------------------------poc mms---------------------------
   // ------------------------poc------------------------------
 
@@ -3412,6 +3452,33 @@ const routes = [
   },
   // ------------------------master user---------------------------------
   //------------------------project admin---------------------------------
+  {
+    path: "/project-admin/gateway-survey-dashboard",
+    name: "Gateway Survey Dashboard",
+    element: (
+      <ProjectAdminRoute>
+        <GatewaySurveyDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/gateway-survey-dashboard/create-robot-survey/:id",
+    name: "Create Robot Survey",
+    element: (
+      <ProjectAdminRoute>
+        <CreateRobotReading />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/gateway-survey-dashboard/view-gateway-survey/:id",
+    name: "View Gateway Survey",
+    element: (
+      <ProjectAdminRoute>
+        <ViewGatewaySurvey />
+      </ProjectAdminRoute>
+    ),
+  },
   {
     path: "/project-admin/robot-activity",
     name: "Robot Activity",
@@ -5266,6 +5333,33 @@ const routes = [
   //------------------------project user---------------------------------
 
   //------------------------service admin---------------------------------
+  {
+    path: "/service-admin/gateway-survey-dashboard",
+    name: "Gateway Survey Dashboard",
+    element: (
+      <ServiceAdminRoute>
+        <GatewaySurveyDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/gateway-survey-dashboard/create-robot-survey/:id",
+    name: "Create Robot Survey",
+    element: (
+      <ServiceAdminRoute>
+        <CreateRobotReading />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/gateway-survey-dashboard/view-gateway-survey/:id",
+    name: "View Gateway Survey",
+    element: (
+      <ServiceAdminRoute>
+        <ViewGatewaySurvey />
+      </ServiceAdminRoute>
+    ),
+  },
   {
     path: "/service-admin/robot-activity",
     name: "Robot Activity",
@@ -7342,6 +7436,34 @@ const routes = [
   //------------------------service user---------------------------------
 
   //------------------------service Site Technician---------------------------------
+
+  {
+    path: "/site-technician/gateway-survey-dashboard",
+    name: "Gateway Survey Dashboard",
+    element: (
+      <SiteTechnicianRoute>
+        <GatewaySurveyDashboard />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/gateway-survey-dashboard/create-robot-survey/:id",
+    name: "Create Robot Survey",
+    element: (
+      <SiteTechnicianRoute>
+        <CreateRobotReading />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/gateway-survey-dashboard/view-gateway-survey/:id",
+    name: "View Gateway Survey",
+    element: (
+      <SiteTechnicianRoute>
+        <ViewGatewaySurvey />
+      </SiteTechnicianRoute>
+    ),
+  },
   {
     path: "/site-technician/robot-activity",
     name: "Robot Activity",
