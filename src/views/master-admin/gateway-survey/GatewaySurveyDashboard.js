@@ -208,12 +208,12 @@ export default function GatewaySurveyDashboard() {
   const [showCreate, setShowCreate] = useState(false);
   const [sites, setSites] = useState([
     {
-      _id: "site123",
+      _id: "1",
       site_id: "avaada_bachau",
       name: "Avaada Bachau",
     },
     {
-      _id: "site456",
+      _id: "2",
       site_id: "tata_bachau",
       name: "Tata Bachau",
     },

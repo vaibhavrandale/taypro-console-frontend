@@ -28,6 +28,7 @@ import {
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useSelector } from "react-redux";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -235,6 +236,33 @@ export default function CreateRobotReading() {
     }
   }, []);
 
+  const userInfo = useSelector((state) => state.userInfo);
+
+  let adminroute = "";
+
+  if (userInfo?.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo?.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo?.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Client Admin") {
+    adminroute = "client-admin";
+  } else if (userInfo?.role === "Site Incharge") {
+    adminroute = "site-incharge";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  } else if (userInfo?.role === "Client Site Technician") {
+    adminroute = "client-site-technician";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Factory Admin") {
+    adminroute = "factory-admin";
+  }
   // ── submit reading ────────────────────────────────────────────────────────
   const handleSubmit = useCallback(
     async (e) => {
@@ -259,7 +287,7 @@ export default function CreateRobotReading() {
         });
         setStep("done");
         navigate(
-          `/master-admin/gateway-survey-dashboard/view-gateway-survey/${id}`,
+          `/${adminroute}/gateway-survey-dashboard/view-gateway-survey/${id}`,
         );
       } catch (err) {
         const msg =

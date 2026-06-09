@@ -989,7 +989,11 @@ const CleaningSummary = () => {
                           <Link
                             size="sm"
                             className="m-1 btn btn-sm"
-                            to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}/${new Date(item.date).toISOString().split("T")[0]}`}
+                            to={
+                              userInfo.type === "External"
+                                ? `/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}/${new Date(item.date).toISOString().split("T")[0]}`
+                                : `/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site_id}/${new Date(item.date).toISOString().split("T")[0]}`
+                            }
                           >
                             View Log
                           </Link>

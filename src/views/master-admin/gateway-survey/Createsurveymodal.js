@@ -473,7 +473,7 @@ export default function CreateSurveyModal({
                   >
                     <option value="">Select a site…</option>
                     {sites.map((s) => (
-                      <option key={s._id} value={s._id}>
+                      <option key={s._id} value={s.site_id}>
                         {s.name}
                       </option>
                     ))}
