@@ -30,6 +30,7 @@ import { Link } from "react-router-dom";
 import LastActivity from "../../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import SiteSelect from "../../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -126,7 +127,7 @@ const Timers = () => {
     bulkUpdateToggleError: "",
   });
 
-  const [site_id, setSiteId] = useState("all");
+  const [site_id, setSiteId] = useState("");
 
   // const authtoken = useSelector((state) => state.authtoken);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -157,6 +158,7 @@ const Timers = () => {
   }
 
   useEffect(() => {
+    if (!site_id) return;
     const fetchSiteIds = async () => {
       dispatch({ type: "FETCH_SITEID_REQUEST" });
       try {
@@ -307,7 +309,7 @@ const Timers = () => {
       {/* 📌 Site Filter */}
       <CRow className="justify-content-start mb-3">
         <CCol md={4}>
-          <CFormSelect
+          {/* <CFormSelect
             name="site_id"
             value={site_id}
             onChange={handleSiteNameChange}
@@ -319,7 +321,8 @@ const Timers = () => {
                   {item.site_id}
                 </option>
               ))}
-          </CFormSelect>
+          </CFormSelect> */}
+          <SiteSelect value={site_id} onChange={setSiteId} />
         </CCol>
       </CRow>
       {/* 📝 Timers Table */}

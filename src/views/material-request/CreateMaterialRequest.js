@@ -20,6 +20,11 @@ import {
   CAlert,
   CTableHeaderCell,
   CTableHead,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from "@coreui/react";
 
 const reducer = (state, action) => {
@@ -85,7 +90,7 @@ const CreateMaterialRequest = () => {
   const navigate = useNavigate();
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
-
+  const [submitModalVisible, setSubmitModalVisible] = useState(false);
   // ================= FORM =================
   const [formData, setFormData] = useState({
     company: "Taypro Private Limited",
@@ -235,6 +240,59 @@ const CreateMaterialRequest = () => {
   };
 
   // ================= SUBMIT =================
+  //   const submitHandler = async (e) => {
+  //     // if (!window.confirm(`Are you sure you want to Submit..?`)) {
+  //     //   return;
+  //     // }
+  //     e.preventDefault();
+
+  //     const errors = validateForm();
+  //     if (errors.length) {
+  //       toast.error(errors.join(", "));
+  //       return;
+  //     }
+  //  setSubmitModalVisible(true);
+  //     try {
+  //       dispatch({ type: "CREATE_REQUEST" });
+
+  //       const payload = {
+  //         ...formData,
+  //         docstatus: 0,
+  //         doctype: "Material Request",
+  //         status: "Draft",
+  //         console_status: "Draft",
+
+  //         items: items.map((item, idx) => ({
+  //           item_code: item.item_code,
+  //           item_name: item.item_name,
+  //           qty: item.qty,
+  //           uom: item.uom,
+  //           warehouse: item.warehouse,
+  //           docstatus: 0,
+  //           doctype: "Material Request Item",
+  //           idx: idx + 1,
+  //         })),
+  //       };
+
+  //       const res = await axios.post("/api/v1/material-requests", payload, {
+  //         // headers: { Authorization: `Bearer ${authtoken}` },
+  //         withCredentials: true,
+  //       });
+
+  //       dispatch({ type: "CREATE_SUCCESS" });
+  //       toast.success(res.data.message);
+
+  //       navigate(`/${adminroute}/material-requests`);
+  //     } catch (error) {
+  //       dispatch({
+  //         type: "CREATE_FAIL",
+  //         payload: error.response?.data?.message || error.response?.data?.error,
+  //       });
+
+  //       toast.error(error.response?.data?.message || error.response?.data?.error);
+  //     }
+  //   };
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -244,6 +302,9 @@ const CreateMaterialRequest = () => {
       return;
     }
 
+    setSubmitModalVisible(true);
+  };
+  const confirmSubmit = async () => {
     try {
       dispatch({ type: "CREATE_REQUEST" });
 
@@ -253,7 +314,6 @@ const CreateMaterialRequest = () => {
         doctype: "Material Request",
         status: "Draft",
         console_status: "Draft",
-
         items: items.map((item, idx) => ({
           item_code: item.item_code,
           item_name: item.item_name,
@@ -267,13 +327,13 @@ const CreateMaterialRequest = () => {
       };
 
       const res = await axios.post("/api/v1/material-requests", payload, {
-        // headers: { Authorization: `Bearer ${authtoken}` },
         withCredentials: true,
       });
 
       dispatch({ type: "CREATE_SUCCESS" });
-      toast.success(res.data.message);
 
+      toast.success(res.data.message);
+      setSubmitModalVisible(false);
       navigate(`/${adminroute}/material-requests`);
     } catch (error) {
       dispatch({
@@ -316,7 +376,7 @@ const CreateMaterialRequest = () => {
       borderRadius: "12px",
       minHeight: "26px",
       minWidth: "300px", // <-- not minWdth
-      zIndex: 9999,
+      // zIndex: 9999,
     }),
 
     // menu: (provided) => ({
@@ -391,14 +451,18 @@ const CreateMaterialRequest = () => {
       padding: "0px 0px 0px 20px",
     }),
   };
+
+  const userimage =
+    "https://res.cloudinary.com/decyim6cd/image/upload/v1745395124/profile-image/p051mclk9t82laqu0mvq.webp";
+
   // ================= UI =================
   return (
-    <div className="card">
-      <div className="card-header bg-primary text-white">
+    <div className="border p-2">
+      <div className="my-2 border-bottom text-white">
         <h3 className="mb-0">New Material Request</h3>
       </div>
 
-      <div className="card-body">
+      <div className="">
         <CForm onSubmit={submitHandler}>
           {/* BASIC INFO */}
           <div className="mb-4">
@@ -445,6 +509,7 @@ const CreateMaterialRequest = () => {
               <div className="col-md-4">
                 <label>From Warehouse</label>
                 <CFormInput
+                  readOnly
                   name="set_from_warehouse"
                   value={formData.set_from_warehouse}
                   onChange={handleFormChange}
@@ -460,6 +525,7 @@ const CreateMaterialRequest = () => {
                   <>
                     <label>To Warehouse</label>
                     <CFormInput
+                      readOnly
                       name="set_to_warehouse"
                       value={formData.set_to_warehouse}
                       onChange={handleFormChange}
@@ -482,7 +548,7 @@ const CreateMaterialRequest = () => {
             </div>
 
             <div className=" mt-3">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 {" "}
                 {/* change to 4 / 6 / 8 */}
                 <label>Remark</label>
@@ -510,7 +576,7 @@ const CreateMaterialRequest = () => {
               </CButton>
             </div>
 
-            <div>
+            <div className="overflow-x-auto">
               <CTable bordered>
                 <CTableHead>
                   <CTableRow>
@@ -540,27 +606,12 @@ const CreateMaterialRequest = () => {
                     items.map((item, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>
-                          {/* <CFormSelect
-                          value={item.item_code}
-                          onChange={(e) =>
-                            handleItemChange(index, "item_code", e.target.value)
-                          }
-                          styles={customStyles}
-                        >
-                          <option value="">Select Item</option>
-                          {serviceItems?.map((serviceItem) => (
-                            <option
-                              key={serviceItem._id}
-                              value={serviceItem.item_code}
-                            >
-                              {serviceItem.item_code} - {serviceItem.item_name}
-                            </option>
-                          ))}
-                        </CFormSelect> */}
-                          <Select
+                          {/* <Select
                             className="z-4"
                             styles={customStyles}
                             placeholder="Search Item..."
+                            menuPortalTarget={document.body} // ✅ renders outside overflow container
+                            menuPosition="fixed" // ✅ positions relative to viewport
                             value={
                               item.item_code
                                 ? {
@@ -578,6 +629,91 @@ const CreateMaterialRequest = () => {
                             }
                             options={serviceItems?.map((serviceItem) => ({
                               value: serviceItem.item_code,
+                              label: `${serviceItem.item_code} - ${serviceItem.item_name}`,
+                            }))}
+                          /> */}
+
+                          <Select
+                            className="z-4"
+                            styles={customStyles}
+                            placeholder="Search Item..."
+                            menuPortalTarget={document.body}
+                            menuPosition="fixed"
+                            formatOptionLabel={(option) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                }}
+                              >
+                                <img
+                                  src={option.item_image || userimage}
+                                  alt={option.label}
+                                  style={{
+                                    width: "56px",
+                                    height: "56px",
+                                    objectFit: "cover",
+                                    borderRadius: "6px",
+                                    border: "1px solid #2a3a6e",
+                                    flexShrink: 0,
+                                  }}
+                                  onError={(e) => {
+                                    e.target.src = userimage;
+                                  }}
+                                />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    lineHeight: "1.3",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: "#ffffff",
+                                      fontSize: "13px",
+                                    }}
+                                  >
+                                    {option.itemName}
+                                  </span>
+                                  <span
+                                    style={{
+                                      color: "#94a3b8",
+                                      fontSize: "11px",
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    {option.itemCode}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                            value={
+                              item.item_code
+                                ? {
+                                    value: item.item_code,
+                                    itemCode: item.item_code,
+                                    itemName: item.item_name,
+                                    item_image: serviceItems?.find(
+                                      (i) => i.item_code === item.item_code,
+                                    )?.item_image,
+                                    label: `${item.item_code} - ${item.item_name}`,
+                                  }
+                                : null
+                            }
+                            onChange={(selected) =>
+                              handleItemChange(
+                                index,
+                                "item_code",
+                                selected ? selected.value : "",
+                              )
+                            }
+                            options={serviceItems?.map((serviceItem) => ({
+                              value: serviceItem.item_code,
+                              itemCode: serviceItem.item_code,
+                              itemName: serviceItem.item_name,
+                              item_image: serviceItem.item_image, // ✅ your image field from DB
                               label: `${serviceItem.item_code} - ${serviceItem.item_name}`,
                             }))}
                           />
@@ -615,7 +751,7 @@ const CreateMaterialRequest = () => {
           </div>
           {createError && <CAlert color="danger">{createError}</CAlert>}
           {/* SUBMIT */}
-          <div className="text-end">
+          <div className="text-end  my-4">
             <CButton type="submit" size="sm" disabled={createLoading}>
               {createLoading ? (
                 <>
@@ -629,6 +765,37 @@ const CreateMaterialRequest = () => {
           </div>
         </CForm>
       </div>
+      <CModal
+        visible={submitModalVisible}
+        onClose={() => setSubmitModalVisible(false)}
+        alignment="top"
+        className="z-5"
+      >
+        <CModalHeader closeButton={false}>
+          <CModalTitle>Confirm Submission</CModalTitle>
+        </CModalHeader>
+
+        <CModalBody>
+          Are you sure you want to submit this Material Request?
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton
+            color="secondary"
+            onClick={() => setSubmitModalVisible(false)}
+          >
+            Cancel
+          </CButton>
+
+          <CButton
+            color="primary"
+            onClick={confirmSubmit}
+            disabled={createLoading}
+          >
+            {createLoading ? "Submitting..." : "Submit"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };

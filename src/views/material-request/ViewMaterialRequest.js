@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -141,6 +141,22 @@ const ViewMaterialRequest = () => {
     }
   };
 
+  let adminroute = "";
+  if (userInfo.role === "Master Admin") {
+    adminroute = "master-admin";
+  } else if (userInfo.role === "Service Admin") {
+    adminroute = "service-admin";
+  } else if (userInfo.role === "Project Admin") {
+    adminroute = "project-admin";
+  } else if (userInfo?.role === "Master User") {
+    adminroute = "master-user";
+  } else if (userInfo?.role === "Service User") {
+    adminroute = "service-user";
+  } else if (userInfo?.role === "Project User") {
+    adminroute = "project-user";
+  } else if (userInfo?.role === "Site Technician") {
+    adminroute = "site-technician";
+  }
   return (
     <div>
       {loading ? (
@@ -150,7 +166,7 @@ const ViewMaterialRequest = () => {
       ) : (
         <>
           {/* APPROVE BUTTON */}
-          <div className="d-flex justify-content-end mb-3">
+          <div className="d-flex justify-content-end align-items-center mb-3">
             {["Master Admin", "Service Admin", "Project Admin"].includes(
               userInfo.role,
             ) &&
@@ -163,6 +179,15 @@ const ViewMaterialRequest = () => {
                   Approve
                 </CButton>
               )}
+            {(userInfo.role !== "Site Technician" ||
+              material.can_technician_edit) && (
+              <Link
+                className="btn btn-sm btn-warning m-1"
+                to={`/${adminroute}/material-requests/update/${material._id}`}
+              >
+                Update
+              </Link>
+            )}
           </div>
 
           {/* DETAILS */}
@@ -238,7 +263,7 @@ const ViewMaterialRequest = () => {
             <CTableHead color="secondary">
               <CTableRow>
                 <CTableHeaderCell>Sr</CTableHeaderCell>
-                <CTableHeaderCell>Item Code</CTableHeaderCell>
+                <CTableHeaderCell>Item</CTableHeaderCell>
                 <CTableHeaderCell>Requested Qty</CTableHeaderCell>
                 <CTableHeaderCell>Ordered Qty</CTableHeaderCell>
                 {/* <CTableHeaderCell>Pending Qty</CTableHeaderCell> */}
@@ -250,11 +275,16 @@ const ViewMaterialRequest = () => {
               {material.items?.map((item, index) => (
                 <CTableRow key={index}>
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{item.item_code}</CTableDataCell>
-                  <CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "300px" }}>
+                    {item.item_name}
+                    <p className="text-muted"> {item.item_code}</p>
+                  </CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "130px" }}>
                     {item.requested_qty || item.qty}
                   </CTableDataCell>
-                  <CTableDataCell>{item.ordered_qty || 0}</CTableDataCell>
+                  <CTableDataCell style={{ minWidth: "130px" }}>
+                    {item.ordered_qty || 0}
+                  </CTableDataCell>
 
                   <CTableDataCell>{item.uom}</CTableDataCell>
                 </CTableRow>
