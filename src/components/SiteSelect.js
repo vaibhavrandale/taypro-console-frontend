@@ -30,7 +30,7 @@ export default function SiteSelect({
         // if (formatted.length > 0) {
         //   onChange(formatted[0].value);
         // }
-        if (formatted.length > 0 && value === "all") {
+        if (formatted.length > 0) {
           onChange(formatted[0].value);
         }
       } catch (e) {

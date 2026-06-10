@@ -27,6 +27,7 @@ import { Link } from "react-router-dom";
 import LastActivity from "../../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import SiteSelect from "../../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -192,7 +193,7 @@ const Mdstimer = () => {
       {/* 📌 Site Filter */}
       <CRow className="justify-content-start mb-3">
         <CCol md={4}>
-          <CFormSelect
+          {/* <CFormSelect
             name="site_id"
             value={site_id}
             onChange={handleSiteNameChange}
@@ -204,7 +205,8 @@ const Mdstimer = () => {
                   {item.site_id}
                 </option>
               ))}
-          </CFormSelect>
+          </CFormSelect> */}
+          <SiteSelect value={site_id} onChange={setSiteId} />
         </CCol>
       </CRow>
       {/* 📝 Timers Table */}

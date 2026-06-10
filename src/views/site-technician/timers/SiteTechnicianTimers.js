@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import PaginateInput from "../../../components/PaginateInput";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+import SiteSelect from "../../../components/SiteSelect";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -188,7 +189,7 @@ const SiteTechnicianTimers = () => {
       {/* 📌 Site Filter */}
       <CRow className="justify-content-start mb-3">
         <CCol md={4}>
-          <CFormSelect
+          {/* <CFormSelect
             name="site_id"
             value={site_id}
             onChange={handleSiteNameChange}
@@ -200,7 +201,8 @@ const SiteTechnicianTimers = () => {
                   {item.site_id}
                 </option>
               ))}
-          </CFormSelect>
+          </CFormSelect> */}
+          <SiteSelect value={site_id} onChange={setSiteId} />
         </CCol>
       </CRow>
 
