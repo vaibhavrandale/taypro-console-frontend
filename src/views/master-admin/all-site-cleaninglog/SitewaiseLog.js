@@ -1358,6 +1358,8 @@ import {
   CTab,
   CTabPanel,
   CTabContent,
+  CProgress,
+  CProgressBar,
 } from "@coreui/react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -1368,6 +1370,7 @@ import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import Logmodal from "../../../components/individual-robot-log/Logmodal";
+import { getCleaningPercentage } from "../../robot-position/helpers";
 
 // import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
@@ -2073,7 +2076,6 @@ const SitewaiseLog = () => {
                     Technician DPR Logs
                   </CTab>
                 </CTabList>
-
                 <CTabContent>
                   {/* Completed Logs Tab */}
                   <CTabPanel itemKey="cleaning-logs">
@@ -2101,7 +2103,7 @@ const SitewaiseLog = () => {
                         </select>
                       </CCol>
                     </CRow>
-                    <CTable
+                    {/* <CTable
                       bordered
                       hover
                       responsive
@@ -2153,7 +2155,7 @@ const SitewaiseLog = () => {
                                 {log.robot_no}
                               </CTableDataCell>
 
-                              {/* STATUS */}
+                          
                               <CTableDataCell>
                                 {log.cleaning?.finish ? (
                                   <CBadge color="success">Completed</CBadge>
@@ -2227,6 +2229,160 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
+                    </CTable> */}
+
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important mb-2"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>Sr</CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Robot No
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>Status</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "130px" }}>
+                            Row Number
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "190px" }}>
+                            Row Length (Meters)
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "190px" }}>
+                            Cleaning Percentage (%)
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "190px" }}>
+                            Started At
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "190px" }}>
+                            Finished At
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "150px" }}>
+                            Battery Start (%)
+                          </CTableHeaderCell>
+                          <CTableHeaderCell style={{ minWidth: "190px" }}>
+                            Battery Finished (%)
+                          </CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {cleaning_completed.length > 0 ? (
+                          filteredCompleted.map((log, index) => {
+                            const lastPoint = log.track_details?.length
+                              ? log.track_details[log.track_details.length - 1]
+                                  .point
+                              : 0;
+
+                            const { percentage } = getCleaningPercentage(
+                              lastPoint,
+                              log,
+                            );
+                            return (
+                              <CTableRow key={index}>
+                                <CTableDataCell>{index + 1}</CTableDataCell>
+                                <CTableDataCell
+                                  className="cursor-pointer"
+                                  onClick={() => OpenCleaningModal(log._id)}
+                                  color={
+                                    successRobotCount[log.robot_no] > 1
+                                      ? "success"
+                                      : ""
+                                  }
+                                >
+                                  {log.robot_no}
+                                </CTableDataCell>
+
+                                {/* STATUS */}
+                                <CTableDataCell>
+                                  {log.cleaning?.finish ? (
+                                    <CBadge color="success">Completed</CBadge>
+                                  ) : log.cleaning?.battery_dead ? (
+                                    <CBadge color="danger">Battery Dead</CBadge>
+                                  ) : log.cleaning?.cleaning_cancelled ? (
+                                    <CBadge color="danger">
+                                      Cleaning Cancelled
+                                    </CBadge>
+                                  ) : (
+                                    <CBadge color="info">In Progress</CBadge>
+                                  )}
+                                </CTableDataCell>
+                                <CTableDataCell>{log.block}</CTableDataCell>
+                                <CTableDataCell>{log.row_no}</CTableDataCell>
+                                <CTableDataCell>
+                                  {log.row_length}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  {/* {percentage}% */}
+                                  <CProgress className=" ">
+                                    <CProgressBar value={percentage}>
+                                      {percentage}%
+                                    </CProgressBar>
+                                  </CProgress>
+                                </CTableDataCell>
+
+                                <CTableDataCell>
+                                  {log.cleaning?.start &&
+                                    new Date(
+                                      log.cleaning?.startAt,
+                                    ).toLocaleString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    })}
+                                </CTableDataCell>
+
+                                <CTableDataCell>
+                                  {log.cleaning?.finish ? (
+                                    new Date(
+                                      log.cleaning?.finishAt,
+                                    ).toLocaleString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    })
+                                  ) : log.cleaning?.battery_dead ? (
+                                    <CBadge color="danger">Battery Dead</CBadge>
+                                  ) : log.cleaning?.cleaning_cancelled ? (
+                                    <CBadge color="danger">
+                                      Cleaning Cancelled
+                                    </CBadge>
+                                  ) : (
+                                    <CBadge color="info">In Progress</CBadge>
+                                  )}
+                                </CTableDataCell>
+
+                                <CTableDataCell>
+                                  {log.cleaning?.battery_before_cleaning ||
+                                    "N/A"}
+                                </CTableDataCell>
+
+                                <CTableDataCell>
+                                  {log.cleaning?.battery_after_cleaning ||
+                                    "N/A"}
+                                </CTableDataCell>
+                              </CTableRow>
+                            );
+                          })
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan="11" className="text-start">
+                              No logs found for the selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
                     </CTable>
                   </CTabPanel>
 
@@ -2256,7 +2412,7 @@ const SitewaiseLog = () => {
                         </select>
                       </CCol>
                     </CRow>
-                    <CTable
+                    {/* <CTable
                       bordered
                       hover
                       responsive
@@ -2317,6 +2473,89 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
+                    </CTable> */}
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Started At</CTableHeaderCell>
+                          <CTableHeaderCell>
+                            Cleaning Percentage
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Status</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {filteredProgress?.length > 0 ? (
+                          filteredProgress.map((log, index) => {
+                            const lastPoint = log.track_details?.length
+                              ? log.track_details[log.track_details.length - 1]
+                                  .point
+                              : 0;
+
+                            const { percentage } = getCleaningPercentage(
+                              lastPoint,
+                              log,
+                            );
+                            return (
+                              <CTableRow key={index}>
+                                <CTableDataCell>{index + 1}</CTableDataCell>
+                                <CTableDataCell
+                                  className="cursor-pointer"
+                                  onClick={() => OpenCleaningModal(log._id)}
+                                  color={
+                                    inProgressRobotCount[log.robot_no] > 1
+                                      ? "warning"
+                                      : ""
+                                  }
+                                >
+                                  {log.robot_no}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  {log.cleaning?.start &&
+                                    new Date(
+                                      log.cleaning?.startAt,
+                                    ).toLocaleString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    })}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  <CProgress className=" ">
+                                    <CProgressBar value={percentage}>
+                                      {percentage}%
+                                    </CProgressBar>
+                                  </CProgress>
+                                </CTableDataCell>
+                                <CTableDataCell>{log.block}</CTableDataCell>
+                                <CTableDataCell>
+                                  <CBadge color="info">In Progress</CBadge>
+                                </CTableDataCell>
+                              </CTableRow>
+                            );
+                          })
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={6} className="text-start">
+                              No Cleaning In Progress logs found for the
+                              selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
                     </CTable>
                   </CTabPanel>
 
@@ -2346,7 +2585,7 @@ const SitewaiseLog = () => {
                         </select>
                       </CCol>
                     </CRow>
-                    <CTable
+                    {/* <CTable
                       bordered
                       hover
                       responsive
@@ -2357,7 +2596,7 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>#</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
-                          {/* <CTableHeaderCell>Is Duplicate</CTableHeaderCell> */}
+                      
                           <CTableHeaderCell>startAt</CTableHeaderCell>
                           <CTableHeaderCell>Error Type</CTableHeaderCell>
                           <CTableHeaderCell>Comments</CTableHeaderCell>
@@ -2381,13 +2620,7 @@ const SitewaiseLog = () => {
                                 {log.robot_no}
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
-                              {/* <CTableDataCell>
-                                                {log.is_duplicate ? (
-                                                  <CBadge color="danger">Yes</CBadge>
-                                                ) : (
-                                                  <CBadge color="success">No</CBadge>
-                                                )}
-                                              </CTableDataCell> */}
+                          
                               <CTableDataCell>
                                 {log.createdAt &&
                                   new Date(log.createdAt).toLocaleString(
@@ -2419,10 +2652,108 @@ const SitewaiseLog = () => {
                           </CTableRow>
                         )}
                       </CTableBody>
-                    </CTable>
+                    </CTable> */}
 
                     {/* <h4 className="my-3  border-top">Testing Error Cycles</h4>
                                     <ErrorCycles errorlogs={failureLogs} /> */}
+
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>#</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          {/* <CTableHeaderCell>Is Duplicate</CTableHeaderCell> */}
+                          <CTableHeaderCell>startAt</CTableHeaderCell>
+                          <CTableHeaderCell>
+                            Cleaning Percentage
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>Error Type</CTableHeaderCell>
+                          <CTableHeaderCell>Comments</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+
+                      <CTableBody>
+                        {filteredFailure?.length > 0 ? (
+                          filteredFailure.map((log, index) => {
+                            const lastPoint = log.track_details?.length
+                              ? log.track_details[log.track_details.length - 1]
+                                  .point
+                              : 0;
+
+                            const { percentage } = getCleaningPercentage(
+                              lastPoint,
+                              log,
+                            );
+
+                            return (
+                              <CTableRow key={index}>
+                                <CTableDataCell>{index + 1}</CTableDataCell>
+                                <CTableDataCell
+                                  className="cursor-pointer"
+                                  onClick={() => OpenCleaningModal(log._id)}
+                                  color={
+                                    failureRobotCount[log.robot_no] > 1
+                                      ? "danger"
+                                      : ""
+                                  }
+                                >
+                                  {log.robot_no}
+                                </CTableDataCell>
+                                <CTableDataCell>{log.block}</CTableDataCell>
+                                {/* <CTableDataCell>
+                                                                    {log.is_duplicate ? (
+                                                                      <CBadge color="danger">Yes</CBadge>
+                                                                    ) : (
+                                                                      <CBadge color="success">No</CBadge>
+                                                                    )}
+                                                                  </CTableDataCell> */}
+                                <CTableDataCell>
+                                  {log.createdAt &&
+                                    new Date(log.createdAt).toLocaleString(
+                                      "en-GB",
+                                      {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true,
+                                      },
+                                    )}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  <CProgress>
+                                    <CProgressBar value={percentage}>
+                                      {/* <span className="text-white"> */}
+                                      {percentage}%{/* </span> */}
+                                    </CProgressBar>
+                                  </CProgress>
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  {log.cleaning?.battery_dead
+                                    ? "In Complete"
+                                    : "Cleaning Cancelled"}
+                                </CTableDataCell>
+                                <CTableDataCell>{log.comments}</CTableDataCell>
+                              </CTableRow>
+                            );
+                          })
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={7} className="text-start">
+                              No error logs found for the selected date.
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                      </CTableBody>
+                    </CTable>
                   </CTabPanel>
 
                   {/* ============ OFFLINE ROBOTS TAB ================= */}

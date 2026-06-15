@@ -6,7 +6,6 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
-  CFormSelect,
   CRow,
   CCol,
   CCard,
@@ -170,22 +169,22 @@ const Mdstimer = () => {
     setViewModalVisible(true);
   };
 
-  const handleSiteNameChange = (e) => {
-    dispatch({ type: "SELECT_SITENAME_REQUEST" });
+  // const handleSiteNameChange = (e) => {
+  //   dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
-    const selectedSiteName = e.target.value;
-    const selectedSite = siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName,
-    );
+  //   const selectedSiteName = e.target.value;
+  //   const selectedSite = siteIds.find(
+  //     (site) => site.site_id.toString() === selectedSiteName,
+  //   );
 
-    if (selectedSite) {
-      setSiteId(selectedSite.site_id);
+  //   if (selectedSite) {
+  //     setSiteId(selectedSite.site_id);
 
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
-    } else {
-      dispatch({ type: "SELECT_SITENAME_FAIL" });
-    }
-  };
+  //     dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
+  //   } else {
+  //     dispatch({ type: "SELECT_SITENAME_FAIL" });
+  //   }
+  // };
 
   return (
     <div className="">
