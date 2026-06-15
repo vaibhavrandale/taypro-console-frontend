@@ -17,9 +17,6 @@ import Select from "react-select";
 import {
   CAlert,
   CButton,
-  CCard,
-  CCardBody,
-  CCardHeader,
   CForm,
   CFormInput,
   CFormSelect,

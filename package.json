@@ -82,6 +82,7 @@
     "react-app-rewired": "^2.2.1",
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.83.4",
-    "sass-loader": "^12.6.0"
+    "sass-loader": "^12.6.0",
+    "source-map-explorer": "^2.5.3"
   }
 }

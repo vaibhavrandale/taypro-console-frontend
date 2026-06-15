@@ -159,13 +159,14 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
             <CCard className="mb-3">
               <CCardHeader className="d-flex justify-content-between align-items-center">
                 <span>Robot Movement</span>
-
-                <Link
-                  to={`/master-admin/robots-tracker/update/${_id}`}
-                  className="btn btn-sm btn-primary"
-                >
-                  Update
-                </Link>
+                {userInfo.role === "Master Admin" && (
+                  <Link
+                    to={`/master-admin/robots-tracker/update/${_id}`}
+                    className="btn btn-sm btn-primary"
+                  >
+                    Update
+                  </Link>
+                )}
               </CCardHeader>
               <CCardBody className="py-4 overflow-x-auto">
                 <Robot

@@ -42,6 +42,7 @@ import {
   Gem,
   Proportions,
   Wrench,
+  Home,
 } from "lucide-react";
 // import { MdCircleNotifications } from "react-icons/md";
 
@@ -65,7 +66,7 @@ const _nav = [
         to: "/master-admin/dashboard",
         icon: (
           <CIcon
-            icon={cilFactory}
+            icon={Home}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
