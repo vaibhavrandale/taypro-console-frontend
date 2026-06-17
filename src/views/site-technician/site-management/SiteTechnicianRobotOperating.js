@@ -731,7 +731,7 @@ const SiteTechnicianRobotOperating = () => {
     };
     getRobots();
     getRobot();
-  }, [block, site_id, , robot_no]);
+  }, [block, site_id, robot_no]);
 
   // ✅ Ensure robots exist before filtering
   // const Robotdata =
@@ -824,6 +824,29 @@ const SiteTechnicianRobotOperating = () => {
     setCommandButton(null);
   };
 
+  let BrushSpeedBadge = "";
+
+  if (robot.brush_motor_speed > 100 && robot.brush_motor_speed <= 170) {
+    BrushSpeedBadge = "primary";
+  } else if (robot.brush_motor_speed > 170 && robot.brush_motor_speed <= 210) {
+    BrushSpeedBadge = "warning";
+  } else if (robot.brush_motor_speed > 210) {
+    BrushSpeedBadge = "success";
+  } else {
+    BrushSpeedBadge = "primary";
+  }
+  let WheelSpeedBadge = "";
+
+  if (robot.wheel_motor_speed > 100 && robot.wheel_motor_speed <= 170) {
+    WheelSpeedBadge = "primary";
+  } else if (robot.wheel_motor_speed > 170 && robot.wheel_motor_speed <= 210) {
+    WheelSpeedBadge = "warning";
+  } else if (robot.wheel_motor_speed > 210) {
+    WheelSpeedBadge = "success";
+  } else {
+    WheelSpeedBadge = "primary";
+  }
+
   return (
     <>
       {loadingRobots ? (
@@ -839,8 +862,11 @@ const SiteTechnicianRobotOperating = () => {
             <CCol>
               <h4 className="fw-bold text-center">
                 <span className="">{site_id} -&nbsp;</span>
-                <span className="text-primary">{block}</span>
-                &nbsp;-&nbsp;Robot's Configuration
+                <span className="text-warning">{block}</span>
+                <div>
+                  <span className="text-success">{robot_no}</span> Robot's
+                  Configuration
+                </div>
               </h4>
             </CCol>
           </CRow>
@@ -901,10 +927,9 @@ const SiteTechnicianRobotOperating = () => {
                 {siteRobots.length > 1 ? (
                   <CDropdownToggle
                     size="sm"
-                    className="shadow-sm "
                     color={`${robot.lora_state === 1 ? `success` : `danger`}`}
                   >
-                    {robot.robot_no}
+                    <span className="text-white">{robot.robot_no}</span>
                   </CDropdownToggle>
                 ) : (
                   <CButton
@@ -943,7 +968,9 @@ const SiteTechnicianRobotOperating = () => {
                                 ? `#`
                                 : `/${adminroute}/site-management/block-management/${site_id}/${block}/${item.robot_no}`
                             }
-                            className="dopdown-item-robot text-dark"
+                            className={`dopdown-item-robot text-${
+                              item.lora_state === 1 ? "dark" : "white"
+                            }`}
                           >
                             {item.robot_no}
                           </Link>
@@ -951,7 +978,7 @@ const SiteTechnicianRobotOperating = () => {
                       ))}
                 </CDropdownMenu>
               </CDropdown>
-              <CBadge color="primary" className="m-1 p-2 ">
+              <CBadge color="primary" className="m-1 p-2">
                 <Link
                   to={`event-and-frames/${robot.deveui}`}
                   className=" text-decoration-none text-white"
@@ -966,8 +993,7 @@ const SiteTechnicianRobotOperating = () => {
           </CRow>
 
           <CRow className="">
-            {/* First Card */}
-            <CCol md={7} className="mt-2">
+            {/* <CCol md={7} className="mt-2">
               <CCard className="shadow border-0" style={{ height: "100%" }}>
                 <CCardBody>
                   <CTable borderless>
@@ -1025,7 +1051,7 @@ const SiteTechnicianRobotOperating = () => {
               </CCard>
             </CCol>
 
-            {/* Second Card */}
+        
             <CCol md={5} className="mt-2">
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
@@ -1083,6 +1109,142 @@ const SiteTechnicianRobotOperating = () => {
                       </CTableRow>
                     </CTableBody>
                   </CTable>
+                </CCardBody>
+              </CCard>
+            </CCol> */}
+
+            <CCol md={5} className="mt-2">
+              <CCard className="h-100 border-0 shadow-sm rounded-3">
+                <CCardBody className="p-3">
+                  {/* Top Section: Robot No + Battery */}
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h6 className=" mb-0">{robot.robot_no}</h6>
+                    <span className="px-2 py-1">
+                      🔋 {robot.battery_voltage}
+                      <span className="mx-1">%</span>{" "}
+                    </span>
+                  </div>
+
+                  {/* Info Grid */}
+                  <CRow className="text-center mb-2">
+                    <CCol>
+                      <small className="text-muted">PCB</small>
+                      <div className="fw-semibold">
+                        {" "}
+                        {robot.pcb_version === 0 ? "Old" : "New"}
+                      </div>
+                    </CCol>
+                    <CCol>
+                      <small className="text-muted">Firmware</small>
+                      <div className="fw-semibold">{robot.version}</div>
+                    </CCol>
+                    <CCol>
+                      <small className="text-muted">LoRa</small>
+                      <CTooltip content={robot.deveui} placement="top">
+                        <div
+                          className="fw-semibold text-success"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {robot.lora_no}
+                        </div>
+                      </CTooltip>
+                    </CCol>
+                  </CRow>
+
+                  <hr className="my-2" />
+
+                  {/* Speeds */}
+                  <CRow className="text-center">
+                    <CCol>
+                      <small className="text-muted">Wheel Speed</small>
+                      <div>
+                        <CBadge
+                          color={`${WheelSpeedBadge}`}
+                          className="px-3 py-2 rounded-pill"
+                        >
+                          {robot.wheel_motor_speed_string} -{" "}
+                          {robot.wheel_motor_speed}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                    <CCol>
+                      <small className="text-muted">Brush Speed</small>
+                      <div>
+                        <CBadge
+                          color={`${BrushSpeedBadge}`}
+                          className="px-3 py-2 rounded-pill"
+                        >
+                          {robot.brush_motor_speed_string} -{" "}
+                          {robot.brush_motor_speed}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+            </CCol>
+
+            {/* Second Card */}
+            <CCol md={4} className="mt-3">
+              <CCard className="h-100 border-0 shadow-sm">
+                <CCardBody className="d-flex flex-column justify-content-start p-3">
+                  {/* Top Row: Status */}
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <span
+                        className={`fw-bold text-${
+                          robot.lora_state === 1 ? "success" : "danger"
+                        }`}
+                        style={{ fontSize: "16px" }}
+                      >
+                        {robot.lora_state === 1 ? "Online" : "Offline"}
+                      </span>
+                    </div>
+                    {/* Middle Row: Stuck Count */}
+                    <div className="">
+                      {/* <span className="text-danger fw-semibold">
+                                        SC: {robot.stuck_count}
+                                      </span> */}
+                      <CBadge color="warning" shape="rounded-pill">
+                        {robot.battery_type}
+                      </CBadge>
+                    </div>
+                  </div>
+
+                  {/* Bottom Row: Last Uplink */}
+                  <div className="d-flex flex-column">
+                    {!robot.last_uplink ||
+                    isNaN(new Date(robot.last_uplink).getTime()) ? (
+                      <CBadge color="danger" shape="rounded-pill">
+                        Robot is not activated
+                      </CBadge>
+                    ) : (
+                      <>
+                        <span
+                          className="text-success "
+                          style={{ cursor: "pointer" }}
+                        >
+                          <span className="me-2 text-success">Last Uplink</span>
+                          :
+                          <small className="text-white ms-2">
+                            {formatDistanceToNow(new Date(robot.last_uplink), {
+                              addSuffix: true,
+                            })}{" "}
+                            - {new Date(robot.last_uplink).toLocaleString()}
+                          </small>
+                        </span>
+
+                        <div className="">
+                          <span className="me-2 text-success">Last Status</span>
+                          :
+                          <span className="ms-2">
+                            {" "}
+                            {robot.last_status || "-"}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </CCardBody>
               </CCard>
             </CCol>

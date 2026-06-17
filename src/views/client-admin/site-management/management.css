@@ -83,6 +83,7 @@
 .dropdown-menu-robot > .dopdown-item-robot {
   margin: 2px 0px;
   padding: 10px;
+  text-decoration: none;
 }
 
 .online:hover {
@@ -96,17 +97,13 @@
   background-color: #96db00;
 
   border-radius: 5px;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .offline {
   background-color: red;
   border-radius: 5px;
   color: #fff !important;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
 }
 
 .shadow-sm {

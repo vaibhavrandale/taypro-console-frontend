@@ -570,13 +570,20 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
     if (value.length > 0) {
       // Filter robots
-      const filteredRobots = robots.filter((robot) =>
-        robot.robot_no?.toLowerCase().includes(value.toLowerCase()),
+      const filteredRobots = robots.filter(
+        (robot) =>
+          robot.robot_no?.toLowerCase().includes(value.toLowerCase()) ||
+          robot.lora_no?.toString().includes(value) ||
+          robot.deveui?.toLowerCase().includes(value.toLowerCase()),
       );
 
       // Filter gateways
-      const filteredGateways = gateways.filter((gateway) =>
-        gateway.gateway_name?.toLowerCase().includes(value.toLowerCase()),
+      const filteredGateways = gateways.filter(
+        (gateway) =>
+          gateway.gateway_name?.toLowerCase().includes(value.toLowerCase()) ||
+          gateway.gateway_id_in_lns_server
+            ?.toLowerCase()
+            .includes(value.toLowerCase()),
       );
 
       // Store them separately
@@ -1829,6 +1836,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                         {filteredData.robots.map((robot, index) => (
                           <Link
                             key={`robot-${index}`}
+                            // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                             onClick={() =>
                               robotLink(
                                 robot.site_id,
@@ -1836,10 +1844,14 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                                 robot.robot_no,
                               )
                             }
-                            // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
-                            className="text-decoration-none"
+                            className="text-decoration-none text-primary"
                           >
-                            <div className="px-3 py-1">{robot.robot_no}</div>
+                            <div className="px-2 py-1  border-bottom d-flex justify-content-start align-items-center ">
+                              <div className=" ">{robot.robot_no}</div>{" "}
+                              <small className="ms-2 text-warning">
+                                [&nbsp;{robot.deveui} - {robot.lora_no}&nbsp;]
+                              </small>
+                            </div>
                           </Link>
                         ))}
                       </>

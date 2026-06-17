@@ -178,7 +178,7 @@ const ClientRobotOperating = () => {
     };
     getRobots();
     getRobot();
-  }, [block, site_id, , robot_no]);
+  }, [block, site_id, robot_no]);
 
   // ✅ Ensure robots exist before filtering
   // const Robotdata =
@@ -384,122 +384,131 @@ const ClientRobotOperating = () => {
 
           <CRow className="">
             {/* First Card */}
-            <CCol md={7} className="mt-2">
-              <CCard className="shadow border-0" style={{ height: "100%" }}>
-                <CCardBody>
-                  <CTable borderless>
-                    <CTableBody>
-                      <CTableRow>
-                        <CTableDataCell>
-                          <span className=" " style={{ fontSize: "15px" }}>
-                            {robot.robot_no}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          🔋: {robot.battery_voltage}%
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className="badge bg-success">
-                            {robot.version}
-                          </span>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell className="text-danger">
-                          <span className=" " style={{ fontSize: "13px" }}>
-                            {" "}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>Wheel Speed</CTableDataCell>
-                        <CTableDataCell>
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {robot.wheel_motor_speed}
-                          </CBadge>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell>
-                          Deveui:
-                          <span className="text-danger">({robot.lora_no})</span>
-                          -<span className="text-success">{robot.deveui}</span>
-                        </CTableDataCell>
-                        <CTableDataCell>Brush Speed</CTableDataCell>
-                        <CTableDataCell>
-                          <CBadge
-                            className="badge bg-danger"
-                            shape="rounded-pill"
-                          >
-                            {robot.brush_motor_speed}
-                          </CBadge>
-                        </CTableDataCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
+            <CCol lg={8} className="mt-2">
+              <CCard className="shadow-sm border-0 h-100">
+                <CCardBody className="p-3">
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h5 className="fw-bold mb-1">{robot.robot_no}</h5>
+
+                      <div className="small">
+                        LoRa :
+                        <span className="text-danger fw-semibold ms-1">
+                          {robot.lora_no}
+                        </span>
+                      </div>
+
+                      <div
+                        className="small text-success fw-semibold text-truncate"
+                        style={{ maxWidth: "300px" }}
+                      >
+                        {robot.deveui}
+                      </div>
+                    </div>
+
+                    <CBadge color="success" shape="rounded-pill">
+                      {robot.version}
+                    </CBadge>
+                  </div>
+
+                  <CRow className="g-2">
+                    <CCol md={4}>
+                      <div
+                        className="rounded p-2 text-center"
+                        style={{ background: "var(--cui-tertiary-bg)" }}
+                      >
+                        <div className="small text-muted">Battery</div>
+                        <div className="fw-bold text-success">
+                          🔋 {robot.battery_voltage}%
+                        </div>
+                      </div>
+                    </CCol>
+
+                    <CCol md={4}>
+                      <div
+                        className="rounded p-2 text-center"
+                        style={{ background: "var(--cui-tertiary-bg)" }}
+                      >
+                        <div className="small text-muted">Wheel Speed</div>
+                        <CBadge color="danger" shape="rounded-pill">
+                          {robot.wheel_motor_speed}
+                        </CBadge>
+                      </div>
+                    </CCol>
+
+                    <CCol md={4}>
+                      <div
+                        className="rounded p-2 text-center"
+                        style={{ background: "var(--cui-tertiary-bg)" }}
+                      >
+                        <div className="small text-muted">Brush Speed</div>
+                        <CBadge
+                          color="warning"
+                          textColor="dark"
+                          shape="rounded-pill"
+                        >
+                          {robot.brush_motor_speed}
+                        </CBadge>
+                      </div>
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
             </CCol>
-
             {/* Second Card */}
-            <CCol md={5} className="mt-2">
-              <CCard className="shadow border-0 " style={{ height: "100%" }}>
-                <CCardBody>
-                  <CTable borderless>
-                    <CTableBody>
-                      <CTableRow>
-                        <CTableDataCell>
+            <CCol lg={4} className="mt-2">
+              <CCard className="shadow-sm border-0 h-100">
+                <CCardBody className="p-3">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="fw-semibold">Robot Status</span>
+
+                    <CBadge
+                      color={robot.lora_state === 1 ? "success" : "danger"}
+                      shape="rounded-pill"
+                    >
+                      {robot.lora_state === 1 ? "Online" : "Offline"}
+                    </CBadge>
+                  </div>
+
+                  <div className="d-flex flex-column gap-2">
+                    <div
+                      className="d-flex justify-content-between align-items-center rounded p-2"
+                      style={{ background: "var(--cui-tertiary-bg)" }}
+                    >
+                      <span className="small text-muted">Status</span>
+
+                      <span className="fw-semibold text-end">
+                        {robot.last_status || "N/A"}
+                      </span>
+                    </div>
+
+                    <div
+                      className="d-flex justify-content-between align-items-center rounded p-2"
+                      style={{ background: "var(--cui-tertiary-bg)" }}
+                    >
+                      <span className="small text-muted">Last Uplink</span>
+
+                      {!robot.last_uplink ||
+                      isNaN(new Date(robot.last_uplink).getTime()) ? (
+                        <CBadge color="danger" shape="rounded-pill">
+                          Not Activated
+                        </CBadge>
+                      ) : (
+                        <CTooltip
+                          content={new Date(robot.last_uplink).toLocaleString()}
+                        >
                           <span
-                            className={`text-${
-                              robot.lora_state === 1 ? `success` : `danger`
-                            }`}
+                            className="fw-semibold"
+                            style={{ cursor: "pointer" }}
                           >
-                            {robot.lora_state === 1 ? `online` : `offline`}
+                            {formatDistanceToNow(new Date(robot.last_uplink), {
+                              addSuffix: true,
+                            })}
                           </span>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className=" ">{robot.last_status}</span>
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell>
-                          <span className="text-danger">
-                            SC : {robot.stuck_count}
-                          </span>
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {!robot.last_uplink ||
-                          isNaN(new Date(robot.last_uplink).getTime()) ? (
-                            <CBadge
-                              className="badge bg-danger"
-                              shape="rounded-pill"
-                            >
-                              Robot is not activated
-                            </CBadge>
-                          ) : (
-                            <span>
-                              <CTooltip
-                                content={new Date(
-                                  robot.last_uplink,
-                                ).toLocaleString()}
-                                placement="top"
-                              >
-                                <span>
-                                  {formatDistanceToNow(
-                                    new Date(robot.last_uplink),
-                                    {
-                                      addSuffix: true,
-                                    },
-                                  )}
-                                </span>
-                              </CTooltip>
-                            </span>
-                          )}
-                        </CTableDataCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
+                        </CTooltip>
+                      )}
+                    </div>
+                  </div>
                 </CCardBody>
               </CCard>
             </CCol>
