@@ -1846,11 +1846,11 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                             }
                             className="text-decoration-none text-primary"
                           >
-                            <div className="px-2 py-1  border-bottom d-flex justify-content-start align-items-center ">
+                            <div className="px-2 py-1 fw-bold  d-flex justify-content-start align-items-center ">
                               <div className=" ">{robot.robot_no}</div>{" "}
-                              <small className="ms-2 text-warning">
+                              {/* <small className="ms-2 text-warning">
                                 [&nbsp;{robot.deveui} - {robot.lora_no}&nbsp;]
-                              </small>
+                              </small> */}
                             </div>
                           </Link>
                         ))}

@@ -43,6 +43,15 @@ import {
   Proportions,
   Wrench,
   Home,
+  RadioTower,
+  Bot,
+  TicketCheck,
+  UserCheck,
+  MapPin,
+  PackageSearch,
+  MessageSquareCode,
+  Wallet,
+  ClipboardPenLine,
 } from "lucide-react";
 // import { MdCircleNotifications } from "react-icons/md";
 
@@ -2697,18 +2706,25 @@ const _nav = [
     items: [
       {
         component: CNavGroup,
-        name: "Gateway Survey",
+        name: "Gateways",
         icon: (
-          <CIcon
-            icon={cilCheck}
+          <RadioTower
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        //  (
+        //   <CIcon
+        //     icon={cilCheck}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
-            name: "Gateway Survey",
+            name: "Survey",
             to: "/site-technician/gateway-survey-dashboard",
           },
         ],
@@ -2718,25 +2734,53 @@ const _nav = [
         name: "Dashboard",
         to: "/site-technician/dashboard",
         icon: (
-          <CIcon
-            icon={cilSpeedometer}
+          <LayoutDashboard
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        // (
+        //   <CIcon
+        //     icon={cilSpeedometer}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
       },
 
       {
-        component: CNavItem,
-        name: "Robot Commands",
-        to: "/site-technician/robot-commands",
+        component: CNavGroup,
+        name: "Robots",
         icon: (
-          <CIcon
-            icon={cilCursor}
+          <Bot
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Commands",
+            to: "/site-technician/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "Row Data",
+            to: "/site-technician/update-row-data",
+          },
+          {
+            component: CNavItem,
+            name: "Locations",
+            to: "/site-technician/robot-location",
+          },
+          {
+            component: CNavItem,
+            name: "Tracking",
+            to: "/site-technician/robots-tracker",
+          },
+        ],
       },
 
       // Site Management Module
@@ -2744,12 +2788,19 @@ const _nav = [
         component: CNavGroup,
         name: "Site Management",
         icon: (
-          <CIcon
-            icon={cilBuilding}
+          <Building2
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        // (
+        //   <CIcon
+        //     icon={cilBuilding}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
@@ -2774,12 +2825,19 @@ const _nav = [
         component: CNavGroup,
         name: "Operations",
         icon: (
-          <CIcon
-            icon={cilListRich}
+          <ClipboardList
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        //  (
+        //   <CIcon
+        //     icon={cilListRich}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
@@ -2799,12 +2857,19 @@ const _nav = [
         component: CNavGroup,
         name: "Tickets & Reports",
         icon: (
-          <CIcon
-            icon={cilTask}
+          <TicketCheck
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        //  (
+        //   <CIcon
+        //     icon={cilTask}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
@@ -2827,14 +2892,22 @@ const _nav = [
       // Inventory & Maintenance Module
       {
         component: CNavGroup,
-        name: "Inventory + Maintenance",
+        name: "Inventory-Maintenance",
         icon: (
-          <CIcon
-            icon={cilStorage}
+          <Wrench
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        //  (
+        //   <CIcon
+        //     icon={cilStorage}
+        //     customClassName="nav-icon"
+        //     style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
+
         items: [
           {
             component: CNavItem,
@@ -2846,6 +2919,11 @@ const _nav = [
             name: "Preventive Maintenance",
             to: "/site-technician/preventive-maintanance-dashboard",
           },
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/site-technician/material-requests",
+          },
         ],
       },
 
@@ -2854,8 +2932,8 @@ const _nav = [
         component: CNavGroup,
         name: "T. Attendance",
         icon: (
-          <CIcon
-            icon={cilCheck}
+          <UserCheck
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
@@ -2875,14 +2953,21 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Expense Management",
+        name: "Expenses",
         icon: (
-          <CIcon
-            icon={cilMoney}
+          <Wallet
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+        // (
+        //   <CIcon
+        //     icon={cilMoney}
+        // customClassName="nav-icon"
+        // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
@@ -2891,75 +2976,45 @@ const _nav = [
           },
         ],
       },
-      {
-        component: CNavGroup,
-        name: "Robots Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Tracking",
-            to: "/site-technician/robots-tracker",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Robot Data",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Row Data",
-            to: "/site-technician/update-row-data",
-          },
-          {
-            component: CNavItem,
-            name: "Robot Locations",
-            to: "/site-technician/robot-location",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Material Management",
-        icon: (
-          <CIcon
-            icon={cilStorage}
-            customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Material Requests",
-            to: "/site-technician/material-requests",
-          },
-        ],
-      },
+
+      // {
+      //   component: CNavGroup,
+      //   name: "Material",
+      //   icon:  <PackageSearch  customClassName="nav-icon"
+      //       style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     />,
+      //   // (
+      //   //   <CIcon
+      //   //     icon={cilStorage}
+      //     //   customClassName="nav-icon"
+      //     //   style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+      //     // />
+      //   // ),
+      //   items: [
+      //     {
+      //       component: CNavItem,
+      //       name: "Material Requests",
+      //       to: "/site-technician/material-requests",
+      //     },
+      //   ],
+      // },
       {
         component: CNavGroup,
         name: "Chat with Console",
         icon: (
-          <CIcon
-            icon={cilCheck}
+          <MessageSquareCode
+            size={20}
             customClassName="nav-icon"
-            style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+            style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
+        //  (
+        //   <CIcon
+        //     icon={cilCheck}
+        // customClassName="nav-icon"
+        // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
@@ -2972,16 +3027,24 @@ const _nav = [
         component: CNavGroup,
         name: "Site Survey",
         icon: (
-          <CIcon
-            icon={cilCheck}
+          <ClipboardPenLine
+            size={20}
             customClassName="nav-icon"
             style={{ height: "30px", color: "rgb(57, 214, 0)" }}
           />
         ),
+
+        // icon: (
+        //   <CIcon
+        //     icon={cilCheck}
+        // customClassName="nav-icon"
+        // style={{ height: "30px", color: "rgb(57, 214, 0)" }}
+        //   />
+        // ),
         items: [
           {
             component: CNavItem,
-            name: "Site Survey",
+            name: "Nomenclatures",
             to: "/site-technician/site-survey-dashboard",
           },
         ],
