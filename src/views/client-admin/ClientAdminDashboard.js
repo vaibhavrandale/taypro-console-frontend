@@ -16,6 +16,9 @@ import {
 import Weather from "./weather/Weather";
 import GatewayMap from "../../components/GatewayMap";
 import { Link } from "react-router-dom";
+import { CButton } from "@coreui/react";
+import toast from "react-hot-toast";
+import ConfirmModal from "../../components/ConfirmModal";
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS
@@ -518,7 +521,44 @@ export default function ClientAdminDashboard() {
     fetchSiteIds();
     setMapLoaded(false);
   }, [site_id]);
+  const [commandSend, setCommandSend] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
+  // handler — remove window.confirm, open modal instead
+  const sendMulticastDownlink = async () => {
+    let alldeveuis = robotsData?.map((robot) => robot.deveui);
+    let allrobotNos = robotsData?.map((robot) => robot.robot_no);
+
+    const robotdownlink = {
+      deveui: alldeveuis,
+      robot_no: allrobotNos,
+      block: "All",
+      site_id: site_id,
+      command: "14",
+    };
+
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    setCommandSend(true);
+    setConfirmVisible(false);
+
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+        robotdownlink,
+        { withCredentials: true },
+      );
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    } finally {
+      setCommandSend(false);
+    }
+  };
   /* derived */
   const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);
   const onlineGw = gateways.filter((g) => g.gateway_status).length;
@@ -614,7 +654,8 @@ export default function ClientAdminDashboard() {
           <section
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
+              // gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: 11,
               marginBottom: 14,
             }}
@@ -625,26 +666,55 @@ export default function ClientAdminDashboard() {
                 .map((_, i) => <KpiSkeleton key={i} />)
             ) : (
               <>
-                <KpiCard
+                {/* <KpiCard
                   label="Robots"
                   icon="🤖"
                   delay={80}
                   right={
-                    <Link
-                      to={`/client-admin/site-management/block-management/${site_id}`}
-                      style={{
-                        fontSize: 11,
-                        color: T.cyan,
-                        textDecoration: "none",
-                        padding: "2px 6px",
-                        borderRadius: 6,
-                        border: `1px solid ${T.border}`,
-                        background: T.cyanDim,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      blockwise →
-                    </Link>
+                    <>
+                      <Link
+                        to={`/client-admin/site-management/block-management/${site_id}`}
+                        style={{
+                          fontSize: 11,
+                          color: T.cyan,
+                          textDecoration: "none",
+                          padding: "2px 6px",
+                          borderRadius: 6,
+                          border: `1px solid ${T.border}`,
+                          background: T.cyanDim,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        blockwise →
+                      </Link>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        disabled={commandSend}
+                        onClick={() => setConfirmVisible(true)}
+                        className="px-2 py-2 small fw-medium"
+                      >
+                        {commandSend ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-1" />
+                            Sending...
+                          </>
+                        ) : (
+                          "Emergency Stop"
+                        )}
+                      </CButton>
+
+                      <ConfirmModal
+                        visible={confirmVisible}
+                        onClose={() => setConfirmVisible(false)}
+                        onConfirm={sendMulticastDownlink}
+                        title="Stop All Robots?"
+                        message={`This will send a stop command to all robots at <b class="text-danger">${site_id}</b>. This action cannot be undone.`}
+                        confirmLabel="Stop All"
+                        confirmColor="danger"
+                        loading={commandSend}
+                      />
+                    </>
                   }
                 >
                   <div
@@ -710,6 +780,251 @@ export default function ClientAdminDashboard() {
                         Report →
                       </Link>
                     </>
+                  }
+                >
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                      gap: 7,
+                      marginTop: 9,
+                    }}
+                  >
+                    <MiniStat
+                      label="Completed"
+                      value={cleaning.completed}
+                      color={T.green}
+                    />
+                    <MiniStat
+                      label="Running"
+                      value={cleaning.inprogress}
+                      color={T.amber}
+                    />
+                    <MiniStat
+                      label="Failed"
+                      value={cleaning.failure}
+                      color={T.red}
+                    />
+                  </div>
+                </KpiCard>
+                <KpiCard
+                  label="Gateways"
+                  icon="📡"
+                  delay={160}
+                  accent={onlineGw === gateways.length ? T.green : T.amber}
+                >
+                  <div style={{ marginTop: 9 }}>
+                    {gateways.length === 1 ? (
+                      // ✅ SINGLE GATEWAY VIEW
+                      <div
+                        style={{
+                          fontSize: 22,
+                          fontWeight: 700,
+                          color: onlineGw === 1 ? T.green : T.red,
+                        }}
+                      >
+                        {onlineGw === 1 ? "Online" : "Offline"}
+                      </div>
+                    ) : (
+                      // ✅ MULTIPLE GATEWAYS VIEW (your existing UI)
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "baseline",
+                            gap: 5,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 30,
+                              fontWeight: 700,
+                              color:
+                                onlineGw === gateways.length
+                                  ? T.green
+                                  : T.amber,
+                              lineHeight: 1,
+                            }}
+                          >
+                            {onlineGw}
+                          </span>
+                          <span style={{ fontSize: 14, color: T.textMid }}>
+                            / {gateways.length} online
+                          </span>
+                        </div>
+
+                        <div
+                          style={{
+                            marginTop: 8,
+                            height: 4,
+                            borderRadius: 4,
+                            background: T.surfaceHi,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: "100%",
+                              borderRadius: 4,
+                              width:
+                                gateways.length > 0
+                                  ? `${(onlineGw / gateways.length) * 100}%`
+                                  : "0%",
+                              background:
+                                onlineGw === gateways.length
+                                  ? T.green
+                                  : T.amber,
+                              transition: "width .7s ease",
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </KpiCard>
+
+                <KpiCard
+                  label="Weather"
+                  icon={wxIcon(weatherData.description, weatherData.is_rain)}
+                  delay={240}
+                >
+                  <div style={{ marginTop: 6 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: 4,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 34,
+                          fontWeight: 700,
+                          // fontFamily: T.mono,
+                          color: T.text,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {weatherData.temperature ?? "—"}
+                      </span>
+                      <span style={{ fontSize: 17, color: T.textMid }}>°C</span>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: T.textMid,
+                        marginTop: 4,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {weatherData.description || "—"}
+                    </div>
+                    {weatherData.feelsLike && (
+                      <div
+                        style={{ fontSize: 11, color: T.textDim, marginTop: 2 }}
+                      >
+                        Feels like {weatherData.feelsLike}°C
+                      </div>
+                    )}
+                  </div>
+                </KpiCard> */}
+                <KpiCard
+                  label="Robots"
+                  icon="🤖"
+                  delay={80}
+                  right={
+                    <>
+                      <Link
+                        to={`/client-admin/site-management/block-management/${site_id}`}
+                        style={{
+                          fontSize: 11,
+                          color: T.cyan,
+                          textDecoration: "none",
+                          padding: "2px 6px",
+                          borderRadius: 6,
+                          border: `1px solid ${T.border}`,
+                          background: T.cyanDim,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        blockwise →
+                      </Link>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        disabled={commandSend}
+                        onClick={() => setConfirmVisible(true)}
+                        className="px-2 py-0 small fw-medium"
+                      >
+                        {commandSend ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-1" />
+                            Sending...
+                          </>
+                        ) : (
+                          "Stop All"
+                        )}
+                      </CButton>
+
+                      <ConfirmModal
+                        visible={confirmVisible}
+                        onClose={() => setConfirmVisible(false)}
+                        onConfirm={sendMulticastDownlink}
+                        title="Emergency Stop All!"
+                        message={`This will send a stop command to all robots at <b class="text-success">${site_id}</b><br/>This action cannot be undone.`}
+                        confirmLabel="Stop All"
+                        confirmColor="danger"
+                        loading={commandSend}
+                      />
+                    </>
+                  }
+                >
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                      gap: 7,
+                      marginTop: 9,
+                    }}
+                  >
+                    <MiniStat
+                      label="Total"
+                      value={totalRobots}
+                      color={T.cyan}
+                    />
+                    <MiniStat
+                      label="Online"
+                      value={onlineRobs}
+                      color={T.green}
+                    />
+                    <MiniStat
+                      label="Offline"
+                      value={offlineRobs}
+                      color={T.red}
+                    />
+                  </div>
+                </KpiCard>
+
+                <KpiCard
+                  label="Today's Cleaning"
+                  icon="🧹"
+                  delay={0}
+                  right={
+                    <Link
+                      to={`/client-admin/cleaning-log-sites/daywise-cleaning/${site_id}/${date}`}
+                      style={{
+                        fontSize: 11,
+                        color: T.cyan,
+                        textDecoration: "none",
+                        padding: "2px 6px",
+                        borderRadius: 6,
+                        border: `1px solid ${T.border}`,
+                        background: T.cyanDim,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Log →
+                    </Link>
                   }
                 >
                   <div

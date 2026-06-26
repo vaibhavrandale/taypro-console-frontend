@@ -13,6 +13,9 @@ import {
   CModalHeader,
   CModal,
   CImage,
+  CRow,
+  CCol,
+  CFormInput,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
@@ -75,6 +78,7 @@ export default function CustomNotifications() {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [mastersearchText, setMasterSearchText] = useState("");
   const [readFilter, setReadFilter] = useState("all"); // all | read | unread
   const [roleFilter, setRoleFilter] = useState("all");
   const [addModal, setAddModal] = useState(false);
@@ -258,6 +262,17 @@ export default function CustomNotifications() {
       alert(error);
     }
   };
+
+  const filteredNotifications = notifications.filter((item) => {
+    return (
+      item.subject.toLowerCase().includes(mastersearchText.toLowerCase()) ||
+      item.description.toLowerCase().includes(mastersearchText.toLowerCase()) ||
+      item.posted_by?.name
+        .toLowerCase()
+        .includes(mastersearchText.toLowerCase())
+    );
+  });
+
   return (
     <div className="m-3">
       {loading ? (
@@ -280,146 +295,160 @@ export default function CustomNotifications() {
               + Add Notification
             </CButton>
           </div>
-
+          <CRow className="my-2 justify-content-end">
+            <CCol md={2}>
+              <CFormInput
+                placeholder="Search Notifications.."
+                value={mastersearchText}
+                onChange={(e) => setMasterSearchText(e.target.value)}
+              />
+            </CCol>
+          </CRow>
           {/* List */}
-          <div className=" ">
-            {notifications.length > 0 ? (
-              notifications.map((item, index) => {
-                const serialNumber = (page - 1) * limit + index + 1;
+          <div className="d-flex  ">
+            <CRow className="my-2 justify-content-end">
+              {filteredNotifications.length > 0 ? (
+                filteredNotifications.map((item, index) => {
+                  const serialNumber = (page - 1) * limit + index + 1;
 
-                const readCount =
-                  item.users?.filter((u) => u.read_status === true).length || 0;
-                const unreadCount =
-                  item.users?.filter((u) => u.read_status !== true).length || 0;
+                  const readCount =
+                    item.users?.filter((u) => u.read_status === true).length ||
+                    0;
+                  const unreadCount =
+                    item.users?.filter((u) => u.read_status !== true).length ||
+                    0;
 
-                return (
-                  <CCard
-                    className="mb-3 shadow-sm bg-dark text-light border"
-                    key={item._id}
-                  >
-                    <CCardBody>
-                      <div className="d-flex justify-content-between align-items-start">
-                        {/* Left section: Avatar + Details */}
-                        <div className="d-flex align-items-start gap-3">
-                          {/* User Avatar */}
-                          <img
-                            src={item.posted_by?.profile_image}
-                            alt="User"
-                            width={50}
-                            height={50}
-                            className="rounded-circle border"
-                            style={{ objectFit: "cover" }}
-                          />
+                  return (
+                    <CCol md={6}>
+                      <CCard
+                        className="mb-3 shadow-sm bg-dark text-light border"
+                        key={item._id}
+                      >
+                        <CCardBody>
+                          <div className="d-flex justify-content-between align-items-start">
+                            {/* Left section: Avatar + Details */}
+                            <div className="d-flex align-items-start gap-3">
+                              {/* User Avatar */}
+                              <img
+                                src={item.posted_by?.profile_image}
+                                alt="User"
+                                width={50}
+                                height={50}
+                                className="rounded-circle border"
+                                style={{ objectFit: "cover" }}
+                              />
 
-                          {/* Text Details */}
-                          <div>
-                            <h6 className=" mb-1  d-flex align-items-center gap-2">
-                              <CBadge
-                                color="warning"
-                                className="border text-muted"
-                              >
-                                #{serialNumber}
-                              </CBadge>
-                              {item.subject}
-                            </h6>
+                              {/* Text Details */}
+                              <div>
+                                <h6 className=" mb-1  d-flex align-items-center gap-2">
+                                  <CBadge
+                                    color="warning"
+                                    className="border text-muted"
+                                  >
+                                    #{serialNumber}
+                                  </CBadge>
+                                  {item.subject}
+                                </h6>
 
-                            <small className="text-muted d-block">
-                              Posted by{" "}
-                              <span className="text-light">
-                                {item.posted_by?.name}
-                              </span>
-                            </small>
+                                <small className="text-muted d-block">
+                                  Posted by{" "}
+                                  <span className="text-light">
+                                    {item.posted_by?.name}
+                                  </span>
+                                </small>
 
-                            <small className="text-muted">
-                              {new Date(item.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  second: "2-digit",
-                                  hour12: true,
-                                },
-                              )}
-                            </small>
+                                <small className="text-muted">
+                                  {new Date(item.createdAt).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    },
+                                  )}
+                                </small>
+                              </div>
+                            </div>
+
+                            {/* Right section: Status Badge */}
+                            <CBadge
+                              color={item.is_active ? "success" : "secondary"}
+                              className="rounded-pill px-3 py-1"
+                            >
+                              {item.is_active ? "Active" : "Inactive"}
+                            </CBadge>
                           </div>
-                        </div>
 
-                        {/* Right section: Status Badge */}
-                        <CBadge
-                          color={item.is_active ? "success" : "secondary"}
-                          className="rounded-pill px-3 py-1"
-                        >
-                          {item.is_active ? "Active" : "Inactive"}
-                        </CBadge>
-                      </div>
+                          <p className="mt-2  small">{item.description}...</p>
 
-                      <p className="mt-2  small">
-                        {item.description.slice(0, 120)}...
-                      </p>
+                          {/* Meta Row */}
+                          <div className="d-flex flex-wrap gap-2 mt-2">
+                            <CBadge color="secondary">
+                              Roles: {item.for_user_roles.join(", ")}
+                            </CBadge>
 
-                      {/* Meta Row */}
-                      <div className="d-flex flex-wrap gap-2 mt-2">
-                        <CBadge color="secondary">
-                          Roles: {item.for_user_roles.join(", ")}
-                        </CBadge>
+                            <CBadge
+                              color={
+                                item.is_feedback_required
+                                  ? "warning"
+                                  : "secondary"
+                              }
+                            >
+                              {item.is_feedback_required
+                                ? "Feedback Required"
+                                : "No Feedback"}
+                            </CBadge>
 
-                        <CBadge
-                          color={
-                            item.is_feedback_required ? "warning" : "secondary"
-                          }
-                        >
-                          {item.is_feedback_required
-                            ? "Feedback Required"
-                            : "No Feedback"}
-                        </CBadge>
+                            <CBadge color="primary">
+                              Total Users: {item.users.length}
+                            </CBadge>
 
-                        <CBadge color="primary">
-                          Total Users: {item.users.length}
-                        </CBadge>
+                            <CBadge color="success">Read: {readCount}</CBadge>
 
-                        <CBadge color="success">Read: {readCount}</CBadge>
+                            <CBadge color="danger">
+                              Unread: {unreadCount}
+                            </CBadge>
+                          </div>
+                          <div className="d-flex justify-content-end gap-2 mt-3">
+                            <CButton
+                              size="sm"
+                              color="info"
+                              onClick={() => openViewModal(item)}
+                            >
+                              View
+                            </CButton>
 
-                        <CBadge color="danger">Unread: {unreadCount}</CBadge>
-                      </div>
-                      <div className="d-flex justify-content-end gap-2 mt-3">
-                        <CButton
-                          size="sm"
-                          color="info"
-                          onClick={() => openViewModal(item)}
-                        >
-                          View
-                        </CButton>
+                            <CButton
+                              size="sm"
+                              color="warning"
+                              onClick={() => openEditModal(item)}
+                            >
+                              Edit
+                            </CButton>
 
-                        <CButton
-                          size="sm"
-                          color="warning"
-                          onClick={() => openEditModal(item)}
-                        >
-                          Edit
-                        </CButton>
-
-                        <CButton
-                          size="sm"
-                          color="danger"
-                          onClick={() => handleDelete(item._id, item.subject)}
-                        >
-                          {deleting ? <LoadingSpinner /> : "Delete"}
-                        </CButton>
-                      </div>
-                    </CCardBody>
-                  </CCard>
-                );
-              })
-            ) : (
-              <CCard className="mb-3 shadow-sm bg-dark text-light border">
-                <CCardBody>
-                  <CAlert color="danger">No Custom Notifications Found</CAlert>
-                </CCardBody>
-              </CCard>
-            )}
+                            <CButton
+                              size="sm"
+                              color="danger"
+                              onClick={() =>
+                                handleDelete(item._id, item.subject)
+                              }
+                            >
+                              {deleting ? <LoadingSpinner /> : "Delete"}
+                            </CButton>
+                          </div>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  );
+                })
+              ) : (
+                <CAlert color="danger">No Custom Notifications Found</CAlert>
+              )}
+            </CRow>
           </div>
           <PaginateInput
             page={page}

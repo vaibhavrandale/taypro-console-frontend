@@ -42,6 +42,9 @@ import { Link } from "react-router-dom";
 import GatewayMap from "../../components/GatewayMap";
 import Weather from "../client-admin/weather/Weather";
 import SiteSelect from "../../components/SiteSelect";
+import toast from "react-hot-toast";
+import { CButton } from "@coreui/react";
+import ConfirmModal from "../../components/ConfirmModal";
 
 /* ══════════════════════════════════════════════
    DESIGN TOKENS
@@ -534,6 +537,45 @@ export default function MasterAdminDashboard() {
   };
 
   const weatherType = getWeatherType();
+
+  const [commandSend, setCommandSend] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+
+  // handler — remove window.confirm, open modal instead
+  const sendMulticastDownlink = async () => {
+    let alldeveuis = robotsData?.map((robot) => robot.deveui);
+    let allrobotNos = robotsData?.map((robot) => robot.robot_no);
+
+    const robotdownlink = {
+      deveui: alldeveuis,
+      robot_no: allrobotNos,
+      block: "All",
+      site_id: site_id,
+      command: "14",
+    };
+
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    setCommandSend(true);
+    setConfirmVisible(false);
+
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/send-mqtt-multicast-downlink",
+        robotdownlink,
+        { withCredentials: true },
+      );
+      toast.success(data.data.message);
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: error.response?.data?.message || error.response?.data?.error,
+      });
+      toast.error(error.response?.data?.message || error.response?.data?.error);
+    } finally {
+      setCommandSend(false);
+    }
+  };
   return (
     <>
       <style>{CSS}</style>
@@ -623,21 +665,50 @@ export default function MasterAdminDashboard() {
                   icon="🤖"
                   delay={80}
                   right={
-                    <Link
-                      to={`/master-admin/site-management/block-management/${site_id}`}
-                      style={{
-                        fontSize: 11,
-                        color: T.cyan,
-                        textDecoration: "none",
-                        padding: "2px 6px",
-                        borderRadius: 6,
-                        border: `1px solid ${T.border}`,
-                        background: T.cyanDim,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      blockwise →
-                    </Link>
+                    <>
+                      <Link
+                        to={`/master-admin/site-management/block-management/${site_id}`}
+                        style={{
+                          fontSize: 11,
+                          color: T.cyan,
+                          textDecoration: "none",
+                          padding: "2px 6px",
+                          borderRadius: 6,
+                          border: `1px solid ${T.border}`,
+                          background: T.cyanDim,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        blockwise →
+                      </Link>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        disabled={commandSend}
+                        onClick={() => setConfirmVisible(true)}
+                        className="px-2 py-0 small fw-medium"
+                      >
+                        {commandSend ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-1" />
+                            Sending...
+                          </>
+                        ) : (
+                          "Stop All"
+                        )}
+                      </CButton>
+
+                      <ConfirmModal
+                        visible={confirmVisible}
+                        onClose={() => setConfirmVisible(false)}
+                        onConfirm={sendMulticastDownlink}
+                        title="Stop All Robots?"
+                        message={`This will send a stop command to all robots at <b class="text-success">${site_id}</b><br/>This action cannot be undone.`}
+                        confirmLabel="Stop All"
+                        confirmColor="danger"
+                        loading={commandSend}
+                      />
+                    </>
                   }
                 >
                   <div

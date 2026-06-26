@@ -1,0 +1,30 @@
+.robotBlock {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.robotBlock .robot {
+  max-height: 15px;
+  max-width: 18px;
+  min-height: 15px;
+  min-width: 18px;
+  margin: 9px;
+  font-size: 12px;
+}
+
+.robotBlock .robot .state-offline {
+  background: rgb(187, 14, 14);
+  color: #e3e0e0;
+  padding: 5px;
+  border-radius: 4px;
+  font-weight: 400;
+}
+
+.robotBlock .robot .state-online {
+  background: rgb(50, 237, 29);
+  color: #000;
+  padding: 5px;
+  border-radius: 4px;
+}
