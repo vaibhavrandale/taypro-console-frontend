@@ -13,6 +13,8 @@ import {
   CFormInput,
   CBadge,
 } from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilRouter, cilSend } from "@coreui/icons";
 // import { useSelector } from "react-redux";
 
 const reducer = (state, action) => {
@@ -70,7 +72,7 @@ const RobotCommands = () => {
 
   // const authtoken = useSelector((state) => state.authtoken);
   // const userInfo = useSelector((state) => state.userInfo);
-  const [site_id, setSiteId] = useState();
+  const [site_id, setSiteId] = useState("");
   const [selectedRobots, setSelectedRobots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -83,6 +85,7 @@ const RobotCommands = () => {
           withCredentials: true,
         });
         dispatch({ type: "FETCH_SITES_SUCCESS", payload: res.data.data });
+        setSiteId(res.data.data[1].site_id);
       } catch (err) {
         dispatch({
           type: "FETCH_SITES_FAIL",
@@ -318,20 +321,62 @@ const RobotCommands = () => {
         {sendDownLinkError && (
           <CBadge color="danger">{sendDownLinkError}</CBadge>
         )}
-        {selectedRobots.length > 0 && (
+        {/* {selectedRobots.length > 0 && (
           <div className="mt-3">
             <h5>Send Command 🔽</h5>
-            {selectedRobots.map((robot, index) => (
-              <p key={index}>
-                {index + 1} Robot No:{" "}
-                <span className="text-primary">
-                  {robot.robot_no} - [{robot.block}]
-                </span>
-              </p>
-            ))}
+            <div className="d-flex flex-wrap">
+              {selectedRobots.map((robot, index) => (
+                <p className="m-1 border p-1" key={index}>
+                  <span className="me-1 text-danger"> {index + 1})</span>
+                  <span className="text-success">
+                    {robot.robot_no} - [{robot.block}]
+                  </span>
+                </p>
+              ))}
+            </div>
+          </div>
+        )} */}
+
+        {selectedRobots.length > 0 && (
+          <div className="mt-3">
+            {/* Header */}
+            <div className="d-flex align-items-center gap-2 mb-2">
+              <div
+                className="d-flex align-items-center justify-content-center rounded bg-primary bg-opacity-10 border border-primary border-opacity-25"
+                style={{ width: 28, height: 28 }}
+              >
+                <CIcon icon={cilSend} className="text-primary" size="sm" />
+              </div>
+              <span className="fw-semibold text-white small">Send Command</span>
+              <CBadge color="primary" shape="rounded-pill" className="fw-bold">
+                {selectedRobots.length}
+              </CBadge>
+            </div>
+
+            {/* Robot chips */}
+            <div className="d-flex flex-wrap gap-2">
+              {selectedRobots.map((robot, index) => (
+                <div
+                  key={index}
+                  className="d-flex align-items-center gap-1 rounded border border-secondary border-opacity-25 bg-body-tertiary px-2 py-1"
+                >
+                  <span
+                    className="text-body-secondary "
+                    style={{ minWidth: 14 }}
+                  >
+                    {index + 1}
+                  </span>
+                  <div className="vr opacity-25 mx-1" />
+                  <CIcon icon={cilRouter} className="text-success" size="sm" />
+                  <span className="text-success small">{robot.robot_no}</span>
+                  <CBadge color="warning" className="ms-1 fw-normal opacity-75">
+                    {robot.block}
+                  </CBadge>
+                </div>
+              ))}
+            </div>
           </div>
         )}
-
         <CRow className="g-3 mt-3">
           {LoadingRobots ? (
             <CCol className="text-center py-5">
@@ -343,7 +388,7 @@ const RobotCommands = () => {
             </CBadge>
           ) : filteredRobots.length > 0 ? (
             filteredRobots.map((robot) => (
-              <CCol md={3} sm={4} xs={6} key={robot.deveui}>
+              <CCol md={2} sm={4} xs={3} key={robot.deveui}>
                 <CCard
                   className={`h-100 ${
                     robot.lora_state === 1 ? `bg-success` : `bg-danger`

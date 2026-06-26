@@ -674,6 +674,14 @@ const ClientCleaningLog = () => {
     return { percentage: Math.round(percentage) };
   };
 
+  // Track run index per robot per tab
+  const runIndexMap = {};
+  const getRunIndex = (robotNo, mapKey) => {
+    const key = `${mapKey}_${robotNo}`;
+    runIndexMap[key] = (runIndexMap[key] || 0) + 1;
+    return runIndexMap[key];
+  };
+
   return (
     <>
       {cleaningLoading ? (
@@ -897,7 +905,7 @@ const ClientCleaningLog = () => {
                             return (
                               <CTableRow key={index}>
                                 <CTableDataCell>{index + 1}</CTableDataCell>
-                                <CTableDataCell
+                                {/* <CTableDataCell
                                   className="cursor-pointer"
                                   onClick={() => OpenCleaningModal(log._id)}
                                   color={
@@ -907,8 +915,28 @@ const ClientCleaningLog = () => {
                                   }
                                 >
                                   {log.robot_no}
+                                </CTableDataCell> */}
+                                <CTableDataCell
+                                  className="cursor-pointer"
+                                  onClick={() => OpenCleaningModal(log._id)}
+                                  // color={
+                                  //   successRobotCount[log.robot_no] > 1
+                                  //     ? "success"
+                                  //     : ""
+                                  // }
+                                >
+                                  {log.robot_no}
+                                  {successRobotCount[log.robot_no] > 1 && (
+                                    <CBadge
+                                      color="warning"
+                                      className="ms-1"
+                                      style={{ fontSize: "10px" }}
+                                    >
+                                      Cycle{" "}
+                                      {getRunIndex(log.robot_no, "completed")}
+                                    </CBadge>
+                                  )}
                                 </CTableDataCell>
-
                                 {/* STATUS */}
                                 <CTableDataCell>
                                   {log.cleaning?.finish ? (

@@ -153,10 +153,12 @@ const SiteTechnicianBlockManagement = () => {
     }
 
     let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    let allRobotNos = robots.map((robot) => robot.robot_no); // Corrected arrow function syntax
 
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
+      robot_no: allRobotNos,
       block: "All",
       site_id: site_id,
       command: "14",

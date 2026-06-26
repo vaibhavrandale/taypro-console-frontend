@@ -466,8 +466,8 @@ const BlockManagement = () => {
           Total Robots: <span>{robots.length}</span>
         </CBadge>
       </div>
-      <CContainer>
-        <CRow className="mt-4 justify-content-center">
+      <div className="m-2">
+        <CRow className="mt-4 justify-content-start">
           {/* mapping blocks */}
           {sortedBlocks
             .map((block, index) => {
@@ -477,7 +477,7 @@ const BlockManagement = () => {
                   )
                 : null; // Handle single robot object
               return (
-                <CCol md={4} className="my-2" key={index}>
+                <CCol md={3} className="my-2" key={index}>
                   <CCard className="h-100 d-flex flex-column border border-primary shadow-sm rounded-0">
                     <CCardHeader className="text-center fw-bold border-bottom border-primary rounded-0">
                       {block.block_name}
@@ -510,7 +510,7 @@ const BlockManagement = () => {
                         </CCol>
                       </div>
 
-                      <div className="d-flex justify-content-center flex-wrap align-items-center flex-grow-1 mx-3">
+                      <div className="d-flex justify-content-center flex-wrap align-items-center flex-grow-1 mx-3 ">
                         {robot.map((item, index) => (
                           <CTooltip
                             key={index}
@@ -518,7 +518,7 @@ const BlockManagement = () => {
                             placement="top"
                           >
                             <span
-                              className={`tooltip-container m-1 badge p-1 rounded-1 ${
+                              className={`tooltip-container p-2 m-1 badge p-1 rounded-1 ${
                                 item.lora_state === 1
                                   ? "bg-success"
                                   : "bg-danger"
@@ -670,7 +670,7 @@ const BlockManagement = () => {
             })
             .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))}
         </CRow>
-      </CContainer>
+      </div>
     </div>
   );
 };
