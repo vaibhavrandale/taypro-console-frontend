@@ -376,12 +376,17 @@ const reducer = (state, action) => {
     case "FETCH_SITEID_FAIL":
       return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
     case "FETCH_SITE_DETAILS_REQUEST":
-      return { ...state, loadingSiteDetails: true };
+      return {
+        ...state,
+        loadingSiteDetails: true,
+        siteDetailsError: "",
+      };
     case "FETCH_SITE_DETAILS_SUCCESS":
       return {
         ...state,
         loadingSiteDetails: false,
         siteDetails: action.payload,
+        siteDetailsError: "",
       };
     case "FETCH_SITE_DETAILS_FAIL":
       return {

@@ -436,12 +436,17 @@ const reducer = (state, action) => {
     case "FETCH_SITEID_FAIL":
       return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
     case "FETCH_SITE_DETAILS_REQUEST":
-      return { ...state, loadingSiteDetails: true };
+      return {
+        ...state,
+        loadingSiteDetails: true,
+        siteDetailsError: "",
+      };
     case "FETCH_SITE_DETAILS_SUCCESS":
       return {
         ...state,
         loadingSiteDetails: false,
         siteDetails: action.payload,
+        siteDetailsError: "",
       };
     case "FETCH_SITE_DETAILS_FAIL":
       return {
@@ -520,7 +525,7 @@ export default function MasterAdminDashboard() {
       try {
         const { data } = await axios.get(
           `/api/v1/sites-coordinates/site-details/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          { withCredentials: true },
         );
         const d = data.data;
         dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
