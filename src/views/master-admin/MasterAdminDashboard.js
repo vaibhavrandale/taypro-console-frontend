@@ -582,7 +582,6 @@ export default function MasterAdminDashboard() {
       setCommandSend(false);
     }
   };
-  console.log(weatherType);
   
   return (
     <>
