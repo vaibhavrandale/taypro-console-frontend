@@ -111,18 +111,29 @@ const ClientBlockManagement = () => {
         })
         .sort((a, b) => (a.robot_no || "").localeCompare(b.robot_no || ""))
     : [];
-
+  const [commandSend, setCommandSend] = useState(false);
   const sendMulticastDownlink = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want Stop All Robots at ${sitename}, ${sitelocation}?`,
+      )
+    ) {
+      return;
+    }
+
     let alldeveuis = robots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    let allRobotNos = robots.map((robot) => robot.robot_no); // Corrected arrow function syntax
 
     //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
+      robot_no: allRobotNos,
       block: "All",
       site_id: site_id,
       command: "14",
     };
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    setCommandSend(true);
     try {
       const data = await axios.post(
         "/api/v1/robots/send-mqtt-multicast-downlink",
@@ -135,6 +146,7 @@ const ClientBlockManagement = () => {
 
       toast.success(data.data.message);
       dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      setCommandSend(false);
     } catch (error) {
       dispatch({
         type: "SEND_DOWNLINK_FAIL",
@@ -142,6 +154,7 @@ const ClientBlockManagement = () => {
       });
 
       toast.error(error.response.data.message || error.response.data.error);
+      setCommandSend(false);
     }
   };
 
@@ -211,13 +224,14 @@ const ClientBlockManagement = () => {
               >
                 All Robot Data
               </CButton>
-              <CButton
-                className="btn btn-secondary btn-sm"
+              <Link
+                className="badge bg-danger p-2 btn-sm"
                 size="sm"
+                disabled={commandSend}
                 onClick={() => sendMulticastDownlink()}
               >
-                Stop Cleaning
-              </CButton>
+                {commandSend ? "Sending..." : "Emergency Stop All"}
+              </Link>
             </div>
             <CModal
               backdrop="static"
@@ -389,8 +403,8 @@ const ClientBlockManagement = () => {
               </CBadge>
             </div>
           </div>
-          <CContainer>
-            <CRow className="mt-4 justify-content-center">
+          <div>
+            <CRow className="m-2 justify-content-start">
               {sortedBlocks.map((block, index) => {
                 const robot = block.blockrobots
                   ? block.blockrobots.sort((a, b) =>
@@ -399,12 +413,12 @@ const ClientBlockManagement = () => {
                   : null; // Handle single robot object
 
                 return (
-                  <CCol md={4} className="my-2" key={index}>
+                  <CCol md={3} className="my-2" key={index}>
                     <CCard className="h-100 d-flex flex-column shadow-sm rounded-0 border border-primary">
                       <CCardHeader className="text-center fw-bold border-bottom border-primary">
                         {block.block_name}
                       </CCardHeader>
-                      <CCardBody className="d-flex flex-column flex-grow-1">
+                      <CCardBody className="d-flex flex-column flex-grow-1 px-0">
                         <div className="d-flex flex-row justify-content-between p-1">
                           <CCol md={3}>
                             <p className="text-center">Total</p>
@@ -480,7 +494,7 @@ const ClientBlockManagement = () => {
                 );
               })}
             </CRow>
-          </CContainer>
+          </div>
         </>
       )}
     </div>

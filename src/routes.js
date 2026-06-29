@@ -232,6 +232,7 @@ import MasterAdminDashboardtow from "./views/master-admin/MasterAdminDashboardto
 import GatewaySurveyDashboard from "./views/master-admin/gateway-survey/GatewaySurveyDashboard";
 import CreateRobotReading from "./views/master-admin/gateway-survey/createRobotReading";
 import ViewGatewaySurvey from "./views/master-admin/gateway-survey/ViewGatewaySurvey";
+import RobotStatus from "./views/robots-dashboards/RobotStatus";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -537,6 +538,19 @@ const routes = [
   { path: "/apps", name: "App", element: App },
 
   // ------------------------master admin---------------------------------
+
+  // -----------------------realtime pages-------------------
+
+  {
+    path: "/master-admin/robots-dashboard",
+    name: "Master Admin Robots",
+    element: (
+      <MasterAdminRoute>
+        <RobotStatus />
+      </MasterAdminRoute>
+    ),
+  },
+  // -----------------------realtime pages-------------------
 
   {
     path: "/master-admin/dashboard",
