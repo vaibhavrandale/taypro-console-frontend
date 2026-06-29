@@ -466,8 +466,8 @@ const BlockManagement = () => {
           Total Robots: <span>{robots.length}</span>
         </CBadge>
       </div>
-      <div className="m-2">
-        <CRow className="mt-4 justify-content-start">
+      <div className="m-2 w-100 align-self-stretch px-3">
+        <CRow className="mt-4 justify-content-start g-3">
           {/* mapping blocks */}
           {sortedBlocks
             .map((block, index) => {
@@ -477,7 +477,7 @@ const BlockManagement = () => {
                   )
                 : null; // Handle single robot object
               return (
-                <CCol md={3} className="my-2" key={index}>
+                <CCol md={4} className="my-2" key={index}>
                   <CCard className="h-100 d-flex flex-column border border-primary shadow-sm rounded-0">
                     <CCardHeader className="text-center fw-bold border-bottom border-primary rounded-0">
                       {block.block_name}

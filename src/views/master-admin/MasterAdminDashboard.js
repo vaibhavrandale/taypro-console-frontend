@@ -405,12 +405,17 @@ const reducer = (state, action) => {
     case "FETCH_SITEID_FAIL":
       return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
     case "FETCH_SITE_DETAILS_REQUEST":
-      return { ...state, loadingSiteDetails: true };
+      return {
+        ...state,
+        loadingSiteDetails: true,
+        siteDetailsError: "",
+      };
     case "FETCH_SITE_DETAILS_SUCCESS":
       return {
         ...state,
         loadingSiteDetails: false,
         siteDetails: action.payload,
+        siteDetailsError: "",
       };
     case "FETCH_SITE_DETAILS_FAIL":
       return {
@@ -489,17 +494,18 @@ export default function MasterAdminDashboard() {
       try {
         const { data } = await axios.get(
           `/api/v1/sites-coordinates/site-details/${site_id}`,
-          { headers: { Authorization: `Bearer ${authtoken}` } },
+          { withCredentials: true },
         );
         const d = data.data;
         dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
-        console.log("API WEATHER:", JSON.stringify(d.weather, null, 2));
+        // console.log("API WEATHER:", JSON.stringify(d.weather, null, 2));
         setSiteCoords(d.coordinates);
         setRobots(d.robots);
         setGateways(d.gateways);
         setBlocks(d.blockWiseCleaning);
         setWeatherData(d.weather);
         setCleaning(d.cleaning || { completed: 0, inprogress: 0, failure: 0 });
+        // console.log(d.weather)
       } catch (e) {
         dispatch({
           type: "FETCH_SITE_DETAILS_FAIL",
@@ -511,7 +517,7 @@ export default function MasterAdminDashboard() {
     fetchSiteDetails();
 
     setMapLoaded(false);
-  }, [authtoken, site_id]);
+  }, [site_id]);
 
   /* derived */
   const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);
@@ -576,6 +582,7 @@ export default function MasterAdminDashboard() {
       setCommandSend(false);
     }
   };
+  
   return (
     <>
       <style>{CSS}</style>

@@ -47,6 +47,9 @@ export default function Weather({
     frame: 0,
     type: weatherType,
   });
+  console.log(weatherData);
+  console.log(siteDetailsError);
+  
   const rafRef = useRef(null);
   const canvasRef = useRef(null);
   const theme = THEMES[weatherType] || THEMES.sunny;
