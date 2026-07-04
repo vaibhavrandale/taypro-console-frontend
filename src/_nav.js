@@ -291,6 +291,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Technician Location",
+            to: "/master-admin/technician-location",
+          },
+          {
+            component: CNavItem,
             name: "User Performance",
             to: "/master-admin/user-performance-dashboard",
           },
@@ -1630,6 +1635,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Technician Location",
+            to: "/project-admin/technician-location",
+          },
+          {
+            component: CNavItem,
             name: "Users",
             to: "/project-admin/users",
           },
@@ -2443,6 +2453,11 @@ const _nav = [
             component: CNavItem,
             name: "Technician Attendance",
             to: "/service-admin/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "Technician Location",
+            to: "/service-admin/technician-location",
           },
           {
             component: CNavItem,
