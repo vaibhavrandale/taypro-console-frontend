@@ -162,10 +162,16 @@ const TechnicianLocationDashboard = () => {
           <CCard className="h-100">
             <CCardBody className="d-flex align-items-center gap-3">
               <div className="rounded-circle bg-primary bg-opacity-10 p-3">
-                <CIcon icon={cilLocationPin} size="xl" className="text-primary" />
+                <CIcon
+                  icon={cilLocationPin}
+                  size="xl"
+                  className="text-primary"
+                />
               </div>
               <div>
-                <div className="text-body-secondary small">Technicians Tracked</div>
+                <div className="text-body-secondary small">
+                  Technicians Tracked
+                </div>
                 <div className="fs-4 fw-semibold">{technicianCount}</div>
               </div>
             </CCardBody>
@@ -298,8 +304,12 @@ const TechnicianLocationDashboard = () => {
             </CTableRow>
           ) : filteredTracks.length ? (
             filteredTracks.map((track, index) => (
-              <CTableRow key={`${track.user_id}_${track.attendance_id}_${index}`}>
-                <CTableDataCell className="text-center">{index + 1}</CTableDataCell>
+              <CTableRow
+                key={`${track.user_id}_${track.attendance_id}_${index}`}
+              >
+                <CTableDataCell className="text-center">
+                  {index + 1}
+                </CTableDataCell>
                 <CTableDataCell className="text-center">
                   <CImage
                     src={track.profile_image}
@@ -315,8 +325,12 @@ const TechnicianLocationDashboard = () => {
                 <CTableDataCell className="text-center">
                   <CBadge color="primary">{track.point_count}</CBadge>
                 </CTableDataCell>
-                <CTableDataCell>{formatDateTime(track.first_recorded_at)}</CTableDataCell>
-                <CTableDataCell>{formatDateTime(track.last_recorded_at)}</CTableDataCell>
+                <CTableDataCell>
+                  {formatDateTime(track.first_recorded_at)}
+                </CTableDataCell>
+                <CTableDataCell>
+                  {formatDateTime(track.last_recorded_at)}
+                </CTableDataCell>
                 <CTableDataCell>
                   <div className="d-flex flex-wrap gap-1 justify-content-center">
                     {track.sources?.map((source) => (
@@ -355,7 +369,10 @@ const TechnicianLocationDashboard = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan={10} className="text-center text-body-secondary">
+              <CTableDataCell
+                colSpan={10}
+                className="text-center text-body-secondary"
+              >
                 No location activity found for the selected filters.
               </CTableDataCell>
             </CTableRow>
