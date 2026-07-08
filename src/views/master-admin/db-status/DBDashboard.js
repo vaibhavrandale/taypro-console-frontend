@@ -11,11 +11,18 @@ import {
   CFormInput,
 } from "@coreui/react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import { RefreshCcw } from "lucide-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CollectionCard from "./CollectionCard";
+import {
+  getApiErrorMessage,
+  isMasterAdmin,
+} from "../../../utils/accessControl";
 
 const DBDashboard = () => {
+  const userInfo = useSelector((state) => state.userInfo);
+  const hasAccess = isMasterAdmin(userInfo?.role);
   const [stats, setStats] = useState([]);
   const [total, setTotal] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,21 +30,29 @@ const DBDashboard = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
+    if (!hasAccess) {
+      setError("Access denied. Master Admin role is required.");
+      setLoading(false);
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("/api/v1/api-logger/collection-status");
+        const res = await axios.get("/api/v1/api-logger/collection-status", {
+          withCredentials: true,
+        });
         setStats(res.data.data);
         setTotal(res.data.total);
       } catch (err) {
-        setError(err.response?.data?.message || err.response?.data?.error);
+        setError(getApiErrorMessage(err, "Failed to fetch database stats"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
-  }, [refreshKey]);
+  }, [refreshKey, hasAccess]);
   const filteredStats = stats
     .filter((item) =>
       item.collection.toLowerCase().includes(searchTerm.toLowerCase())

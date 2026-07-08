@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {
@@ -152,6 +152,53 @@ const TechnicianLocationDashboard = () => {
     setSelectedTrack(track);
     setMapVisible(true);
   };
+
+  const refreshSelectedTrack = useCallback(async () => {
+    if (!selectedTrack) return null;
+
+    try {
+      const payload = {
+        start_date: startDate,
+        end_date: endDate,
+        user_id: selectedTrack.user_id,
+      };
+
+      if (siteId !== "all") payload.site_id = siteId;
+
+      const response = await axios.post(
+        "/api/v1/technician-user-location-activity/admin",
+        payload,
+        { withCredentials: true },
+      );
+
+      dispatch({
+        type: "FETCH_SUCCESS",
+        payload: response.data,
+      });
+
+      const updatedTrack = (response.data.data || []).find(
+        (track) =>
+          String(track.user_id) === String(selectedTrack.user_id) &&
+          String(track.attendance_id) === String(selectedTrack.attendance_id),
+      );
+
+      if (updatedTrack) {
+        setSelectedTrack(updatedTrack);
+        toast.success("Location activity refreshed");
+        return updatedTrack;
+      }
+
+      toast.error("This session is no longer available for the selected filters");
+      return null;
+    } catch (fetchError) {
+      const message =
+        fetchError.response?.data?.message ||
+        fetchError.response?.data?.error ||
+        "Failed to refresh location activity";
+      toast.error(message);
+      return null;
+    }
+  }, [selectedTrack, startDate, endDate, siteId]);
 
   return (
     <div className="p-2">
@@ -384,6 +431,7 @@ const TechnicianLocationDashboard = () => {
         visible={mapVisible}
         onClose={() => setMapVisible(false)}
         track={selectedTrack}
+        onRefresh={refreshSelectedTrack}
       />
     </div>
   );

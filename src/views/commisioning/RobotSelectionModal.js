@@ -21,7 +21,6 @@ import {
   CTabPanel,
 } from "@coreui/react";
 
-import { robot_commissioning_doc } from "./cdata";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import toast from "react-hot-toast";

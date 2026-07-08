@@ -14,7 +14,13 @@ import {
   CTableDataCell,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilLocationPin, cilMap, cilMagnifyingGlass } from "@coreui/icons";
+import {
+  cilLocationPin,
+  cilMap,
+  cilMagnifyingGlass,
+  cilReload,
+  cilX,
+} from "@coreui/icons";
 import {
   MapContainer,
   TileLayer,
@@ -70,6 +76,13 @@ const MAP_STYLES = `
   .tech-track-table tbody tr.is-selected {
     background-color: rgba(59, 130, 246, 0.16) !important;
   }
+  .tech-track-map .spin {
+    animation: tech-track-spin 0.8s linear infinite;
+  }
+  @keyframes tech-track-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 `;
 
 const MAP_MAX_ZOOM = 19;
@@ -90,6 +103,30 @@ const END_ICON = L.divIcon({
   html: `<div style="width:34px;height:34px;border-radius:50%;background:#ef4444;border:3px solid #fff;box-shadow:0 0 0 4px rgba(239,68,68,0.35),0 4px 12px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;">E</div>`,
 });
 
+function MapResizeHandler() {
+  const map = useMap();
+
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        map.invalidateSize({ pan: false });
+      } catch {
+        // ignore leaflet race while container is hidden
+      }
+    };
+
+    const timer = setTimeout(handleResize, 300);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [map]);
+
+  return null;
+}
+
 function FitTrackHandler({ points, trigger }) {
   const map = useMap();
 
@@ -102,24 +139,26 @@ function FitTrackHandler({ points, trigger }) {
 
     if (!latLngs.length) return;
 
-    map.whenReady(() => {
-      map.invalidateSize();
-      if (latLngs.length === 1) {
-        map.setView(latLngs[0], 17);
-      } else {
-        map.fitBounds(L.latLngBounds(latLngs), {
-          padding: [48, 48],
-          maxZoom: MAP_MAX_ZOOM,
-        });
-      }
-    });
-  }, [map, points, trigger]);
+    const timer = setTimeout(() => {
+      map.whenReady(() => {
+        try {
+          map.invalidateSize({ pan: false });
+          if (latLngs.length === 1) {
+            map.setView(latLngs[0], 17);
+          } else {
+            map.fitBounds(L.latLngBounds(latLngs), {
+              padding: [48, 48],
+              maxZoom: MAP_MAX_ZOOM,
+            });
+          }
+        } catch {
+          // ignore leaflet race during modal mount
+        }
+      });
+    }, 200);
 
-  useEffect(() => {
-    map.whenReady(() => {
-      requestAnimationFrame(() => map.invalidateSize());
-    });
-  }, [map]);
+    return () => clearTimeout(timer);
+  }, [map, points, trigger]);
 
   return null;
 }
@@ -132,7 +171,19 @@ function PanToPoint({ point, active }) {
     const lat = point?.location?.lat;
     const lng = point?.location?.lng;
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-    map.panTo([lat, lng], { animate: true, duration: 0.4 });
+
+    const timer = setTimeout(() => {
+      map.whenReady(() => {
+        try {
+          map.invalidateSize({ pan: false });
+          map.panTo([lat, lng], { animate: true, duration: 0.35 });
+        } catch {
+          // ignore leaflet race during layer updates
+        }
+      });
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [active, map, point]);
 
   return null;
@@ -141,12 +192,9 @@ function PanToPoint({ point, active }) {
 const TrackMapLayers = memo(function TrackMapLayers({
   polyline,
   mapPoints,
-  allPoints,
-  selectedIndex,
-  onPointSelect,
+  selectedPoint,
 }) {
-  const selectedPointRef =
-    selectedIndex != null ? allPoints[selectedIndex] : null;
+  if (!polyline.length) return null;
 
   return (
     <>
@@ -175,29 +223,20 @@ const TrackMapLayers = memo(function TrackMapLayers({
         </>
       )}
 
-      {mapPoints.map((point, index) => {
-        const isSelected = selectedPointRef === point;
-        const pos = [point.location.lat, point.location.lng];
-        return (
+      {selectedPoint &&
+        Number.isFinite(selectedPoint?.location?.lat) &&
+        Number.isFinite(selectedPoint?.location?.lng) && (
           <CircleMarker
-            key={`${point.recorded_at}_${index}`}
-            center={pos}
-            radius={isSelected ? 9 : 5}
+            center={[selectedPoint.location.lat, selectedPoint.location.lng]}
+            radius={10}
             pathOptions={{
-              color: isSelected ? "#fff" : "#38bdf8",
-              fillColor: isSelected ? "#fbbf24" : "#0ea5e9",
-              fillOpacity: isSelected ? 1 : 0.85,
-              weight: isSelected ? 3 : 2,
-            }}
-            eventHandlers={{
-              click: () => {
-                const rowIndex = allPoints.indexOf(point);
-                if (rowIndex >= 0) onPointSelect(rowIndex);
-              },
+              color: "#fff",
+              fillColor: "#fbbf24",
+              fillOpacity: 1,
+              weight: 3,
             }}
           />
-        );
-      })}
+        )}
 
       <Marker position={polyline[0]} icon={START_ICON} zIndexOffset={1000}>
         <Popup className="tech-track-popup">
@@ -275,7 +314,13 @@ function StatCard({ icon, label, value, accent }) {
         <CIcon icon={icon} />
       </div>
       <div>
-        <div style={{ fontSize: "0.72rem", color: "#94a3b8", letterSpacing: "0.04em" }}>
+        <div
+          style={{
+            fontSize: "0.72rem",
+            color: "#94a3b8",
+            letterSpacing: "0.04em",
+          }}
+        >
           {label}
         </div>
         <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f1f5f9" }}>
@@ -286,9 +331,11 @@ function StatCard({ icon, label, value, accent }) {
   );
 }
 
-const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
+const TechnicianLocationMapModal = ({ visible, onClose, track, onRefresh }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [fitTrackTick, setFitTrackTick] = useState(0);
+  const [mapReady, setMapReady] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const allPoints = track?.points ?? [];
 
   const mapPoints = useMemo(
@@ -317,8 +364,34 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
     setSelectedIndex((prev) => (prev === index ? null : index));
   }, []);
 
+  const handleRefresh = useCallback(async () => {
+    if (!onRefresh || refreshing) return;
+
+    setRefreshing(true);
+    try {
+      const updated = await onRefresh();
+      if (updated) {
+        setSelectedIndex(null);
+        setFitTrackTick((tick) => tick + 1);
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  }, [onRefresh, refreshing]);
+
   useEffect(() => {
-    if (visible) setSelectedIndex(null);
+    if (!visible) {
+      setMapReady(false);
+      setSelectedIndex(null);
+      return undefined;
+    }
+
+    setSelectedIndex(null);
+    const timer = setTimeout(() => setMapReady(true), 350);
+    return () => {
+      clearTimeout(timer);
+      setMapReady(false);
+    };
   }, [visible, track?.attendance_id, track?.user_id]);
 
   return (
@@ -326,15 +399,16 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
       <style>{MAP_STYLES}</style>
       <CModal fullscreen visible={visible} onClose={onClose}>
         <CModalHeader
-          closeButton
+          closeButton={false}
           className="py-2 px-3 border-0"
           style={{ background: "#0f172a", color: "#f8fafc" }}
         >
-          <div className="d-flex align-items-center justify-content-between w-100 pe-3 flex-wrap gap-2">
+          <div className="d-flex align-items-center justify-content-between w-100 gap-2 flex-wrap">
             <CModalTitle className="fs-5 mb-0 text-white">
               Location Track — {track?.username || "Technician"}
             </CModalTitle>
-            <div className="d-flex flex-wrap gap-2">
+
+            <div className="d-flex align-items-center gap-2 flex-wrap">
               {track?.sources?.map((source) => (
                 <CBadge
                   color="secondary"
@@ -345,6 +419,33 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                   {source}
                 </CBadge>
               ))}
+
+              <CButton
+                size="sm"
+                color="info"
+                variant="outline"
+                className="d-flex align-items-center gap-1"
+                onClick={handleRefresh}
+                disabled={refreshing || !onRefresh}
+              >
+                <CIcon
+                  icon={cilReload}
+                  size="sm"
+                  className={refreshing ? "spin" : ""}
+                />
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </CButton>
+
+              <CButton
+                size="sm"
+                color="secondary"
+                variant="outline"
+                className="d-flex align-items-center"
+                onClick={onClose}
+                aria-label="Close"
+              >
+                <CIcon icon={cilX} size="sm" />
+              </CButton>
             </div>
           </div>
         </CModalHeader>
@@ -392,7 +493,7 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
             </div>
           ) : (
             <>
-              {visible && mapPoints.length > 0 && (
+              {mapReady && mapPoints.length > 0 && (
                 <div
                   className="position-relative border-bottom"
                   style={{
@@ -410,7 +511,6 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                     style={{ height: "100%", width: "100%" }}
                     scrollWheelZoom
                     zoomControl
-                    preferCanvas
                   >
                     <TileLayer
                       url={SATELLITE_TILE_URL}
@@ -423,15 +523,20 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                       keepBuffer={3}
                     />
 
-                    <FitTrackHandler points={locationCoords} trigger={fitTrackTick} />
-                    <PanToPoint point={selectedPoint} active={selectedIndex != null} />
+                    <MapResizeHandler />
+                    <FitTrackHandler
+                      points={locationCoords}
+                      trigger={fitTrackTick}
+                    />
+                    <PanToPoint
+                      point={selectedPoint}
+                      active={selectedIndex != null}
+                    />
 
                     <TrackMapLayers
                       polyline={polyline}
                       mapPoints={mapPoints}
-                      allPoints={allPoints}
-                      selectedIndex={selectedIndex}
-                      onPointSelect={handlePointSelect}
+                      selectedPoint={selectedPoint}
                     />
                   </MapContainer>
 
@@ -467,13 +572,20 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                       pointerEvents: "none",
                     }}
                   >
-                    <span style={{ fontSize: "0.68rem", color: "#94a3b8", letterSpacing: "0.08em" }}>
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        color: "#94a3b8",
+                        letterSpacing: "0.08em",
+                      }}
+                    >
                       MAP LEGEND
                     </span>
                     {[
                       { color: "#22c55e", label: "Start" },
                       { color: "#ef4444", label: "Latest" },
-                      { color: "#38bdf8", label: "Track / points" },
+                      { color: "#38bdf8", label: "Track line" },
+                      { color: "#fbbf24", label: "Selected point" },
                     ].map(({ color, label }) => (
                       <div
                         key={label}
@@ -492,7 +604,13 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                         {label}
                       </div>
                     ))}
-                    <span style={{ fontSize: "0.72rem", color: "#64748b", marginTop: 4 }}>
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        color: "#64748b",
+                        marginTop: 4,
+                      }}
+                    >
                       Satellite view · max zoom {MAP_MAX_ZOOM}
                     </span>
                   </div>
@@ -504,11 +622,15 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                 style={{ background: "#0f172a" }}
               >
                 <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-                  <h6 className="mb-0" style={{ color: "#e2e8f0", fontWeight: 600 }}>
+                  <h6
+                    className="mb-0"
+                    style={{ color: "#e2e8f0", fontWeight: 600 }}
+                  >
                     All Location Points ({allPoints.length})
                   </h6>
                   <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                    Click a row to highlight on map · zoom freely with scroll or controls
+                    Click a row to highlight on map · zoom freely with scroll or
+                    controls
                   </span>
                 </div>
 
@@ -551,7 +673,10 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                           key={`${point.recorded_at}_${index}`}
                           className={isSelected ? "is-selected" : ""}
                           style={{
-                            background: index % 2 === 0 ? "rgba(15,23,42,0.5)" : "rgba(30,41,59,0.35)",
+                            background:
+                              index % 2 === 0
+                                ? "rgba(15,23,42,0.5)"
+                                : "rgba(30,41,59,0.35)",
                           }}
                           onClick={() => handlePointSelect(index)}
                         >
@@ -563,13 +688,19 @@ const TechnicianLocationMapModal = ({ visible, onClose, track }) => {
                           </CTableDataCell>
                           <CTableDataCell
                             className="text-center"
-                            style={{ fontFamily: "monospace", fontSize: "0.8rem" }}
+                            style={{
+                              fontFamily: "monospace",
+                              fontSize: "0.8rem",
+                            }}
                           >
                             {hasCoords ? lat.toFixed(6) : "—"}
                           </CTableDataCell>
                           <CTableDataCell
                             className="text-center"
-                            style={{ fontFamily: "monospace", fontSize: "0.8rem" }}
+                            style={{
+                              fontFamily: "monospace",
+                              fontSize: "0.8rem",
+                            }}
                           >
                             {hasCoords ? lng.toFixed(6) : "—"}
                           </CTableDataCell>

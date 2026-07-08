@@ -44,6 +44,10 @@ import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
 import { Link } from "react-router-dom";
 import LastActivity from "../../../components/LastActivity";
+import {
+  canManageUsers,
+  getApiErrorMessage,
+} from "../../../utils/accessControl";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -226,6 +230,8 @@ const UsersDashboard = () => {
     adminroute = "service-user";
   }
 
+  const canEditUsers = canManageUsers(userInfo?.role);
+
   // const authtoken = useSelector((state) => state.authtoken);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -371,8 +377,9 @@ const UsersDashboard = () => {
       toast.success(response.data.message);
     } catch (error) {
       console.error(error);
-      dispatch({ type: "ADD_USER_FAIL", payload: error.response.data.error });
-      toast.error(error.response.data.error);
+      const message = getApiErrorMessage(error, "Failed to create user");
+      dispatch({ type: "ADD_USER_FAIL", payload: message });
+      toast.error(message);
     }
   };
 
@@ -460,11 +467,12 @@ const UsersDashboard = () => {
       setModalVisible(false);
       setImage("");
     } catch (error) {
+      const message = getApiErrorMessage(error, "Failed to update user");
       dispatch({
         type: "UPDATE_FAIL",
-        payload: error.response?.data?.message || "Failed to update user",
+        payload: message,
       });
-      toast.error(error.response?.data?.message);
+      toast.error(message);
     }
   };
 
@@ -564,16 +572,18 @@ const UsersDashboard = () => {
           >
             External Users
           </Link>
-          {/* Add User button - hidden for restricted roles */}
-          <CButton
-            color="success"
-            size="sm"
-            className="text-white m-1"
-            onClick={openAddModal}
-            aria-label="Add new user"
-          >
-            + Add User
-          </CButton>
+          {/* Add User button - admin roles only */}
+          {canEditUsers && (
+            <CButton
+              color="success"
+              size="sm"
+              className="text-white m-1"
+              onClick={openAddModal}
+              aria-label="Add new user"
+            >
+              + Add User
+            </CButton>
+          )}
         </div>
       </div>
       <CRow className="mb-3 justify-content-end">
@@ -670,20 +680,18 @@ const UsersDashboard = () => {
                   >
                     View Assigned Sites
                   </CButton>
-                  {/* Update button - hidden for restricted roles */}
-                  {/* {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role
-                  ) && ( */}
-                  <CButton
-                    color="success"
-                    size="sm"
-                    className="m-1"
-                    onClick={() => openModal(user)}
-                    aria-label={`Edit user ${user.username}`}
-                  >
-                    Update
-                  </CButton>
-                  {/* )} */}
+                  {/* Update button - admin roles only */}
+                  {canEditUsers && (
+                    <CButton
+                      color="success"
+                      size="sm"
+                      className="m-1"
+                      onClick={() => openModal(user)}
+                      aria-label={`Edit user ${user.username}`}
+                    >
+                      Update
+                    </CButton>
+                  )}
                 </CTableDataCell>
               </CTableRow>
             ))
@@ -1150,10 +1158,6 @@ const UsersDashboard = () => {
                   <CTableRow>
                     <CTableHeaderCell>Email</CTableHeaderCell>
                     <CTableDataCell>{selectedItem.email}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Password</CTableHeaderCell>
-                    <CTableDataCell>{selectedItem.password}</CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Employee ID</CTableHeaderCell>

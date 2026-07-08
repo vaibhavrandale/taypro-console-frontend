@@ -29,6 +29,10 @@ import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import UserApiUsageBarChart from "./UserApiUsageBarChart";
 import EndpointUsageTable from "./EndpointUsageTable";
+import {
+  getApiErrorMessage,
+  isMasterAdmin,
+} from "../../../utils/accessControl";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -71,7 +75,18 @@ const ApiLoggerDashboard = () => {
   const [userLogs, setUserLogs] = useState([]);
   const [userLogsLoading, setUserLogsLoading] = useState(false);
   const [userLogsError, setUserLogsError] = useState("");
+  const userInfo = useSelector((state) => state.userInfo);
+  const hasAccess = isMasterAdmin(userInfo?.role);
+
   useEffect(() => {
+    if (!hasAccess) {
+      dispatch({
+        type: "FETCH_LOGS_FAIL",
+        payload: "Access denied. Master Admin role is required.",
+      });
+      return;
+    }
+
     const fetchLogs = async () => {
       try {
         dispatch({ type: "FETCH_LOGS_REQUEST" });
@@ -91,41 +106,36 @@ const ApiLoggerDashboard = () => {
       } catch (err) {
         dispatch({
           type: "FETCH_LOGS_FAIL",
-          payload:
-            err.response?.data?.error ||
-            err.response?.data?.message ||
-            "Error fetching logs",
+          payload: getApiErrorMessage(err, "Error fetching logs"),
         });
       }
     };
 
     fetchLogs();
-  }, [refreshKey]);
+  }, [refreshKey, hasAccess]);
 
   // Fetch logs when modal opens
   useEffect(() => {
-    if (modalVisible && selectedUserId) {
-      const fetchUserLogs = async () => {
+    if (!hasAccess || !modalVisible || !selectedUserId) return;
+
+    const fetchUserLogs = async () => {
         try {
           setUserLogsLoading(true);
           setUserLogsError("");
           const res = await axios.get(
             `/api/v1/api-logger/full-logs/${selectedUserId}`,
+            { withCredentials: true },
           );
-          console.log(res);
 
           setUserLogs(res.data.logs);
         } catch (err) {
-          setUserLogsError(
-            err.response?.data?.message || err.response?.data?.error,
-          );
+          setUserLogsError(getApiErrorMessage(err, "Failed to fetch user logs"));
         } finally {
           setUserLogsLoading(false);
         }
       };
       fetchUserLogs();
-    }
-  }, [modalVisible, selectedUserId]);
+  }, [modalVisible, selectedUserId, hasAccess]);
 
   // ⭐ Filter users based on search box
   const filteredLogs =
@@ -147,7 +157,7 @@ const ApiLoggerDashboard = () => {
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
-        <CAlert>{error}</CAlert>
+        <CAlert color="danger">{error}</CAlert>
       ) : (
         <>
           <h2 className=" text-center mb-4">User API Usage Logs</h2>

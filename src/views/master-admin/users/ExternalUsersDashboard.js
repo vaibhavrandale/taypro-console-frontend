@@ -35,6 +35,10 @@ import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
 import { Link } from "react-router-dom";
+import {
+  canManageUsers,
+  getApiErrorMessage,
+} from "../../../utils/accessControl";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -218,6 +222,8 @@ const ExternalUsersDashboard = () => {
     adminroute = "service-user";
   }
 
+  const canEditUsers = canManageUsers(userInfo?.role);
+
   useEffect(() => {
     const fetchUsers = async () => {
       let pagination = {
@@ -340,11 +346,12 @@ const ExternalUsersDashboard = () => {
       setImage("");
     } catch (error) {
       console.error(error);
+      const message = getApiErrorMessage(error, "Failed to create user");
       dispatch({
         type: "ADD_USER_FAIL",
-        payload: error.response.data.error || error.response.data.message,
+        payload: message,
       });
-      toast.error(error.response.data.error || error.response.data.message);
+      toast.error(message);
     }
   };
 
@@ -439,11 +446,12 @@ const ExternalUsersDashboard = () => {
       toast.success(`${filteredFormData.username} user updated successfully!`);
       setModalVisible(false);
     } catch (error) {
+      const message = getApiErrorMessage(error, "Failed to update user");
       dispatch({
         type: "UPDATE_FAIL",
-        payload: error.response?.data?.message || "Failed to update user",
+        payload: message,
       });
-      toast.error(error.response?.data?.message);
+      toast.error(message);
     }
   };
 
@@ -547,10 +555,8 @@ const ExternalUsersDashboard = () => {
           >
             Internal Users
           </Link>
-          {/* Add User button - hidden for restricted roles */}
-          {!["Master User", "Project User", "Service User"].includes(
-            userInfo?.role,
-          ) && (
+          {/* Add User button - admin roles only */}
+          {canEditUsers && (
             <CButton
               color="success"
               size="sm"
@@ -645,10 +651,8 @@ const ExternalUsersDashboard = () => {
                   >
                     view Assigned Sites
                   </CButton>
-                  {/* Update button - hidden for restricted roles */}
-                  {!["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role,
-                  ) && (
+                  {/* Update button - admin roles only */}
+                  {canEditUsers && (
                     <CButton
                       color="primary"
                       size="sm"

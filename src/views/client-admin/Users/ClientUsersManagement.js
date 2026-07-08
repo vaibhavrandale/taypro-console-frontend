@@ -33,6 +33,7 @@ import PaginateInput from "../../../components/PaginateInput";
 import toast from "react-hot-toast";
 import CIcon from "@coreui/icons-react";
 import { cilTrash, cilX } from "@coreui/icons";
+import { getApiErrorMessage } from "../../../utils/accessControl";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -347,11 +348,12 @@ const ClientUsersManagement = () => {
       setImage("");
     } catch (error) {
       console.error("Error adding user:", error);
+      const message = getApiErrorMessage(error, "Failed to create user");
       dispatch({
         type: "ADD_USER_FAIL",
-        payload: error.response?.data?.error || error.response?.data?.message,
+        payload: message,
       });
-      toast.error(error.response?.data?.error || error.response?.data?.message);
+      toast.error(message);
     }
   };
 
@@ -446,11 +448,12 @@ const ClientUsersManagement = () => {
       toast.success(`${filteredFormData.username} user updated successfully!`);
       setModalVisible(false);
     } catch (error) {
+      const message = getApiErrorMessage(error, "Failed to update user");
       dispatch({
         type: "UPDATE_FAIL",
-        payload: error.response?.data?.message || "Failed to update user",
+        payload: message,
       });
-      toast.error(error.response?.data?.message);
+      toast.error(message);
     }
   };
 
