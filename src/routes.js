@@ -43,6 +43,7 @@ import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnici
 import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
+import TechnicianLocationDashboard from "./views/master-admin/technician-location/TechnicianLocationDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
 
 import {
@@ -1273,6 +1274,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <TechnicianAttendanceDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/technician-location",
+    name: "Technician Location",
+    element: (
+      <MasterAdminRoute>
+        <TechnicianLocationDashboard />
       </MasterAdminRoute>
     ),
   },
@@ -4018,6 +4028,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/technician-location",
+    name: "Technician Location",
+    element: (
+      <ProjectAdminRoute>
+        <TechnicianLocationDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/serviceticket-fault/service-tickets-fault-dashboard",
     name: "service-tickets-fault-dashboard",
     element: (
@@ -5949,6 +5968,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <TechnicianAttendanceDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/technician-location",
+    name: "Technician Location",
+    element: (
+      <ServiceAdminRoute>
+        <TechnicianLocationDashboard />
       </ServiceAdminRoute>
     ),
   },
