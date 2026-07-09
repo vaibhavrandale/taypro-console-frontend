@@ -224,8 +224,8 @@ const AddRobotLocation = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authtoken}`,
           },
+          withCredentials: true,
         },
       );
       const url = data.url || data.secure_url || "";
