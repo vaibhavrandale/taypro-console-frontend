@@ -158,7 +158,7 @@ const RobotOperating = () => {
   let setWheelCurrent = "GWC";
   let setBrushCurrent = "GBC";
   let batteryVoltage = "63";
-  let temp = "TP";
+  let temp = "60";
   let cleanRight = "C3";
   let cleanLeft = "C2";
 

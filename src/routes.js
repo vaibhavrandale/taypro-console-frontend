@@ -173,6 +173,9 @@ import QualityAdminDashboard from "./views/quality-admin/QualityAdminDashboard";
 import SupplyChainAndLogisticsDashboard from "./views/supply-chain-and-logistics-admin/SupplyChainAndLogisticsDashboard";
 import ResearchAndDevelopmentAndProductDevelopmentAdminDashboard from "./views/research-and-development-and-product-development-admin/ResearchAndDevelopmentAndProductDevelopmentAdminDashboard";
 import HrAdminDashboard from "./views/hr-admin/HrAdminDashboard";
+import HRUserDashboard from "./views/hr-admin/HRUserDashboard";
+import AttendanceDashboard from "./views/hr-admin/AttendanceDashboard";
+import MonthlyAttendanceReport from "./views/hr-admin/MonthlyAttendanceReport";
 import Summary from "./views/mis-report/Summary";
 import Mds from "./views/master-admin/mds/Mds";
 import AddMdsUsingLoraNo from "./views/master-admin/mds/AddMdsUsingLoraNo";
@@ -8773,14 +8776,44 @@ const routes = [
   },
 
   {
-    path: "/hr-admin/mis-report",
-    name: "MIS Report",
+    path: "/hr-admin/hr-users",
+    name: "User Registration",
     element: (
       <HRAndAdminRoute>
-        <MisDashboard />
+        <HRUserDashboard />
       </HRAndAdminRoute>
     ),
   },
+
+  {
+    path: "/hr-admin/attendance",
+    name: "Attendance Dashboard",
+    element: (
+      <HRAndAdminRoute>
+        <AttendanceDashboard />
+      </HRAndAdminRoute>
+    ),
+  },
+
+  {
+    path: "/hr-admin/monthly-report",
+    name: "Monthly Attendance Report",
+    element: (
+      <HRAndAdminRoute>
+        <MonthlyAttendanceReport />
+      </HRAndAdminRoute>
+    ),
+  },
+
+  // {
+  //   path: "/hr-admin/mis-report",
+  //   name: "MIS Report",
+  //   element: (
+  //     <HRAndAdminRoute>
+  //       <MisDashboard />
+  //     </HRAndAdminRoute>
+  //   ),
+  // },
   // ----------------------------HR and admin------------------------------------
 
   // ------------------------------Factory Admin----------------------------
