@@ -18,6 +18,7 @@ import {
   cilMoney,
   cilLocationPin,
   cilGraph,
+  cilUser,
 } from "@coreui/icons";
 import { CNavGroup, CNavItem } from "@coreui/react";
 import {
@@ -5027,8 +5028,32 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: "MIS Report",
-        to: "/hr-admin/mis-report",
+        name: "User Registration",
+        to: "/hr-admin/hr-users",
+        icon: (
+          <CIcon
+            icon={cilUser}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Attendance",
+        to: "/hr-admin/attendance",
+        icon: (
+          <CIcon
+            icon={cilCheckCircle}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Monthly Report",
+        to: "/hr-admin/monthly-report",
         icon: (
           <Proportions
             customClassName="nav-icon"
@@ -5036,6 +5061,17 @@ const _nav = [
           />
         ),
       },
+      // {
+      //   component: CNavItem,
+      //   name: "MIS Report",
+      //   to: "/hr-admin/mis-report",
+      //   icon: (
+      //     <Proportions
+      //       customClassName="nav-icon"
+      //       style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+      //     />
+      //   ),
+      // },
     ],
   },
   // ------------------hr Admin-------------------------------------------
