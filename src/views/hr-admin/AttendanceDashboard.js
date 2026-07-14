@@ -7,6 +7,7 @@ import {
   CCardBody,
   CCol,
   CForm,
+  CFormCheck,
   CFormInput,
   CFormLabel,
   CFormSelect,
@@ -207,6 +208,14 @@ const DeviceFleetCard = ({ device, onEdit, onLogs, logsLoading }) => {
         </div>
       ) : null}
 
+      {device.latitude != null && device.longitude != null ? (
+        <div className="small text-muted mb-2 font-monospace">
+          {Number(device.latitude).toFixed(5)}, {Number(device.longitude).toFixed(5)}
+        </div>
+      ) : (
+        <div className="small text-danger mb-2">Lat/Lng not set</div>
+      )}
+
       <div className="d-flex flex-wrap gap-1 mb-3">
         {device.setup_status === "pending_setup" ? (
           <CBadge color="warning">Pending Setup</CBadge>
@@ -236,6 +245,50 @@ const DeviceFleetCard = ({ device, onEdit, onLogs, logsLoading }) => {
 
 const formatPunchType = (value) =>
   value ? String(value).replace(/_/g, " ").toUpperCase() : "-";
+
+const formatYmd = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getMonthBoundaryDates = (month, year) => {
+  const start = new Date(year, month - 1, 1);
+  const end = new Date(year, month, 0);
+  return {
+    start_date: formatYmd(start),
+    end_date: formatYmd(end),
+  };
+};
+
+const formatTransferStatus = (punch) => {
+  if (punch.taypro_app_transferred) {
+    return {
+      color: "success",
+      label: "Synced",
+      detail:
+        punch.taypro_app_transfer_label ||
+        (punch.taypro_app_transferred_at
+          ? `Synced ${new Date(punch.taypro_app_transferred_at).toLocaleString()}`
+          : "Synced to app.taypro.in"),
+    };
+  }
+
+  if (punch.taypro_app_transfer_error) {
+    return {
+      color: "danger",
+      label: "Failed",
+      detail: punch.taypro_app_transfer_error,
+    };
+  }
+
+  return {
+    color: "secondary",
+    label: "Pending",
+    detail: "Not sent to app.taypro.in yet",
+  };
+};
 
 const AttendanceDashboard = () => {
   const [state, dispatch] = useReducer(reducer, {
@@ -281,6 +334,8 @@ const AttendanceDashboard = () => {
     location: "office",
     wifi_ssid: "",
     wifi_password: "",
+    latitude: "",
+    longitude: "",
   });
   const [editDeviceForm, setEditDeviceForm] = useState({
     hardware_id: "",
@@ -289,6 +344,8 @@ const AttendanceDashboard = () => {
     location: "office",
     wifi_ssid: "",
     wifi_password: "",
+    latitude: "",
+    longitude: "",
   });
   const [editingDeviceId, setEditingDeviceId] = useState("");
   const [createdDevice, setCreatedDevice] = useState(null);
@@ -303,6 +360,18 @@ const AttendanceDashboard = () => {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   });
+  const currentMonthBounds = getMonthBoundaryDates(
+    new Date().getMonth() + 1,
+    new Date().getFullYear(),
+  );
+  const [transferModal, setTransferModal] = useState(false);
+  const [transferring, setTransferring] = useState(false);
+  const [transferForm, setTransferForm] = useState({
+    from_date: currentMonthBounds.start_date,
+    to_date: currentMonthBounds.end_date,
+    force: false,
+  });
+  const [transferSummary, setTransferSummary] = useState(null);
 
   const monthOptions = [
     { value: 1, label: "January" },
@@ -469,10 +538,26 @@ const AttendanceDashboard = () => {
 
   const handleCreateDevice = async () => {
     try {
+      if (
+        deviceForm.latitude === "" ||
+        deviceForm.longitude === "" ||
+        Number.isNaN(Number(deviceForm.latitude)) ||
+        Number.isNaN(Number(deviceForm.longitude))
+      ) {
+        toast.error("Latitude and longitude are required.");
+        return;
+      }
+
       setCreatingDevice(true);
-      const result = await axios.post(`${API_BASE}/devices`, deviceForm, {
-        withCredentials: true,
-      });
+      const result = await axios.post(
+        `${API_BASE}/devices`,
+        {
+          ...deviceForm,
+          latitude: Number(deviceForm.latitude),
+          longitude: Number(deviceForm.longitude),
+        },
+        { withCredentials: true },
+      );
       toast.success(result.data.message || "Device created");
       setCreatedDevice(result.data.data);
       setDeviceModal(false);
@@ -482,6 +567,8 @@ const AttendanceDashboard = () => {
         location: "office",
         wifi_ssid: "",
         wifi_password: "",
+        latitude: "",
+        longitude: "",
       });
       fetchDevices();
     } catch (err) {
@@ -500,6 +587,14 @@ const AttendanceDashboard = () => {
       location: device.location || "office",
       wifi_ssid: device.wifi_ssid || "",
       wifi_password: "",
+      latitude:
+        device.latitude === null || device.latitude === undefined
+          ? ""
+          : String(device.latitude),
+      longitude:
+        device.longitude === null || device.longitude === undefined
+          ? ""
+          : String(device.longitude),
     });
     setEditDeviceModal(true);
   };
@@ -508,12 +603,24 @@ const AttendanceDashboard = () => {
     if (!editingDeviceId) return;
 
     try {
+      if (
+        editDeviceForm.latitude === "" ||
+        editDeviceForm.longitude === "" ||
+        Number.isNaN(Number(editDeviceForm.latitude)) ||
+        Number.isNaN(Number(editDeviceForm.longitude))
+      ) {
+        toast.error("Latitude and longitude are required.");
+        return;
+      }
+
       setUpdatingDevice(true);
       const payload = {
         device_id: editDeviceForm.device_id.trim(),
         name: editDeviceForm.name.trim(),
         location: editDeviceForm.location,
         wifi_ssid: editDeviceForm.wifi_ssid.trim(),
+        latitude: Number(editDeviceForm.latitude),
+        longitude: Number(editDeviceForm.longitude),
       };
 
       if (editDeviceForm.wifi_password.trim()) {
@@ -582,6 +689,49 @@ const AttendanceDashboard = () => {
       );
     } finally {
       setExportingReport(false);
+    }
+  };
+
+  const handleTransferToTayproApp = async () => {
+    if (!transferForm.from_date || !transferForm.to_date) {
+      toast.error("Start date and end date are required.");
+      return;
+    }
+
+    if (transferForm.from_date > transferForm.to_date) {
+      toast.error("Start date cannot be after end date.");
+      return;
+    }
+
+    try {
+      setTransferring(true);
+      setTransferSummary(null);
+      toast.loading("Queueing attendance transfer to app.taypro.in...", {
+        id: "hr-attendance-transfer",
+      });
+
+      const response = await axios.post(
+        `${API_BASE}/transfer-to-taypro-app`,
+        {
+          from_date: transferForm.from_date,
+          to_date: transferForm.to_date,
+          force: transferForm.force,
+        },
+        { withCredentials: true },
+      );
+
+      setTransferSummary(response.data.data || null);
+      toast.success(response.data.message || "Transfer queued", {
+        id: "hr-attendance-transfer",
+      });
+      fetchPunches(page);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to transfer attendance",
+        { id: "hr-attendance-transfer" },
+      );
+    } finally {
+      setTransferring(false);
     }
   };
 
@@ -673,6 +823,16 @@ const AttendanceDashboard = () => {
               onClick={() => setExportModal(true)}
             >
               Export Report
+            </CButton>
+            <CButton
+              color="info"
+              size="sm"
+              onClick={() => {
+                setTransferSummary(null);
+                setTransferModal(true);
+              }}
+            >
+              Transfer to app.taypro.in
             </CButton>
             <CButton color="primary" size="sm" onClick={() => setDeviceModal(true)}>
               + Provision Device
@@ -951,35 +1111,43 @@ const AttendanceDashboard = () => {
                   <CTableHeaderCell>Punch</CTableHeaderCell>
                   <CTableHeaderCell>Time</CTableHeaderCell>
                   <CTableHeaderCell className="text-center">Source</CTableHeaderCell>
+                  <CTableHeaderCell>app.taypro.in</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {loadingPunches ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={7}>
+                    <CTableDataCell colSpan={8}>
                       <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
                 ) : error ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={7} className="text-danger">
+                    <CTableDataCell colSpan={8} className="text-danger">
                       {error}
                     </CTableDataCell>
                   </CTableRow>
                 ) : !punchesLoaded ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={7} className="text-center text-muted py-4">
+                    <CTableDataCell colSpan={8} className="text-center text-muted py-4">
                       Loading attendance log...
                     </CTableDataCell>
                   </CTableRow>
                 ) : punches.length > 0 ? (
-                  punches.map((item, index) => (
+                  punches.map((item, index) => {
+                    const transferStatus = formatTransferStatus(item);
+                    return (
                     <CTableRow key={item._id}>
                       <CTableDataCell className="text-center text-muted">
                         {(page - 1) * limit + index + 1}
                       </CTableDataCell>
                       <CTableDataCell className="fw-semibold">
                         {item.employee_name}
+                        {item.employee_email ? (
+                          <div className="text-muted small fw-normal">
+                            {item.employee_email}
+                          </div>
+                        ) : null}
                       </CTableDataCell>
                       <CTableDataCell className="font-monospace small">
                         {item.card_id}
@@ -994,11 +1162,23 @@ const AttendanceDashboard = () => {
                       <CTableDataCell className="text-center">
                         <CBadge color="secondary">{item.source}</CBadge>
                       </CTableDataCell>
+                      <CTableDataCell className="small">
+                        <CBadge color={transferStatus.color}>{transferStatus.label}</CBadge>
+                        <div className="text-muted mt-1" title={transferStatus.detail}>
+                          {transferStatus.detail}
+                        </div>
+                        {item.taypro_app_checkin_name ? (
+                          <div className="text-muted font-monospace" style={{ fontSize: "0.7rem" }}>
+                            {item.taypro_app_checkin_name}
+                          </div>
+                        ) : null}
+                      </CTableDataCell>
                     </CTableRow>
-                  ))
+                    );
+                  })
                 ) : (
                   <CTableRow>
-                    <CTableDataCell colSpan={7} className="text-center text-muted py-4">
+                    <CTableDataCell colSpan={8} className="text-center text-muted py-4">
                       No punches found
                     </CTableDataCell>
                   </CTableRow>
@@ -1101,6 +1281,34 @@ const AttendanceDashboard = () => {
                     })
                   }
                   placeholder="WiFi password"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="device_latitude">Latitude *</CFormLabel>
+                <CFormInput
+                  id="device_latitude"
+                  type="number"
+                  step="any"
+                  required
+                  value={deviceForm.latitude}
+                  onChange={(e) =>
+                    setDeviceForm({ ...deviceForm, latitude: e.target.value })
+                  }
+                  placeholder="18.5204"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="device_longitude">Longitude *</CFormLabel>
+                <CFormInput
+                  id="device_longitude"
+                  type="number"
+                  step="any"
+                  required
+                  value={deviceForm.longitude}
+                  onChange={(e) =>
+                    setDeviceForm({ ...deviceForm, longitude: e.target.value })
+                  }
+                  placeholder="73.8567"
                 />
               </CCol>
             </CRow>
@@ -1221,6 +1429,40 @@ const AttendanceDashboard = () => {
                   placeholder="Leave blank to keep current password"
                 />
               </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="edit_latitude">Latitude *</CFormLabel>
+                <CFormInput
+                  id="edit_latitude"
+                  type="number"
+                  step="any"
+                  required
+                  value={editDeviceForm.latitude}
+                  onChange={(e) =>
+                    setEditDeviceForm({
+                      ...editDeviceForm,
+                      latitude: e.target.value,
+                    })
+                  }
+                  placeholder="18.5204"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="edit_longitude">Longitude *</CFormLabel>
+                <CFormInput
+                  id="edit_longitude"
+                  type="number"
+                  step="any"
+                  required
+                  value={editDeviceForm.longitude}
+                  onChange={(e) =>
+                    setEditDeviceForm({
+                      ...editDeviceForm,
+                      longitude: e.target.value,
+                    })
+                  }
+                  placeholder="73.8567"
+                />
+              </CCol>
             </CRow>
           </CForm>
         </CModalBody>
@@ -1334,6 +1576,148 @@ const AttendanceDashboard = () => {
             disabled={exportingReport}
           >
             {exportingReport ? "Exporting..." : "Download Excel"}
+          </CButton>
+        </CModalFooter>
+      </CModal>
+
+      <CModal
+        visible={transferModal}
+        onClose={() => setTransferModal(false)}
+        backdrop="static"
+        size="lg"
+      >
+        <CModalHeader>
+          <CModalTitle>Transfer Attendance to app.taypro.in</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm>
+            <p className="text-muted small">
+              Queue check-in and check-out punches for transfer to Frappe Employee
+              Checkin on app.taypro.in. Large batches are processed in the
+              background (about 5 records/second). Nightly auto-sync runs at
+              8:00 PM IST.
+            </p>
+            <CRow className="g-3">
+              <CCol md={6}>
+                <CFormLabel htmlFor="transfer_from_date" className="small text-muted">
+                  From Date
+                </CFormLabel>
+                <CFormInput
+                  id="transfer_from_date"
+                  type="date"
+                  value={transferForm.from_date}
+                  onChange={(e) =>
+                    setTransferForm({
+                      ...transferForm,
+                      from_date: e.target.value,
+                    })
+                  }
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormLabel htmlFor="transfer_to_date" className="small text-muted">
+                  To Date
+                </CFormLabel>
+                <CFormInput
+                  id="transfer_to_date"
+                  type="date"
+                  value={transferForm.to_date}
+                  min={transferForm.from_date}
+                  onChange={(e) =>
+                    setTransferForm({
+                      ...transferForm,
+                      to_date: e.target.value,
+                    })
+                  }
+                />
+              </CCol>
+              <CCol md={12}>
+                <CFormCheck
+                  id="transfer_force"
+                  label="Force re-transfer already synced punches"
+                  checked={transferForm.force}
+                  onChange={(e) =>
+                    setTransferForm({
+                      ...transferForm,
+                      force: e.target.checked,
+                    })
+                  }
+                />
+              </CCol>
+            </CRow>
+
+            {transferSummary ? (
+              <div className="mt-4 p-3 rounded border" style={SAAS_PANEL}>
+                <div className="fw-semibold mb-2">Queue result</div>
+                <div className="d-flex flex-wrap gap-2 mb-3">
+                  <CBadge color="info">Total: {transferSummary.total}</CBadge>
+                  <CBadge color="success">Queued: {transferSummary.queued}</CBadge>
+                  <CBadge color="warning">
+                    Already queued: {transferSummary.already_queued || 0}
+                  </CBadge>
+                  <CBadge color="secondary">Skipped: {transferSummary.skipped}</CBadge>
+                </div>
+                <p className="text-muted small mb-0">
+                  Refresh the attendance log to see each punch move to Synced or
+                  Failed as the queue processes.
+                </p>
+                {Array.isArray(transferSummary.results) &&
+                transferSummary.results.length > 0 ? (
+                  <div
+                    className="small"
+                    style={{ maxHeight: 220, overflowY: "auto" }}
+                  >
+                    {transferSummary.results.slice(0, 20).map((row) => (
+                      <div
+                        key={`${row.punch_id || row.tap_id}-${row.tapped_at}`}
+                        className="mb-2"
+                      >
+                        <CBadge color={row.success ? "success" : "danger"}>
+                          {row.success ? "OK" : "FAIL"}
+                        </CBadge>{" "}
+                        <span className="fw-semibold">{row.employee_name}</span>{" "}
+                        <span className="text-muted">
+                          {formatPunchType(row.punch_type)} ·{" "}
+                          {row.tapped_at
+                            ? new Date(row.tapped_at).toLocaleString()
+                            : "-"}
+                        </span>
+                        {row.device_id ? (
+                          <div className="text-muted font-monospace">
+                            Device: {row.device_id}
+                          </div>
+                        ) : null}
+                        {row.checkin_name ? (
+                          <div className="text-muted font-monospace">
+                            {row.checkin_name}
+                          </div>
+                        ) : null}
+                        {row.error ? (
+                          <div className="text-danger">{row.error}</div>
+                        ) : null}
+                      </div>
+                    ))}
+                    {transferSummary.results.length > 20 ? (
+                      <div className="text-muted">
+                        Showing first 20 of {transferSummary.results.length} rows.
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setTransferModal(false)}>
+            Close
+          </CButton>
+          <CButton
+            color="info"
+            onClick={handleTransferToTayproApp}
+            disabled={transferring}
+          >
+            {transferring ? "Queueing..." : "Queue Transfer"}
           </CButton>
         </CModalFooter>
       </CModal>
