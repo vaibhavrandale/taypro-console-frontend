@@ -5055,9 +5055,10 @@ const _nav = [
         name: "Monthly Report",
         to: "/hr-admin/monthly-report",
         icon: (
-          <Proportions
+          <CIcon
+            icon={cilCheckCircle}
             customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
+            style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
       },
