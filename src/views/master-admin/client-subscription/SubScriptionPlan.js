@@ -176,7 +176,9 @@ const SubScriptionPlan = () => {
         trialDuration: Number(formData.trialDuration),
       };
 
-      const { data } = await axios.post("/api/v1/subscription-plans", payload);
+      const { data } = await axios.post("/api/v1/subscription-plans", payload, {
+        withCredentials: true,
+      });
 
       dispatch({
         type: "CREATE_PLAN_SUCCESS",

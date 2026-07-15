@@ -344,6 +344,7 @@ const UsersDashboard = () => {
       designation: "",
       employee_id: "",
       is_master_opex_site_technician: false,
+      access_from_website: true,
     });
     setAddModalVisible(true);
     setImage(""); // Reset image state when opening modal
@@ -845,6 +846,26 @@ const UsersDashboard = () => {
             checked={formData.is_master_opex_site_technician || false}
             onChange={handleChange}
           />{" "}
+          {(formData.role === "Site Technician" ||
+            formData.role === "Client Site Technician" ||
+            formData.role === "Opex Site Technician") && (
+            <>
+              <br />
+              <CFormLabel className="my-2">
+                Access From Website{" "}
+                <span className="text-muted">
+                  (If unchecked, technician can only use the mobile app)
+                </span>
+              </CFormLabel>
+              <br />
+              <CFormCheck
+                id="access_from_website"
+                name="access_from_website"
+                checked={formData.access_from_website !== false}
+                onChange={handleChange}
+              />
+            </>
+          )}
           {loadingUpload ? (
             <div className="mt-2 d-flex justify-content-center">
               <LoadingSpinner />
@@ -1014,6 +1035,26 @@ const UsersDashboard = () => {
             checked={formData.robot_command_access || false}
             onChange={handleChange}
           />
+          {(formData.role === "Site Technician" ||
+            formData.role === "Client Site Technician" ||
+            formData.role === "Opex Site Technician") && (
+            <>
+              <br />
+              <CFormLabel className="my-2">
+                Access From Website
+                <span className="text-muted ms-2">
+                  (If unchecked, technician can only use the mobile app)
+                </span>
+              </CFormLabel>
+              <br />
+              <CFormCheck
+                id="update_access_from_website"
+                name="access_from_website"
+                checked={formData.access_from_website !== false}
+                onChange={handleChange}
+              />
+            </>
+          )}
           <br />
           <hr />
           <CFormLabel>

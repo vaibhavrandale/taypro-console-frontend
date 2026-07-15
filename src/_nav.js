@@ -54,8 +54,17 @@ import {
   Wallet,
   ClipboardPenLine,
   SatelliteDish,
+  BrainCircuit,
+  Wifi,
+  Bell,
+  ClipboardCheck,
+  Receipt,
 } from "lucide-react";
 // import { MdCircleNotifications } from "react-icons/md";
+
+const maIcon = (Icon) => (
+  <Icon size={22} style={{ color: "rgb(57, 214, 0)" }} />
+);
 
 const _nav = [
   // -----------------------------------master admin----------------------------------------
@@ -63,62 +72,32 @@ const _nav = [
     component: CNavGroup,
     name: "Master Admin",
     to: "/base",
-    icon: (
-      <CIcon
-        icon={cilSpeedometer}
-        customClassName="nav-icon"
-        style={{ color: "rgb(57, 214, 0)" }}
-      />
-    ),
+    icon: maIcon(ShieldCheck),
     items: [
       {
         component: CNavItem,
         name: "Real Time Robots",
         to: "/master-admin/robots-dashboard",
-        icon: (
-          <SatelliteDish
-            size={22}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(SatelliteDish),
       },
       {
         component: CNavItem,
         name: "Dashboard",
         to: "/master-admin/dashboard",
-        icon: (
-          <LayoutDashboard
-            size={22}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(LayoutDashboard),
       },
       {
         component: CNavItem,
         name: "Dashboard 2",
         to: "/master-admin/dashboard-2",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(BarChart3),
       },
 
       // ✅ GROUP 1: Site Data
       {
         component: CNavGroup,
         name: "Site Data",
-        icon: (
-          <CIcon
-            icon={cilBuilding}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Building2),
         items: [
           {
             component: CNavItem,
@@ -173,13 +152,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Tickets",
-        icon: (
-          <CIcon
-            icon={cilTask}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Ticket),
         items: [
           {
             component: CNavItem,
@@ -203,13 +176,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Robots Management",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Bot),
         items: [
           {
             component: CNavItem,
@@ -272,13 +239,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Users Management",
-        icon: (
-          <CIcon
-            icon={cilGroup}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Users),
         items: [
           {
             component: CNavItem,
@@ -311,13 +272,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Operations",
-        icon: (
-          <CIcon
-            icon={cilListRich}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(ClipboardList),
         items: [
           {
             component: CNavItem,
@@ -349,13 +304,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Inventory Data",
-        icon: (
-          <CIcon
-            icon={cilTask}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(PackageSearch),
         items: [
           {
             component: CNavItem,
@@ -383,25 +332,12 @@ const _nav = [
       //   component: CNavItem,
       //   name: "Monthly Sites Report",
       //   to: "/master-admin/monthlyreport",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilFactory}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
       // },
 
       {
         component: CNavGroup,
         name: "AI Model",
-        icon: (
-          <CIcon
-            icon={cilLan}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(BrainCircuit),
         items: [
           {
             component: CNavItem,
@@ -414,13 +350,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Live Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(MapPin),
         items: [
           // {
           //   component: CNavItem,
@@ -443,13 +373,6 @@ const _nav = [
       // {
       //   component: CNavGroup,
       //   name: "MDS Tracking",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilLocationPin}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
       //   items: [
       //     {
       //       component: CNavItem,
@@ -462,13 +385,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Customer Feedback",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(MessageSquare),
         items: [
           {
             component: CNavItem,
@@ -480,13 +397,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Subscriptions",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Wallet),
         items: [
           {
             component: CNavItem,
@@ -504,13 +415,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Expense Management",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Receipt),
         items: [
           {
             component: CNavItem,
@@ -522,13 +427,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Material Management",
-        icon: (
-          <CIcon
-            icon={cilStorage}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Database),
         items: [
           {
             component: CNavItem,
@@ -541,13 +440,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "System Logs",
-        icon: (
-          <CIcon
-            icon={cilEnvelopeOpen}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Terminal),
         items: [
           {
             component: CNavItem,
@@ -574,13 +467,6 @@ const _nav = [
       // {
       //   component: CNavGroup,
       //   name: "Pricing",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilMoney}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
       //   items: [
       //     {
       //       component: CNavItem,
@@ -593,13 +479,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Opex Data",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Proportions),
         items: [
           {
             component: CNavItem,
@@ -611,13 +491,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Scada",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(RadioTower),
         items: [
           {
             component: CNavItem,
@@ -629,13 +503,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "MQTT",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Wifi),
         items: [
           {
             component: CNavItem,
@@ -652,13 +520,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Site Analysis",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(BarChart3),
         items: [
           {
             component: CNavItem,
@@ -670,13 +532,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Sprints",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(ClipboardPenLine),
         items: [
           {
             component: CNavItem,
@@ -688,18 +544,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "MIS Report",
-        icon: (
-          // <CIcon
-          //   icon={cilMoney}
-          // customClassName="nav-icon"
-          // style={{  color: "rgb(57, 214, 0)" }}
-          // />
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ height: "20px", color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Proportions),
         items: [
           {
             component: CNavItem,
@@ -711,13 +556,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "MDS Management",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Settings2),
         items: [
           {
             component: CNavItem,
@@ -772,13 +611,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Robot Data",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Bot),
         items: [
           {
             component: CNavItem,
@@ -795,13 +628,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Custom Notifications",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Bell),
         items: [
           {
             component: CNavItem,
@@ -813,13 +640,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Chat with Console",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(MessageSquareCode),
         items: [
           {
             component: CNavItem,
@@ -831,13 +652,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Commissioning",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(Wrench),
         items: [
           {
             component: CNavItem,
@@ -849,13 +664,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Statistics",
-        icon: (
-          <CIcon
-            icon={cilGraph}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(BarChart3),
         items: [
           {
             component: CNavItem,
@@ -867,13 +676,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Site Survey",
-        icon: (
-          <CIcon
-            icon={cilCheck}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(ClipboardCheck),
         items: [
           {
             component: CNavItem,
@@ -890,13 +693,7 @@ const _nav = [
       {
         component: CNavGroup,
         name: "Gateway Survey",
-        icon: (
-          <CIcon
-            icon={cilCheck}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
+        icon: maIcon(RadioTower),
         items: [
           {
             component: CNavItem,
