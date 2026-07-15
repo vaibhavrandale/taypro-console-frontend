@@ -147,7 +147,7 @@ const Login = () => {
     try {
       const { data } = await axios.post(
         "/api/v1/auth/sign-in",
-        { email, password },
+        { email, password, source: "web" },
         { withCredentials: true }, // ✅ required to send/receive cookies
       );
 
@@ -165,7 +165,11 @@ const Login = () => {
       toast.success(`Welcome Back! ${user.username}`);
       navigate(`/${adminroute}/dashboard`);
     } catch (error) {
-      toast.error(error.response?.data?.error ?? "Login failed");
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Login failed",
+      );
     } finally {
       setLoading(false);
     }
