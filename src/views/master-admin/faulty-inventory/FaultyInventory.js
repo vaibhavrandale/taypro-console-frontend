@@ -14,14 +14,17 @@ import {
   CModalTitle,
   CModalBody,
   CBadge,
+  CButton,
+  CNav,
+  CNavItem,
+  CNavLink,
 } from "@coreui/react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
-import PaginateInput from "../../../components/PaginateInput";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import SiteSelect from "../../../components/SiteSelect";
@@ -35,94 +38,79 @@ const reducer = (state, action) => {
         ...state,
         loadingInventories: false,
         inventories: action.payload.data,
-        totalPages: action.payload.totalPages,
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_FAULTYINVENTORY_FAIL":
       return { ...state, loadingInventories: false, error: action.payload };
-
+    case "FETCH_TRACKING_REQUEST":
+      return { ...state, loadingTracking: true };
+    case "FETCH_TRACKING_SUCCESS":
+      return {
+        ...state,
+        loadingTracking: false,
+        tracking: action.payload,
+      };
+    case "FETCH_TRACKING_FAIL":
+      return { ...state, loadingTracking: false };
     default:
       return state;
   }
 };
 
+const useAdminRoute = () => {
+  const userInfo = useSelector((state) => state.userInfo);
+  const role = userInfo?.role;
+  if (role === "Master Admin") return "master-admin";
+  if (role === "Service Admin") return "service-admin";
+  if (role === "Project Admin") return "project-admin";
+  if (role === "Master User") return "master-user";
+  if (role === "Service User") return "service-user";
+  if (role === "Project User") return "project-user";
+  return "master-admin";
+};
+
 const FaultyInventory = () => {
   const [
-    {
-      error,
-      inventories,
-      loadingInventories,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      successDelete,
-    },
+    { inventories, loadingInventories, tracking, loadingTracking, error },
     dispatch,
   ] = useReducer(reducer, {
     inventories: [],
-
-    loading: true,
+    tracking: [],
     loadingInventories: true,
+    loadingTracking: false,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
-  // const authtoken = useSelector((state) => state.authtoken);
+
+  const adminroute = useAdminRoute();
+  const [searchParams] = useSearchParams();
   const [siteId, setSiteId] = useState("all");
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [trackSearch, setTrackSearch] = useState("");
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") === "tracking" ? "tracking" : "faulty",
+  );
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState(null);
-
-  const [pageInput, setPageInput] = useState("");
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-
-  const [formData, setFormData] = useState({
-    item_name: "",
-    item_code: "",
-    item_id: "",
-    site_id: "",
-    quantity: "",
-    threshold: "",
-  });
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
+    const tab = searchParams.get("tab");
+    if (tab === "tracking") setActiveTab("tracking");
+    if (tab === "faulty") setActiveTab("faulty");
+  }, [searchParams]);
+
+  useEffect(() => {
     const fetchInventories = async () => {
       dispatch({ type: "FETCH_FAULTYINVENTORY_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/faulty-inventory`,
-          pagination,
-          {
-            // headers: { Authorization: `Bearer ${authtoken}` },
-            withCredentials: true,
-          },
+          { site_id: siteId },
+          { withCredentials: true },
         );
-
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_FAULTYINVENTORY_SUCCESS",
-          payload: {
-            data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
-          },
+          payload: { data: result.data.data || [] },
         });
-      } catch (error) {
+      } catch (err) {
         dispatch({
           type: "FETCH_FAULTYINVENTORY_FAIL",
           payload: "Failed to fetch Inventories",
@@ -130,187 +118,261 @@ const FaultyInventory = () => {
         toast.error("Failed to fetch Inventories");
       }
     };
+    fetchInventories();
+  }, [siteId]);
 
-    fetchInventories(); // 👈 Add this!
-  }, [successDelete, limit, page]);
-  const filteredInventories = inventories.filter((inventory) => {
-    const matchesSite = siteId === "all" || inventory.site_id === siteId;
-    const matchesSearch =
-      inventory.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inventory.item_code.toLowerCase().includes(searchTerm.toLowerCase());
+  useEffect(() => {
+    if (activeTab !== "tracking") return;
+    const fetchTracking = async () => {
+      dispatch({ type: "FETCH_TRACKING_REQUEST" });
+      try {
+        const q = siteId !== "all" ? `?site_id=${siteId}` : "";
+        const result = await axios.get(
+          `/api/v1/faulty-inventory/item-tracking${q}`,
+          { withCredentials: true },
+        );
+        dispatch({
+          type: "FETCH_TRACKING_SUCCESS",
+          payload: result.data.data || [],
+        });
+      } catch (err) {
+        dispatch({ type: "FETCH_TRACKING_FAIL" });
+        toast.error(
+          err.response?.data?.message || "Failed to fetch item tracking",
+        );
+      }
+    };
+    fetchTracking();
+  }, [activeTab, siteId]);
 
-    return matchesSite && matchesSearch;
+  const filteredInventories = (inventories || []).filter((inventory) => {
+    const q = searchTerm.toLowerCase();
+    return (
+      inventory.site_id?.toLowerCase().includes(q) ||
+      String(inventory.item_id || "")
+        .toLowerCase()
+        .includes(q) ||
+      inventory.item_name?.toLowerCase().includes(q) ||
+      inventory.item_code?.toLowerCase().includes(q)
+    );
   });
 
-  // Open modal and load inventory data
+  const filteredTracking = (tracking || []).filter((row) => {
+    const q = trackSearch.toLowerCase();
+    return (
+      row.item_name?.toLowerCase().includes(q) ||
+      row.item_code?.toLowerCase().includes(q)
+    );
+  });
+
   const openModal = (inventory) => {
-    setSelectedInventory(inventory);
     setFormData(inventory);
     setModalVisible(true);
   };
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  // // console.item(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
-  };
-
-  const userInfo = useSelector((state) => state.userInfo);
-  let adminroute = "";
-
-  if (userInfo.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  }
 
   return (
     <div className="p-2">
-      <h2 className="text-center mt-4">Faulty Inventory List</h2>
-      {/* Search Input */}
-      <CRow className="mb-3  justify-content-between align-items-center">
-        <CCol md={4}>
-          <SiteSelect value={siteId} onChange={setSiteId} />
-        </CCol>
-        <CCol md={4}>
-          <CFormInput
-            type="text"
-            placeholder="Search by Site Id, Item Id, Item Name, or Item Code..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CCol>
-      </CRow>
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h5 className="mb-0">Faulty Inventory</h5>
+        <div className="d-flex gap-2 flex-wrap">
+          <Link
+            className="btn btn-sm btn-outline-secondary"
+            to={`/${adminroute}/inventory-hub`}
+          >
+            Inventory Hub
+          </Link>
+          <Link
+            className="btn btn-sm btn-outline-info"
+            to={`/${adminroute}/faulty-return-rework`}
+          >
+            Return to Factory
+          </Link>
+          <Link
+            className="btn btn-sm btn-primary"
+            to={`/${adminroute}/faulty-return-rework/create`}
+          >
+            New Return
+          </Link>
+        </div>
+      </div>
 
-      {/* Inventories Table */}
-      <CTable
-        bordered
-        hover
-        responsive
-        className="text-center shadow-sm bg-important"
-      >
-        <CTableHead color="secondary">
-          <CTableRow>
-            <CTableHeaderCell>#</CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "200px" }}>
-              Item Name
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Item Code
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "140px" }}>
-              Site Id
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "140px" }}>
-              Quantity
-            </CTableHeaderCell>
-            <CTableHeaderCell style={{ minWidth: "100px" }}>
-              Action
-            </CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
+      <CNav variant="tabs" className="mb-3">
+        <CNavItem>
+          <CNavLink
+            active={activeTab === "faulty"}
+            style={{ cursor: "pointer" }}
+            onClick={() => setActiveTab("faulty")}
+          >
+            Faulty Stock
+          </CNavLink>
+        </CNavItem>
+        <CNavItem>
+          <CNavLink
+            active={activeTab === "tracking"}
+            style={{ cursor: "pointer" }}
+            onClick={() => setActiveTab("tracking")}
+          >
+            Item Tracking
+          </CNavLink>
+        </CNavItem>
+      </CNav>
+
+      {activeTab === "faulty" && (
+        <>
+          <CRow className="mb-3 justify-content-between align-items-center">
+            <CCol md={4}>
+              <SiteSelect value={siteId} onChange={setSiteId} />
+            </CCol>
+            <CCol md={4}>
+              <CFormInput
+                type="text"
+                size="sm"
+                placeholder="Search site, item name, or code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </CCol>
+          </CRow>
+
           {loadingInventories ? (
-            <CTableRow>
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
-                <LoadingSpinner />
-              </CTableDataCell>
-            </CTableRow>
+            <LoadingSpinner />
           ) : error ? (
-            <CTableRow>
-              {" "}
-              <CTableDataCell colSpan="9" className="text-center fw-bold">
-                {error}
-              </CTableDataCell>
-            </CTableRow>
-          ) : filteredInventories.length > 0 ? (
-            filteredInventories.map((inventory, index) => (
-              <CTableRow
-                key={index}
-                className={inventory.is_delete ? "table-danger" : ""}
-              >
-                <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{inventory.item_name}</CTableDataCell>
-                <CTableDataCell>{inventory.item_code}</CTableDataCell>
-                <CTableDataCell>{inventory.site_id}</CTableDataCell>
-                {inventory.quantity <= inventory.threshold ? (
-                  <CTableDataCell>
-                    {" "}
-                    <CBadge color="danger"> {inventory.quantity}</CBadge>
-                  </CTableDataCell>
-                ) : (
-                  <CTableDataCell>{inventory.quantity}</CTableDataCell>
-                )}
-                <CTableDataCell>
-                  <Link
-                    className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
-                    onClick={() => openModal(inventory)}
-                  >
-                    View
-                  </Link>
-                </CTableDataCell>
-              </CTableRow>
-            ))
+            <div className="text-danger">{error}</div>
           ) : (
-            <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
-                No matching Inventories found.
-              </CTableDataCell>
-            </CTableRow>
+            <CTable bordered hover responsive>
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>#</CTableHeaderCell>
+                  <CTableHeaderCell>Site</CTableHeaderCell>
+                  <CTableHeaderCell>Item</CTableHeaderCell>
+                  <CTableHeaderCell>Code</CTableHeaderCell>
+                  <CTableHeaderCell>Qty</CTableHeaderCell>
+                  <CTableHeaderCell>Action</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {filteredInventories.length ? (
+                  filteredInventories.map((inv, idx) => (
+                    <CTableRow key={inv._id}>
+                      <CTableDataCell>{idx + 1}</CTableDataCell>
+                      <CTableDataCell>{inv.site_id}</CTableDataCell>
+                      <CTableDataCell>{inv.item_name}</CTableDataCell>
+                      <CTableDataCell>{inv.item_code}</CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="danger">{inv.quantity}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CButton
+                          color="secondary"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openModal(inv)}
+                        >
+                          View
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={6} className="text-center">
+                      No faulty inventory found.
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
           )}
-        </CTableBody>
-      </CTable>
+        </>
+      )}
 
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
-      {/* view Modal */}
+      {activeTab === "tracking" && (
+        <>
+          <CRow className="mb-3 justify-content-between align-items-center">
+            <CCol md={4}>
+              <SiteSelect value={siteId} onChange={setSiteId} />
+            </CCol>
+            <CCol md={4}>
+              <CFormInput
+                type="text"
+                size="sm"
+                placeholder="Search item name or code..."
+                value={trackSearch}
+                onChange={(e) => setTrackSearch(e.target.value)}
+              />
+            </CCol>
+          </CRow>
+          <p className="small text-medium-emphasis mb-2">
+            Per-item counts: inward (lifetime estimate) · on site (good) ·
+            consumed (tickets) · faulty (at site) · returned (to factory).
+          </p>
+          {loadingTracking ? (
+            <LoadingSpinner />
+          ) : (
+            <CTable bordered hover responsive>
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell>#</CTableHeaderCell>
+                  <CTableHeaderCell>Item</CTableHeaderCell>
+                  <CTableHeaderCell>Code</CTableHeaderCell>
+                  <CTableHeaderCell>Inward</CTableHeaderCell>
+                  <CTableHeaderCell>On Site</CTableHeaderCell>
+                  <CTableHeaderCell>Consumed</CTableHeaderCell>
+                  <CTableHeaderCell>Faulty</CTableHeaderCell>
+                  <CTableHeaderCell>Returned</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {filteredTracking.length ? (
+                  filteredTracking.map((row, idx) => (
+                    <CTableRow key={row.item_id}>
+                      <CTableDataCell>{idx + 1}</CTableDataCell>
+                      <CTableDataCell>{row.item_name}</CTableDataCell>
+                      <CTableDataCell>{row.item_code}</CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="info">{row.inward}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="success">{row.on_site}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="warning">{row.consumed}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="danger">{row.faulty}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="secondary">{row.returned}</CBadge>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                ) : (
+                  <CTableRow>
+                    <CTableDataCell colSpan={8} className="text-center">
+                      No tracking data.
+                    </CTableDataCell>
+                  </CTableRow>
+                )}
+              </CTableBody>
+            </CTable>
+          )}
+        </>
+      )}
+
       <CModal
-        size="xl"
+        size="lg"
         scrollable
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>
-            Inventory Data :&nbsp;
-            <span className="badge bg-success">{formData.site_id}</span>{" "}
+            Faulty Item — {formData.item_name}{" "}
+            <CBadge color="success">{formData.site_id}</CBadge>
           </CModalTitle>
           <button
             type="button"
-            className=" border-0 ms-auto py-0 px-1"
+            className="border-0 ms-auto py-0 px-1"
             onClick={() => setModalVisible(false)}
             style={{ background: "none" }}
           >
@@ -318,35 +380,20 @@ const FaultyInventory = () => {
           </button>
         </CModalHeader>
         <CModalBody>
-          {selectedInventory && (
-            <>
-              <CTable bordered responsive className="bg-important">
-                <CTableHead color="secondary">
-                  <CTableRow>
-                    <CTableHeaderCell>Field</CTableHeaderCell>
-                    <CTableHeaderCell>Value</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {Object.entries(formData)
-                    .filter(([key]) => key !== "last_activity") // Exclude last_activity
-                    .map(([key, value]) => (
-                      <CTableRow key={key} className="align-middle">
-                        <CTableDataCell className="fw-semibold text-uppercase ">
-                          {key.replace(/_/g, " ")}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          <span className=" fw-medium">{String(value)}</span>
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))}
-                </CTableBody>
-              </CTable>
-
-              {formData.last_activity && (
-                <LastActivity lastactivity={formData.last_activity} />
-              )}
-            </>
+          <CTable bordered>
+            <CTableBody>
+              <CTableRow>
+                <CTableHeaderCell>Item Code</CTableHeaderCell>
+                <CTableDataCell>{formData.item_code}</CTableDataCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell>Quantity</CTableHeaderCell>
+                <CTableDataCell>{formData.quantity}</CTableDataCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
+          {formData.last_activity?.length > 0 && (
+            <LastActivity lastactivity={formData.last_activity} />
           )}
         </CModalBody>
       </CModal>

@@ -31,7 +31,7 @@ export default function SiteSelect({
         //   onChange(formatted[0].value);
         // }
         if (formatted.length > 0) {
-          onChange(formatted[0].value);
+          onChange(formatted[1].value);
         }
       } catch (e) {
         console.log(e);

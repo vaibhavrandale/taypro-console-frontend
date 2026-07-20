@@ -3,6 +3,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import Select from "react-select";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CButton,
@@ -11,9 +12,75 @@ import {
   CCardHeader,
   CCol,
   CForm,
-  CFormSelect,
   CRow,
 } from "@coreui/react";
+
+const selectStyles = {
+  control: (provided) => ({
+    ...provided,
+    background: "#111c44",
+    border: "none",
+    borderRadius: "8px",
+    minHeight: "38px",
+    cursor: "pointer",
+    boxShadow: "none",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    background: "#16213e",
+    borderRadius: "5px",
+    overflow: "hidden",
+    zIndex: 9999,
+  }),
+  menuPortal: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    padding: 0,
+    background: "#16213e",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    background: state.isSelected
+      ? "#00d4ff22"
+      : state.isFocused
+        ? "#1b2a52"
+        : "#16213e",
+    color: state.isSelected ? "#00d4ff" : "#ffffff",
+    padding: 8,
+    cursor: "pointer",
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#ffffff",
+    fontWeight: 500,
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: "#ffffff",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#94a3b8",
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    color: state.isFocused ? "#00d4ff" : "#94a3b8",
+    "&:hover": { color: "#00d4ff" },
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    color: "#94a3b8",
+    "&:hover": { color: "#ffffff" },
+  }),
+  indicatorSeparator: () => ({ display: "none" }),
+  noOptionsMessage: (provided) => ({
+    ...provided,
+    color: "#94a3b8",
+  }),
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -177,44 +244,48 @@ const NewInventory = () => {
     });
   };
 
-  const handleSiteChange = (e) => {
+  const itemOptions = (state.sites || []).map((item) => ({
+    value: item.item_name,
+    label: item.item_code
+      ? `${item.item_name} (${item.item_code})`
+      : item.item_name,
+    item,
+  }));
+
+  const siteOptions = (state.siteIds || []).map((site) => ({
+    value: site.site_id,
+    label: site.site_id,
+    site,
+  }));
+
+  const handleItemChange = (selected) => {
     dispatch({ type: "SELECT_SITE_REQUEST" });
 
-    const selectedSiteName = e.target.value;
-    const selectedSite = state.sites.find(
-      (site) => site.item_name.toString() === selectedSiteName,
-    );
-
-    if (selectedSite) {
-      setFormData({
-        item_name: selectedSite.item_name,
-        item_id: selectedSite._id,
-        item_code: selectedSite.item_code,
-      });
-
-      dispatch({ type: "SELECT_SITE_SUCCESS", payload: selectedSite });
-    } else {
+    if (!selected?.item) {
+      setFormData({ item_name: "", item_id: "", item_code: "" });
       dispatch({ type: "SELECT_SITE_FAIL" });
+      return;
     }
+
+    setFormData({
+      item_name: selected.item.item_name,
+      item_id: selected.item._id,
+      item_code: selected.item.item_code,
+    });
+    dispatch({ type: "SELECT_SITE_SUCCESS", payload: selected.item });
   };
 
-  const handleSiteNameChange = (e) => {
+  const handleSiteNameChange = (selected) => {
     dispatch({ type: "SELECT_SITENAME_REQUEST" });
 
-    const selectedSiteName = e.target.value;
-    const selectedSite = state.siteIds.find(
-      (site) => site.site_id.toString() === selectedSiteName,
-    );
-
-    if (selectedSite) {
-      setSiteName({
-        site_id: selectedSite.site_id,
-      });
-
-      dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selectedSite });
-    } else {
+    if (!selected?.site) {
+      setSiteName({ site_id: "" });
       dispatch({ type: "SELECT_SITENAME_FAIL" });
+      return;
     }
+
+    setSiteName({ site_id: selected.site.site_id });
+    dispatch({ type: "SELECT_SITENAME_SUCCESS", payload: selected.site });
   };
 
   const handleSubmit = async (e) => {
@@ -268,19 +339,22 @@ const NewInventory = () => {
                     Item Name {state.loadingSites && <LoadingSpinner />}{" "}
                   </label>
 
-                  <CFormSelect
+                  <Select
                     name="item_name"
-                    value={formData.item_name}
-                    onChange={handleSiteChange}
-                  >
-                    <option value="">Select Item Name </option>
-                    {state.sites?.length > 0 &&
-                      state.sites.map((item) => (
-                        <option key={item.item_name} value={item.item_name}>
-                          {item.item_name}
-                        </option>
-                      ))}
-                  </CFormSelect>
+                    options={itemOptions}
+                    value={
+                      itemOptions.find((o) => o.value === formData.item_name) ||
+                      null
+                    }
+                    onChange={handleItemChange}
+                    isSearchable
+                    isClearable
+                    isLoading={state.loadingSites}
+                    placeholder="Search item name..."
+                    styles={selectStyles}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                  />
                 </div>
               </CCol>
               {state.loadingFields ? (
@@ -329,19 +403,22 @@ const NewInventory = () => {
                     Site Id
                     {state.loadingSiteIds && <LoadingSpinner />}
                   </label>
-                  <CFormSelect
+                  <Select
                     name="site_id"
-                    value={siteName.site_id}
+                    options={siteOptions}
+                    value={
+                      siteOptions.find((o) => o.value === siteName.site_id) ||
+                      null
+                    }
                     onChange={handleSiteNameChange}
-                  >
-                    <option value="">Select Site Name</option>
-                    {state.siteIds?.length > 0 &&
-                      state.siteIds.map((item) => (
-                        <option key={item.site_id} value={item.site_id}>
-                          {item.site_id}
-                        </option>
-                      ))}
-                  </CFormSelect>
+                    isSearchable
+                    isClearable
+                    isLoading={state.loadingSiteIds}
+                    placeholder="Search site..."
+                    styles={selectStyles}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                  />
                 </div>
               </CCol>
               <CCol>

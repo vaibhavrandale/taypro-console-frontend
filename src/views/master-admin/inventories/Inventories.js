@@ -22,13 +22,12 @@ import {
   CBadge,
   // CFormSelect,
 } from "@coreui/react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
-import PaginateInput from "../../../components/PaginateInput";
 // import InventoryOverview from "./InventoryOverview";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 import image from "./tool.png";
@@ -36,9 +35,12 @@ import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import SiteSelect from "../../../components/SiteSelect";
 const InventoryTab = () => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab") === "item" ? "item" : "inventory";
+
   return (
     <div>
-      <CTabs activeItemKey="inventory">
+      <CTabs activeItemKey={tab} key={tab}>
         <CTabList variant="tabs">
           {/* <CTab itemKey="inventoryOverview">Inventory Overview</CTab> */}
           <CTab itemKey="inventory">Service Inventory</CTab>
@@ -69,9 +71,6 @@ const reducer = (state, action) => {
         ...state,
         loadingInventories: false,
         inventories: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_INVENTORY_FAIL":
       return { ...state, loadingInventories: false, error: action.payload };
@@ -82,9 +81,6 @@ const reducer = (state, action) => {
         ...state,
         loadingServiceItems: false,
         serviceItems: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_SERVICEITEM_FAIL":
       return { ...state, loadingServiceItems: false, error: action.payload };
@@ -119,9 +115,6 @@ const Inventories = () => {
       // sites,
       // loadingSites,
       // siteError,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
       successDelete,
     },
     dispatch,
@@ -133,9 +126,6 @@ const Inventories = () => {
     loading: true,
     loadingInventories: true,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
 
   // const authtoken = useSelector((state) => state.authtoken);
@@ -144,11 +134,6 @@ const Inventories = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState(null);
   const [siteId, setSiteId] = useState("all");
-
-  const [pageInput, setPageInput] = useState("");
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   const [formData, setFormData] = useState({
     item_name: "",
@@ -160,35 +145,22 @@ const Inventories = () => {
   });
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchInventories = async () => {
       dispatch({ type: "FETCH_INVENTORY_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/service-inventory/get-inventory`,
-          pagination,
+          {},
           {
             // headers: { Authorization: `Bearer ${authtoken}` },
             withCredentials: true,
           },
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
           },
         });
       } catch (error) {
@@ -226,7 +198,7 @@ const Inventories = () => {
       fetchInventories();
     }
     // fetchSites();
-  }, [successDelete, limit, page]);
+  }, [successDelete]);
   const filteredInventories = inventories.filter((inventory) => {
     // Apply site filter first
     if (siteId !== "all" && inventory.site_id !== siteId) {
@@ -249,22 +221,6 @@ const Inventories = () => {
     setSelectedInventory(inventory);
     setFormData(inventory);
     setModalVisible(true);
-  };
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
   };
 
   const deleteInventory = async (inventory) => {
@@ -480,18 +436,6 @@ const Inventories = () => {
         </CTableBody>
       </CTable>
 
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
       {/* view Modal */}
       <CModal
         size="xl"
@@ -556,9 +500,6 @@ const ServiceItems = () => {
       error,
       serviceItems,
       loadingServiceItems,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
       successDelete,
     },
     dispatch,
@@ -567,18 +508,12 @@ const ServiceItems = () => {
     loading: true,
     loadingServiceItems: true,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
   // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState(null);
-  const [pageInput, setPageInput] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   // const [selectedSite, setSelectedSite] = useState('');
   const [formData, setFormData] = useState({
@@ -589,35 +524,22 @@ const ServiceItems = () => {
   });
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchServiceItems = async () => {
       dispatch({ type: "FETCH_SERVICEITEM_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/service-items/get-service-items`,
-          pagination,
+          {},
           {
             // headers: { Authorization: `Bearer ${authtoken}` },
             withCredentials: true,
           },
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_SERVICEITEM_SUCCESS",
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
           },
         });
       } catch (error) {
@@ -633,7 +555,7 @@ const ServiceItems = () => {
     } else {
       fetchServiceItems();
     }
-  }, [successDelete, limit, page]);
+  }, [successDelete]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
@@ -647,23 +569,6 @@ const ServiceItems = () => {
     setSelectedServiceItem(serviceItem);
     setFormData(serviceItem);
     setModalVisible(true);
-  };
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  // // console.item(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
   };
 
   const deleteServiceItem = async (serviceItem) => {
@@ -895,18 +800,6 @@ const ServiceItems = () => {
         </CTableBody>
       </CTable>
 
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
       {/* view Modal */}
       <CModal
         size="xl"

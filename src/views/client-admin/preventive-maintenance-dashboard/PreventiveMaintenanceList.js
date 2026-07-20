@@ -497,6 +497,8 @@ import {
   Ban,
   Bot,
   Image,
+  Building2,
+  ClipboardList,
 } from "lucide-react";
 
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -1400,6 +1402,14 @@ const PreventiveMaintenanceList = () => {
     "subscriptionPlanAccess",
   ];
   const allRobots = preventivemaintanance.data?.flatMap((c) => c.robots) || [];
+  const siteCount =
+    preventivemaintanance.site_count ??
+    (site_id === "all"
+      ? new Set(allRobots.map((r) => r.site_id).filter(Boolean)).size
+      : allRobots.length
+        ? 1
+        : 0);
+  const recordCount = preventivemaintanance.record_count ?? allRobots.length;
   const issueCount = allRobots.filter(
     (r) =>
       r.oiling_need_for_motors_condition === "Yes" ||
@@ -1509,6 +1519,38 @@ const PreventiveMaintenanceList = () => {
           </CRow>
         </CCardBody>
       </CCard>
+
+      {/* Summary */}
+      <CRow className="g-3 mb-4">
+        <CCol sm={6} lg={4}>
+          <CCard className="h-100 border-0" style={{ background: "var(--cui-tertiary-bg)" }}>
+            <CCardBody className="py-3 d-flex align-items-center gap-3">
+              <Building2 size={28} className="text-primary flex-shrink-0" />
+              <div>
+                <div className="small text-medium-emphasis">Sites in period</div>
+                <div className="fs-4 fw-semibold mb-0">{siteCount}</div>
+                <div className="small text-muted">
+                  {startDate} to {endDate}
+                </div>
+              </div>
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol sm={6} lg={4}>
+          <CCard className="h-100 border-0" style={{ background: "var(--cui-tertiary-bg)" }}>
+            <CCardBody className="py-3 d-flex align-items-center gap-3">
+              <ClipboardList size={28} className="text-success flex-shrink-0" />
+              <div>
+                <div className="small text-medium-emphasis">PM records generated</div>
+                <div className="fs-4 fw-semibold mb-0">{recordCount}</div>
+                <div className="small text-muted">
+                  {site_id === "all" ? "All sites" : site_id}
+                </div>
+              </div>
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
 
       {/* Records */}
       {allRobots.length === 0 ? (

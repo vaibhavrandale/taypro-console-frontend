@@ -308,6 +308,16 @@ const _nav = [
         items: [
           {
             component: CNavItem,
+            name: "Inventory Hub",
+            to: "/master-admin/inventory-hub",
+          },
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/master-admin/material-requests",
+          },
+          {
+            component: CNavItem,
             name: "Service Inventory",
             to: "/master-admin/inventories",
           },
@@ -315,6 +325,11 @@ const _nav = [
             component: CNavItem,
             name: "Faulty Inventory",
             to: "/master-admin/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Return Rework",
+            to: "/master-admin/faulty-return-rework",
           },
           {
             component: CNavItem,
@@ -429,6 +444,11 @@ const _nav = [
         name: "Material Management",
         icon: maIcon(Database),
         items: [
+          {
+            component: CNavItem,
+            name: "Inventory Hub",
+            to: "/master-admin/inventory-hub",
+          },
           {
             component: CNavItem,
             name: "Material Requests",
@@ -805,6 +825,11 @@ const _nav = [
         items: [
           {
             component: CNavItem,
+            name: "Inventory Hub",
+            to: "/master-user/inventory-hub",
+          },
+          {
+            component: CNavItem,
             name: "Service Inventory",
             to: "/master-user/inventories",
           },
@@ -812,6 +837,11 @@ const _nav = [
             component: CNavItem,
             name: "Faulty Inventory",
             to: "/master-user/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Return Rework",
+            to: "/master-user/faulty-return-rework",
           },
           {
             component: CNavItem,
@@ -1563,8 +1593,28 @@ const _nav = [
         items: [
           {
             component: CNavItem,
+            name: "Inventory Hub",
+            to: "/project-admin/inventory-hub",
+          },
+          {
+            component: CNavItem,
             name: "Material Requests",
             to: "/project-admin/material-requests",
+          },
+          {
+            component: CNavItem,
+            name: "Service Inventory",
+            to: "/project-admin/inventories",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Inventory",
+            to: "/project-admin/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Return Rework",
+            to: "/project-admin/faulty-return-rework",
           },
         ],
       },
@@ -2189,9 +2239,8 @@ const _nav = [
 
       // === Inventory Group ===
       {
-        component: CNavItem,
-        name: "Service Inventory",
-        to: "/service-admin/inventories",
+        component: CNavGroup,
+        name: "Inventory",
         icon: (
           <CIcon
             icon={cilStorage}
@@ -2199,6 +2248,33 @@ const _nav = [
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Inventory Hub",
+            to: "/service-admin/inventory-hub",
+          },
+          {
+            component: CNavItem,
+            name: "Material Requests",
+            to: "/service-admin/material-requests",
+          },
+          {
+            component: CNavItem,
+            name: "Service Inventory",
+            to: "/service-admin/inventories",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Inventory",
+            to: "/service-admin/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "Faulty Return Rework",
+            to: "/service-admin/faulty-return-rework",
+          },
+        ],
       },
 
       // === Tickets Group ===

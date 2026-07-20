@@ -26,7 +26,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
-import PaginateInput from "../../../components/PaginateInput";
 // import InventoryOverview from "./InventoryOverview";
 import * as XLSX from "xlsx"; // Import xlsx for Excel export
 
@@ -60,9 +59,6 @@ const reducer = (state, action) => {
         ...state,
         loadingInventories: false,
         inventories: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_INVENTORY_FAIL":
       return { ...state, loadingInventories: false, error: action.payload };
@@ -73,9 +69,6 @@ const reducer = (state, action) => {
         ...state,
         loadingServiceItems: false,
         serviceItems: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_SERVICEITEM_FAIL":
       return { ...state, loadingServiceItems: false, error: action.payload };
@@ -101,9 +94,6 @@ const SiteTechnicianInventories = () => {
       error,
       inventories,
       loadingInventories,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
       successDelete,
     },
     dispatch,
@@ -112,20 +102,12 @@ const SiteTechnicianInventories = () => {
     loading: true,
     loadingInventories: true,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
   // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState(null);
-
-  const [pageInput, setPageInput] = useState("");
-
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   const [formData, setFormData] = useState({
     item_name: "",
@@ -137,35 +119,22 @@ const SiteTechnicianInventories = () => {
   });
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchInventories = async () => {
       dispatch({ type: "FETCH_INVENTORY_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/service-inventory/get-sitewise-inventory`,
-          pagination,
+          {},
           {
             // headers: { Authorization: `Bearer ${authtoken}` },
             withCredentials: true,
           },
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_INVENTORY_SUCCESS",
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
           },
         });
       } catch (error) {
@@ -181,7 +150,7 @@ const SiteTechnicianInventories = () => {
     } else {
       fetchInventories();
     }
-  }, [successDelete, , limit, page]);
+  }, [successDelete]);
 
   const filteredInventories = inventories.filter(
     (inventory) =>
@@ -196,23 +165,6 @@ const SiteTechnicianInventories = () => {
     setSelectedInventory(inventory);
     setFormData(inventory);
     setModalVisible(true);
-  };
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  // // console.item(uniqueSitenames);
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
   };
 
   const deleteInventory = async (inventory) => {
@@ -386,18 +338,6 @@ const SiteTechnicianInventories = () => {
         </CTableBody>
       </CTable>
 
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
       {/* view Modal */}
       <CModal
         size="xl"

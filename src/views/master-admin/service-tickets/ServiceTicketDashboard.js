@@ -9,19 +9,18 @@ import {
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
-  CButton,
   CBadge,
+  CFormInput,
+  CFormSelect,
+  CFormLabel,
+  CRow,
+  CCol,
   CModal,
   CModalHeader,
   CModalTitle,
   CModalBody,
   CModalFooter,
-  CFormInput,
-  CRow,
-  CCol,
-  CImage,
-  CCarouselItem,
-  CCarousel,
+  CButton,
 } from "@coreui/react";
 import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -30,11 +29,8 @@ import "./servicetickts.css";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import LastActivity from "../../../components/LastActivity";
 import PaginateInput from "../../../components/PaginateInput";
 import BarGraph from "./BarGraph";
-import { cilX } from "@coreui/icons";
-import CIcon from "@coreui/icons-react";
 import toast from "react-hot-toast";
 import moment from "moment";
 
@@ -42,86 +38,39 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
-
     case "FETCH_SUCCESS":
       return {
         ...state,
         servicetickets: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
+        totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
         loading: false,
       };
-
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-
-    case "FETCH_TICKET_REQUEST":
-      return { ...state, fetchserviceticketloading: true };
-
-    case "FETCH_TICKET_SUCCESS":
-      return {
-        ...state,
-        serviceticket: action.payload,
-        fetchserviceticketloading: false,
-      };
-
-    case "FETCH_TICKET_FAIL":
-      return {
-        ...state,
-        fetchserviceticketloading: false,
-        error: action.payload,
-      };
-
-    case "UPDATE_TICKET_REQUEST":
-      return { ...state, updateserviceticketloading: true };
-
-    case "UPDATE_TICKET_SUCCESS":
-      return {
-        ...state,
-        serviceticket: action.payload,
-        updateserviceticketloading: false,
-      };
-
-    case "UPDATE_TICKET_FAIL":
-      return {
-        ...state,
-        updateserviceticketloading: false,
-        error: action.payload,
-      };
-
     default:
       return state;
   }
 };
 
+const fmtSite = (id = "") =>
+  id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
 const ServiceTicketDashboard = () => {
   const [
-    {
-      loading,
-      error,
-      servicetickets,
-      serviceticket,
-      fetchserviceticketloading,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-    },
+    { loading, error, servicetickets, totalPages, hasNextPage, hasPrevPage },
     dispatch,
   ] = useReducer(reducer, {
     servicetickets: [],
-    serviceticket: [],
     loading: true,
-    fetchserviceticketloading: true,
-    updateserviceticketloading: true,
     error: "",
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
-  // const authtoken = useSelector((state) => state.authtoken);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewModalVisible, setViewModalVisible] = useState(false);
   const userInfo = useSelector((state) => state.userInfo);
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0],
@@ -129,176 +78,213 @@ const ServiceTicketDashboard = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0],
   );
-  const openViewModal = async (id) => {
-    setViewModalVisible(true);
-
-    try {
-      dispatch({ type: "FETCH_TICKET_REQUEST" });
-      const response = await axios.get(`/api/v1/servicetickets/getone/${id}`, {
-        // headers: { Authorization: `Bearer ${authtoken}` },
-        withCredentials: true,
-      });
-
-      let result = response.data.data;
-
-      dispatch({ type: "FETCH_TICKET_SUCCESS", payload: result });
-    } catch (error) {
-      console.error("Error fetching ticket:", error);
-      dispatch({ type: "FETCH_TICKET_FAIL", payload: error });
-    }
-  };
-
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
+  const [exportModal, setExportModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [faultOptions, setFaultOptions] = useState([]);
+  const [siteOptions, setSiteOptions] = useState([]);
+  const [exportFilters, setExportFilters] = useState({
+    start_date: new Date().toISOString().split("T")[0],
+    end_date: new Date().toISOString().split("T")[0],
+    fault_type: "all",
+    site_id: "all",
+    status: "all",
+  });
+
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchServicetickets = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const response = await axios.post(
           `/api/v1/servicetickets/get-servicetickets`,
-          pagination,
-          {
-            // headers: { Authorization: `Bearer ${authtoken}` },
-            withCredentials: true,
-          },
+          { pg: page, limit },
+          { withCredentials: true },
         );
-
-        let total = Math.ceil(
-          Number(response.data.total) / Number(response.data.limit),
-        );
-        let next = response.data.hasNextPage;
-        let prev = response.data.hasPrevPage;
-        let result = response.data.data;
 
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: result,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
+            data: response.data.data,
+            totalPages: Math.ceil(
+              Number(response.data.total) / Number(response.data.limit),
+            ),
+            hasNextPage: response.data.hasNextPage,
+            hasPrevPage: response.data.hasPrevPage,
           },
         });
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: error,
-        });
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL", payload: err });
       }
     };
 
     fetchServicetickets();
   }, [limit, page]);
 
-  // const filteredData = servicetickets
-  //   ? servicetickets.filter(
-  //       (item) =>
-  //         item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         item.site_id.toLowerCase().includes(searchTerm.toLowerCase())
-  //     )
-  //   : [];
+  const openExportModal = async () => {
+    setExportFilters({
+      start_date: startDate,
+      end_date: endDate,
+      fault_type: "all",
+      site_id: "all",
+      status: "all",
+    });
+    setExportModal(true);
+
+    try {
+      const [faultRes, siteRes] = await Promise.all([
+        axios.get("/api/v1/servicetickets/faultcount", {
+          withCredentials: true,
+        }),
+        axios.get("/api/v1/servicetickets/siteresolve", {
+          withCredentials: true,
+        }),
+      ]);
+
+      setFaultOptions(
+        (faultRes.data.data || [])
+          .map((f) => f.fault_type)
+          .filter(Boolean)
+          .sort((a, b) => a.localeCompare(b)),
+      );
+      setSiteOptions(
+        (siteRes.data.data || [])
+          .map((s) => s.site_id)
+          .filter(Boolean)
+          .sort((a, b) => a.localeCompare(b)),
+      );
+    } catch {
+      // dropdowns stay empty; user can still export All
+    }
+  };
 
   const filteredData = servicetickets
     ? servicetickets.filter((item) => {
         const createdAtDate = new Date(item.createdAt)
           .toISOString()
           .split("T")[0];
+        const q = searchTerm.toLowerCase();
 
         return (
-          (item.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.fault_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.site_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (searchTerm.toLowerCase() === "open" && !item.ticket_resolved) ||
-            (searchTerm.toLowerCase() === "resolved" &&
-              item.ticket_resolved)) &&
+          (item.ticket_id.toLowerCase().includes(q) ||
+            item.fault_type.toLowerCase().includes(q) ||
+            item.robot_no.toLowerCase().includes(q) ||
+            item.deveui.toLowerCase().includes(q) ||
+            item.site_id.toLowerCase().includes(q) ||
+            (q === "open" && !item.ticket_resolved) ||
+            (q === "resolved" && item.ticket_resolved)) &&
           createdAtDate >= startDate &&
           createdAtDate <= endDate
         );
       })
     : [];
 
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
+    if (newPage >= 1 && newPage <= totalPages) setPage(newPage);
   };
 
   const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
+    const pageNumber = parseInt(pageInput, 10);
     if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
       handlePageChange(pageNumber);
     }
   };
 
   const TImetoResolvedTicket = (createdAt, resolvedAt) => {
-    const createdDate = moment(createdAt);
-    const resolvedDate = moment(resolvedAt);
-    const duration = moment.duration(resolvedDate.diff(createdDate));
-    const days = Math.floor(duration.asDays());
-    const hours = duration.hours();
-    const minutes = duration.minutes();
-    const seconds = duration.seconds();
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    const duration = moment.duration(
+      moment(resolvedAt).diff(moment(createdAt)),
+    );
+    return `${Math.floor(duration.asDays())}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
   };
 
-  const exportToExcel = () => {
-    if (filteredData.length === 0) {
-      toast.error("No data available for export.");
+  const exportToExcel = async () => {
+    if (!exportFilters.start_date || !exportFilters.end_date) {
+      toast.error("Start date and end date are required.");
+      return;
+    }
+    if (exportFilters.start_date > exportFilters.end_date) {
+      toast.error("Start date cannot be after end date.");
       return;
     }
 
-    // Convert JSON to sheet
-    const worksheet = XLSX.utils.json_to_sheet(
-      filteredData.map((item, index) => ({
-        "#": index + 1,
-        "Ticket Id": item.ticket_id,
-        "Robot No": item.robot_no,
-        "Site Id": item.site_id,
-        "Fault Type": item.fault_type,
-        Status: item.ticket_resolved ? "RESOLVED" : "OPEN",
-        "Created Date": moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
-        "Resolved Date": item.ticket_resolved
-          ? moment(item.ticket_resolved_at).format("DD/MM/YYYY hh:mm A")
-          : "OPEN",
-        "Time to Resolve": item.ticket_resolved
-          ? TImetoResolvedTicket(item.createdAt, item.ticket_resolved_at)
-          : "OPEN",
-      })),
-    );
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Service Ticket");
+    try {
+      setExporting(true);
+      const res = await axios.post(
+        "/api/v1/servicetickets/export-servicetickets",
+        exportFilters,
+        { withCredentials: true },
+      );
+      const rows = res.data.data || [];
 
-    // Trigger download
-    XLSX.writeFile(workbook, `Service-Ticket(${startDate}-${endDate}).xlsx`);
+      if (rows.length === 0) {
+        toast.error("No tickets match the selected filters.");
+        return;
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(
+        rows.map((item, index) => ({
+          "#": index + 1,
+          "Ticket Id": item.ticket_id,
+          "Robot No": item.robot_no,
+          "Site Id": item.site_id,
+          "Fault Type": item.fault_type,
+          Status: item.ticket_resolved ? "RESOLVED" : "OPEN",
+          "Created Date": moment(item.createdAt).format("DD/MM/YYYY hh:mm A"),
+          "Resolved Date": item.ticket_resolved
+            ? moment(item.ticket_resolved_at).format("DD/MM/YYYY hh:mm A")
+            : "OPEN",
+          "Time to Resolve": item.ticket_resolved
+            ? TImetoResolvedTicket(item.createdAt, item.ticket_resolved_at)
+            : "OPEN",
+          "Generating Notes": item.ticket_generating_notes || "",
+          "Resolving Notes": item.ticket_resolving_notes || "",
+          "Generated Image 1": item.ticket_generated_images1 || "",
+          "Generated Image 2": item.ticket_generated_images2 || "",
+          "Generated Image 3": item.ticket_generated_images3 || "",
+          "Generated Image 4": item.ticket_generated_images4 || "",
+          "Generated Image 5": item.ticket_generated_images5 || "",
+          "Resolved Image 1": item.ticket_resolved_images1 || "",
+          "Resolved Image 2": item.ticket_resolved_images2 || "",
+          "Resolved Image 3": item.ticket_resolved_images3 || "",
+          "Resolved Image 4": item.ticket_resolved_images4 || "",
+          "Resolved Image 5": item.ticket_resolved_images5 || "",
+        })),
+      );
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Service Ticket");
+      XLSX.writeFile(
+        workbook,
+        `Service-Ticket(${exportFilters.start_date}-${exportFilters.end_date}).xlsx`,
+      );
+      toast.success(`Exported ${rows.length} ticket(s).`);
+      setExportModal(false);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Export failed",
+      );
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
-    <div className="">
-      <h4 className="mb-4 text-center">Service Tickets Overview</h4>
+    <div>
+      <h4 className="mb-3">Service Tickets Dashboard</h4>
+      <p className="text-medium-emphasis mb-4">
+        Raised, resolved, pending by site — plus recurring faults and aging.
+      </p>
 
       <PieChart />
       <BarGraph />
-      {/* 📋 Service Tickets Table */}
+
       <CCard className="mt-4">
         <CCardHeader className="d-flex justify-content-between align-items-center">
-          <h4>All Service Tickets</h4>
-          <div className="d-flex justify-content-end mb-3">
+          <h5 className="mb-0">All Service Tickets</h5>
+          <div className="d-flex justify-content-end">
             <Link
               to="key-preventive-matrix"
               className="btn btn-sm btn-primary m-1"
@@ -315,12 +301,13 @@ const ServiceTicketDashboard = () => {
                 NEW
               </Link>
             )}
-            <Link
+            <button
+              type="button"
               className="btn btn-sm btn-secondary m-1"
-              onClick={exportToExcel}
+              onClick={openExportModal}
             >
               Export
-            </Link>
+            </button>
           </div>
         </CCardHeader>
 
@@ -350,6 +337,7 @@ const ServiceTicketDashboard = () => {
               />
             </CCol>
           </CRow>
+
           <CTable bordered hover responsive className="text-center">
             <CTableHead color="secondary">
               <CTableRow>
@@ -375,12 +363,12 @@ const ServiceTicketDashboard = () => {
                 </CTableRow>
               ) : error ? (
                 <CTableRow>
-                  <CTableDataCell colSpan={8}>{error}</CTableDataCell>
+                  <CTableDataCell colSpan={8}>{String(error)}</CTableDataCell>
                 </CTableRow>
               ) : filteredData.length > 0 ? (
                 filteredData.map((ticket, index) => (
                   <CTableRow
-                    key={index}
+                    key={ticket._id || index}
                     className={ticket.is_delete ? "table-danger" : ""}
                   >
                     <CTableDataCell>{index + 1}</CTableDataCell>
@@ -388,7 +376,12 @@ const ServiceTicketDashboard = () => {
                       style={{ minWidth: "240px" }}
                       className="sticky-col"
                     >
-                      {ticket.ticket_id}
+                      <Link
+                        to={`view-service-ticket/${ticket._id}`}
+                        className="text-decoration-none"
+                      >
+                        {ticket.ticket_id}
+                      </Link>
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
                       {ticket.robot_no}
@@ -416,31 +409,17 @@ const ServiceTicketDashboard = () => {
                         second: "2-digit",
                         hour12: true,
                       })}
-                      {/* <CTooltip
-                        content={new Date(ticket.createdAt).toLocaleString()}
-                        placement="top"
-                      >
-                        <span>
-                          {formatDistanceToNow(new Date(ticket.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                      </CTooltip> */}
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "210px" }}>
-                      <CButton
-                        color="secondary"
-                        size="sm"
-                        className="mx-1"
-                        onClick={() => openViewModal(ticket._id)}
+                      <Link
+                        className="mx-1 btn btn-sm btn-secondary text-decoration-none"
+                        to={`view-service-ticket/${ticket._id}`}
                       >
                         View
-                      </CButton>
+                      </Link>
 
                       {userInfo.role === "Master Admin" && (
                         <Link
-                          color="primary"
-                          size="sm"
                           className="mx-1 btn btn-sm btn-primary text-decoration-none"
                           to={`update-service-ticket/${ticket._id}`}
                         >
@@ -453,8 +432,7 @@ const ServiceTicketDashboard = () => {
                         "Service User",
                       ].includes(userInfo?.role) && (
                         <Link
-                          size="sm"
-                          className="m-1 btn btn-sm btn-secondary text-decoration-none"
+                          className="m-1 btn btn-sm btn-success text-decoration-none"
                           to={`resolve-service-ticket/${ticket._id}`}
                         >
                           Resolve
@@ -465,7 +443,7 @@ const ServiceTicketDashboard = () => {
                 ))
               ) : (
                 <CTableRow>
-                  <CTableDataCell colSpan={8} className="text-start ">
+                  <CTableDataCell colSpan={8} className="text-start">
                     No data found
                   </CTableDataCell>
                 </CTableRow>
@@ -480,756 +458,132 @@ const ServiceTicketDashboard = () => {
             hasNextPage={hasNextPage}
             pageInput={pageInput}
             handlePageChange={handlePageChange}
-            handlePageInputChange={handlePageInputChange}
+            handlePageInputChange={(e) => setPageInput(e.target.value)}
             handlePageInputSubmit={handlePageInputSubmit}
             limit={limit}
-            handleLimitChange={setLimit} // New prop
+            handleLimitChange={setLimit}
           />
         </CCardBody>
       </CCard>
 
-      {/* 📌 View Modal */}
       <CModal
-        scrollable
-        size="xl"
+        visible={exportModal}
+        onClose={() => !exporting && setExportModal(false)}
         backdrop="static"
-        visible={viewModalVisible}
-        onClose={() => setViewModalVisible(false)}
-      >
-        {fetchserviceticketloading ? (
-          <CModalBody className="d-flex justify-content-center align-items-center">
-            <LoadingSpinner />
-          </CModalBody>
-        ) : (
-          <>
-            <CModalHeader closeButton={false}>
-              <CModalTitle>
-                Details :{" "}
-                <span className="badge bg-danger">
-                  {serviceticket.ticket_id}
-                </span>
-              </CModalTitle>
-              <button
-                type="button"
-                className="border-0 ms-auto py-0 px-1"
-                onClick={() => setViewModalVisible(false)}
-                style={{ background: "none" }}
-              >
-                <CIcon icon={cilX} size="lg" />
-              </button>
-            </CModalHeader>
-
-            <CModalBody>
-              <CTable striped hover bordered responsive>
-                <CTableBody>
-                  <CTableRow>
-                    <CTableHeaderCell>Ticket ID</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.ticket_id}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Robot No</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.robot_no}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Deveui</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.deveui}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Robot Type</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.robot_type}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Site ID</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.site_id}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Company</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.company}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Fault Type</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.fault_type}</CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Ticket Generated At</CTableHeaderCell>
-                    <CTableDataCell>
-                      {new Date(serviceticket.createdAt).toLocaleString()}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Generated By</CTableHeaderCell>
-                    <CTableDataCell>
-                      {serviceticket.ticket_generated_by}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Generated By Email</CTableHeaderCell>
-                    <CTableDataCell>
-                      {serviceticket.ticket_generated_by_email}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Generating Notes</CTableHeaderCell>
-                    <CTableDataCell>
-                      {serviceticket.ticket_generating_notes}
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableHeaderCell>Ticket Resolved</CTableHeaderCell>
-                    <CTableDataCell>
-                      {serviceticket.ticket_resolved ? (
-                        <CBadge color="success">Resolved</CBadge>
-                      ) : (
-                        <CBadge color="danger">Open</CBadge>
-                      )}
-                    </CTableDataCell>
-                  </CTableRow>
-
-                  {serviceticket.ticket_resolved && (
-                    <>
-                      <CTableRow>
-                        <CTableHeaderCell>Resolved By</CTableHeaderCell>
-                        <CTableDataCell>
-                          {serviceticket.ticket_resolved_by}
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableHeaderCell>Resolved By Email</CTableHeaderCell>
-                        <CTableDataCell>
-                          {serviceticket.ticket_resolved_by_email}
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableHeaderCell>Resolving Notes</CTableHeaderCell>
-                        <CTableDataCell>
-                          {serviceticket.ticket_resolving_notes}
-                        </CTableDataCell>
-                      </CTableRow>
-                    </>
-                  )}
-                </CTableBody>
-              </CTable>
-
-              {/* Carousel Arrow Styling */}
-              <style>
-                {`
-            .carousel-control-prev-icon,
-            .carousel-control-next-icon {
-              filter: brightness(0) invert(1) !important;
-            }
-            .carousel-control-prev,
-            .carousel-control-next {
-              background-color: rgba(88, 80, 80, 0.3) !important;
-              width: 40px;
-              height: 40px;
-              border-radius: 50%;
-              top: 50%;
-              transform: translateY(-50%);
-            }
-          `}
-              </style>
-
-              <div className="my-4">
-                {/* ✅ Generated Images Carousel */}
-                {(() => {
-                  const generatedImages = [
-                    serviceticket.ticket_generated_images1,
-                    serviceticket.ticket_generated_images2,
-                    serviceticket.ticket_generated_images3,
-                    serviceticket.ticket_generated_images4,
-                    serviceticket.ticket_generated_images5,
-                  ].filter(Boolean);
-
-                  if (generatedImages.length === 0) {
-                    return (
-                      <div className="text-center text-muted my-2">
-                        No Generated Images Available
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <>
-                      <h5 className="text-center text-light my-3">
-                        🟢 Ticket Generating Time Images
-                      </h5>
-                      <CCarousel
-                        controls={generatedImages.length > 1}
-                        indicators={generatedImages.length > 1}
-                      >
-                        {generatedImages.map((img, index) => (
-                          <CCarouselItem key={index}>
-                            <div
-                            // style={{
-                            //   height: "500px",
-                            //   display: "flex",
-                            //   justifyContent: "center",
-                            //   alignItems: "center",
-                            //   overflow: "hidden",
-                            // }}
-                            >
-                              <Link to={img} target="_blank">
-                                <CImage
-                                  src={img}
-                                  className="border border-2 border-secondary"
-                                  alt={`Generated Image ${index + 1}`}
-                                  style={{
-                                    height: "300px",
-                                    width: "500px",
-                                    objectFit: "contain",
-                                    display: "block",
-                                    margin: "0 auto",
-                                  }}
-                                />
-                              </Link>
-                            </div>
-                            <div className="carousel-caption d-md-block bg-dark bg-opacity-50 p-2 rounded">
-                              <h6>{`Generated Image ${index + 1}`}</h6>
-                            </div>
-                          </CCarouselItem>
-                        ))}
-                      </CCarousel>
-                    </>
-                  );
-                })()}
-
-                {/* ✅ Resolved Images Carousel */}
-                {(() => {
-                  const resolvedImages = [
-                    serviceticket.ticket_resolved_images1,
-                    serviceticket.ticket_resolved_images2,
-                    serviceticket.ticket_resolved_images3,
-                    serviceticket.ticket_resolved_images4,
-                    serviceticket.ticket_resolved_images5,
-                  ].filter(Boolean);
-
-                  if (resolvedImages.length === 0) {
-                    return (
-                      <div className="text-center text-muted my-3">
-                        No Resolved Images Available
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <>
-                      <h5 className="text-center text-light my-4">
-                        🔵 Ticket Resolving Time Images
-                      </h5>
-                      <CCarousel
-                        controls={resolvedImages.length > 1}
-                        indicators={resolvedImages.length > 1}
-                      >
-                        {resolvedImages.map((img, index) => (
-                          <CCarouselItem key={index}>
-                            <div
-                            // style={{
-                            //   height: "500px",
-                            //   display: "flex",
-                            //   justifyContent: "center",
-                            //   alignItems: "center",
-                            //   overflow: "hidden",
-                            // }}
-                            >
-                              <Link to={img} target="_blank">
-                                <CImage
-                                  src={img}
-                                  alt={`Resolved Image ${index + 1}`}
-                                  style={{
-                                    maxHeight: "400px",
-                                    maxWidth: "400px",
-                                    objectFit: "contain",
-                                    display: "block",
-                                    margin: "0 auto",
-                                  }}
-                                />
-                              </Link>
-                            </div>
-                            <div className="carousel-caption d-md-block bg-dark bg-opacity-50 p-2 rounded">
-                              <h6>{`Resolved Image ${index + 1}`}</h6>
-                            </div>
-                          </CCarouselItem>
-                        ))}
-                      </CCarousel>
-                    </>
-                  );
-                })()}
-              </div>
-
-              <LastActivity lastactivity={serviceticket.last_activity} />
-            </CModalBody>
-
-            <CModalFooter>
-              <CButton
-                color="secondary"
-                size="sm"
-                onClick={() => setViewModalVisible(false)}
-              >
-                Close
-              </CButton>
-            </CModalFooter>
-          </>
-        )}
-      </CModal>
-
-      {/* 📌 Update Modal */}
-      {/* <CModal
-        scrollable
-        backdrop="static"
-        size="xl"
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        alignment="center"
       >
         <CModalHeader>
-          <CModalTitle>
-            Update Service Ticket :{" "}
-            <span className="badge bg-danger">{serviceticket.ticket_id}</span>
-          </CModalTitle>
+          <CModalTitle>Export Service Tickets</CModalTitle>
         </CModalHeader>
-
-        {fetchserviceticketloading ? (
-          <CModalBody className="d-flex justify-content-center align-items-center">
-            {" "}
-            <LoadingSpinner />
-          </CModalBody>
-        ) : (
-          <CModalBody>
-            <CRow>
-          
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="ticket_id"
-                  value={serviceticket.ticket_id}
-                  disabled
-                  label="Ticket ID"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="robot_no"
-                  value={serviceticket.robot_no}
-                  disabled
-                  label="Robot No"
-                  className="mb-3"
-                />
-              </CCol>
-
-             
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="deveui"
-                  value={serviceticket.deveui}
-                  disabled
-                  label="Deveui"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="site_id"
-                  value={serviceticket.site_id}
-                  disabled
-                  label="Site ID"
-                  className="mb-3"
-                />
-              </CCol>
-
-      
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="fault_type"
-                  value={serviceticket.fault_type}
-                  label="Fault Type"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="lora_no"
-                  value={serviceticket.lora_no}
-                  disabled
-                  label="Lora No"
-                  className="mb-3"
-                />
-              </CCol>
-
-             
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="ticket_generated_by"
-                  value={serviceticket.ticket_generated_by}
-                  disabled
-                  label="Generated By"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="email"
-                  name="ticket_generated_by_email"
-                  value={serviceticket.ticket_generated_by_email}
-                  disabled
-                  label="Generated By Email"
-                  className="mb-3"
-                />
-              </CCol>
-
-   
-              <CCol md={6}>
-                <CFormInput
-                  type="datetime-local"
-                  name="ticket_generated_at"
-                  value={serviceticket.ticket_generated_at}
-                  label="Generated At"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={12}>
-                <CFormInput
-                  type="textarea"
-                  name="ticket_generating_notes"
-                  value={serviceticket.ticket_generating_notes}
-                  label="Generating Notes"
-                  className="mb-3"
-                />
-              </CCol>
-         
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="ticket_resolved"
-                  value={serviceticket.ticket_resolved ? "Resolved" : "Open"}
-                  label="Status"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="datetime-local"
-                  name="ticket_resolved_at"
-                  value={serviceticket.ticket_resolved_at || ""}
-                  label="Resolved At"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              </CCol>
-         
-              <CCol md={6}>
-                <CFormInput
-                  type="text"
-                  name="ticket_resolved_by"
-                  value={serviceticket.ticket_resolved_by || "N/A"}
-                  label="Resolved By"
-                  className="mb-3"
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  type="email"
-                  name="ticket_resolved_by_email"
-                  value={serviceticket.ticket_resolved_by_email || "N/A"}
-                  label="Resolved By Email"
-                  className="mb-3"
-                />
-              </CCol>
-
-           
-              <CCol md={12}>
-                <CFormInput
-                  type="textarea"
-                  name="ticket_resolving_notes"
-                  value={serviceticket.ticket_resolving_notes}
-                  label="Resolving Notes"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              </CCol>
-
-          
-              <CCol md={12}>
-                <label className="form-label">Upload Images</label>
-                <CFormInput type="file" multiple className="mb-3" />
-              </CCol>
-
-   
-              <CCol md={12}>
-                <h6 className="mt-3">Service Ticket Generating Time Images</h6>
-                <div className="d-flex flex-wrap">
-                  {serviceticket.ticket_generated_images1 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_generated_images1)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_generated_images1}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_generated_images1}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                  {serviceticket.ticket_generated_images2 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_generated_images2)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_generated_images2}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_generated_images2}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                  {serviceticket.ticket_generated_images3 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_generated_images3)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_generated_images3}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_generated_images3}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {serviceticket.ticket_generated_images4 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_generated_images4)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_generated_images4}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_generated_images4}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {serviceticket.ticket_generated_images5 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_generated_images5)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_generated_images5}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_generated_images5}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </CCol>
-
-              <CCol md={12}>
-                <h6 className="mt-3">Service Ticket Resolving Time Images</h6>
-                <div className="d-flex flex-wrap">
-                  {serviceticket.ticket_resolved_images1 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_resolved_images1)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_resolved_images1}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_resolved_images1}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                  {serviceticket.ticket_resolved_images2 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_resolved_images2)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_resolved_images2}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_resolved_images2}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                  {serviceticket.ticket_resolved_images3 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_resolved_images3)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_resolved_images3}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_resolved_images3}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {serviceticket.ticket_resolved_images4 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_resolved_images4)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_resolved_images4}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_resolved_images4}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {serviceticket.ticket_resolved_images5 ? (
-                    <div
-                      className="p-2"
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setSelectedImage(serviceticket.ticket_resolved_images5)
-                      }
-                    >
-                      {" "}
-                      <CImage
-                        fluid
-                        src={serviceticket.ticket_resolved_images5}
-                        className="m-2"
-                        alt={`Ticket Image ${serviceticket.ticket_resolved_images5}`}
-                        style={{ width: "10vw", height: "10vh" }}
-                      />{" "}
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </CCol>
-
-             
-              {selectedImage && (
-                <CModal
-                  className=""
-                  visible={true}
-                  onClose={() => setSelectedImage(null)}
-                  size="xl"
-                >
-                  <div
-                    className="position-absolute top-0 end-0 m-2"
-                    style={{ zIndex: 999 }}
-                  >
-                    <CButton onClick={() => setSelectedImage(null)}>✖</CButton>
-                  </div>
-                  <CModalBody
-                    style={{ background: "transparent" }}
-                    className="d-flex justify-content-center"
-                  >
-                    <img
-                      src={selectedImage}
-                      alt="Selected"
-                      className="p-2"
-                      style={{ height: "80vh", width: "90%" }}
-                    />
-                  </CModalBody>
-                </CModal>
-              )}
-            </CRow>
-          </CModalBody>
-        )}
+        <CModalBody>
+          <CRow className="g-3">
+            <CCol xs={12} md={6}>
+              <CFormLabel>Start date</CFormLabel>
+              <CFormInput
+                type="date"
+                value={exportFilters.start_date}
+                onChange={(e) =>
+                  setExportFilters((f) => ({
+                    ...f,
+                    start_date: e.target.value,
+                  }))
+                }
+              />
+            </CCol>
+            <CCol xs={12} md={6}>
+              <CFormLabel>End date</CFormLabel>
+              <CFormInput
+                type="date"
+                value={exportFilters.end_date}
+                onChange={(e) =>
+                  setExportFilters((f) => ({
+                    ...f,
+                    end_date: e.target.value,
+                  }))
+                }
+              />
+            </CCol>
+            <CCol xs={12}>
+              <CFormLabel>Fault type</CFormLabel>
+              <CFormSelect
+                value={exportFilters.fault_type}
+                onChange={(e) =>
+                  setExportFilters((f) => ({
+                    ...f,
+                    fault_type: e.target.value,
+                  }))
+                }
+              >
+                <option value="all">All</option>
+                {faultOptions.map((fault) => (
+                  <option key={fault} value={fault}>
+                    {fault}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+            <CCol xs={12}>
+              <CFormLabel>Site</CFormLabel>
+              <CFormSelect
+                value={exportFilters.site_id}
+                onChange={(e) =>
+                  setExportFilters((f) => ({
+                    ...f,
+                    site_id: e.target.value,
+                  }))
+                }
+              >
+                <option value="all">All</option>
+                {siteOptions.map((site) => (
+                  <option key={site} value={site}>
+                    {fmtSite(site)}
+                  </option>
+                ))}
+              </CFormSelect>
+            </CCol>
+            <CCol xs={12}>
+              <CFormLabel>Status</CFormLabel>
+              <CFormSelect
+                value={exportFilters.status}
+                onChange={(e) =>
+                  setExportFilters((f) => ({
+                    ...f,
+                    status: e.target.value,
+                  }))
+                }
+              >
+                <option value="all">All</option>
+                <option value="open">Open</option>
+                <option value="resolved">Resolved</option>
+              </CFormSelect>
+            </CCol>
+          </CRow>
+        </CModalBody>
         <CModalFooter>
           <CButton
             color="secondary"
             size="sm"
-            onClick={() => setModalVisible(false)}
+            disabled={exporting}
+            onClick={() => setExportModal(false)}
           >
             Cancel
           </CButton>
           <CButton
             color="primary"
             size="sm"
-            onClick={() => handleUpdate(serviceticket._id)}
+            disabled={exporting}
+            onClick={exportToExcel}
           >
-            {updateserviceticketloading ? (
+            {exporting ? (
               <>
-                Saving <LoadingSpinner />
+                Exporting <LoadingSpinner />
               </>
             ) : (
-              "save changes"
+              "Export Excel"
             )}
           </CButton>
         </CModalFooter>
-      </CModal> */}
+      </CModal>
     </div>
   );
 };

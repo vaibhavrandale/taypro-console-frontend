@@ -15,7 +15,6 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import PaginateInput from "../../../components/PaginateInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -26,9 +25,6 @@ const reducer = (state, action) => {
         ...state,
         loadingServiceItems: false,
         serviceItems: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_SERVICEITEM_FAIL":
       return { ...state, loadingServiceItems: false, error: action.payload };
@@ -54,9 +50,6 @@ const FaultAnalysisChecklist = () => {
       error,
       serviceItems,
       loadingServiceItems,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
       successDelete,
     },
     dispatch,
@@ -65,48 +58,29 @@ const FaultAnalysisChecklist = () => {
     loading: true,
     loadingServiceItems: true,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
   // const authtoken = useSelector((state) => state.authtoken);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [pageInput, setPageInput] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
   const [existingChecklistItemIds, setExistingChecklistItemIds] = useState([]);
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
     const fetchServiceItems = async () => {
       dispatch({ type: "FETCH_SERVICEITEM_REQUEST" });
       try {
         const result = await axios.post(
           `/api/v1/service-items/get-service-items`,
-          pagination,
+          {},
           {
             // headers: { Authorization: `Bearer ${authtoken}` },
             withCredentials: true,
           },
         );
 
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
-        );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
         dispatch({
           type: "FETCH_SERVICEITEM_SUCCESS",
           payload: {
             data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
           },
         });
       } catch (error) {
@@ -140,7 +114,7 @@ const FaultAnalysisChecklist = () => {
     };
 
     fetchChecklistComponentIds();
-  }, [successDelete, , limit, page]);
+  }, [successDelete]);
 
   // Filter robots based on search term
   const filteredInventories = serviceItems.filter(
@@ -148,23 +122,6 @@ const FaultAnalysisChecklist = () => {
       serviceItem.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       serviceItem.item_code.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
-    }
-  };
 
   const userInfo = useSelector((state) => state.userInfo);
   let adminroute = "";
@@ -286,19 +243,6 @@ const FaultAnalysisChecklist = () => {
           )}
         </CTableBody>
       </CTable>
-
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
     </div>
   );
 };

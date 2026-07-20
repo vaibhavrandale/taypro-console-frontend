@@ -1,1441 +1,902 @@
-// import React from "react";
-
-// const MasterAdminDashboard = () => {
-//   return (
-//     <div
-//       style={{ height: "80vh" }}
-//       className=" d-flex flex-wrap align-items-start justify-content-center"
-//     >
-//       <h2 className="py-2">
-//         Delivering&nbsp;
-//         <span
-//           style={{
-//             color: "#39d600",
-//           }}
-//         >
-//           Solar Cleaning Robots
-//         </span>
-//         &nbsp; With Highest Up-Time Guarantee
-//       </h2>
-//       <iframe
-//         width="860"
-//         height="350"
-//         src="https://www.youtube.com/embed/PiXJhQ_MYgk?si=22r6pGnC1wbewKuy"
-//         title="YouTube video player"
-//         frameBorder="0"
-//         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-//         referrerPolicy="strict-origin-when-cross-origin"
-//         allowFullScreen
-//       ></iframe>
-//     </div>
-//   );
-// };
-
-// export default MasterAdminDashboard;
-
-// import React, { useEffect } from "react";
-
-// import { useNavigate } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import ApiLoggerDashboard from "./api-logger/ApiLoggerDashboard";
-
-// const MasterAdminDashboard = () => {
-//   const userInfo = useSelector((state) => state.userInfo);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     if (!userInfo) {
-//       navigate("/login");
-//     }
-//   }, [navigate, userInfo]);
-
-//   return (
-
-//     <ApiLoggerDashboard />
-//   );
-// };
-
-// export default MasterAdminDashboard;
-
-import axios from "axios";
-import { useState, useEffect, useReducer } from "react";
-import { useSelector } from "react-redux";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-
+import React, { useCallback, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
-import GatewayMap from "../../components/GatewayMap";
-import Weather from "../client-admin/weather/Weather";
+import axios from "axios";
+import moment from "moment";
+import {
+  CBadge,
+  CButton,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCol,
+  CRow,
+  CSpinner,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilReload } from "@coreui/icons";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
-/* ══════════════════════════════════════════════
-   DESIGN TOKENS
-══════════════════════════════════════════════ */
-const T = {
-  bg: "",
-  surface: "#151f38",
-  surfaceHi: "#1a2642",
-  border: "rgba(99,179,237,.10)",
-  borderHi: "rgba(99,179,237,.22)",
+const BASE = "/service-admin";
 
-  cyan: "#38BDF8",
-  cyanDim: "rgba(56,189,248,.12)",
-  green: "#34D399",
-  greenDim: "rgba(52,211,153,.12)",
-  amber: "#FBBF24",
-  amberDim: "rgba(251,191,36,.12)",
-  red: "#F87171",
-  redDim: "rgba(248,113,113,.12)",
-  purple: "#A78BFA",
-
-  text: "#E2EAF4",
-  textMid: "#94A3B8",
-  textDim: "#FFF",
-
-  font: "",
-  mono: "",
+const LINKS = {
+  attendance: `${BASE}/technician-attendance`,
+  location: `${BASE}/technician-location`,
+  tickets: `${BASE}/service-tickets`,
+  cleaning: `${BASE}/all-site-cleaning-log`,
+  gateways: `${BASE}/all-site-gateways`,
+  robots: `${BASE}/robot-battery-temperature`,
+  siteManagement: `${BASE}/site-management`,
+  dpr: `${BASE}/all-site-dpr`,
 };
 
-/* ══════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════ */
-const fmtNum = (n) => {
-  if (!n && n !== 0) return "—";
-  const v = Number(n);
-  if (v >= 1e6) return (v / 1e6).toFixed(1) + "M";
-  if (v >= 1e3) return (v / 1e3).toFixed(1) + "K";
-  return v.toFixed(0);
+const COLORS = {
+  cyan: "#38bdf8",
+  green: "#34d399",
+  amber: "#fbbf24",
+  red: "#f87171",
+  purple: "#a78bfa",
+  slate: "#94a3b8",
 };
 
-const battColor = (v) => (v > 60 ? T.cyan : v > 30 ? T.amber : T.red);
-
-const greeting = () => {
-  const h = new Date().getHours();
-  return h < 12 ? "Good Morning" : h < 18 ? "Good Afternoon" : "Good Evening";
-};
-
-const wxIcon = (desc = "", rain = false) => {
-  if (rain || desc.includes("rain")) return "🌧";
-  if (desc.includes("cloud")) return "⛅";
-  if (desc.includes("fog")) return "🌫";
-  return "☀️";
-};
-
-/* ══════════════════════════════════════════════
-   GLOBAL CSS
-══════════════════════════════════════════════ */
-const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body, #root {
-  background: ${T.bg};
-  font-family: ${T.font};
-  color: ${T.text};
-  -webkit-font-smoothing: antialiased;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
-}
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: .55; transform: scale(1.4); }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, ${T.surface} 25%, ${T.surfaceHi} 50%, ${T.surface} 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.6s ease infinite;
-  border-radius: 8px;
-}
-
-.site-sel {
-  background: ${T.surfaceHi};
-  border: 1px solid ${T.border};
-  border-radius: 8px;
-  color: ${T.text};
-  padding: 7px 30px 7px 12px;
-  font-family: ${T.font};
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  transition: border-color .2s, background .2s;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-color: ${T.surfaceHi};
-}
-.site-sel:hover, .site-sel:focus { border-color: ${T.borderHi}; }
-.site-sel option { background: #1a2642; color: ${T.text}; }
-
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: ${T.borderHi}; }
-
-.status-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11px; font-weight: 500;
-  padding: 3px 8px; border-radius: 20px; letter-spacing: .2px;
-}
-
-.pulse-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: ${T.green};
-  animation: pulseDot 2s ease infinite;
-  display: inline-block;
-}
-
-.card-glow {
-  transition: border-color .25s, box-shadow .25s;
-}
-.card-glow:hover {
-  border-color: ${T.borderHi} !important;
-  box-shadow: 0 0 0 1px rgba(56,189,248,.05), 0 8px 32px rgba(0,0,0,.22);
-}
-
-.recharts-tooltip-wrapper { outline: none; }
-`;
-
-/* ══════════════════════════════════════════════
-   PRIMITIVE COMPONENTS
-══════════════════════════════════════════════ */
-const Card = ({ children, style = {}, delay = 0, className = "" }) => (
-  <div
-    className={`card-glow ${className}`}
-    style={{
-      background: T.surface,
-      border: `1px solid ${T.border}`,
-      borderRadius: 14,
-      overflow: "hidden",
-      animation: `fadeUp .4s ease ${delay}ms both`,
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-);
-
-const CardHead = ({ icon, title, badge, badgeColor = T.cyan, right }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "13px 18px",
-      borderBottom: `1px solid ${T.border}`,
-    }}
-  >
-    <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-      {icon && (
-        <span
-          style={{
-            fontSize: 13,
-            width: 28,
-            height: 28,
-            borderRadius: 7,
-            background: T.cyanDim,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {icon}
-        </span>
-      )}
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: 600,
-          color: T.text,
-          letterSpacing: ".1px",
-        }}
-      >
-        {title}
-      </span>
-    </div>
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      {badge && (
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 500,
-            padding: "3px 9px",
-            borderRadius: 20,
-            background: badgeColor === T.green ? T.greenDim : T.cyanDim,
-            color: badgeColor,
-            border: `1px solid ${badgeColor === T.green ? "rgba(52,211,153,.22)" : "rgba(56,189,248,.22)"}`,
-            // fontFamily: T.mono,
-            letterSpacing: ".3px",
-          }}
-        >
-          {badge}
-        </span>
-      )}
-      {right}
-    </div>
-  </div>
-);
-
-const Skel = ({ h = 16, w = "100%", r = 6, style = {} }) => (
-  <div
-    className="skeleton"
-    style={{ height: h, width: w, borderRadius: r, flexShrink: 0, ...style }}
-  />
-);
-
-const CardSkeleton = ({ height = 300 }) => (
-  <div
-    style={{
-      background: T.surface,
-      border: `1px solid ${T.border}`,
-      borderRadius: 14,
-      overflow: "hidden",
-      height,
-      padding: "13px 18px",
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: 14,
-      }}
-    >
-      <Skel h={13} w={130} />
-      <Skel h={13} w={72} r={20} />
-    </div>
-    <Skel h={height - 72} r={8} />
-  </div>
-);
-
-const KpiSkeleton = () => (
-  <div
-    style={{
-      background: T.surface,
-      border: `1px solid ${T.border}`,
-      borderRadius: 12,
-      padding: "14px 16px",
-    }}
-  >
-    <Skel h={9} w={90} style={{ marginBottom: 14 }} />
-    <div style={{ display: "flex", gap: 8 }}>
-      <Skel h={52} style={{ flex: 1, borderRadius: 8 }} />
-      <Skel h={52} style={{ flex: 1, borderRadius: 8 }} />
-      <Skel h={52} style={{ flex: 1, borderRadius: 8 }} />
-    </div>
-  </div>
-);
-
-/* ══════════════════════════════════════════════
-   TOOLTIPS
-══════════════════════════════════════════════ */
-const Tip = ({ children }) => (
-  <div
-    style={{
-      background: "#0C1426",
-      border: `1px solid ${T.borderHi}`,
-      borderRadius: 10,
-      padding: "9px 13px",
-      fontSize: 12,
-      color: T.text,
-      boxShadow: "0 8px 32px rgba(0,0,0,.55)",
-      lineHeight: 1.6,
-    }}
-  >
-    {children}
-  </div>
-);
-
-const PieTip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <Tip>
-      <div style={{ fontWeight: 600 }}>{payload[0].name}</div>
-      <div
-        style={{
-          color: T.cyan,
-          // fontFamily: T.mono
-        }}
-      >
-        {Number(payload[0].value).toLocaleString()} m²
-      </div>
-    </Tip>
-  );
-};
-const GwTip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  const g = payload[0]?.payload;
-  return (
-    <Tip>
-      <div style={{ fontWeight: 600 }}>{g?.gateway_name}</div>
-      <div style={{ color: g?.gateway_status ? T.green : T.red }}>
-        {g?.gateway_status ? "● Online" : "○ Offline"}
-      </div>
-      {g?.battery_voltage && (
-        <div
-          style={{
-            color: T.textMid,
-            // fontFamily: T.mono
-          }}
-        >
-          Battery {g.battery_voltage}%
-        </div>
-      )}
-    </Tip>
-  );
-};
-const BatTip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  const v = payload[0].value;
-  return (
-    <Tip>
-      <div style={{ fontWeight: 600 }}>{label}</div>
-      <div
-        style={{
-          color: battColor(v),
-          //  fontFamily: T.mono
-        }}
-      >
-        {v}%
-      </div>
-    </Tip>
-  );
-};
-
-/* ══════════════════════════════════════════════
-   REDUCER
-══════════════════════════════════════════════ */
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_SITEID_REQUEST":
-      return { ...state, loadingSiteIds: true };
-    case "FETCH_SITEID_SUCCESS":
-      return { ...state, loadingSiteIds: false, siteIds: action.payload };
-    case "FETCH_SITEID_FAIL":
-      return { ...state, loadingSiteIds: false, errorSiteIds: action.payload };
-    case "FETCH_SITE_DETAILS_REQUEST":
+    case "LOAD":
+      return { ...state, loading: true, refreshing: false, error: "" };
+    case "REFRESH":
+      return { ...state, refreshing: true, error: "" };
+    case "OK":
       return {
         ...state,
-        loadingSiteDetails: true,
-        siteDetailsError: "",
+        loading: false,
+        refreshing: false,
+        data: action.payload,
       };
-    case "FETCH_SITE_DETAILS_SUCCESS":
+    case "FAIL":
       return {
         ...state,
-        loadingSiteDetails: false,
-        siteDetails: action.payload,
-        siteDetailsError: "",
+        loading: false,
+        refreshing: false,
+        error: action.payload,
       };
-    case "FETCH_SITE_DETAILS_FAIL":
-      return {
-        ...state,
-        loadingSiteDetails: false,
-        siteDetailsError: action.payload,
-      };
-
     default:
       return state;
   }
 };
 
-/* ══════════════════════════════════════════════
-   MAIN DASHBOARD
-══════════════════════════════════════════════ */
-export default function MasterAdminDashboard() {
-  const authtoken = useSelector((s) => s.authtoken);
+const RefreshBtn = ({ onClick, disabled }) => (
+  <CButton
+    color="secondary"
+    variant="outline"
+    size="sm"
+    className="px-2"
+    title="Refresh"
+    disabled={disabled}
+    onClick={onClick}
+  >
+    {disabled ? (
+      <CSpinner size="sm" />
+    ) : (
+      <CIcon icon={cilReload} size="sm" />
+    )}
+  </CButton>
+);
 
-  const [state, dispatch] = useReducer(reducer, {
-    siteIds: [],
-    siteDetails: {},
+const fmtSite = (id = "") =>
+  String(id)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
-    loadingSiteIds: false,
-    loadingSiteDetails: false,
-    errorSiteIds: "",
-    siteDetailsError: "",
+const fmtTime = (d) => (d ? moment(d).format("hh:mm A") : "—");
+
+const Kpi = ({ label, value, sub, color, to, onRefresh, refreshing }) => (
+  <CCard className="h-100 shadow-sm border-0">
+    <CCardBody className="py-3">
+      <div className="d-flex justify-content-between align-items-start gap-2">
+        <div className="text-medium-emphasis small text-uppercase">{label}</div>
+        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+          {to ? (
+            <Link to={to} className="small text-decoration-none">
+              View →
+            </Link>
+          ) : null}
+          {onRefresh ? (
+            <RefreshBtn onClick={onRefresh} disabled={refreshing} />
+          ) : null}
+        </div>
+      </div>
+      <div className="fs-3 fw-semibold mt-1" style={{ color }}>
+        {value}
+      </div>
+      {sub ? <div className="small text-medium-emphasis mt-1">{sub}</div> : null}
+    </CCardBody>
+  </CCard>
+);
+
+const Section = ({
+  title,
+  to,
+  children,
+  actionLabel = "View details",
+  onRefresh,
+  refreshing,
+}) => (
+  <CCard className="h-100 shadow-sm mb-0">
+    <CCardHeader className="d-flex justify-content-between align-items-center gap-2">
+      <h6 className="mb-0">{title}</h6>
+      <div className="d-flex align-items-center gap-2 flex-shrink-0">
+        {to ? (
+          <Link to={to} className="btn btn-sm btn-outline-secondary">
+            {actionLabel}
+          </Link>
+        ) : null}
+        {onRefresh ? (
+          <RefreshBtn onClick={onRefresh} disabled={refreshing} />
+        ) : null}
+      </div>
+    </CCardHeader>
+    <CCardBody>{children}</CCardBody>
+  </CCard>
+);
+
+const Empty = ({ text = "No data" }) => (
+  <div className="text-center text-medium-emphasis py-3 small">{text}</div>
+);
+
+const ServiceAdminDashboard = () => {
+  const [{ loading, refreshing, error, data }, dispatch] = useReducer(reducer, {
+    loading: true,
+    refreshing: false,
+    error: "",
+    data: null,
   });
 
-  const {
-    siteIds,
-    siteDetails,
-    loadingSiteIds,
-    loadingSiteDetails,
-    siteDetailsError,
-  } = state;
-
-  const [blockWiseCleaning, setBlocks] = useState([]);
-  const [cleaning, setCleaning] = useState({
-    completed: 0,
-    inprogress: 0,
-    failure: 0,
-  });
-  const [gateways, setGateways] = useState([]);
-  const [robotsData, setRobots] = useState([]);
-  const [weatherData, setWeatherData] = useState({});
-  const [siteCoords, setSiteCoords] = useState({});
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [showMapModal, setShowMapModal] = useState(false);
-  const [site_id, setSiteid] = useState("");
-
-  useEffect(() => {
-    const fetchSiteIds = async () => {
-      dispatch({ type: "FETCH_SITEID_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({ type: "FETCH_SITEID_SUCCESS", payload: result.data.data });
-        setSiteid(result.data.data[0]?.site_id || "");
-      } catch (e) {
-        dispatch({
-          type: "FETCH_SITEID_FAIL",
-          payload: e.response?.data?.error || e.message,
-        });
-      }
-    };
-    fetchSiteIds();
+  const load = useCallback(async (soft = false) => {
+    try {
+      dispatch({ type: soft ? "REFRESH" : "LOAD" });
+      const res = await axios.get("/api/v1/service-admin/dashboard-summary", {
+        withCredentials: true,
+      });
+      dispatch({ type: "OK", payload: res.data.data });
+    } catch (err) {
+      dispatch({
+        type: "FAIL",
+        payload:
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to load service dashboard",
+      });
+    }
   }, []);
 
   useEffect(() => {
-    if (!site_id) return;
-    const fetchSiteDetails = async () => {
-      dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
-      try {
-        const { data } = await axios.get(
-          `/api/v1/sites-coordinates/site-details/${site_id}`,
-          { withCredentials: true },
-        );
-        const d = data.data;
-        dispatch({ type: "FETCH_SITE_DETAILS_SUCCESS", payload: d });
-        console.log("API WEATHER:", JSON.stringify(d.weather, null, 2));
-        setSiteCoords(d.coordinates);
-        setRobots(d.robots);
-        setGateways(d.gateways);
-        setBlocks(d.blockWiseCleaning);
-        setWeatherData(d.weather);
-        setCleaning(d.cleaning || { completed: 0, inprogress: 0, failure: 0 });
-      } catch (e) {
-        dispatch({
-          type: "FETCH_SITE_DETAILS_FAIL",
-          payload: e.response?.data?.message || e.response?.data?.error,
-        });
-      }
-    };
+    load(false);
+  }, [load]);
 
-    fetchSiteDetails();
+  const refresh = () => load(true);
+  const rf = { onRefresh: refresh, refreshing };
 
-    setMapLoaded(false);
-  }, [site_id]);
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <LoadingSpinner />
+        <div className="small text-medium-emphasis mt-2">
+          Loading all-sites summary…
+        </div>
+      </div>
+    );
+  }
 
-  /* derived */
-  const totalArea = blockWiseCleaning.reduce((s, b) => s + b.areaCleaned, 0);
-  const onlineGw = gateways.filter((g) => g.gateway_status).length;
-  const totalRobots = robotsData.length;
-  const onlineRobs = robotsData.filter((r) => r.lora_state === 1).length;
-  const offlineRobs = robotsData.filter((r) => r.lora_state === 0).length;
-  // const mapSrc = `https://maps.google.com/maps?hl=en&q=${siteCoords.latitude},${siteCoords.longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
+  if (!data) {
+    return (
+      <div className="text-center py-5">
+        <div className="text-danger mb-3">{error || "No data"}</div>
+        <CButton color="secondary" size="sm" onClick={() => load(false)}>
+          Retry
+        </CButton>
+      </div>
+    );
+  }
 
-  const isLoading = loadingSiteDetails;
+  const {
+    cleaning,
+    uptime_sites,
+    attendance,
+    location,
+    robots,
+    gateways,
+    tickets,
+    subscriptions,
+    month,
+  } = data;
 
-  const date = new Date().toISOString().split("T")[0];
-  const getWeatherType = () => {
-    const cloudiness = weatherData && weatherData?.cloudiness;
-    const cloudy = weatherData && weatherData?.description?.includes("cloud");
+  const fmtDate = (d) => (d ? moment(d).format("DD MMM YYYY") : "—");
 
-    const rainy = weatherData && weatherData?.is_rain;
-
-    if (rainy) return "rainy";
-    if (cloudy || cloudiness > 70) return "cloudy";
-    if (weatherData?.humidity > 60 && cloudiness > 40 && !rainy) return "foggy";
-    return "sunny";
+  const daysLabel = (days) => {
+    if (days == null) return "—";
+    if (days < 0) return `Expired ${Math.abs(days)}d ago`;
+    if (days === 0) return "Expires today";
+    return `${days}d left`;
   };
 
-  const weatherType = getWeatherType();
-  return (
-    <>
-      <style>{CSS}</style>
-      <div
-        className=""
-        style={{
-          background: T.bg,
-          minHeight: "100vh",
-          //  fontFamily: T.font
-        }}
-      >
-        {/* ══ TOP BAR ══ */}
-        <header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 200,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "end",
-            padding: "0 10px",
-            height: 50,
-            // background: "rgba(16,25,54,.94)",
-            backdropFilter: "blur(20px)",
-            borderBottom: `1px solid ${T.border}`,
-          }}
-        >
-          {/* <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span className="pulse-dot" />
-            <span style={{ fontSize: 13, color: T.textMid }}>
-              Hello,&nbsp;
-              <strong style={{ color: T.text, fontWeight: 600 }}>
-                {userInfo.username}
-              </strong>
-              &nbsp;—&nbsp;
-              <span style={{ color: T.cyan }}>{greeting()}</span>
-            </span>
-          </div> */}
+  const daysBadge = (s) => {
+    if (s.days_remaining == null) return "secondary";
+    if (s.days_remaining < 0 || s.subscription_status === "expired")
+      return "danger";
+    if (s.days_remaining <= 30) return "warning";
+    return "success";
+  };
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {loadingSiteIds ? (
-              <Skel h={32} w={160} r={8} />
+  return (
+    <div>
+      <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+          <h4 className="mb-1">Service Operations Dashboard</h4>
+          <p className="text-medium-emphasis mb-0">
+            Priority: Cleaning → Attendance → Location → Online/Offline →
+            Tickets · Uptime via site links
+          </p>
+        </div>
+        <div className="d-flex flex-wrap gap-2">
+          <Link to={LINKS.cleaning} className="btn btn-sm btn-primary">
+            Cleaning Logs
+          </Link>
+          <Link to={LINKS.attendance} className="btn btn-sm btn-secondary">
+            Attendance
+          </Link>
+          <Link to={LINKS.location} className="btn btn-sm btn-secondary">
+            Location
+          </Link>
+        </div>
+      </div>
+
+      {/* Priority KPI strip */}
+      <CRow className="g-3 mb-4">
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="1 · Cleaning Today"
+            value={cleaning.completed}
+            sub={`${cleaning.inprogress} running · ${cleaning.failure} failed`}
+            color={COLORS.green}
+            to={LINKS.cleaning}
+            {...rf}
+          />
+        </CCol>
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="2 · Attendance"
+            value={attendance.total}
+            sub={`${attendance.punched_in} on site · ${attendance.punched_out} out`}
+            color={COLORS.cyan}
+            to={LINKS.attendance}
+            {...rf}
+          />
+        </CCol>
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="3 · Location Tracks"
+            value={location.technician_count}
+            sub={`${location.points} pts · ${location.site_count} sites`}
+            color={COLORS.amber}
+            to={LINKS.location}
+            {...rf}
+          />
+        </CCol>
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="4 · Robots Online"
+            value={`${robots.online}/${robots.total}`}
+            sub={`${robots.offline} offline`}
+            color={COLORS.cyan}
+            to={LINKS.siteManagement}
+            {...rf}
+          />
+        </CCol>
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="5 · Gateways"
+            value={`${gateways.online}/${gateways.total}`}
+            sub={`${gateways.offline} offline`}
+            color={gateways.offline > 0 ? COLORS.red : COLORS.green}
+            to={LINKS.gateways}
+            {...rf}
+          />
+        </CCol>
+        <CCol xs={6} md={4} lg={2}>
+          <Kpi
+            label="6 · Tickets Pending"
+            value={tickets.pending}
+            sub={`${tickets.raised} raised`}
+            color={COLORS.red}
+            to={LINKS.tickets}
+            {...rf}
+          />
+        </CCol>
+      </CRow>
+
+      {/* 1. CLEANING — detailed */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12}>
+          <Section title="1. Cleaning Summary (Today) — All Sites" to={LINKS.cleaning} {...rf}>
+            <CRow className="g-3 mb-3">
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Completed</div>
+                <div className="fs-3 fw-semibold" style={{ color: COLORS.green }}>
+                  {cleaning.completed}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">In progress</div>
+                <div className="fs-3 fw-semibold" style={{ color: COLORS.amber }}>
+                  {cleaning.inprogress}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Failed</div>
+                <div className="fs-3 fw-semibold" style={{ color: COLORS.red }}>
+                  {cleaning.failure}
+                </div>
+              </CCol>
+            </CRow>
+            {!cleaning.by_site?.length ? (
+              <Empty text="No cleaning cycles today" />
             ) : (
-              <select
-                className="site-sel"
-                value={site_id}
-                onChange={(e) => setSiteid(e.target.value)}
-              >
-                {siteIds.map((s) => (
-                  <option key={s.site_id} value={s.site_id}>
-                    {s.site_id}
-                  </option>
+              <CTable hover responsive bordered small className="mb-0 align-middle text-center">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell className="text-start">Site</CTableHeaderCell>
+                    <CTableHeaderCell>Completed</CTableHeaderCell>
+                    <CTableHeaderCell>Running</CTableHeaderCell>
+                    <CTableHeaderCell>Failed</CTableHeaderCell>
+                    <CTableHeaderCell>Uptime</CTableHeaderCell>
+                    <CTableHeaderCell>Detail</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {cleaning.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="text-start small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="success">{s.completed}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color="warning">{s.inprogress}</CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color={s.failure ? "danger" : "secondary"}>
+                          {s.failure}
+                        </CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          to={`${LINKS.cleaning}/cleaning-report/${s.site_id}`}
+                          className="btn btn-sm btn-outline-info"
+                        >
+                          Uptime
+                        </Link>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <Link
+                          to={`${LINKS.cleaning}/${s.site_id}`}
+                          className="btn btn-sm btn-outline-secondary"
+                        >
+                          Open
+                        </Link>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
+
+      {/* 2. UPTIME — links only */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12}>
+          <Section
+            title={`2. Site Uptime Links — ${month}`}
+            to={LINKS.dpr}
+            actionLabel="DPR"
+            {...rf}
+          >
+            <p className="small text-medium-emphasis mb-3">
+              Open a site report for cleaning / availability uptime (loaded on
+              demand).
+            </p>
+            {!uptime_sites?.length ? (
+              <Empty text="No sites" />
+            ) : (
+              <div className="d-flex flex-wrap gap-2">
+                {uptime_sites.map((s) => (
+                  <Link
+                    key={s.site_id}
+                    to={`${LINKS.cleaning}/cleaning-report/${s.site_id}`}
+                    className="btn btn-sm btn-outline-secondary"
+                  >
+                    {fmtSite(s.site_id)}
+                  </Link>
                 ))}
-              </select>
-            )}
-          </div>
-        </header>
-
-        {/* ══ MAIN CONTENT ══ */}
-        <main
-          style={{
-            padding: "16px 16px 32px",
-            maxWidth: 1800,
-            margin: "0 auto",
-          }}
-        >
-          {/* KPI STRIP */}
-          <section
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 11,
-              marginBottom: 14,
-            }}
-          >
-            {isLoading ? (
-              Array(4)
-                .fill(0)
-                .map((_, i) => <KpiSkeleton key={i} />)
-            ) : (
-              <>
-                <KpiCard
-                  label="Robots"
-                  icon="🤖"
-                  delay={80}
-                  right={
-                    <Link
-                      to={`/service-admin/site-management/block-management/${site_id}`}
-                      style={{
-                        fontSize: 11,
-                        color: T.cyan,
-                        textDecoration: "none",
-                        padding: "2px 6px",
-                        borderRadius: 6,
-                        border: `1px solid ${T.border}`,
-                        background: T.cyanDim,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      blockwise →
-                    </Link>
-                  }
-                >
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      gap: 7,
-                      marginTop: 9,
-                    }}
-                  >
-                    <MiniStat
-                      label="Total"
-                      value={totalRobots}
-                      color={T.cyan}
-                    />
-                    <MiniStat
-                      label="Online"
-                      value={onlineRobs}
-                      color={T.green}
-                    />
-                    <MiniStat
-                      label="Offline"
-                      value={offlineRobs}
-                      color={T.red}
-                    />
-                  </div>
-                </KpiCard>
-
-                <KpiCard
-                  label="Today's Cleaning"
-                  icon="🧹"
-                  delay={0}
-                  right={
-                    <>
-                      <Link
-                        to={`/service-admin/all-site-cleaning-log/sitewise-cleaning-log/${site_id}/${date}`}
-                        style={{
-                          fontSize: 11,
-                          color: T.cyan,
-                          textDecoration: "none",
-                          padding: "2px 6px",
-                          borderRadius: 6,
-                          border: `1px solid ${T.border}`,
-                          background: T.cyanDim,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Log →
-                      </Link>
-                      <Link
-                        to={`/service-admin/all-site-cleaning-log/cleaning-report/${site_id}`}
-                        style={{
-                          fontSize: 11,
-                          color: T.cyan,
-                          textDecoration: "none",
-                          padding: "2px 6px",
-                          borderRadius: 6,
-                          border: `1px solid ${T.border}`,
-                          background: T.cyanDim,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Report →
-                      </Link>
-                    </>
-                  }
-                >
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      gap: 7,
-                      marginTop: 9,
-                    }}
-                  >
-                    <MiniStat
-                      label="Completed"
-                      value={cleaning.completed}
-                      color={T.green}
-                    />
-                    <MiniStat
-                      label="Running"
-                      value={cleaning.inprogress}
-                      color={T.amber}
-                    />
-                    <MiniStat
-                      label="Failed"
-                      value={cleaning.failure}
-                      color={T.red}
-                    />
-                  </div>
-                </KpiCard>
-                <KpiCard
-                  label="Gateways"
-                  icon="📡"
-                  delay={160}
-                  accent={onlineGw === gateways.length ? T.green : T.amber}
-                >
-                  <div style={{ marginTop: 9 }}>
-                    {gateways.length === 1 ? (
-                      // ✅ SINGLE GATEWAY VIEW
-                      <div
-                        style={{
-                          fontSize: 22,
-                          fontWeight: 700,
-                          color: onlineGw === 1 ? T.green : T.red,
-                        }}
-                      >
-                        {onlineGw === 1 ? "Online" : "Offline"}
-                      </div>
-                    ) : (
-                      // ✅ MULTIPLE GATEWAYS VIEW (your existing UI)
-                      <>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "baseline",
-                            gap: 5,
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: 30,
-                              fontWeight: 700,
-                              color:
-                                onlineGw === gateways.length
-                                  ? T.green
-                                  : T.amber,
-                              lineHeight: 1,
-                            }}
-                          >
-                            {onlineGw}
-                          </span>
-                          <span style={{ fontSize: 14, color: T.textMid }}>
-                            / {gateways.length} online
-                          </span>
-                        </div>
-
-                        <div
-                          style={{
-                            marginTop: 8,
-                            height: 4,
-                            borderRadius: 4,
-                            background: T.surfaceHi,
-                            overflow: "hidden",
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "100%",
-                              borderRadius: 4,
-                              width:
-                                gateways.length > 0
-                                  ? `${(onlineGw / gateways.length) * 100}%`
-                                  : "0%",
-                              background:
-                                onlineGw === gateways.length
-                                  ? T.green
-                                  : T.amber,
-                              transition: "width .7s ease",
-                            }}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </KpiCard>
-
-                <KpiCard
-                  label="Weather"
-                  icon={wxIcon(weatherData?.description, weatherData?.is_rain)}
-                  delay={240}
-                >
-                  <div style={{ marginTop: 6 }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        gap: 4,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 34,
-                          fontWeight: 700,
-                          // fontFamily: T.mono,
-                          color: T.text,
-                          lineHeight: 1,
-                        }}
-                      >
-                        {weatherData?.temperature ?? "—"}
-                      </span>
-                      <span style={{ fontSize: 17, color: T.textMid }}>°C</span>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: T.textMid,
-                        marginTop: 4,
-                        textTransform: "capitalize",
-                      }}
-                    >
-                      {weatherData?.description || "—"}
-                    </div>
-                    {weatherData?.feelsLike && (
-                      <div
-                        style={{ fontSize: 11, color: T.textDim, marginTop: 2 }}
-                      >
-                        Feels like {weatherData?.feelsLike}°C
-                      </div>
-                    )}
-                  </div>
-                </KpiCard>
-              </>
-            )}
-          </section>
-
-          {/* MAP + WEATHER */}
-          <section
-            style={{
-              display: "grid",
-              // gridTemplateColumns: "1fr 1fr",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-              gap: 13,
-              marginBottom: 13,
-            }}
-          >
-            {loadingSiteDetails ? (
-              <CardSkeleton height={416} />
-            ) : (
-              <Card delay={200}>
-                <CardHead
-                  icon="📍"
-                  title="Gateway Coverage"
-                  badge={site_id}
-                  right={
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button
-                        onClick={() => setShowMapModal(true)}
-                        style={{
-                          fontSize: 11,
-                          padding: "5px 10px",
-                          borderRadius: 6,
-                          border: "1px solid rgba(56,189,248,.3)",
-                          background: "rgba(56,189,248,.1)",
-                          color: "#38BDF8",
-                          cursor: "pointer",
-                        }}
-                      >
-                        ⛶ Fullscreen
-                      </button>
-                    </div>
-                  }
-                />
-
-                <GatewayMap
-                  gateways={gateways}
-                  authtoken={authtoken}
-                  site_id={site_id}
-                  T={T} // your existing token object
-                  height={360} // optional, defaults to 360
-                  radiusKm={1} // optional, defaults to 2
-                />
-              </Card>
-            )}
-
-            {loadingSiteDetails ? (
-              <CardSkeleton height={416} />
-            ) : (
-              <Weather
-                siteDetailsError={siteDetailsError}
-                weatherType={weatherType} // "sunny"|"rainy"|"cloudy"|"foggy"
-                weatherData={weatherData} // full API response object
-                siteName={weatherData?.siteName}
-                logo={siteDetails.logo}
-              />
-            )}
-          </section>
-
-          {/* CHARTS ROW */}
-          <section
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 13,
-              marginBottom: 13,
-            }}
-          >
-            {loadingSiteDetails ? (
-              <CardSkeleton height={265} />
-            ) : (
-              <Card delay={350}>
-                <CardHead
-                  icon="🧽"
-                  title="Area Cleaned by Block"
-                  badge={`${fmtNum(totalArea)} m²`}
-                />
-                <div style={{ padding: "16px 18px" }}>
-                  {blockWiseCleaning.length === 0 ? (
-                    <EmptyState label="No cleaning data available" />
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 14,
-                      }}
-                    >
-                      <ResponsiveContainer width={170} height={175}>
-                        <PieChart>
-                          <Pie
-                            data={blockWiseCleaning}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={48}
-                            outerRadius={78}
-                            dataKey="areaCleaned"
-                            nameKey="block"
-                            paddingAngle={3}
-                            strokeWidth={0}
-                          >
-                            {blockWiseCleaning.map((_, i) => (
-                              <Cell
-                                key={i}
-                                fill={
-                                  [
-                                    T.cyan,
-                                    T.green,
-                                    T.purple,
-                                    T.amber,
-                                    "#FF6B35",
-                                  ][i % 5]
-                                }
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip content={<PieTip />} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            )}
-
-            {loadingSiteDetails ? (
-              <CardSkeleton height={265} />
-            ) : (
-              <Card delay={420}>
-                <CardHead
-                  icon="📡"
-                  title="Gateway Status"
-                  badge={`${onlineGw}/${gateways.length} online`}
-                  badgeColor={onlineGw === gateways.length ? T.green : T.amber}
-                />
-                <div style={{ padding: "16px 18px" }}>
-                  {gateways.length === 0 ? (
-                    <EmptyState label="No gateways found" />
-                  ) : (
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 14 }}
-                    >
-                      <ResponsiveContainer width={150} height={155}>
-                        <PieChart>
-                          <Pie
-                            data={gateways}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={44}
-                            outerRadius={68}
-                            dataKey={() => 1}
-                            nameKey="gateway_name"
-                            paddingAngle={4}
-                            strokeWidth={0}
-                          >
-                            {gateways.map((g, i) => (
-                              <Cell
-                                key={i}
-                                fill={g.gateway_status ? T.green : T.red}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip content={<GwTip />} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      <div
-                        style={{
-                          flex: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 6,
-                        }}
-                      >
-                        {gateways.map((g, i) => (
-                          <div
-                            key={i}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              background: T.surfaceHi,
-                              border: `1px solid ${T.border}`,
-                              borderRadius: 8,
-                              padding: "7px 10px",
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: 7,
-                                height: 7,
-                                borderRadius: "50%",
-                                flexShrink: 0,
-                                background: g.gateway_status ? T.green : T.red,
-                                boxShadow: `0 0 5px ${g.gateway_status ? T.green : T.red}`,
-                              }}
-                            />
-                            <span
-                              style={{ flex: 1, fontSize: 12, color: T.text }}
-                            >
-                              {g.gateway_name}
-                            </span>
-                            <span
-                              className="status-badge"
-                              style={{
-                                background: g.gateway_status
-                                  ? T.greenDim
-                                  : T.redDim,
-                                color: g.gateway_status ? T.green : T.red,
-                                border: `1px solid ${g.gateway_status ? "rgba(52,211,153,.2)" : "rgba(248,113,113,.2)"}`,
-                              }}
-                            >
-                              {g.gateway_status ? "online" : "offline"}
-                            </span>
-                            <span
-                              className="status-badge"
-                              style={{
-                                background: g.gateway_status
-                                  ? T.greenDim
-                                  : T.redDim,
-                                color: g.gateway_status ? T.green : T.red,
-                                border: `1px solid ${g.gateway_status ? "rgba(52,211,153,.2)" : "rgba(248,113,113,.2)"}`,
-                              }}
-                            >
-                              {g.robot_count}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            )}
-          </section>
-
-          {/* BATTERY CHART */}
-          {loadingSiteDetails ? (
-            <CardSkeleton height={265} />
-          ) : (
-            <Card delay={500}>
-              <CardHead
-                icon="🔋"
-                title="Robot Battery Status"
-                badge={`${robotsData.length} robots`}
-              />
-              <div style={{ padding: "14px 18px 20px" }}>
-                {robotsData.length === 0 ? (
-                  <EmptyState label="No robot battery data" />
-                ) : (
-                  <>
-                    <ResponsiveContainer width="100%" height={210}>
-                      <BarChart
-                        data={robotsData.map((r) => ({
-                          name: r.robot_no,
-                          battery: parseInt(r.battery_voltage) || 0,
-                        }))}
-                        barSize={22}
-                        margin={{ top: 4, right: 8, left: -20, bottom: 0 }}
-                      >
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="rgba(99,179,237,.06)"
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="name"
-                          tick={{
-                            fill: T.textMid,
-                            fontSize: 11,
-                            // fontFamily: T.mono,
-                          }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          domain={[0, 100]}
-                          tick={{
-                            fill: T.textDim,
-                            fontSize: 11,
-                            // fontFamily: T.mono,
-                          }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip
-                          content={<BatTip />}
-                          cursor={{ fill: "rgba(56,189,248,.04)", radius: 4 }}
-                        />
-                        <Bar dataKey="battery" radius={[5, 5, 0, 0]}>
-                          {robotsData.map((r, i) => (
-                            <Cell
-                              key={i}
-                              fill={battColor(parseInt(r.battery_voltage) || 0)}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 20,
-                        justifyContent: "center",
-                        marginTop: 12,
-                        paddingTop: 12,
-                        borderTop: `1px solid ${T.border}`,
-                      }}
-                    >
-                      {[
-                        { color: T.cyan, label: "High  > 60%" },
-                        { color: T.amber, label: "Medium  30–60%" },
-                        { color: T.red, label: "Low  < 30%" },
-                      ].map((l, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 6,
-                            fontSize: 11,
-                            color: T.textMid,
-                          }}
-                        >
-                          <span
-                            style={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: 2,
-                              background: l.color,
-                              flexShrink: 0,
-                            }}
-                          />
-                          {l.label}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
               </div>
-            </Card>
-          )}
-        </main>
-      </div>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
 
-      {showMapModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,.85)",
-            zIndex: 9999,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {/* HEADER */}
-          <div
-            style={{
-              height: 50,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 16px",
-              borderBottom: `1px solid ${T.border}`,
-              background: "#0f172a",
-            }}
+      {/* 3. ATTENDANCE — detailed */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12} lg={5}>
+          <Section
+            title="3. Technician Attendance (Today) by Site"
+            to={LINKS.attendance}
+            {...rf}
           >
-            <span style={{ fontSize: 13, color: T.text }}>
-              📍 Full Map View — {site_id}
-            </span>
+            <CRow className="g-2 mb-3">
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Present</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.cyan }}>
+                  {attendance.total}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">On site</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.amber }}>
+                  {attendance.punched_in}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Punched out</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.green }}>
+                  {attendance.punched_out}
+                </div>
+              </CCol>
+            </CRow>
+            {!attendance.by_site?.length ? (
+              <Empty text="No punches today" />
+            ) : (
+              <CTable hover responsive small className="mb-0">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Present</CTableHeaderCell>
+                    <CTableHeaderCell>On site</CTableHeaderCell>
+                    <CTableHeaderCell>Out</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {attendance.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>{s.total}</CTableDataCell>
+                      <CTableDataCell>{s.punched_in}</CTableDataCell>
+                      <CTableDataCell>{s.punched_out}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+        <CCol xs={12} lg={7}>
+          <Section
+            title="3b. Who Punched In Today"
+            to={LINKS.attendance}
+            actionLabel="Full list"
+            {...rf}
+          >
+            {!attendance.list?.length ? (
+              <Empty text="No technicians punched in today" />
+            ) : (
+              <CTable hover responsive small className="mb-0 align-middle">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Technician</CTableHeaderCell>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>In</CTableHeaderCell>
+                    <CTableHeaderCell>Out</CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {attendance.list.map((a, i) => (
+                    <CTableRow key={a._id || i}>
+                      <CTableDataCell className="small">
+                        {a.username}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtSite(a.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtTime(a.punchin_time)}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtTime(a.punchout_time)}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge
+                          color={
+                            a.status === "punched_out" ? "success" : "warning"
+                          }
+                        >
+                          {a.status === "punched_out" ? "Out" : "On site"}
+                        </CBadge>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
 
-            <button
-              onClick={() => setShowMapModal(false)}
-              style={{
-                fontSize: 12,
-                padding: "6px 12px",
-                borderRadius: 6,
-                border: "1px solid #ff4d4d",
-                background: "rgba(255,77,77,.1)",
-                color: "#ff4d4d",
-                cursor: "pointer",
-              }}
-            >
-              ✕ Close
-            </button>
-          </div>
+      {/* 4. LOCATION TRACKING */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12} lg={5}>
+          <Section
+            title="4. Technician Location Tracking (Today)"
+            to={LINKS.location}
+            {...rf}
+          >
+            <CRow className="g-2 mb-3">
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Technicians</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.amber }}>
+                  {location.technician_count}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">GPS points</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.cyan }}>
+                  {location.points}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Sites</div>
+                <div className="fs-4 fw-semibold">{location.site_count}</div>
+              </CCol>
+            </CRow>
+            {!location.by_site?.length ? (
+              <Empty text="No location tracks today" />
+            ) : (
+              <CTable hover responsive small className="mb-0">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Techs</CTableHeaderCell>
+                    <CTableHeaderCell>Points</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {location.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>{s.technician_count}</CTableDataCell>
+                      <CTableDataCell>{s.points}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+        <CCol xs={12} lg={7}>
+          <Section
+            title="4b. Latest Location Activity"
+            to={LINKS.location}
+            actionLabel="Open map"
+            {...rf}
+          >
+            {!location.tracks?.length ? (
+              <Empty text="No live tracks" />
+            ) : (
+              <CTable hover responsive small className="mb-0 align-middle">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Technician</CTableHeaderCell>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Last seen</CTableHeaderCell>
+                    <CTableHeaderCell>Points</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {location.tracks.map((t) => (
+                    <CTableRow key={String(t.user_id)}>
+                      <CTableDataCell className="small">
+                        {t.username}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtSite(t.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {t.last_recorded_at
+                          ? moment(t.last_recorded_at).format("hh:mm A")
+                          : "—"}
+                      </CTableDataCell>
+                      <CTableDataCell>{t.points}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
 
-          {/* FULLSCREEN MAP */}
-          <div style={{ flex: 1 }}>
-            <GatewayMap
-              gateways={gateways}
-              authtoken={authtoken}
-              site_id={site_id}
-              T={T}
-              height={"100%"} // 🔥 important
-              radiusKm={1}
-            />
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
+      {/* 5. ONLINE / OFFLINE */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12} lg={6}>
+          <Section title="5. Robots Online / Offline" to={LINKS.siteManagement} {...rf}>
+            <CRow className="g-2 mb-3">
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Online</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.green }}>
+                  {robots.online}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Offline</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.red }}>
+                  {robots.offline}
+                </div>
+              </CCol>
+              <CCol xs={4}>
+                <div className="small text-medium-emphasis">Low battery</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.amber }}>
+                  {robots.low_battery}
+                </div>
+              </CCol>
+            </CRow>
+            {!robots.by_site?.length ? (
+              <Empty />
+            ) : (
+              <CTable hover responsive small className="mb-0">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>On</CTableHeaderCell>
+                    <CTableHeaderCell>Off</CTableHeaderCell>
+                    <CTableHeaderCell>Avg V</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {robots.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>{s.online}</CTableDataCell>
+                      <CTableDataCell>{s.offline}</CTableDataCell>
+                      <CTableDataCell>{s.avg_battery}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+        <CCol xs={12} lg={6}>
+          <Section title="5b. Gateways Online / Offline" to={LINKS.gateways} {...rf}>
+            <CRow className="g-2 mb-3">
+              <CCol xs={6}>
+                <div className="small text-medium-emphasis">Online</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.green }}>
+                  {gateways.online}/{gateways.total}
+                </div>
+              </CCol>
+              <CCol xs={6}>
+                <div className="small text-medium-emphasis">Offline</div>
+                <div className="fs-4 fw-semibold" style={{ color: COLORS.red }}>
+                  {gateways.offline}
+                </div>
+              </CCol>
+            </CRow>
+            {!gateways.by_site?.length ? (
+              <Empty />
+            ) : (
+              <CTable hover responsive small className="mb-0">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Online</CTableHeaderCell>
+                    <CTableHeaderCell>Offline</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {gateways.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>{s.online}</CTableDataCell>
+                      <CTableDataCell>{s.offline}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
 
-/* ══════════════════════════════════════════════
-   UTILITY COMPONENTS
-══════════════════════════════════════════════ */
-function KpiCard({ label, icon, children, delay = 0, accent = T.cyan, right }) {
-  return (
-    <div
-      className="card-glow"
-      style={{
-        background: T.surface,
-        border: `1px solid ${T.border}`,
-        borderRadius: 12,
-        padding: "13px 15px",
-        position: "relative",
-        overflow: "hidden",
-        animation: `fadeUp .4s ease ${delay}ms both`,
-      }}
-    >
-      {/* top glow */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: "12%",
-          right: "12%",
-          height: 1,
-          background: `linear-gradient(90deg, transparent, ${accent}55, transparent)`,
-        }}
-      />
+      {/* 6. SERVICE TICKETS */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12} lg={7}>
+          <Section title="6. Service Tickets by Site" to={LINKS.tickets} {...rf}>
+            {!tickets.by_site?.length ? (
+              <Empty />
+            ) : (
+              <CTable hover responsive small className="mb-0">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Site</CTableHeaderCell>
+                    <CTableHeaderCell>Raised</CTableHeaderCell>
+                    <CTableHeaderCell>Pending</CTableHeaderCell>
+                    <CTableHeaderCell>Resolved</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {tickets.by_site.map((s) => (
+                    <CTableRow key={s.site_id}>
+                      <CTableDataCell className="small">
+                        {fmtSite(s.site_id)}
+                      </CTableDataCell>
+                      <CTableDataCell>{s.raised}</CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color={s.pending ? "warning" : "secondary"}>
+                          {s.pending}
+                        </CBadge>
+                      </CTableDataCell>
+                      <CTableDataCell>{s.resolved}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+        <CCol xs={12} lg={5}>
+          <Section title="6b. Oldest Pending Tickets" to={LINKS.tickets} {...rf}>
+            {!tickets.oldest_pending?.length ? (
+              <Empty text="No pending tickets" />
+            ) : (
+              tickets.oldest_pending.map((t) => (
+                <div
+                  key={t._id || t.ticket_id}
+                  className="d-flex justify-content-between small border-bottom py-2"
+                >
+                  <Link
+                    to={`${LINKS.tickets}/view-service-ticket/${t._id}`}
+                    className="text-decoration-none"
+                  >
+                    {t.ticket_id}
+                  </Link>
+                  <span className="text-medium-emphasis">
+                    {fmtSite(t.site_id)} · {t.days_pending}d
+                  </span>
+                </div>
+              ))
+            )}
+          </Section>
+        </CCol>
+      </CRow>
 
-      {/* HEADER ROW */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between", // ✅ key
-          marginBottom: 6,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 10,
-            color: T.textDim,
-            textTransform: "uppercase",
-            letterSpacing: ".85px",
-          }}
-        >
-          <span style={{ fontSize: 12 }}>{icon}</span>
-          {label}
-        </div>
-
-        {right}
-      </div>
-
-      {children}
+      {/* Subscriptions — full details */}
+      <CRow className="g-3 mb-4">
+        <CCol xs={12}>
+          <Section title="Client Subscriptions" {...rf}>
+            <CRow className="g-2 mb-3">
+              {[
+                ["subscribed", COLORS.green],
+                ["free", COLORS.cyan],
+                ["expired", COLORS.red],
+                ["cancelled", COLORS.slate],
+              ].map(([key, color]) => (
+                <CCol xs={6} md={3} key={key}>
+                  <div className="small text-medium-emphasis text-capitalize">
+                    {key}
+                  </div>
+                  <div className="fs-5 fw-semibold" style={{ color }}>
+                    {subscriptions[key] || 0}
+                  </div>
+                </CCol>
+              ))}
+            </CRow>
+            {!subscriptions.list?.length ? (
+              <Empty />
+            ) : (
+              <CTable hover responsive bordered small className="mb-0 align-middle">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>Client</CTableHeaderCell>
+                    <CTableHeaderCell>Plan / Tier</CTableHeaderCell>
+                    <CTableHeaderCell>Frequency</CTableHeaderCell>
+                    <CTableHeaderCell>Status</CTableHeaderCell>
+                    <CTableHeaderCell>Start date</CTableHeaderCell>
+                    <CTableHeaderCell>End date</CTableHeaderCell>
+                    <CTableHeaderCell>Days remaining</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {subscriptions.list.map((s) => (
+                    <CTableRow
+                      key={s._id || s.client_id}
+                      className={
+                        s.is_expired
+                          ? "table-danger"
+                          : s.is_expiring_soon
+                            ? "table-warning"
+                            : ""
+                      }
+                    >
+                      <CTableDataCell className="small">
+                        <div className="fw-semibold">
+                          {s.client_name || s.client_id}
+                        </div>
+                        <div className="text-medium-emphasis">{s.client_id}</div>
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {s.plan_id || "—"}
+                        <div className="text-medium-emphasis">
+                          {s.serviceTier || "—"}
+                        </div>
+                      </CTableDataCell>
+                      <CTableDataCell className="small text-capitalize">
+                        {s.frequency || "—"}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge
+                          color={
+                            s.subscription_status === "subscribed"
+                              ? "success"
+                              : s.subscription_status === "expired"
+                                ? "danger"
+                                : s.subscription_status === "free"
+                                  ? "info"
+                                  : "secondary"
+                          }
+                        >
+                          {s.subscription_status}
+                        </CBadge>
+                        {s.is_trial_ended ? (
+                          <div className="small text-medium-emphasis mt-1">
+                            Trial ended
+                          </div>
+                        ) : null}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtDate(s.subscription_start_date)}
+                      </CTableDataCell>
+                      <CTableDataCell className="small">
+                        {fmtDate(s.subscription_end_date)}
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <CBadge color={daysBadge(s)}>
+                          {daysLabel(s.days_remaining)}
+                        </CBadge>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            )}
+          </Section>
+        </CCol>
+      </CRow>
     </div>
   );
-}
+};
 
-function MiniStat({ label, value, color }) {
-  return (
-    <div
-      style={{
-        background: T.surfaceHi,
-        border: `1px solid ${color}2A`,
-        borderRadius: 8,
-        padding: "8px 6px",
-        textAlign: "center",
-      }}
-    >
-      <div
-        style={{
-          fontSize: 9,
-          color,
-          textTransform: "uppercase",
-          letterSpacing: ".6px",
-          marginBottom: 4,
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          fontSize: 22,
-          fontWeight: 700,
-          color,
-          // fontFamily: T.mono,
-          lineHeight: 1,
-        }}
-      >
-        {value ?? 0}
-      </div>
-    </div>
-  );
-}
-
-function EmptyState({ label }) {
-  return (
-    <div
-      style={{
-        minHeight: 130,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 12,
-        color: T.textDim,
-        border: `1px dashed ${T.border}`,
-        borderRadius: 10,
-      }}
-    >
-      {label}
-    </div>
-  );
-}
-
-function ErrorState({ message }) {
-  return (
-    <div
-      style={{
-        minHeight: 120,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px 20px",
-        fontSize: 12,
-        color: T.amber,
-        background: T.amberDim,
-        borderRadius: 10,
-        margin: 16,
-        border: `1px solid rgba(251,191,36,.15)`,
-        textAlign: "center",
-      }}
-    >
-      ⚠️ &nbsp;{message}
-    </div>
-  );
-}
+export default ServiceAdminDashboard;

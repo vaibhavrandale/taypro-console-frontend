@@ -1,1 +1,23 @@
-// Here you can add other styles
+// Compact tables — moderate text so more content fits per row/column
+.table,
+table {
+  font-size: 0.8125rem; // ~13px
+
+  > :not(caption) > * > * {
+    padding: 0.4rem 0.55rem;
+  }
+
+  th,
+  td {
+    vertical-align: middle;
+  }
+
+  .btn,
+  .badge {
+    font-size: 0.75rem;
+  }
+
+  &.table-sm > :not(caption) > * > * {
+    padding: 0.3rem 0.4rem;
+  }
+}

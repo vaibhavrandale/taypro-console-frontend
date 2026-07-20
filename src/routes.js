@@ -119,6 +119,10 @@ import FaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklis
 import UpdateFaultAnalysisChecklist from "./views/master-admin/fault-analysis-checklist/UpdateFaultAnalysis";
 import ClientFeedback from "./views/master-admin/client-feedback/ClientFeedback";
 import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInventory";
+import FaultyReturnDashboard from "./views/master-admin/faulty-inventory/FaultyReturnDashboard";
+import CreateFaultyReturn from "./views/master-admin/faulty-inventory/CreateFaultyReturn";
+import ViewFaultyReturn from "./views/master-admin/faulty-inventory/ViewFaultyReturn";
+import InventoryHub from "./views/master-admin/inventories/InventoryHub";
 import SubscriptionDashboard from "./views/master-admin/client-subscription/SubscriptionDashboard";
 import CreateSubscription from "./views/master-admin/client-subscription/CreateSubscription";
 import ViewSubscription from "./views/master-admin/client-subscription/ViewSubscription";
@@ -287,6 +291,10 @@ const UpdateServiceTicket = React.lazy(
 
 const CreateNewServiceTicket = React.lazy(
   () => import("./views/master-admin/service-tickets/CreateServiceTicket"),
+);
+
+const ViewServiceTicket = React.lazy(
+  () => import("./views/master-admin/service-tickets/ViewServiceTicket"),
 );
 
 const InternalTicketsDashboard = React.lazy(
@@ -894,6 +902,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-admin/inventory-hub",
+    name: "Inventory Hub",
+    element: (
+      <MasterAdminRoute>
+        <InventoryHub />
+      </MasterAdminRoute>
+    ),
+  },
+  {
     path: "/master-admin/inventories/update-inventory/:id",
     name: "Update Inventory",
     element: (
@@ -989,6 +1006,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ServiceTicketDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <MasterAdminRoute>
+        <ViewServiceTicket />
       </MasterAdminRoute>
     ),
   },
@@ -1460,6 +1486,33 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <FaultyInventory />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/faulty-return-rework",
+    name: "Faulty Return Rework",
+    element: (
+      <MasterAdminRoute>
+        <FaultyReturnDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/faulty-return-rework/create",
+    name: "Create Faulty Return",
+    element: (
+      <MasterAdminRoute>
+        <CreateFaultyReturn />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/faulty-return-rework/view/:id",
+    name: "View Faulty Return",
+    element: (
+      <MasterAdminRoute>
+        <ViewFaultyReturn />
       </MasterAdminRoute>
     ),
   },
@@ -2540,6 +2593,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-user/inventory-hub",
+    name: "Inventory Hub",
+    element: (
+      <MasterUserRoute>
+        <InventoryHub />
+      </MasterUserRoute>
+    ),
+  },
+  {
     path: "/master-user/inventories/update-inventory/:id",
     name: "Update Inventory",
     element: (
@@ -2635,6 +2697,15 @@ const routes = [
     element: (
       <MasterUserRoute>
         <ServiceTicketDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <MasterUserRoute>
+        <ViewServiceTicket />
       </MasterUserRoute>
     ),
   },
@@ -3236,6 +3307,33 @@ const routes = [
       </MasterUserRoute>
     ),
   },
+  {
+    path: "/master-user/faulty-return-rework",
+    name: "Faulty Return Rework",
+    element: (
+      <MasterUserRoute>
+        <FaultyReturnDashboard />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/faulty-return-rework/create",
+    name: "Create Faulty Return",
+    element: (
+      <MasterUserRoute>
+        <CreateFaultyReturn />
+      </MasterUserRoute>
+    ),
+  },
+  {
+    path: "/master-user/faulty-return-rework/view/:id",
+    name: "View Faulty Return",
+    element: (
+      <MasterUserRoute>
+        <ViewFaultyReturn />
+      </MasterUserRoute>
+    ),
+  },
 
   {
     path: "/master-user/client-subscriptions",
@@ -3777,6 +3875,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <ProjectAdminRoute>
+        <ViewServiceTicket />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/service-tickets/update-service-ticket/:id",
     name: "Update Service Ticket",
     element: (
@@ -3982,6 +4089,51 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <Inventories />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/inventory-hub",
+    name: "Inventory Hub",
+    element: (
+      <ProjectAdminRoute>
+        <InventoryHub />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/faulty-inventory",
+    name: "Faulty Inventory",
+    element: (
+      <ProjectAdminRoute>
+        <FaultyInventory />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/faulty-return-rework",
+    name: "Faulty Return Rework",
+    element: (
+      <ProjectAdminRoute>
+        <FaultyReturnDashboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/faulty-return-rework/create",
+    name: "Create Faulty Return",
+    element: (
+      <ProjectAdminRoute>
+        <CreateFaultyReturn />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/faulty-return-rework/view/:id",
+    name: "View Faulty Return",
+    element: (
+      <ProjectAdminRoute>
+        <ViewFaultyReturn />
       </ProjectAdminRoute>
     ),
   },
@@ -4763,6 +4915,15 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <ServiceTicketDashboard />
+      </ProjectUserRoute>
+    ),
+  },
+  {
+    path: "/project-user/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <ProjectUserRoute>
+        <ViewServiceTicket />
       </ProjectUserRoute>
     ),
   },
@@ -5695,6 +5856,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-admin/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <ServiceAdminRoute>
+        <ViewServiceTicket />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
     path: "/service-admin/service-tickets/update-service-ticket/:id",
     name: "Update Service Ticket",
     element: (
@@ -5925,6 +6095,51 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <Inventories />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/inventory-hub",
+    name: "Inventory Hub",
+    element: (
+      <ServiceAdminRoute>
+        <InventoryHub />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/faulty-inventory",
+    name: "Faulty Inventory",
+    element: (
+      <ServiceAdminRoute>
+        <FaultyInventory />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/faulty-return-rework",
+    name: "Faulty Return Rework",
+    element: (
+      <ServiceAdminRoute>
+        <FaultyReturnDashboard />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/faulty-return-rework/create",
+    name: "Create Faulty Return",
+    element: (
+      <ServiceAdminRoute>
+        <CreateFaultyReturn />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/faulty-return-rework/view/:id",
+    name: "View Faulty Return",
+    element: (
+      <ServiceAdminRoute>
+        <ViewFaultyReturn />
       </ServiceAdminRoute>
     ),
   },
@@ -6828,6 +7043,15 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <ServiceTicketDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/service-tickets/view-service-ticket/:id",
+    name: "View Service Ticket",
+    element: (
+      <ServiceUserRoute>
+        <ViewServiceTicket />
       </ServiceUserRoute>
     ),
   },
