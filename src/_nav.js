@@ -328,6 +328,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Material Consumption",
+            to: "/master-admin/material-consumption",
+          },
+          {
+            component: CNavItem,
             name: "Faulty Return Rework",
             to: "/master-admin/faulty-return-rework",
           },
@@ -837,6 +842,11 @@ const _nav = [
             component: CNavItem,
             name: "Faulty Inventory",
             to: "/master-user/faulty-inventory",
+          },
+          {
+            component: CNavItem,
+            name: "Material Consumption",
+            to: "/master-user/material-consumption",
           },
           {
             component: CNavItem,
@@ -1613,6 +1623,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Material Consumption",
+            to: "/project-admin/material-consumption",
+          },
+          {
+            component: CNavItem,
             name: "Faulty Return Rework",
             to: "/project-admin/faulty-return-rework",
           },
@@ -1979,24 +1994,6 @@ const _nav = [
     ),
     items: [
       {
-        component: CNavGroup,
-        name: "Gateway Survey",
-        icon: (
-          <CIcon
-            icon={cilCheck}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Gateway Survey",
-            to: "/service-admin/gateway-survey-dashboard",
-          },
-        ],
-      },
-      {
         component: CNavItem,
         name: "Dashboard",
         to: "/service-admin/dashboard",
@@ -2008,55 +2005,8 @@ const _nav = [
           />
         ),
       },
-      //robots-positioning
-      // {
-      //   component: CNavGroup,
-      //   name: "Robots Tracking",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilLocationPin}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      //   items: [
-      //     {
-      //       component: CNavItem,
-      //       name: "Robots Tracking",
-      //       to: "/service-admin/robots-tracker",
-      //     },
-      //   ],
-      // },
-      {
-        component: CNavGroup,
-        name: "Live Tracking",
-        icon: (
-          <CIcon
-            icon={cilLocationPin}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Robots Position Tracking",
-          //   to: "/master-admin/robots-position",
-          // },
-          {
-            component: CNavItem,
-            name: "Robot Tracking",
-            to: "/service-admin/robots-tracker",
-          },
-          {
-            component: CNavItem,
-            name: "MDS Tracking",
-            to: "/service-admin/mds-tracker",
-          },
-        ],
-      },
 
-      // === Site Management Group ===
+      // === Site Management ===
       {
         component: CNavGroup,
         name: "Site Management",
@@ -2086,36 +2036,16 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Gateways",
-            to: "/service-admin/all-site-gateways",
+            name: "Site Survey",
+            to: "/service-admin/site-survey-dashboard",
           },
         ],
       },
 
-      //robots-positioning
-      // {
-      //   component: CNavGroup,
-      //   name: "Robots Tracking",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilWrapText}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      //   items: [
-      //     {
-      //       component: CNavItem,
-      //       name: "Robots Position Tracking",
-      //       to: "/service-admin/robots-position",
-      //     },
-      //   ],
-      // },
-
-      // === Robot Management Group ===
+      // === Robots ===
       {
         component: CNavGroup,
-        name: "Robot Management",
+        name: "Robots",
         to: "/service-admin/search-robot",
         icon: (
           <CIcon
@@ -2125,6 +2055,16 @@ const _nav = [
           />
         ),
         items: [
+          {
+            component: CNavItem,
+            name: "Robot Management",
+            to: "/service-admin/search-robot",
+          },
+          {
+            component: CNavItem,
+            name: "Robot Tracking",
+            to: "/service-admin/robots-tracker",
+          },
           {
             component: CNavItem,
             name: "Shift Robots",
@@ -2162,19 +2102,49 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Weather Data ",
+            name: "Weather Data",
             to: "/service-admin/weather-data-sitewise",
           },
+          {
+            component: CNavItem,
+            name: "Robot Data",
+            to: "/service-admin/update-row-data",
+          },
+          {
+            component: CNavItem,
+            name: "Robot Locations",
+            to: "/service-admin/robot-location",
+          },
+          {
+            component: CNavItem,
+            name: "Replace Lora",
+            to: "/service-admin/replace-lora/active-robots",
+          },
+          {
+            component: CNavItem,
+            name: "Lora Configuration",
+            to: "/service-admin/lora-configuration",
+          },
+          {
+            component: CNavItem,
+            name: "Flush Queue",
+            to: "/service-admin/flush-queues",
+          },
+          {
+            component: CNavItem,
+            name: "Statistics",
+            to: "/service-admin/statistics",
+          },
         ],
       },
 
-      //Expense Management
+      // === Gateway ===
       {
         component: CNavGroup,
-        name: "Expense Management",
+        name: "Gateway",
         icon: (
           <CIcon
-            icon={cilMoney}
+            icon={cilLan}
             customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
@@ -2182,62 +2152,18 @@ const _nav = [
         items: [
           {
             component: CNavItem,
-            name: "View Expenses",
-            to: "/service-admin/expenses",
-          },
-        ],
-      },
-      // === Project & Maintenance Group ===
-      {
-        component: CNavGroup,
-        name: "Project & Maintenance",
-        to: "/service-admin/project-handover",
-        icon: (
-          <CIcon
-            icon={cilCheckCircle}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Project Handover",
-            to: "/service-admin/project-handover",
+            name: "Gateways",
+            to: "/service-admin/all-site-gateways",
           },
           {
             component: CNavItem,
-            name: "Preventive Maintenance",
-            to: "/service-admin/preventive-maintanance-dashboard",
-          },
-          {
-            component: CNavItem,
-            name: "Micro Fiber Data",
-            to: "/service-admin/micro-fiber-data",
+            name: "Gateway Survey",
+            to: "/service-admin/gateway-survey-dashboard",
           },
         ],
       },
 
-      {
-        component: CNavGroup,
-        name: "Opex Data",
-        icon: (
-          <CIcon
-            icon={cilMoney}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Opex Dashboard",
-            to: "/service-admin/opexdata",
-          },
-        ],
-      },
-
-      // === Inventory Group ===
+      // === Inventory ===
       {
         component: CNavGroup,
         name: "Inventory",
@@ -2271,13 +2197,18 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Material Consumption",
+            to: "/service-admin/material-consumption",
+          },
+          {
+            component: CNavItem,
             name: "Faulty Return Rework",
             to: "/service-admin/faulty-return-rework",
           },
         ],
       },
 
-      // === Tickets Group ===
+      // === Tickets ===
       {
         component: CNavGroup,
         name: "Tickets",
@@ -2307,11 +2238,124 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "ServiceTickets Fault",
+            name: "Service Tickets Fault",
             to: "/service-admin/serviceticket-fault/service-tickets-fault-dashboard",
           },
         ],
       },
+
+      // === Feedback ===
+      {
+        component: CNavGroup,
+        name: "Feedback",
+        icon: (
+          <CIcon
+            icon={cilEnvelopeOpen}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Customer Feedback",
+            to: "/service-admin/customer-feedback",
+          },
+        ],
+      },
+
+      // === Project ===
+      {
+        component: CNavGroup,
+        name: "Project",
+        to: "/service-admin/project-handover",
+        icon: (
+          <CIcon
+            icon={cilCheckCircle}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Project Handover",
+            to: "/service-admin/project-handover",
+          },
+          {
+            component: CNavItem,
+            name: "Project Commissioning",
+            to: "/service-admin/commissioning",
+          },
+        ],
+      },
+
+      // === Maintenance ===
+      {
+        component: CNavGroup,
+        name: "Maintenance",
+        icon: (
+          <CIcon
+            icon={cilCheck}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Preventive Maintenance",
+            to: "/service-admin/preventive-maintanance-dashboard",
+          },
+          {
+            component: CNavItem,
+            name: "Micro Fiber Data",
+            to: "/service-admin/micro-fiber-data",
+          },
+        ],
+      },
+
+      // === Expense ===
+      {
+        component: CNavGroup,
+        name: "Expense Management",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "View Expenses",
+            to: "/service-admin/expenses",
+          },
+        ],
+      },
+
+      // === Opex ===
+      {
+        component: CNavGroup,
+        name: "Opex Data",
+        icon: (
+          <CIcon
+            icon={cilMoney}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Opex Dashboard",
+            to: "/service-admin/opexdata",
+          },
+        ],
+      },
+
+      // === Users ===
       {
         component: CNavGroup,
         name: "Users Management",
@@ -2348,20 +2392,14 @@ const _nav = [
             name: "Chat",
             to: "/service-admin/chat",
           },
+          {
+            component: CNavItem,
+            name: "Chat with Console",
+            to: "/service-admin/chat-with-console",
+          },
         ],
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Monthly Sites Report",
-      //   to: "/service-admin/monthlyreport",
-      //   icon: (
-      //     <CIcon
-      //       icon={cilFactory}
-      //       customClassName="nav-icon"
-      //       style={{  color: "rgb(57, 214, 0)" }}
-      //     />
-      //   ),
-      // },
+
       {
         component: CNavItem,
         name: "MIS Report",
@@ -2374,6 +2412,8 @@ const _nav = [
           />
         ),
       },
+
+      // === MDS ===
       {
         component: CNavGroup,
         name: "MDS Management",
@@ -2390,201 +2430,20 @@ const _nav = [
             name: "MDS Devices",
             to: "/service-admin/mds-devices",
           },
-
+          {
+            component: CNavItem,
+            name: "MDS Tracking",
+            to: "/service-admin/mds-tracker",
+          },
           {
             component: CNavItem,
             name: "Replace MDS Lora",
             to: "/service-admin/replace-mds-lora/active-mdss",
           },
-          // {
-          //   component: CNavItem,
-          //   name: "MDS Tracking",
-          //   to: "/service-admin/mds-tracker",
-          // },
           {
             component: CNavItem,
             name: "MDS Timer",
             to: "/service-admin/mds-timer",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Chat with Console",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Chat with Console",
-            to: "/service-admin/chat-with-console",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Material Management",
-        icon: (
-          <CIcon
-            icon={cilStorage}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Material Requests",
-            to: "/service-admin/material-requests",
-          },
-        ],
-      },
-      // /service-admin/statistics
-      {
-        component: CNavGroup,
-        name: "Statistics",
-        icon: (
-          <CIcon
-            icon={cilGraph}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Statistics",
-            to: "/service-admin/statistics",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Commissioning",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Dashboard",
-            to: "/service-admin/commissioning",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Robot Data",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Row Data",
-            to: "/service-admin/update-row-data",
-          },
-          {
-            component: CNavItem,
-            name: "Robot Locations",
-            to: "/service-admin/robot-location",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Site Survey",
-        icon: (
-          <CIcon
-            icon={cilCheck}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "Site Survey",
-            to: "/service-admin/site-survey-dashboard",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Robots Management",
-        icon: (
-          <CIcon
-            icon={cilSettings}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          // {
-          //   component: CNavItem,
-          //   name: "Robots",
-          //   to: "/master-admin/robots",
-          // },
-          // {
-          //   component: CNavItem,
-          //   name: "Semi-Robots",
-          //   to: "/master-admin/semi-automatic-robots",
-          // },
-          {
-            component: CNavItem,
-            name: "Lora Configuration",
-            to: "/service-admin/lora-configuration",
-          },
-          {
-            component: CNavItem,
-            name: "Replace Lora",
-            to: "/service-admin/replace-lora/active-robots",
-          },
-          // {
-          //   component: CNavItem,
-          //   name: "Robot Battery Temperature",
-          //   to: "/master-admin/robot-battery-temperature",
-          // },
-          // {
-          //   component: CNavItem,
-          //   name: "Robot Commands",
-          //   to: "/master-admin/robot-commands",
-          // },
-          {
-            component: CNavItem,
-            name: "Flush Queue",
-            to: "/service-admin/flush-queues",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Customer Feedback",
-        icon: (
-          <CIcon
-            icon={cilFactory}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "All Feedbacks",
-            to: "/service-admin/customer-feedback",
           },
         ],
       },

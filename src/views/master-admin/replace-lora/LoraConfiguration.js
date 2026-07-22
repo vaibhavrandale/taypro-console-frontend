@@ -28,23 +28,12 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
+import SiteSelect from "../../../components/SiteSelect";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, error: "" };
-    case "FETCH_SITES_SUCCESS":
-      return {
-        ...state,
-        loadingSites: false,
-
-        sites: action.payload,
-      };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, error: action.payload };
-
     case "FETCH_LORACONFIG_REQUEST":
       return { ...state, loadingloraconfig: true, error: "" };
     case "FETCH_LORACONFIG_SUCCESS":
@@ -97,7 +86,6 @@ const LoraConfiguration = () => {
     {
       error,
       updatingLora,
-      sites,
       lora_configuration,
       loadingloraconfig,
       addloadingloraconfig,
@@ -107,9 +95,7 @@ const LoraConfiguration = () => {
     },
     dispatch,
   ] = useReducer(reducer, {
-    sites: [],
     lora_configuration: [],
-    loadingSites: false,
     loadingloraconfig: false,
     addloadingloraconfig: false,
     updatingLora: false,
@@ -175,28 +161,7 @@ const LoraConfiguration = () => {
       }
     };
 
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const result = await axios.get(`/api/v1/sites`, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        dispatch({
-          type: "FETCH_SITES_SUCCESS",
-          payload: result.data.data,
-        });
-      } catch (error) {
-        dispatch({
-          type: "FETCH_SITES_FAIL",
-          payload: error.response.data.error || error.response.data.message,
-        });
-        toast.error(error.response.data.error || error.response.data.message);
-      }
-    };
-
     fetchloraconfigurations();
-    fetchSites();
   }, [limit, page]);
 
   // Open Modal and Set Selected Item Data
@@ -303,11 +268,6 @@ const LoraConfiguration = () => {
       item.status?.toLowerCase().includes(term)
     );
   });
-
-  const uniqueSitenames = sites.filter(
-    (value, index, self) =>
-      index === self.findIndex((t) => t.site_id === value.site_id),
-  );
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -674,29 +634,14 @@ const LoraConfiguration = () => {
                 </CCol>
                 <CCol md={6}>
                   <CFormLabel>Site ID</CFormLabel>
-                  {uniqueSitenames.length === 0 ? (
-                    <p className="text-danger">No sites Found</p>
-                  ) : (
-                    <CFormSelect
-                      size="md"
-                      className="mb-3"
-                      aria-label="Large select example"
-                      name="site_id"
-                      value={formData.site_id}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select site</option>
-                      {uniqueSitenames.map((item, index) => (
-                        <option
-                          key={index}
-                          value={item.site_id}
-                          selected={formData.site_id === item.site_id}
-                        >
-                          {item.site_id}
-                        </option>
-                      ))}
-                    </CFormSelect>
-                  )}
+                  <SiteSelect
+                    value={formData.site_id || ""}
+                    onChange={(site_id) =>
+                      setFormData((prev) => ({ ...prev, site_id }))
+                    }
+                    width="100%"
+                    placeholder="Search site..."
+                  />
                 </CCol>
               </CRow>
 

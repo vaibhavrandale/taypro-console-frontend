@@ -498,7 +498,6 @@ import {
   CModalBody,
   CModalFooter,
   CTooltip,
-  CProgress,
   CTable,
   CTableHead,
   CTableRow,
@@ -652,6 +651,7 @@ const ImageModal = ({ images, initialIndex, onClose }) => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, zoom]);
 
   return (
@@ -1451,20 +1451,6 @@ const PreventiveMaintenanceList = () => {
         ? 1
         : 0);
   const recordCount = preventivemaintanance.record_count ?? allRobots.length;
-  const issueCount = allRobots.filter(
-    (r) =>
-      r.oiling_need_for_motors_condition === "Yes" ||
-      r.oiling_need_for_bearing_condition === "Yes" ||
-      r.oiling_need_for_coupling_condition === "Yes" ||
-      r.is_wheels_loose === "Yes" ||
-      r.is_wheels_loose === true ||
-      r.is_nutbolt_loose === "Yes" ||
-      r.is_nutbolt_loose === true,
-  ).length;
-  const compliance =
-    allRobots.length > 0
-      ? Math.round(((allRobots.length - issueCount) / allRobots.length) * 100)
-      : 100;
 
   if (pmloading) return <LoadingSpinner />;
   if (checkStatus.includes(subscriptionStatus))

@@ -1834,9 +1834,29 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                           Robots
                         </div>
                         {filteredData.robots.map((robot, index) => (
+                          // <Link
+                          //   key={`robot-${index}`}
+                          //   // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
+                          //   onClick={() =>
+                          //     robotLink(
+                          //       robot.site_id,
+                          //       robot.block,
+                          //       robot.robot_no,
+                          //     )
+                          //   }
+                          //   className="text-decoration-none text-warning"
+                          //   id="robot-no"
+                          // >
+                          //   <div className="px-2 py-1 fw-bold  d-flex justify-content-start align-items-center ">
+                          //     <div className=" ">{robot.robot_no}</div>{" "}
+                          //     {/* <small className="ms-2 text-warning">
+                          //       [&nbsp;{robot.deveui} - {robot.lora_no}&nbsp;]
+                          //     </small> */}
+                          //   </div>
+                          // </Link>
+
                           <Link
                             key={`robot-${index}`}
-                            // to={`/${adminroute}/site-management/block-management/${robot.site_id}/${robot.block}/${robot.robot_no}`}
                             onClick={() =>
                               robotLink(
                                 robot.site_id,
@@ -1844,13 +1864,10 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                                 robot.robot_no,
                               )
                             }
-                            className="text-decoration-none text-primary"
+                            className="text-decoration-none text-warning robot-no-hover"
                           >
-                            <div className="px-2 py-1 fw-bold  d-flex justify-content-start align-items-center ">
-                              <div className=" ">{robot.robot_no}</div>{" "}
-                              {/* <small className="ms-2 text-warning">
-                                [&nbsp;{robot.deveui} - {robot.lora_no}&nbsp;]
-                              </small> */}
+                            <div className="px-2 py-1 fw-bold d-flex justify-content-start align-items-center">
+                              <div>{robot.robot_no}</div>
                             </div>
                           </Link>
                         ))}

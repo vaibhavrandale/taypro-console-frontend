@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   CBadge,

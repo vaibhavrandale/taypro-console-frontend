@@ -14,25 +14,15 @@ export default function SiteSelect({
   useEffect(() => {
     const fetchSiteIds = async () => {
       setLoading(true);
-
       try {
         const result = await axios.get(`/api/v1/sites`, {
           withCredentials: true,
         });
-
-        const formatted = result.data.data.map((site) => ({
+        const formatted = (result.data.data || []).map((site) => ({
           value: site.site_id,
           label: site.site_id,
         }));
-
         setSiteIds(formatted);
-        // Default select first value
-        // if (formatted.length > 0) {
-        //   onChange(formatted[0].value);
-        // }
-        if (formatted.length > 0) {
-          onChange(formatted[1].value);
-        }
       } catch (e) {
         console.log(e);
       } finally {
@@ -44,7 +34,7 @@ export default function SiteSelect({
   }, []);
 
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       background: "#111c44",
       border: "none",
@@ -60,7 +50,6 @@ export default function SiteSelect({
       background: "#16213e",
       borderRadius: "5px",
       overflow: "hidden",
-
       zIndex: 9999,
     }),
 
@@ -116,18 +105,26 @@ export default function SiteSelect({
       color: "#94a3b8",
       padding: "0px 0px 0px 20px",
     }),
+
+    menuPortal: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
   };
 
   return (
-    <div style={{ width }}>
+    <div style={{ width: "100%", maxWidth: width }}>
       <Select
         options={siteIds}
-        value={siteIds.find((s) => s.value === value)}
+        value={siteIds.find((s) => s.value === value) || null}
         onChange={(selected) => onChange(selected?.value || "")}
         isLoading={loading}
         isSearchable
         placeholder={placeholder}
         styles={customStyles}
+        menuPortalTarget={
+          typeof document !== "undefined" ? document.body : null
+        }
       />
     </div>
   );

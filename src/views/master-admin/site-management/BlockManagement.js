@@ -329,6 +329,9 @@ const BlockManagement = () => {
                     Robot No
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
+                    Lora No
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="text-center">
                     Deveui
                   </CTableHeaderCell>
                   <CTableHeaderCell className="text-center">
@@ -375,6 +378,13 @@ const BlockManagement = () => {
                       </CTableDataCell>
 
                       <CTableDataCell className="text-center">
+                        {robot.lora_no ? (
+                          robot.lora_no
+                        ) : (
+                          <CBadge color="secondary">N/A</CBadge>
+                        )}
+                      </CTableDataCell>
+                      <CTableDataCell className="text-center">
                         {robot.deveui}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
@@ -390,11 +400,11 @@ const BlockManagement = () => {
                       <CTableDataCell className="text-center">
                         {robot.block}
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CBadge color="info" className="me-1">
+                      <CTableDataCell className="text-center ">
+                        <CBadge color="warning" className="m-1 fw-light">
                           FW: {robot.version}
                         </CBadge>
-                        <CBadge color="secondary">
+                        <CBadge color="warning">
                           PCB: {robot.pcb_version}
                         </CBadge>
                       </CTableDataCell>

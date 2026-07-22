@@ -759,15 +759,19 @@ const RobotOperating = () => {
                           <div className="fw-semibold">{robot.version}</div>
                         </CCol>
                         <CCol>
-                          <small className="text-muted">LoRa</small>
-                          <CTooltip content={robot.deveui} placement="top">
-                            <div
-                              className="fw-semibold text-success"
-                              style={{ cursor: "pointer" }}
-                            >
-                              {robot.lora_no}
-                            </div>
-                          </CTooltip>
+                          <small className="text-muted">LoRa/DevEui</small>
+                          {/* <CTooltip content={robot.deveui} placement="top"> */}
+                          <div className=" text-success">
+                            {robot.lora_no ? (
+                              <span className="text-warning me-1">
+                                {robot.lora_no}
+                              </span>
+                            ) : (
+                              ""
+                            )}
+                            /<span className="ms-1">{robot.deveui} </span>
+                          </div>
+                          {/* </CTooltip> */}
                         </CCol>
                       </CRow>
 
