@@ -97,8 +97,10 @@ const fmtTime = (d) => (d ? moment(d).format("hh:mm A") : "—");
 const Kpi = ({ label, value, sub, color, to, onRefresh, refreshing }) => (
   <CCard className="h-100 shadow-sm border-0">
     <CCardBody className="py-3">
-      <div className="d-flex justify-content-between align-items-start gap-2">
-        <div className="text-medium-emphasis small text-uppercase">{label}</div>
+      <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
+        <div className="small text-medium-emphasis text-uppercase fw-semibold">
+          {label}
+        </div>
         <div className="d-flex align-items-center gap-2 flex-shrink-0">
           {to ? (
             <Link to={to} className="small text-decoration-none">
@@ -110,10 +112,10 @@ const Kpi = ({ label, value, sub, color, to, onRefresh, refreshing }) => (
           ) : null}
         </div>
       </div>
-      <div className="fs-3 fw-semibold mt-1" style={{ color }}>
+      <div className="fs-4 fw-semibold lh-1" style={{ color }}>
         {value}
       </div>
-      {sub ? <div className="small text-medium-emphasis mt-1">{sub}</div> : null}
+      {sub ? <div className="small text-medium-emphasis mt-2">{sub}</div> : null}
     </CCardBody>
   </CCard>
 );
@@ -255,9 +257,9 @@ const ServiceAdminDashboard = () => {
         </div>
       </div>
 
-      {/* Priority KPI strip */}
-      <CRow className="g-3 mb-4">
-        <CCol xs={6} md={4} lg={2}>
+      {/* Priority KPI strip — 2 rows × 3 cards */}
+      <CRow className="g-3 mb-3">
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="1 · Cleaning Today"
             value={cleaning.completed}
@@ -267,7 +269,7 @@ const ServiceAdminDashboard = () => {
             {...rf}
           />
         </CCol>
-        <CCol xs={6} md={4} lg={2}>
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="2 · Attendance"
             value={attendance.total}
@@ -277,7 +279,7 @@ const ServiceAdminDashboard = () => {
             {...rf}
           />
         </CCol>
-        <CCol xs={6} md={4} lg={2}>
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="3 · Location Tracks"
             value={location.technician_count}
@@ -287,7 +289,7 @@ const ServiceAdminDashboard = () => {
             {...rf}
           />
         </CCol>
-        <CCol xs={6} md={4} lg={2}>
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="4 · Robots Online"
             value={`${robots.online}/${robots.total}`}
@@ -297,7 +299,7 @@ const ServiceAdminDashboard = () => {
             {...rf}
           />
         </CCol>
-        <CCol xs={6} md={4} lg={2}>
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="5 · Gateways"
             value={`${gateways.online}/${gateways.total}`}
@@ -307,7 +309,7 @@ const ServiceAdminDashboard = () => {
             {...rf}
           />
         </CCol>
-        <CCol xs={6} md={4} lg={2}>
+        <CCol xs={12} sm={6} md={4}>
           <Kpi
             label="6 · Tickets Pending"
             value={tickets.pending}
@@ -349,6 +351,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive bordered small className="mb-0 align-middle text-center">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell className="text-start">Site</CTableHeaderCell>
                     <CTableHeaderCell>Completed</CTableHeaderCell>
                     <CTableHeaderCell>Running</CTableHeaderCell>
@@ -358,8 +361,9 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {cleaning.by_site.map((s) => (
+                  {cleaning.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="text-start small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -465,6 +469,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>Present</CTableHeaderCell>
                     <CTableHeaderCell>On site</CTableHeaderCell>
@@ -472,8 +477,9 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {attendance.by_site.map((s) => (
+                  {attendance.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -500,6 +506,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0 align-middle">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Technician</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>In</CTableHeaderCell>
@@ -510,6 +517,7 @@ const ServiceAdminDashboard = () => {
                 <CTableBody>
                   {attendance.list.map((a, i) => (
                     <CTableRow key={a._id || i}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {a.username}
                       </CTableDataCell>
@@ -572,14 +580,16 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>Techs</CTableHeaderCell>
                     <CTableHeaderCell>Points</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {location.by_site.map((s) => (
+                  {location.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -605,6 +615,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0 align-middle">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Technician</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>Last seen</CTableHeaderCell>
@@ -612,8 +623,9 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {location.tracks.map((t) => (
+                  {location.tracks.map((t, i) => (
                     <CTableRow key={String(t.user_id)}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {t.username}
                       </CTableDataCell>
@@ -665,6 +677,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>On</CTableHeaderCell>
                     <CTableHeaderCell>Off</CTableHeaderCell>
@@ -672,8 +685,9 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {robots.by_site.map((s) => (
+                  {robots.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -709,14 +723,16 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>Online</CTableHeaderCell>
                     <CTableHeaderCell>Offline</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {gateways.by_site.map((s) => (
+                  {gateways.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -741,6 +757,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive small className="mb-0">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Site</CTableHeaderCell>
                     <CTableHeaderCell>Raised</CTableHeaderCell>
                     <CTableHeaderCell>Pending</CTableHeaderCell>
@@ -748,8 +765,9 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {tickets.by_site.map((s) => (
+                  {tickets.by_site.map((s, i) => (
                     <CTableRow key={s.site_id}>
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         {fmtSite(s.site_id)}
                       </CTableDataCell>
@@ -820,6 +838,7 @@ const ServiceAdminDashboard = () => {
               <CTable hover responsive bordered small className="mb-0 align-middle">
                 <CTableHead>
                   <CTableRow>
+                    <CTableHeaderCell>SR</CTableHeaderCell>
                     <CTableHeaderCell>Client</CTableHeaderCell>
                     <CTableHeaderCell>Plan / Tier</CTableHeaderCell>
                     <CTableHeaderCell>Frequency</CTableHeaderCell>
@@ -830,7 +849,7 @@ const ServiceAdminDashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {subscriptions.list.map((s) => (
+                  {subscriptions.list.map((s, i) => (
                     <CTableRow
                       key={s._id || s.client_id}
                       className={
@@ -841,6 +860,7 @@ const ServiceAdminDashboard = () => {
                             : ""
                       }
                     >
+                      <CTableDataCell>{i + 1}</CTableDataCell>
                       <CTableDataCell className="small">
                         <div className="fw-semibold">
                           {s.client_name || s.client_id}

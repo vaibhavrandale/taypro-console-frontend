@@ -122,6 +122,7 @@ import FaultyInventory from "./views/master-admin/faulty-inventory/FaultyInvento
 import FaultyReturnDashboard from "./views/master-admin/faulty-inventory/FaultyReturnDashboard";
 import CreateFaultyReturn from "./views/master-admin/faulty-inventory/CreateFaultyReturn";
 import ViewFaultyReturn from "./views/master-admin/faulty-inventory/ViewFaultyReturn";
+import MaterialConsumption from "./views/master-admin/faulty-inventory/MaterialConsumption";
 import InventoryHub from "./views/master-admin/inventories/InventoryHub";
 import SubscriptionDashboard from "./views/master-admin/client-subscription/SubscriptionDashboard";
 import CreateSubscription from "./views/master-admin/client-subscription/CreateSubscription";
@@ -1486,6 +1487,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <FaultyInventory />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/material-consumption",
+    name: "Material Consumption",
+    element: (
+      <MasterAdminRoute>
+        <MaterialConsumption />
       </MasterAdminRoute>
     ),
   },
@@ -3308,6 +3318,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-user/material-consumption",
+    name: "Material Consumption",
+    element: (
+      <MasterUserRoute>
+        <MaterialConsumption />
+      </MasterUserRoute>
+    ),
+  },
+  {
     path: "/master-user/faulty-return-rework",
     name: "Faulty Return Rework",
     element: (
@@ -4107,6 +4126,15 @@ const routes = [
     element: (
       <ProjectAdminRoute>
         <FaultyInventory />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/material-consumption",
+    name: "Material Consumption",
+    element: (
+      <ProjectAdminRoute>
+        <MaterialConsumption />
       </ProjectAdminRoute>
     ),
   },
@@ -6113,6 +6141,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <FaultyInventory />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/material-consumption",
+    name: "Material Consumption",
+    element: (
+      <ServiceAdminRoute>
+        <MaterialConsumption />
       </ServiceAdminRoute>
     ),
   },

@@ -71,3 +71,8 @@
   bottom: 0;
   right: 0;
 }
+
+.robot-no-hover:hover {
+  cursor: pointer;
+  background-color: #515253;
+}

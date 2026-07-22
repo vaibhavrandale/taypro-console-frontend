@@ -88,6 +88,19 @@ const InventoryHub = () => {
       ],
     },
     {
+      title: "Material Consumption",
+      desc: "Parts used on service tickets — graphs, tables, and Excel export by date range.",
+      badge: "Spend",
+      color: "warning",
+      links: [
+        {
+          label: "Consumption report",
+          to: `${base}/material-consumption`,
+          primary: true,
+        },
+      ],
+    },
+    {
       title: "Faulty Return Rework",
       desc: "Return faulty parts from N sites to main factory / office for rework.",
       badge: "Return",

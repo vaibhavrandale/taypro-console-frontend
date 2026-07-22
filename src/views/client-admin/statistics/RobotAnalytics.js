@@ -613,15 +613,12 @@ import {
   CCardBody,
   CCardHeader,
   CFormInput,
-  CBadge,
   CTable,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
   CTableBody,
   CTableDataCell,
-  CProgress,
-  CTooltip,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import { CChartBar, CChartLine } from "@coreui/react-chartjs";

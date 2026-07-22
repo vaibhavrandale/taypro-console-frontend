@@ -82,7 +82,7 @@ const FaultyInventory = () => {
 
   const adminroute = useAdminRoute();
   const [searchParams] = useSearchParams();
-  const [siteId, setSiteId] = useState("all");
+  const [siteId, setSiteId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [trackSearch, setTrackSearch] = useState("");
   const [activeTab, setActiveTab] = useState(
@@ -93,8 +93,7 @@ const FaultyInventory = () => {
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab === "tracking") setActiveTab("tracking");
-    if (tab === "faulty") setActiveTab("faulty");
+    if (tab === "tracking" || tab === "faulty") setActiveTab(tab);
   }, [searchParams]);
 
   useEffect(() => {
@@ -103,7 +102,7 @@ const FaultyInventory = () => {
       try {
         const result = await axios.post(
           `/api/v1/faulty-inventory`,
-          { site_id: siteId },
+          { site_id: siteId || "all" },
           { withCredentials: true },
         );
         dispatch({
@@ -126,7 +125,7 @@ const FaultyInventory = () => {
     const fetchTracking = async () => {
       dispatch({ type: "FETCH_TRACKING_REQUEST" });
       try {
-        const q = siteId !== "all" ? `?site_id=${siteId}` : "";
+        const q = siteId ? `?site_id=${siteId}` : "";
         const result = await axios.get(
           `/api/v1/faulty-inventory/item-tracking${q}`,
           { withCredentials: true },
@@ -180,6 +179,12 @@ const FaultyInventory = () => {
             to={`/${adminroute}/inventory-hub`}
           >
             Inventory Hub
+          </Link>
+          <Link
+            className="btn btn-sm btn-outline-warning"
+            to={`/${adminroute}/material-consumption`}
+          >
+            Material Consumption
           </Link>
           <Link
             className="btn btn-sm btn-outline-info"

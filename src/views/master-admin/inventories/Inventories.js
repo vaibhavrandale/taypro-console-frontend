@@ -299,9 +299,13 @@ const Inventories = () => {
         >
           Add Inventory
         </Link>
-        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary m-1"
+          onClick={exportToExcel}
+        >
           Export
-        </Link>
+        </button>
       </div>
       {/* Search Input */}
       <CRow className="mb-3  justify-content-between align-items-center">
@@ -395,14 +399,13 @@ const Inventories = () => {
 
                 <CTableDataCell>{inventory.threshold}</CTableDataCell>
                 <CTableDataCell>
-                  <Link
+                  <button
+                    type="button"
                     className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
                     onClick={() => openModal(inventory)}
                   >
                     View
-                  </Link>
+                  </button>
 
                   <Link
                     className="btn btn-sm btn-warning m-1"
@@ -414,14 +417,13 @@ const Inventories = () => {
                   {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role,
                   ) && (
-                    <Link
-                      color="danger"
-                      size="sm"
+                    <button
+                      type="button"
                       className="btn btn-sm btn-danger m-1 text-white"
                       onClick={() => deleteInventory(inventory)}
                     >
                       Delete
-                    </Link>
+                    </button>
                   )}
                 </CTableDataCell>
               </CTableRow>
@@ -664,9 +666,13 @@ const ServiceItems = () => {
         >
           Add Item
         </Link>
-        <Link className="btn btn-sm btn-primary m-1" onClick={exportToExcel}>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary m-1"
+          onClick={exportToExcel}
+        >
           Export
-        </Link>
+        </button>
       </div>
       {/* Search Input */}
       <CRow className="justify-content-end mb-3">
@@ -753,14 +759,13 @@ const ServiceItems = () => {
                 </CTableDataCell>
                 <CTableDataCell>{serviceItem.item_description}</CTableDataCell>
                 <CTableDataCell>
-                  <Link
+                  <button
+                    type="button"
                     className="btn btn-sm btn-secondary m-1"
-                    color="secondary"
-                    size="sm"
                     onClick={() => openModal(serviceItem)}
                   >
                     View
-                  </Link>
+                  </button>
 
                   {/* Hide Update button for Master User, Project User, Service User */}
                   {!["Master User", "Project User", "Service User"].includes(
@@ -778,14 +783,13 @@ const ServiceItems = () => {
                   {!["Master User", "Project User", "Service User"].includes(
                     userInfo?.role,
                   ) && (
-                    <Link
-                      color="danger"
-                      size="sm"
+                    <button
+                      type="button"
                       className="btn btn-sm btn-danger m-1 text-white"
                       onClick={() => deleteServiceItem(serviceItem)}
                     >
                       Delete
-                    </Link>
+                    </button>
                   )}
                 </CTableDataCell>
               </CTableRow>

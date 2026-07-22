@@ -500,7 +500,6 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CFormSelect,
   CFormInput,
   CButton,
   CBadge,
@@ -511,7 +510,6 @@ import {
   CModalBody,
   CModalFooter,
   CTooltip,
-  CProgress,
   CTable,
   CTableHead,
   CTableRow,
@@ -547,6 +545,7 @@ import {
 } from "lucide-react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+import SiteSelect from "../../../components/SiteSelect";
 import { Link } from "react-router-dom";
 import CIcon from "@coreui/icons-react";
 import { useSelector } from "react-redux";
@@ -576,12 +575,6 @@ const reducer = (state, action) => {
         subscriptiondata: action.subscriptiondata,
         subscriptionStatus: action.subscriptionStatus,
       };
-    case "FETCH_SITES_REQUEST":
-      return { ...state, loadingSites: true, sitesError: "" };
-    case "FETCH_SITES_SUCCESS":
-      return { ...state, loadingSites: false, sites: action.payload };
-    case "FETCH_SITES_FAIL":
-      return { ...state, loadingSites: false, sitesError: action.payload };
     default:
       return state;
   }
@@ -665,6 +658,8 @@ const ImageModal = ({ images, initialIndex, onClose }) => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+    // ponytail: handlers recreated each render; deps would rebind every keystroke frame
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, zoom]);
 
   return (
@@ -1302,18 +1297,13 @@ const PreventiveMaintenanceList = () => {
     {
       preventivemaintanance,
       pmloading,
-      loadingSites,
-      sites,
       error,
       subscriptiondata,
       subscriptionStatus,
     },
     dispatch,
   ] = useReducer(reducer, {
-    sitesError: "",
     preventivemaintanance: [],
-    loadingSites: false,
-    sites: [],
     pmloading: true,
     error: "",
     subscriptionStatus: "",
@@ -1329,19 +1319,6 @@ const PreventiveMaintenanceList = () => {
   );
   const userInfo = useSelector((state) => state.userInfo);
   useEffect(() => {
-    const fetchSites = async () => {
-      dispatch({ type: "FETCH_SITES_REQUEST" });
-      try {
-        const r = await axios.get(`/api/v1/sites`, { withCredentials: true });
-        dispatch({ type: "FETCH_SITES_SUCCESS", payload: r.data.data });
-      } catch (e) {
-        dispatch({
-          type: "FETCH_SITES_FAIL",
-          payload: e.response?.data?.error || e.response?.data?.message,
-        });
-      }
-    };
-
     const fetchPM = async () => {
       dispatch({ type: "FETCH_PM_REQUEST" });
       try {
@@ -1361,7 +1338,6 @@ const PreventiveMaintenanceList = () => {
       }
     };
 
-    fetchSites();
     fetchPM();
   }, [endDate, site_id, startDate]);
 
@@ -1458,20 +1434,15 @@ const PreventiveMaintenanceList = () => {
         ? 1
         : 0);
   const recordCount = preventivemaintanance.record_count ?? allRobots.length;
-  const issueCount = allRobots.filter(
-    (r) =>
-      r.oiling_need_for_motors_condition === "Yes" ||
-      r.oiling_need_for_bearing_condition === "Yes" ||
-      r.oiling_need_for_coupling_condition === "Yes" ||
-      r.is_wheels_loose === "Yes" ||
-      r.is_wheels_loose === true ||
-      r.is_nutbolt_loose === "Yes" ||
-      r.is_nutbolt_loose === true,
-  ).length;
-  const compliance =
-    allRobots.length > 0
-      ? Math.round(((allRobots.length - issueCount) / allRobots.length) * 100)
-      : 100;
+  const siteBreakdown = Object.entries(
+    allRobots.reduce((acc, r) => {
+      const sid = r.site_id || "Unknown";
+      acc[sid] = (acc[sid] || 0) + 1;
+      return acc;
+    }, {}),
+  )
+    .map(([site, count]) => ({ site, count }))
+    .sort((a, b) => b.count - a.count);
 
   if (pmloading) return <LoadingSpinner />;
   if (checkStatus.includes(subscriptionStatus))
@@ -1558,22 +1529,12 @@ const PreventiveMaintenanceList = () => {
           <CRow className="g-2 align-items-end">
             <CCol md={3} xs={12}>
               <label className="form-label small fw-semibold mb-1">Site</label>
-              <CFormSelect
+              <SiteSelect
                 value={site_id}
-                onChange={(e) => setSiteId(e.target.value)}
-                size="sm"
-              >
-                <option value="all">All sites</option>
-                {loadingSites ? (
-                  <option disabled>Loading...</option>
-                ) : (
-                  sites?.map((item) => (
-                    <option key={item.site_id} value={item.site_id}>
-                      {item.site_id}
-                    </option>
-                  ))
-                )}
-              </CFormSelect>
+                onChange={setSiteId}
+                width="100%"
+                placeholder="Search site…"
+              />
             </CCol>
             <CCol md={3} xs={6}>
               <label className="form-label small fw-semibold mb-1">From</label>
@@ -1649,6 +1610,42 @@ const PreventiveMaintenanceList = () => {
           </CCard>
         </CCol>
       </CRow>
+
+      {siteBreakdown.length > 0 && (
+        <CCard className="mb-4">
+          <CCardBody className="py-3">
+            <h6 className="mb-3">Site-wise PM count</h6>
+            <CTable bordered hover responsive small className="mb-0 align-middle text-center">
+              <CTableHead color="secondary">
+                <CTableRow>
+                  <CTableHeaderCell>SR</CTableHeaderCell>
+                  <CTableHeaderCell className="text-start">Site</CTableHeaderCell>
+                  <CTableHeaderCell>PM records</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                {siteBreakdown.map((row, i) => (
+                  <CTableRow key={row.site}>
+                    <CTableDataCell>{i + 1}</CTableDataCell>
+                    <CTableDataCell className="text-start">{row.site}</CTableDataCell>
+                    <CTableDataCell>
+                      <CBadge color="primary">{row.count}</CBadge>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))}
+                <CTableRow>
+                  <CTableDataCell colSpan={2} className="text-end fw-semibold">
+                    Total
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CBadge color="success">{recordCount}</CBadge>
+                  </CTableDataCell>
+                </CTableRow>
+              </CTableBody>
+            </CTable>
+          </CCardBody>
+        </CCard>
+      )}
 
       {/* Records */}
       {allRobots.length === 0 ? (
