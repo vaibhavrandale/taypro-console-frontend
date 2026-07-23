@@ -38,7 +38,6 @@ import SiteTechnicianSites from "./views/site-technician/cleaninglog/SiteTechnic
 import SiteTechnicianCleaningLog from "./views/site-technician/cleaninglog/SiteTechnicianCleaningLog";
 import SiteTechnicianServiceTicketDashboard from "./views/site-technician/service-tickets/SiteTechnicianServiceTicketDashboard";
 import SiteTechnicianCreateServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianCreateServiceTicket";
-import SiteTechnicianResolveServiceTicket from "./views/site-technician/service-tickets/SiteTechnicianResolveServiceTicket";
 import SiteTechnicianDprDashboard from "./views/site-technician/dpr/SiteTechnicianDprDashboard";
 import SiteTechnicianAddDpr from "./views/site-technician/dpr/SiteTechnicianAddDpr";
 import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInventories";
@@ -7937,7 +7936,7 @@ const routes = [
     name: "Resolve Service Ticket",
     element: (
       <SiteTechnicianRoute>
-        <SiteTechnicianResolveServiceTicket />
+        <ResolveServiceTicket />
       </SiteTechnicianRoute>
     ),
   },

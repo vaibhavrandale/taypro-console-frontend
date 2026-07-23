@@ -131,9 +131,9 @@ const CreateExpense = () => {
         (itm, idx) =>
           idx !== index &&
           itm.expense_date ===
-          (field === "expense_date" ? value : updatedItem.expense_date) &&
+            (field === "expense_date" ? value : updatedItem.expense_date) &&
           itm.expense_type ===
-          (field === "expense_type" ? value : updatedItem.expense_type),
+            (field === "expense_type" ? value : updatedItem.expense_type),
       );
 
       if (isDuplicate) {
@@ -665,7 +665,8 @@ const CreateExpense = () => {
       <div className="erp-container">
         {/* Breadcrumb */}
         <div className="erp-breadcrumb">
-          <span>HR</span> / <span>Expense Claim</span> / <span style={{ fontWeight: 500 }}>New Expense Claim</span>
+          <span>HR</span> / <span>Expense Claim</span> /{" "}
+          <span style={{ fontWeight: 500 }}>New Expense Claim</span>
         </div>
 
         {/* Form header toolbar */}
@@ -696,7 +697,6 @@ const CreateExpense = () => {
         {/* Form body */}
         <div className="erp-body">
           <CForm id="expense-form" onSubmit={submitExpenseClaim}>
-
             {/* Claimant Details */}
             <div className="erp-section">
               <div className="erp-section-header">Employee Details</div>
@@ -736,7 +736,9 @@ const CreateExpense = () => {
               <div className="erp-section-header">Accounting & Approvals</div>
               <div className="erp-field-group">
                 <div className="erp-field">
-                  <label className="erp-label">Posting Date <span className="required">*</span></label>
+                  <label className="erp-label">
+                    Posting Date <span className="required">*</span>
+                  </label>
                   <input
                     type="date"
                     name="posting_date"
@@ -747,7 +749,9 @@ const CreateExpense = () => {
                   />
                 </div>
                 <div className="erp-field">
-                  <label className="erp-label">Department of Visit <span className="required">*</span></label>
+                  <label className="erp-label">
+                    Department of Visit <span className="required">*</span>
+                  </label>
                   <select
                     name="department_of_visit"
                     className="erp-input"
@@ -756,12 +760,14 @@ const CreateExpense = () => {
                     required
                   >
                     <option value="">Select Department of Visit</option>
-                    <option value="project">Project</option>
-                    <option value="service">Service</option>
+                    <option value="Projects - TAYPRO">Project</option>
+                    <option value="Field Service - TAYPRO">Service</option>
                   </select>
                 </div>
                 <div className="erp-field">
-                  <label className="erp-label">Cost Center <span className="required">*</span></label>
+                  <label className="erp-label">
+                    Cost Center <span className="required">*</span>
+                  </label>
                   <select
                     name="cost_center"
                     className="erp-input"
@@ -870,7 +876,8 @@ const CreateExpense = () => {
                                     const isAlreadySelected = expenseItems.some(
                                       (itm, idx) =>
                                         idx !== index &&
-                                        itm.expense_date === item.expense_date &&
+                                        itm.expense_date ===
+                                          item.expense_date &&
                                         itm.expense_type === type,
                                     );
                                     return (
@@ -890,7 +897,10 @@ const CreateExpense = () => {
                               <textarea
                                 className="erp-grid-input"
                                 rows={1}
-                                style={{ resize: "vertical", minHeight: "32px" }}
+                                style={{
+                                  resize: "vertical",
+                                  minHeight: "32px",
+                                }}
                                 value={item.description}
                                 onChange={(e) =>
                                   handleExpenseItemChange(
@@ -939,12 +949,19 @@ const CreateExpense = () => {
                                       e.target.value = "";
                                       return;
                                     }
-                                    handleExpenseItemChange(index, "file", file);
+                                    handleExpenseItemChange(
+                                      index,
+                                      "file",
+                                      file,
+                                    );
                                   }
                                 }}
                               />
                             </td>
-                            <td className="erp-grid-td" style={{ textAlign: "center" }}>
+                            <td
+                              className="erp-grid-td"
+                              style={{ textAlign: "center" }}
+                            >
                               <button
                                 type="button"
                                 onClick={() => removeExpenseItem(index)}
@@ -959,9 +976,16 @@ const CreateExpense = () => {
 
                           {isDuplicate && (
                             <tr>
-                              <td colSpan="6" style={{ padding: "2px 14px", backgroundColor: "#fef2f2" }}>
+                              <td
+                                colSpan="6"
+                                style={{
+                                  padding: "2px 14px",
+                                  backgroundColor: "#fef2f2",
+                                }}
+                              >
                                 <div className="text-danger small">
-                                  <strong>{item.expense_type}</strong> already selected for this date.
+                                  <strong>{item.expense_type}</strong> already
+                                  selected for this date.
                                 </div>
                               </td>
                             </tr>
@@ -978,14 +1002,15 @@ const CreateExpense = () => {
             <div className="erp-summary-card">
               <div className="erp-summary-row">
                 <span>Total Claimed:</span>
-                <strong>₹{calculateTotals().total_claimed_amount.toFixed(2)}</strong>
+                <strong>
+                  ₹{calculateTotals().total_claimed_amount.toFixed(2)}
+                </strong>
               </div>
               <div className="erp-summary-row total">
                 <span>Grand Total:</span>
                 <span>₹{calculateTotals().grand_total.toFixed(2)}</span>
               </div>
             </div>
-
           </CForm>
         </div>
       </div>

@@ -4,11 +4,16 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import {
+  CAlert,
   CBadge,
   CButton,
-  CCol,
   CImage,
-  CRow,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
@@ -26,112 +31,16 @@ const reducer = (state, action) => {
   }
 };
 
-const S = {
-  page: { maxWidth: 1280, margin: "0 auto" },
-  header: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 12,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    padding: "16px 18px",
-    borderRadius: 10,
-    border: "1px solid rgba(148,163,184,0.18)",
-    background: "rgba(15, 23, 42, 0.45)",
-    marginBottom: 14,
-  },
-  number: {
-    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-    fontSize: 13,
-    color: "#38bdf8",
-    letterSpacing: 0.3,
-  },
-  title: { fontSize: 22, fontWeight: 650, margin: "4px 0 6px", color: "#e2e8f0" },
-  meta: { fontSize: 13, color: "#94a3b8" },
-  actions: { display: "flex", flexWrap: "wrap", gap: 8 },
-  panel: {
-    borderRadius: 10,
-    border: "1px solid rgba(148,163,184,0.18)",
-    background: "rgba(15, 23, 42, 0.45)",
-    marginBottom: 14,
-    overflow: "hidden",
-  },
-  panelHead: {
-    padding: "10px 16px",
-    borderBottom: "1px solid rgba(148,163,184,0.14)",
-    fontSize: 12,
-    fontWeight: 650,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: "#94a3b8",
-  },
-  panelBody: { padding: 16 },
-  fieldRow: {
-    display: "grid",
-    gridTemplateColumns: "140px 1fr",
-    gap: 8,
-    padding: "8px 0",
-    borderBottom: "1px solid rgba(148,163,184,0.08)",
-    fontSize: 13,
-  },
-  fieldLabel: { color: "#94a3b8", fontWeight: 500 },
-  fieldValue: { color: "#e2e8f0", wordBreak: "break-word" },
-  note: {
-    whiteSpace: "pre-wrap",
-    lineHeight: 1.55,
-    color: "#e2e8f0",
-    fontSize: 14,
-    minHeight: 48,
-  },
-  imgGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-    gap: 10,
-  },
-};
+const fmt = (d) =>
+  d
+    ? moment(d).format("DD/MM/YYYY, hh:mm:ss A")
+    : "—";
 
-const fmt = (d) => (d ? moment(d).format("DD MMM YYYY, hh:mm A") : "—");
 const fmtSite = (id = "") =>
   id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-const Field = ({ label, children }) => (
-  <div style={S.fieldRow}>
-    <div style={S.fieldLabel}>{label}</div>
-    <div style={S.fieldValue}>{children ?? "—"}</div>
-  </div>
-);
-
-const Panel = ({ title, children }) => (
-  <div style={S.panel}>
-    <div style={S.panelHead}>{title}</div>
-    <div style={S.panelBody}>{children}</div>
-  </div>
-);
-
-const ImageGrid = ({ images, empty }) => {
-  if (!images.length) {
-    return <div style={{ color: "#64748b", fontSize: 13 }}>{empty}</div>;
-  }
-  return (
-    <div style={S.imgGrid}>
-      {images.map((src, i) => (
-        <a key={i} href={src} target="_blank" rel="noreferrer">
-          <CImage
-            src={src}
-            alt={`Attachment ${i + 1}`}
-            style={{
-              width: "100%",
-              height: 120,
-              objectFit: "cover",
-              borderRadius: 8,
-              border: "1px solid rgba(148,163,184,0.2)",
-            }}
-          />
-        </a>
-      ))}
-    </div>
-  );
-};
+const thStyle = { width: "18%", whiteSpace: "nowrap", verticalAlign: "middle" };
+const tdStyle = { verticalAlign: "middle" };
 
 const ViewServiceTicket = () => {
   const { id } = useParams();
@@ -176,24 +85,17 @@ const ViewServiceTicket = () => {
     fetchTicket();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="text-center py-5">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
+  if (loading) return <LoadingSpinner />;
   if (error || !ticket) {
     return (
-      <div style={S.page}>
-        <div className="text-danger mb-3">{error || "Ticket not found"}</div>
+      <div>
+        <CAlert color="danger">{error || "Ticket not found"}</CAlert>
         <CButton
           color="secondary"
           size="sm"
           onClick={() => navigate(`/${adminroute}/service-tickets`)}
         >
-          Back to list
+          Back
         </CButton>
       </div>
     );
@@ -215,35 +117,44 @@ const ViewServiceTicket = () => {
     ticket.ticket_resolved_images5,
   ].filter(Boolean);
 
-  const daysOpen = moment().diff(moment(ticket.createdAt), "days");
+  const partsList =
+    Array.isArray(ticket.parts_replaced) && ticket.parts_replaced.length > 0
+      ? ticket.parts_replaced
+      : ticket.part_replaced
+        ? [
+            {
+              part_replaced: ticket.part_replaced,
+              part_replaced_id: ticket.part_replaced_id,
+              replaced_part_quantity: ticket.replaced_part_quantity,
+              item_image: ticket.part_replaced_image,
+              item_code: "",
+            },
+          ]
+        : [];
+
+  const partsWithChecklist = partsList.map((part) => {
+    if (part.checklist) return part;
+    const entry = (ticket.part_checklist || []).find(
+      (c) => c.part_id === part.part_replaced_id,
+    );
+    return { ...part, checklist: entry?.checklist || null };
+  });
+
   const isResolved = !!ticket.ticket_resolved;
 
   return (
-    <div style={S.page}>
-      {/* ITSM header */}
-      <div style={S.header}>
-        <div>
-          <div style={S.number}>{ticket.ticket_id}</div>
-          <h1 style={S.title}>{ticket.fault_type || "Service Ticket"}</h1>
-          <div style={S.meta}>
-            <CBadge color={isResolved ? "success" : "warning"} className="me-2">
-              {isResolved ? "Resolved" : "Open"}
-            </CBadge>
-            <span>
-              {fmtSite(ticket.site_id)} · Robot {ticket.robot_no}
-              {!isResolved ? ` · Open ${daysOpen}d` : ""}
-            </span>
-          </div>
-        </div>
-        <div style={S.actions}>
-          <CButton
-            color="secondary"
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/${adminroute}/service-tickets`)}
-          >
-            Back
-          </CButton>
+    <div>
+      {/* Actions */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <CButton
+          color="secondary"
+          size="sm"
+          variant="outline"
+          onClick={() => navigate(`/${adminroute}/service-tickets`)}
+        >
+          Back
+        </CButton>
+        <div className="d-flex gap-2">
           {canUpdate && (
             <Link
               to={`/${adminroute}/service-tickets/update-service-ticket/${ticket._id}`}
@@ -263,110 +174,285 @@ const ViewServiceTicket = () => {
         </div>
       </div>
 
-      <CRow className="g-3">
-        {/* Main column — ServiceNow style */}
-        <CCol xs={12} lg={8}>
-          <Panel title="Short description">
-            <div style={S.note}>
-              {ticket.fault_type}
-              {ticket.ticket_generating_notes
-                ? ` — ${ticket.ticket_generating_notes}`
-                : ""}
-            </div>
-          </Panel>
-
-          <Panel title="Work notes / generating notes">
-            <div style={S.note}>
-              {ticket.ticket_generating_notes || "No generating notes."}
-            </div>
-          </Panel>
-
-          {isResolved && (
-            <Panel title="Resolution notes">
-              <div style={S.note}>
-                {ticket.ticket_resolving_notes || "No resolution notes."}
-              </div>
-            </Panel>
-          )}
-
-          <Panel title="Attachments — raised">
-            <ImageGrid
-              images={generatedImages}
-              empty="No images attached at raise time."
-            />
-          </Panel>
-
-          {isResolved && (
-            <Panel title="Attachments — resolved">
-              <ImageGrid
-                images={resolvedImages}
-                empty="No images attached at resolve time."
-              />
-            </Panel>
-          )}
-
-          <Panel title="Activity">
-            {ticket.last_activity?.length ? (
-              <LastActivity lastactivity={ticket.last_activity} />
-            ) : (
-              <div style={{ color: "#64748b", fontSize: 13 }}>
-                No activity recorded.
-              </div>
-            )}
-          </Panel>
-        </CCol>
-
-        {/* Right sidebar — SAP/ServiceNow fields */}
-        <CCol xs={12} lg={4}>
-          <Panel title="Ticket information">
-            <Field label="Number">{ticket.ticket_id}</Field>
-            <Field label="State">
+      {/* Ticket details */}
+      <h5 className="mb-2">Ticket details</h5>
+      <CTable bordered striped responsive className="mb-4">
+        <CTableBody>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Ticket ID</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              <strong>{ticket.ticket_id}</strong>
+            </CTableDataCell>
+            <CTableHeaderCell style={thStyle}>Status</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
               <CBadge color={isResolved ? "success" : "warning"}>
                 {isResolved ? "Resolved" : "Open"}
               </CBadge>
-            </Field>
-            <Field label="Fault">{ticket.fault_type}</Field>
-            <Field label="Site">{fmtSite(ticket.site_id)}</Field>
-            <Field label="Company">{ticket.company}</Field>
-            <Field label="Opened">{fmt(ticket.createdAt)}</Field>
-            <Field label="Resolved">{fmt(ticket.ticket_resolved_at)}</Field>
-            {!isResolved && <Field label="Age">{daysOpen} days</Field>}
-          </Panel>
+            </CTableDataCell>
+          </CTableRow>
 
-          <Panel title="Configuration item">
-            <Field label="Robot No">{ticket.robot_no}</Field>
-            <Field label="DevEUI">{ticket.deveui}</Field>
-            <Field label="Robot Type">{ticket.robot_type}</Field>
-            <Field label="Block">{ticket.block}</Field>
-            <Field label="LoRa No">{ticket.lora_no || "—"}</Field>
-          </Panel>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Fault type</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {ticket.fault_type?.replace(/-/g, " ") || "—"}
+            </CTableDataCell>
+            <CTableHeaderCell style={thStyle}>Site</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {fmtSite(ticket.site_id)}
+            </CTableDataCell>
+          </CTableRow>
 
-          <Panel title="People">
-            <Field label="Opened by">{ticket.ticket_generated_by}</Field>
-            <Field label="Opened email">
-              {ticket.ticket_generated_by_email}
-            </Field>
-            <Field label="Resolved by">
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Company</CTableHeaderCell>
+            <CTableDataCell style={tdStyle} colSpan={3}>
+              {ticket.company || "—"}
+            </CTableDataCell>
+          </CTableRow>
+
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Opened at</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {fmt(ticket.createdAt)}
+            </CTableDataCell>
+            <CTableHeaderCell style={thStyle}>Opened by</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {ticket.ticket_generated_by || "—"}
+              {ticket.ticket_generated_by_email ? (
+                <div className="small text-medium-emphasis">
+                  {ticket.ticket_generated_by_email}
+                </div>
+              ) : null}
+            </CTableDataCell>
+          </CTableRow>
+
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Resolved at</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {fmt(ticket.ticket_resolved_at)}
+            </CTableDataCell>
+            <CTableHeaderCell style={thStyle}>Resolved by</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
               {ticket.ticket_resolved_by || "—"}
-            </Field>
-            <Field label="Resolved email">
-              {ticket.ticket_resolved_by_email || "—"}
-            </Field>
-          </Panel>
+              {ticket.ticket_resolved_by_email ? (
+                <div className="small text-medium-emphasis">
+                  {ticket.ticket_resolved_by_email}
+                </div>
+              ) : null}
+            </CTableDataCell>
+          </CTableRow>
 
-          {(ticket.service_part_replaced || ticket.part_replaced) && (
-            <Panel title="Parts">
-              <Field label="Part replaced">
-                {ticket.service_part_replaced ? "Yes" : "No"}
-              </Field>
-              <Field label="Part">{ticket.part_replaced || "—"}</Field>
-              <Field label="Qty">
-                {ticket.replaced_part_quantity ?? "—"}
-              </Field>
-            </Panel>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>
+              Generating notes
+            </CTableHeaderCell>
+            <CTableDataCell style={tdStyle} colSpan={3}>
+              <div style={{ whiteSpace: "pre-wrap" }}>
+                {ticket.ticket_generating_notes || "—"}
+              </div>
+            </CTableDataCell>
+          </CTableRow>
+
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>
+              Resolving notes
+            </CTableHeaderCell>
+            <CTableDataCell style={tdStyle} colSpan={3}>
+              <div style={{ whiteSpace: "pre-wrap" }}>
+                {ticket.ticket_resolving_notes || "—"}
+              </div>
+            </CTableDataCell>
+          </CTableRow>
+
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Part replaced</CTableHeaderCell>
+            <CTableDataCell style={tdStyle} colSpan={3}>
+              <CBadge
+                color={
+                  ticket.service_part_replaced || partsWithChecklist.length
+                    ? "info"
+                    : "secondary"
+                }
+              >
+                {ticket.service_part_replaced || partsWithChecklist.length
+                  ? "Yes"
+                  : "No"}
+              </CBadge>
+            </CTableDataCell>
+          </CTableRow>
+        </CTableBody>
+      </CTable>
+
+      {/* Robot / configuration item */}
+      <h5 className="mb-2">Robot details</h5>
+      <CTable bordered striped responsive className="mb-4">
+        <CTableBody>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Robot No</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>{ticket.robot_no}</CTableDataCell>
+            <CTableHeaderCell style={thStyle}>Robot type</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {ticket.robot_type || "—"}
+            </CTableDataCell>
+          </CTableRow>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>Block</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>{ticket.block || "—"}</CTableDataCell>
+            <CTableHeaderCell style={thStyle}>LoRa No</CTableHeaderCell>
+            <CTableDataCell style={tdStyle}>
+              {ticket.lora_no || "—"}
+            </CTableDataCell>
+          </CTableRow>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>DevEUI</CTableHeaderCell>
+            <CTableDataCell style={tdStyle} colSpan={3}>
+              <span className="font-monospace">{ticket.deveui || "—"}</span>
+            </CTableDataCell>
+          </CTableRow>
+        </CTableBody>
+      </CTable>
+
+      {/* Parts replaced */}
+      <h5 className="mb-2">
+        Parts replaced{" "}
+        <CBadge color="secondary" className="ms-1">
+          {partsWithChecklist.length}
+        </CBadge>
+      </h5>
+      <CTable bordered responsive className="mb-4 align-middle">
+        <CTableHead>
+          <CTableRow>
+            <CTableHeaderCell style={{ width: 50 }}>Sr</CTableHeaderCell>
+            <CTableHeaderCell style={{ width: 70 }}>Image</CTableHeaderCell>
+            <CTableHeaderCell>Part name</CTableHeaderCell>
+            <CTableHeaderCell>Item code</CTableHeaderCell>
+            <CTableHeaderCell style={{ width: 90 }}>Quantity</CTableHeaderCell>
+            <CTableHeaderCell>Checklist</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
+        <CTableBody>
+          {!partsWithChecklist.length ? (
+            <CTableRow>
+              <CTableDataCell colSpan={6} className="text-center text-medium-emphasis">
+                No parts replaced
+              </CTableDataCell>
+            </CTableRow>
+          ) : (
+            partsWithChecklist.map((part, index) => {
+              const checklistEntries =
+                part.checklist && typeof part.checklist === "object"
+                  ? Object.entries(part.checklist)
+                  : [];
+              return (
+                <CTableRow key={part._id || part.part_replaced_id || index}>
+                  <CTableDataCell>{index + 1}</CTableDataCell>
+                  <CTableDataCell>
+                    {part.item_image ? (
+                      <a
+                        href={part.item_image}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <CImage
+                          src={part.item_image}
+                          width={40}
+                          height={40}
+                          className="rounded border"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <strong>{part.part_replaced || "—"}</strong>
+                  </CTableDataCell>
+                  <CTableDataCell>{part.item_code || "—"}</CTableDataCell>
+                  <CTableDataCell>
+                    {part.replaced_part_quantity ?? "—"}
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    {checklistEntries.length ? (
+                      <ul className="mb-0 ps-3 small">
+                        {checklistEntries.map(([k, v]) => (
+                          <li key={k}>
+                            {k.replace(/_/g, " ")}: {String(v)}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      "—"
+                    )}
+                  </CTableDataCell>
+                </CTableRow>
+              );
+            })
           )}
-        </CCol>
-      </CRow>
+        </CTableBody>
+      </CTable>
+
+      {/* Attachments */}
+      <h5 className="mb-2">Attachments</h5>
+      <CTable bordered striped responsive className="mb-4">
+        <CTableBody>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>
+              Raised images ({generatedImages.length})
+            </CTableHeaderCell>
+            <CTableDataCell>
+              {generatedImages.length ? (
+                <div className="d-flex flex-wrap gap-2">
+                  {generatedImages.map((src, i) => (
+                    <a key={i} href={src} target="_blank" rel="noreferrer">
+                      <CImage
+                        src={src}
+                        width={90}
+                        height={68}
+                        className="rounded border"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                "—"
+              )}
+            </CTableDataCell>
+          </CTableRow>
+          <CTableRow>
+            <CTableHeaderCell style={thStyle}>
+              Resolved images ({resolvedImages.length})
+            </CTableHeaderCell>
+            <CTableDataCell>
+              {resolvedImages.length ? (
+                <div className="d-flex flex-wrap gap-2">
+                  {resolvedImages.map((src, i) => (
+                    <a key={i} href={src} target="_blank" rel="noreferrer">
+                      <CImage
+                        src={src}
+                        width={90}
+                        height={68}
+                        className="rounded border"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                "—"
+              )}
+            </CTableDataCell>
+          </CTableRow>
+        </CTableBody>
+      </CTable>
+
+      {/* Activity */}
+      <h5 className="mb-2">Activity</h5>
+      {ticket.last_activity?.length ? (
+        <LastActivity lastactivity={ticket.last_activity} />
+      ) : (
+        <p className="text-medium-emphasis">No activity recorded.</p>
+      )}
     </div>
   );
 };
