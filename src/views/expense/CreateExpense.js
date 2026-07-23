@@ -89,9 +89,9 @@ const CreateExpense = () => {
     naming_series: "HR-EXP-.YYYY.-",
     name: "new-expense-claim-znzqxzcgqd",
     posting_date: new Date().toISOString().split("T")[0],
-    cost_center: "Main - TPL",
-    payable_account: "Employee Expenses Payable - TPL",
-    department: "Project - TPL",
+    cost_center: "Main - TAYPRO",
+    payable_account: "Expense Claim Payable - TAYPRO",
+    department: "Projects - TAYPRO",
     expense_approver: "tejas.memane@taypro.in",
     company_gstin: "27AAHCT4250H1ZA",
     department_of_visit: "",
@@ -103,7 +103,7 @@ const CreateExpense = () => {
   const [expenseItems, setExpenseItems] = useState([
     {
       expense_date: new Date().toISOString().split("T")[0],
-      cost_center: "Main - TPL",
+      cost_center: "Main - TAYPRO",
       expense_type: "",
       description: "",
       amount: 0,
@@ -131,9 +131,9 @@ const CreateExpense = () => {
         (itm, idx) =>
           idx !== index &&
           itm.expense_date ===
-            (field === "expense_date" ? value : updatedItem.expense_date) &&
+          (field === "expense_date" ? value : updatedItem.expense_date) &&
           itm.expense_type ===
-            (field === "expense_type" ? value : updatedItem.expense_type),
+          (field === "expense_type" ? value : updatedItem.expense_type),
       );
 
       if (isDuplicate) {
@@ -321,7 +321,303 @@ const CreateExpense = () => {
   };
 
   return (
-    <div className=" py-4">
+    <div className="erp-container-wrapper py-3">
+      {/* ERPNext Theme Custom Styles */}
+      <style>{`
+        .erp-container {
+          background-color: transparent;
+          border-radius: 8px;
+          border: none;
+          box-shadow: none;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          color: #f8fafc;
+          overflow: hidden;
+        }
+
+        .erp-breadcrumb {
+          font-size: 12px;
+          color: #94a3b8;
+          padding: 16px 0px 4px 0px;
+          display: flex;
+          gap: 6px;
+        }
+
+        .erp-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 0px 16px 0px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .erp-header-title {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .erp-header-title h2 {
+          font-size: 20px;
+          font-weight: 600;
+          margin: 0;
+          color: #ffffff;
+        }
+
+        .erp-status-badge {
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 10px;
+          border-radius: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .erp-status-badge.draft {
+          background-color: rgba(217, 119, 6, 0.15);
+          color: #fbbf24;
+          border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .erp-actions {
+          display: flex;
+          gap: 10px;
+        }
+
+        .erp-btn {
+          font-size: 13px;
+          font-weight: 500;
+          padding: 6px 14px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          border: 1px solid #334155;
+          background-color: #1e293b;
+          color: #e2e8f0;
+          outline: none;
+        }
+
+        .erp-btn:hover {
+          background-color: #334155;
+          border-color: #475569;
+        }
+
+        .erp-btn-primary {
+          background-color: #1b66ec;
+          color: #ffffff;
+          border-color: #1b66ec;
+        }
+
+        .erp-btn-primary:hover {
+          background-color: #1652be;
+          border-color: #1652be;
+        }
+
+        .erp-body {
+          padding: 24px 0px;
+        }
+
+        .erp-section {
+          margin-bottom: 28px;
+          background: transparent;
+        }
+
+        .erp-section-header {
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          color: #38bdf8;
+          letter-spacing: 1px;
+          margin-bottom: 16px;
+          padding-bottom: 6px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .erp-field-group {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 16px 24px;
+        }
+
+        .erp-field {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .erp-label {
+          font-size: 12px;
+          font-weight: 500;
+          color: #cbd5e1;
+        }
+
+        .erp-label .required {
+          color: #f87171;
+          margin-left: 2px;
+        }
+
+        .erp-input {
+          font-size: 13px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: 1px solid #334155;
+          background-color: #111c2e;
+          color: #ffffff;
+          outline: none;
+          transition: all 0.2s;
+        }
+
+        .erp-input:focus {
+          border-color: #1b66ec;
+          box-shadow: 0 0 0 3px rgba(27, 102, 236, 0.25);
+        }
+
+        .erp-input[readonly] {
+          background-color: #1e293b;
+          color: #94a3b8;
+          cursor: not-allowed;
+          border-color: #334155;
+        }
+
+        select.erp-input option {
+          background-color: #111c2e;
+          color: #ffffff;
+        }
+
+        .erp-grid-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .erp-grid-header h4 {
+          font-size: 15px;
+          font-weight: 600;
+          margin: 0;
+          color: #ffffff;
+        }
+
+        .erp-grid-container {
+          border: 1px solid #334155;
+          border-radius: 6px;
+          overflow: hidden;
+          margin-bottom: 20px;
+          background-color: #111c2e;
+        }
+
+        .erp-grid-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 13px;
+        }
+
+        .erp-grid-thead {
+          background-color: #1e293b;
+          border-bottom: 1px solid #334155;
+        }
+
+        .erp-grid-thead th {
+          padding: 10px 12px;
+          font-weight: 500;
+          color: #cbd5e1;
+          text-align: left;
+          font-size: 12px;
+        }
+
+        .erp-grid-row {
+          border-bottom: 1px solid #334155;
+          transition: background-color 0.2s;
+        }
+
+        .erp-grid-row:last-child {
+          border-bottom: none;
+        }
+
+        .erp-grid-row:hover {
+          background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .erp-grid-td {
+          padding: 6px 8px;
+          vertical-align: middle;
+        }
+
+        .erp-grid-input {
+          width: 100%;
+          padding: 5px 8px;
+          border: 1px solid transparent;
+          background-color: transparent;
+          border-radius: 4px;
+          font-size: 13px;
+          color: #ffffff;
+          outline: none;
+          transition: all 0.2s;
+        }
+
+        .erp-grid-input:focus, .erp-grid-input:hover {
+          border-color: #475569;
+          background-color: #111c2e;
+        }
+
+        select.erp-grid-input option {
+          background-color: #111c2e;
+          color: #ffffff;
+        }
+
+        .erp-grid-btn-delete {
+          background: none;
+          border: none;
+          color: #f87171;
+          font-size: 18px;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+        }
+
+        .erp-grid-btn-delete:disabled {
+          color: #475569;
+          cursor: not-allowed;
+          background: none;
+        }
+
+        .erp-grid-btn-delete:hover:not(:disabled) {
+          background-color: rgba(248, 113, 113, 0.15);
+        }
+
+        .erp-summary-card {
+          background-color: #111c2e;
+          border-radius: 6px;
+          padding: 14px 18px;
+          border: 1px solid #334155;
+          width: 280px;
+          margin-left: auto;
+        }
+
+        .erp-summary-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 4px 0;
+          font-size: 13px;
+          color: #cbd5e1;
+        }
+
+        .erp-summary-row.total {
+          font-size: 14px;
+          font-weight: 600;
+          border-top: 1px dashed #334155;
+          margin-top: 6px;
+          padding-top: 10px;
+          color: #4ade80;
+        }
+      `}</style>
+
       <CModal
         visible={visible}
         onClose={() => setVisible(false)}
@@ -365,169 +661,170 @@ const CreateExpense = () => {
           </CTable>
         </CModalBody>
       </CModal>
-      <div className="card">
-        <div className="card-header bg-primary text-white">
-          <h3 className="mb-0">New Expense</h3>
+
+      <div className="erp-container">
+        {/* Breadcrumb */}
+        <div className="erp-breadcrumb">
+          <span>HR</span> / <span>Expense Claim</span> / <span style={{ fontWeight: 500 }}>New Expense Claim</span>
         </div>
 
-        <div className="card-body">
-          <CForm onSubmit={submitExpenseClaim}>
-            {/* Basic Information Section */}
-            <div className="mb-4">
-              <div className="row">
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Employee Name</label>
-                  <CFormInput
+        {/* Form header toolbar */}
+        <div className="erp-header">
+          <div className="erp-header-title">
+            <h2>New Expense Claim</h2>
+            <span className="erp-status-badge draft">Draft</span>
+          </div>
+          <div className="erp-actions">
+            <button
+              type="button"
+              className="erp-btn erp-btn-secondary"
+              onClick={() => setVisible(true)}
+            >
+              Allowance Limits
+            </button>
+            <button
+              type="submit"
+              form="expense-form"
+              className="erp-btn erp-btn-primary"
+              disabled={loading}
+            >
+              {loading ? <LoadingSpinner /> : "Save"}
+            </button>
+          </div>
+        </div>
+
+        {/* Form body */}
+        <div className="erp-body">
+          <CForm id="expense-form" onSubmit={submitExpenseClaim}>
+
+            {/* Claimant Details */}
+            <div className="erp-section">
+              <div className="erp-section-header">Employee Details</div>
+              <div className="erp-field-group">
+                <div className="erp-field">
+                  <label className="erp-label">Employee ID</label>
+                  <input
                     type="text"
-                    className="form-control"
-                    value={formData.employee_name}
-                    readOnly
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Employee ID</label>
-                  <CFormInput
-                    type="text"
-                    className="form-control"
+                    className="erp-input"
                     value={formData.employee}
                     readOnly
                   />
                 </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Posting Date</label>
-                  <CFormInput
-                    type="date"
-                    name="posting_date"
-                    className="form-control"
-                    value={formData.posting_date}
-                    onChange={handleFormChange}
-                    required
+                <div className="erp-field">
+                  <label className="erp-label">Employee Name</label>
+                  <input
+                    type="text"
+                    className="erp-input"
+                    value={formData.employee_name}
+                    readOnly
                   />
                 </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Company</label>
-                  <CFormInput
+                <div className="erp-field">
+                  <label className="erp-label">Company</label>
+                  <input
                     type="text"
-                    className="form-control"
+                    className="erp-input"
                     value={formData.company}
-                    readOnly
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Department</label>
-                  {/* <CFormSelect
-                    type="hidden"
-                    name="department"
-                    className="form-control"
-                    value={formData.department}
-                    onChange={handleFormChange}
-                    required
-                  >
-                    <option selected value="Project - TPL">
-                      Project
-                    </option>
-                  </CFormSelect> */}
-                  <CFormInput
-                    type="hidden"
-                    name="department"
-                    className="form-control"
-                    value={formData.department}
-                    onChange={handleFormChange}
-                    required
-                    placeholder="Enter department"
-                  />
-                  <CFormSelect
-                    name="department_of_visit"
-                    className="form-control"
-                    value={formData.department_of_visit}
-                    onChange={handleFormChange}
-                    required
-                  >
-                    <option selected value="">
-                      Select Department of Visit
-                    </option>
-                    <option value="project">Project</option>
-                    <option value="service">Service</option>
-                  </CFormSelect>
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">Cost Center</label>
-                  <CFormSelect
-                    name="cost_center"
-                    className="form-control"
-                    value={formData.cost_center}
-                    onChange={handleFormChange}
-                    required
-                  >
-                    <option selected value="Main - TPL">
-                      Main
-                    </option>
-                    {/* <option value="Project - TPL">Project</option>
-                    <option value="Administration - TPL">Administration</option> */}
-                  </CFormSelect>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Expense Approver Email</label>
-                  <CFormInput
-                    type="email"
-                    name="expense_approver"
-                    className="form-control"
-                    value={formData.expense_approver}
-                    onChange={handleFormChange}
-                    required
-                    readOnly
-                    placeholder="Enter approver's email"
-                  />
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Company GSTIN</label>
-                  <CFormInput
-                    type="text"
-                    name="company_gstin"
-                    className="form-control"
-                    value={formData.company_gstin}
-                    onChange={handleFormChange}
-                    placeholder="Optional"
                     readOnly
                   />
                 </div>
               </div>
             </div>
 
-            {/* Expense Items Section */}
-            <div className="mb-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="mb-0">Expense Items</h4>
+            {/* Accounting and Approvals */}
+            <div className="erp-section">
+              <div className="erp-section-header">Accounting & Approvals</div>
+              <div className="erp-field-group">
+                <div className="erp-field">
+                  <label className="erp-label">Posting Date <span className="required">*</span></label>
+                  <input
+                    type="date"
+                    name="posting_date"
+                    className="erp-input"
+                    value={formData.posting_date}
+                    onChange={handleFormChange}
+                    required
+                  />
+                </div>
+                <div className="erp-field">
+                  <label className="erp-label">Department of Visit <span className="required">*</span></label>
+                  <select
+                    name="department_of_visit"
+                    className="erp-input"
+                    value={formData.department_of_visit}
+                    onChange={handleFormChange}
+                    required
+                  >
+                    <option value="">Select Department of Visit</option>
+                    <option value="project">Project</option>
+                    <option value="service">Service</option>
+                  </select>
+                </div>
+                <div className="erp-field">
+                  <label className="erp-label">Cost Center <span className="required">*</span></label>
+                  <select
+                    name="cost_center"
+                    className="erp-input"
+                    value={formData.cost_center}
+                    onChange={handleFormChange}
+                    required
+                  >
+                    <option value="Main - TAYPRO">Main</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="erp-field-group mt-3">
+                <div className="erp-field" style={{ gridColumn: "span 2" }}>
+                  <label className="erp-label">Expense Approver Email</label>
+                  <input
+                    type="email"
+                    name="expense_approver"
+                    className="erp-input"
+                    value={formData.expense_approver}
+                    readOnly
+                  />
+                </div>
+                <div className="erp-field">
+                  <label className="erp-label">Company GSTIN</label>
+                  <input
+                    type="text"
+                    className="erp-input"
+                    value={formData.company_gstin}
+                    readOnly
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Expenses Child Table Grid */}
+            <div className="erp-section">
+              <div className="erp-grid-header">
+                <h4>Expenses</h4>
                 <button
                   type="button"
                   onClick={addExpenseItem}
-                  className="btn btn-sm btn-primary"
+                  className="erp-btn erp-btn-secondary"
+                  style={{ padding: "4px 10px", fontSize: "12px" }}
                 >
-                  <GrAddCircle className="me-1" /> Add Item
+                  <GrAddCircle /> Add Row
                 </button>
               </div>
 
-              <div className="table-responsive">
-                <table className="table table-bordered">
-                  <thead className="table-light">
+              <div className="erp-grid-container">
+                <table className="erp-grid-table">
+                  <thead className="erp-grid-thead">
                     <tr>
-                      <th>Date</th>
-                      <th style={{ minWidth: "150px" }}>Type</th>
-                      <th style={{ minWidth: "300px" }}>Description</th>
-                      <th style={{ minWidth: "150px" }}>Amount (₹)</th>
-                      <th style={{ minWidth: "150px" }}>Bill Attachment</th>
-                      <th>Actions</th>
+                      <th style={{ width: "15%" }}>Date</th>
+                      <th style={{ width: "20%" }}>Type</th>
+                      <th style={{ width: "35%" }}>Description</th>
+                      <th style={{ width: "15%" }}>Amount (₹)</th>
+                      <th style={{ width: "10%" }}>Attachment</th>
+                      <th style={{ width: "5%", textAlign: "center" }}></th>
                     </tr>
                   </thead>
                   <tbody>
                     {expenseItems.map((item, index) => {
-                      // 🔍 Check for duplicates: is this expense_type already used for this date in another row?
                       const isDuplicate = expenseItems.some(
                         (itm, idx) =>
                           idx !== index &&
@@ -538,11 +835,11 @@ const CreateExpense = () => {
 
                       return (
                         <React.Fragment key={index}>
-                          <tr>
-                            <td>
-                              <CFormInput
+                          <tr className="erp-grid-row">
+                            <td className="erp-grid-td">
+                              <input
                                 type="date"
-                                className="form-control form-control-sm"
+                                className="erp-grid-input"
                                 value={item.expense_date}
                                 onChange={(e) =>
                                   handleExpenseItemChange(
@@ -554,9 +851,9 @@ const CreateExpense = () => {
                                 required
                               />
                             </td>
-                            <td>
+                            <td className="erp-grid-td">
                               <select
-                                className="form-control form-control-sm"
+                                className="erp-grid-input"
                                 value={item.expense_type}
                                 onChange={(e) =>
                                   handleExpenseItemChange(
@@ -573,8 +870,7 @@ const CreateExpense = () => {
                                     const isAlreadySelected = expenseItems.some(
                                       (itm, idx) =>
                                         idx !== index &&
-                                        itm.expense_date ===
-                                          item.expense_date &&
+                                        itm.expense_date === item.expense_date &&
                                         itm.expense_type === type,
                                     );
                                     return (
@@ -590,10 +886,11 @@ const CreateExpense = () => {
                                 )}
                               </select>
                             </td>
-                            <td>
+                            <td className="erp-grid-td">
                               <textarea
-                                className="form-control form-control-sm"
-                                rows={3}
+                                className="erp-grid-input"
+                                rows={1}
+                                style={{ resize: "vertical", minHeight: "32px" }}
                                 value={item.description}
                                 onChange={(e) =>
                                   handleExpenseItemChange(
@@ -605,10 +902,10 @@ const CreateExpense = () => {
                                 required
                               />
                             </td>
-                            <td>
-                              <CFormInput
+                            <td className="erp-grid-td">
+                              <input
                                 type="number"
-                                className="form-control form-control-sm"
+                                className="erp-grid-input"
                                 min="0"
                                 step="0.01"
                                 value={item.amount}
@@ -622,68 +919,49 @@ const CreateExpense = () => {
                                 required
                               />
                             </td>
-                            <td>
-                              {/* <CFormInput
-                                type="file"
-                                className="form-control form-control-sm"
-                                onChange={(e) =>
-                                  handleExpenseItemChange(
-                                    index,
-                                    "file",
-                                    e.target.files[0]
-                                  )
-                                }
-                              /> */}
-
+                            <td className="erp-grid-td">
                               <CFormInput
                                 type="file"
-                                className="form-control form-control-sm"
+                                size="sm"
+                                style={{ fontSize: "11px", padding: "2px 4px" }}
                                 onChange={(e) => {
                                   const file = e.target.files[0];
                                   if (file) {
-                                    const maxSize = 1 * 1024 * 1024; // 1 MB in bytes
+                                    const maxSize = 1 * 1024 * 1024;
                                     if (file.size > maxSize) {
                                       const fileSizeInMB = (
                                         file.size /
                                         (1024 * 1024)
-                                      ).toFixed(2); // convert to MB
+                                      ).toFixed(2);
                                       toast.error(
                                         `File size must be less than 1MB. Your file size is ${fileSizeInMB} MB.`,
                                       );
-                                      e.target.value = ""; // reset input
+                                      e.target.value = "";
                                       return;
                                     }
-                                    handleExpenseItemChange(
-                                      index,
-                                      "file",
-                                      file,
-                                    );
+                                    handleExpenseItemChange(index, "file", file);
                                   }
                                 }}
                               />
                             </td>
-                            <td className="text-center">
-                              <CButton
+                            <td className="erp-grid-td" style={{ textAlign: "center" }}>
+                              <button
                                 type="button"
                                 onClick={() => removeExpenseItem(index)}
-                                className="btn btn-sm btn-danger"
+                                className="erp-grid-btn-delete"
                                 disabled={expenseItems.length <= 1}
-                                title="Remove Item"
+                                title="Delete Row"
                               >
                                 <MdDeleteOutline />
-                              </CButton>
+                              </button>
                             </td>
                           </tr>
 
-                          {/* 🔴 Show warning if duplicate found */}
                           {isDuplicate && (
                             <tr>
-                              <td colSpan="5">
-                                <div className="text-danger small mt-1">
-                                  <strong>{item.expense_type}</strong> already
-                                  selected for{" "}
-                                  <strong>{item.expense_date}</strong>. Please
-                                  choose a different type.
+                              <td colSpan="6" style={{ padding: "2px 14px", backgroundColor: "#fef2f2" }}>
+                                <div className="text-danger small">
+                                  <strong>{item.expense_type}</strong> already selected for this date.
                                 </div>
                               </td>
                             </tr>
@@ -696,49 +974,18 @@ const CreateExpense = () => {
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="row justify-content-end">
-                <div className="col-md-4 col-sm-6 col-12">
-                  <div className="card">
-                    <div className="card-header">
-                      <h6 className="mb-0">Expense Summary</h6>
-                    </div>
-                    <div className="card-body py-2">
-                      <div className="d-flex justify-content-between mb-2">
-                        <strong className="small">Total Claimed:</strong>
-                        <span className="small">
-                          ₹{calculateTotals().total_claimed_amount.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-between fw-bold small">
-                        <span>Grand Total:</span>
-                        <span className="text-success">
-                          ₹{calculateTotals().grand_total.toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* Summary */}
+            <div className="erp-summary-card">
+              <div className="erp-summary-row">
+                <span>Total Claimed:</span>
+                <strong>₹{calculateTotals().total_claimed_amount.toFixed(2)}</strong>
+              </div>
+              <div className="erp-summary-row total">
+                <span>Grand Total:</span>
+                <span>₹{calculateTotals().grand_total.toFixed(2)}</span>
               </div>
             </div>
 
-            {/* Form Actions */}
-            <div className="d-flex justify-content-end border-top pt-3">
-              <CButton
-                type="submit"
-                color="primary"
-                size="sm"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <LoadingSpinner /> Submitting...
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </CButton>
-            </div>
           </CForm>
         </div>
       </div>
