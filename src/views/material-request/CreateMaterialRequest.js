@@ -97,7 +97,7 @@ const CreateMaterialRequest = () => {
     transaction_date: new Date().toISOString().split("T")[0],
     material_request_type: "Material Transfer",
     site_id: "",
-    set_from_warehouse: "Stores - TPL",
+    set_from_warehouse: "Stores - TAYPRO",
     set_to_warehouse: "",
     custom_request_type: "Service",
     remark: "",

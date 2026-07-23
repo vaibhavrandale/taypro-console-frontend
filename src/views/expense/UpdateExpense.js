@@ -67,7 +67,7 @@ const UpdateExpense = () => {
   const [expenseItems, setExpenseItems] = useState([
     {
       expense_date: "",
-      cost_center: "Main - TPL",
+      cost_center: "Main - TAYPRO",
       expense_type: "",
       description: "",
       amount: 0,
@@ -255,17 +255,17 @@ const UpdateExpense = () => {
   const getDefaultAccount = (expenseType) => {
     switch (expenseType) {
       case "Food":
-        return "Food Expenses - TPL";
+        return "Material Cost For Accessories - TAYPRO";
       case "Travel":
-        return "Travel Expenses - TPL";
+        return "RaaS Site Travel & Lodging - TAYPRO";
       case "Stay":
-        return "Hotel Expenses - TPL";
+        return "RaaS Site Travel & Lodging - TAYPRO";
       case "Communication":
-        return "Communication Expenses - TPL";
+        return "Miscellaneous Office Expenses - TAYPRO";
       case "Office":
-        return "Office Expenses - TPL";
+        return "Miscellaneous Office Expenses - TAYPRO";
       default:
-        return "Miscellaneous Expenses - TPL";
+        return "Miscellaneous Office Expenses - TAYPRO";
     }
   };
 
@@ -381,10 +381,10 @@ const UpdateExpense = () => {
                       required
                     >
                       {/* <option value="">Select Department</option> */}
-                      <option value="Project - TPL">Project</option>
-                      {/* <option value="HR - TPL">HR</option> */}
-                      {/* <option value="Finance - TPL">Finance</option> */}
-                      {/* <option value="Operations - TPL">Operations</option> */}
+                      <option value="Projects - TAYPRO">Project</option>
+                      {/* <option value="HR - TAYPRO">HR</option> */}
+                      {/* <option value="Finance - TAYPRO">Finance</option> */}
+                      {/* <option value="Operations - TAYPRO">Operations</option> */}
                     </CFormSelect>
                   </div>
                   <div className="col-md-4 mb-3">
@@ -396,9 +396,9 @@ const UpdateExpense = () => {
                       onChange={handleFormChange}
                       required
                     >
-                      <option value="Main - TPL">Main</option>
-                      {/* <option value="Project - TPL">Project</option>
-                             <option value="Administration - TPL">Administration</option> */}
+                      <option value="Main - TAYPRO">Main</option>
+                      {/* <option value="Project - TAYPRO">Project</option>
+                             <option value="Administration - TAYPRO">Administration</option> */}
                     </CFormSelect>
                   </div>
                 </div>
