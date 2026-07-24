@@ -142,7 +142,7 @@ const UpdateExpense = () => {
     };
 
     fetchExpense();
-  }, [id, , userInfo.role, navigate, adminroute]);
+  }, [id, userInfo.role, navigate, adminroute]);
 
   const handleFormChange = (e) => {
     // const { name, value } = e.target;
@@ -382,6 +382,7 @@ const UpdateExpense = () => {
                     >
                       {/* <option value="">Select Department</option> */}
                       <option value="Projects - TAYPRO">Project</option>
+                      <option value="Field Service - TAYPRO">Service</option>
                       {/* <option value="HR - TAYPRO">HR</option> */}
                       {/* <option value="Finance - TAYPRO">Finance</option> */}
                       {/* <option value="Operations - TAYPRO">Operations</option> */}

@@ -5,26 +5,22 @@ import {
   CCard,
   CCardBody,
   CButton,
-  CTable,
-  CTableRow,
-  CTableBody,
-  CTableDataCell,
   CDropdownMenu,
   CDropdownItem,
   CDropdown,
   CDropdownToggle,
   CTooltip,
   CBadge,
+  CAlert,
 } from "@coreui/react";
 import "./management.css";
 import { Link, useParams } from "react-router-dom";
-import "./management.css";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import WeatherCheckResultModal from "../../../components/WeatherCheckResultModal";
 import { formatDistanceToNow } from "date-fns";
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -78,6 +74,9 @@ const ClientRobotOperating = () => {
   const { site_id, block, robot_no } = useParams();
   const [siteRobots, setSiteRobots] = useState([]);
   // const authtoken = useSelector((state) => state.authtoken);
+  const [commandButton, setCommandButton] = useState(null);
+  const [weatherErrorModal, setWeatherErrorModal] = useState(false);
+  const [weatherError, setWeatherError] = useState(null);
   const userInfo = useSelector((state) => state.userInfo);
 
   let start = "11";
@@ -85,7 +84,6 @@ const ClientRobotOperating = () => {
   let stop = "14";
   let returntodock = "15";
   // const [LoadingRow,setLoadingRow] = useState(null); // Track the row index
-  const [commandButton, setCommandButton] = useState(null); // Track the row index
 
   const [{ error, loadingRobots, robots, robot }, dispatch] = useReducer(
     reducer,
@@ -195,14 +193,7 @@ const ClientRobotOperating = () => {
 
   const sendsingleDownlink = async (command, index) => {
     setCommandButton(index);
-    //deveui,command,robot_no,site_id,lora_no
-    // let robotdownlink = {
-    //   deveui: robot.deveui,
-    //   robot_no: robot.robot_no,
-    //   site_id: site_id,
-    //   command: command,
-    //   lora_no: robot.lora_no,
-    // };
+
     dispatch({ type: "SEND_DOWNLINK_REQUEST" });
     try {
       const data = await axios.post(
@@ -268,16 +259,66 @@ const ClientRobotOperating = () => {
     setCommandButton(null);
   };
 
+  const sendsingleintelligentDownlink = async (command, index) => {
+    setCommandButton(index);
+
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/intelligent-command-weather-check",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
+    } catch (error) {
+      const errData = error.response?.data || {};
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: errData.message || errData.error || "Command failed",
+      });
+
+      if (errData.weather || errData.failed_field || errData.checks) {
+        setWeatherError({
+          message: errData.message || errData.error || "Weather check failed",
+          failed_field: errData.failed_field,
+          failed_fields: errData.failed_fields || [],
+          failed_count: errData.failed_count ?? 0,
+          passed_count: errData.passed_count ?? 0,
+          total_checks: errData.total_checks ?? 0,
+          checks: errData.checks || [],
+          weather: errData.weather || {},
+          thresholds: errData.thresholds || {},
+        });
+        setWeatherErrorModal(true);
+      } else {
+        toast.error(errData.message || errData.error || "Command failed");
+      }
+    }
+    setCommandButton(null);
+  };
+
   return (
     <>
       {loadingRobots ? (
         <div className="loading-container">
           <LoadingSpinner />
         </div>
-      ) : error ? (
-        <h1>{error}</h1>
       ) : (
         <div className="">
+          <div className="w-50">
+            {" "}
+            {error && <CAlert color="danger">{error}</CAlert>}
+          </div>
+
           {/* Page Header */}
           <CRow>
             <CCol>
@@ -397,15 +438,14 @@ const ClientRobotOperating = () => {
                           {robot.lora_no}
                         </span>
                       </div>
-
-                      <div
-                        className="small text-success fw-semibold text-truncate"
-                        style={{ maxWidth: "300px" }}
-                      >
-                        {robot.deveui}
-                      </div>
                     </div>
-
+                    <div
+                      className="small  fw-semibold text-truncate"
+                      style={{ maxWidth: "300px" }}
+                    >
+                      deveui:
+                      <span className="text-success"> {robot.deveui}</span>
+                    </div>
                     <CBadge color="success" shape="rounded-pill">
                       {robot.version}
                     </CBadge>
@@ -477,7 +517,7 @@ const ClientRobotOperating = () => {
                     >
                       <span className="small text-muted">Status</span>
 
-                      <span className="fw-semibold text-end">
+                      <span className="text-success text-end">
                         {robot.last_status || "N/A"}
                       </span>
                     </div>
@@ -498,7 +538,7 @@ const ClientRobotOperating = () => {
                           content={new Date(robot.last_uplink).toLocaleString()}
                         >
                           <span
-                            className="fw-semibold"
+                            className="text-warning"
                             style={{ cursor: "pointer" }}
                           >
                             {formatDistanceToNow(new Date(robot.last_uplink), {
@@ -520,6 +560,23 @@ const ClientRobotOperating = () => {
               <CCard className="shadow border-0 " style={{ height: "100%" }}>
                 <CCardBody>
                   <p>Cleaning Cycle</p>
+
+                  <div>
+                    <CButton
+                      className="btn btn-sm btn-secondary m-1 shadow"
+                      disabled={commandButton === 4}
+                      onClick={() => sendsingleintelligentDownlink(start, 4)}
+                    >
+                      {commandButton === 4 ? (
+                        <>
+                          Checking weather&nbsp;
+                          <LoadingSpinner />
+                        </>
+                      ) : (
+                        "Check Weather & Start"
+                      )}
+                    </CButton>
+                  </div>
                   <CButton
                     className="btn btn-sm btn-secondary m-1 shadow"
                     disabled={commandButton === 1}
@@ -604,6 +661,12 @@ const ClientRobotOperating = () => {
           </CRow>
         </div>
       )}
+
+      <WeatherCheckResultModal
+        visible={weatherErrorModal}
+        onClose={() => setWeatherErrorModal(false)}
+        weatherError={weatherError}
+      />
     </>
   );
 };
