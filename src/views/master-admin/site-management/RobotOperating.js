@@ -33,6 +33,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import WeatherCheckResultModal from "../../../components/WeatherCheckResultModal";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 
@@ -209,6 +210,8 @@ const RobotOperating = () => {
 
   const [loadingRow, setLoadingRow] = useState(null); // Track the row index
   const [commandButton, setCommandButton] = useState(null); // Track the row index
+  const [weatherErrorModal, setWeatherErrorModal] = useState(false);
+  const [weatherError, setWeatherError] = useState(null);
 
   const [customDownlink, setCustomDownlink] = useState("");
   const [page, setPage] = useState(1);
@@ -382,6 +385,49 @@ const RobotOperating = () => {
       toast.error(error.response.data.message || error.response.data.error);
     }
     setLoadingRow(null);
+    setCommandButton(null);
+  };
+
+  const sendsingleintelligentDownlink = async (command, index) => {
+    setCommandButton(index);
+    dispatch({ type: "SEND_DOWNLINK_REQUEST" });
+    try {
+      const data = await axios.post(
+        "/api/v1/robots/intelligent-command-weather-check",
+        {
+          deveui: robot.deveui,
+          robot_no: robot.robot_no,
+          site_id: site_id,
+          payload: command,
+          lora_no: robot.lora_no,
+        },
+        { withCredentials: true },
+      );
+      dispatch({ type: "SEND_DOWNLINK_SUCCESS" });
+      toast.success(data.data.message);
+    } catch (error) {
+      const errData = error.response?.data || {};
+      dispatch({
+        type: "SEND_DOWNLINK_FAIL",
+        payload: errData.message || errData.error || "Command failed",
+      });
+      if (errData.weather || errData.failed_field || errData.checks) {
+        setWeatherError({
+          message: errData.message || errData.error || "Weather check failed",
+          failed_field: errData.failed_field,
+          failed_fields: errData.failed_fields || [],
+          failed_count: errData.failed_count ?? 0,
+          passed_count: errData.passed_count ?? 0,
+          total_checks: errData.total_checks ?? 0,
+          checks: errData.checks || [],
+          weather: errData.weather || {},
+          thresholds: errData.thresholds || {},
+        });
+        setWeatherErrorModal(true);
+      } else {
+        toast.error(errData.message || errData.error || "Command failed");
+      }
+    }
     setCommandButton(null);
   };
 
@@ -1244,6 +1290,21 @@ const RobotOperating = () => {
                         {(userInfo.role === "Master Admin" ||
                           userInfo.role === "Service Admin") && (
                           <>
+                            <CButton
+                              className="btn btn-sm btn-info m-1 shadow"
+                              onClick={() =>
+                                sendsingleintelligentDownlink(start, 47)
+                              }
+                            >
+                              {commandButton === 47 ? (
+                                <>
+                                  Checking weather&nbsp;
+                                  <LoadingSpinner />
+                                </>
+                              ) : (
+                                "Check Weather & Start"
+                              )}
+                            </CButton>
                             <CButton
                               className="btn btn-sm btn-warning m-1 shadow"
                               onClick={() =>
@@ -2177,6 +2238,12 @@ const RobotOperating = () => {
           )}
         </div>
       )}
+
+      <WeatherCheckResultModal
+        visible={weatherErrorModal}
+        onClose={() => setWeatherErrorModal(false)}
+        weatherError={weatherError}
+      />
     </>
   );
 };
