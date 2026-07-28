@@ -53,8 +53,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node --max-old-space-size=8192 node_modules/react-scripts/bin/react-scripts.js build",
-    "build:analyze": "node --max-old-space-size=8192 node_modules/react-scripts/bin/react-scripts.js build && source-map-explorer 'build/static/js/*.js'",
+    "build": "node scripts/build-prod.js",
+    "build:analyze": "node --max-old-space-size=12288 node_modules/react-scripts/bin/react-scripts.js build && source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
