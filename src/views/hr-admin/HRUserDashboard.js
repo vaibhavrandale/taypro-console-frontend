@@ -37,6 +37,7 @@ const emptyForm = {
   email: "",
   employee_id: "",
   rfid_card_id: "",
+  rfid_card_id_2: "",
   department: "",
   location: "office",
   phone: "",
@@ -89,8 +90,10 @@ const HRUserDashboard = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [captureListening, setCaptureListening] = useState(false);
-  const [lastCapturedCard, setLastCapturedCard] = useState("");
+  const [fpDevices, setFpDevices] = useState([]);
+  const [enrollDeviceId, setEnrollDeviceId] = useState("");
+  const [enrolling, setEnrolling] = useState(false);
+  const [lastEnrollId, setLastEnrollId] = useState("");
 
   const fetchHRUsers = async () => {
     try {
@@ -144,25 +147,65 @@ const HRUserDashboard = () => {
   useEffect(() => {
     socket.emit("attendance-join");
 
-    const handleTap = (payload) => {
-      if (!payload?.card_id) return;
-      setLastCapturedCard(payload.card_id);
-      if (captureListening) {
+    const handleEnroll = (payload) => {
+      if (!payload) return;
+      if (payload.phase === "started") {
+        toast(payload.message || "Place finger on reader (twice)");
+        return;
+      }
+      if (payload.phase === "done" && payload.card_id) {
+        const finger = Number(payload.finger) === 2 ? 2 : 1;
         setForm((prev) => ({
           ...prev,
-          rfid_card_id: payload.card_id,
+          ...(finger === 2
+            ? { rfid_card_id_2: payload.card_id }
+            : { rfid_card_id: payload.card_id }),
         }));
-        toast.success(`Card captured: ${payload.card_id}`);
-        setCaptureListening(false);
+        setLastEnrollId(payload.card_id);
+        toast.success(
+          payload.message || `Finger ${finger}/2 → ${payload.card_id}`,
+        );
+        setEnrolling(false);
+        if (editModal) {
+          fetchHRUsers();
+        }
+        return;
+      }
+      if (payload.phase === "failed") {
+        toast.error(payload.message || "Fingerprint enroll failed");
+        setEnrolling(false);
       }
     };
 
-    socket.on("attendance-tap", handleTap);
+    socket.on("attendance-enroll", handleEnroll);
 
     return () => {
-      socket.off("attendance-tap", handleTap);
+      socket.off("attendance-enroll", handleEnroll);
     };
-  }, [captureListening]);
+  }, [editModal]);
+
+  useEffect(() => {
+    const loadDevices = async () => {
+      try {
+        const res = await axios.post(
+          "/api/v1/hr/attendance/devices/list",
+          { pg: 1, limit: 100 },
+          { withCredentials: true },
+        );
+        const list = res.data?.data || res.data?.devices || [];
+        setFpDevices(Array.isArray(list) ? list : []);
+        const online = (Array.isArray(list) ? list : []).find(
+          (d) => d.status === "online",
+        );
+        if (online?.device_id) {
+          setEnrollDeviceId((prev) => prev || online.device_id);
+        }
+      } catch {
+        /* ignore — enroll button still usable if admin typed device earlier */
+      }
+    };
+    loadDevices();
+  }, []);
 
   const handlePageInputChange = (e) => {
     setPageInput(e.target.value);
@@ -178,6 +221,37 @@ const HRUserDashboard = () => {
     const pageNumber = parseInt(pageInput, 10);
     if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
       handlePageChange(pageNumber);
+    }
+  };
+
+  const handleFingerprintEnroll = async (finger = 1) => {
+    if (!enrollDeviceId) {
+      toast.error("Select an online fingerprint device first");
+      return;
+    }
+    try {
+      setEnrolling(true);
+      const body = { device_id: enrollDeviceId, finger };
+      if (selectedItem?._id && editModal) {
+        body.hr_user_id = selectedItem._id;
+      }
+      const res = await axios.post(
+        "/api/v1/hr/attendance/fingerprint/enroll",
+        body,
+        { withCredentials: true },
+      );
+      toast.success(
+        res.data?.message ||
+          `Enroll finger ${finger}/2 — place that finger twice on Pi`,
+      );
+      setTimeout(() => setEnrolling(false), 90000);
+    } catch (err) {
+      setEnrolling(false);
+      toast.error(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to start fingerprint enroll",
+      );
     }
   };
 
@@ -201,6 +275,7 @@ const HRUserDashboard = () => {
       email: item.email || "",
       employee_id: item.employee_id || "",
       rfid_card_id: item.rfid_card_id || "",
+      rfid_card_id_2: item.rfid_card_id_2 || "",
       department: item.department || "",
       location: item.location || "office",
       phone: item.phone || "",
@@ -322,26 +397,62 @@ const HRUserDashboard = () => {
         />
       </CCol>
       <CCol md={6}>
-        <CFormLabel htmlFor="rfid_card_id">RFID Card ID</CFormLabel>
-        <div className="d-flex gap-2">
-          <CFormInput
-            id="rfid_card_id"
-            name="rfid_card_id"
-            value={form.rfid_card_id}
-            onChange={handleFormChange}
-            placeholder="Enter RFID card ID"
-            required
-          />
-          <CButton
-            color={captureListening ? "warning" : "info"}
-            onClick={() => setCaptureListening((prev) => !prev)}
+        <CFormLabel htmlFor="rfid_card_id">Fingerprint 1 ID</CFormLabel>
+        <CFormInput
+          id="rfid_card_id"
+          name="rfid_card_id"
+          value={form.rfid_card_id}
+          onChange={handleFormChange}
+          placeholder="FP0001 (from Enroll Finger 1)"
+          required
+        />
+        <CFormLabel htmlFor="rfid_card_id_2" className="mt-2">
+          Fingerprint 2 ID (backup)
+        </CFormLabel>
+        <CFormInput
+          id="rfid_card_id_2"
+          name="rfid_card_id_2"
+          value={form.rfid_card_id_2}
+          onChange={handleFormChange}
+          placeholder="FP0002 (from Enroll Finger 2)"
+        />
+        <div className="d-flex gap-2 mt-2 align-items-center flex-wrap">
+          <CFormSelect
+            value={enrollDeviceId}
+            onChange={(e) => setEnrollDeviceId(e.target.value)}
+            style={{ maxWidth: 220 }}
           >
-            {captureListening ? "Listening..." : "Capture"}
+            <option value="">Select fingerprint reader</option>
+            {fpDevices.map((d) => (
+              <option key={d.device_id || d._id} value={d.device_id}>
+                {d.name || d.device_id}
+                {d.status === "online" ? " (online)" : " (offline)"}
+              </option>
+            ))}
+          </CFormSelect>
+          <CButton
+            color="success"
+            disabled={enrolling || !enrollDeviceId}
+            onClick={() => handleFingerprintEnroll(1)}
+          >
+            {enrolling ? "Enrolling..." : "Enroll Finger 1"}
+          </CButton>
+          <CButton
+            color="success"
+            variant="outline"
+            disabled={enrolling || !enrollDeviceId}
+            onClick={() => handleFingerprintEnroll(2)}
+          >
+            Enroll Finger 2
           </CButton>
         </div>
-        {lastCapturedCard ? (
+        <small className="text-medium-emphasis d-block mt-1">
+          Use Enroll on the Pi reader (no RFID card tap). Templates stay on
+          the R307; IDs auto-fill here.
+        </small>
+        {lastEnrollId ? (
           <CBadge color="info" className="mt-2">
-            Last tap: {lastCapturedCard}
+            Last enrolled: {lastEnrollId}
           </CBadge>
         ) : null}
       </CCol>
@@ -425,7 +536,7 @@ const HRUserDashboard = () => {
                 <CFormLabel htmlFor="search">Search</CFormLabel>
                 <CFormInput
                   id="search"
-                  placeholder="Search by name, email, employee ID, RFID..."
+                  placeholder="Search by name, email, employee ID, fingerprint..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                 />
@@ -463,7 +574,7 @@ const HRUserDashboard = () => {
             <CTableHeaderCell>Name</CTableHeaderCell>
             <CTableHeaderCell>Email</CTableHeaderCell>
             <CTableHeaderCell>Employee ID</CTableHeaderCell>
-            <CTableHeaderCell>RFID Card ID</CTableHeaderCell>
+            <CTableHeaderCell>Finger IDs</CTableHeaderCell>
             <CTableHeaderCell>Department</CTableHeaderCell>
             <CTableHeaderCell>Location</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
@@ -492,7 +603,10 @@ const HRUserDashboard = () => {
                 <CTableDataCell>{item.name}</CTableDataCell>
                 <CTableDataCell>{item.email}</CTableDataCell>
                 <CTableDataCell>{item.employee_id}</CTableDataCell>
-                <CTableDataCell>{item.rfid_card_id}</CTableDataCell>
+                <CTableDataCell>
+                  {item.rfid_card_id}
+                  {item.rfid_card_id_2 ? ` / ${item.rfid_card_id_2}` : ""}
+                </CTableDataCell>
                 <CTableDataCell>{item.department}</CTableDataCell>
                 <CTableDataCell>
                   <CBadge
@@ -516,7 +630,7 @@ const HRUserDashboard = () => {
                   <CButton
                     color="info"
                     size="sm"
-                    className="me-1"
+                    className="m-1"
                     onClick={() => openViewModal(item)}
                   >
                     View
@@ -524,7 +638,7 @@ const HRUserDashboard = () => {
                   <CButton
                     color="warning"
                     size="sm"
-                    className="me-1"
+                    className="m-1"
                     onClick={() => openEditModal(item)}
                   >
                     Edit
@@ -560,7 +674,12 @@ const HRUserDashboard = () => {
         handleLimitChange={setLimit}
       />
 
-      <CModal visible={addModal} onClose={() => setAddModal(false)} size="lg" backdrop="static">
+      <CModal
+        visible={addModal}
+        onClose={() => setAddModal(false)}
+        size="lg"
+        backdrop="static"
+      >
         <CModalHeader>
           <CModalTitle>Register HR User</CModalTitle>
         </CModalHeader>
@@ -577,7 +696,12 @@ const HRUserDashboard = () => {
         </CModalFooter>
       </CModal>
 
-      <CModal visible={editModal} onClose={() => setEditModal(false)} size="lg" backdrop="static">
+      <CModal
+        visible={editModal}
+        onClose={() => setEditModal(false)}
+        size="lg"
+        backdrop="static"
+      >
         <CModalHeader>
           <CModalTitle>Edit HR User</CModalTitle>
         </CModalHeader>
@@ -594,7 +718,12 @@ const HRUserDashboard = () => {
         </CModalFooter>
       </CModal>
 
-      <CModal visible={viewModal} onClose={() => setViewModal(false)} size="lg" backdrop="static">
+      <CModal
+        visible={viewModal}
+        onClose={() => setViewModal(false)}
+        size="lg"
+        backdrop="static"
+      >
         <CModalHeader>
           <CModalTitle>HR User Details</CModalTitle>
         </CModalHeader>
@@ -615,8 +744,14 @@ const HRUserDashboard = () => {
                   <CTableDataCell>{selectedItem.employee_id}</CTableDataCell>
                 </CTableRow>
                 <CTableRow>
-                  <CTableHeaderCell>RFID Card ID</CTableHeaderCell>
+                  <CTableHeaderCell>Finger 1</CTableHeaderCell>
                   <CTableDataCell>{selectedItem.rfid_card_id}</CTableDataCell>
+                </CTableRow>
+                <CTableRow>
+                  <CTableHeaderCell>Finger 2</CTableHeaderCell>
+                  <CTableDataCell>
+                    {selectedItem.rfid_card_id_2 || "—"}
+                  </CTableDataCell>
                 </CTableRow>
                 <CTableRow>
                   <CTableHeaderCell>Department</CTableHeaderCell>
