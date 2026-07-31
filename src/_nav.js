@@ -2447,6 +2447,25 @@ const _nav = [
           },
         ],
       },
+
+      {
+        component: CNavGroup,
+        name: "Faulty Materials Checklist",
+        icon: (
+          <CIcon
+            icon={cilSettings}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Faulty Materials Checklist",
+            to: "/service-admin/fault-analysis-checklist",
+          },
+        ],
+      },
     ],
   },
 

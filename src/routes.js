@@ -6836,6 +6836,34 @@ const routes = [
       </ServiceAdminRoute>
     ),
   },
+
+  {
+    path: "/service-admin/fault-analysis-checklist",
+    name: "Fault Analysis Checklist",
+    element: (
+      <ServiceAdminRoute>
+        <FaultAnalysisChecklist />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/fault-analysis-checklist/add-checklist/:id",
+    name: "Add Fault Analysis Checklist",
+    element: (
+      <ServiceAdminRoute>
+        <AddFaultAnalysisChecklist />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/fault-analysis-checklist/update-checklist/:id",
+    name: "Update Fault Analysis Checklist",
+    element: (
+      <ServiceAdminRoute>
+        <UpdateFaultAnalysisChecklist />
+      </ServiceAdminRoute>
+    ),
+  },
   // ------------------------poc------------------------------
 
   //------------------------service admin---------------------------------
