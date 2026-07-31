@@ -1305,6 +1305,7 @@ export default function ClientAdminDashboard() {
                 weatherData={weatherData} // full API response object
                 siteName={weatherData?.siteName}
                 logo={siteDetails.logo}
+                siteId={site_id}
               />
             )}
           </section>

@@ -1,5 +1,6 @@
-import { CBadge } from "@coreui/react";
-import React, { useEffect, useRef } from "react";
+import { CBadge, CModal, CModalBody, CModalHeader, CModalTitle } from "@coreui/react";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 const THEMES = {
   rainy: {
@@ -32,12 +33,36 @@ const THEMES = {
   },
 };
 
+const weatherEmoji = (item) => {
+  const desc = (item?.description || "").toLowerCase();
+  if (item?.is_rain || desc.includes("rain") || desc.includes("drizzle"))
+    return "🌧️";
+  if (desc.includes("thunder")) return "⛈️";
+  if (desc.includes("snow")) return "❄️";
+  if (desc.includes("fog") || desc.includes("mist") || desc.includes("haze"))
+    return "🌫️";
+  if ((item?.cloudiness ?? 0) > 60 || desc.includes("cloud")) return "☁️";
+  if (desc.includes("clear") || desc.includes("sun")) return "☀️";
+  return "🌤️";
+};
+
+const hourLabel = (time) => {
+  if (!time) return "--";
+  return new Date(time).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+  });
+};
+
 export default function Weather({
   siteDetailsError,
   weatherType,
   weatherData = {},
   siteName,
   logo,
+  siteId,
 }) {
   const stateRef = useRef({
     drops: [],
@@ -47,12 +72,40 @@ export default function Weather({
     frame: 0,
     type: weatherType,
   });
-  console.log(weatherData);
-  console.log(siteDetailsError);
-  
+
   const rafRef = useRef(null);
   const canvasRef = useRef(null);
   const theme = THEMES[weatherType] || THEMES.sunny;
+
+  const [forecastOpen, setForecastOpen] = useState(false);
+  const [todayWeather, setTodayWeather] = useState([]);
+  const [loadingToday, setLoadingToday] = useState(false);
+  const [todayError, setTodayError] = useState("");
+
+  const openForecast = async () => {
+    const id = siteId || weatherData?.site_id;
+    if (!id) {
+      setTodayError("Site id missing");
+      setForecastOpen(true);
+      return;
+    }
+    setForecastOpen(true);
+    setLoadingToday(true);
+    setTodayError("");
+    try {
+      const { data } = await axios.get(`/api/v1/weatherdata/client/${id}/today`, {
+        withCredentials: true,
+      });
+      setTodayWeather(data.data || []);
+    } catch (e) {
+      setTodayWeather([]);
+      setTodayError(
+        e.response?.data?.message || e.response?.data?.error || "Failed to load today's weather",
+      );
+    } finally {
+      setLoadingToday(false);
+    }
+  };
 
   /* ── canvas animation ── */
   useEffect(() => {
@@ -72,7 +125,6 @@ export default function Weather({
         H = canvas.height;
       const s = stateRef.current;
 
-      /* clouds */
       const cc = {
         rainy: "#3a4a62",
         cloudy: "#6a7d94",
@@ -92,7 +144,6 @@ export default function Weather({
         color: cc,
       })).map((c) => ({ ...c, h: c.w * 0.36 }));
 
-      /* rain */
       s.drops =
         weatherType === "rainy"
           ? Array.from({ length: 200 }, () => ({
@@ -105,7 +156,6 @@ export default function Weather({
             }))
           : [];
 
-      /* fog */
       s.fogBands =
         weatherType === "foggy"
           ? [0.25, 0.45, 0.62, 0.8].map((f, i) => ({
@@ -201,7 +251,6 @@ export default function Weather({
       const cx = W * 0.78,
         cy = 55,
         r = 30;
-      /* outer glow */
       const glow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, r * 3);
       glow.addColorStop(0, "rgba(255,220,60,0.28)");
       glow.addColorStop(1, "rgba(255,220,60,0)");
@@ -209,7 +258,6 @@ export default function Weather({
       ctx.beginPath();
       ctx.arc(cx, cy, r * 3, 0, Math.PI * 2);
       ctx.fill();
-      /* rays */
       for (let i = 0; i < 12; i++) {
         const a = (i / 12) * Math.PI * 2 + f * 0.003;
         const pulse = 0.3 + 0.15 * Math.sin(f * 0.05 + i);
@@ -223,7 +271,6 @@ export default function Weather({
         ctx.stroke();
         ctx.restore();
       }
-      /* disc */
       const disc = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, r);
       disc.addColorStop(0, "#FFF176");
       disc.addColorStop(1, "#FFB300");
@@ -262,7 +309,6 @@ export default function Weather({
     return <div style={{ padding: 20, color: "#fff" }}>{siteDetailsError}</div>;
   }
 
-  /* ── helpers ── */
   const fmt = (v, unit) =>
     v != null && v !== undefined ? `${v}${unit}` : `--${unit}`;
   const timeStr = weatherData?.time
@@ -276,112 +322,135 @@ export default function Weather({
       })
     : null;
 
+  const todayTitle = new Date().toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    timeZone: "Asia/Kolkata",
+  });
+
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        // fontFamily: "'Inter', 'Segoe UI', sans-serif",
-        minHeight: 360,
-        borderRadius: "10px",
-      }}
-    >
-      {siteDetailsError ? (
-        <div
-          className="border"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CBadge color="warning">{siteDetailsError}</CBadge>
-        </div>
-      ) : (
-        <>
-          <canvas
-            ref={canvasRef}
+    <>
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          minHeight: 360,
+          borderRadius: "10px",
+        }}
+      >
+        {siteDetailsError ? (
+          <div
+            className="border"
             style={{
               position: "absolute",
               inset: 0,
               width: "100%",
               height: "100%",
-              display: "block",
-            }}
-          />
-
-          {/* bottom gradient scrim for readability */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(160deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.45) 100%)",
-            }}
-          />
-
-          {/* ── main content ── */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 2,
-              height: "100%",
               display: "flex",
-              flexDirection: "column",
-              padding: "20px 20px 16px",
-              boxSizing: "border-box",
-              color: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            {/* ── row 1: site + description pill ── */}
+            <CBadge color="warning">{siteDetailsError}</CBadge>
+          </div>
+        ) : (
+          <>
+            <canvas
+              ref={canvasRef}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                display: "block",
+              }}
+            />
+
             <div
               style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(160deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.45) 100%)",
+              }}
+            />
+
+            <div
+              style={{
+                position: "relative",
+                zIndex: 2,
+                height: "100%",
                 display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "end",
-                flexShrink: 0,
+                flexDirection: "column",
+                padding: "20px 20px 16px",
+                boxSizing: "border-box",
+                color: "#ffffff",
               }}
             >
               <div
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 5,
-                  // background: "rgba(255,255,255,0.14)",
-                  border: "1px solid rgba(255,255,255,0.22)",
-                  borderRadius: 20,
-                  padding: "4px 10px",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: theme.accent,
-                  backdropFilter: "blur(8px)",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: 8,
                   flexShrink: 0,
                 }}
               >
-                {theme.emoji} {weatherData.description || theme.label}
+                <button
+                  type="button"
+                  onClick={openForecast}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    background: "rgba(255,255,255,0.14)",
+                    border: "1px solid rgba(255,255,255,0.28)",
+                    borderRadius: 20,
+                    padding: "5px 12px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    color: "#fff",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                >
+                  📅 Today&apos;s Forecast
+                </button>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    border: "1px solid rgba(255,255,255,0.22)",
+                    borderRadius: 20,
+                    padding: "4px 10px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: theme.accent,
+                    backdropFilter: "blur(8px)",
+                    flexShrink: 0,
+                  }}
+                >
+                  {theme.emoji} {weatherData.description || theme.label}
+                </div>
               </div>
-            </div>
 
-            {/* ── row 2: hero temperature ── */}
-            <div style={{ marginTop: 23, flexShrink: 0 }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 4,
-                }}
-              >
-                {siteName && (
-                  <>
+              <div style={{ marginTop: 23, flexShrink: 0 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 4,
+                  }}
+                >
+                  {siteName && (
                     <div
                       style={{
                         fontSize: 13,
@@ -393,188 +462,280 @@ export default function Weather({
                     >
                       {siteName},&nbsp;{weatherData.location}
                     </div>
-                  </>
-                )}
-                <div>
-                  {" "}
-                  <span
-                    style={{
-                      fontSize: 30,
-                      fontWeight: 700,
-                      lineHeight: 1,
-                      color: "#ffffff",
-                      textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
-                      letterSpacing: "-2px",
-                      right: 9,
-                    }}
-                    className=" position-relative"
-                  >
-                    {weatherData.temperature ?? "--"}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 300,
-                      right: 12,
-                      opacity: 0.85,
-                    }}
-                    className=" position-absolute"
-                  >
-                    °C
-                  </span>
+                  )}
+                  <div>
+                    <span
+                      style={{
+                        fontSize: 30,
+                        fontWeight: 700,
+                        lineHeight: 1,
+                        color: "#ffffff",
+                        textShadow: `0 0 40px ${theme.glow}, 0 2px 12px rgba(0,0,0,0.4)`,
+                        letterSpacing: "-2px",
+                        right: 9,
+                      }}
+                      className=" position-relative"
+                    >
+                      {weatherData.temperature ?? "--"}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 300,
+                        right: 12,
+                        opacity: 0.85,
+                      }}
+                      className=" position-absolute"
+                    >
+                      °C
+                    </span>
+                  </div>
                 </div>
               </div>
-              {/* <div
-            style={{
-              fontSize: 13,
-              opacity: 0.65,
-              marginTop: 2,
-              letterSpacing: "0.02em",
-            }}
-          >
-            Feels like {fmt(weatherData.temperature, "°C")}
-          </div> */}
-            </div>
 
-            {/* ── row 3: divider ── */}
-            <div
-              style={{
-                height: 1,
-                // background: "rgba(255,255,255,0.12)",
-                margin: "14px 0",
-                flexShrink: 0,
-              }}
-            />
-
-            {/* ── row 4: three stat pills ── */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 10,
-                flexShrink: 0,
-              }}
-            >
-              {[
-                {
-                  icon: logo && (
-                    <div className=" d-flex justify-content-center align-items-center  ">
-                      <img
-                        src={logo}
-                        alt="Site Logo"
-                        style={{
-                          width: "90%",
-                          height: 70,
-
-                          objectFit: "contain",
-                        }}
-                      />
-                    </div>
-                  ),
-                  value: "",
-                  label: "",
-                },
-                {
-                  icon: "💧",
-                  value: fmt(weatherData.humidity, "%"),
-                  label: "Humidity",
-                },
-                {
-                  icon: "💨",
-                  value: fmt(weatherData.wind_speed, " m/s"),
-                  label: "Wind",
-                },
-                {
-                  icon: "☁️",
-                  value: fmt(weatherData.cloudiness, "%"),
-                  label: "Cloud cover",
-                },
-              ].map(({ icon, value, label }) => (
-                <div
-                  key={label}
-                  style={{
-                    background: "rgba(255,255,255,0.10)",
-                    backdropFilter: "blur(12px)",
-                    // border: "1px solid rgba(255,255,255,0.16)",
-                    borderRadius: 14,
-                    padding: "12px 10px 10px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 3,
-                  }}
-                >
-                  <span style={{ fontSize: 18 }}>{icon}</span>
-                  <span
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 700,
-                      color: "#fff",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {value}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 10,
-                      opacity: 0.6,
-                      letterSpacing: "0.05em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {/* {logo && (
-            <img
-              src={logo}
-              alt="Site Logo"
-              style={{
-                width: 140,
-                height: 90,
-                // marginTop: 10,
-                // borderRadius: 20,
-                padding: 10,
-                objectFit: "contain",
-                border: "1px solid white",
-              }}
-            />
-
-        )} */}
-            {/* ── spacer ── */}
-            <div style={{ flex: 1, minHeight: 0 }} />
-
-            {/* ── row 5: timestamp ── */}
-            {timeStr && (
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  background: "rgba(0,0,0,0.28)",
-                  backdropFilter: "blur(8px)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  borderRadius: 10,
-                  padding: "7px 14px",
-                  fontSize: 11,
-                  opacity: 0.85,
-                  letterSpacing: "0.03em",
+                  height: 1,
+                  margin: "14px 0",
+                  flexShrink: 0,
+                }}
+              />
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 10,
                   flexShrink: 0,
                 }}
               >
-                <span style={{ opacity: 0.6 }}>🕐</span>
-                Last updated:{" "}
-                <strong style={{ fontWeight: 600 }}>{timeStr}</strong>
+                {[
+                  {
+                    icon: logo && (
+                      <div className=" d-flex justify-content-center align-items-center  ">
+                        <img
+                          src={logo}
+                          alt="Site Logo"
+                          style={{
+                            width: "90%",
+                            height: 70,
+                            objectFit: "contain",
+                          }}
+                        />
+                      </div>
+                    ),
+                    value: "",
+                    label: "",
+                  },
+                  {
+                    icon: "💧",
+                    value: fmt(weatherData.humidity, "%"),
+                    label: "Humidity",
+                  },
+                  {
+                    icon: "💨",
+                    value: fmt(weatherData.wind_speed, " m/s"),
+                    label: "Wind",
+                  },
+                  {
+                    icon: "☁️",
+                    value: fmt(weatherData.cloudiness, "%"),
+                    label: "Cloud cover",
+                  },
+                ].map(({ icon, value, label }) => (
+                  <div
+                    key={label || "logo"}
+                    style={{
+                      background: "rgba(255,255,255,0.10)",
+                      backdropFilter: "blur(12px)",
+                      borderRadius: 14,
+                      padding: "12px 10px 10px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 3,
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>{icon}</span>
+                    <span
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "#fff",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {value}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        opacity: 0.6,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                ))}
               </div>
-            )}
+
+              <div style={{ flex: 1, minHeight: 0 }} />
+
+              {timeStr && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    background: "rgba(0,0,0,0.28)",
+                    backdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    borderRadius: 10,
+                    padding: "7px 14px",
+                    fontSize: 11,
+                    opacity: 0.85,
+                    letterSpacing: "0.03em",
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ opacity: 0.6 }}>🕐</span>
+                  Last updated:{" "}
+                  <strong style={{ fontWeight: 600 }}>{timeStr}</strong>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      <CModal
+        visible={forecastOpen}
+        onClose={() => setForecastOpen(false)}
+        alignment="center"
+        size="lg"
+        scrollable
+      >
+        <CModalHeader
+          style={{
+            background: "linear-gradient(160deg, #0a2a6e 0%, #1a4fa8 55%, #162847 100%)",
+            color: "#fff",
+            borderBottom: "1px solid rgba(255,255,255,0.12)",
+          }}
+        >
+          <CModalTitle style={{ fontSize: 16, fontWeight: 700 }}>
+            {siteName || weatherData?.siteName || siteId || "Site"} · {todayTitle}
+          </CModalTitle>
+        </CModalHeader>
+        <CModalBody
+          style={{
+            background: "linear-gradient(180deg, #0d1b2e 0%, #162847 100%)",
+            color: "#fff",
+            padding: "18px 16px 22px",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 12,
+              opacity: 0.7,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              marginBottom: 12,
+              paddingLeft: 4,
+            }}
+          >
+            Hourly Forecast
           </div>
-        </>
-      )}
-    </div>
+
+          {loadingToday ? (
+            <div style={{ padding: 24, textAlign: "center", opacity: 0.8 }}>
+              Loading today&apos;s weather…
+            </div>
+          ) : todayError ? (
+            <div style={{ padding: 16, color: "#ffb4b4" }}>{todayError}</div>
+          ) : todayWeather.length === 0 ? (
+            <div style={{ padding: 24, textAlign: "center", opacity: 0.75 }}>
+              No weather records for today.
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                overflowX: "auto",
+                paddingBottom: 8,
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "thin",
+              }}
+            >
+              {todayWeather.map((item) => (
+                <div
+                  key={item._id || item.time}
+                  style={{
+                    minWidth: 86,
+                    maxWidth: 96,
+                    flex: "0 0 auto",
+                    background: "rgba(255,255,255,0.10)",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    borderRadius: 18,
+                    padding: "14px 10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 8,
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      opacity: 0.85,
+                      textAlign: "center",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {hourLabel(item.time)}
+                  </div>
+                  <div style={{ fontSize: 26, lineHeight: 1 }}>
+                    {weatherEmoji(item)}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 700,
+                      letterSpacing: "-0.5px",
+                    }}
+                  >
+                    {item.temperature ?? "--"}°
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      opacity: 0.65,
+                      textAlign: "center",
+                      lineHeight: 1.25,
+                      maxHeight: 28,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {item.description || (item.is_rain ? "Rain" : "—")}
+                  </div>
+                  <div style={{ fontSize: 10, opacity: 0.55 }}>
+                    💧 {item.humidity ?? "--"}%
+                  </div>
+                  <div style={{ fontSize: 10, opacity: 0.55 }}>
+                    💨 {item.wind_speed ?? "--"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CModalBody>
+      </CModal>
+    </>
   );
 }
