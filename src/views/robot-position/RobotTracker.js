@@ -439,14 +439,14 @@ const RobotTracker = () => {
 
   return (
     <div
-      className=""
+      className="robot-tracker-page"
       ref={pageRef}
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh", // Required
-        overflowY: "auto", // Required
-        overflowX: "hidden",
+        height: "100vh",
+        overflow: "hidden",
+        backgroundColor: "#080f25",
       }}
     >
       {
@@ -499,7 +499,7 @@ const RobotTracker = () => {
               {InternaladminRoles.includes(userInfo.role) && (
                 <Link
                   className="btn btn-sm btn-warning"
-                  to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site_id}`}
+                  to={`/${adminroute}/all-site-cleaning-log/sitewise-cleaning-log/${site_id}/${date}`}
                 >
                   Log
                 </Link>
@@ -508,7 +508,7 @@ const RobotTracker = () => {
               {clientAdminRole.includes(userInfo.role) && (
                 <Link
                   className="btn btn-sm btn-warning"
-                  to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}`}
+                  to={`/${adminroute}/cleaning-log-sites/daywise-cleaning/${site_id}/${date}`}
                 >
                   Log
                 </Link>
@@ -517,7 +517,7 @@ const RobotTracker = () => {
               {technicianRole.includes(userInfo.role) && (
                 <Link
                   className="btn btn-sm btn-warning"
-                  to={`/${adminroute}/cleaning-log-sites/${site_id}`}
+                  to={`/${adminroute}/cleaning-log-sites/${site_id}/${date}`}
                 >
                   Log
                 </Link>
@@ -552,14 +552,22 @@ const RobotTracker = () => {
               </div>
             </div>
           )} */}
-          <div className="custom-scrollbar">
+          <div
+            className="custom-scrollbar robot-tracker-list"
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: "auto",
+              overflowX: "hidden",
+            }}
+          >
             {loading ? (
               <div
                 style={{
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100vh", // centers spinner vertically
+                  height: "100%",
                 }}
               >
                 <LoadingSpinner />
@@ -637,18 +645,19 @@ const RobotTracker = () => {
           userInfo={userInfo}
         />
       )}
-      {/*footer */}
+      {/* footer — pinned to bottom in default + fullscreen */}
       <div
+        className="robot-tracker-legend"
         style={{
-          position: "sticky",
-          bottom: 0,
-          padding: "5px 5px",
+          flexShrink: 0,
+          padding: "8px 12px",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "flex-end",
           alignItems: "center",
           gap: "15px",
           backgroundColor: "#080f25",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
           zIndex: 50,
         }}
       >

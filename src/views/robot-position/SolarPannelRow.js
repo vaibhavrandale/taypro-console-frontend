@@ -1,4 +1,5 @@
 import React from "react";
+import { Cog, Check, X } from "lucide-react";
 import RobotImg from "../../assets/images/robot.png";
 import { getRobotPhase } from "./helpers";
 import "./tracking.css";
@@ -127,22 +128,38 @@ const SolarPanelRow = ({
           transform: "translate(-50%, -50%)",
         };
 
+  const cleaning = robot.cleaning || {};
   let className = "";
+  let gearStatus = null; // progress | failed | finished
+  let gearSpin = null; // cw | ccw
+
   if (
-    robot.cleaning.start &&
-    !robot.cleaning.finish &&
-    !robot.cleaning.cleaning_cancelled &&
-    !robot.cleaning.battery_dead
+    cleaning.start &&
+    !cleaning.finish &&
+    !cleaning.cleaning_cancelled &&
+    !cleaning.battery_dead
   ) {
     className = "cleaning-in-progress";
-  } else if (robot.cleaning.finish) {
+    gearStatus = "progress";
+    const isReturn =
+      phase === "Reverse Cleaning" ||
+      phase === "At Reverse Station" ||
+      phase === "Ready for Reverse Cleaning" ||
+      (highestPoint >= 29 && highestPoint <= 39);
+    gearSpin = isReturn ? "ccw" : "cw";
+  } else if (cleaning.finish && statusText === "Cleaning Finished") {
     className = "cleaning-finished";
-  } else if (robot.cleaning.cleaning_cancelled) {
+    gearStatus = "finished";
+  } else if (cleaning.cleaning_cancelled) {
     className = "cleaning-cancelled";
-  } else if (robot.cleaning.battery_dead) {
+    gearStatus = "failed";
+  } else if (cleaning.battery_dead) {
     className = "battery-dead";
-  } else if (!robot.cleaning.start && !robot.cleaning.finish) {
+    gearStatus = "failed";
+  } else if (!cleaning.start && !cleaning.finish) {
     className = "no-cleaning-today";
+  } else if (cleaning.finish) {
+    className = "cleaning-finished";
   } else {
     className = "unknown-status";
   }
@@ -247,6 +264,7 @@ const SolarPanelRow = ({
 
           {/* Robot: tall top-down asset, vertically centered on the track */}
           <div
+            className="robot-marker"
             style={{
               position: "absolute",
               top: "50%",
@@ -271,6 +289,41 @@ const SolarPanelRow = ({
                 display: "block",
               }}
             />
+
+            {gearStatus && (
+              <span
+                className={`robot-gear robot-gear--${gearStatus}`}
+                title={
+                  gearStatus === "progress"
+                    ? "Cleaning in progress"
+                    : gearStatus === "failed"
+                      ? "Cleaning failed"
+                      : "Cleaning finished"
+                }
+              >
+                <Cog
+                  size={14}
+                  strokeWidth={2.4}
+                  className={
+                    gearSpin === "cw"
+                      ? "robot-gear__spin-cw"
+                      : gearSpin === "ccw"
+                        ? "robot-gear__spin-ccw"
+                        : undefined
+                  }
+                />
+                {gearStatus === "failed" && (
+                  <span className="robot-gear__badge" aria-hidden>
+                    <X size={7} strokeWidth={3} />
+                  </span>
+                )}
+                {gearStatus === "finished" && (
+                  <span className="robot-gear__badge" aria-hidden>
+                    <Check size={7} strokeWidth={3} />
+                  </span>
+                )}
+              </span>
+            )}
           </div>
         </div>
       </div>
