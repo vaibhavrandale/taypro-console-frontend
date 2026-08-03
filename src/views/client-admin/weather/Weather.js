@@ -1,4 +1,10 @@
-import { CBadge, CModal, CModalBody, CModalHeader, CModalTitle } from "@coreui/react";
+import {
+  CBadge,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalTitle,
+} from "@coreui/react";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
@@ -93,36 +99,54 @@ export default function Weather({
     setLoadingToday(true);
     setTodayError("");
     try {
-      const { data } = await axios.get(`/api/v1/weatherdata/client/${id}/today`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(
+        `/api/v1/weatherdata/client/${id}/today`,
+        {
+          withCredentials: true,
+        },
+      );
       setTodayWeather(data.data || []);
     } catch (e) {
       setTodayWeather([]);
       setTodayError(
-        e.response?.data?.message || e.response?.data?.error || "Failed to load today's weather",
+        e.response?.data?.message ||
+          e.response?.data?.error ||
+          "Failed to load today's weather",
       );
     } finally {
       setLoadingToday(false);
     }
   };
 
-  /* ── canvas animation ── */
+  /* ── canvas animation (throttled + pause when off-screen/hidden) ── */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     stateRef.current.type = weatherType;
 
+    let running = false;
+    let visible = true;
+    let lastTs = 0;
+    const FPS_MS = 1000 / 20; // ~20fps — enough for weather, far cheaper than 60
+    let skyGrad = null;
+    let skyH = 0;
+
     const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      init();
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      if (!w || !h) return;
+      // Cap pixel density — full retina + 60fps was melting the dashboard
+      const dpr = Math.min(window.devicePixelRatio || 1, 1);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      skyGrad = null;
+      skyH = 0;
+      init(w, h);
     };
 
-    const init = () => {
-      const W = canvas.width,
-        H = canvas.height;
+    const init = (W, H) => {
       const s = stateRef.current;
 
       const cc = {
@@ -134,7 +158,7 @@ export default function Weather({
       const co = { rainy: 0.9, cloudy: 0.8, foggy: 0.5, sunny: 0.55 }[
         weatherType
       ];
-      const cn = { rainy: 5, cloudy: 4, foggy: 3, sunny: 2 }[weatherType];
+      const cn = { rainy: 4, cloudy: 3, foggy: 2, sunny: 2 }[weatherType];
       s.clouds = Array.from({ length: cn }, (_, i) => ({
         x: (W / cn) * i - 40,
         y: H * (0.03 + i * 0.06),
@@ -146,47 +170,49 @@ export default function Weather({
 
       s.drops =
         weatherType === "rainy"
-          ? Array.from({ length: 200 }, () => ({
+          ? Array.from({ length: 40 }, () => ({
               x: Math.random() * W,
               y: Math.random() * H,
-              len: 12 + Math.random() * 20,
-              speed: 10 + Math.random() * 9,
-              opacity: 0.3 + Math.random() * 0.5,
-              thick: 0.8 + Math.random() * 0.9,
+              len: 12 + Math.random() * 16,
+              speed: 8 + Math.random() * 7,
+              opacity: 0.35 + Math.random() * 0.4,
+              thick: 1,
             }))
           : [];
 
       s.fogBands =
         weatherType === "foggy"
-          ? [0.25, 0.45, 0.62, 0.8].map((f, i) => ({
+          ? [0.3, 0.55, 0.78].map((f, i) => ({
               y: H * f,
-              h: H * 0.2,
-              opacity: 0.5 - i * 0.06,
-              speed: (i % 2 === 0 ? 1 : -1) * (0.1 + i * 0.03),
+              h: H * 0.18,
+              opacity: 0.45 - i * 0.08,
+              speed: (i % 2 === 0 ? 1 : -1) * (0.08 + i * 0.03),
               offset: Math.random() * W,
             }))
           : [];
     };
 
-    const drawSky = () => {
-      const W = canvas.width,
-        H = canvas.height;
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      theme.sky.forEach((c, i) =>
-        g.addColorStop(i / (theme.sky.length - 1), c),
-      );
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
+    const drawSky = (cssW, cssH) => {
+      if (!skyGrad || skyH !== cssH) {
+        skyGrad = ctx.createLinearGradient(0, 0, 0, cssH);
+        theme.sky.forEach((c, i) =>
+          skyGrad.addColorStop(i / (theme.sky.length - 1), c),
+        );
+        skyH = cssH;
+      }
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, cssW, cssH);
     };
 
     const drawCloud = ({ x, y, w, h, opacity, color }) => {
-      ctx.save();
       ctx.globalAlpha = opacity;
       ctx.fillStyle = color;
-      ctx.shadowColor = "rgba(0,0,0,0.3)";
-      ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.roundRect(x, y + h * 0.35, w, h * 0.65, h * 0.32);
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y + h * 0.35, w, h * 0.65, h * 0.32);
+      } else {
+        ctx.rect(x, y + h * 0.35, w, h * 0.65);
+      }
       ctx.fill();
       [
         { dx: w * 0.08, dy: -h * 0.5, r: h * 0.52 },
@@ -198,110 +224,121 @@ export default function Weather({
         ctx.arc(x + dx, y + h + dy, r, 0, Math.PI * 2);
         ctx.fill();
       });
-      ctx.restore();
+      ctx.globalAlpha = 1;
     };
 
-    const drawRain = (drops) => {
-      const W = canvas.width;
-      drops.forEach((d) => {
-        ctx.save();
-        const g = ctx.createLinearGradient(
-          d.x,
-          d.y,
-          d.x + d.len * 0.2,
-          d.y + d.len,
-        );
-        g.addColorStop(0, "rgba(147,196,255,0)");
-        g.addColorStop(1, `rgba(147,196,255,${d.opacity})`);
-        ctx.strokeStyle = g;
-        ctx.lineWidth = d.thick;
-        ctx.beginPath();
+    const drawRain = (drops, W, H) => {
+      ctx.strokeStyle = "rgba(147,196,255,0.55)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let i = 0; i < drops.length; i++) {
+        const d = drops[i];
         ctx.moveTo(d.x, d.y);
         ctx.lineTo(d.x + d.len * 0.2, d.y + d.len);
-        ctx.stroke();
-        ctx.restore();
         d.y += d.speed;
         d.x += d.speed * 0.2;
-        if (d.y > canvas.height + 20) {
+        if (d.y > H + 20) {
           d.y = -20;
           d.x = Math.random() * W;
         }
         if (d.x > W + 10) d.x = -5;
-      });
+      }
+      ctx.stroke();
     };
 
-    const drawFog = (bands) => {
-      const W = canvas.width;
+    const drawFog = (bands, W) => {
       bands.forEach((b) => {
         b.offset += b.speed;
-        const g = ctx.createLinearGradient(0, b.y, 0, b.y + b.h);
-        g.addColorStop(0, "rgba(180,210,220,0)");
-        g.addColorStop(0.5, `rgba(180,210,220,${b.opacity})`);
-        g.addColorStop(1, "rgba(180,210,220,0)");
-        ctx.save();
-        ctx.fillStyle = g;
+        ctx.fillStyle = `rgba(180,210,220,${b.opacity * 0.55})`;
         ctx.fillRect((b.offset % (W * 0.5)) - W * 0.1, b.y, W * 1.2, b.h);
-        ctx.restore();
       });
     };
 
-    const drawSun = () => {
-      const W = canvas.width,
-        f = stateRef.current.frame;
+    const drawSun = (W) => {
+      const f = stateRef.current.frame;
       const cx = W * 0.78,
         cy = 55,
         r = 30;
-      const glow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, r * 3);
-      glow.addColorStop(0, "rgba(255,220,60,0.28)");
-      glow.addColorStop(1, "rgba(255,220,60,0)");
-      ctx.fillStyle = glow;
+      ctx.fillStyle = "rgba(255,220,60,0.22)";
       ctx.beginPath();
-      ctx.arc(cx, cy, r * 3, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r * 2.4, 0, Math.PI * 2);
       ctx.fill();
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * Math.PI * 2 + f * 0.003;
-        const pulse = 0.3 + 0.15 * Math.sin(f * 0.05 + i);
-        ctx.save();
-        ctx.globalAlpha = pulse;
-        ctx.strokeStyle = "#FFD93D";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
+      ctx.strokeStyle = "rgba(255,217,61,0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + f * 0.003;
         ctx.moveTo(cx + Math.cos(a) * (r + 6), cy + Math.sin(a) * (r + 6));
-        ctx.lineTo(cx + Math.cos(a) * (r + 20), cy + Math.sin(a) * (r + 20));
-        ctx.stroke();
-        ctx.restore();
+        ctx.lineTo(cx + Math.cos(a) * (r + 18), cy + Math.sin(a) * (r + 18));
       }
-      const disc = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, r);
-      disc.addColorStop(0, "#FFF176");
-      disc.addColorStop(1, "#FFB300");
-      ctx.fillStyle = disc;
+      ctx.stroke();
+      ctx.fillStyle = "#FFB300";
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fill();
     };
 
-    const loop = () => {
+    const loop = (ts) => {
+      if (!running) return;
+      rafRef.current = requestAnimationFrame(loop);
+      if (!visible || document.hidden) return;
+      if (ts - lastTs < FPS_MS) return;
+      lastTs = ts;
+
       const s = stateRef.current;
+      const cssW = canvas.offsetWidth;
+      const cssH = canvas.offsetHeight;
+      if (!cssW || !cssH) return;
+
       s.frame++;
-      drawSky();
-      if (s.type === "sunny") drawSun();
+      drawSky(cssW, cssH);
+      if (s.type === "sunny") drawSun(cssW);
       s.clouds.forEach((c) => {
         c.x += c.speed;
-        if (c.x > canvas.width + 30) c.x = -c.w - 20;
+        if (c.x > cssW + 30) c.x = -c.w - 20;
         drawCloud(c);
       });
-      if (s.type === "rainy") drawRain(s.drops);
-      if (s.type === "foggy") drawFog(s.fogBands);
+      if (s.type === "rainy") drawRain(s.drops, cssW, cssH);
+      if (s.type === "foggy") drawFog(s.fogBands, cssW);
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      lastTs = 0;
       rafRef.current = requestAnimationFrame(loop);
     };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(rafRef.current);
+    };
+
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else if (visible) start();
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting && entry.intersectionRatio > 0.05;
+        if (visible && !document.hidden) start();
+        else stop();
+      },
+      { threshold: [0, 0.05, 0.2] },
+    );
+    io.observe(canvas);
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
     resize();
-    rafRef.current = requestAnimationFrame(loop);
+    document.addEventListener("visibilitychange", onVisibility);
+    if (!document.hidden) start();
+
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      stop();
       ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [theme.sky, weatherType]);
 
@@ -616,57 +653,78 @@ export default function Weather({
         visible={forecastOpen}
         onClose={() => setForecastOpen(false)}
         alignment="center"
-        size="lg"
+        size="xl"
         scrollable
+        backdrop="static"
       >
         <CModalHeader
           style={{
-            background: "linear-gradient(160deg, #0a2a6e 0%, #1a4fa8 55%, #162847 100%)",
+            background:
+              "linear-gradient(160deg, #0a2a6e 0%, #1a4fa8 55%, #162847 100%)",
             color: "#fff",
             borderBottom: "1px solid rgba(255,255,255,0.12)",
           }}
         >
-          <CModalTitle style={{ fontSize: 16, fontWeight: 700 }}>
-            {siteName || weatherData?.siteName || siteId || "Site"} · {todayTitle}
+          <CModalTitle style={{ fontSize: 22, fontWeight: 700 }}>
+            {siteName || weatherData?.siteName || siteId || "Site"} ·{" "}
+            {todayTitle}
           </CModalTitle>
         </CModalHeader>
         <CModalBody
           style={{
             background: "linear-gradient(180deg, #0d1b2e 0%, #162847 100%)",
             color: "#fff",
-            padding: "18px 16px 22px",
+            padding: "24px 20px 28px",
           }}
         >
           <div
             style={{
-              fontSize: 12,
-              opacity: 0.7,
+              fontSize: 15,
+              opacity: 0.75,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              marginBottom: 12,
+              marginBottom: 16,
               paddingLeft: 4,
+              fontWeight: 600,
             }}
           >
-            Hourly Forecast
+            Forecast
           </div>
 
           {loadingToday ? (
-            <div style={{ padding: 24, textAlign: "center", opacity: 0.8 }}>
+            <div
+              style={{
+                padding: 32,
+                textAlign: "center",
+                opacity: 0.8,
+                fontSize: 16,
+              }}
+            >
               Loading today&apos;s weather…
             </div>
           ) : todayError ? (
-            <div style={{ padding: 16, color: "#ffb4b4" }}>{todayError}</div>
+            <div style={{ padding: 20, color: "#ffb4b4", fontSize: 15 }}>
+              {todayError}
+            </div>
           ) : todayWeather.length === 0 ? (
-            <div style={{ padding: 24, textAlign: "center", opacity: 0.75 }}>
+            <div
+              style={{
+                padding: 32,
+                textAlign: "center",
+                opacity: 0.75,
+                fontSize: 16,
+              }}
+            >
               No weather records for today.
             </div>
           ) : (
             <div
               style={{
                 display: "flex",
-                gap: 10,
+                justifyContent: "center",
+                gap: 14,
                 overflowX: "auto",
-                paddingBottom: 8,
+                paddingBottom: 10,
                 WebkitOverflowScrolling: "touch",
                 scrollbarWidth: "thin",
               }}
@@ -675,37 +733,37 @@ export default function Weather({
                 <div
                   key={item._id || item.time}
                   style={{
-                    minWidth: 86,
-                    maxWidth: 96,
+                    minWidth: 128,
+                    maxWidth: 140,
                     flex: "0 0 auto",
                     background: "rgba(255,255,255,0.10)",
                     border: "1px solid rgba(255,255,255,0.14)",
-                    borderRadius: 18,
-                    padding: "14px 10px",
+                    borderRadius: 20,
+                    padding: "20px 14px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    gap: 8,
+                    gap: 10,
                     backdropFilter: "blur(10px)",
                   }}
                 >
                   <div
                     style={{
-                      fontSize: 11,
+                      fontSize: 14,
                       fontWeight: 600,
-                      opacity: 0.85,
+                      opacity: 0.9,
                       textAlign: "center",
                       whiteSpace: "nowrap",
                     }}
                   >
                     {hourLabel(item.time)}
                   </div>
-                  <div style={{ fontSize: 26, lineHeight: 1 }}>
+                  <div style={{ fontSize: 36, lineHeight: 1 }}>
                     {weatherEmoji(item)}
                   </div>
                   <div
                     style={{
-                      fontSize: 18,
+                      fontSize: 26,
                       fontWeight: 700,
                       letterSpacing: "-0.5px",
                     }}
@@ -714,20 +772,20 @@ export default function Weather({
                   </div>
                   <div
                     style={{
-                      fontSize: 10,
-                      opacity: 0.65,
+                      fontSize: 13,
+                      opacity: 0.7,
                       textAlign: "center",
-                      lineHeight: 1.25,
-                      maxHeight: 28,
+                      lineHeight: 1.3,
+                      maxHeight: 36,
                       overflow: "hidden",
                     }}
                   >
                     {item.description || (item.is_rain ? "Rain" : "—")}
                   </div>
-                  <div style={{ fontSize: 10, opacity: 0.55 }}>
+                  <div style={{ fontSize: 13, opacity: 0.6 }}>
                     💧 {item.humidity ?? "--"}%
                   </div>
-                  <div style={{ fontSize: 10, opacity: 0.55 }}>
+                  <div style={{ fontSize: 13, opacity: 0.6 }}>
                     💨 {item.wind_speed ?? "--"}
                   </div>
                 </div>

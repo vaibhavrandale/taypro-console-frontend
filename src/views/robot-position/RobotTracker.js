@@ -299,14 +299,16 @@ const RobotTracker = () => {
               segmentPct = newPoint / L;
             }
 
-            const iconOffsetPx = segmentPct * L * 14; // Match SolarPannelRow calculation
-            const halfWidth = el.clientWidth / 2;
+            // Track is viewport-width; only scroll if content still overflows
+            const trackW = el.clientWidth || 1;
+            const iconOffsetPx = segmentPct * trackW;
+            const halfWidth = trackW / 2;
 
             let targetScroll =
               newPoint >= 20 && newPoint <= 29
-                ? iconOffsetPx - el.clientWidth * 0.25
+                ? iconOffsetPx - trackW * 0.25
                 : newPoint >= 31 && newPoint <= 40
-                  ? iconOffsetPx - el.clientWidth * 0.75
+                  ? iconOffsetPx - trackW * 0.75
                   : iconOffsetPx - halfWidth;
 
             targetScroll = Math.max(
@@ -314,7 +316,9 @@ const RobotTracker = () => {
               Math.min(targetScroll, el.scrollWidth - el.clientWidth),
             );
 
-            smoothScroll(el, targetScroll, 400);
+            if (el.scrollWidth > el.clientWidth) {
+              smoothScroll(el, targetScroll, 400);
+            }
           }
         }, 100);
       }
@@ -569,19 +573,26 @@ const RobotTracker = () => {
             ) : (
               <div
                 style={{
-                  overflowX: "auto",
+                  overflowX: "hidden",
                   height: "auto",
                   overflowY: "hidden",
                   position: "relative",
                   zIndex: 1,
+                  width: "100%",
                 }}
               >
                 {filteredRobot.length > 0 ? (
-                  filteredRobot
-                    .filter((r) => !selectedBlock || r.block === selectedBlock)
-                    .map((robot) => (
+                  (() => {
+                    const visibleRobots = filteredRobot.filter(
+                      (r) => !selectedBlock || r.block === selectedBlock,
+                    );
+                    const maxRowLength = Math.max(
+                      1,
+                      ...visibleRobots.map((r) => Number(r.row_length) || 1),
+                    );
+                    return visibleRobots.map((robot) => (
                       <div
-                        className="col-md-12 my-1"
+                        className="col-md-12"
                         key={robot._id || robot.robot_no}
                       >
                         <Robot
@@ -589,9 +600,12 @@ const RobotTracker = () => {
                           handleRobotClick={handleRobotClick}
                           deleteHandler={(e) => deleteHandler(e, robot._id)}
                           loadingDelete={loadingDelete}
+                          scrollRefs={scrollRefs}
+                          maxRowLength={maxRowLength}
                         />
                       </div>
-                    ))
+                    ));
+                  })()
                 ) : (
                   <div
                     style={{

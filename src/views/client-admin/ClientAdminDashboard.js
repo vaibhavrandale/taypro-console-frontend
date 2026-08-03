@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useMemo } from "react";
 import { useSelector } from "react-redux";
 import {
   PieChart,
@@ -570,6 +570,16 @@ export default function ClientAdminDashboard() {
   const totalRobots = robotsData.length;
   const onlineRobs = robotsData.filter((r) => r.lora_state === 1).length;
   const offlineRobs = robotsData.filter((r) => r.lora_state === 0).length;
+
+  // Cap bars — Recharts SVG per-robot is expensive on large sites
+  const batteryChartData = useMemo(
+    () =>
+      robotsData.slice(0, 40).map((r) => ({
+        name: r.robot_no,
+        battery: parseInt(r.battery_voltage, 10) || 0,
+      })),
+    [robotsData],
+  );
   // const mapSrc = `https://maps.google.com/maps?hl=en&q=${siteCoords.latitude},${siteCoords.longitude}&t=k&z=18&ie=UTF8&iwloc=B&output=embed`;
 
   const isLoading = loadingSiteDetails || loadingWeatherData;
@@ -1504,10 +1514,7 @@ export default function ClientAdminDashboard() {
                   <>
                     <ResponsiveContainer width="100%" height={210}>
                       <BarChart
-                        data={robotsData.map((r) => ({
-                          name: r.robot_no,
-                          battery: parseInt(r.battery_voltage) || 0,
-                        }))}
+                        data={batteryChartData}
                         barSize={22}
                         margin={{ top: 4, right: 8, left: -20, bottom: 0 }}
                       >
@@ -1541,11 +1548,8 @@ export default function ClientAdminDashboard() {
                           cursor={{ fill: "rgba(56,189,248,.04)", radius: 4 }}
                         />
                         <Bar dataKey="battery" radius={[5, 5, 0, 0]}>
-                          {robotsData.map((r, i) => (
-                            <Cell
-                              key={i}
-                              fill={battColor(parseInt(r.battery_voltage) || 0)}
-                            />
+                          {batteryChartData.map((r, i) => (
+                            <Cell key={i} fill={battColor(r.battery)} />
                           ))}
                         </Bar>
                       </BarChart>

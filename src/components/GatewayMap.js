@@ -145,7 +145,6 @@ export default function GatewayMap({
           withCredentials: true,
         },
       );
-      console.log(res.data.data);
       dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: res.data.data });
     } catch (e) {
       dispatch({
