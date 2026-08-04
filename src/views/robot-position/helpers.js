@@ -124,6 +124,16 @@ export const smoothScroll = (element, target, duration = 400) => {
 // };
 // ----------------------------new phase-----------------------
 
+/** Physical position along the row: 0 = dock (DS), 1 = reverse station (RS). */
+export const pointToSegmentPctFromDock = (point) => {
+  const p = Number(point) || 0;
+  if (p >= 20 && p <= 29) return (p - 19) / (29 - 19);
+  if (p === 30) return 1;
+  // Return path 31–40: walking back to dock
+  if (p >= 31 && p <= 40) return Math.max(0, (40 - p) / (40 - 30));
+  return 0;
+};
+
 export const getRobotPhase = (
   pt,
   L,
@@ -190,12 +200,7 @@ export const getRobotPhase = (
       phase: "Battery Dead",
       badgeColor: "danger",
       iconBorder: "#dc3545",
-      segmentPct:
-        effectivePoint >= 20 && effectivePoint <= 29
-          ? (effectivePoint - 19) / (29 - 19) // forward
-          : effectivePoint >= 31 && effectivePoint <= 40
-            ? (effectivePoint - 29) / (40 - 29) // reverse
-            : 0,
+      segmentPct: pointToSegmentPctFromDock(effectivePoint),
       effectivePoint,
     };
   } else if (cleaning?.battery_dead && cleaning.finish) {
@@ -227,12 +232,8 @@ export const getRobotPhase = (
       phase: "Cleaning Cancelled",
       badgeColor: "warning",
       iconBorder: "#6c757d",
-      segmentPct:
-        effectivePoint >= 20 && effectivePoint <= 29
-          ? (effectivePoint - 19) / (29 - 19) // forward
-          : effectivePoint >= 31 && effectivePoint <= 40
-            ? (effectivePoint - 29) / (40 - 29) // reverse
-            : 0,
+      // Must use dock-relative position — cancelled phase uses left:%, not right:%
+      segmentPct: pointToSegmentPctFromDock(effectivePoint),
       effectivePoint,
     };
   } else if (effectivePoint !== 40 && cleaning.finish) {
@@ -288,12 +289,13 @@ export const getRobotPhase = (
     phase = "Forward Cleaning";
     badgeColor = "success";
     iconBorder = "#2eb85c";
-    segmentPct = (effectivePoint - 19) / (29 - 19);
+    segmentPct = pointToSegmentPctFromDock(effectivePoint);
   } else if (effectivePoint >= 31 && effectivePoint <= 39) {
     phase = "Reverse Cleaning";
     badgeColor = "primary";
     iconBorder = "#0d6efd";
-    segmentPct = (effectivePoint - 29) / (40 - 29);
+    // Dock-relative: point 38 → ~20% from DS (near dock), not 82% toward RS
+    segmentPct = pointToSegmentPctFromDock(effectivePoint);
   } else if (effectivePoint === 40) {
     phase = "At Dock";
     badgeColor = "success";

@@ -249,7 +249,6 @@ export default function ChatDashboard() {
 
     return () => {
       socket.off("updateOnlineUsers");
-      socket.disconnect();
     };
   }, []);
 

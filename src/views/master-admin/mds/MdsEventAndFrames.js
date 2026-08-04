@@ -50,7 +50,6 @@ const MdsEventAndFrames = () => {
 
     return () => {
       socket.off("event");
-      socket.disconnect(); // Disconnect socket on unmount
     };
   }, [deveui]); // Add deveui as a dependency
 

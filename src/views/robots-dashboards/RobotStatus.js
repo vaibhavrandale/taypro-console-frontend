@@ -80,7 +80,7 @@ const RobotStatus = () => {
 
     return () => {
       socket.emit("leave-all-robots");
-      socket.disconnect();
+      socket.off("robot-status-update");
     };
   }, []);
   let adminroute = "";

@@ -114,19 +114,12 @@ const SolarPanelRow = ({
 
   const batteryPercentage = getBatteryPercentage();
 
-  // Same segmentPct movement math — only display mapping changed
-  const iconStyle =
-    phase === "Reverse Cleaning"
-      ? {
-          right: `${segmentPct * 100}%`,
-          left: "auto",
-          transform: "translate(50%, -50%)",
-        }
-      : {
-          left: `${segmentPct * 100}%`,
-          right: "auto",
-          transform: "translate(-50%, -50%)",
-        };
+  // segmentPct is always fraction from DS (0) → RS (1)
+  const iconStyle = {
+    left: `${segmentPct * 100}%`,
+    right: "auto",
+    transform: "translate(-50%, -50%)",
+  };
 
   const cleaning = robot.cleaning || {};
   let className = "";

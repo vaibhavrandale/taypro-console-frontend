@@ -13,8 +13,6 @@ import {
   calculateRobotPosition,
   getMdsStatus,
   mergeLastActivity,
-  mergeRows,
-  mergeUniqueArrayByKey,
 } from "./mdsTrackingHelper";
 import { Link, useNavigate } from "react-router-dom";
 import MdsSidebar from "./MdsSidebar";
@@ -181,49 +179,32 @@ const MdsDashboard = () => {
 
     dispatch({
       type: "FETCH_SUCCESS",
-      payload: () => {
-        const index = mdsRef.current.findIndex(
+      payload: (prev) => {
+        const list = prev || mdsRef.current || [];
+        const index = list.findIndex(
           (m) => m._id === tracking._id || m.mds_no === tracking.mds_no,
         );
 
         if (index !== -1) {
-          const existing = mdsRef.current[index];
-
-          // console.log(existing);
-          const mergedPositions = mergeUniqueArrayByKey(
-            existing.mds_positions || [],
-            tracking.mds_positions || [],
-            "row_number",
-          );
-
-          const mergedActivity = mergeLastActivity(
-            existing.last_activity || [],
-            tracking.last_activity || [],
-          );
-
-          const mergedRows = mergeRows(
-            existing.rows || [],
-            tracking.rows || [],
-            // "_id"
-          );
-
-          const updated = [...mdsRef.current];
+          const existing = list[index];
+          // Trust server for positions/rows (active row + robot track) —
+          // merging by key can keep a stale active:true on the previous row.
+          const updated = [...list];
           updated[index] = {
             ...existing,
             ...tracking,
-            mds_positions: mergedPositions,
-            last_activity: mergedActivity,
-            rows: mergedRows,
+            mds_positions: tracking.mds_positions || [],
+            rows: tracking.rows || [],
+            last_activity: mergeLastActivity(
+              existing.last_activity || [],
+              tracking.last_activity || [],
+            ),
             updatedAt: new Date().toISOString(),
           };
-          console.log(mergedRows);
-
           return updated;
         }
 
-        // New MDS → add at the start
-        return [tracking, ...mdsRef.current];
-        // return [...prevMdsDevices, tracking];
+        return [tracking, ...list];
       },
     });
   };
@@ -359,9 +340,13 @@ const MdsDashboard = () => {
             //getMdsStatus helper usage
             const { isDocked, isMoving } = getMdsStatus(data);
 
-            const activeMdsPosition = data?.mds_positions.find(
-              (p) => p.active || (p.robot_released && !p.robot_returned),
-            );
+            // Prefer the true active position. Do NOT use find(released && !returned)
+            // first — older rows stay "released/not returned" and steal the robot marker.
+            const activeMdsPosition =
+              data?.mds_positions?.find((p) => p.active === true) ||
+              [...(data?.mds_positions || [])]
+                .reverse()
+                .find((p) => p.robot_released && !p.robot_returned);
 
             const activeRowNumber = isDocked
               ? 1
@@ -401,9 +386,10 @@ const MdsDashboard = () => {
                           data,
                         );
 
-                      const mdsPosition = data?.mds_positions.find(
-                        (p) => p.row_number === row.row_no,
-                      );
+                      // Latest position for this row (may visit row 1 twice in one day)
+                      const mdsPosition = [...(data?.mds_positions || [])]
+                        .reverse()
+                        .find((p) => p.row_number === row.row_no);
 
                       const showMdsBridge =
                         mdsPosition?.active ||
