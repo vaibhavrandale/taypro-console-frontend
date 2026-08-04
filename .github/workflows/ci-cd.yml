@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
 
       - name: Install dependencies
@@ -80,7 +80,6 @@ jobs:
             exit 1
           fi
 
-          # Deploy CRA build contents into the frontend web root
           rsync -avz --delete \
             -e "ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no" \
             ./build/ \
