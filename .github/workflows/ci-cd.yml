@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  EC2_FRONTEND_PATH: /var/www/taypro-console-frontend
+  EC2_FRONTEND_PATH: /var/www/taypro-console-frontend/build
 
 jobs:
   build:
