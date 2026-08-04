@@ -1,0 +1,96 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  EC2_FRONTEND_PATH: /var/www/taypro-console-frontend
+
+jobs:
+  build:
+    name: Install & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Production build
+        env:
+          CI: true
+          GENERATE_SOURCEMAP: "false"
+          DISABLE_ESLINT_PLUGIN: "true"
+          BUILD_HEAP_MB: "8192"
+          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+        run: npm run build
+
+      - name: Upload build artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: build
+          retention-days: 3
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: build
+
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
+
+      - name: Sync build to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ]; then
+            echo "Missing secrets: EC2_HOST, EC2_USER, EC2_SSH_KEY"
+            exit 1
+          fi
+
+          # Deploy CRA build contents into the frontend web root
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no" \
+            ./build/ \
+            "${EC2_USER}@${EC2_HOST}:${EC2_FRONTEND_PATH}/"
+
+      - name: Reload nginx
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -i ~/.ssh/ec2_key.pem -o StrictHostKeyChecking=no \
+            "${EC2_USER}@${EC2_HOST}" \
+            'sudo nginx -t && sudo systemctl reload nginx || true'
