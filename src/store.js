@@ -51,16 +51,17 @@
 // export default store;
 
 import { legacy_createStore as createStore } from "redux";
-import { connectSocket, disconnectSocket } from "./components/Socket";
 
 localStorage.removeItem("theme");
 localStorage.setItem("theme", "dark");
 
-// Auth token = HttpOnly cookie (set by /auth/sign-in).
-// userInfo = Redux only (Login.js) — not localStorage.
+// ✅ No authtoken in localStorage anymore — it lives in HttpOnly cookie
 const initialState = {
   theme: "dark",
-  userInfo: null,
+  userInfo: localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo"))
+    : null,
+  // ✅ Keep robots/gateways if they are not sensitive
   robots: localStorage.getItem("robots")
     ? JSON.parse(localStorage.getItem("robots"))
     : null,
@@ -72,22 +73,21 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "EMP_SIGNIN":
-      // Cookie already set by sign-in; open authenticated socket
-      queueMicrotask(() => connectSocket());
+      // ✅ Store only userInfo in localStorage (no token)
+      localStorage.setItem("userInfo", JSON.stringify(action.payload));
       return {
         ...state,
         userInfo: action.payload,
+        // ✅ No authtoken in state — cookie handles auth silently
       };
 
     case "EMP_SIGNOUT":
+      localStorage.removeItem("userInfo");
       localStorage.removeItem("robots");
       localStorage.removeItem("gateways");
-      queueMicrotask(() => disconnectSocket());
       return {
         ...state,
         userInfo: null,
-        robots: null,
-        gateways: null,
       };
 
     case "set":
