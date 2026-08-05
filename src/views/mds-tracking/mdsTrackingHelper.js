@@ -77,43 +77,70 @@ export function getMdsStatus(data) {
   return { allMdsInactive, isDocked, isMoving };
 }
 
-// ✅ Calculate robot position along a row
-export function calculateRobotPosition(row, activeRowNumber, isDocked, data) {
+/** Prefer true active; else most recently reached position (travel / return gaps). */
+export function resolveActiveMdsPosition(mds_positions = []) {
+  const active = [...mds_positions]
+    .reverse()
+    .find((p) => p.active === true);
+  if (active) return active;
+
+  const releasedOpen = [...mds_positions]
+    .reverse()
+    .find((p) => p.robot_released && !p.robot_returned);
+  if (releasedOpen) return releasedOpen;
+
+  return (
+    [...mds_positions].sort(
+      (a, b) =>
+        new Date(b.reached_at?.$date || b.reached_at || 0) -
+        new Date(a.reached_at?.$date || a.reached_at || 0)
+    )[0] || null
+  );
+}
+
+// Robot track points: 20–29 forward, 30–40 reverse. <20 = still on MDS.
+export function calculateRobotPosition(row, activeRowNumber) {
   let robotPos = 0;
   let showRobotOnMds = false;
 
-  if (row.row_no === activeRowNumber) {
-    const track = row.track_details;
+  if (row.row_no !== activeRowNumber) {
+    return { robotPos, showRobotOnMds };
+  }
 
-    if (
-      !track ||
-      track.length === 0 ||
-      (row.cleaning.start && row.cleaning.finish)
-    ) {
-      showRobotOnMds = true;
-      robotPos = -75;
-    } else {
-      const currentPoint = track[track.length - 1]?.point || 0;
+  const track = row.track_details || [];
+  const cleaning = row.cleaning || {};
+  const currentPoint = Number(track[track.length - 1]?.point);
+  const hasProgress =
+    track.length > 0 && Number.isFinite(currentPoint) && currentPoint >= 20;
 
-      if (row.cleaning.start && row.cleaning.finish) {
-        robotPos = 0;
-      } else if (currentPoint <= 29) {
-        const forwardStart = 20;
-        const forwardEnd = 29;
-        robotPos =
-          ((currentPoint - forwardStart) / (forwardEnd - forwardStart)) *
-          row.row_length;
-      } else if (currentPoint > 29 && currentPoint <= 40) {
-        const reverseStart = 30;
-        const reverseEnd = 40;
-        robotPos =
-          row.row_length -
-          ((currentPoint - reverseStart) / (reverseEnd - reverseStart)) *
-            row.row_length;
-      } else if (currentPoint > 40) {
-        robotPos = 0;
-      }
-    }
+  // Docked on MDS: empty track, finished cycle, or start uplink (point 0/11) before real points
+  if (!hasProgress || (cleaning.start && cleaning.finish)) {
+    showRobotOnMds = true;
+    robotPos = -75;
+    return { robotPos, showRobotOnMds };
+  }
+
+  if (currentPoint <= 29) {
+    const forwardStart = 20;
+    const forwardEnd = 29;
+    robotPos =
+      ((currentPoint - forwardStart) / (forwardEnd - forwardStart)) *
+      (row.row_length || 0);
+  } else if (currentPoint <= 40) {
+    const reverseStart = 30;
+    const reverseEnd = 40;
+    robotPos =
+      (row.row_length || 0) -
+      ((currentPoint - reverseStart) / (reverseEnd - reverseStart)) *
+        (row.row_length || 0);
+  } else {
+    robotPos = 0;
+  }
+
+  // Clamp so a bad point never parks the sprite off-screen
+  if (!Number.isFinite(robotPos) || robotPos < 0) {
+    showRobotOnMds = true;
+    robotPos = -75;
   }
 
   return { robotPos, showRobotOnMds };

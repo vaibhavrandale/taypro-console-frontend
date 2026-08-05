@@ -11,6 +11,7 @@ import socket from "../../components/Socket";
 import { FaArrowUp } from "react-icons/fa";
 import {
   calculateRobotPosition,
+  resolveActiveMdsPosition,
   getMdsStatus,
   mergeLastActivity,
 } from "./mdsTrackingHelper";
@@ -340,13 +341,10 @@ const MdsDashboard = () => {
             //getMdsStatus helper usage
             const { isDocked, isMoving } = getMdsStatus(data);
 
-            // Prefer the true active position. Do NOT use find(released && !returned)
-            // first — older rows stay "released/not returned" and steal the robot marker.
-            const activeMdsPosition =
-              data?.mds_positions?.find((p) => p.active === true) ||
-              [...(data?.mds_positions || [])]
-                .reverse()
-                .find((p) => p.robot_released && !p.robot_returned);
+            // Prefer active:true (latest), then open release, then latest reached_at.
+            const activeMdsPosition = resolveActiveMdsPosition(
+              data?.mds_positions || [],
+            );
 
             const activeRowNumber = isDocked
               ? 1
@@ -379,12 +377,7 @@ const MdsDashboard = () => {
                     {data.rows.map((row, index) => {
                       // helper functions to calculate robot position
                       const { robotPos, showRobotOnMds } =
-                        calculateRobotPosition(
-                          row,
-                          activeRowNumber,
-                          isDocked,
-                          data,
-                        );
+                        calculateRobotPosition(row, activeRowNumber);
 
                       // Latest position for this row (may visit row 1 twice in one day)
                       const mdsPosition = [...(data?.mds_positions || [])]
