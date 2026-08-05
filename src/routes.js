@@ -4586,6 +4586,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/custom-notifications",
+    name: "Custom Notifications",
+    element: (
+      <ProjectAdminRoute>
+        <CustomNofifications />
+      </ProjectAdminRoute>
+    ),
+  },
   // Material Request
   {
     path: "/project-admin/material-requests",
@@ -6600,6 +6609,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <OpenAiChat />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/custom-notifications",
+    name: "Custom Notifications",
+    element: (
+      <ServiceAdminRoute>
+        <CustomNofifications />
       </ServiceAdminRoute>
     ),
   },
@@ -9089,6 +9107,16 @@ const routes = [
     element: (
       <HRAndAdminRoute>
         <MonthlyAttendanceReport />
+      </HRAndAdminRoute>
+    ),
+  },
+
+  {
+    path: "/hr-admin/custom-notifications",
+    name: "Custom Notifications",
+    element: (
+      <HRAndAdminRoute>
+        <CustomNofifications />
       </HRAndAdminRoute>
     ),
   },

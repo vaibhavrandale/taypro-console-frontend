@@ -1592,6 +1592,24 @@ const _nav = [
       },
       {
         component: CNavGroup,
+        name: "Custom Notifications",
+        icon: (
+          <CIcon
+            icon={cilEnvelopeOpen}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Custom Notifications",
+            to: "/project-admin/custom-notifications",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
         name: "Material Management",
         icon: (
           <CIcon
@@ -2396,6 +2414,11 @@ const _nav = [
             component: CNavItem,
             name: "Chat with Console",
             to: "/service-admin/chat-with-console",
+          },
+          {
+            component: CNavItem,
+            name: "Custom Notifications",
+            to: "/service-admin/custom-notifications",
           },
         ],
       },
@@ -4808,6 +4831,18 @@ const _nav = [
         icon: (
           <CIcon
             icon={cilCheckCircle}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+      },
+      {
+        component: CNavItem,
+        name: "Custom Notifications",
+        to: "/hr-admin/custom-notifications",
+        icon: (
+          <CIcon
+            icon={cilEnvelopeOpen}
             customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />

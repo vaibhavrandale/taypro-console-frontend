@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   CCard,
@@ -25,6 +25,8 @@ import { Link } from "react-router-dom";
 import { role_permissions } from "../../../data";
 import toast from "react-hot-toast";
 import LoadingImage from "../../../components/LoadingImage";
+
+const HR_VISIBLE_ROLES = ["Site Technician", "Opex Site Technician"];
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -68,6 +70,16 @@ export default function CustomNotifications() {
     hasPrevPage,
   } = state;
   // const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  const visibleRoleOptions = useMemo(() => {
+    if (userInfo?.role === "Hr Admin") {
+      return role_permissions.filter((item) =>
+        HR_VISIBLE_ROLES.includes(item.role),
+      );
+    }
+    return role_permissions;
+  }, [userInfo?.role]);
+
   const [pageInput, setPageInput] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -83,6 +95,7 @@ export default function CustomNotifications() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [addModal, setAddModal] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const emptyAddForm = {
     subject: "",
@@ -96,6 +109,63 @@ export default function CustomNotifications() {
   };
 
   const [addForm, setAddForm] = useState(emptyAddForm);
+
+  const uploadNotificationImage = async (file) => {
+    if (!file) return null;
+    if (!file.type?.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploadingImage(true);
+    try {
+      const { data } = await axios.post(
+        "/api/v1/image-upload/custom-notification",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        },
+      );
+      const url = data?.url || data?.secure_url || "";
+      if (!url) {
+        toast.error("Upload failed");
+        return null;
+      }
+      toast.success("Image uploaded");
+      return url;
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Image upload failed");
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleAddImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    const url = await uploadNotificationImage(file);
+    if (!url) return;
+    setAddForm((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), url],
+    }));
+  };
+
+  const handleEditImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    const url = await uploadNotificationImage(file);
+    if (!url) return;
+    setEditForm((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), url],
+    }));
+  };
   const fetchNotifications = async () => {
     try {
       dispatch({ type: "FETCH_NOTIFICATION_REQUEST" });
@@ -153,10 +223,16 @@ export default function CustomNotifications() {
 
   const openEditModal = (item) => {
     setSelectedItem(item);
+    const roles =
+      userInfo?.role === "Hr Admin"
+        ? (item.for_user_roles || []).filter((role) =>
+            HR_VISIBLE_ROLES.includes(role),
+          )
+        : item.for_user_roles;
     setEditForm({
       subject: item.subject,
       description: item.description,
-      for_user_roles: item.for_user_roles,
+      for_user_roles: roles,
       is_active: item.is_active,
       is_feedback_required: item.is_feedback_required,
       points: item.points,
@@ -884,7 +960,7 @@ export default function CustomNotifications() {
               <div className="mb-3">
                 <label className="form-label">Visible For Roles</label>
                 <div className="d-flex  flex-wrap">
-                  {role_permissions.map((item) => {
+                  {visibleRoleOptions.map((item) => {
                     const roleName = item.role;
 
                     return (
@@ -990,49 +1066,57 @@ export default function CustomNotifications() {
               {/* Images */}
               <div className="mb-3">
                 <div className="d-flex justify-content-between align-items-center my-2">
-                  <label className="form-label">Images (URLs)</label>
-                  <CButton
-                    color="success"
-                    size="sm"
-                    onClick={() =>
-                      setEditForm({
-                        ...editForm,
-                        images: [...(editForm.images || []), ""],
-                      })
-                    }
-                  >
-                    Add Image
-                  </CButton>
+                  <label className="form-label mb-0">Images</label>
+                  <div className="d-flex gap-2 align-items-center">
+                    {uploadingImage ? <CSpinner size="sm" /> : null}
+                    <label className="btn btn-sm btn-success mb-0">
+                      Upload Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        disabled={uploadingImage}
+                        onChange={handleEditImageUpload}
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                {editForm.images?.map((img, index) => (
-                  <div
-                    key={index}
-                    className="d-flex align-items-center gap-2 mb-2"
-                  >
-                    <input
-                      className="form-control bg-dark text-light border"
-                      value={img}
-                      onChange={(e) => {
-                        const images = [...editForm.images];
-                        images[index] = e.target.value;
-                        setEditForm({ ...editForm, images });
-                      }}
-                    />
-                    <CButton
-                      color="danger"
-                      size="sm"
-                      onClick={() => {
-                        const images = editForm.images.filter(
-                          (_, i) => i !== index,
-                        );
-                        setEditForm({ ...editForm, images });
-                      }}
-                    >
-                      Remove
-                    </CButton>
+                {editForm.images?.length > 0 ? (
+                  <div className="row g-2">
+                    {editForm.images.map((img, index) => (
+                      <div key={`${img}-${index}`} className="col-6 col-md-4 col-lg-3">
+                        <div className="border rounded p-2 position-relative">
+                          <CImage
+                            src={img}
+                            alt={`notification-${index}`}
+                            className="rounded"
+                            style={{
+                              width: "100%",
+                              height: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            className="mt-2 w-100"
+                            onClick={() => {
+                              const images = editForm.images.filter(
+                                (_, i) => i !== index,
+                              );
+                              setEditForm({ ...editForm, images });
+                            }}
+                          >
+                            Remove
+                          </CButton>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <small className="text-muted">No images uploaded</small>
+                )}
               </div>
             </CModalBody>
 
@@ -1048,7 +1132,7 @@ export default function CustomNotifications() {
               <CButton
                 size="sm"
                 color="warning"
-                disabled={updating}
+                disabled={updating || uploadingImage}
                 onClick={handleUpdate}
               >
                 {updating ? <CSpinner size="sm" /> : "Update"}
@@ -1158,7 +1242,7 @@ export default function CustomNotifications() {
               <div className="mb-3">
                 <label className="form-label">Visible For Roles</label>
                 <div className="d-flex flex-wrap">
-                  {role_permissions.map((item, idx) => {
+                  {visibleRoleOptions.map((item, idx) => {
                     const roleName = item.role;
 
                     return (
@@ -1223,49 +1307,57 @@ export default function CustomNotifications() {
               {/* Images */}
               <div className="mb-3">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <label className="form-label">Images (URLs)</label>
-                  <CButton
-                    size="sm"
-                    color="success"
-                    onClick={() =>
-                      setAddForm({
-                        ...addForm,
-                        images: [...addForm.images, ""],
-                      })
-                    }
-                  >
-                    Add Image
-                  </CButton>
+                  <label className="form-label mb-0">Images</label>
+                  <div className="d-flex gap-2 align-items-center">
+                    {uploadingImage ? <CSpinner size="sm" /> : null}
+                    <label className="btn btn-sm btn-success mb-0">
+                      Upload Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        disabled={uploadingImage}
+                        onChange={handleAddImageUpload}
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                {addForm.images.map((img, index) => (
-                  <div
-                    key={index}
-                    className="d-flex align-items-center gap-2 mb-2"
-                  >
-                    <input
-                      className="form-control bg-dark text-light border"
-                      value={img}
-                      onChange={(e) => {
-                        const images = [...addForm.images];
-                        images[index] = e.target.value;
-                        setAddForm({ ...addForm, images });
-                      }}
-                    />
-                    <CButton
-                      size="sm"
-                      color="danger"
-                      onClick={() => {
-                        const images = addForm.images.filter(
-                          (_, i) => i !== index,
-                        );
-                        setAddForm({ ...addForm, images });
-                      }}
-                    >
-                      Remove
-                    </CButton>
+                {addForm.images.length > 0 ? (
+                  <div className="row g-2">
+                    {addForm.images.map((img, index) => (
+                      <div key={`${img}-${index}`} className="col-6 col-md-4 col-lg-3">
+                        <div className="border rounded p-2">
+                          <CImage
+                            src={img}
+                            alt={`notification-${index}`}
+                            className="rounded"
+                            style={{
+                              width: "100%",
+                              height: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <CButton
+                            size="sm"
+                            color="danger"
+                            className="mt-2 w-100"
+                            onClick={() => {
+                              const images = addForm.images.filter(
+                                (_, i) => i !== index,
+                              );
+                              setAddForm({ ...addForm, images });
+                            }}
+                          >
+                            Remove
+                          </CButton>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <small className="text-muted">No images uploaded</small>
+                )}
               </div>
             </CModalBody>
 
@@ -1281,7 +1373,7 @@ export default function CustomNotifications() {
               <CButton
                 size="sm"
                 color="success"
-                disabled={adding}
+                disabled={adding || uploadingImage}
                 onClick={handleAddNotification}
               >
                 {adding ? <CSpinner size="sm" /> : "Create"}
