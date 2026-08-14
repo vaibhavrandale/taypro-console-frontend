@@ -5,25 +5,29 @@ import {
   AppFooter,
   AppHeader,
 } from "../components/index";
-// import ChatWidget from "../components/ChatWidget";
+import { VoiceCallProvider } from "../context/VoiceCallContext";
+import VoiceCallModal from "../components/VoiceCallModal";
 
 const DefaultLayout = () => {
-  const [sidebarShow, setSidebarShow] = useState(true); // Use local state
+  const [sidebarShow, setSidebarShow] = useState(true);
 
   return (
-    <div>
-      {/* <AppSidebar /> */}
-      <AppSidebar sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
-      <div className="wrapper d-flex flex-column min-vh-100">
-        {/* <AppHeader /> */}
-        <AppHeader sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
-        <div className="body flex-grow-1">
-          <AppContent />
-          {/* <ChatWidget /> */}
+    <VoiceCallProvider>
+      <div>
+        <AppSidebar sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} />
+        <div className="wrapper d-flex flex-column min-vh-100">
+          <AppHeader
+            sidebarShow={sidebarShow}
+            setSidebarShow={setSidebarShow}
+          />
+          <div className="body flex-grow-1">
+            <AppContent />
+          </div>
+          <AppFooter />
         </div>
-        <AppFooter />
+        <VoiceCallModal />
       </div>
-    </div>
+    </VoiceCallProvider>
   );
 };
 

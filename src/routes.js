@@ -71,6 +71,7 @@ import {
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
 import ChatDashboard from "./views/master-admin/chat/ChatDashboard";
+import VoiceCallsPage from "./views/master-admin/voice-calls/VoiceCallsPage";
 import ClientTicketsDashboard from "./views/master-admin/client-tickets/ClientTicketsDashboard";
 import CreateNewClientTicket from "./views/master-admin/client-tickets/CreateNewClientTicket";
 import UpdateClientTicket from "./views/master-admin/client-tickets/UpdateClientTicket";
@@ -150,7 +151,7 @@ import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmware
 import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
-import Dummy from "./views/robot-position/Dummy";
+
 import SiteAnalysisDashboard from "./views/master-admin/site-analysis/SiteAnalysisDashboard";
 import AllClientsDashboard from "./views/master-admin/site-analysis/AllClientsDashboard";
 import ClientSitesDashboard from "./views/master-admin/site-analysis/ClientSitesDashboard";
@@ -241,6 +242,7 @@ import GatewaySurveyDashboard from "./views/master-admin/gateway-survey/GatewayS
 import CreateRobotReading from "./views/master-admin/gateway-survey/createRobotReading";
 import ViewGatewaySurvey from "./views/master-admin/gateway-survey/ViewGatewaySurvey";
 import RobotStatus from "./views/robots-dashboards/RobotStatus";
+import Dummy from "./views/pr/Dummy";
 
 const App = React.lazy(() => import("./views/pages/app/App"));
 // const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
@@ -601,8 +603,8 @@ const routes = [
     ),
   },
   {
-    path: "/master-admin/robots-tracker/dummy",
-    name: "Robots Dummy",
+    path: "/master-admin/pr",
+    name: "pr",
     element: (
       <MasterAdminRoute>
         <Dummy />
@@ -1357,6 +1359,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ChatDashboard />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/voice-calls",
+    name: "Voice Calls",
+    element: (
+      <MasterAdminRoute>
+        <VoiceCallsPage />
       </MasterAdminRoute>
     ),
   },
@@ -6281,6 +6292,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-admin/voice-calls",
+    name: "Voice Calls",
+    element: (
+      <ServiceAdminRoute>
+        <VoiceCallsPage />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
     path: "/service-admin/robot-battery-temperature",
     name: "Robot Battery & Temperature",
     element: (
@@ -8224,6 +8244,15 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <OpenAiChat />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/voice-calls",
+    name: "Voice Calls",
+    element: (
+      <SiteTechnicianRoute>
+        <VoiceCallsPage />
       </SiteTechnicianRoute>
     ),
   },

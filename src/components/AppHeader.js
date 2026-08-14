@@ -1668,6 +1668,20 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   </ul>
                 )}
 
+                {customNotificationData.link ? (
+                  <div className="m-2">
+                    <small className="text-muted d-block mb-1">Link</small>
+                    <a
+                      href={customNotificationData.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-break"
+                    >
+                      {customNotificationData.link}
+                    </a>
+                  </div>
+                ) : null}
+
                 {/* Images */}
                 {customNotificationData.images?.length > 0 && (
                   <div className="mt-3 row g-2 border-bottom">

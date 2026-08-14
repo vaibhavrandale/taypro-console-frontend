@@ -101,6 +101,7 @@ export default function CustomNotifications() {
     subject: "",
     description: "",
     points: [],
+    link: "",
     for_user_roles: [],
     is_active: true,
     is_feedback_required: false,
@@ -236,6 +237,7 @@ export default function CustomNotifications() {
       is_active: item.is_active,
       is_feedback_required: item.is_feedback_required,
       points: item.points,
+      link: item.link || "",
       users: item.users,
       images: item.images,
     });
@@ -615,6 +617,20 @@ export default function CustomNotifications() {
                     </div>
                   )}
 
+                  {selectedItem.link ? (
+                    <div className="mb-4">
+                      <h6 className="text-muted mb-2">Link</h6>
+                      <a
+                        href={selectedItem.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-info text-break"
+                      >
+                        {selectedItem.link}
+                      </a>
+                    </div>
+                  ) : null}
+
                   <hr className="border-secondary" />
 
                   {/* META INFO */}
@@ -905,6 +921,23 @@ export default function CustomNotifications() {
                 />
               </div>
 
+              {/* Link / survey URL */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Link{" "}
+                  <span className="text-muted">(survey / any URL, optional)</span>
+                </label>
+                <input
+                  type="url"
+                  className="form-control bg-dark text-light border"
+                  placeholder="https://forms.example.com/survey"
+                  value={editForm.link || ""}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, link: e.target.value })
+                  }
+                />
+              </div>
+
               <hr className="border-secondary" />
               <div className="mb-3">
                 <div className="d-flex align-items-center justify-content-between my-2">
@@ -1182,6 +1215,23 @@ export default function CustomNotifications() {
                   value={addForm.description}
                   onChange={(e) =>
                     setAddForm({ ...addForm, description: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Link / survey URL */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Link{" "}
+                  <span className="text-muted">(survey / any URL, optional)</span>
+                </label>
+                <input
+                  type="url"
+                  className="form-control bg-dark text-light border"
+                  placeholder="https://forms.example.com/survey"
+                  value={addForm.link}
+                  onChange={(e) =>
+                    setAddForm({ ...addForm, link: e.target.value })
                   }
                 />
               </div>

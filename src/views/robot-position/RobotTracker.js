@@ -8,6 +8,7 @@ import { smoothScroll } from "./helpers";
 import socket from "../../components/Socket";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import {
+  CButton,
   CCol,
   CFormInput,
   CFormSelect,
@@ -19,6 +20,7 @@ import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
 import { Link } from "react-router-dom";
 import FullScreen from "./FullScreen";
 import SiteSelect from "../../components/SiteSelect";
+import RobotLocationsMapModal from "./RobotLocationsMapModal";
 // import CleaningSummary from "./CleaningSummary";
 // import bgImage from "../../assets/brand/solapannelbg.avif";
 
@@ -110,9 +112,18 @@ const RobotTracker = () => {
   const userInfo = useSelector((state) => state.userInfo);
   const [selectedRobotId, setSelectedRobotId] = useState(null);
   const [selectedBlock, setSelectedBlock] = useState("");
+  const [showMapModal, setShowMapModal] = useState(false);
 
   // const [selectedRobot, setSelectedRobot] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  const openMapModal = () => {
+    if (!site_id) {
+      toast.error("Please select a site first");
+      return;
+    }
+    setShowMapModal(true);
+  };
   const mergeLastActivity = (existing, incoming) => {
     const existingKeys = new Set(
       existing.map((a) => new Date(a.timestamp).getTime()),
@@ -525,6 +536,17 @@ const RobotTracker = () => {
             </CCol>
 
             <CCol md={1} xs={12} sm={12} className="mb-2">
+              <CButton
+                color="info"
+                size="sm"
+                className="w-100"
+                onClick={openMapModal}
+                disabled={!site_id}
+              >
+                Map
+              </CButton>
+            </CCol>
+            <CCol md={1} xs={12} sm={12} className="mb-2">
               <FullScreen pageRef={pageRef} />
             </CCol>
           </CRow>
@@ -643,6 +665,14 @@ const RobotTracker = () => {
           visible={sidebarVisible}
           onClose={handleSidebarClose}
           userInfo={userInfo}
+        />
+      )}
+
+      {showMapModal && (
+        <RobotLocationsMapModal
+          visible={showMapModal}
+          onClose={() => setShowMapModal(false)}
+          site_id={site_id}
         />
       )}
       {/* footer — pinned to bottom in default + fullscreen */}
