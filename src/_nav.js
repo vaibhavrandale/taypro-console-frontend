@@ -266,6 +266,11 @@ const _nav = [
             name: "Chat",
             to: "/master-admin/chat",
           },
+          {
+            component: CNavItem,
+            name: "Voice Calls",
+            to: "/master-admin/voice-calls",
+          },
         ],
       },
       // /master-admin/customer-feedback
@@ -2412,6 +2417,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Voice Calls",
+            to: "/service-admin/voice-calls",
+          },
+          {
+            component: CNavItem,
             name: "Chat with Console",
             to: "/service-admin/chat-with-console",
           },
@@ -2823,6 +2833,11 @@ const _nav = [
             component: CNavItem,
             name: "Chat",
             to: "/site-technician/chat-with-console",
+          },
+          {
+            component: CNavItem,
+            name: "Voice Calls",
+            to: "/site-technician/voice-calls",
           },
         ],
       },
