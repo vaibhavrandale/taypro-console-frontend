@@ -174,9 +174,10 @@ export default function VoiceCallsPage() {
           </CCardHeader>
           <CCardBody>
             <p className="text-muted small mb-3">
-              Tap <strong>Call</strong> to start a 1:1 voice call. Allow
-              microphone access when the browser asks. During the call you will
-              see mic / remote sound level bars.
+              Tap <strong>Call</strong> to start a 1:1 voice call. Offline app
+              users can still be reached via push notification if they have the
+              mobile app installed. Allow microphone access when the browser
+              asks. During the call you will see mic / remote sound level bars.
             </p>
             {loading ? (
               <div className="text-center py-5">
@@ -233,13 +234,11 @@ export default function VoiceCallsPage() {
                           <CButton
                             color="success"
                             size="sm"
-                            disabled={
-                              !online || phase !== "idle" || submitting
-                            }
+                            disabled={phase !== "idle" || submitting}
                             title={
                               online
                                 ? "Start voice call"
-                                : "User is offline"
+                                : "User appears offline — will ring via push if they have the app"
                             }
                             onClick={() => void startCall(user._id)}
                           >
