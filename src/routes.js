@@ -44,6 +44,7 @@ import InventoryTab from "./views/site-technician/inventories/SiteTechnicianInve
 import TechnicianAttendanceDashboard from "./views/master-admin/technician-attendance/TechnicianAttendanceDashboard";
 import TechnicianLocationDashboard from "./views/master-admin/technician-location/TechnicianLocationDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
+import TechnicianWfhApprovals from "./views/service-admin/TechnicianWfhApprovals";
 
 import {
   ServiceUserRoute,
@@ -6226,6 +6227,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-admin/technician-wfh",
+    name: "Technician WFH Approvals",
+    element: (
+      <ServiceAdminRoute>
+        <TechnicianWfhApprovals />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
     path: "/service-admin/technician-location",
     name: "Technician Location",
     element: (
@@ -7396,6 +7406,15 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <TechnicianAttendanceDashboard />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/technician-wfh",
+    name: "Technician WFH Approvals",
+    element: (
+      <ServiceUserRoute>
+        <TechnicianWfhApprovals />
       </ServiceUserRoute>
     ),
   },

@@ -2374,6 +2374,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Technician WFH",
+            to: "/service-admin/technician-wfh",
+          },
+          {
+            component: CNavItem,
             name: "Technician Location",
             to: "/service-admin/technician-location",
           },
@@ -3427,6 +3432,11 @@ const _nav = [
             component: CNavItem,
             name: "Technician Attendance",
             to: "/service-user/technician-attendance",
+          },
+          {
+            component: CNavItem,
+            name: "Technician WFH",
+            to: "/service-user/technician-wfh",
           },
           {
             component: CNavItem,
