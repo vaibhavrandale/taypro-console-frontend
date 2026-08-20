@@ -35,9 +35,11 @@ import {
   cilSend,
   cilX,
 } from "@coreui/icons";
+import { BsTelephoneFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useVoiceCall } from "../../../context/VoiceCallContext";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import socket from "../../../components/Socket";
 import PdfIcon from "../../../assets/images/pdf.png";
@@ -155,6 +157,7 @@ export default function ChatDashboard() {
   const [showUserModal, setShowUserModal] = useState(false);
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
+  const { startCall, phase, submitting } = useVoiceCall();
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -969,22 +972,51 @@ export default function ChatDashboard() {
                             <CTableDataCell>{user.department}</CTableDataCell>
                             <CTableDataCell>{user.designation}</CTableDataCell>
                             <CTableDataCell>
-                              <CBadge
-                                style={{
-                                  cursor: "pointer",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                                color="primary"
-                                onClick={() => {
-                                  CreateChatRoom(user);
-                                  setShowUserModal(false);
-                                }}
-                              >
-                                Start Chat &nbsp;
-                                <CIcon icon={cilChatBubble} />
-                              </CBadge>
+                              <div className="d-flex gap-2 justify-content-center flex-wrap">
+                                <CBadge
+                                  style={{
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                  color="primary"
+                                  onClick={() => {
+                                    CreateChatRoom(user);
+                                    setShowUserModal(false);
+                                  }}
+                                >
+                                  Start Chat &nbsp;
+                                  <CIcon icon={cilChatBubble} />
+                                </CBadge>
+                                {user._id !== userInfo?._id ? (
+                                  <CBadge
+                                    style={{
+                                      cursor:
+                                        phase !== "idle" || submitting
+                                          ? "not-allowed"
+                                          : "pointer",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      opacity:
+                                        phase !== "idle" || submitting
+                                          ? 0.5
+                                          : 1,
+                                    }}
+                                    color="success"
+                                    onClick={() => {
+                                      if (phase !== "idle" || submitting)
+                                        return;
+                                      void startCall(user._id);
+                                      setShowUserModal(false);
+                                    }}
+                                  >
+                                    Call &nbsp;
+                                    <BsTelephoneFill size={12} />
+                                  </CBadge>
+                                ) : null}
+                              </div>
                             </CTableDataCell>
                           </CTableRow>
                         ))}
@@ -1145,7 +1177,7 @@ export default function ChatDashboard() {
                             height="30"
                             style={{ objectFit: "cover" }}
                           />
-                          <div>
+                          <div className="flex-grow-1">
                             <div>{otherUser.name}</div>
                             <small
                               className={`${
@@ -1161,6 +1193,16 @@ export default function ChatDashboard() {
                                   : "Offline"}
                             </small>
                           </div>
+                          <CButton
+                            color="success"
+                            size="sm"
+                            variant="outline"
+                            disabled={phase !== "idle" || submitting}
+                            onClick={() => void startCall(otherUser.user_id)}
+                            title="Voice call"
+                          >
+                            <BsTelephoneFill />
+                          </CButton>
                         </>
                       );
                     })()}

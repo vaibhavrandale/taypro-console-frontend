@@ -6,7 +6,6 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CInputGroup,
   CFormInput,
   CRow,
   CCol,
@@ -18,6 +17,7 @@ import {
   CModalTitle,
   CModalBody,
   CFormLabel,
+  CFormSelect,
   CModalFooter,
 } from "@coreui/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -29,6 +29,7 @@ import PaginateInput from "../../components/PaginateInput";
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import ExpenseDashboardCharts from "./ExpenseDashboardCharts";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -45,6 +46,17 @@ const reducer = (state, action) => {
       };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "STATS_REQUEST":
+      return { ...state, statsLoading: true };
+    case "STATS_SUCCESS":
+      return {
+        ...state,
+        statsLoading: false,
+        stats: action.payload,
+      };
+    case "STATS_FAIL":
+      return { ...state, statsLoading: false, stats: null };
 
     case "APPROVE_REQUEST":
       return { ...state, approveLoading: true, approveError: "" };
@@ -81,11 +93,15 @@ const ExpenseDashboard = () => {
       approveLoading,
       deleteLoading,
       deleteError,
+      stats,
+      statsLoading,
     },
     dispatch,
   ] = useReducer(reducer, {
     expenses: [],
+    stats: null,
     loading: true,
+    statsLoading: true,
     approveLoading: false,
     error: "",
     approveError: "",
@@ -97,6 +113,14 @@ const ExpenseDashboard = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [employeeFilter, setEmployeeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState({
+    department: "",
+    employee: "",
+    status: "",
+  });
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
   const [pageInput, setPageInput] = useState("");
@@ -112,9 +136,16 @@ const ExpenseDashboard = () => {
   const navigate = useNavigate();
 
   const fetchExpenses = async () => {
-    const pagination = {
+    const body = {
       pg: page,
       limit: limit,
+      ...(appliedFilters.department.trim()
+        ? { department: appliedFilters.department.trim() }
+        : {}),
+      ...(appliedFilters.employee.trim()
+        ? { employee: appliedFilters.employee.trim() }
+        : {}),
+      ...(appliedFilters.status ? { status: appliedFilters.status } : {}),
     };
 
     dispatch({ type: "FETCH_REQUEST" });
@@ -122,11 +153,8 @@ const ExpenseDashboard = () => {
     try {
       const result = await axios.post(
         `/api/v1/expenseclaims/get-expense-claims`,
-        pagination,
+        body,
         {
-          // headers: {
-          //   Authorization: `Bearer ${authtoken}`,
-          // },
           withCredentials: true,
         },
       );
@@ -158,6 +186,22 @@ const ExpenseDashboard = () => {
     }
   };
 
+  const fetchExpenseStats = async () => {
+    dispatch({ type: "STATS_REQUEST" });
+    try {
+      const result = await axios.get(
+        `/api/v1/expenseclaims/dashboard-stats`,
+        { withCredentials: true },
+      );
+      dispatch({
+        type: "STATS_SUCCESS",
+        payload: result?.data?.data || null,
+      });
+    } catch {
+      dispatch({ type: "STATS_FAIL" });
+    }
+  };
+
   const deleteExpense = async (id, reason) => {
     dispatch({ type: "DELETE_EXPENSE_REQUEST" });
     try {
@@ -173,6 +217,7 @@ const ExpenseDashboard = () => {
       dispatch({ type: "DELETE_EXPENSE_SUCCESS", payload: id });
       toast.success(result?.data?.message);
       fetchExpenses();
+      fetchExpenseStats();
     } catch (error) {
       dispatch({
         type: "DELETE_EXPENSE_FAIL",
@@ -184,14 +229,39 @@ const ExpenseDashboard = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, [page, limit]);
+  }, [page, limit, appliedFilters]);
 
-  const filteredData = expenses?.filter(
-    (expense) =>
-      expense.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.employee_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expense.department?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => {
+    fetchExpenseStats();
+  }, []);
+
+  const applyFilters = () => {
+    setPage(1);
+    setAppliedFilters({
+      department: departmentFilter,
+      employee: employeeFilter,
+      status: statusFilter,
+    });
+  };
+
+  const clearFilters = () => {
+    setDepartmentFilter("");
+    setEmployeeFilter("");
+    setStatusFilter("");
+    setSearchTerm("");
+    setPage(1);
+    setAppliedFilters({ department: "", employee: "", status: "" });
+  };
+
+  const filteredData = expenses?.filter((expense) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      expense.name?.toLowerCase().includes(term) ||
+      expense.employee_name?.toLowerCase().includes(term) ||
+      expense.department?.toLowerCase().includes(term)
+    );
+  });
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -238,6 +308,7 @@ const ExpenseDashboard = () => {
 
       dispatch({ type: "APPROVE_SUCCESS" });
       fetchExpenses();
+      fetchExpenseStats();
       toast.success(response.data.frappe_response.data.name);
       setUploadingFields((prev) => ({ ...prev, [id]: false })); // ✅ Set only this field to loading
     } catch (error) {
@@ -309,6 +380,11 @@ const ExpenseDashboard = () => {
         </Link>
       </div>
 
+      <ExpenseDashboardCharts
+        stats={stats}
+        loading={statsLoading}
+      />
+
       {/* remark modal */}
       <CModal
         visible={showApproveModal}
@@ -360,17 +436,57 @@ const ExpenseDashboard = () => {
         </CModalFooter>
       </CModal>
 
-      {/* Search Input */}
-      <CRow className="justify-content-end">
-        <CCol xs={12} sm={10} md={8} lg={5}>
-          <CInputGroup className="mb-3">
-            <CFormInput
-              type="text"
-              placeholder="Search by Claim ID, Employee or Department"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </CInputGroup>
+      {/* Filters */}
+      <CRow className="mb-3 g-2 align-items-end">
+        <CCol xs={12} sm={6} md={3} lg={2}>
+          <CFormLabel className="mb-1">Department</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Department"
+            value={departmentFilter}
+            onChange={(e) => setDepartmentFilter(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && applyFilters()}
+          />
+        </CCol>
+        <CCol xs={12} sm={6} md={3} lg={2}>
+          <CFormLabel className="mb-1">Employee</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Employee"
+            value={employeeFilter}
+            onChange={(e) => setEmployeeFilter(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && applyFilters()}
+          />
+        </CCol>
+        <CCol xs={12} sm={6} md={3} lg={2}>
+          <CFormLabel className="mb-1">Status</CFormLabel>
+          <CFormSelect
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="Approved">Approved</option>
+            <option value="Pending">Pending</option>
+            <option value="Draft">Draft</option>
+            <option value="Rejected">Rejected</option>
+          </CFormSelect>
+        </CCol>
+        <CCol xs={12} sm={6} md={3} lg={2}>
+          <CFormLabel className="mb-1">Search</CFormLabel>
+          <CFormInput
+            type="text"
+            placeholder="Claim ID on this page"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </CCol>
+        <CCol xs={12} sm={6} md={6} lg={4} className="d-flex gap-2">
+          <CButton color="primary" size="sm" onClick={applyFilters}>
+            Apply
+          </CButton>
+          <CButton color="secondary" variant="outline" size="sm" onClick={clearFilters}>
+            Clear
+          </CButton>
         </CCol>
       </CRow>
 

@@ -12,7 +12,6 @@ const socket = io(backendURL, {
   upgrade: false,
   autoConnect: true,
   secure: true, // ensure WSS
-  withCredentials: true, // send HttpOnly authtoken cookie on handshake
 });
 
 export default socket;

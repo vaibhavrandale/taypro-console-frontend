@@ -235,11 +235,16 @@ const HRUserDashboard = () => {
       if (selectedItem?._id && editModal) {
         body.hr_user_id = selectedItem._id;
       }
-      const res = await axios.post(
-        "/api/v1/hr/attendance/fingerprint/enroll",
-        body,
-        { withCredentials: true },
-      );
+      const device = fpDevices.find((d) => d.device_id === enrollDeviceId);
+      const piIp = String(device?.ip || "").trim();
+      const onPi =
+        piIp && piIp !== "0.0.0.0" && piIp !== "127.0.0.1";
+      const url = onPi
+        ? `http://${piIp}:3000/api/v1/hr/attendance/fingerprint/enroll`
+        : "/api/v1/hr/attendance/fingerprint/enroll";
+      const res = await axios.post(url, body, {
+        withCredentials: !onPi,
+      });
       toast.success(
         res.data?.message ||
           `Enroll finger ${finger}/2 — place that finger twice on Pi`,
