@@ -26,6 +26,7 @@ const BASE = "/service-admin";
 
 const LINKS = {
   attendance: `${BASE}/technician-attendance`,
+  wfh: `${BASE}/technician-wfh`,
   location: `${BASE}/technician-location`,
   tickets: `${BASE}/service-tickets`,
   cleaning: `${BASE}/all-site-cleaning-log`,
@@ -250,6 +251,9 @@ const ServiceAdminDashboard = () => {
           </Link>
           <Link to={LINKS.attendance} className="btn btn-sm btn-secondary">
             Attendance
+          </Link>
+          <Link to={LINKS.wfh} className="btn btn-sm btn-secondary">
+            WFH Approvals
           </Link>
           <Link to={LINKS.location} className="btn btn-sm btn-secondary">
             Location

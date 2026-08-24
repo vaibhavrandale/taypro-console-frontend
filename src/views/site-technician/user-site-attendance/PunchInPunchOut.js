@@ -14,6 +14,8 @@ import {
   CCol,
   CFormLabel,
   CFormSelect,
+  CFormCheck,
+  CFormTextarea,
   CButton,
   CAlert,
   CBadge,
@@ -153,6 +155,10 @@ const PunchInPunchOut = () => {
   const isProcessing = uploadingImage || savingImage;
   const webcamRef = useRef(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [wfhChecked, setWfhChecked] = useState(false);
+  const [wfhReason, setWfhReason] = useState("");
+  const [wfhStatus, setWfhStatus] = useState(null); // { id, status, reason, site_id, date }
+  const [attendanceSource, setAttendanceSource] = useState(null);
 
   const fetchPunchStatus = async () => {
     try {
@@ -165,6 +171,12 @@ const PunchInPunchOut = () => {
       );
 
       setinTime(data?.data?.data?.punchin_time);
+      setWfhStatus(data?.data?.wfh || null);
+      if (data?.data?.data?.source) {
+        setAttendanceSource(data.data.data.source);
+      } else if (!data?.data?.punchedIn) {
+        setAttendanceSource(null);
+      }
 
       dispatch({
         type: "SET_STATUS",
@@ -328,12 +340,57 @@ const PunchInPunchOut = () => {
     setCanPunchOut(within);
   }, [liveLocation, selectedSiteData, punchedIn, punchedOut]);
 
+  const handleWfhRequest = async () => {
+    if (!site_id) {
+      toast.error("Please select a site.");
+      return;
+    }
+    if (!String(wfhReason || "").trim()) {
+      toast.error("Please enter a WFH reason (e.g. rain / no robot ops).");
+      return;
+    }
+    dispatch({ type: "PUNCH_REQUEST" });
+    try {
+      const res = await axios.post(
+        "/api/v1/technician-attendance/wfh-request",
+        { site_id, reason: wfhReason.trim() },
+        { withCredentials: true },
+      );
+      dispatch({
+        type: "SET_STATUS",
+        payload: { punchedIn: false, punchedOut: false },
+      });
+      // clear loading without marking punched in
+      dispatch({ type: "PUNCH_FAIL", payload: null });
+      setWfhStatus({
+        id: res.data?.data?._id,
+        status: res.data?.data?.status || "pending",
+        reason: res.data?.data?.reason,
+        site_id: res.data?.data?.site_id,
+        date: res.data?.data?.date,
+      });
+      toast.success("WFH request sent — waiting for Service Admin/User approval");
+      fetchPunchStatus();
+    } catch (error) {
+      dispatch({
+        type: "PUNCH_FAIL",
+        payload: error.response?.data?.message || "WFH request failed",
+      });
+      toast.error(error.response?.data?.message || "WFH request failed");
+    }
+  };
+
   // Modified to open camera modal instead of direct punch in
   const handlePunchInClick = (e) => {
     e.preventDefault();
 
     if (!site_id) {
       toast.error("Please select a site.");
+      return;
+    }
+
+    if (wfhChecked) {
+      handleWfhRequest();
       return;
     }
 
@@ -578,7 +635,17 @@ const PunchInPunchOut = () => {
                 <CAlert color="warning">Loading attendance status...</CAlert>
               ) : punchedIn && punchedOut ? (
                 <CAlert color="info">
-                  ✅ You have already punched in and out for today.
+                  {attendanceSource === "wfh" ||
+                  wfhStatus?.status === "approved"
+                    ? "WFH approved — attendance marked for today."
+                    : "✅ You have already punched in and out for today."}
+                </CAlert>
+              ) : wfhStatus?.status === "pending" && !punchedIn ? (
+                <CAlert color="warning">
+                  WFH request pending approval
+                  {wfhStatus.reason ? ` (${wfhStatus.reason})` : ""}. Service
+                  Admin / Service User will approve — attendance will mark
+                  automatically.
                 </CAlert>
               ) : !punchedIn ? (
                 <CForm
@@ -603,7 +670,42 @@ const PunchInPunchOut = () => {
                     </CCol>
                   </CRow>
 
-                  {canPunchIn ? (
+                  <div className="mt-3 d-flex align-items-center gap-2">
+                    <CFormCheck
+                      id="wfh-checkbox"
+                      label="WFH"
+                      checked={wfhChecked}
+                      onChange={(e) => setWfhChecked(e.target.checked)}
+                    />
+                    <span className="small text-medium-emphasis">
+                      (rain / no site ops — skips radius, needs approval)
+                    </span>
+                  </div>
+
+                  {wfhChecked && (
+                    <div className="mt-2">
+                      <CFormLabel>WFH reason</CFormLabel>
+                      <CFormTextarea
+                        rows={2}
+                        value={wfhReason}
+                        onChange={(e) => setWfhReason(e.target.value)}
+                        placeholder="e.g. Rainy season — robots not operating"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {wfhChecked ? (
+                    <CButton
+                      type="submit"
+                      color="info"
+                      size="sm"
+                      className="mt-3"
+                      disabled={loading}
+                    >
+                      {loading ? "Submitting..." : "Request WFH"}
+                    </CButton>
+                  ) : canPunchIn ? (
                     <CButton
                       type="submit"
                       color="success"
