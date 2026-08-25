@@ -92,7 +92,8 @@ const CreateExpense = () => {
     cost_center: "Main - TAYPRO",
     payable_account: "Expense Claim Payable - TAYPRO",
     department: "Projects - TAYPRO",
-    expense_approver: "tejas.memane@taypro.in",
+    // Console shows ERP manager for field claims — Abhay Singh (not Tejas).
+    expense_approver: "abhay.singh@taypro.in",
     company_gstin: "27AAHCT4250H1ZA",
     department_of_visit: "",
     employee: userInfo.employee_id,

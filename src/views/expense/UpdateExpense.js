@@ -411,10 +411,8 @@ const UpdateExpense = () => {
                       type="email"
                       name="expense_approver"
                       className="form-control"
-                      value={formData.expense_approver}
-                      onChange={handleFormChange}
-                      required
-                      placeholder="Enter approver's email"
+                      value={formData.expense_approver || "abhay.singh@taypro.in"}
+                      readOnly
                     />
                   </div>
                   <div className="col-md-6 mb-3">
