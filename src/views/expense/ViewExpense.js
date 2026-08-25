@@ -107,10 +107,16 @@ const ViewExpenseClaim = () => {
       toast.success(response.data.frappe_response.data.name);
       setUploadingFields((prev) => ({ ...prev, [id]: false })); // ✅ Set only this field to loading
     } catch (error) {
-      toast.error(error.response?.data?.message || error.response?.data?.error);
+      const raw =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to approve and push to ERP";
+      const msg = typeof raw === "string" ? raw : JSON.stringify(raw);
+      toast.error(msg);
       dispatch({
         type: "APPROVE_FAIL",
-        payload: error.response?.data?.message || error.response?.data?.error,
+        payload: msg,
       });
       setUploadingFields((prev) => ({ ...prev, [id]: false })); // ✅ Set only this field to loading
     }
