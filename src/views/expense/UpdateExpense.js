@@ -416,7 +416,7 @@ const UpdateExpense = () => {
                     />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">Company GSTIN</label>
+                    <label className="form-label"> GSTIN</label>
                     <CFormInput
                       type="text"
                       name="company_gstin"
