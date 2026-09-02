@@ -411,14 +411,12 @@ const UpdateExpense = () => {
                       type="email"
                       name="expense_approver"
                       className="form-control"
-                      value={formData.expense_approver}
-                      onChange={handleFormChange}
-                      required
-                      placeholder="Enter approver's email"
+                      value={formData.expense_approver || "abhay.singh@taypro.in"}
+                      readOnly
                     />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="form-label">Company GSTIN</label>
+                    <label className="form-label"> GSTIN</label>
                     <CFormInput
                       type="text"
                       name="company_gstin"
