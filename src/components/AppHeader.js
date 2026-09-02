@@ -624,9 +624,18 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
 
     dispatch({ type: "SUBMIT_REQUEST" });
     try {
+      const isTechnicianAssigned = Boolean(
+        latestfeedback?.technician_feedback_data?.is_technician_assigned,
+      );
       const data = await axios.put(
         `/api/v1/customer-feedback/${latestfeedback._id}`,
-        formData,
+        {
+          ...formData,
+          technician_feedback_data: {
+            ...formData.technician_feedback_data,
+            is_technician_assigned: isTechnicianAssigned,
+          },
+        },
         {
           // headers: { Authorization: `Bearer ${authtoken}` },
           withCredentials: true,
@@ -1077,7 +1086,15 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                 closeButton={false}
                 className="d-flex justify-content-between align-items-center"
               >
-                <CModalTitle>Rate Us</CModalTitle>
+                <CModalTitle>
+                  Rate Us
+                  {latestfeedback.createdAt && (
+                    <span className="text-body-secondary fs-6 fw-normal ms-2">
+                      ·{" "}
+                      {moment(latestfeedback.createdAt).format("MMMM YYYY")}
+                    </span>
+                  )}
+                </CModalTitle>
                 <CButton
                   color="success"
                   size="sm"

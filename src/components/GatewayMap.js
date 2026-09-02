@@ -42,13 +42,14 @@ function safeRemoveLayers(list) {
 
 /* ─── colour palette ─────────────────────────────────────────
    Gateway:  #00ffcc (online)  |  #ff4d4d (offline)
-   Robot:    #facc15 (yellow)  — always distinct from gateways
+   Robot:    green online / red offline
    Link line: semi-transparent white
 ──────────────────────────────────────────────────────────── */
 const CLR = {
   gwOnline: "#00ffcc",
   gwOffline: "#ff4d4d",
-  robot: "#facc15",
+  robotOnline: "#22c55e",
+  robotOffline: "#ef4444",
   link: "rgba(255,255,255,0.35)",
 };
 
@@ -340,18 +341,18 @@ export default function GatewayMap({
           ? CLR.gwOnline
           : CLR.gwOffline
         : "#888";
-
-      /* robot icon — yellow diamond/hexagon feel */
+      const isRobotOnline = Number(robot.lora_state) === 1;
+      const robotColor = isRobotOnline ? CLR.robotOnline : CLR.robotOffline;
       const robotIconHtml = `
         <div style="position:relative;width:5px;height:5px;">
           <div style="position:absolute;inset:0;border-radius:4px;
-            background:${CLR.robot};opacity:.25;
+            background:${robotColor};opacity:.25;
             animation:gwPulse 2.4s ease-out infinite;"></div>
           <div style="position:absolute;top:50%;left:50%;
             transform:translate(-50%,-50%) rotate(45deg);
             width:6px;height:6px;
-            background:${CLR.robot};border:2px solid #fff;
-            box-shadow:0 0 8px ${CLR.robot},0 0 16px ${CLR.robot};"></div>
+            background:${robotColor};border:2px solid #fff;
+            box-shadow:0 0 8px ${robotColor},0 0 16px ${robotColor};"></div>
         </div>`;
 
       const robotIcon = L.divIcon({
@@ -371,16 +372,18 @@ export default function GatewayMap({
       );
       robotMarker.bindPopup(
         `<div style="font-family:monospace;font-size:12px;background:#0f172a;
-          color:#e2e8f0;border:1px solid ${CLR.robot};border-radius:6px;
+          color:#e2e8f0;border:1px solid ${robotColor};border-radius:6px;
           padding:8px 10px;min-width:185px;line-height:1.7;">
-          <strong style="color:${CLR.robot}">🤖 ${robotNo}</strong><br/>
+          <strong style="color:${robotColor}">🤖 ${robotNo}</strong><br/>
+          <span style="color:#8899bb">Status:</span>
+          <span style="color:${robotColor}">${isRobotOnline ? "Online" : "Offline"}</span><br/>
           <span style="color:#8899bb">Block:</span> ${block}<br/>
           <span style="color:#8899bb">DevEUI:</span> ${robot?.deveui ?? "—"}<br/>
           <span style="color:#8899bb">LoRa No:</span> ${robot?.lora_no ?? "—"}<br/>
           <span style="color:#8899bb">Last Gateway:</span>
           <span style="color:${gwColor}">${gwName}</span><br/>
           <span style="color:#8899bb">Distance From Gateway:</span>
-          <span style="color:${CLR.robot}">${distance} km</span><br/>
+          <span style="color:${robotColor}">${distance} km</span><br/>
            <span style="color:#8899bb">Open in map: </span>
            <span ><a href="https://www.google.com/maps?q=${lat},${lng}" target="blank">View</a> </span>
         </div>`,
@@ -605,7 +608,8 @@ export default function GatewayMap({
             {[
               { color: CLR.gwOnline, shape: "circle", label: "GW Online" },
               { color: CLR.gwOffline, shape: "circle", label: "GW Offline" },
-              { color: CLR.robot, shape: "diamond", label: "Robot" },
+              { color: CLR.robotOnline, shape: "diamond", label: "Robot Online" },
+              { color: CLR.robotOffline, shape: "diamond", label: "Robot Offline" },
             ].map(({ color, shape, label }) => (
               <div
                 key={label}

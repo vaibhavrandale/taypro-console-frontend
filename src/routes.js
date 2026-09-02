@@ -22,7 +22,7 @@ import ClientSiteManagement from "./views/client-admin/site-management/ClientSit
 import ClientBlockManagement from "./views/client-admin/site-management/ClientBlockManagement";
 import ClientRobotOperating from "./views/client-admin/site-management/ClientRobotOperating";
 // import ClientTimers from "./views/client-admin/timers/ClientTimers";
-import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
+// import ClientUpdateTimer from "./views/client-admin/timers/ClientUpdateTimer";
 import ClientUsersManagement from "./views/client-admin/Users/ClientUsersManagement";
 import Sites from "./views/client-admin/cleaninglog/Sites";
 import ClientCleaningLog from "./views/client-admin/cleaninglog/ClientCleaningLog";
@@ -8389,10 +8389,10 @@ const routes = [
   },
   {
     path: "/client-admin/timers/:id",
-    name: "Update Block Timer",
+    name: "Update Robot Timer",
     element: (
       <ClientAdminRoute>
-        <ClientUpdateTimer />
+        <UpdateTimer />
       </ClientAdminRoute>
     ),
   },
@@ -8672,10 +8672,10 @@ const routes = [
   },
   {
     path: "/site-incharge/timers/:id",
-    name: "Update Block Timer",
+    name: "Update Robot Timer",
     element: (
       <ClientSiteInchargeRoute>
-        <ClientUpdateTimer />
+        <UpdateTimer />
       </ClientSiteInchargeRoute>
     ),
   },
@@ -8786,10 +8786,10 @@ const routes = [
   },
   {
     path: "/client-site-technician/timers/:id",
-    name: "Update Block Timer",
+    name: "Update Robot Timer",
     element: (
       <ClientSiteTechnicianRoute>
-        <ClientUpdateTimer />
+        <UpdateTimer />
       </ClientSiteTechnicianRoute>
     ),
   },

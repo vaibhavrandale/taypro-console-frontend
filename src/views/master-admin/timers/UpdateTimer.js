@@ -110,6 +110,9 @@ const UpdateTimer = () => {
   else if (userInfo.role === "Service User") adminroute = "service-user";
   else if (userInfo.role === "Master User") adminroute = "master-user";
   else if (userInfo.role === "Client Admin") adminroute = "client-admin";
+  else if (userInfo.role === "Site Incharge") adminroute = "site-incharge";
+  else if (userInfo.role === "Client Site Technician")
+    adminroute = "client-site-technician";
   else if (userInfo?.role === "Site Technician") {
     adminroute = "site-technician";
   }

@@ -619,8 +619,8 @@ const MonthlyAttendanceReport = () => {
                   Working
                 </CBadge>
                 <div className="small text-muted">
-                  Daily working hours are 9h 30m or more. This counts for salary
-                  processing.
+                  Factory: 9h or more. Office and WFH: 9h 30m or more. This
+                  counts for salary processing.
                 </div>
               </div>
             </CCol>
@@ -648,7 +648,7 @@ const MonthlyAttendanceReport = () => {
             <StatCard
               label="Total Working Days"
               value={summaryStats.workingDays}
-              hint="Salary-eligible days (9h 30m+)"
+              hint="Salary-eligible days (factory 9h / others 9h 30m)"
               accent="#2eb85c"
             />
             <StatCard

@@ -8,7 +8,7 @@ import {
   CBadge,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilWarning, cilExternalLink } from "@coreui/icons";
+import { cilWarning } from "@coreui/icons";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -73,7 +73,6 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
     frequency,
     subscription_status,
     invoice = [],
-    last_activity = [],
   } = data;
 
   const statusConfig = {
@@ -134,8 +133,8 @@ const SubscriptionExpiryCard = ({ data, error, subscriptionStatus }) => {
               {latestInvoice.status === "pending"
                 ? "Payment Pending"
                 : latestInvoice.status === "paid"
-                ? "Upgrade Plan"
-                : "Subscribe Now"}
+                  ? "Upgrade Plan"
+                  : "Subscribe Now"}
             </CBadge>
           </CCardHeader>
 
