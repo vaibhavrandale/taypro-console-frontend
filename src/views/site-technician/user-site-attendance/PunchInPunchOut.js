@@ -633,12 +633,17 @@ const PunchInPunchOut = () => {
 
               {!state.statusLoaded ? (
                 <CAlert color="warning">Loading attendance status...</CAlert>
+              ) : wfhStatus?.status === "approved" ||
+                (punchedIn &&
+                  punchedOut &&
+                  (attendanceSource === "wfh" ||
+                    wfhStatus?.status === "approved")) ? (
+                <CAlert color="info">
+                  WFH approved — attendance marked for today.
+                </CAlert>
               ) : punchedIn && punchedOut ? (
                 <CAlert color="info">
-                  {attendanceSource === "wfh" ||
-                  wfhStatus?.status === "approved"
-                    ? "WFH approved — attendance marked for today."
-                    : "✅ You have already punched in and out for today."}
+                  ✅ You have already punched in and out for today.
                 </CAlert>
               ) : wfhStatus?.status === "pending" && !punchedIn ? (
                 <CAlert color="warning">

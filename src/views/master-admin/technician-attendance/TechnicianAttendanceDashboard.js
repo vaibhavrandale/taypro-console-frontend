@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
 import {
   CBadge,
   CButton,
@@ -34,7 +33,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        technicians: action.payload.data,
+        technicians: Array.isArray(action.payload.data)
+          ? action.payload.data
+          : [],
+        wfhRequests: Array.isArray(action.payload.wfh)
+          ? action.payload.wfh
+          : [],
         totalPages: action.payload.totalPages,
         hasNextPage: action.payload.hasNextPage,
         hasPrevPage: action.payload.hasPrevPage,
@@ -46,15 +50,63 @@ const reducer = (state, action) => {
   }
 };
 
-const TechnicianAttendanceDashboard = () => {
-  const [{ loading, technicians }, dispatch] = useReducer(reducer, {
-    technicians: [],
-    loading: true,
-    error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
+const istYmd = (value) => {
+  if (value == null || value === "") return null;
+  // Pure calendar date from API — keep as-is (no TZ shift)
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value.trim())) {
+    return value.trim();
+  }
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+};
+
+const mapsLink = (loc) => {
+  const lat = loc?.lat ?? loc?.latitude;
+  const lng = loc?.lng ?? loc?.longitude;
+  if (lat == null || lng == null || lat === "" || lng === "") return null;
+  return `https://www.google.com/maps?q=${lat},${lng}`;
+};
+
+const formatTime = (value) => {
+  if (value == null || value === "") return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
+};
+
+const formatDateTime = (value) => {
+  if (value == null || value === "") return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+};
+
+const TechnicianAttendanceDashboard = () => {
+  const [{ loading, technicians, wfhRequests }, dispatch] = useReducer(
+    reducer,
+    {
+      technicians: [],
+      wfhRequests: [],
+      loading: true,
+      error: "",
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false,
+    },
+  );
 
   // const authtoken = useSelector((state) => state.authtoken);
 
@@ -89,7 +141,8 @@ const TechnicianAttendanceDashboard = () => {
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            data: result.data.data,
+            data: Array.isArray(result.data.data) ? result.data.data : [],
+            wfh: Array.isArray(result.data.wfh) ? result.data.wfh : [],
             totalPages: total,
             hasNextPage: result.data.hasNextPage,
             hasPrevPage: result.data.hasPrevPage,
@@ -116,13 +169,18 @@ const TechnicianAttendanceDashboard = () => {
   const groupedData = {};
   // Grouping logic
 
-  technicians.forEach((record) => {
-    const date = new Date(record.punchin_time).toISOString().split("T")[0];
+  (technicians || []).forEach((record) => {
+    // WFH rows often have date but null punchin_time — don't key as "Invalid Date"
+    const date =
+      istYmd(record.punchin_time) ||
+      istYmd(record.date) ||
+      istYmd(record.createdAt);
+    if (!date || !record.username) return;
 
     if (!groupedData[record.username]) {
       groupedData[record.username] = {
-        site_id: record.site_id,
-        profile_image: record.profile_image,
+        site_id: record.site_id || "",
+        profile_image: record.profile_image || "",
         attendance: {},
       };
     }
@@ -133,19 +191,56 @@ const TechnicianAttendanceDashboard = () => {
       username: record.username,
       site_id: record.site_id,
       profile_image: record.profile_image,
-
-      in: record.punchin_time,
+      source: record.source || "site",
+      wfhStatus: record.wfh_status || record.wfhStatus || null,
+      reason: record.reason || null,
+      in: record.punchin_time || null,
       out: record.punchout_time || null,
-
       punchin_location: record.punchin_location,
       punchout_location: record.punchout_location || null,
-
       punch_in_image: record.punch_in_image,
       punch_out_image: record.punch_out_image || null,
-
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       __v: record.__v,
+    };
+  });
+
+  (wfhRequests || []).forEach((wfh) => {
+    const date = istYmd(wfh.date) || istYmd(wfh.createdAt);
+    const username = wfh.username;
+    if (!username || !date) return;
+    if (!groupedData[username]) {
+      groupedData[username] = {
+        site_id: wfh.site_id || "",
+        profile_image: "",
+        attendance: {},
+      };
+    }
+    const existing = groupedData[username].attendance[date];
+    // Keep real punch times; still stamp WFH status onto the day cell
+    if (existing?.in) {
+      groupedData[username].attendance[date] = {
+        ...existing,
+        source: existing.source === "wfh" ? "wfh" : existing.source,
+        wfhStatus: wfh.status || existing.wfhStatus,
+        reason: wfh.reason || existing.reason,
+      };
+      return;
+    }
+    if (existing?.source === "wfh" && existing.wfhStatus === "approved") return;
+    groupedData[username].attendance[date] = {
+      _id: wfh._id,
+      username,
+      site_id: wfh.site_id,
+      source: "wfh",
+      wfhStatus: wfh.status,
+      reason: wfh.reason,
+      in: existing?.in || null,
+      out: existing?.out || null,
+      punchin_location: null,
+      punchout_location: null,
+      createdAt: wfh.createdAt,
     };
   });
 
@@ -181,15 +276,15 @@ const TechnicianAttendanceDashboard = () => {
   const filteredEntries = Object.entries(groupedData).filter(
     ([username, data]) =>
       username.toLowerCase().includes(searchText) ||
-      data.site_id.toLowerCase().includes(searchText),
+      String(data.site_id || "")
+        .toLowerCase()
+        .includes(searchText),
   );
 
   const openModal = (log) => {
     setModalVisible(true);
     setModalData(log);
   };
-
-  console.log(modalData);
 
   return (
     <div>
@@ -275,15 +370,24 @@ const TechnicianAttendanceDashboard = () => {
                 <CTableRow key={idx} className="text-center">
                   <CTableDataCell>{idx + 1}</CTableDataCell>
                   <CTableDataCell>
-                    <CImage
-                      src={data.profile_image}
-                      style={{
-                        height: "50px",
-                        width: "50x",
-                        borderRadius: "50%",
-                        objectFit: "contain",
-                      }}
-                    />
+                    {data.profile_image ? (
+                      <CImage
+                        src={data.profile_image}
+                        style={{
+                          height: "50px",
+                          width: "50px",
+                          borderRadius: "50%",
+                          objectFit: "contain",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center"
+                        style={{ height: "50px", width: "50px" }}
+                      >
+                        {(username || "?").charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </CTableDataCell>
                   {/* <CTableDataCell style={{ minWidth: "170px" }}>
                     {username}
@@ -305,46 +409,67 @@ const TechnicianAttendanceDashboard = () => {
                     const formattedDate = `${year}-${month}-${day}`;
                     const log = data.attendance[formattedDate];
 
-                    if (log?.in && log?.out) presentCount++; // Count only full Present
+                    const isWfh =
+                      log?.source === "wfh" || Boolean(log?.wfhStatus);
+                    const inTime = formatTime(log?.in);
+                    const outTime = formatTime(log?.out);
+
+                    if (inTime && outTime) presentCount++;
+                    else if (
+                      isWfh &&
+                      log?.wfhStatus === "approved" &&
+                      !inTime
+                    ) {
+                      presentCount++;
+                    } else if (isWfh && !log?.wfhStatus && !inTime) {
+                      // Approved WFH attendance row (source only, no punch times)
+                      presentCount++;
+                    }
 
                     return (
                       <CTableDataCell key={dayIdx}>
                         {log ? (
-                          log.in && log.out ? (
-                            <>
-                              <CBadge
-                                color="success"
-                                className="cursor-pointer"
-                                onClick={() => openModal(log)}
-                              >
-                                P
-                                <br />
-                                {new Date(log.in).toLocaleTimeString("en-IN", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                })}
-                                <br />
-                                {new Date(log.out).toLocaleTimeString("en-IN", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                })}
-                              </CBadge>
-                            </>
-                          ) : log.in && !log.out ? (
+                          isWfh && !inTime ? (
+                            <CBadge
+                              color={
+                                log.wfhStatus === "rejected"
+                                  ? "danger"
+                                  : log.wfhStatus === "pending"
+                                    ? "info"
+                                    : "success"
+                              }
+                              className="cursor-pointer"
+                              onClick={() => openModal(log)}
+                              title={log.reason || "WFH"}
+                            >
+                              {log.wfhStatus === "pending"
+                                ? "WFH*"
+                                : log.wfhStatus === "rejected"
+                                  ? "WFH×"
+                                  : "WFH"}
+                            </CBadge>
+                          ) : inTime && outTime ? (
+                            <CBadge
+                              color={isWfh ? "info" : "success"}
+                              className="cursor-pointer"
+                              onClick={() => openModal(log)}
+                              title={log.reason || undefined}
+                            >
+                              {isWfh ? "WFH" : "P"}
+                              <br />
+                              {inTime}
+                              <br />
+                              {outTime}
+                            </CBadge>
+                          ) : inTime && !outTime ? (
                             <CBadge
                               color="warning"
                               className="cursor-pointer"
                               onClick={() => openModal(log)}
                             >
-                              P*
+                              {isWfh ? "WFH*" : "P*"}
                               <br />
-                              {new Date(log.in).toLocaleTimeString("en-IN", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
+                              {inTime}
                             </CBadge>
                           ) : (
                             <CBadge color="danger">A</CBadge>
@@ -385,12 +510,21 @@ const TechnicianAttendanceDashboard = () => {
             closeButton={false}
           >
             <div className="d-flex align-items-center">
-              <img
-                src={modalData.profile_image}
-                alt={modalData.username}
-                className="rounded-circle me-2"
-                style={{ width: "40px", height: "40px", objectFit: "cover" }}
-              />
+              {modalData.profile_image ? (
+                <img
+                  src={modalData.profile_image}
+                  alt={modalData.username}
+                  className="rounded-circle me-2"
+                  style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  className="rounded-circle me-2 bg-secondary text-white d-flex align-items-center justify-content-center"
+                  style={{ width: "40px", height: "40px", flexShrink: 0 }}
+                >
+                  {(modalData.username || "?").charAt(0).toUpperCase()}
+                </div>
+              )}
               <div>
                 <h5 className="mb-0">{modalData.username}</h5>
                 <small className="text-muted">{modalData.site_id}</small>
@@ -412,17 +546,30 @@ const TechnicianAttendanceDashboard = () => {
             <div className="row g-3">
               {/* Date */}
               <div className="d-flex justify-content-center align-items-center fw-semibold">
-                {new Date(modalData.createdAt).toLocaleString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
+                {modalData.source === "wfh" || modalData.wfhStatus
+                  ? `WFH${modalData.wfhStatus ? ` (${modalData.wfhStatus})` : ""}${
+                      modalData.reason ? ` — ${modalData.reason}` : ""
+                    }`
+                  : null}
+              </div>
+              <div className="d-flex justify-content-center align-items-center fw-semibold">
+                {istYmd(modalData.in || modalData.createdAt)
+                  ? new Date(
+                      `${istYmd(modalData.in || modalData.createdAt)}T12:00:00`,
+                    ).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
+                  : ""}
               </div>
               {/* Punch In Section */}
               <div className="col-md-6">
                 <div className="card shadow-sm border-0 h-100">
                   <div className="card-header bg-success text-white py-2">
-                    Punch In
+                    {modalData.source === "wfh" || modalData.wfhStatus
+                      ? "WFH"
+                      : "Punch In"}
                   </div>
                   <div className="card-body text-center">
                     {modalData.punch_in_image ? (
@@ -432,37 +579,38 @@ const TechnicianAttendanceDashboard = () => {
                         className="img-fluid rounded mb-2"
                         style={{ maxHeight: "200px", objectFit: "contain" }}
                       />
-                    ) : (
+                    ) : modalData.profile_image ? (
                       <img
                         src={modalData.profile_image}
                         alt="Punch In"
                         className="img-fluid rounded mb-2"
                         style={{ maxHeight: "200px", objectFit: "contain" }}
                       />
-                    )}
+                    ) : null}
                     <p className="mb-1">
                       <strong>Time:</strong>{" "}
-                      {new Date(modalData.in).toLocaleString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })}
+                      {formatDateTime(modalData.in) ||
+                        (modalData.source === "wfh" || modalData.wfhStatus
+                          ? "WFH (no punch)"
+                          : "N/A")}
                     </p>
                     <p className="mb-0">
                       <strong>Location :</strong>
-                      <Link
-                        className="ms-3"
-                        target="blank"
-                        to={`https://www.google.com/maps?q=${modalData.punchin_location.lat},${modalData.punchin_location.lng}`}
-                      >
-                        View
-                      </Link>
-                      {/* {modalData.punchin_location?.lat},{" "}
-                      {modalData.punchin_location?.lng} */}
+                      {mapsLink(modalData.punchin_location) ? (
+                        <Link
+                          className="ms-3"
+                          target="blank"
+                          to={mapsLink(modalData.punchin_location)}
+                        >
+                          View
+                        </Link>
+                      ) : (
+                        <span className="ms-2 text-muted">
+                          {modalData.source === "wfh" || modalData.wfhStatus
+                            ? "WFH (no GPS)"
+                            : "N/A"}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -482,39 +630,35 @@ const TechnicianAttendanceDashboard = () => {
                           className="img-fluid rounded mb-2"
                           style={{ maxHeight: "200px", objectFit: "contain" }}
                         />
-                      ) : (
+                      ) : modalData.profile_image ? (
                         <img
                           src={modalData.profile_image}
                           alt="Punch In"
                           className="img-fluid rounded mb-2"
                           style={{ maxHeight: "200px", objectFit: "contain" }}
                         />
-                      )}
+                      ) : null}
                       <p className="mb-1">
                         <strong>Time:</strong>{" "}
-                        {modalData.out
-                          ? new Date(modalData.out).toLocaleString("en-GB", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: true,
-                            })
-                          : "Not Available"}
+                        {formatDateTime(modalData.out) || "Not Available"}
                       </p>
                       <p className="mb-0">
                         <strong>Location :</strong>{" "}
-                        <Link
-                          target="blank"
-                          className="ms-3"
-                          to={`https://www.google.com/maps?q=${modalData.punchout_location.lat},${modalData.punchout_location.lng}`}
-                        >
-                          View
-                        </Link>
-                        {/* {modalData.punchout_location?.lat},{" "}
-                        {modalData.punchout_location?.lng} */}
+                        {mapsLink(modalData.punchout_location) ? (
+                          <Link
+                            target="blank"
+                            className="ms-3"
+                            to={mapsLink(modalData.punchout_location)}
+                          >
+                            View
+                          </Link>
+                        ) : (
+                          <span className="ms-2 text-muted">
+                            {modalData.source === "wfh" || modalData.wfhStatus
+                              ? "WFH (no GPS)"
+                              : "N/A"}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -526,7 +670,9 @@ const TechnicianAttendanceDashboard = () => {
                       Punch Out
                     </div>
                     <div className="card-body d-flex justify-content-center align-items-center">
-                      No Punch Out Data Available
+                      {modalData.source === "wfh" || modalData.wfhStatus
+                        ? "WFH — no punch out"
+                        : "No Punch Out Data Available"}
                     </div>
                   </div>
                 </div>
