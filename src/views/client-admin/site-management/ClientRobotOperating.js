@@ -225,12 +225,17 @@ const ClientRobotOperating = () => {
   };
 
   const sendMulticastDownlink = async (command, index) => {
-    let alldeveuis = blockwiserobots.map((robot) => robot.deveui); // Corrected arrow function syntax
+    const alldeveuis = blockwiserobots
+      .map((robot) => robot.deveui)
+      .filter(Boolean);
+    const allrobotnos = blockwiserobots
+      .map((robot) => robot.robot_no)
+      .filter(Boolean);
 
     setCommandButton(index);
-    //deveui,command,robot_no,site_id,lora_no
     let robotdownlink = {
       deveui: alldeveuis,
+      robot_no: allrobotnos,
       block: block,
       site_id: site_id,
       command: command,
@@ -335,21 +340,45 @@ const ClientRobotOperating = () => {
             <CCol>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(start, 1)}
+                disabled={commandButton === "all-start"}
+                onClick={() => sendMulticastDownlink(start, "all-start")}
               >
-                START ALL
+                {commandButton === "all-start" ? (
+                  <>
+                    START ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "START ALL"
+                )}
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(stop, 2)}
+                disabled={commandButton === "all-stop"}
+                onClick={() => sendMulticastDownlink(stop, "all-stop")}
               >
-                STOP ALL
+                {commandButton === "all-stop" ? (
+                  <>
+                    STOP ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "STOP ALL"
+                )}
               </CButton>
               <CButton
                 className="btn btn-sm btn-secondary m-1 shadow-sm"
-                onClick={() => sendMulticastDownlink(returntodock, 3)}
+                disabled={commandButton === "all-return"}
+                onClick={() => sendMulticastDownlink(returntodock, "all-return")}
               >
-                RETURN TO DOCK ALL
+                {commandButton === "all-return" ? (
+                  <>
+                    RETURN TO DOCK ALL&nbsp;
+                    <LoadingSpinner />
+                  </>
+                ) : (
+                  "RETURN TO DOCK ALL"
+                )}
               </CButton>
               {/* <Link
                 to={`/${adminroute}/site-management/block-management/${site_id}/${block}/${robot_no}/debug_logs`}

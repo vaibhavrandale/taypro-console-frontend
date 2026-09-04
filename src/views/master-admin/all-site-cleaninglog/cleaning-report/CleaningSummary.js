@@ -587,6 +587,21 @@ import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import { CChartBar } from "@coreui/react-chartjs";
+
+const JOB_BADGE = {
+  active: "warning",
+  waiting: "info",
+  delayed: "secondary",
+  completed: "success",
+  failed: "danger",
+};
+
+function formatJobTime(iso) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleString();
+}
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -636,6 +651,7 @@ const CleaningSummary = () => {
 
   // const authtoken = useSelector((state) => state.authtoken);
   const userInfo = useSelector((state) => state.userInfo);
+  const isMasterAdmin = userInfo?.role === "Master Admin";
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   // Main table search
@@ -650,6 +666,23 @@ const CleaningSummary = () => {
     robots: [],
     type: "success",
   });
+  const [yearlyVisible, setYearlyVisible] = useState(false);
+  const [yearlyLoading, setYearlyLoading] = useState(false);
+  const [yearlyError, setYearlyError] = useState("");
+  const [yearlyReport, setYearlyReport] = useState(null);
+  const [yearlyEmailing, setYearlyEmailing] = useState(false);
+  const [yearlyJobs, setYearlyJobs] = useState(null);
+
+  const fetchYearlyJobs = async () => {
+    try {
+      const result = await axios.get(`/api/v1/yearly-uptime/jobs`, {
+        withCredentials: true,
+      });
+      setYearlyJobs(result.data);
+    } catch (_) {
+      // queue status is secondary; don't toast over the report
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -688,6 +721,13 @@ const CleaningSummary = () => {
 
     fetchData();
   }, [site_id, month, year]);
+
+  useEffect(() => {
+    if (!yearlyVisible || !isMasterAdmin) return undefined;
+    fetchYearlyJobs();
+    const timer = setInterval(fetchYearlyJobs, 5000);
+    return () => clearInterval(timer);
+  }, [yearlyVisible, isMasterAdmin]);
   // const handleViewDetails = (date, type, robots) => {
   //   setModalSearch("");
   //   setModalData({ date, type, robots });
@@ -739,6 +779,55 @@ const CleaningSummary = () => {
           id: "export",
         },
       );
+    }
+  };
+
+  const openYearlyModal = async () => {
+    setYearlyVisible(true);
+    setYearlyLoading(true);
+    setYearlyError("");
+    setYearlyReport(null);
+    try {
+      const result = await axios.post(
+        `/api/v1/yearly-uptime/summary`,
+        { site_id, year },
+        { withCredentials: true },
+      );
+      setYearlyReport(result.data);
+    } catch (error) {
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to load yearly uptime";
+      setYearlyError(msg);
+      toast.error(msg);
+    } finally {
+      setYearlyLoading(false);
+    }
+  };
+
+  const handleYearlyUptimeEmail = async () => {
+    try {
+      setYearlyEmailing(true);
+      toast.loading("Queuing yearly uptime email...", { id: "yearly-uptime" });
+      const result = await axios.post(
+        `/api/v1/yearly-uptime`,
+        { site_id, year },
+        { withCredentials: true },
+      );
+      toast.success(result.data?.message || `Yearly uptime will be emailed`, {
+        id: "yearly-uptime",
+      });
+      if (isMasterAdmin) fetchYearlyJobs();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to queue yearly uptime",
+        { id: "yearly-uptime" },
+      );
+    } finally {
+      setYearlyEmailing(false);
     }
   };
 
@@ -831,6 +920,13 @@ const CleaningSummary = () => {
                     onClick={handleExport}
                   >
                     Export
+                  </CButton>
+                  <CButton
+                    className="btn-sm ms-2"
+                    color="success"
+                    onClick={openYearlyModal}
+                  >
+                    Uptime
                   </CButton>
                 </CCol>
 
@@ -1207,6 +1303,289 @@ const CleaningSummary = () => {
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setModalVisible(false)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
+
+      <CModal
+        backdrop="static"
+        visible={yearlyVisible}
+        onClose={() => setYearlyVisible(false)}
+        size="xl"
+        scrollable
+      >
+        <CModalHeader closeButton={false}>
+          {site_id} Yearly Uptime — {year}
+          <button
+            type="button"
+            className="border-0 ms-auto py-0 px-1"
+            onClick={() => setYearlyVisible(false)}
+            style={{ background: "none" }}
+            aria-label="Close"
+          >
+            <CIcon icon={cilX} size="lg" />
+          </button>
+        </CModalHeader>
+        <CModalBody>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h6 className="mb-0">Overall Yearly Uptime</h6>
+            <CButton
+              color="success"
+              disabled={yearlyLoading || yearlyEmailing}
+              onClick={handleYearlyUptimeEmail}
+            >
+              {yearlyEmailing ? (
+                <>
+                  <LoadingSpinner size="sm" /> Sending...
+                </>
+              ) : (
+                "Send Report on Email"
+              )}
+            </CButton>
+          </div>
+
+          {yearlyLoading ? (
+            <div className="text-center py-4">
+              <LoadingSpinner />
+            </div>
+          ) : yearlyError ? (
+            <div className="text-center text-danger py-3">{yearlyError}</div>
+          ) : yearlyReport ? (
+            <>
+              <div className="d-flex flex-wrap justify-content-start align-items-center mb-4 gap-3">
+                <div className="text-center">
+                  <div className="text-muted small">Total Robots</div>
+                  <CBadge color="primary" className="fs-5 px-3 mt-1">
+                    {yearlyReport.yearly?.total_assigned_robots ?? 0}
+                  </CBadge>
+                </div>
+                <div className="text-center">
+                  <div className="text-muted small">Avg Success</div>
+                  <CBadge color="success" className="fs-5 px-3 mt-1">
+                    {yearlyReport.yearly?.average_success ?? 0}
+                  </CBadge>
+                </div>
+                <div className="text-center">
+                  <div className="text-muted small">Avg Failure</div>
+                  <CBadge color="danger" className="fs-5 px-3 mt-1">
+                    {yearlyReport.yearly?.average_failure ?? 0}
+                  </CBadge>
+                </div>
+                <div className="text-center">
+                  <div className="text-muted small">Cleaning Uptime</div>
+                  <CBadge color="warning" className="fs-5 px-3 mt-1">
+                    {yearlyReport.yearly?.monthlyCleaningUptime ?? 0} %
+                  </CBadge>
+                </div>
+                <div className="text-center">
+                  <div className="text-muted small">Availibility Uptime</div>
+                  <CBadge color="warning" className="fs-5 px-3 mt-1">
+                    {yearlyReport.yearly?.monthlyAvailibilityUptime ?? 0} %
+                  </CBadge>
+                </div>
+              </div>
+
+              <h6 className="mb-2">Month-wise Uptime</h6>
+              <div className="mb-4" style={{ height: 280 }}>
+                <CChartBar
+                  style={{ height: "100%", width: "100%" }}
+                  data={{
+                    labels: (yearlyReport.months || []).map((m) =>
+                      (m.month_name || "").slice(0, 3),
+                    ),
+                    datasets: [
+                      {
+                        label: "Cleaning Uptime %",
+                        backgroundColor: "#0f766e",
+                        data: (yearlyReport.months || []).map(
+                          (m) => Number(m.monthlyCleaningUptime) || 0,
+                        ),
+                      },
+                      {
+                        label: "Availability Uptime %",
+                        backgroundColor: "#2563eb",
+                        data: (yearlyReport.months || []).map(
+                          (m) => Number(m.monthlyAvailibilityUptime) || 0,
+                        ),
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: "top" } },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: "%" },
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <CTable hover bordered responsive>
+                <CTableHead color="light">
+                  <CTableRow>
+                    <CTableHeaderCell className="text-center">
+                      #
+                    </CTableHeaderCell>
+                    <CTableHeaderCell>Month</CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Assigned Robots
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Avg Success
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Avg Failure
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Cleaning Uptime
+                    </CTableHeaderCell>
+                    <CTableHeaderCell className="text-center">
+                      Availibility Uptime
+                    </CTableHeaderCell>
+                    {/* <CTableHeaderCell className="text-center">
+                      Status
+                    </CTableHeaderCell> */}
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {(yearlyReport.months || []).length ? (
+                    yearlyReport.months.map((item, index) => (
+                      <CTableRow key={item.month}>
+                        <CTableDataCell className="text-center">
+                          {index + 1}
+                        </CTableDataCell>
+                        <CTableDataCell>{item.month_name}</CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {item.total_assigned_robots}
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {item.average_success}
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {item.average_failure}
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {item.monthlyCleaningUptime} %
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center">
+                          {item.monthlyAvailibilityUptime} %
+                        </CTableDataCell>
+                        {/* <CTableDataCell className="text-center">
+                          {item.has_data ? "Data" : "No data"}
+                        </CTableDataCell> */}
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan="8" className="text-center">
+                        No yearly data
+                      </CTableDataCell>
+                    </CTableRow>
+                  )}
+                </CTableBody>
+              </CTable>
+            </>
+          ) : null}
+
+          {isMasterAdmin ? (
+            <>
+              <h6 className="mb-2 mt-4">Email jobs</h6>
+              {yearlyJobs ? (
+                <>
+                  <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <CBadge
+                      color={yearlyJobs.worker_running ? "success" : "danger"}
+                    >
+                      Worker {yearlyJobs.worker_running ? "online" : "offline"}
+                      {yearlyJobs.workers ? ` (${yearlyJobs.workers})` : ""}
+                    </CBadge>
+                    {yearlyJobs.paused ? (
+                      <CBadge color="warning">Queue paused</CBadge>
+                    ) : null}
+                    <CBadge color="warning">
+                      Running {yearlyJobs.counts?.active ?? 0}
+                    </CBadge>
+                    <CBadge color="info">
+                      Waiting {yearlyJobs.counts?.waiting ?? 0}
+                    </CBadge>
+                    <CBadge color="secondary">
+                      Delayed {yearlyJobs.counts?.delayed ?? 0}
+                    </CBadge>
+                    <CBadge color="success">
+                      Completed {yearlyJobs.counts?.completed ?? 0}
+                    </CBadge>
+                    <CBadge color="danger">
+                      Failed {yearlyJobs.counts?.failed ?? 0}
+                    </CBadge>
+                  </div>
+                  <CTable hover bordered responsive small>
+                    <CTableHead color="light">
+                      <CTableRow>
+                        <CTableHeaderCell>Status</CTableHeaderCell>
+                        <CTableHeaderCell>Site</CTableHeaderCell>
+                        <CTableHeaderCell>Year</CTableHeaderCell>
+                        <CTableHeaderCell>Created by</CTableHeaderCell>
+                        <CTableHeaderCell>Email</CTableHeaderCell>
+                        <CTableHeaderCell>Created</CTableHeaderCell>
+                        <CTableHeaderCell>Started</CTableHeaderCell>
+                        <CTableHeaderCell>Finished</CTableHeaderCell>
+                        <CTableHeaderCell>Error</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      {(yearlyJobs.jobs || []).length ? (
+                        yearlyJobs.jobs.map((job) => (
+                          <CTableRow key={job.id}>
+                            <CTableDataCell>
+                              <CBadge
+                                color={JOB_BADGE[job.state] || "secondary"}
+                              >
+                                {job.state === "active" ? "running" : job.state}
+                              </CBadge>
+                            </CTableDataCell>
+                            <CTableDataCell>{job.site_id}</CTableDataCell>
+                            <CTableDataCell>{job.year}</CTableDataCell>
+                            <CTableDataCell>
+                              {job.username || "—"}
+                            </CTableDataCell>
+                            <CTableDataCell>{job.email || "—"}</CTableDataCell>
+                            <CTableDataCell>
+                              {formatJobTime(job.createdAt)}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {formatJobTime(job.processedAt)}
+                            </CTableDataCell>
+                            <CTableDataCell>
+                              {formatJobTime(job.finishedAt)}
+                            </CTableDataCell>
+                            <CTableDataCell className="text-danger">
+                              {job.failedReason || "—"}
+                            </CTableDataCell>
+                          </CTableRow>
+                        ))
+                      ) : (
+                        <CTableRow>
+                          <CTableDataCell colSpan="9" className="text-center">
+                            No jobs in queue
+                          </CTableDataCell>
+                        </CTableRow>
+                      )}
+                    </CTableBody>
+                  </CTable>
+                </>
+              ) : (
+                <div className="text-muted small">Loading job status…</div>
+              )}
+            </>
+          ) : null}
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setYearlyVisible(false)}>
             Close
           </CButton>
         </CModalFooter>

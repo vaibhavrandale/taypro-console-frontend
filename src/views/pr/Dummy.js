@@ -79,6 +79,10 @@ const App = () => {
                   <CBadge color="secondary">Never</CBadge>
                 )}
               </span>
+
+              <CBadge color={user.is_active ? "success" : "danger"}>
+                {user.is_active ? "Active" : "Inactive"}
+              </CBadge>
             </div>
           </CCardBody>
         </CCard>
