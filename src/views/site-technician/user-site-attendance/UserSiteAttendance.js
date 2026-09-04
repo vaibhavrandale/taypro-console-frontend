@@ -218,13 +218,20 @@ const SitesCoordinates = () => {
                 </CTableDataCell>
 
                 <CTableDataCell>
-                  <Link
-                    target="blank"
-                    className="text-decoration-none"
-                    to={`https://www.google.com/maps/search/?api=1&query=${attendances.punchin_location.lat},${attendances.punchin_location.lng}`}
-                  >
-                    View
-                  </Link>
+                  {attendances.punchin_location?.lat != null &&
+                  attendances.punchin_location?.lng != null ? (
+                    <Link
+                      target="blank"
+                      className="text-decoration-none"
+                      to={`https://www.google.com/maps/search/?api=1&query=${attendances.punchin_location.lat},${attendances.punchin_location.lng}`}
+                    >
+                      View
+                    </Link>
+                  ) : attendances.source === "wfh" ? (
+                    <CBadge color="info">WFH</CBadge>
+                  ) : (
+                    <CBadge color="secondary">N/A</CBadge>
+                  )}
                 </CTableDataCell>
 
                 <CTableDataCell>
@@ -247,7 +254,8 @@ const SitesCoordinates = () => {
 
                 <CTableDataCell>
                   {attendances.punchout_time ? (
-                    <>
+                    attendances.punchout_location?.lat != null &&
+                    attendances.punchout_location?.lng != null ? (
                       <Link
                         target="blank"
                         className="text-decoration-none"
@@ -255,7 +263,11 @@ const SitesCoordinates = () => {
                       >
                         View
                       </Link>
-                    </>
+                    ) : attendances.source === "wfh" ? (
+                      <CBadge color="info">WFH</CBadge>
+                    ) : (
+                      <CBadge color="secondary">N/A</CBadge>
+                    )
                   ) : (
                     <CBadge color="warning">N/A</CBadge>
                   )}
