@@ -79,6 +79,13 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
     toast.success(`Data for Robot ${log.robot_no} clicked!`);
   };
 
+  const getTotalTime = (totaltimeinSeconds) => {
+    const hours = Math.floor(totaltimeinSeconds / 3600);
+    const minutes = Math.floor((totaltimeinSeconds % 3600) / 60);
+    const seconds = totaltimeinSeconds % 60;
+    return `${hours}h ${minutes}m ${seconds}s` || "N/A";
+  };
+
   return (
     <CModal
       visible={modalState}
@@ -343,7 +350,11 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
                               style={{ minWidth: "100px", fontSize: "13px" }}
                             >
                               {log.cleaning.forward_cleaning_time ? (
-                                <>{log.cleaning.forward_cleaning_time} Sec.</>
+                                <>
+                                  {getTotalTime(
+                                    log.cleaning.forward_cleaning_time,
+                                  )}
+                                </>
                               ) : (
                                 <CBadge color="warning">N/A</CBadge>
                               )}
@@ -382,7 +393,11 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
                               style={{ minWidth: "100px", fontSize: "13px" }}
                             >
                               {log.cleaning.reverse_cleaning_time ? (
-                                <>{log.cleaning.reverse_cleaning_time} Sec.</>
+                                <>
+                                  {getTotalTime(
+                                    log.cleaning.reverse_cleaning_time,
+                                  )}
+                                </>
                               ) : (
                                 <CBadge color="warning">N/A</CBadge>
                               )}
@@ -422,15 +437,8 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
                           {log.cleaning.total_cleaning_time ? (
                             <>
                               {" "}
-                              {new Date(
-                                log.cleaning.total_cleaning_time,
-                              ).toLocaleString("en-GB", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                              })}{" "}
-                            </> // Use the utility function here
+                              {getTotalTime(log.cleaning.total_cleaning_time)}
+                            </>
                           ) : (
                             <CBadge color="warning">N/A</CBadge>
                           )}

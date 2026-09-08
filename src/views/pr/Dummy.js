@@ -9,6 +9,11 @@ const App = () => {
   const [loading, SetLoading] = useState(false);
   const searchUser = async (query) => {
     try {
+      if (!query || query.trim() === "") {
+        setUsers([]);
+        setError(null);
+        return;
+      }
       SetLoading(true);
       const res = await axios.post(
         "/api/v1/users/search",

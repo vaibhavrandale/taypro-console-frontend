@@ -224,6 +224,7 @@ const ClientCleaningLog = () => {
       mergedData.push([
         "Sr No",
         "Robot No",
+        "Block",
         "Row Number",
         "Row Length (Meters)",
         "Cleaning Percentage",
@@ -243,6 +244,7 @@ const ClientCleaningLog = () => {
         mergedData.push([
           index + 1,
           log.robot_no || "N/A",
+          log.block || "N/A",
           log.row_no || "N/A",
           log.row_length || "N/A",
           `${percentage} %` || "N/A",
