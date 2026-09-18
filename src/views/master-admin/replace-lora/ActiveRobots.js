@@ -20,8 +20,6 @@ import {
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import PaginateInput from "../../../components/PaginateInput";
-import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
@@ -35,237 +33,247 @@ const reducer = (state, action) => {
         ...state,
         loadingRobots: false,
         robots: action.payload.data,
-        totalPages: action.payload.totalPages, // Use API-provided totalPages
-        hasNextPage: action.payload.hasNextPage,
-        hasPrevPage: action.payload.hasPrevPage,
       };
     case "FETCH_ROBOTS_FAIL":
-      return { ...state, loadingRobots: false, error: action.payload };
-
-    case "UPDATE_REQUEST":
-      return { ...state, updateloading: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, updateloading: false, success: true };
-    case "UPDATE_FAIL":
-      return { ...state, updateloading: false, error: action.payload };
+      return {
+        ...state,
+        loadingRobots: false,
+        error: action.payload,
+        robots: [],
+      };
     default:
       return state;
   }
 };
 
+const STEPS = [
+  {
+    key: "deactivate",
+    label: "Deactivate",
+    desc: "Remove current LoRa from LNS",
+  },
+  {
+    key: "activate",
+    label: "Activate",
+    desc: "Add new LoRa and activate robot",
+  },
+];
+
+const apiError = (error) =>
+  error.response?.data?.message ||
+  error.response?.data?.error ||
+  error.message ||
+  "Request failed";
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const ActiveRobots = () => {
-  const [
-    {
-      robots,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      updateloading,
-      loadingRobots,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ robots, loadingRobots }, dispatch] = useReducer(reducer, {
     robots: [],
-    loadingaddRobots: false,
-    updateloading: false,
+    loadingRobots: false,
     error: "",
-    totalPages: 1,
-    hasNextPage: false,
-    hasPrevPage: false,
   });
+
+  const [search, setSearch] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
-
   const [formData, setFormData] = useState({
     _id: "",
     robot_no: "",
     deveui: "",
     current_lora_no: "",
+    old_lora_no: "",
     new_lora_no: "",
   });
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [pageInput, setPageInput] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [flowStarted, setFlowStarted] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [stepStatus, setStepStatus] = useState({
+    deactivate: "idle",
+    activate: "idle",
+  });
+  const [stepError, setStepError] = useState("");
+  const [failedStep, setFailedStep] = useState(null);
+  const [confirmReplace, setConfirmReplace] = useState(false);
 
-  // const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  const canAct = !["Master User", "Project User", "Service User"].includes(
+    userInfo?.role,
+  );
 
   useEffect(() => {
-    let pagination = {
-      pg: page,
-      limit: limit,
-    };
-    const fetchRobots = async () => {
+    const query = search.trim();
+    if (query.length < 3) {
+      dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: { data: [] } });
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
-        const result = await axios.post(`/api/v1/robots/active`, pagination, {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
-        });
-        let total = Math.ceil(
-          Number(result.data.total) / Number(result.data.limit),
+        const result = await axios.get(
+          `/api/v1/robots/get-robot-using-robot-no/${encodeURIComponent(query)}`,
+          { withCredentials: true, signal: controller.signal },
         );
-        let next = result.data.hasNextPage;
-        let prev = result.data.hasPrevPage;
-
+        const raw = result.data?.data;
+        const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+        const q = query.toLowerCase();
         dispatch({
           type: "FETCH_ROBOTS_SUCCESS",
-
           payload: {
-            data: result.data.data,
-            totalPages: total,
-            hasNextPage: next,
-            hasPrevPage: prev,
+            data: list.filter((robot) =>
+              robot.robot_no?.toLowerCase().includes(q),
+            ),
           },
         });
       } catch (error) {
-        dispatch({
-          type: "FETCH_ROBOTS_FAIL",
-          payload: error.response?.data?.message || error.response?.data?.error,
-        });
-        toast.error(
-          error.response?.data?.message || error.response?.data?.error,
-        );
+        if (error.code === "ERR_CANCELED" || error.name === "CanceledError") {
+          return;
+        }
+        dispatch({ type: "FETCH_ROBOTS_SUCCESS", payload: { data: [] } });
       }
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
     };
+  }, [search, refreshKey]);
 
-    fetchRobots();
-  }, [limit, page]);
+  const resetFlow = () => {
+    setFlowStarted(false);
+    setRunning(false);
+    setStepStatus({ deactivate: "idle", activate: "idle" });
+    setStepError("");
+    setFailedStep(null);
+    setConfirmReplace(false);
+  };
 
-  // Filter robots based on search term
-  const filteredRobots = robots.filter(
-    (robot) =>
-      robot.robot_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.deveui.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      robot.lora_no
-        ?.toString()
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()),
-  );
+  const closeModal = () => {
+    if (running) return;
+    setModalVisible(false);
+    setSelectedRobot(null);
+    resetFlow();
+  };
 
-  // Open modal with selected robot data
   const openModal = (robot) => {
     setSelectedRobot(robot);
     setFormData({
       _id: robot._id,
-      current_lora_no: robot.lora_no,
+      current_lora_no: robot.lora_no || "",
+      old_lora_no: robot.old_lora_no || "",
       robot_no: robot.robot_no,
       deveui: robot.deveui,
+      new_lora_no: "",
     });
+    resetFlow();
     setModalVisible(true);
   };
-  //lora_no, old_lora_no
 
-  // Handle input change
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const runFrom = async (startStep) => {
+    const newLora = formData.new_lora_no?.trim();
+    if (startStep === "deactivate") {
+      if (!newLora) {
+        toast.error("Enter the new LoRa number");
+        return;
+      }
+      if (newLora === String(formData.current_lora_no).trim()) {
+        toast.error("New LoRa number must be different from the current one");
+        return;
+      }
+    }
 
-  // Handle update (currently logs updated data)
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    dispatch({ type: "UPDATE_REQUEST" });
-    console.log("formData updated:", formData);
+    setFlowStarted(true);
+    setRunning(true);
+    setStepError("");
+    setFailedStep(null);
+
+    let currentStep = startStep;
     try {
-      const {
-        createdAt,
-        last_activity,
-        last_uplink,
-        manufactured_date,
-        ...filteredFormData
-      } = formData;
+      if (startStep === "deactivate") {
+        currentStep = "deactivate";
+        setStepStatus((s) => ({ ...s, deactivate: "running" }));
+        await axios.put(
+          `/api/v1/robots/deactivate-and-delete-from-lns`,
+          {
+            _id: formData._id,
+            robot_no: formData.robot_no,
+            deveui: formData.deveui,
+            current_lora_no: formData.current_lora_no,
+            new_lora_no: newLora,
+          },
+          { withCredentials: true },
+        );
+        setStepStatus((s) => ({ ...s, deactivate: "done" }));
+        await sleep(450);
+      } else {
+        setStepStatus((s) => ({ ...s, deactivate: "done" }));
+      }
 
+      currentStep = "activate";
+      setStepStatus((s) => ({ ...s, activate: "running" }));
       await axios.put(
-        `/api/v1/robots/deactivate-and-delete-from-lns`,
-        filteredFormData,
+        `/api/v1/robots/activate-and-add-in-lns`,
         {
-          // headers: { Authorization: `Bearer ${authtoken}` },
-          withCredentials: true,
+          robot_no: formData.robot_no,
+          deveui: formData.deveui,
+          lora_no: newLora || formData.current_lora_no,
+          old_lora_no: formData.current_lora_no,
         },
+        { withCredentials: true },
       );
-
-      dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success(`${filteredFormData.robot_no}  updated successfully!`);
-      navigate(`/${adminroute}/replace-lora/in-active-robots`); // Redirect after update
+      setStepStatus((s) => ({ ...s, activate: "done" }));
+      toast.success(`${formData.robot_no} LoRa replaced successfully`);
+      setRefreshKey((k) => k + 1);
+      await sleep(700);
+      setRunning(false);
+      setModalVisible(false);
+      setSelectedRobot(null);
+      resetFlow();
     } catch (error) {
-      dispatch({
-        type: "UPDATE_FAIL",
-        payload: error.response?.data?.message || error.message,
-      });
-
-      toast.error(error.response?.data?.error);
-    }
-    setModalVisible(false);
-  };
-
-  const handlePageInputChange = (e) => {
-    setPageInput(e.target.value);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
+      setStepStatus((s) => ({ ...s, [currentStep]: "error" }));
+      setFailedStep(currentStep);
+      setStepError(apiError(error));
+      toast.error(apiError(error));
+    } finally {
+      setRunning(false);
     }
   };
 
-  const handlePageInputSubmit = () => {
-    const pageNumber = parseInt(pageInput);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
-      handlePageChange(pageNumber);
+  const askToReplace = (e) => {
+    e.preventDefault();
+    if (failedStep || running || flowStarted) return;
+    const newLora = formData.new_lora_no?.trim();
+    if (!newLora) {
+      toast.error("Enter the new LoRa number");
+      return;
     }
+    if (newLora === String(formData.current_lora_no).trim()) {
+      toast.error("New LoRa number must be different from the current one");
+      return;
+    }
+    setConfirmReplace(true);
   };
 
-  const userInfo = useSelector((state) => state.userInfo);
-
-  let adminroute = "";
-
-  if (userInfo?.role === "Master Admin") {
-    adminroute = "master-admin";
-  } else if (userInfo?.role === "Master User") {
-    adminroute = "master-user";
-  } else if (userInfo?.role === "Service Admin") {
-    adminroute = "service-admin";
-  } else if (userInfo?.role === "Project Admin") {
-    adminroute = "project-admin";
-  } else if (userInfo?.role === "Client Admin") {
-    adminroute = "client-admin";
-  } else if (userInfo?.role === "Site Incharge") {
-    adminroute = "site-incharge";
-  } else if (userInfo?.role === "Site Technician") {
-    adminroute = "site-technician";
-  } else if (userInfo?.role === "Client Site Technician") {
-    adminroute = "client-site-technician";
-  } else if (userInfo?.role === "Project User") {
-    adminroute = "project-user";
-  } else if (userInfo?.role === "Service User") {
-    adminroute = "service-user";
-  }
+  const colSpan = canAct ? 7 : 6;
 
   return (
     <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2>Active Robots</h2>
-        <Link
-          className="btn btn-sm btn-danger text-white"
-          to={`/${adminroute}/replace-lora/in-active-robots`}
-        >
-          In Active Robots
-        </Link>
-      </div>
+      <h2>Replace Lora</h2>
       <CRow className="justify-content-end">
-        <CCol md={4} lg={4}>
-          {/* Search Input */}
+        <CCol md={4}>
           <CFormInput
-            type="text"
-            placeholder="Search by Robot No, Deveui, or Lora No"
-            className="mb-3 "
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3"
+            autoFocus
+            placeholder="Search robot no"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </CCol>
       </CRow>
+
       <CTable bordered hover responsive className="text-center">
         <CTableHead color="secondary">
           <CTableRow>
@@ -275,43 +283,29 @@ const ActiveRobots = () => {
             <CTableHeaderCell>Current Lora No</CTableHeaderCell>
             <CTableHeaderCell>Old Lora No</CTableHeaderCell>
             <CTableHeaderCell>Status</CTableHeaderCell>
-            {!["Master User", "Project User", "Service User"].includes(
-              userInfo?.role,
-            ) && <CTableHeaderCell>Action</CTableHeaderCell>}
+            {canAct && <CTableHeaderCell>Action</CTableHeaderCell>}
           </CTableRow>
         </CTableHead>
         <CTableBody>
           {loadingRobots ? (
             <CTableRow>
-              <CTableDataCell
-                colSpan={
-                  ["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role,
-                  )
-                    ? 6
-                    : 7
-                }
-              >
+              <CTableDataCell colSpan={colSpan}>
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
-          ) : filteredRobots.length === 0 ? (
+          ) : robots.length === 0 ? (
             <CTableRow>
-              <CTableDataCell
-                colSpan={
-                  ["Master User", "Project User", "Service User"].includes(
-                    userInfo?.role,
-                  )
-                    ? 6
-                    : 7
-                }
-              >
-                No active Robots Found
+              <CTableDataCell colSpan={colSpan}>
+                {search.trim().length < 3
+                  ? "Type at least 3 characters"
+                  : search.trim()
+                    ? "No matching robots"
+                    : "Search a robot number"}
               </CTableDataCell>
             </CTableRow>
           ) : (
-            filteredRobots.map((robot, index) => (
-              <CTableRow key={index}>
+            robots.map((robot, index) => (
+              <CTableRow key={robot._id || index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{robot.robot_no}</CTableDataCell>
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
@@ -324,9 +318,7 @@ const ActiveRobots = () => {
                     <CBadge color="danger">In Active</CBadge>
                   )}
                 </CTableDataCell>
-                {!["Master User", "Project User", "Service User"].includes(
-                  userInfo?.role,
-                ) && (
+                {canAct && (
                   <CTableDataCell>
                     <CButton
                       color="primary"
@@ -334,7 +326,7 @@ const ActiveRobots = () => {
                       size="sm"
                       onClick={() => openModal(robot)}
                     >
-                      Deactivate
+                      Replace Lora
                     </CButton>
                   </CTableDataCell>
                 )}
@@ -344,107 +336,191 @@ const ActiveRobots = () => {
         </CTableBody>
       </CTable>
 
-      <PaginateInput
-        page={page}
-        totalPages={totalPages}
-        hasPrevPage={hasPrevPage}
-        hasNextPage={hasNextPage}
-        pageInput={pageInput}
-        handlePageChange={handlePageChange}
-        handlePageInputChange={handlePageInputChange}
-        handlePageInputSubmit={handlePageInputSubmit}
-        limit={limit}
-        handleLimitChange={setLimit} // New prop
-      />
-      {/* Update Modal */}
       {selectedRobot && (
         <CModal
           backdrop="static"
           size="lg"
           visible={modalVisible}
-          onClose={() => setModalVisible(false)}
+          onClose={closeModal}
         >
           <CModalHeader closeButton={false}>
             <CModalTitle>
-              Deactivate Robot -{" "}
+              Replace Lora -{" "}
               <span className="badge bg-success">{selectedRobot.robot_no}</span>
             </CModalTitle>
             <button
               type="button"
-              className=" border-0 ms-auto py-0 px-1"
-              onClick={() => setModalVisible(false)}
+              className="border-0 ms-auto py-0 px-1"
+              onClick={closeModal}
+              disabled={running}
               style={{ background: "none" }}
             >
               <CIcon icon={cilX} size="lg" />
             </button>
           </CModalHeader>
-          <form onSubmit={handleUpdate}>
+          <form onSubmit={askToReplace}>
             <CModalBody>
-              <div>
-                <CFormInput
-                  type="text"
-                  name="_id"
-                  value={selectedRobot._id}
-                  label="Robot id"
-                  onChange={handleChange}
-                  className="mb-3"
-                  readOnly
-                />
-                <CFormInput
-                  type="text"
-                  name="robot_no"
-                  value={selectedRobot.robot_no}
-                  label="Robot No"
-                  onChange={handleChange}
-                  className="mb-3"
-                  readOnly
-                />
-                <CFormInput
-                  type="text"
-                  name="deveui"
-                  value={selectedRobot.deveui}
-                  label="Deveui"
-                  readOnly
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-                <CFormInput
-                  type="text"
-                  name="current_lora_no"
-                  readOnly
-                  value={selectedRobot.lora_no}
-                  label="Current Lora No"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-                <CFormInput
-                  type="text"
-                  name="new_lora_no"
-                  value={formData.new_lora_no}
-                  label="New Lora No"
-                  onChange={handleChange}
-                  className="mb-3"
-                />
-              </div>
+              <CFormInput
+                className="mb-3"
+                label="Robot No"
+                value={formData.robot_no}
+                readOnly
+              />
+              <CFormInput
+                className="mb-3"
+                label="Deveui"
+                value={formData.deveui}
+                readOnly
+              />
+              <CFormInput
+                className="mb-3"
+                label="Current Lora No"
+                value={formData.current_lora_no}
+                readOnly
+              />
+              <CFormInput
+                className="mb-3"
+                name="new_lora_no"
+                label="New Lora No"
+                value={formData.new_lora_no}
+                disabled={
+                  running || stepStatus.deactivate === "done" || confirmReplace
+                }
+                onChange={(e) =>
+                  setFormData({ ...formData, new_lora_no: e.target.value })
+                }
+                required
+              />
+
+              {confirmReplace && !flowStarted && (
+                <div
+                  className="replace-lora-error mt-3"
+                  style={{
+                    background: "rgba(51, 153, 255, 0.12)",
+                    color: "inherit",
+                  }}
+                >
+                  Replace LoRa{" "}
+                  <span className="badge bg-warning mx-1">
+                    {formData.current_lora_no}
+                  </span>{" "}
+                  with new Lora
+                  <span className=" badge bg-success mx-1 ">
+                    {formData.new_lora_no.trim()}
+                  </span>{" "}
+                  on robot{" "}
+                  <span className="text-success">{formData.robot_no}</span>?
+                </div>
+              )}
+
+              {flowStarted && (
+                <div className="replace-lora-steps mt-4">
+                  {STEPS.map((step, index) => {
+                    const status = stepStatus[step.key];
+                    return (
+                      <React.Fragment key={step.key}>
+                        {index > 0 && (
+                          <div
+                            className={`replace-lora-line ${
+                              stepStatus[STEPS[index - 1].key] === "done"
+                                ? "is-done"
+                                : ""
+                            }`}
+                          />
+                        )}
+                        <div className={`replace-lora-step is-${status}`}>
+                          <div className="replace-lora-dot">
+                            {status === "done" && "✓"}
+                            {status === "error" && "!"}
+                            {status === "running" && (
+                              <span className="replace-lora-spinner" />
+                            )}
+                            {status !== "done" &&
+                              status !== "error" &&
+                              status !== "running" &&
+                              index + 1}
+                          </div>
+                          <div>
+                            <div className="fw-semibold">{step.label}</div>
+                            <div className="small text-medium-emphasis">
+                              {step.desc}
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              )}
+
+              {stepError && (
+                <div className="replace-lora-error mt-3">
+                  Stopped at{" "}
+                  <strong>
+                    {failedStep === "deactivate" ? "Deactivate" : "Activate"}
+                  </strong>
+                  : {stepError}
+                </div>
+              )}
             </CModalBody>
             <CModalFooter>
-              <CButton
-                color="secondary"
-                size="sm"
-                onClick={() => setModalVisible(false)}
-              >
-                Cancel
-              </CButton>
-              <CButton color="primary" size="sm" type="submit">
-                {updateloading ? (
-                  <>
-                    Deactivating...
-                    <LoadingSpinner />
-                  </>
-                ) : (
-                  "Deactivate"
-                )}
-              </CButton>
+              {confirmReplace && !flowStarted && !failedStep ? (
+                <>
+                  <CButton
+                    color="secondary"
+                    size="sm"
+                    type="button"
+                    onClick={() => setConfirmReplace(false)}
+                  >
+                    Back
+                  </CButton>
+                  <CButton
+                    color="danger"
+                    className="text-white"
+                    size="sm"
+                    type="button"
+                    onClick={() => {
+                      setConfirmReplace(false);
+                      runFrom("deactivate");
+                    }}
+                  >
+                    Yes, replace
+                  </CButton>
+                </>
+              ) : (
+                <>
+                  <CButton
+                    color="secondary"
+                    size="sm"
+                    type="button"
+                    disabled={running}
+                    onClick={closeModal}
+                  >
+                    Cancel
+                  </CButton>
+                  {failedStep ? (
+                    <CButton
+                      color="warning"
+                      className="text-white"
+                      size="sm"
+                      type="button"
+                      disabled={running}
+                      onClick={() => runFrom(failedStep)}
+                    >
+                      {running ? "Retrying..." : `Retry ${failedStep}`}
+                    </CButton>
+                  ) : (
+                    <CButton
+                      color="primary"
+                      size="sm"
+                      type="submit"
+                      disabled={running || stepStatus.activate === "done"}
+                    >
+                      {running ? "Replacing..." : "Replace Lora"}
+                    </CButton>
+                  )}
+                </>
+              )}
             </CModalFooter>
           </form>
         </CModal>

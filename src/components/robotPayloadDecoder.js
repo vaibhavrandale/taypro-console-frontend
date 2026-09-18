@@ -65,6 +65,12 @@ export const ASCII_METRIC_MAP = {
     type: "metric",
     unit: "°C",
   },
+  TC: {
+    desc: "Temperature",
+    code: "TP",
+    type: "metric",
+    unit: "°C",
+  },
   EE: {
     desc: "Battery At Reverse Station",
     code: "UV",

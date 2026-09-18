@@ -124,6 +124,11 @@ const _nav = [
             name: "All Site Cleaning Log",
             to: "/master-admin/all-site-cleaning-log",
           },
+          {
+            component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/master-admin/yearly-uptime",
+          },
 
           {
             component: CNavItem,
@@ -196,7 +201,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Replace Lora",
-            to: "/master-admin/replace-lora/active-robots",
+            to: "/master-admin/replace-lora",
           },
           {
             component: CNavItem,
@@ -934,6 +939,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/master-user/yearly-uptime",
+          },
+          {
+            component: CNavItem,
             name: "All Sites Timers",
             to: "/master-user/timers",
           },
@@ -1025,7 +1035,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Replace Lora",
-            to: "/master-user/replace-lora/active-robots",
+            to: "/master-user/replace-lora",
           },
           {
             component: CNavItem,
@@ -1296,6 +1306,11 @@ const _nav = [
             component: CNavItem,
             name: "Cleaning Log",
             to: "/project-admin/all-site-cleaning-log",
+          },
+          {
+            component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/project-admin/yearly-uptime",
           },
           {
             component: CNavItem,
@@ -1757,6 +1772,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/project-user/yearly-uptime",
+          },
+          {
+            component: CNavItem,
             name: "Timers",
             to: "/project-user/timers",
           },
@@ -2100,6 +2120,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/service-admin/yearly-uptime",
+          },
+          {
+            component: CNavItem,
             name: "Timers",
             to: "/service-admin/timers",
           },
@@ -2141,7 +2166,7 @@ const _nav = [
           {
             component: CNavItem,
             name: "Replace Lora",
-            to: "/service-admin/replace-lora/active-robots",
+            to: "/service-admin/replace-lora",
           },
           {
             component: CNavItem,
@@ -3520,6 +3545,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/service-user/yearly-uptime",
+          },
+          {
+            component: CNavItem,
             name: "Timers",
             to: "/service-user/timers",
           },
@@ -4209,6 +4239,14 @@ const _nav = [
             component: CNavItem,
             name: "Cleaning History",
             to: "/client-admin/cleaning-log-sites",
+            icon: (
+              <ClipboardList style={{ color: "rgb(57, 214, 0)" }} size={16} />
+            ),
+          },
+          {
+            component: CNavItem,
+            name: "Yearly Uptime",
+            to: "/client-admin/yearly-uptime",
             icon: (
               <ClipboardList style={{ color: "rgb(57, 214, 0)" }} size={16} />
             ),

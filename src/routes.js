@@ -321,6 +321,11 @@ const AllSiteCleaningLog = React.lazy(
   () => import("./views/master-admin/all-site-cleaninglog/AllSiteCleaningLog"),
 );
 
+const ClientWiseYearlyUptime = React.lazy(
+  () =>
+    import("./views/master-admin/all-site-cleaninglog/ClientWiseYearlyUptime"),
+);
+
 const SitewaiseLog = React.lazy(
   () => import("./views/master-admin/all-site-cleaninglog/SitewaiseLog"),
 );
@@ -1162,6 +1167,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <AllSiteCleaningLog />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/yearly-uptime",
+    name: "Master Admin Client-wise Yearly Uptime",
+    element: (
+      <MasterAdminRoute>
+        <ClientWiseYearlyUptime />
       </MasterAdminRoute>
     ),
   },
@@ -2875,6 +2889,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-user/yearly-uptime",
+    name: "Master User Client-wise Yearly Uptime",
+    element: (
+      <MasterUserRoute>
+        <ClientWiseYearlyUptime />
+      </MasterUserRoute>
+    ),
+  },
+  {
     path: "/master-user/all-site-cleaning-log/cleaning-report/:site_id",
     name: "Master User Cleaning Report",
     element: (
@@ -3986,6 +4009,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/yearly-uptime",
+    name: "Project Admin Client-wise Yearly Uptime",
+    element: (
+      <ProjectAdminRoute>
+        <ClientWiseYearlyUptime />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
@@ -5048,6 +5080,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-user/yearly-uptime",
+    name: "Project User Client-wise Yearly Uptime",
+    element: (
+      <ProjectUserRoute>
+        <ClientWiseYearlyUptime />
+      </ProjectUserRoute>
+    ),
+  },
+  {
     path: "/project-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project User Sitewise Cleaning Log",
     element: (
@@ -5982,6 +6023,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <AllSiteCleaningLog />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/yearly-uptime",
+    name: "Service Admin Client-wise Yearly Uptime",
+    element: (
+      <ServiceAdminRoute>
+        <ClientWiseYearlyUptime />
       </ServiceAdminRoute>
     ),
   },
@@ -7241,6 +7291,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-user/yearly-uptime",
+    name: "Service User Client-wise Yearly Uptime",
+    element: (
+      <ServiceUserRoute>
+        <ClientWiseYearlyUptime />
+      </ServiceUserRoute>
+    ),
+  },
+  {
     path: "/service-user/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Service User Sitewise Cleaning Log",
     element: (
@@ -8430,6 +8489,15 @@ const routes = [
     element: (
       <ClientAdminRoute>
         <Sites />
+      </ClientAdminRoute>
+    ),
+  },
+  {
+    path: "/client-admin/yearly-uptime",
+    name: "Client-wise Yearly Uptime",
+    element: (
+      <ClientAdminRoute>
+        <ClientWiseYearlyUptime />
       </ClientAdminRoute>
     ),
   },

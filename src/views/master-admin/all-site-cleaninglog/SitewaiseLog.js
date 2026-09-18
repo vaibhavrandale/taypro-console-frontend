@@ -1697,6 +1697,7 @@ const SitewaiseLog = () => {
                                           <CTableHeaderCell>FromLog (Success)</CTableHeaderCell> */}
                           <CTableHeaderCell>Remarks</CTableHeaderCell>
                           <CTableHeaderCell>Technician</CTableHeaderCell>
+                          <CTableHeaderCell>Submitted At</CTableHeaderCell>
                         </CTableRow>
                       </CTableHead>
 
@@ -1704,7 +1705,7 @@ const SitewaiseLog = () => {
                         {dpr?.length > 0 ? (
                           dpr.map((log, index) => {
                             const technician =
-                              log.technician_present?.[0]?.name || "-";
+                              log.last_activity?.[0]?.name || "-";
                             const reportDate = log.report_date
                               ? new Date(log.report_date).toLocaleDateString()
                               : "-";
@@ -1719,6 +1720,20 @@ const SitewaiseLog = () => {
                                   {log.comments || "-"}
                                 </CTableDataCell>
                                 <CTableDataCell>{technician}</CTableDataCell>
+                                <CTableDataCell>
+                                  {log.last_activity?.[0]?.timestamp &&
+                                    new Date(
+                                      log.last_activity?.[0]?.timestamp,
+                                    ).toLocaleString("en-GB", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                      hour12: true,
+                                    })}
+                                </CTableDataCell>
                               </CTableRow>
                             );
                           })
