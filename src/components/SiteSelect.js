@@ -1,15 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import axios from "axios";
+
+export const SELECTED_SITE_STORAGE_KEY = "selectedSiteId";
+
+export function getSavedSiteId() {
+  try {
+    return localStorage.getItem(SELECTED_SITE_STORAGE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveSiteId(siteId) {
+  if (!siteId || siteId === "all") return;
+  try {
+    localStorage.setItem(SELECTED_SITE_STORAGE_KEY, siteId);
+  } catch {
+    // Ignore quota / private-mode failures.
+  }
+}
 
 export default function SiteSelect({
   value,
   onChange,
   width = 260,
   placeholder = "Search Site...",
+  persist = true,
 }) {
   const [siteIds, setSiteIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const restoredRef = useRef(false);
 
   useEffect(() => {
     const fetchSiteIds = async () => {
@@ -32,6 +53,27 @@ export default function SiteSelect({
 
     fetchSiteIds();
   }, []);
+
+  useEffect(() => {
+    if (!persist || restoredRef.current || !siteIds.length) return;
+
+    const saved = getSavedSiteId();
+    const known = (id) => siteIds.some((s) => s.value === id);
+
+    if (value && value !== "all" && known(value)) {
+      restoredRef.current = true;
+      saveSiteId(value);
+      return;
+    }
+
+    if (saved && known(saved) && saved !== value) {
+      restoredRef.current = true;
+      onChange(saved);
+      return;
+    }
+
+    restoredRef.current = true;
+  }, [onChange, persist, siteIds, value]);
 
   const customStyles = {
     control: (provided) => ({
@@ -113,11 +155,15 @@ export default function SiteSelect({
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: width }}>
+    <div style={{ width: "100%", maxWidth: width, minWidth: 150 }}>
       <Select
         options={siteIds}
         value={siteIds.find((s) => s.value === value) || null}
-        onChange={(selected) => onChange(selected?.value || "")}
+        onChange={(selected) => {
+          const next = selected?.value || "";
+          if (persist) saveSiteId(next);
+          onChange(next);
+        }}
         isLoading={loading}
         isSearchable
         placeholder={placeholder}

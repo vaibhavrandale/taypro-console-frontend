@@ -218,9 +218,6 @@ const ActiveRobots = () => {
         `/api/v1/robots/activate-and-add-in-lns`,
         {
           robot_no: formData.robot_no,
-          deveui: formData.deveui,
-          lora_no: newLora || formData.current_lora_no,
-          old_lora_no: formData.current_lora_no,
         },
         { withCredentials: true },
       );

@@ -85,6 +85,7 @@ const reducer = (state = initialState, action) => {
       localStorage.removeItem("userInfo");
       localStorage.removeItem("robots");
       localStorage.removeItem("gateways");
+      localStorage.removeItem("selectedSiteId");
       return {
         ...state,
         userInfo: null,

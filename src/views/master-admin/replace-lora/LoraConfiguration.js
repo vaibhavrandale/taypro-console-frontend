@@ -896,6 +896,7 @@ const LoraConfiguration = () => {
                     onChange={(site_id) =>
                       setFormData((prev) => ({ ...prev, site_id }))
                     }
+                    persist={false}
                     width="100%"
                     placeholder="Search site..."
                   />

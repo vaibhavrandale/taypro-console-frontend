@@ -125,7 +125,12 @@ const CommisioningDashboard = () => {
           type: "FETCH_SITES_SUCCESS",
           payload: result.data.data,
         });
-        setSiteId(result.data.data[0]?.site_id); // Set default site_id to the first site or "all" if no sites
+        setSiteId((current) => {
+          if (current && current !== "all") return current;
+          const saved = localStorage.getItem("selectedSiteId");
+          if (saved) return saved;
+          return result.data.data[0]?.site_id || current;
+        });
       } catch (error) {
         dispatch({
           type: "FETCH_SITES_FAIL",

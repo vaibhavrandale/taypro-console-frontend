@@ -582,7 +582,7 @@ export default function MasterAdminDashboard() {
       setCommandSend(false);
     }
   };
-  
+
   return (
     <>
       <style>{CSS}</style>
@@ -622,7 +622,7 @@ export default function MasterAdminDashboard() {
             </span>
           </div> */}
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div>
             {loadingSiteIds ? (
               <Skel h={32} w={160} r={8} />
             ) : (
@@ -637,7 +637,7 @@ export default function MasterAdminDashboard() {
               //     </option>
               //   ))}
               // </select>
-              <div>
+              <div className="me-3">
                 <SiteSelect value={site_id} onChange={setSiteid} />
               </div>
             )}
