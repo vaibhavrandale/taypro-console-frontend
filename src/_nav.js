@@ -129,6 +129,11 @@ const _nav = [
             name: "Yearly Uptime",
             to: "/master-admin/yearly-uptime",
           },
+          {
+            component: CNavItem,
+            name: "Quizzes",
+            to: "/master-admin/quizzes",
+          },
 
           {
             component: CNavItem,
@@ -1314,6 +1319,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Quizzes",
+            to: "/project-admin/quizzes",
+          },
+          {
+            component: CNavItem,
             name: "Timers",
             to: "/project-admin/timers",
           },
@@ -2122,6 +2132,11 @@ const _nav = [
             component: CNavItem,
             name: "Yearly Uptime",
             to: "/service-admin/yearly-uptime",
+          },
+          {
+            component: CNavItem,
+            name: "Quizzes",
+            to: "/service-admin/quizzes",
           },
           {
             component: CNavItem,

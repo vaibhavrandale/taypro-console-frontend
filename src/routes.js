@@ -326,6 +326,19 @@ const ClientWiseYearlyUptime = React.lazy(
     import("./views/master-admin/all-site-cleaninglog/ClientWiseYearlyUptime"),
 );
 
+const QuizManagement = React.lazy(
+  () => import("./views/master-admin/quizzes/QuizManagement"),
+);
+const QuizBuilder = React.lazy(
+  () => import("./views/master-admin/quizzes/QuizBuilder"),
+);
+const QuizAttempts = React.lazy(
+  () => import("./views/master-admin/quizzes/QuizAttempts"),
+);
+const QuizEvaluate = React.lazy(
+  () => import("./views/master-admin/quizzes/QuizEvaluate"),
+);
+
 const SitewaiseLog = React.lazy(
   () => import("./views/master-admin/all-site-cleaninglog/SitewaiseLog"),
 );
@@ -1176,6 +1189,51 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <ClientWiseYearlyUptime />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes",
+    name: "Quiz Management",
+    element: (
+      <MasterAdminRoute>
+        <QuizManagement />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes/create",
+    name: "Create Quiz",
+    element: (
+      <MasterAdminRoute>
+        <QuizBuilder />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes/:id/edit",
+    name: "Edit Quiz",
+    element: (
+      <MasterAdminRoute>
+        <QuizBuilder />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes/:id/attempts",
+    name: "Quiz Attempts",
+    element: (
+      <MasterAdminRoute>
+        <QuizAttempts />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes/attempts/:attemptId/evaluate",
+    name: "Evaluate Quiz Attempt",
+    element: (
+      <MasterAdminRoute>
+        <QuizEvaluate />
       </MasterAdminRoute>
     ),
   },
@@ -4018,6 +4076,51 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/quizzes",
+    name: "Quiz Management",
+    element: (
+      <ProjectAdminRoute>
+        <QuizManagement />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/quizzes/create",
+    name: "Create Quiz",
+    element: (
+      <ProjectAdminRoute>
+        <QuizBuilder />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/quizzes/:id/edit",
+    name: "Edit Quiz",
+    element: (
+      <ProjectAdminRoute>
+        <QuizBuilder />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/quizzes/:id/attempts",
+    name: "Quiz Attempts",
+    element: (
+      <ProjectAdminRoute>
+        <QuizAttempts />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/quizzes/attempts/:attemptId/evaluate",
+    name: "Evaluate Quiz Attempt",
+    element: (
+      <ProjectAdminRoute>
+        <QuizEvaluate />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
@@ -6032,6 +6135,51 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <ClientWiseYearlyUptime />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes",
+    name: "Quiz Management",
+    element: (
+      <ServiceAdminRoute>
+        <QuizManagement />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes/create",
+    name: "Create Quiz",
+    element: (
+      <ServiceAdminRoute>
+        <QuizBuilder />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes/:id/edit",
+    name: "Edit Quiz",
+    element: (
+      <ServiceAdminRoute>
+        <QuizBuilder />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes/:id/attempts",
+    name: "Quiz Attempts",
+    element: (
+      <ServiceAdminRoute>
+        <QuizAttempts />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes/attempts/:attemptId/evaluate",
+    name: "Evaluate Quiz Attempt",
+    element: (
+      <ServiceAdminRoute>
+        <QuizEvaluate />
       </ServiceAdminRoute>
     ),
   },
