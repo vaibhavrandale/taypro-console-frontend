@@ -25,6 +25,16 @@ const Login = React.lazy(() => import("./views/pages/login/Login"));
 const Register = React.lazy(() => import("./views/pages/register/Register"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
+const QuizPortalLayout = React.lazy(
+  () => import("./views/quiz-portal/QuizPortalLayout"),
+);
+const QuizLogin = React.lazy(() => import("./views/quiz-portal/QuizLogin"));
+const QuizHome = React.lazy(() => import("./views/quiz-portal/QuizHome"));
+const QuizInstructions = React.lazy(
+  () => import("./views/quiz-portal/QuizInstructions"),
+);
+const QuizAttempt = React.lazy(() => import("./views/quiz-portal/QuizAttempt"));
+const QuizResult = React.lazy(() => import("./views/quiz-portal/QuizResult"));
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes("theme");
@@ -86,6 +96,17 @@ const App = () => {
             element={<ForgotPassword />}
           />
           <Route exact path="/login" name="Login Page" element={<Login />} />
+
+          <Route path="/quiz/login" element={<QuizLogin />} />
+          <Route path="/quiz" element={<QuizPortalLayout />}>
+            <Route index element={<QuizHome />} />
+            <Route path=":quizId/instructions" element={<QuizInstructions />} />
+            <Route
+              path=":quizId/attempt/:attemptId"
+              element={<QuizAttempt />}
+            />
+            <Route path="result/:attemptId" element={<QuizResult />} />
+          </Route>
 
           <Route
             exact
