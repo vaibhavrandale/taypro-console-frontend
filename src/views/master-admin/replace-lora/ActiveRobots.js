@@ -114,7 +114,7 @@ const ActiveRobots = () => {
       dispatch({ type: "FETCH_ROBOTS_REQUEST" });
       try {
         const result = await axios.get(
-          `/api/v1/robots/get-robot-using-robot-no/${encodeURIComponent(query)}`,
+          `/api/v1/robots/get-robot-using-matching-robot-no/${encodeURIComponent(query)}`,
           { withCredentials: true, signal: controller.signal },
         );
         const raw = result.data?.data;
