@@ -24,6 +24,75 @@ const roleToRoute = (role) => {
 const initialOf = (name) =>
   String(name || "?").trim().charAt(0).toUpperCase() || "?";
 
+function ProfileAvatar({ person, size = 48, bg = "#0f3460", color = "#fff" }) {
+  const src = person?.profileImage;
+  const [broken, setBroken] = useState(false);
+  if (src && !broken) {
+    return (
+      <img
+        src={src}
+        alt={person?.technician || "Profile"}
+        className="rounded-circle flex-shrink-0"
+        style={{
+          width: size,
+          height: size,
+          objectFit: "cover",
+          border: "2px solid rgba(255,255,255,0.35)",
+        }}
+        onError={() => setBroken(true)}
+      />
+    );
+  }
+  return (
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+      style={{
+        width: size,
+        height: size,
+        background: bg,
+        color,
+        fontSize: Math.max(12, Math.round(size * 0.38)),
+      }}
+    >
+      {initialOf(person?.technician)}
+    </div>
+  );
+}
+
+function SiteIdsLine({ siteIds, light }) {
+  const ids = (siteIds || []).filter(Boolean);
+  if (!ids.length) {
+    return (
+      <div
+        className="small mt-1"
+        style={{ opacity: light ? 0.7 : undefined }}
+      >
+        <span className={light ? "" : "text-body-secondary"}>Sites: —</span>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-1 d-flex flex-wrap gap-1 align-items-center">
+      <span
+        className="small me-1"
+        style={{ opacity: light ? 0.75 : undefined }}
+      >
+        <span className={light ? "" : "text-body-secondary"}>Sites:</span>
+      </span>
+      {ids.map((id) => (
+        <CBadge
+          key={id}
+          color={light ? "warning" : "secondary"}
+          className={light ? "text-dark" : ""}
+          style={{ fontWeight: 500 }}
+        >
+          {id}
+        </CBadge>
+      ))}
+    </div>
+  );
+}
+
 const rankAccent = (rank) => {
   if (rank === 1) return { bar: "#f9b115", label: "Gold", emoji: "🥇" };
   if (rank === 2) return { bar: "#9da5b1", label: "Silver", emoji: "🥈" };
@@ -185,19 +254,12 @@ const QuizLeaderboard = () => {
               <CCardBody className="p-4 p-md-5">
                 <div className="d-flex flex-wrap align-items-center justify-content-between gap-4">
                   <div className="d-flex align-items-center gap-3">
-                    <div
-                      className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                      style={{
-                        width: 72,
-                        height: 72,
-                        background: "#f9b115",
-                        color: "#1a1a2e",
-                        fontSize: 28,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {initialOf(top.technician)}
-                    </div>
+                    <ProfileAvatar
+                      person={top}
+                      size={72}
+                      bg="#f9b115"
+                      color="#1a1a2e"
+                    />
                     <div>
                       <div
                         className="text-uppercase small mb-1"
@@ -211,6 +273,7 @@ const QuizLeaderboard = () => {
                           {top.email}
                         </div>
                       ) : null}
+                      <SiteIdsLine siteIds={top.assignedSiteIds} light />
                       {top.submittedAt ? (
                         <div className="small mt-1" style={{ opacity: 0.65 }}>
                           Submitted {formatQuizDate(top.submittedAt)}
@@ -263,38 +326,35 @@ const QuizLeaderboard = () => {
                           borderTop: `4px solid ${accent.bar}`,
                         }}
                       >
-                        <CCardBody className="p-3 d-flex align-items-center gap-3">
-                          <div className="fs-3" aria-hidden>
-                            {accent.emoji}
-                          </div>
-                          <div
-                            className="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                            style={{
-                              width: 48,
-                              height: 48,
-                              background: r.rank === 2 ? "#6c757d" : "#8B5A2B",
-                              color: "#fff",
-                            }}
-                          >
-                            {initialOf(r.technician)}
-                          </div>
-                          <div className="min-w-0 flex-grow-1">
-                            <div className="fw-semibold text-truncate">
-                              {r.technician}
+                        <CCardBody className="p-3">
+                          <div className="d-flex align-items-center gap-3">
+                            <div className="fs-3" aria-hidden>
+                              {accent.emoji}
                             </div>
-                            <div className="small text-body-secondary text-truncate">
-                              {r.email || "—"}
+                            <ProfileAvatar
+                              person={r}
+                              size={48}
+                              bg={r.rank === 2 ? "#6c757d" : "#8B5A2B"}
+                            />
+                            <div className="min-w-0 flex-grow-1">
+                              <div className="fw-semibold text-truncate">
+                                {r.technician}
+                              </div>
+                              <div className="small text-body-secondary text-truncate">
+                                {r.email || "—"}
+                              </div>
+                              <SiteIdsLine siteIds={r.assignedSiteIds} />
                             </div>
-                          </div>
-                          <div className="text-end flex-shrink-0">
-                            <div className="fs-5 fw-bold">{r.score}</div>
-                            <div className="small text-body-secondary">
-                              {r.percentage != null
-                                ? `${Number(r.percentage).toFixed(1)}%`
-                                : "—"}
-                              {r.timeSec != null
-                                ? ` · ${formatMmSs(r.timeSec)}`
-                                : ""}
+                            <div className="text-end flex-shrink-0">
+                              <div className="fs-5 fw-bold">{r.score}</div>
+                              <div className="small text-body-secondary">
+                                {r.percentage != null
+                                  ? `${Number(r.percentage).toFixed(1)}%`
+                                  : "—"}
+                                {r.timeSec != null
+                                  ? ` · ${formatMmSs(r.timeSec)}`
+                                  : ""}
+                              </div>
                             </div>
                           </div>
                         </CCardBody>
@@ -330,17 +390,7 @@ const QuizLeaderboard = () => {
                       >
                         #{r.rank}
                       </div>
-                      <div
-                        className="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white flex-shrink-0"
-                        style={{
-                          width: 40,
-                          height: 40,
-                          background: "#0f3460",
-                          fontSize: 14,
-                        }}
-                      >
-                        {initialOf(r.technician)}
-                      </div>
+                      <ProfileAvatar person={r} size={40} />
                       <div className="min-w-0">
                         <div className="fw-semibold text-truncate">
                           {r.technician}
@@ -348,6 +398,7 @@ const QuizLeaderboard = () => {
                         <div className="small text-body-secondary text-truncate">
                           {r.email || "—"}
                         </div>
+                        <SiteIdsLine siteIds={r.assignedSiteIds} />
                       </div>
                     </div>
                     <div className="d-flex align-items-center gap-3 flex-wrap ms-auto">
