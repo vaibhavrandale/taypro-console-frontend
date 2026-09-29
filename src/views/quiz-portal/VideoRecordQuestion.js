@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { CButton, CProgress, CSpinner } from "@coreui/react";
 import { formatMmSs } from "./quizUtils";
 import { uploadQuizMediaDirect } from "./uploadQuizMediaDirect";
+import ConfirmModal from "../../components/ConfirmModal";
 
 /**
  * Browser camera recording → signed direct upload to Cloudinary.
@@ -31,15 +32,19 @@ const VideoRecordQuestion = ({
   const blobRef = useRef(null);
   const blobUrlRef = useRef("");
 
-  const [phase, setPhase] = useState("idle"); // idle | previewCam | recording | uploading | uploadFailed
+  const [phase, setPhase] = useState("idle"); // idle | previewCam | recording | uploading | uploadFailed | awaitingLimitConfirm
   const [recElapsed, setRecElapsed] = useState(0);
   const [blobUrl, setBlobUrl] = useState("");
   const [uploadPct, setUploadPct] = useState(0);
+  const [stopConfirmVisible, setStopConfirmVisible] = useState(false);
+  const [limitConfirmVisible, setLimitConfirmVisible] = useState(false);
 
   const existingIds = value?.mediaIds || [];
   const existing = existingIds
     .map((id) => mediaById[String(id)])
     .filter(Boolean);
+
+  const isBusy = phase === "uploading";
 
   const stopStream = () => {
     streamRef.current?.getTracks()?.forEach((t) => t.stop());
@@ -113,7 +118,7 @@ const VideoRecordQuestion = ({
   };
 
   const uploadBlob = async (b) => {
-    if (!b) return;
+    if (!b || isBusy) return;
     try {
       setPhase("uploading");
       setUploadPct(0);
@@ -141,18 +146,31 @@ const VideoRecordQuestion = ({
     }
   };
 
-  /** Ask before stop; on OK → stop and auto-upload */
   const requestStopAndUpload = () => {
-    const ok = window.confirm(
-      "Stop recording and upload now?\n\nYou cannot retake after uploading.",
-    );
-    if (!ok) return;
+    if (isBusy) return;
+    setStopConfirmVisible(true);
+  };
+
+  const confirmStopAndUpload = () => {
+    setStopConfirmVisible(false);
     autoUploadOnStopRef.current = true;
     stopRecorder();
   };
 
+  const confirmLimitUpload = () => {
+    setLimitConfirmVisible(false);
+    uploadBlob(blobRef.current);
+  };
+
+  const discardLimitRecording = () => {
+    setLimitConfirmVisible(false);
+    clearBlobUrl();
+    setPhase("idle");
+    toast("Recording discarded");
+  };
+
   const startRecording = () => {
-    if (!streamRef.current) return;
+    if (!streamRef.current || isBusy) return;
     chunksRef.current = [];
     elapsedRef.current = 0;
     setRecElapsed(0);
@@ -196,17 +214,8 @@ const VideoRecordQuestion = ({
         autoUploadOnStopRef.current = false;
         uploadBlob(b);
       } else {
-        // Max-time stop without prior confirm — ask now
-        const ok = window.confirm(
-          "Recording time limit reached. Upload now?\n\nYou cannot retake after uploading.",
-        );
-        if (ok) {
-          uploadBlob(b);
-        } else {
-          clearBlobUrl();
-          setPhase("idle");
-          toast("Recording discarded");
-        }
+        setPhase("awaitingLimitConfirm");
+        setLimitConfirmVisible(true);
       }
     };
 
@@ -217,7 +226,6 @@ const VideoRecordQuestion = ({
       const next = elapsedRef.current;
       setRecElapsed(next);
       if (next >= maxSec) {
-        // Time up — stop; confirm happens in onstop if not already confirmed
         autoUploadOnStopRef.current = false;
         stopRecorder();
       }
@@ -247,7 +255,7 @@ const VideoRecordQuestion = ({
       ) : null}
 
       {phase === "idle" && existing.length === 0 ? (
-        <CButton color="success" size="sm" onClick={startCamera}>
+        <CButton color="success" size="sm" onClick={startCamera} disabled={isBusy}>
           Start camera
         </CButton>
       ) : null}
@@ -285,7 +293,10 @@ const VideoRecordQuestion = ({
         </div>
       )}
 
-      {(phase === "uploading" || phase === "uploadFailed") && blobUrl ? (
+      {(phase === "uploading" ||
+        phase === "uploadFailed" ||
+        phase === "awaitingLimitConfirm") &&
+      blobUrl ? (
         <div className="mb-2">
           <div className="small text-body-secondary mb-1">
             Preview ({formatMmSs(recElapsed)})
@@ -302,13 +313,23 @@ const VideoRecordQuestion = ({
       ) : null}
 
       {phase === "previewCam" ? (
-        <CButton color="danger" size="sm" onClick={startRecording}>
+        <CButton
+          color="danger"
+          size="sm"
+          onClick={startRecording}
+          disabled={isBusy}
+        >
           Start recording
         </CButton>
       ) : null}
 
       {phase === "recording" ? (
-        <CButton color="secondary" size="sm" onClick={requestStopAndUpload}>
+        <CButton
+          color="secondary"
+          size="sm"
+          onClick={requestStopAndUpload}
+          disabled={isBusy || stopConfirmVisible}
+        >
           Stop & upload
         </CButton>
       ) : null}
@@ -319,6 +340,9 @@ const VideoRecordQuestion = ({
             Uploading… {uploadPct}% <CSpinner size="sm" />
           </div>
           <CProgress value={uploadPct} color="success" />
+          <CButton color="secondary" size="sm" className="mt-2" disabled>
+            Uploading — please wait
+          </CButton>
         </div>
       ) : null}
 
@@ -326,11 +350,32 @@ const VideoRecordQuestion = ({
         <CButton
           color="warning"
           size="sm"
+          disabled={isBusy}
           onClick={() => uploadBlob(blobRef.current)}
         >
           Retry upload
         </CButton>
       ) : null}
+
+      <ConfirmModal
+        visible={stopConfirmVisible}
+        onClose={() => setStopConfirmVisible(false)}
+        onConfirm={confirmStopAndUpload}
+        title="Stop & upload?"
+        message="Are you sure you want to stop recording and upload now?<br/><br/>You <strong>cannot retake</strong> after uploading."
+        confirmLabel="Yes, upload"
+        confirmColor="success"
+      />
+
+      <ConfirmModal
+        visible={limitConfirmVisible}
+        onClose={discardLimitRecording}
+        onConfirm={confirmLimitUpload}
+        title="Time limit reached"
+        message="Recording time limit reached.<br/><br/>Upload this clip now? You <strong>cannot retake</strong> after uploading."
+        confirmLabel="Yes, upload"
+        confirmColor="success"
+      />
     </div>
   );
 };

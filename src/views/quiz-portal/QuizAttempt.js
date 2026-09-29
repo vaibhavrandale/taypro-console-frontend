@@ -15,6 +15,7 @@ import {
 import { formatMmSs } from "./quizUtils";
 import VideoRecordQuestion from "./VideoRecordQuestion";
 import ImageFileUploadQuestion from "./ImageFileUploadQuestion";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const QuizAttempt = () => {
   const { attemptId } = useParams();
@@ -27,6 +28,7 @@ const QuizAttempt = () => {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [submitConfirmVisible, setSubmitConfirmVisible] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await axios.get(
@@ -151,6 +153,7 @@ const QuizAttempt = () => {
         {},
         { withCredentials: true },
       );
+      setSubmitConfirmVisible(false);
       navigate(`/quiz/result/${attemptId}`);
     } catch (e) {
       toast.error(e.response?.data?.message || "Submit failed");
@@ -363,13 +366,24 @@ const QuizAttempt = () => {
               color="success"
               size="sm"
               disabled={submitting}
-              onClick={submit}
+              onClick={() => setSubmitConfirmVisible(true)}
             >
               {submitting ? "Submitting..." : "Submit quiz"}
             </CButton>
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        visible={submitConfirmVisible}
+        onClose={() => !submitting && setSubmitConfirmVisible(false)}
+        onConfirm={submit}
+        title="Are you sure?"
+        message="Are you sure you want to submit this quiz?<br/><br/>You will not be able to change answers after submitting."
+        confirmLabel="Yes, submit"
+        confirmColor="success"
+        loading={submitting}
+      />
     </div>
   );
 };
