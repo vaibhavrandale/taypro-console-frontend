@@ -19,6 +19,32 @@ const roleToRoute = (role) => {
   return "master-admin";
 };
 
+/** Turn stored option ids into the labels the user actually saw */
+function formatAnswerDisplay(q, ans, mediaList) {
+  const value = ans?.value;
+  if (!value) return "—";
+
+  if (value.optionIds?.length) {
+    const byId = Object.fromEntries(
+      (q.options || []).map((o) => [String(o.id), o.text]),
+    );
+    return value.optionIds
+      .map((id) => byId[String(id)] || String(id))
+      .join(", ");
+  }
+
+  if (value.text != null && String(value.text).trim() !== "") {
+    return String(value.text);
+  }
+  if (value.number != null && value.number !== "") {
+    return String(value.number);
+  }
+  if (mediaList?.length) {
+    return `${mediaList.length} media file(s)`;
+  }
+  return "—";
+}
+
 const QuizEvaluate = () => {
   const { attemptId } = useParams();
   const userInfo = useSelector((s) => s.userInfo);
@@ -110,13 +136,21 @@ const QuizEvaluate = () => {
               </div>
               <div className="fw-semibold mb-2">{q.questionText}</div>
               <div className="small mb-2">
-                Answer:{" "}
-                {ans?.value?.optionIds?.length
-                  ? ans.value.optionIds.join(", ")
-                  : ans?.value?.text ??
-                    ans?.value?.number ??
-                    (mediaList.length ? "Media attached" : "—")}
+                <span className="text-muted">Answer: </span>
+                <span className="fw-semibold">
+                  {formatAnswerDisplay(q, ans, mediaList)}
+                </span>
               </div>
+              {["MCQ_SINGLE", "MCQ_MULTI"].includes(q.questionType) &&
+              (q.options || []).length ? (
+                <div className="small text-muted mb-2">
+                  Correct:{" "}
+                  {(q.options || [])
+                    .filter((o) => o.isCorrect)
+                    .map((o) => o.text)
+                    .join(", ") || "—"}
+                </div>
+              ) : null}
               {mediaList.map((m) =>
                 m.resourceType === "video" || m.mime?.startsWith("video/") ? (
                   <video
