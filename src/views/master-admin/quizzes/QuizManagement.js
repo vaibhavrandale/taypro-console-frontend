@@ -183,6 +183,12 @@ const QuizManagement = () => {
                   >
                     Attempts
                   </Link>
+                  <Link
+                    className="btn btn-sm btn-outline-info m-1"
+                    to={`${base}/${r._id}/leaderboard`}
+                  >
+                    Leaderboard
+                  </Link>
                 </CTableDataCell>
               </CTableRow>
             ))}

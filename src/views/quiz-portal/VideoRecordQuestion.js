@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { CButton, CProgress, CSpinner } from "@coreui/react";
 import { formatMmSs } from "./quizUtils";
+import { uploadQuizMediaDirect } from "./uploadQuizMediaDirect";
 
 /**
- * Browser camera recording → upload to quiz-portal media API.
- * Recording timer is separate from the quiz countdown.
+ * Browser camera recording → signed direct upload to Cloudinary.
+ * Stop asks to confirm, then uploads immediately (no retake).
  */
 const VideoRecordQuestion = ({
   attemptId,
@@ -24,11 +24,13 @@ const VideoRecordQuestion = ({
   const timerRef = useRef(null);
   const elapsedRef = useRef(0);
   const mimeRef = useRef("video/webm");
+  const autoUploadOnStopRef = useRef(false);
+  const blobRef = useRef(null);
+  const blobUrlRef = useRef("");
 
-  const [phase, setPhase] = useState("idle"); // idle | previewCam | recording | review | uploading
+  const [phase, setPhase] = useState("idle"); // idle | previewCam | recording | uploading | uploadFailed
   const [recElapsed, setRecElapsed] = useState(0);
   const [blobUrl, setBlobUrl] = useState("");
-  const [blob, setBlob] = useState(null);
   const [uploadPct, setUploadPct] = useState(0);
 
   const existingIds = value?.mediaIds || [];
@@ -49,16 +51,22 @@ const VideoRecordQuestion = ({
     }
   };
 
+  const clearBlobUrl = () => {
+    if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+    blobUrlRef.current = "";
+    setBlobUrl("");
+    blobRef.current = null;
+  };
+
   useEffect(() => {
     return () => {
       clearRecTimer();
       stopStream();
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Attach live stream after <video> mounts (fixes blank screen)
   useEffect(() => {
     if (phase !== "previewCam" && phase !== "recording") return undefined;
     const el = liveRef.current;
@@ -90,7 +98,7 @@ const VideoRecordQuestion = ({
     }
   };
 
-  const stopRecording = () => {
+  const stopRecorder = () => {
     clearRecTimer();
     if (recorderRef.current && recorderRef.current.state !== "inactive") {
       try {
@@ -101,11 +109,51 @@ const VideoRecordQuestion = ({
     }
   };
 
+  const uploadBlob = async (b) => {
+    if (!b) return;
+    try {
+      setPhase("uploading");
+      setUploadPct(0);
+      const ext = (b.type || mimeRef.current).includes("mp4") ? "mp4" : "webm";
+      const fileType = b.type || mimeRef.current || `video/${ext}`;
+      const file = new File([b], `recording-${Date.now()}.${ext}`, {
+        type: fileType,
+      });
+      const data = await uploadQuizMediaDirect({
+        attemptId,
+        questionId: question.questionId,
+        file,
+        durationSec: elapsedRef.current || recElapsed,
+        onProgress: setUploadPct,
+      });
+      toast.success("Recording uploaded");
+      onUploaded?.(data);
+      clearBlobUrl();
+      setRecElapsed(0);
+      elapsedRef.current = 0;
+      setPhase("idle");
+    } catch (e) {
+      toast.error(e.response?.data?.message || e.message || "Upload failed");
+      setPhase("uploadFailed");
+    }
+  };
+
+  /** Ask before stop; on OK → stop and auto-upload */
+  const requestStopAndUpload = () => {
+    const ok = window.confirm(
+      "Stop recording and upload now?\n\nYou cannot retake after uploading.",
+    );
+    if (!ok) return;
+    autoUploadOnStopRef.current = true;
+    stopRecorder();
+  };
+
   const startRecording = () => {
     if (!streamRef.current) return;
     chunksRef.current = [];
     elapsedRef.current = 0;
     setRecElapsed(0);
+    autoUploadOnStopRef.current = false;
 
     const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
       ? "video/webm;codecs=vp8,opus"
@@ -132,17 +180,31 @@ const VideoRecordQuestion = ({
     };
     recorder.onstop = () => {
       clearRecTimer();
-      const type =
-        recorder.mimeType || mimeRef.current || "video/webm";
+      const type = recorder.mimeType || mimeRef.current || "video/webm";
       const b = new Blob(chunksRef.current, { type });
-      setBlob(b);
+      blobRef.current = b;
       const url = URL.createObjectURL(b);
-      setBlobUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return url;
-      });
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = url;
+      setBlobUrl(url);
       stopStream();
-      setPhase("review");
+
+      if (autoUploadOnStopRef.current) {
+        autoUploadOnStopRef.current = false;
+        uploadBlob(b);
+      } else {
+        // Max-time stop without prior confirm — ask now
+        const ok = window.confirm(
+          "Recording time limit reached. Upload now?\n\nYou cannot retake after uploading.",
+        );
+        if (ok) {
+          uploadBlob(b);
+        } else {
+          clearBlobUrl();
+          setPhase("idle");
+          toast("Recording discarded");
+        }
+      }
     };
 
     recorder.start(500);
@@ -151,59 +213,12 @@ const VideoRecordQuestion = ({
       elapsedRef.current += 1;
       const next = elapsedRef.current;
       setRecElapsed(next);
-      if (next >= maxSec) stopRecording();
+      if (next >= maxSec) {
+        // Time up — stop; confirm happens in onstop if not already confirmed
+        autoUploadOnStopRef.current = false;
+        stopRecorder();
+      }
     }, 1000);
-  };
-
-  const retake = () => {
-    clearRecTimer();
-    setBlob(null);
-    if (blobUrl) URL.revokeObjectURL(blobUrl);
-    setBlobUrl("");
-    setRecElapsed(0);
-    elapsedRef.current = 0;
-    setUploadPct(0);
-    startCamera();
-  };
-
-  const upload = async () => {
-    if (!blob) return;
-    try {
-      setPhase("uploading");
-      setUploadPct(0);
-      const ext = (blob.type || mimeRef.current).includes("mp4") ? "mp4" : "webm";
-      const fileType = blob.type || mimeRef.current || `video/${ext}`;
-      const file = new File([blob], `recording-${Date.now()}.${ext}`, {
-        type: fileType,
-      });
-      const form = new FormData();
-      form.append("file", file);
-      form.append("questionId", String(question.questionId));
-      form.append("durationSec", String(elapsedRef.current || recElapsed));
-      const { data } = await axios.post(
-        `/api/v1/quiz-portal/attempts/${attemptId}/media`,
-        form,
-        {
-          withCredentials: true,
-          onUploadProgress: (ev) => {
-            if (ev.total) {
-              setUploadPct(Math.round((ev.loaded / ev.total) * 100));
-            }
-          },
-        },
-      );
-      toast.success("Recording uploaded");
-      onUploaded?.(data.data);
-      setPhase("idle");
-      setBlob(null);
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
-      setBlobUrl("");
-      setRecElapsed(0);
-      elapsedRef.current = 0;
-    } catch (e) {
-      toast.error(e.response?.data?.message || "Upload failed");
-      setPhase("review");
-    }
   };
 
   return (
@@ -224,9 +239,7 @@ const VideoRecordQuestion = ({
               style={{ maxHeight: 320, minHeight: 200, background: "#000" }}
             />
           ))}
-          <CButton color="warning" size="sm" onClick={startCamera}>
-            Record again
-          </CButton>
+          <div className="small text-body-secondary">Recording submitted</div>
         </div>
       ) : null}
 
@@ -269,7 +282,7 @@ const VideoRecordQuestion = ({
         </div>
       )}
 
-      {(phase === "review" || phase === "uploading") && blobUrl ? (
+      {(phase === "uploading" || phase === "uploadFailed") && blobUrl ? (
         <div className="mb-2">
           <div className="small text-body-secondary mb-1">
             Preview ({formatMmSs(recElapsed)})
@@ -292,20 +305,9 @@ const VideoRecordQuestion = ({
       ) : null}
 
       {phase === "recording" ? (
-        <CButton color="secondary" size="sm" onClick={stopRecording}>
-          Stop recording
+        <CButton color="secondary" size="sm" onClick={requestStopAndUpload}>
+          Stop & upload
         </CButton>
-      ) : null}
-
-      {phase === "review" ? (
-        <div className="d-flex gap-2 flex-wrap">
-          <CButton color="secondary" size="sm" onClick={retake}>
-            Retake
-          </CButton>
-          <CButton color="success" size="sm" onClick={upload}>
-            Submit recording
-          </CButton>
-        </div>
       ) : null}
 
       {phase === "uploading" ? (
@@ -315,6 +317,16 @@ const VideoRecordQuestion = ({
           </div>
           <CProgress value={uploadPct} color="success" />
         </div>
+      ) : null}
+
+      {phase === "uploadFailed" ? (
+        <CButton
+          color="warning"
+          size="sm"
+          onClick={() => uploadBlob(blobRef.current)}
+        >
+          Retry upload
+        </CButton>
       ) : null}
     </div>
   );

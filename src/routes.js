@@ -335,6 +335,9 @@ const QuizBuilder = React.lazy(
 const QuizAttempts = React.lazy(
   () => import("./views/master-admin/quizzes/QuizAttempts"),
 );
+const QuizLeaderboard = React.lazy(
+  () => import("./views/master-admin/quizzes/QuizLeaderboard"),
+);
 const QuizEvaluate = React.lazy(
   () => import("./views/master-admin/quizzes/QuizEvaluate"),
 );
@@ -1225,6 +1228,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <QuizAttempts />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/quizzes/:id/leaderboard",
+    name: "Quiz Leaderboard",
+    element: (
+      <MasterAdminRoute>
+        <QuizLeaderboard />
       </MasterAdminRoute>
     ),
   },
@@ -4112,6 +4124,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/quizzes/:id/leaderboard",
+    name: "Quiz Leaderboard",
+    element: (
+      <ProjectAdminRoute>
+        <QuizLeaderboard />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/quizzes/attempts/:attemptId/evaluate",
     name: "Evaluate Quiz Attempt",
     element: (
@@ -6171,6 +6192,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <QuizAttempts />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/quizzes/:id/leaderboard",
+    name: "Quiz Leaderboard",
+    element: (
+      <ServiceAdminRoute>
+        <QuizLeaderboard />
       </ServiceAdminRoute>
     ),
   },

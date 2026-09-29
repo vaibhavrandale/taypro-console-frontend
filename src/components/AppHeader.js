@@ -1090,8 +1090,7 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                   Rate Us
                   {latestfeedback.createdAt && (
                     <span className="text-body-secondary fs-6 fw-normal ms-2">
-                      ·{" "}
-                      {moment(latestfeedback.createdAt).format("MMMM YYYY")}
+                      · {moment(latestfeedback.createdAt).format("MMMM YYYY")}
                     </span>
                   )}
                 </CModalTitle>

@@ -4,7 +4,6 @@ import {
   CButton,
   CCard,
   CCardBody,
-  CCardGroup,
   CCol,
   CContainer,
   CForm,
@@ -18,26 +17,28 @@ import { cilLockLocked, cilUser } from "@coreui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Tayprofordarkbg from "../../assets/brand/logofordarkbg.png";
-import Tayproforwhitebg from "../../assets/brand/logoforwhitebg.png";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-/** Same look as Console /login — separate quiz auth only */
+/** Quiz portal login — same Console brand, clearer assessment-focused UX */
 const QuizLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const theme = localStorage.getItem("theme");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email.trim() || !password) {
+      toast.error("Enter email and password");
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await axios.post(
         "/api/v1/quiz-portal/auth/login",
-        { email, password },
+        { email: email.trim(), password },
         { withCredentials: true },
       );
       sessionStorage.setItem(
@@ -62,100 +63,135 @@ const QuizLogin = () => {
 
   return (
     <div
+      className="d-flex flex-column min-vh-100"
       style={{
         backgroundImage:
-          "url('https://res.cloudinary.com/decyim6cd/image/upload/v1756550699/profile-image/zue50f0h9pwdebxd745f.png')",
+          "linear-gradient(160deg, rgba(8,16,28,0.78) 0%, rgba(8,16,28,0.55) 45%, rgba(8,16,28,0.72) 100%), url('https://res.cloudinary.com/decyim6cd/image/upload/v1756550699/profile-image/zue50f0h9pwdebxd745f.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
-        height: "100vh",
       }}
-      className="d-flex flex-column justify-content-center align-items-center min-vh-100"
     >
-      <CContainer>
-        <CRow className="justify-content-center">
-          <CCol xs={12} sm={10} md={8} lg={4}>
-            <CCardGroup>
-              <CCard className="p-3 shadow-lg border-0">
-                <CCardBody>
-                  <div className="text-center mb-3">
-                    {theme === "light" ? (
-                      <img
-                        src={Tayproforwhitebg}
-                        alt="Taypro Logo"
-                        style={{ height: "80px", width: "auto" }}
+      <CContainer className="flex-grow-1 d-flex align-items-center py-4 py-md-5">
+        <CRow className="justify-content-center w-100 g-0">
+          <CCol xs={12} sm={10} md={7} lg={5} xl={4}>
+            <div className="text-center text-white mb-4">
+              <img
+                src={Tayprofordarkbg}
+                alt="Taypro"
+                style={{ height: 56, width: "auto" }}
+              />
+              <div
+                className="mt-3 text-uppercase"
+                style={{
+                  letterSpacing: "0.18em",
+                  fontSize: 12,
+                  opacity: 0.85,
+                }}
+              >
+                Assessment portal
+              </div>
+            </div>
+
+            <CCard
+              className="border-0 shadow-lg overflow-hidden"
+              style={{ borderRadius: 16 }}
+            >
+              <div
+                style={{
+                  height: 4,
+                  background: "linear-gradient(90deg, #2eb85c, #39f, #f9b115)",
+                }}
+              />
+              <CCardBody className="p-4 p-md-4">
+                <CForm onSubmit={handleSubmit} autoComplete="off">
+                  <h4 className="mb-1 fw-semibold">Sign in to take quizzes</h4>
+                  <p className="text-body-secondary small mb-4">
+                    Use your Console email and password. This portal is for
+                    assessments only.
+                  </p>
+
+                  <label className="form-label small fw-semibold mb-1">
+                    Email
+                  </label>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon={cilUser} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="email"
+                      placeholder="you@company.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="username"
+                      autoFocus
+                      required
+                    />
+                  </CInputGroup>
+
+                  <label className="form-label small fw-semibold mb-1">
+                    Password
+                  </label>
+                  <CInputGroup className="mb-4">
+                    <CInputGroupText>
+                      <CIcon icon={cilLockLocked} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      required
+                    />
+                    <CInputGroupText
+                      role="button"
+                      tabIndex={0}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                      onClick={() => setShowPassword(!showPassword)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setShowPassword((v) => !v);
+                        }
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
                       />
-                    ) : (
-                      <img
-                        src={Tayprofordarkbg}
-                        alt="Taypro Logo"
-                        style={{ height: "80px", width: "auto" }}
-                      />
-                    )}
+                    </CInputGroupText>
+                  </CInputGroup>
+
+                  <CButton
+                    color="success"
+                    className="w-100 py-2 fw-semibold"
+                    type="submit"
+                    disabled={!email || !password || loading}
+                  >
+                    {loading ? "Signing in…" : "Continue to quizzes"}
+                  </CButton>
+
+                  <div className="text-center mt-3">
+                    <Link
+                      to="/login"
+                      className="small text-decoration-none text-body-secondary"
+                    >
+                      Need Console access instead? →
+                    </Link>
                   </div>
+                </CForm>
+              </CCardBody>
+            </CCard>
 
-                  <CForm onSubmit={handleSubmit} autoComplete="off">
-                    <h4 className="text-center mb-2">Quiz Login</h4>
-                    <p className="text-center text-body-secondary small mb-4">
-                      Assessment access only
-                    </p>
-
-                    <CInputGroup className="mb-3">
-                      <CInputGroupText>
-                        <CIcon icon={cilUser} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="username"
-                      />
-                    </CInputGroup>
-
-                    <CInputGroup className="mb-4">
-                      <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
-                      </CInputGroupText>
-                      <CFormInput
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="current-password"
-                      />
-                      <CInputGroupText
-                        onClick={() => setShowPassword(!showPassword)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <FontAwesomeIcon
-                          icon={showPassword ? faEyeSlash : faEye}
-                        />
-                      </CInputGroupText>
-                    </CInputGroup>
-
-                    <CRow className="d-flex justify-content-between align-items-center">
-                      <CCol xs="6">
-                        <CButton
-                          color="success"
-                          className="px-4"
-                          size="sm"
-                          type="submit"
-                          disabled={!email || !password || loading}
-                        >
-                          {loading ? "Logging in..." : "Login"}
-                        </CButton>
-                      </CCol>
-                      <CCol xs="6" className="text-end">
-                        <Link to="/login" className="px-0">
-                          Console login
-                        </Link>
-                      </CCol>
-                    </CRow>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-            </CCardGroup>
+            <p
+              className="text-center text-white small mt-3 mb-0"
+              style={{ opacity: 0.65 }}
+            >
+              Stable connection recommended for video questions
+            </p>
           </CCol>
         </CRow>
       </CContainer>

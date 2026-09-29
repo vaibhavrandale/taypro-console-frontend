@@ -86,6 +86,12 @@ const QuizAttempts = () => {
       <div className="d-flex justify-content-between mb-3">
         <h4 className="mb-0">Quiz attempts</h4>
         <div className="d-flex gap-2">
+          <Link
+            className="btn btn-outline-info btn-sm"
+            to={`${base}/${id}/leaderboard`}
+          >
+            Leaderboard
+          </Link>
           <CButton color="success" size="sm" onClick={publishResults}>
             Publish results
           </CButton>

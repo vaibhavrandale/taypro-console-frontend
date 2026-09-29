@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { CButton, CFormInput, CProgress, CSpinner } from "@coreui/react";
+import { uploadQuizMediaDirect } from "./uploadQuizMediaDirect";
 
 const ImageFileUploadQuestion = ({
   attemptId,
@@ -27,24 +27,16 @@ const ImageFileUploadQuestion = ({
     try {
       setUploading(true);
       setPct(0);
-      const form = new FormData();
-      form.append("file", file);
-      form.append("questionId", question.questionId);
-      const { data } = await axios.post(
-        `/api/v1/quiz-portal/attempts/${attemptId}/media`,
-        form,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (ev) => {
-            if (ev.total) setPct(Math.round((ev.loaded / ev.total) * 100));
-          },
-        },
-      );
+      const data = await uploadQuizMediaDirect({
+        attemptId,
+        questionId: question.questionId,
+        file,
+        onProgress: setPct,
+      });
       toast.success("Uploaded");
-      onUploaded?.(data.data);
+      onUploaded?.(data);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Upload failed");
+      toast.error(err.response?.data?.message || err.message || "Upload failed");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
