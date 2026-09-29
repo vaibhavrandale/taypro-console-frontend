@@ -15,7 +15,10 @@ const VideoRecordQuestion = ({
   value,
   onUploaded,
 }) => {
-  const maxSec = question.mediaConfig?.maxDurationSec || 120;
+  const maxSec = Math.min(
+    Number(question.mediaConfig?.maxDurationSec) || 60,
+    60,
+  );
   const liveRef = useRef(null);
   const playbackRef = useRef(null);
   const streamRef = useRef(null);
