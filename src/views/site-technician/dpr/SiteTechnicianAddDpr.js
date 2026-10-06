@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import axios from "axios";
 // import React, { useEffect, useReducer, useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -2184,6 +2185,7 @@ import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import { useNavigate } from "react-router-dom";
 
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_TECHNICIAN_REQUEST":
@@ -3000,7 +3002,7 @@ const SiteTechnicianAddDpr = () => {
                 <CTableBody>
                   {state.availableRobots.map((robot, index) => (
                     <CTableRow key={index}>
-                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                       <CTableDataCell>{robot.block}</CTableDataCell>
                       {/* <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>

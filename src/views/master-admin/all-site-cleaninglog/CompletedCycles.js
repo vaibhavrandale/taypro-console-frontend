@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import {
   CBadge,
   CTable,
@@ -8,6 +9,7 @@ import {
   CTableRow,
 } from "@coreui/react";
 import React from "react";
+
 
 const CompletedCycles = ({ completedLogs }) => {
   const cycle1 = [];
@@ -78,7 +80,7 @@ const CompletedCycles = ({ completedLogs }) => {
             cycle1.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>
@@ -187,7 +189,7 @@ const CompletedCycles = ({ completedLogs }) => {
             cycle2.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>
@@ -296,7 +298,7 @@ const CompletedCycles = ({ completedLogs }) => {
             cycle3.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>

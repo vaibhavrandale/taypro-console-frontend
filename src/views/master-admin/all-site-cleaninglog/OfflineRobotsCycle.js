@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import React from "react";
 
 // const OfflineRobotsCycle = () => {
@@ -17,6 +18,7 @@ import {
 } from "@coreui/react";
 import React from "react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const OfflineRobotsCycle = ({
   offlineLogs,
@@ -75,7 +77,7 @@ const OfflineRobotsCycle = ({
             cycle1.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                 <CTableDataCell>{log.block}</CTableDataCell>
                 {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
 
@@ -129,7 +131,7 @@ const OfflineRobotsCycle = ({
             cycle2.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                 <CTableDataCell>{log.block}</CTableDataCell>
                 {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
 
@@ -183,7 +185,7 @@ const OfflineRobotsCycle = ({
             cycle3.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                 <CTableDataCell>{log.block}</CTableDataCell>
                 {/* <CTableDataCell>{log.createdAt}</CTableDataCell> */}
 

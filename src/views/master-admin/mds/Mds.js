@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -35,6 +36,7 @@ import PaginateInput from "../../../components/PaginateInput";
 import { cilTrash, cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { deleteMdsFromDatabase, deleteMdsFromLns } from "./DeleteMds";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -717,7 +719,7 @@ const Mds = () => {
                       <CTableRow>
                         <CTableDataCell>1</CTableDataCell>
                         <CTableDataCell>
-                          {selectedMds.robot.robot_no}
+                          <RobotNoLink robot={selectedMds.robot} />
                         </CTableDataCell>
                         <CTableDataCell>
                           {selectedMds.robot.site_id}
@@ -751,8 +753,7 @@ const Mds = () => {
                       <option value="">Assign Robot</option>
                       {robots?.length > 0 &&
                         robots.map((item, index) => (
-                          <option key={index} value={item.robot_no}>
-                            {item.robot_no}-({item.site_id})
+                          <option key={index} value={item.robot_no}>{item.robot_no}-({item.site_id})
                           </option>
                         ))}
                     </CFormSelect>

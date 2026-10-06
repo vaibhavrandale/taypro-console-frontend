@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import axios from "axios";
 import React, { useEffect, useReducer } from "react";
 import toast from "react-hot-toast";
@@ -14,6 +15,7 @@ import {
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -149,7 +151,7 @@ const ViewGateway = () => {
               </CTableHead>
               <CTableBody>
                 <CTableRow>
-                  <CTableDataCell>{gateway?.robot?.robot_no}</CTableDataCell>
+                  <CTableDataCell><RobotNoLink robot={gateway?.robot} /></CTableDataCell>
 
                   <CTableDataCell>
                     <CBadge

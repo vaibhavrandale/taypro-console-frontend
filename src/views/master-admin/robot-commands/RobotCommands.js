@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import React, { useEffect, useReducer, useState } from "react";
@@ -15,6 +16,7 @@ import {
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilRouter, cilSend } from "@coreui/icons";
+
 // import { useSelector } from "react-redux";
 
 const reducer = (state, action) => {
@@ -368,7 +370,7 @@ const RobotCommands = () => {
                   </span>
                   <div className="vr opacity-25 mx-1" />
                   <CIcon icon={cilRouter} className="text-success" size="sm" />
-                  <span className="text-success small">{robot.robot_no}</span>
+                  <span className="text-success small"><RobotNoLink robot={robot} /></span>
                   <CBadge color="warning" className="ms-1 fw-normal opacity-75">
                     {robot.block}
                   </CBadge>
@@ -404,7 +406,7 @@ const RobotCommands = () => {
                       style={{}}
                     />
                     <div className="flex-grow-1 text-center">
-                      <div>{robot.robot_no}</div>
+                      <div><RobotNoLink robot={robot} /></div>
                     </div>
                   </CCardBody>
                 </CCard>

@@ -1,0 +1,22 @@
+.robot-no-link {
+  color: var(--warning-text, #fdb52a);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.robot-no-link:hover {
+  color: var(--warning-text, #fdb52a);
+  text-decoration: underline;
+}
+
+.modal .robot-no-link,
+.modal-title .robot-no-link,
+.leaflet-popup .robot-no-link {
+  pointer-events: auto !important;
+  z-index: 1080;
+}

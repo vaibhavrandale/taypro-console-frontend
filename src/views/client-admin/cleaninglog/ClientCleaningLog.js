@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -31,6 +32,7 @@ import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import Logmodal from "../../../components/individual-robot-log/Logmodal";
+
 
 // import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
@@ -916,7 +918,7 @@ const ClientCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell> */}
                                 <CTableDataCell
                                   className="cursor-pointer"
@@ -927,7 +929,7 @@ const ClientCleaningLog = () => {
                                   //     : ""
                                   // }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                   {successRobotCount[log.robot_no] > 1 && (
                                     <CBadge
                                       color="warning"
@@ -1098,7 +1100,7 @@ const ClientCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell>
                                 <CTableDataCell>
                                   {log.cleaning?.start &&
@@ -1212,7 +1214,7 @@ const ClientCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell>
                                 <CTableDataCell>{log.block}</CTableDataCell>
                                 {/* <CTableDataCell>
@@ -1318,7 +1320,7 @@ const ClientCleaningLog = () => {
                           filteredOffline.map((log, index) => (
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
-                              <CTableDataCell>{log.robot_no}</CTableDataCell>
+                              <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
                               <CTableDataCell>
                                 {log.createdAt &&
@@ -1411,7 +1413,7 @@ const ClientCleaningLog = () => {
                               }
                             >
                               <CTableDataCell>{index + 1}</CTableDataCell>
-                              <CTableDataCell>{log.robot_no}</CTableDataCell>
+                              <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
                               <CTableDataCell>
                                 {log.lora_state ? (

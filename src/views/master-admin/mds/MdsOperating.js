@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CRow,
@@ -19,6 +20,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 import "../site-management/management.css";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -643,7 +645,7 @@ const MdsOperating = () => {
                         {/* Top Section: Robot No + Battery */}
                         <div className="d-flex justify-content-between align-items-center mb-2">
                           <h6 className=" mb-0">
-                            Robot No: {mdsDevice.robot.robot_no}
+                            Robot No: <RobotNoLink robot={mdsDevice.robot} />
                           </h6>
                           <span className="px-2 py-1">
                             🔋 {mdsDevice.robot.battery_voltage}

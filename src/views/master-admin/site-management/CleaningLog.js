@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, {
   useEffect,
   useReducer,
@@ -29,6 +30,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -439,7 +441,7 @@ const CleaningLog = () => {
                         style={{ cursor: "pointer", listStyle: "none" }}
                         onClick={() => handleSelectRobot(robot)}
                       >
-                        {robot.robot_no}
+                        <RobotNoLink robot={robot} />
                       </li>
                     ))}
                   </ul>
@@ -547,7 +549,7 @@ const CleaningLog = () => {
                     <CTableRow key={index}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {log.robot_no}
+                        <RobotNoLink robot={log} />
                       </CTableDataCell>
                       {/* <CTableDataCell className="text-center">
                         {log.deveui}

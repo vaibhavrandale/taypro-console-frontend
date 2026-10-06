@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import React, { useState } from "react";
 import {
   COffcanvas,
@@ -26,6 +27,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
+
 
 const RobotSidebar = ({
   robot,
@@ -121,7 +123,7 @@ const RobotSidebar = ({
           <span style={{ fontSize: "15px" }}>
             Robot Details –{" "}
             <CBadge color="warning" className="px-2 py-2">
-              {robot.robot_no}
+              <RobotNoLink robot={robot} />
             </CBadge>
           </span>
 
@@ -257,7 +259,7 @@ const RobotSidebar = ({
                   <CTableDataCell
                     style={{ minWidth: "100px", fontSize: "13px" }}
                   >
-                    {robot.robot_no}
+                    <RobotNoLink robot={robot} />
                   </CTableDataCell>
                 </CTableRow>
                 <CTableRow>

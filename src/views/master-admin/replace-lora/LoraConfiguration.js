@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -33,6 +34,7 @@ import PaginateInput from "../../../components/PaginateInput";
 import SiteSelect from "../../../components/SiteSelect";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const darkSelectStyles = {
   control: (provided) => ({
@@ -677,7 +679,7 @@ const LoraConfiguration = () => {
                   </CBadge>
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
-                  {item.robot_no}
+                  <RobotNoLink robot={item} />
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "150px" }}>
                   {item.deveui}
@@ -830,7 +832,7 @@ const LoraConfiguration = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
-                    <CTableDataCell>{selectedItem.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={selectedItem} /></CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Site ID</CTableHeaderCell>

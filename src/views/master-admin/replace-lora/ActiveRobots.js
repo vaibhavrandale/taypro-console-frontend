@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -23,6 +24,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -304,7 +306,7 @@ const ActiveRobots = () => {
             robots.map((robot, index) => (
               <CTableRow key={robot._id || index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                 <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>{robot.lora_no}</CTableDataCell>
                 <CTableDataCell>{robot.old_lora_no}</CTableDataCell>
@@ -343,7 +345,7 @@ const ActiveRobots = () => {
           <CModalHeader closeButton={false}>
             <CModalTitle>
               Replace Lora -{" "}
-              <span className="badge bg-success">{selectedRobot.robot_no}</span>
+              <span className="badge bg-success"><RobotNoLink robot={selectedRobot} /></span>
             </CModalTitle>
             <button
               type="button"

@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React from "react";
 import {
   CCard,
@@ -21,6 +22,7 @@ import {
   CAvatar,
 } from "@coreui/react";
 import BatteryGraph from "./BatteryGraph";
+
 
 const formatValue = (value) =>
   value === null || value === undefined || value === "" ? "NA" : value;
@@ -55,7 +57,7 @@ const RobotFaultyAnalysis = ({ data }) => {
           color: "white",
         }}
       >
-        <strong>{data.robot_no}</strong>
+        <strong><RobotNoLink robot={data} /></strong>
 
         <div>
           <CBadge
@@ -408,7 +410,7 @@ const RobotFaultyAnalysis = ({ data }) => {
                       <CTableRow key={log._id} className="text-center">
                         <CTableDataCell>{idx + 1}</CTableDataCell>
                         <CTableDataCell>{log.ticket_id}</CTableDataCell>
-                        <CTableDataCell>{log.robot_no}</CTableDataCell>
+                        <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                         <CTableDataCell>{log.block}</CTableDataCell>
                         <CTableDataCell>{log.fault_type}</CTableDataCell>
                         <CTableDataCell>

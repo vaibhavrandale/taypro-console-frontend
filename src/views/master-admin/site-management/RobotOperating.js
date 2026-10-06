@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CRow,
@@ -36,6 +37,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import WeatherCheckResultModal from "../../../components/WeatherCheckResultModal";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -787,7 +789,7 @@ const RobotOperating = () => {
                     <CCardBody className="p-3">
                       {/* Top Section: Robot No + Battery */}
                       <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h6 className=" mb-0">{robot.robot_no}</h6>
+                        <h6 className=" mb-0"><RobotNoLink robot={robot} /></h6>
                         <span className="px-2 py-1">
                           🔋 {robot.battery_voltage}
                           <span className="mx-1">%</span>{" "}

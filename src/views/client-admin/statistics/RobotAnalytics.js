@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import React, { useState, useEffect, useReducer } from "react";
 // import axios from "axios";
 // import {
@@ -626,6 +627,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+
 
 /* ─────────────────────────────────────────────
    REDUCER
@@ -1267,7 +1269,7 @@ const RobotAnalytics = () => {
                           setFilteredRobots([]);
                         }}
                       >
-                        {robot.robot_no}
+                        <RobotNoLink robot={robot} />
                       </div>
                     ))}
                   </div>

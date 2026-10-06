@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState, useEffect, useReducer } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -23,6 +24,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import * as XLSX from "xlsx";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -444,7 +446,7 @@ const MonthlySiteReport = () => {
                                 <CCard className="border shadow-sm h-100">
                                   <CCardBody>
                                     <h6 className="mb-2">
-                                      Robot: {robot.robot_no}
+                                      Robot: <RobotNoLink robot={robot} />
                                     </h6>
                                     <CBadge color="success" className="mb-2">
                                       PM ID: {robot.pm_id}

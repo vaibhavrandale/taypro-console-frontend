@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -15,6 +16,7 @@ import { CChartLine } from "@coreui/react-chartjs";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -189,7 +191,7 @@ const BatteryAndTemperature = () => {
                     style={{ cursor: "pointer", listStyle: "none" }}
                     onClick={() => handleSelectRobot(robot.robot_no)}
                   >
-                    {robot.robot_no}
+                    <RobotNoLink robot={robot} />
                   </li>
                 ))}
               </ul>

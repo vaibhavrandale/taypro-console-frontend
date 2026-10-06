@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import {
   CBadge,
   CCol,
@@ -17,6 +18,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITES_REQUEST":
@@ -252,7 +254,7 @@ const TimerCommandSentLog = () => {
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
 
-                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                 <CTableDataCell>{robot.site_id}</CTableDataCell>
                 <CTableDataCell>{robot.block}</CTableDataCell>
                 <CTableDataCell>

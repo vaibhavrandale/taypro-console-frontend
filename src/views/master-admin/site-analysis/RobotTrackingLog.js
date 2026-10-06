@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -17,6 +18,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -197,7 +199,7 @@ const RobotTrackingLog = () => {
                 cleaninglogs.map((log, index) => (
                   <CTableRow key={index}>
                     <CTableDataCell>{index + 1}</CTableDataCell>
-                    <CTableDataCell>{log.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                     <CTableDataCell>{log.row_no}</CTableDataCell>
                     <CTableDataCell>{log.row_length}</CTableDataCell>
                     <CTableDataCell>

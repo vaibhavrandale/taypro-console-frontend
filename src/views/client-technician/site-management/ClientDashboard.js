@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CContainer,
@@ -27,6 +28,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -290,7 +292,7 @@ const ClientDashboard = () => {
                                     {index + 1}
                                   </CTableHeaderCell>
                                   <CTableDataCell>
-                                    {robot.robot_no}
+                                    <RobotNoLink robot={robot} />
                                   </CTableDataCell>
                                   <CTableDataCell>
                                     {robot.deveui}
@@ -409,7 +411,7 @@ const ClientDashboard = () => {
                                     {index + 1}
                                   </CTableHeaderCell>
                                   <CTableDataCell>
-                                    {robot.robot_no}
+                                    <RobotNoLink robot={robot} />
                                   </CTableDataCell>
                                   <CTableDataCell>
                                     <CBadge
@@ -578,7 +580,7 @@ const ClientDashboard = () => {
                                     {index + 1}
                                   </CTableHeaderCell>
                                   <CTableDataCell>
-                                    {robot.robot_no}
+                                    <RobotNoLink robot={robot} />
                                   </CTableDataCell>
                                   <CTableDataCell>
                                     {robot.deveui}

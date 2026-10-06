@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../../components/RobotNoLink";
 // import {
 //   CBadge,
 //   CButton,
@@ -588,6 +589,7 @@ import LoadingSpinner from "../../../../components/LoadingSpinner";
 import { cilX } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { CChartBar } from "@coreui/react-chartjs";
+
 
 const JOB_BADGE = {
   active: "warning",
@@ -1182,7 +1184,7 @@ const CleaningSummary = () => {
                     </CTableDataCell>
                     {/* <CTableDataCell className="text-center">{robot._id}</CTableDataCell> */}
                     <CTableDataCell className="text-center">
-                      {robot.robot_no}
+                      <RobotNoLink robot={robot} />
                     </CTableDataCell>
 
                     {modalData.type === "success" ? (

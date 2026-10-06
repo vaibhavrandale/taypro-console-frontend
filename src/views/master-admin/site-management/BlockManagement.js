@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState, useEffect, useReducer } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -29,6 +30,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -439,7 +441,7 @@ const BlockManagement = () => {
                         className="text-center"
                         style={{ width: "200px", whiteSpace: "nowrap" }}
                       >
-                        {robot.robot_no}
+                        <RobotNoLink robot={robot} />
                       </CTableDataCell>
 
                       <CTableDataCell className="text-center">
@@ -830,7 +832,7 @@ const BlockManagement = () => {
                                       {index + 1}
                                     </CTableDataCell>
                                     <CTableDataCell className="text-center">
-                                      {r.robot_no}
+                                      <RobotNoLink robot={r} />
                                     </CTableDataCell>
                                     <CTableDataCell className="text-center">
                                       {r.lora_state === 1 ? (

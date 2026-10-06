@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import {
   CCard,
   CCardBody,
@@ -27,6 +28,7 @@ import PaginateInput from "../../../components/PaginateInput";
 import KeyMaintenanceMatrixOverview from "./KeyMaintenanceMatrixOverview";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
+
 
 const KeyPMMatrix = () => {
   return (
@@ -342,7 +344,7 @@ const KeyMaintenanceMatrix = () => {
               filteredProjectDocs.map((doc, index) => (
                 <CTableRow key={index}>
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{doc.robot_no}</CTableDataCell>
+                  <CTableDataCell><RobotNoLink robot={doc} /></CTableDataCell>
                   <CTableDataCell>{doc.fault_type}</CTableDataCell>
                   <CTableDataCell>{doc.mtbf}</CTableDataCell>
                   <CTableDataCell>{doc.mttr}</CTableDataCell>

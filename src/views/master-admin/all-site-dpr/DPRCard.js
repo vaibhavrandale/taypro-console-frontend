@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -32,6 +33,7 @@ import {
   cilRouter,
 } from "@coreui/icons";
 import { Link } from "react-router-dom";
+
 
 // ── Theme tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -643,7 +645,7 @@ const DPRDetailModal = ({ item, visible, onClose, adminroute }) => {
                             border: "none",
                           }}
                         >
-                          {robot.robot_no}
+                          <RobotNoLink robot={robot} />
                         </CTableDataCell>
                         <CTableDataCell
                           style={{

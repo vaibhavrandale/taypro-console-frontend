@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -18,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import SiteSelect from "../../components/SiteSelect";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -357,7 +359,7 @@ const GenerateNewCertificate = () => {
                   </CTableDataCell>
 
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                  <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                   <CTableDataCell>{robot.block}</CTableDataCell>
                   <CTableDataCell>{robot.robot_type}</CTableDataCell>
                   <CTableDataCell>{robot.site_location}</CTableDataCell>

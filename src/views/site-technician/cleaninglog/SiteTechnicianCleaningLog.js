@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -32,6 +33,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import Logmodal from "../../../components/individual-robot-log/Logmodal";
 import { getCleaningPercentage } from "../../robot-position/helpers";
+
 
 // import CompletedCycles from "./CompletedCycles";
 // import ErrorCycles from "./ErrorCycles";
@@ -813,7 +815,7 @@ const SiteTechnicianCleaningLog = () => {
                                     : ""
                                 }
                               >
-                                {log.robot_no}
+                                <RobotNoLink robot={log} />
                               </CTableDataCell>
 
                              
@@ -954,7 +956,7 @@ const SiteTechnicianCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell>
 
                                 {/* STATUS */}
@@ -1103,7 +1105,7 @@ const SiteTechnicianCleaningLog = () => {
                                     : ""
                                 }
                               >
-                                {log.robot_no}
+                                <RobotNoLink robot={log} />
                               </CTableDataCell>
                               <CTableDataCell>
                                 {log.cleaning?.start &&
@@ -1178,7 +1180,7 @@ const SiteTechnicianCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell>
                                 <CTableDataCell>
                                   {log.cleaning?.start &&
@@ -1277,7 +1279,7 @@ const SiteTechnicianCleaningLog = () => {
                                     : ""
                                 }
                               >
-                                {log.robot_no}
+                                <RobotNoLink robot={log} />
                               </CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
                             
@@ -1363,7 +1365,7 @@ const SiteTechnicianCleaningLog = () => {
                                       : ""
                                   }
                                 >
-                                  {log.robot_no}
+                                  <RobotNoLink robot={log} />
                                 </CTableDataCell>
                                 <CTableDataCell>{log.block}</CTableDataCell>
                                 {/* <CTableDataCell>
@@ -1466,7 +1468,7 @@ const SiteTechnicianCleaningLog = () => {
                           filteredOffline.map((log, index) => (
                             <CTableRow key={index}>
                               <CTableDataCell>{index + 1}</CTableDataCell>
-                              <CTableDataCell>{log.robot_no}</CTableDataCell>
+                              <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
                               <CTableDataCell>
                                 {log.createdAt &&
@@ -1559,7 +1561,7 @@ const SiteTechnicianCleaningLog = () => {
                               }
                             >
                               <CTableDataCell>{index + 1}</CTableDataCell>
-                              <CTableDataCell>{log.robot_no}</CTableDataCell>
+                              <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
                               <CTableDataCell>{log.block}</CTableDataCell>
                               <CTableDataCell>
                                 {log.lora_state ? (

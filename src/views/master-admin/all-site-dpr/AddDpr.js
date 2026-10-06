@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CForm,
@@ -29,6 +30,7 @@ import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -938,7 +940,7 @@ const AddDpr = () => {
                 <CTableBody>
                   {state.availableRobots.map((robot, index) => (
                     <CTableRow key={index}>
-                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                       <CTableDataCell>{robot.block}</CTableDataCell>
                       {/* <CTableDataCell>{robot.deveui}</CTableDataCell>
                 <CTableDataCell>

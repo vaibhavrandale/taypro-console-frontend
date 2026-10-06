@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
@@ -384,7 +385,7 @@ const ServiceTicketDashboard = () => {
                       </Link>
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
-                      {ticket.robot_no}
+                      <RobotNoLink robot={ticket} />
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
                       {ticket.site_id}

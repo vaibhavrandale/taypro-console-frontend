@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState } from "react";
 import {
   CCard,
@@ -188,7 +189,7 @@ const SiteTodayOverview = ({ data }) => {
                       <CTableRow key={robot.robot_no}>
                         <CTableDataCell>{i + 1}</CTableDataCell>
                         <CTableDataCell>
-                          <CBadge color="success">{robot.robot_no}</CBadge>
+                          <CBadge color="success"><RobotNoLink robot={robot} /></CBadge>
                         </CTableDataCell>
                         <CTableDataCell>{robot.block}</CTableDataCell>
                         <CTableDataCell>
@@ -238,7 +239,7 @@ const SiteTodayOverview = ({ data }) => {
                       <CTableRow key={robot.robot_no}>
                         <CTableDataCell>{i + 1}</CTableDataCell>
                         <CTableDataCell>
-                          <CBadge color="warning">{robot.robot_no}</CBadge>
+                          <CBadge color="warning"><RobotNoLink robot={robot} /></CBadge>
                         </CTableDataCell>
                         <CTableDataCell>{robot.block}</CTableDataCell>
                         <CTableDataCell>
@@ -283,7 +284,7 @@ const SiteTodayOverview = ({ data }) => {
                       <CTableRow key={robot.robot_no}>
                         <CTableDataCell>{i + 1}</CTableDataCell>
                         <CTableDataCell>
-                          <CBadge color="danger">{robot.robot_no}</CBadge>
+                          <CBadge color="danger"><RobotNoLink robot={robot} /></CBadge>
                         </CTableDataCell>
                         <CTableDataCell>{robot.block}</CTableDataCell>
                         <CTableDataCell>
@@ -348,7 +349,7 @@ const SiteTodayOverview = ({ data }) => {
                         <CTableRow key={robot.robot_no}>
                           <CTableDataCell>{i + 1}</CTableDataCell>
                           <CTableDataCell>
-                            <CBadge color="danger">{robot.robot_no}</CBadge>
+                            <CBadge color="danger"><RobotNoLink robot={robot} /></CBadge>
                           </CTableDataCell>
                           <CTableDataCell>{robot.block || "NA"}</CTableDataCell>
                           <CTableDataCell>

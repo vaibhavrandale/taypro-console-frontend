@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CRow,
@@ -21,6 +22,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import WeatherCheckResultModal from "../../../components/WeatherCheckResultModal";
 import { formatDistanceToNow } from "date-fns";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -459,7 +461,7 @@ const ClientRobotOperating = () => {
                 <CCardBody className="p-3">
                   <div className="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                      <h5 className="fw-bold mb-1">{robot.robot_no}</h5>
+                      <h5 className="fw-bold mb-1"><RobotNoLink robot={robot} /></h5>
 
                       <div className="small">
                         LoRa :

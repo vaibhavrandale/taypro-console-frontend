@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import axios from "axios";
 // import React, { useCallback, useEffect, useReducer } from "react";
 // import { useSelector } from "react-redux";
@@ -95,6 +96,7 @@ import { Link, useParams } from "react-router-dom";
 import LastActivity from "../../../components/LastActivity";
 import { useSelector } from "react-redux";
 import SurveySignalMapModal from "./SurveySignalMapModal";
+
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
 
@@ -623,7 +625,7 @@ const ViewGatewaySurvey = () => {
                         {i + 1}
                       </CBadge>
                       <CBadge color="info" shape="rounded-pill">
-                        {r.robot_no}
+                        <RobotNoLink robot={r} />
                       </CBadge>
                       <span className="text-medium-emphasis small ms-auto">
                         <CIcon icon={cilClock} size="sm" className="me-1" />

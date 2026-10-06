@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ import {
   CFormLabel,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -236,7 +238,7 @@ const RobotActivity = () => {
                   {(page - 1) * limit + index + 1}
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "200px" }}>
-                  {item.robot_no}
+                  <RobotNoLink robot={item} />
                   <br />
                   <small className="text-muted">{item.deveui}</small>
                 </CTableDataCell>

@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState, useEffect, useReducer, useMemo } from "react";
 import axios from "axios";
 import {
@@ -21,6 +22,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SITES_REQUEST":
@@ -361,7 +363,7 @@ const SiteAnalytics = () => {
                     <CTableRow key={robot.robot_no}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
 
-                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                       <CTableDataCell>{robot.total_cycles}</CTableDataCell>
 
                       <CTableDataCell className="text-center">
@@ -446,7 +448,7 @@ const SiteAnalytics = () => {
                   sortedRobots.map((robot, index) => (
                     <CTableRow key={robot.robot_no}>
                       <CTableDataCell>{index + 1}</CTableDataCell>
-                      <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                      <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                       <CTableDataCell>{robot.total_cycles}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.avg_cleaning_minutes}

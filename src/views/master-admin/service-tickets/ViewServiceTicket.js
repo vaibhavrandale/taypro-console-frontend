@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -17,6 +18,7 @@ import {
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import LastActivity from "../../../components/LastActivity";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -288,7 +290,7 @@ const ViewServiceTicket = () => {
         <CTableBody>
           <CTableRow>
             <CTableHeaderCell style={thStyle}>Robot No</CTableHeaderCell>
-            <CTableDataCell style={tdStyle}>{ticket.robot_no}</CTableDataCell>
+            <CTableDataCell style={tdStyle}><RobotNoLink robot={ticket} /></CTableDataCell>
             <CTableHeaderCell style={thStyle}>Robot type</CTableHeaderCell>
             <CTableDataCell style={tdStyle}>
               {ticket.robot_type || "—"}

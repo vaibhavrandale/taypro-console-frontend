@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import React from "react";
 
 // const RobotTrackingCurrentTable = () => {
@@ -31,6 +32,7 @@ import toast from "react-hot-toast";
 import moment from "moment";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useParams } from "react-router-dom";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -185,8 +187,7 @@ const RobotTrackingCurrentTable = () => {
               >
                 <option value="">All Robots</option>
                 {robots.map((robot) => (
-                  <option key={robot._id} value={robot.robot_no}>
-                    {robot.robot_no}
+                  <option key={robot._id} value={robot.robot_no}>{robot.robot_no}
                   </option>
                 ))}
               </CFormSelect>
@@ -284,7 +285,7 @@ const RobotTrackingCurrentTable = () => {
               ) : (
                 filteredData.map((item, idx) => (
                   <CTableRow key={idx}>
-                    <CTableDataCell>{item.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={item} /></CTableDataCell>
                     <CTableDataCell>{item.date}</CTableDataCell>
                     <CTableDataCell>{item.totalRecords}</CTableDataCell>
                     <CTableDataCell>

@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useState, useEffect, useReducer } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -28,6 +29,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -216,7 +218,7 @@ const ClientBlockManagement = () => {
                         {index + 1}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {robot.robot_no}
+                        <RobotNoLink robot={robot} />
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
                         {robot.battery_voltage} %
@@ -292,7 +294,7 @@ const ClientBlockManagement = () => {
                               item.lora_state === 1 ? "bg-success" : "bg-danger"
                             }`}
                           >
-                            {item.robot_no}
+                            <RobotNoLink robot={item} />
                           </span>
                         </CTooltip>
                       ))}

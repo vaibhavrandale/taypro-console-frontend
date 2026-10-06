@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import {
   CAlert,
   CButton,
@@ -27,6 +28,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
 import LastActivity from "../../../components/LastActivity";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ROBOTS_REQUEST":
@@ -303,7 +305,7 @@ const UpdateRobotRowData = () => {
             robots.map((robot, index) => (
               <CTableRow key={robot.deveui}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                 <CTableDataCell>{robot.block}</CTableDataCell>
                 <CTableDataCell>{robot.row_number}</CTableDataCell>
                 <CTableDataCell>{robot.row_length}</CTableDataCell>
@@ -412,7 +414,7 @@ const UpdateRobotRowData = () => {
           size="xl"
         >
           <CModalHeader closeButton={false}>
-            <CModalTitle>{selectedRobot.robot_no}</CModalTitle>
+            <CModalTitle><RobotNoLink robot={selectedRobot} /></CModalTitle>
             <button
               type="button"
               className=" border-0 ms-auto py-0 px-1"

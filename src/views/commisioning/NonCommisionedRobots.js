@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -19,6 +20,7 @@ import { useSelector } from "react-redux";
 
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -307,7 +309,7 @@ const NonCommisionedRobots = () => {
             filteredRobots.map((robot, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                 <CTableDataCell>{robot.site_id}</CTableDataCell>
                 <CTableDataCell>{robot.block}</CTableDataCell>
                 <CTableDataCell>

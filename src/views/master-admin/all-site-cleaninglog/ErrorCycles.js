@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import React from "react";
 
 // const ErrorCycles = ({ errorlogs }) => {
@@ -50,6 +51,7 @@ import {
   CTableRow,
 } from "@coreui/react";
 import React from "react";
+
 
 const ErrorCycles = ({ errorlogs }) => {
   const cycle1 = [];
@@ -118,7 +120,7 @@ const ErrorCycles = ({ errorlogs }) => {
             cycle1.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>
@@ -227,7 +229,7 @@ const ErrorCycles = ({ errorlogs }) => {
             cycle2.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>
@@ -336,7 +338,7 @@ const ErrorCycles = ({ errorlogs }) => {
             cycle3.map((log, index) => (
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{log.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={log} /></CTableDataCell>
 
                 {/* STATUS */}
                 <CTableDataCell>

@@ -190,8 +190,7 @@ const RobotTrackingCurrentGraph = () => {
               >
                 <option value="">All Robots</option>
                 {robots.map((robot) => (
-                  <option key={robot._id} value={robot.robot_no}>
-                    {robot.robot_no}
+                  <option key={robot._id} value={robot.robot_no}>{robot.robot_no}
                   </option>
                 ))}
               </CFormSelect>

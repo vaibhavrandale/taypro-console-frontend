@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
@@ -22,6 +23,7 @@ import {
   CButton,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -330,7 +332,7 @@ const ViewPreventivemaintananceQuaterly = () => {
                         client.robots.map((record, idx) => (
                           <CTableRow key={idx} className="text-center">
                             <CTableDataCell>{idx + 1}</CTableDataCell>
-                            <CTableDataCell>{record.robot_no}</CTableDataCell>
+                            <CTableDataCell><RobotNoLink robot={record} /></CTableDataCell>
                             <CTableDataCell>{record.robot_type}</CTableDataCell>
                             <CTableDataCell>
                               {record.createdAt

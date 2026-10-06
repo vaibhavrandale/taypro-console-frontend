@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 // import React, { useEffect, useReducer } from "react";
 // import {
 //   CCard,
@@ -308,6 +309,7 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import LastActivity from "../../components/LastActivity";
 
+
 /* ─────────────────────────────────────────────
    Reducer
 ───────────────────────────────────────────── */
@@ -459,7 +461,7 @@ const ViewRobotCommisioningDoc = () => {
               </CCol>
 
               <CCol>
-                <h4 className="mb-1 fw-bold text-white">{doc.robot_no}</h4>
+                <h4 className="mb-1 fw-bold text-white"><RobotNoLink robot={doc} /></h4>
                 <div className="d-flex flex-wrap gap-2 align-items-center opacity-75 small">
                   <Icon as={MapPin} size={14} className="text-success" />
                   <span>{doc.site_location}</span>

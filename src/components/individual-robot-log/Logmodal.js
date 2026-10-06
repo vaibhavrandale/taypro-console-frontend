@@ -1,3 +1,4 @@
+import RobotNoLink from "../RobotNoLink";
 import React, { useEffect } from "react";
 import {
   CModal,
@@ -27,6 +28,7 @@ import CleaningStatusCard from "../../views/robot-position/CleaningStatusCard";
 import CIcon from "@coreui/icons-react";
 import { cilCheckCircle, cilX, cilXCircle } from "@coreui/icons";
 import { Link } from "react-router-dom";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_LOG_DETAILS_REQUEST":
@@ -155,7 +157,7 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
             {/* 🔷 HEADER SUMMARY */}
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div>
-                <h5 className="mb-0">{log.robot_no}</h5>
+                <h5 className="mb-0"><RobotNoLink robot={log} /></h5>
                 <small className="text-medium-emphasis">
                   {log.site_id} | {log.block}
                 </small>
@@ -243,7 +245,7 @@ const Logmodal = ({ _id, modalState, onClose, userInfo }) => {
                       <CTableDataCell
                         style={{ minWidth: "100px", fontSize: "13px" }}
                       >
-                        {log.robot_no}
+                        <RobotNoLink robot={log} />
                       </CTableDataCell>
                     </CTableRow>
                     <CTableRow>

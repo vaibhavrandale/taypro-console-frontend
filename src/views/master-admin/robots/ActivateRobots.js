@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCardBody,
@@ -16,6 +17,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
 import PaginateInput from "../../../components/PaginateInput";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -227,7 +229,7 @@ const ActivateRobots = () => {
             {activatedRobots.map((robot, index) => (
               <p key={index}>
                 {index + 1}] Robot No:{" "}
-                <span className="text-success">{robot.robot_no}</span>
+                <span className="text-success"><RobotNoLink robot={robot} /></span>
               </p>
             ))}
           </div>
@@ -286,7 +288,7 @@ const ActivateRobots = () => {
                     />
                   </CTableDataCell>
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                  <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                   <CTableDataCell>{robot.lora_no}</CTableDataCell>
                   <CTableDataCell>{robot.deveui}</CTableDataCell>
                   <CTableDataCell>{robot.site_id}</CTableDataCell>

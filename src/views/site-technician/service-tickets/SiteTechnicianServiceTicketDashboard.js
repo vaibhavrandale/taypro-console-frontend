@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CTable,
@@ -32,6 +33,7 @@ import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -319,7 +321,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
                       {ticket.ticket_id}
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
-                      {ticket.robot_no}
+                      <RobotNoLink robot={ticket} />
                     </CTableDataCell>
                     <CTableDataCell style={{ minWidth: "150px" }}>
                       {ticket.site_id}
@@ -444,7 +446,7 @@ const SiteTechnicianServiceTicketDashboard = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Robot No</CTableHeaderCell>
-                    <CTableDataCell>{serviceticket.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={serviceticket} /></CTableDataCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>Deveui</CTableHeaderCell>

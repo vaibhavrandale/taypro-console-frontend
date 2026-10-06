@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
@@ -15,6 +16,7 @@ import {
   CTableRow,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -180,7 +182,7 @@ const PreventiveMaintananceNotifications = () => {
               <CTableRow key={index}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{pm.pm_id}</CTableDataCell>
-                <CTableDataCell>{pm.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={pm} /></CTableDataCell>
                 <CTableDataCell>{pm.site_id}</CTableDataCell>
                 <CTableDataCell>{pm.client_id}</CTableDataCell>
                 <CTableDataCell>{pm.site_location}</CTableDataCell>

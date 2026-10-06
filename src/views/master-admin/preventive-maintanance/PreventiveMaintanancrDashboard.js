@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // import {
 //   CBadge,
 //   CCarousel,
@@ -551,6 +552,7 @@ import CIcon from "@coreui/icons-react";
 import { useSelector } from "react-redux";
 import { cilBell } from "@coreui/icons";
 
+
 // ─── Reducer ─────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
   switch (action.type) {
@@ -1085,7 +1087,7 @@ const RobotPMCard = ({ record }) => {
             <div>
               <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
                 <CBadge color="success" className="p-2 fs-6">
-                  {record.robot_no}
+                  <RobotNoLink robot={record} />
                 </CBadge>
                 <CBadge color="info" className="p-2 fs-6">
                   {record.robot_type}
@@ -1772,7 +1774,7 @@ const PreventiveMaintenanceList = () => {
                 client.robots.map((record, idx) => (
                   <CTableRow key={idx} className="text-center">
                     <CTableDataCell>{idx + 1}</CTableDataCell>
-                    <CTableDataCell>{record.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={record} /></CTableDataCell>
                     <CTableDataCell>{record.robot_type}</CTableDataCell>
                     <CTableDataCell>
                       {record.createdAt ? record.createdAt.slice(0, 10) : "NA"}

@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CRow,
@@ -24,6 +25,7 @@ import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 import { useParams } from "react-router-dom";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -306,7 +308,7 @@ const ClientRobotOperating = () => {
                       <CTableRow>
                         <CTableDataCell>
                           <span className=" " style={{ fontSize: "15px" }}>
-                            {Robotdata[0].robot_no}
+                            <RobotNoLink robot={Robotdata[0]} />
                           </span>
                         </CTableDataCell>
                         <CTableDataCell>

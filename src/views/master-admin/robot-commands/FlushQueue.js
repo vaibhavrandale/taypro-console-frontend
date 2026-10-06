@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import React, { useEffect, useReducer, useState } from "react";
@@ -14,6 +15,7 @@ import {
   CBadge,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -304,7 +306,7 @@ const FlushQueue = () => {
                       style={{}}
                     />
                     <div className="flex-grow-1 text-center">
-                      <div>{robot.robot_no}</div>
+                      <div><RobotNoLink robot={robot} /></div>
                     </div>
                   </CCardBody>
                 </CCard>

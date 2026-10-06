@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCardBody,
@@ -28,6 +29,7 @@ import { Link } from "react-router-dom";
 import PaginateInput from "../../../components/PaginateInput";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -468,7 +470,7 @@ const ShiftBlockwiseRobots = () => {
                     />
                   </CTableDataCell>
                   <CTableDataCell>{index + 1}</CTableDataCell>
-                  <CTableDataCell>{robot.robot_no}</CTableDataCell>
+                  <CTableDataCell><RobotNoLink robot={robot} /></CTableDataCell>
                   <CTableDataCell>{robot.lora_no}</CTableDataCell>
                   <CTableDataCell>{robot.deveui}</CTableDataCell>
                   <CTableDataCell>{robot.site_id}</CTableDataCell>

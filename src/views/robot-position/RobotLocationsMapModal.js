@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import React, {
   useCallback,
   useEffect,
@@ -165,7 +166,7 @@ function RobotMarker({ robot, selected, onSelect, markerRefs }) {
     >
       <Popup className="rlm-popup">
         <div>
-          <strong style={{ color: ROBOT_COLOR }}>{robot.robot_no}</strong>
+          <strong style={{ color: ROBOT_COLOR }}><RobotNoLink robot={robot} /></strong>
           <br />
           <span style={{ color: "#8899bb" }}>Block:</span> {robot.block || "—"}
           <br />
@@ -337,7 +338,7 @@ export default function RobotLocationsMapModal({ visible, onClose, site_id }) {
                     selectRobot(r);
                   }}
                 >
-                  <strong style={{ color: ROBOT_COLOR }}>{r.robot_no}</strong>
+                  <strong style={{ color: ROBOT_COLOR }}><RobotNoLink robot={r} /></strong>
                   <span style={{ color: "#8899bb", marginLeft: 8 }}>
                     {r.block || "—"}
                   </span>
@@ -455,7 +456,7 @@ export default function RobotLocationsMapModal({ visible, onClose, site_id }) {
               SELECTED ROBOT
             </div>
             <div style={{ fontSize: 18, fontWeight: 700, color: SELECTED_COLOR }}>
-              {selected.robot_no}
+              <RobotNoLink robot={selected} />
             </div>
             <div style={{ marginTop: 14, fontSize: 13, lineHeight: 1.9 }}>
               <div>

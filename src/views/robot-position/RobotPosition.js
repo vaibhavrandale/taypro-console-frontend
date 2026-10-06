@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import {
   cilExitToApp,
   cilLocationPin,
@@ -24,6 +25,7 @@ import {
 } from "@coreui/react";
 import RobotImg from "../../assets/images/robot.png";
 import SubscriptionExpiryCard from "../../components/SubscriptionExpiryCard";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -417,7 +419,7 @@ const RobotRow = ({ robot, index }) => {
             fontWeight: "bold",
           }}
         >
-          {robot.robot_no}
+          <RobotNoLink robot={robot} />
         </span>
         <span
           style={{
@@ -591,7 +593,7 @@ const RobotRow = ({ robot, index }) => {
                 <h6 className="text-success mt-4">Robot Information</h6>
                 <span>
                   {" "}
-                  <strong>Robot No:</strong> {robotDetails.robot_no}
+                  <strong>Robot No:</strong> <RobotNoLink robot={robotDetails} />
                   <br />
                 </span>
                 <span>

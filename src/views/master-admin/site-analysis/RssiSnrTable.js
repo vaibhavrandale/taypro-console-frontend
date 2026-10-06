@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   CCard,
@@ -21,6 +22,7 @@ import toast from "react-hot-toast";
 import moment from "moment";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useParams } from "react-router-dom";
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -172,8 +174,7 @@ const RssiSnrTable = () => {
               >
                 <option value="">All Robots</option>
                 {robots.map((robot) => (
-                  <option key={robot._id} value={robot.robot_no}>
-                    {robot.robot_no}
+                  <option key={robot._id} value={robot.robot_no}>{robot.robot_no}
                   </option>
                 ))}
               </CFormSelect>
@@ -282,7 +283,7 @@ const RssiSnrTable = () => {
               <CTableBody>
                 {statsData.map((item, index) => (
                   <CTableRow key={index}>
-                    <CTableDataCell>{item.robot_no}</CTableDataCell>
+                    <CTableDataCell><RobotNoLink robot={item} /></CTableDataCell>
                     <CTableDataCell>
                       {(item.topics || []).join(", ")}
                     </CTableDataCell>

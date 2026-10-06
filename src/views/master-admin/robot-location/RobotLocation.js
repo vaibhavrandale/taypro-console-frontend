@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 import {
   CAlert,
   CBadge,
@@ -19,6 +20,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Link } from "react-router-dom";
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_ROBOTS_REQUEST":
@@ -302,7 +304,7 @@ const RobotLocation = () => {
             filteredRobots.map((item, index) => (
               <CTableRow key={item.robot._id}>
                 <CTableDataCell>{index + 1}</CTableDataCell>
-                <CTableDataCell>{item.robot.robot_no}</CTableDataCell>
+                <CTableDataCell><RobotNoLink robot={item.robot} /></CTableDataCell>
                 <CTableDataCell>{item.robot.block}</CTableDataCell>
                 <CTableDataCell>{item.robot.lora_no}</CTableDataCell>
                 <CTableDataCell>{item.robot.deveui}</CTableDataCell>

@@ -1,3 +1,4 @@
+import RobotNoLink from "../../components/RobotNoLink";
 import React, { useState } from "react";
 import {
   COffcanvas,
@@ -25,6 +26,7 @@ import {
 } from "./mdsTrackingHelper";
 import MdsStatusOverviewCard from "./MdsStatusOverviewCard";
 import MdsPositionInformationCard from "./MdsPositionInformationCard";
+
 
 const MdsSideBar = ({
   mds,
@@ -430,7 +432,7 @@ const MdsSideBar = ({
                     </CTableDataCell>
                     <CTableDataCell>
                       <CBadge color="warning" className="px-2 py-1">
-                        {mds.robot.robot_no}
+                        <RobotNoLink robot={mds.robot} />
                       </CBadge>
                     </CTableDataCell>
                   </CTableRow>

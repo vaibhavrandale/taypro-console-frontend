@@ -1,3 +1,4 @@
+import RobotNoLink from "../../../components/RobotNoLink";
 // // SurveySignalMapModal.jsx
 // import React, { useEffect, useRef } from "react";
 // import {
@@ -305,6 +306,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 function signalInfo(rssi) {
@@ -471,7 +473,7 @@ function ReadingPopup({ reading, index }) {
               Reading #{index}
             </p>
             <p style={{ margin: 0, fontSize: 11, color: "#6b7280" }}>
-              {reading.robot_no}
+              <RobotNoLink robot={reading} />
             </p>
           </div>
         </div>
