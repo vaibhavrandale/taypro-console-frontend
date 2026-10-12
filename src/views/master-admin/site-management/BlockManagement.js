@@ -172,10 +172,13 @@ const BlockManagement = () => {
         { withCredentials: true },
       );
       const queued = data.data.installQueued ?? 0;
+      const skipped = data.data.skipped ?? 0;
       toast.success(
         queued > 0
           ? `Multicast downlink queued for ${queued} robots.`
-          : "No new multicast downlink. Robots already in the group stay there.",
+          : skipped > 0
+            ? `${skipped} robots were not sent the group. Their version is too old or has not arrived.`
+            : "No new multicast downlink. Robots already in the group stay there.",
       );
     } catch (error) {
       toast.error(
