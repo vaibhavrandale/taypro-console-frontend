@@ -109,6 +109,7 @@ const BlockManagement = () => {
   // NEW STATES for block-level modal
   const [blockModalVisible, setBlockModalVisible] = useState(false);
   const [selectedBlock, setSelectedBlock] = useState(null);
+  const [sendingBlock, setSendingBlock] = useState("");
   const fetchData = async () => {
     dispatch({ type: "FETCH_BLOCKDATA_REQUEST" });
     try {
@@ -161,6 +162,31 @@ const BlockManagement = () => {
     fetchData();
     fetchGateways();
   }, []);
+
+  const sendBlockMulticast = async (blockName) => {
+    setSendingBlock(blockName);
+    try {
+      const data = await axios.post(
+        "/api/v1/block-radio/downlink",
+        { site_id, block: blockName },
+        { withCredentials: true },
+      );
+      const queued = data.data.installQueued ?? 0;
+      toast.success(
+        queued > 0
+          ? `Multicast downlink queued for ${queued} robots.`
+          : "No new multicast downlink. Robots already in the group stay there.",
+      );
+    } catch (error) {
+      toast.error(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Multicast downlink was not queued.",
+      );
+    } finally {
+      setSendingBlock("");
+    }
+  };
 
   const sendMulticastDownlink = async () => {
     if (
@@ -762,6 +788,16 @@ const BlockManagement = () => {
                               MANAGE
                             </Link>
 
+                            <CButton
+                              color="primary"
+                              size="sm"
+                              disabled={sendingBlock === block.block_name}
+                              onClick={() => sendBlockMulticast(block.block_name)}
+                            >
+                              {sendingBlock === block.block_name
+                                ? "Sending..."
+                                : "Send multicast"}
+                            </CButton>
                             <CButton
                               color="info"
                               size="sm"
