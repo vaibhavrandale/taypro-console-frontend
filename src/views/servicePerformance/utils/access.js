@@ -8,14 +8,11 @@ export const isServiceEngineer = (user) => designationIs(user, SERVICE_ENGINEER)
 
 /** Mirrors backend access.js canReadAll. The backend stays the authority. */
 export function canReadAll(user) {
-  if (user?.role === "Master Admin" || user?.role === "Project Admin") return true;
-  return user?.role === "Service Admin" && !isServiceEngineer(user);
+  if (user?.role === "Master Admin") return true;
+  return user?.role === "Service Admin" && designationIs(user, "Service Manager");
 }
 
-export function canWriteConfig(user) {
-  if (user?.role === "Master Admin") return true;
-  return user?.role === "Service Admin" && !isServiceEngineer(user);
-}
+export const canWriteConfig = canReadAll;
 
 export const canViewPerformance = (user) => canReadAll(user) || isServiceEngineer(user);
 
