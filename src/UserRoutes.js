@@ -142,33 +142,6 @@ export function FactoryAdminRoute({ children }) {
   return userInfo && userInfo.role === "Factory Admin" ? children : <Page404 />;
 }
 
-function sameDesignation(user, expected) {
-  return (
-    String(user?.designation || "").trim().toLowerCase() ===
-    expected.trim().toLowerCase()
-  );
-}
-
-export function ServiceManagerRoute({ children }) {
-  const userInfo = useSelector((state) => state.userInfo);
-  return userInfo?.role === "Service Admin" &&
-    sameDesignation(userInfo, "Service Manager") ? (
-    children
-  ) : (
-    <Page404 />
-  );
-}
-
-export function ServiceEngineerAdminRoute({ children }) {
-  const userInfo = useSelector((state) => state.userInfo);
-  return userInfo?.role === "Service Admin" &&
-    sameDesignation(userInfo, "Service Engineer") ? (
-    children
-  ) : (
-    <Page404 />
-  );
-}
-
 export function DesignAdminRoute({ children }) {
   const userInfo = useSelector((state) => state.userInfo);
   return userInfo && userInfo.role === "Design Admin" ? children : <Page404 />;
