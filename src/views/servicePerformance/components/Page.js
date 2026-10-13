@@ -5,13 +5,22 @@ import { canReadAll, canViewPerformance } from "../utils/access";
 import { NotAuthorized } from "./Panel";
 import "../servicePerformance.css";
 
-/** Light feature surface inside the dark console shell. */
+/** SVG and chart colours; SVG attributes cannot read the CSS variables. Keep in sync with servicePerformance.css. */
+export const COLORS = {
+  text: "#e5e7eb",
+  muted: "#a3adbd",
+  grid: "#2f3a4d",
+  track: "#2f3a4d",
+  green: "#4ade80",
+  amber: "#fbbf24",
+  amberText: "#fcd34d",
+  red: "#f87171",
+  blue: "#60a5fa",
+  none: "#6b7280",
+};
+
 export default function Page({ children }) {
-  return (
-    <div className="sp" data-coreui-theme="light">
-      {children}
-    </div>
-  );
+  return <div className="sp">{children}</div>;
 }
 
 /**
