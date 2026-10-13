@@ -103,7 +103,7 @@ function TicketPanel({ row, reasons, onSaved }) {
           key={row.ticket_id}
           ticketId={row.ticket_id}
           reasons={reasons}
-          disabledReason={row._id ? "" : "Saving needs the ticket record id, which the performance API does not return yet."}
+          disabledReason={row._id ? "" : `Ticket ${row.ticket_id} has no record id in the performance API response, so it cannot be saved here.`}
           onSave={async (body) => {
             try {
               await saveDelayReason(row, body);

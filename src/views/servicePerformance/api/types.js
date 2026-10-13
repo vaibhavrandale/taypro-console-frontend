@@ -92,7 +92,7 @@
  * @property {string[]|null} site_ids
  *
  * @typedef {Object} TicketDetailRow
- * @property {string} [_id] Not returned yet. See saveDelayReason.
+ * @property {string} _id Ticket record id, used by saveDelayReason.
  * @property {"service_ticket"|"client_ticket"} kind
  * @property {string} ticket_id
  * @property {string} site_id

@@ -121,23 +121,15 @@ export const lookupApi = {
 };
 
 /**
- * Writes only delay_reason_code and delay_reason_remarks through the generic
- * ticket update routes. PUT /servicetickets/resolve/:id is deliberately not
- * used: on an already-resolved ticket without parts in the body it resets
- * parts_replaced and part_checklist.
- *
- * TODO(backend): /engineer-performance/details does not return the ticket
- * _id yet, and the service update route does not validate the code against
- * the active configuration (the client route does).
+ * The backend writes only delay_reason_code and delay_reason_remarks, checks
+ * the code against the active configuration and the caller's site access.
  * @param {TicketDetailRow} row
  */
 export async function saveDelayReason(row, body) {
   if (!row?._id) {
-    const error = new Error("The performance API does not return this ticket's record id yet, so the reason cannot be saved from here.");
+    const error = new Error(`Ticket ${row?.ticket_id} has no record id in the performance API response.`);
     error.code = "missing_record_id";
     throw error;
   }
-  const path = row.kind === "client_ticket" ? `/api/v1/clienttickets/${row._id}` : `/api/v1/servicetickets/${row._id}`;
-  const response = await axios.put(path, body, { withCredentials: true });
-  return response.data?.data;
+  return send("patch", `/tickets/${row.kind}/${row._id}/delay-reason`, body);
 }
