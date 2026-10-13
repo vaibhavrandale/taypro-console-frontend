@@ -92,6 +92,33 @@ const _nav = [
         to: "/master-admin/dashboard-2",
         icon: maIcon(BarChart3),
       },
+      {
+        component: CNavGroup,
+        name: "Engineer Performance",
+        icon: maIcon(BarChart3),
+        items: [
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/master-admin/engineer-performance",
+          },
+          {
+            component: CNavItem,
+            name: "Compare Engineers",
+            to: "/master-admin/engineer-performance/compare",
+          },
+          {
+            component: CNavItem,
+            name: "Configuration Gaps",
+            to: "/master-admin/engineer-performance/gaps",
+          },
+          {
+            component: CNavItem,
+            name: "KPI Rules",
+            to: "/master-admin/engineer-performance/rules",
+          },
+        ],
+      },
 
       // ✅ GROUP 1: Site Data
       {
@@ -2057,6 +2084,64 @@ const _nav = [
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
+      },
+      {
+        component: CNavGroup,
+        name: "Service Manager",
+        designation: "Service Manager",
+        icon: (
+          <CIcon
+            icon={cilGraph}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "Engineer Performance",
+            to: "/service-admin/service-manager/performance",
+          },
+          {
+            component: CNavItem,
+            name: "Compare Engineers",
+            to: "/service-admin/service-manager/performance/compare",
+          },
+          {
+            component: CNavItem,
+            name: "Configuration Gaps",
+            to: "/service-admin/service-manager/performance/gaps",
+          },
+          {
+            component: CNavItem,
+            name: "KPI Rules",
+            to: "/service-admin/service-manager/performance/rules",
+          },
+        ],
+      },
+      {
+        component: CNavGroup,
+        name: "Service Engineer",
+        designation: "Service Engineer",
+        icon: (
+          <CIcon
+            icon={cilUser}
+            customClassName="nav-icon"
+            style={{ color: "rgb(57, 214, 0)" }}
+          />
+        ),
+        items: [
+          {
+            component: CNavItem,
+            name: "My Performance",
+            to: "/service-admin/service-engineer/performance",
+          },
+          {
+            component: CNavItem,
+            name: "Configuration Gaps",
+            to: "/service-admin/service-engineer/performance/gaps",
+          },
+        ],
       },
 
       // === Site Management ===

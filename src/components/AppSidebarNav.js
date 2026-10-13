@@ -292,13 +292,29 @@ export const AppSidebarNav = () => {
         return nameA.localeCompare(nameB);
       });
   const roleNav = getRoleNav(_nav, userInfo.role);
+  const visibleForPersona = (items = []) =>
+    items
+      .filter((item) => {
+        if (!item.designation || userInfo.role === "Master Admin") return true;
+        return (
+          String(userInfo.designation || "").trim().toLowerCase() ===
+          String(item.designation).trim().toLowerCase()
+        );
+      })
+      .map((item) => ({
+        ...item,
+        items: item.items ? visibleForPersona(item.items) : undefined,
+      }));
+  const personaNav = roleNav
+    ? { ...roleNav, items: visibleForPersona(roleNav.items || []) }
+    : null;
 
-  const filteredNav = roleNav
+  const filteredNav = personaNav
     ? [
         {
-          ...roleNav,
-          items: roleNav.items
-            ? filterSearchItems(roleNav.items, search)
+          ...personaNav,
+          items: personaNav.items
+            ? filterSearchItems(personaNav.items, search)
             : undefined,
         },
       ]

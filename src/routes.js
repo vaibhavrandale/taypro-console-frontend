@@ -45,6 +45,15 @@ import TechnicianAttendanceDashboard from "./views/master-admin/technician-atten
 import TechnicianLocationDashboard from "./views/master-admin/technician-location/TechnicianLocationDashboard";
 import RobotActivity from "./views/master-admin/site-management/RobotActivity";
 import TechnicianWfhApprovals from "./views/service-admin/TechnicianWfhApprovals";
+import { MasterPerformanceHome, ManagerPerformanceHome, EngineerPerformanceHome } from "./views/engineer-performance/PerformanceHome";
+import {
+  MasterSitePerformance,
+  ManagerSitePerformance,
+  EngineerSitePerformance,
+} from "./views/engineer-performance/SitePerformance";
+import { MasterGaps, ManagerGaps, EngineerGaps } from "./views/engineer-performance/ConfigurationGaps";
+import { MasterCompare, ManagerCompare } from "./views/engineer-performance/CompareEngineers";
+import { MasterRules, ManagerRules } from "./views/engineer-performance/KpiRules";
 
 import {
   ServiceUserRoute,
@@ -68,6 +77,8 @@ import {
   HRAndAdminRoute,
   FactoryAdminRoute,
   DesignAdminRoute,
+  ServiceManagerRoute,
+  ServiceEngineerAdminRoute,
 } from "./UserRoutes";
 import UserSiteAttendance from "./views/site-technician/user-site-attendance/UserSiteAttendance";
 import Statistics from "./views/client-admin/statistics/Statistics";
@@ -9594,6 +9605,124 @@ const routes = [
   // ------------------------poc------------------------------
 
   // --------------------------Design Admin------------------------------------
+
+  {
+    path: "/master-admin/engineer-performance",
+    name: "Engineer Performance",
+    element: (
+      <MasterAdminRoute>
+        <MasterPerformanceHome />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/engineer-performance/site/:siteId",
+    name: "Engineer Performance Site",
+    element: (
+      <MasterAdminRoute>
+        <MasterSitePerformance />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/engineer-performance/gaps",
+    name: "Engineer Performance Gaps",
+    element: (
+      <MasterAdminRoute>
+        <MasterGaps />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/engineer-performance/compare",
+    name: "Compare Engineers",
+    element: (
+      <MasterAdminRoute>
+        <MasterCompare />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/engineer-performance/rules",
+    name: "KPI Rules",
+    element: (
+      <MasterAdminRoute>
+        <MasterRules />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-manager/performance",
+    name: "Service Manager Performance",
+    element: (
+      <ServiceManagerRoute>
+        <ManagerPerformanceHome />
+      </ServiceManagerRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-manager/performance/site/:siteId",
+    name: "Service Manager Site Performance",
+    element: (
+      <ServiceManagerRoute>
+        <ManagerSitePerformance />
+      </ServiceManagerRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-manager/performance/gaps",
+    name: "Service Manager Gaps",
+    element: (
+      <ServiceManagerRoute>
+        <ManagerGaps />
+      </ServiceManagerRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-manager/performance/compare",
+    name: "Service Manager Compare",
+    element: (
+      <ServiceManagerRoute>
+        <ManagerCompare />
+      </ServiceManagerRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-manager/performance/rules",
+    name: "Service Manager KPI Rules",
+    element: (
+      <ServiceManagerRoute>
+        <ManagerRules />
+      </ServiceManagerRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-engineer/performance",
+    name: "Service Engineer Performance",
+    element: (
+      <ServiceEngineerAdminRoute>
+        <EngineerPerformanceHome />
+      </ServiceEngineerAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-engineer/performance/site/:siteId",
+    name: "Service Engineer Site Performance",
+    element: (
+      <ServiceEngineerAdminRoute>
+        <EngineerSitePerformance />
+      </ServiceEngineerAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/service-engineer/performance/gaps",
+    name: "Service Engineer Gaps",
+    element: (
+      <ServiceEngineerAdminRoute>
+        <EngineerGaps />
+      </ServiceEngineerAdminRoute>
+    ),
+  },
 ];
 
 export default routes;
