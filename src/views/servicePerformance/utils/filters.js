@@ -25,26 +25,34 @@ export function readFilters(search, now = new Date()) {
     const from = get("from");
     const to = get("to");
     const span = (Date.parse(to) - Date.parse(from)) / DAY_MS;
-    if (!ISO_DAY.test(from) || !ISO_DAY.test(to) || Number.isNaN(span)) errors.push("Date range needs a valid start and end date.");
-    else if (span < 0) errors.push("The end date is before the start date.");
-    else if (span > 366) errors.push("Date range cannot exceed 12 months.");
-    else Object.assign(filters, { mode: "range", from, to });
+    const fromBad = !ISO_DAY.test(from) || Number.isNaN(Date.parse(from));
+    const toBad = !ISO_DAY.test(to) || Number.isNaN(Date.parse(to));
+    if (fromBad) errors.push(`Start date "${from}" is not a valid YYYY-MM-DD date.`);
+    if (toBad) errors.push(`End date "${to}" is not a valid YYYY-MM-DD date.`);
+    if (!fromBad && !toBad) {
+      if (span < 0) errors.push(`End date ${to} is before start date ${from}.`);
+      else if (span > 366) errors.push(`Date range ${from} to ${to} is ${Math.round(span)} days; the maximum is 366.`);
+      else Object.assign(filters, { mode: "range", from, to });
+    }
   } else if (get("month") || get("year")) {
     const month = int(get("month"));
     const year = int(get("year"));
-    if (!month || month < 1 || month > 12 || !year || year < 2000 || year > 2100) errors.push("Month or year is invalid.");
-    else Object.assign(filters, { month, year });
+    const monthBad = !month || month < 1 || month > 12;
+    const yearBad = !year || year < 2000 || year > 2100;
+    if (monthBad) errors.push(`Month "${get("month")}" is invalid; use 1 to 12.`);
+    if (yearBad) errors.push(`Year "${get("year")}" is invalid; use 2000 to 2100.`);
+    if (!monthBad && !yearBad) Object.assign(filters, { month, year });
   }
 
   filters.site_id = get("site_id");
   filters.fault_type = get("fault_type");
   filters.engineer_id = /^[a-f0-9]{24}$/i.test(get("engineer_id")) ? get("engineer_id") : "";
-  if (get("engineer_id") && !filters.engineer_id) errors.push("Engineer filter is invalid.");
+  if (get("engineer_id") && !filters.engineer_id) errors.push(`Engineer id "${get("engineer_id")}" is not a valid 24-character id.`);
   const status = get("status");
-  if (status && !SERVICE_STATUSES.includes(status)) errors.push("Status filter is invalid.");
+  if (status && !SERVICE_STATUSES.includes(status)) errors.push(`Service status "${status}" is not one of: ${SERVICE_STATUSES.join(", ")}.`);
   else filters.status = status;
   const clientStatus = get("client_status");
-  if (clientStatus && !CLIENT_STATUSES.includes(clientStatus)) errors.push("Client status filter is invalid.");
+  if (clientStatus && !CLIENT_STATUSES.includes(clientStatus)) errors.push(`Client status "${clientStatus}" is not one of: ${CLIENT_STATUSES.join(", ")}.`);
   else filters.client_status = clientStatus;
 
   return { ...filters, errors };

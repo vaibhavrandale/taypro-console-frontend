@@ -6,7 +6,7 @@ import Page, { PageHeader } from "./components/Page";
 import Panel from "./components/Panel";
 import StatusChip from "./components/StatusChip";
 import CategoryWeights from "./components/CategoryWeights";
-import { performanceApi, strategyRegistryFrom, toApiError } from "./api/client";
+import { performanceApi, strategyRegistryFrom, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { canWriteConfig } from "./utils/access";
 import { weightsValid } from "./utils/score";
@@ -93,7 +93,7 @@ export default function KpiConfig() {
       const result = await performanceApi.validateConfig(body());
       setValidation([...localChecks(), ...(result.valid ? [["pass", "Server validation passed."]] : result.errors.map((e) => ["fail", e]))]);
     } catch (error) {
-      setValidation([...localChecks(), ["fail", toApiError(error).message]]);
+      setValidation([...localChecks(), ["fail", errorText(error)]]);
     }
   };
 
@@ -108,7 +108,7 @@ export default function KpiConfig() {
       active.reload();
       history.reload();
     } catch (error) {
-      toast.error(toApiError(error).message);
+      toast.error(errorText(error));
     } finally {
       setBusy(false);
     }

@@ -21,11 +21,21 @@ async function send(method, path, body) {
 
 /** @returns {ApiError} */
 export function toApiError(error) {
-  if (error?.code === "missing_record_id") return { status: null, message: error.message, code: error.code };
+  if (error?.code === "missing_record_id") return { status: null, message: error.message, code: error.code, detail: null };
+  const response = error?.response;
+  const server = typeof response?.data === "object" ? response.data.error ?? response.data.message : null;
+  const request = error?.config ? `${String(error.config.method || "get").toUpperCase()} ${error.config.url}` : null;
   return {
-    status: error?.response?.status ?? null,
-    message: error?.response?.data?.error || error?.response?.data?.message || error?.message || "Request failed",
+    status: response?.status ?? null,
+    message: server || error?.message || String(error),
+    detail: [response && `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ""}`, request].filter(Boolean).join(" · ") || null,
   };
+}
+
+/** Exact server message plus HTTP status and request, for toasts and inline text. */
+export function errorText(error) {
+  const { message, detail } = error && typeof error === "object" && "detail" in error ? error : toApiError(error);
+  return detail ? `${message} (${detail})` : message;
 }
 
 const site = (id) => encodeURIComponent(id);

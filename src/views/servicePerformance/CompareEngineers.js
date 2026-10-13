@@ -8,7 +8,7 @@ import Panel from "./components/Panel";
 import FilterBar from "./components/FilterBar";
 import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
-import { performanceApi, toApiError } from "./api/client";
+import { performanceApi, toApiError, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
 import { useEngineerOptions, useFaultOptions, useSiteOptions } from "./hooks/useLookups";
@@ -97,22 +97,22 @@ export default function CompareEngineers() {
 
   const rows = compare.data?.engineers || [];
   const scored = rows.filter((r) => r.score?.overall_score != null);
-  const warnings = [...(compare.error ? [["Failure", `Comparison failed: ${compare.error.message}`]] : []), ...warningsFor(rows)];
+  const warnings = [...(compare.error ? [["Failure", `Comparison failed: ${errorText(compare.error)}`]] : []), ...warningsFor(rows)];
   const canRecalculate = canReadAll(user) && filters.mode === "month" && list.length > 0;
 
   const recalculate = async () => {
     setRunning(true);
-    let failed = 0;
+    const failed = [];
     for (const engineer of list) {
       try {
         await performanceApi.recalculate({ month: filters.month, year: filters.year, engineer_id: engineer._id });
-      } catch {
-        failed += 1;
+      } catch (error) {
+        failed.push(`${engineer.username}: ${errorText(error)}`);
       }
     }
     setRunning(false);
     setConfirm(false);
-    if (failed) toast.error(`${failed} of ${list.length} recalculations failed`);
+    if (failed.length) toast.error(`${failed.length} of ${list.length} recalculations failed\n${failed.join("\n")}`, { duration: 10000, style: { whiteSpace: "pre-line" } });
     else toast.success(`Stored ${list.length} labelled snapshots for ${periodText(filters)}`);
     compare.reload();
   };
@@ -134,7 +134,7 @@ export default function CompareEngineers() {
         <CCol md={3} sm={6}><MetricTile label="Engineers scored" value={compare.loading ? "…" : `${scored.length} of ${rows.length}`} /></CCol>
         <CCol md={3} sm={6}><MetricTile label="Median score" value={num(median(scored.map((r) => r.score.overall_score)))} /></CCol>
         <CCol md={3} sm={6}><MetricTile label="Sites needing configuration" value={gaps.data ? gaps.data.total : "—"} /></CCol>
-        <CCol md={3} sm={6}><MetricTile label="Calculation failures" value={compare.error ? 1 : 0} hint={compare.error ? compare.error.message : "Requests that failed"} /></CCol>
+        <CCol md={3} sm={6}><MetricTile label="Calculation failures" value={compare.error ? 1 : 0} hint={compare.error ? errorText(compare.error) : "Requests that failed"} /></CCol>
       </CRow>
 
       <div className="mb-3">
@@ -212,7 +212,7 @@ export default function CompareEngineers() {
                       return (
                         <tr key={label}>
                           <td>{label}</td>
-                          <td colSpan={5}><StatusChip status="calculation_error" title={error.message} /></td>
+                          <td colSpan={5}><StatusChip status="calculation_error" title={errorText(error)} /></td>
                         </tr>
                       );
                     }

@@ -7,6 +7,8 @@ import DelayReasonForm from "../components/DelayReasonForm";
 import { scoreSummary, weightTotal, weightsValid } from "../utils/score";
 import { canSeeNavItem } from "../utils/access";
 
+jest.mock("axios", () => ({}));
+
 test("score donut reports excluded KPIs and stays provisional", () => {
   const summary = scoreSummary({
     overall_score: 72.4,
@@ -114,6 +116,16 @@ test("delay reason form only saves an enabled configured code", async () => {
   expect(save.disabled).toBe(false);
   fireEvent.click(save);
   await waitFor(() => expect(onSave).toHaveBeenCalledWith({ delay_reason_code: "spare_unavailable", delay_reason_remarks: "waiting on vendor" }));
+});
+
+test("errors show the exact server message, status and request", () => {
+  const { errorText, toApiError } = require("../api/client");
+  const axiosError = { message: "Request failed with status code 403", status: 403, config: { method: "get", url: "/api/v1/engineer-performance/compare" }, response: { status: 403, statusText: "Forbidden", data: { success: false, error: "Access denied" } } };
+  const parsed = toApiError(axiosError);
+  expect(parsed.message).toBe("Access denied");
+  expect(errorText(axiosError)).toBe("Access denied (HTTP 403 Forbidden · GET /api/v1/engineer-performance/compare)");
+  expect(errorText(parsed)).toBe(errorText(axiosError));
+  expect(errorText({ message: "Network Error", config: { method: "post", url: "/x" } })).toBe("Network Error (POST /x)");
 });
 
 test("delay reason form is locked when the record id is unavailable", () => {

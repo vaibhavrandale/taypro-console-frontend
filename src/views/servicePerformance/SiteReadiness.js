@@ -7,7 +7,7 @@ import Panel from "./components/Panel";
 import Pager from "./components/Pager";
 import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
-import { performanceApi, toApiError } from "./api/client";
+import { performanceApi, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
 import { useEngineerOptions } from "./hooks/useLookups";
@@ -94,7 +94,7 @@ function EditPanel({ siteId, period, periodLabel, canWrite, onSaved }) {
       report.reload();
       onSaved();
     } catch (error) {
-      toast.error(toApiError(error).message);
+      toast.error(errorText(error));
     } finally {
       setSaving(false);
     }

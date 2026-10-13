@@ -21,7 +21,7 @@ export default function DelayReasonForm({ ticketId, reasons, onSave, disabledRea
     try {
       await onSave({ delay_reason_code: code, delay_reason_remarks: remarks.trim() });
     } catch (err) {
-      setError(err?.message || "Could not save the delay reason");
+      setError(err?.message ?? String(err));
     } finally {
       setSaving(false);
     }

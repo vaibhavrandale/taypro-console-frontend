@@ -33,7 +33,10 @@ export function PerformanceRoute({ admin = false, children }) {
   if (allowed) return children;
   return (
     <Page>
-      <NotAuthorized message={admin ? "This page is for service admins." : "This page is for service engineers and service admins."} />
+      <NotAuthorized
+        message={`your account has role "${user?.role || "none"}" and designation "${user?.designation || "none"}".`}
+        detail={`Allowed: Master Admin; Service Admin with designation Service Manager${admin ? "" : "; Service Engineer (own assigned sites)"}.`}
+      />
     </Page>
   );
 }

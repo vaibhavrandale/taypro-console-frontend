@@ -9,7 +9,7 @@ import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
 import Pager from "./components/Pager";
 import DelayReasonForm from "./components/DelayReasonForm";
-import { performanceApi, saveDelayReason } from "./api/client";
+import { performanceApi, saveDelayReason, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
 import { useEngineerOptions, useFaultOptions, useSiteOptions } from "./hooks/useLookups";
@@ -105,7 +105,11 @@ function TicketPanel({ row, reasons, onSaved }) {
           reasons={reasons}
           disabledReason={row._id ? "" : "Saving needs the ticket record id, which the performance API does not return yet."}
           onSave={async (body) => {
-            await saveDelayReason(row, body);
+            try {
+              await saveDelayReason(row, body);
+            } catch (error) {
+              throw new Error(errorText(error));
+            }
             onSaved();
           }}
         />
