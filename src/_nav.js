@@ -94,29 +94,14 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Engineer Performance",
+        name: "Service Performance",
         icon: maIcon(BarChart3),
         items: [
-          {
-            component: CNavItem,
-            name: "Dashboard",
-            to: "/master-admin/engineer-performance",
-          },
-          {
-            component: CNavItem,
-            name: "Compare Engineers",
-            to: "/master-admin/engineer-performance/compare",
-          },
-          {
-            component: CNavItem,
-            name: "Configuration Gaps",
-            to: "/master-admin/engineer-performance/gaps",
-          },
-          {
-            component: CNavItem,
-            name: "KPI Rules",
-            to: "/master-admin/engineer-performance/rules",
-          },
+          { component: CNavItem, name: "Dashboard", to: "/service-performance", access: "performance" },
+          { component: CNavItem, name: "Ticket Performance", to: "/service-performance/tickets", access: "performance" },
+          { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
+          { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
+          { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
         ],
       },
 
@@ -2087,8 +2072,8 @@ const _nav = [
       },
       {
         component: CNavGroup,
-        name: "Service Manager",
-        designation: "Service Manager",
+        name: "Service Performance",
+        access: "performance",
         icon: (
           <CIcon
             icon={cilGraph}
@@ -2097,50 +2082,11 @@ const _nav = [
           />
         ),
         items: [
-          {
-            component: CNavItem,
-            name: "Engineer Performance",
-            to: "/service-admin/service-manager/performance",
-          },
-          {
-            component: CNavItem,
-            name: "Compare Engineers",
-            to: "/service-admin/service-manager/performance/compare",
-          },
-          {
-            component: CNavItem,
-            name: "Configuration Gaps",
-            to: "/service-admin/service-manager/performance/gaps",
-          },
-          {
-            component: CNavItem,
-            name: "KPI Rules",
-            to: "/service-admin/service-manager/performance/rules",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Service Engineer",
-        designation: "Service Engineer",
-        icon: (
-          <CIcon
-            icon={cilUser}
-            customClassName="nav-icon"
-            style={{ color: "rgb(57, 214, 0)" }}
-          />
-        ),
-        items: [
-          {
-            component: CNavItem,
-            name: "My Performance",
-            to: "/service-admin/service-engineer/performance",
-          },
-          {
-            component: CNavItem,
-            name: "Configuration Gaps",
-            to: "/service-admin/service-engineer/performance/gaps",
-          },
+          { component: CNavItem, name: "Dashboard", to: "/service-performance", access: "performance" },
+          { component: CNavItem, name: "Ticket Performance", to: "/service-performance/tickets", access: "performance" },
+          { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
+          { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
+          { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
         ],
       },
 

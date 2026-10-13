@@ -138,6 +138,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import { CBadge, CNavLink, CSidebarNav, CFormInput } from "@coreui/react";
 import _nav from "../_nav";
 import { useSelector } from "react-redux";
+import { canSeeNavItem } from "../views/servicePerformance/utils/access";
 
 export const AppSidebarNav = () => {
   const userInfo = useSelector((state) => state.userInfo);
@@ -294,13 +295,7 @@ export const AppSidebarNav = () => {
   const roleNav = getRoleNav(_nav, userInfo.role);
   const visibleForPersona = (items = []) =>
     items
-      .filter((item) => {
-        if (!item.designation || userInfo.role === "Master Admin") return true;
-        return (
-          String(userInfo.designation || "").trim().toLowerCase() ===
-          String(item.designation).trim().toLowerCase()
-        );
-      })
+      .filter((item) => canSeeNavItem(userInfo, item))
       .map((item) => ({
         ...item,
         items: item.items ? visibleForPersona(item.items) : undefined,
