@@ -86,6 +86,8 @@ test("nav items are gated by role and designation", () => {
   expect(canSeeNavItem(engineer, engineerItem)).toBe(true);
   expect(canSeeNavItem(engineer, adminItem)).toBe(false);
   expect(canSeeNavItem(other, engineerItem)).toBe(false);
+  expect(canSeeNavItem({ role: "Project Admin" }, engineerItem)).toBe(false);
+  expect(canSeeNavItem({ role: "Service Admin", designation: "Team Lead" }, engineerItem)).toBe(false);
   expect(canSeeNavItem(manager, { designation: "Service Engineer" })).toBe(false);
   expect(canSeeNavItem(master, { designation: "Service Engineer" })).toBe(true);
   expect(canSeeNavItem(other, { name: "plain item" })).toBe(true);
