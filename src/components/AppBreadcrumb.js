@@ -21,7 +21,7 @@ const AppBreadcrumb = () => {
       if (routeParts.length !== pathParts.length) return false;
 
       return routeParts.every(
-        (part, index) => part.startsWith(":") || part === pathParts[index]
+        (part, index) => part.startsWith(":") || part === pathParts[index],
       );
     });
 
