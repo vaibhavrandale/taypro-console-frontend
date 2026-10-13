@@ -19,6 +19,7 @@ import { canReadAll } from "./utils/access";
 import { apiParams, lastSixMonths, periodText, scopeParams, writeFilters } from "./utils/filters";
 import { categoryCards, scoreSummary } from "./utils/score";
 import { MONTHS, count, dateTime, day, downloadCsv, duration, humanize, monthLabel, num, pct } from "./utils/format";
+import { COLORS } from "./components/Page";
 
 export const BASE = "/service-performance";
 
@@ -120,8 +121,8 @@ function TicketCard({ title, kind, summary, config, targets, loading, error, onR
 function Ring({ label }) {
   return (
     <svg width="96" height="96" viewBox="0 0 96 96" role="img" aria-label={label}>
-      <circle cx="48" cy="48" r="40" fill="none" stroke="#e9edf2" strokeWidth="10" />
-      <text x="50%" y="54%" textAnchor="middle" fontSize="20" fontWeight="600" fill="#4b5563">
+      <circle cx="48" cy="48" r="40" fill="none" stroke={COLORS.track} strokeWidth="10" />
+      <text x="50%" y="54%" textAnchor="middle" fontSize="20" fontWeight="600" fill={COLORS.muted}>
         —
       </text>
     </svg>
@@ -349,12 +350,12 @@ export default function Dashboard() {
                 <div style={{ width: "100%", height: 200 }} aria-hidden="true">
                   <ResponsiveContainer>
                     <LineChart data={sixMonths} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e6ed" />
-                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#4b5563" }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: "#4b5563" }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} />
+                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: COLORS.muted }} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: COLORS.muted }} />
                       <Tooltip formatter={(value) => [value == null ? "No record" : `${Number(value).toFixed(1)}%`, "Uptime"]} />
-                      {uptimeTarget != null && <ReferenceLine y={uptimeTarget} stroke="#b45309" strokeDasharray="6 4" label={{ value: `Target ${uptimeTarget}%`, fontSize: 11, fill: "#78350f", position: "insideTopRight" }} />}
-                      <Line type="monotone" dataKey="value" stroke="#15803d" strokeWidth={2} dot connectNulls={false} />
+                      {uptimeTarget != null && <ReferenceLine y={uptimeTarget} stroke={COLORS.amber} strokeDasharray="6 4" label={{ value: `Target ${uptimeTarget}%`, fontSize: 11, fill: COLORS.amberText, position: "insideTopRight" }} />}
+                      <Line type="monotone" dataKey="value" stroke={COLORS.green} strokeWidth={2} dot connectNulls={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

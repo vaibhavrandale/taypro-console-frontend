@@ -17,6 +17,7 @@ import { canReadAll } from "./utils/access";
 import { apiParams, lastSixMonths, periodText, scopeParams } from "./utils/filters";
 import { count, dateTime, duration, MONTHS, pct } from "./utils/format";
 import { breachDays, DelayChip } from "./SiteDetail";
+import { COLORS } from "./components/Page";
 
 const TABS = [
   ["service", "Service tickets"],
@@ -222,14 +223,14 @@ export default function TicketPerformance() {
                 <div style={{ width: "100%", height: 220 }} aria-hidden="true">
                   <ResponsiveContainer>
                     <BarChart data={monthly} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e6ed" />
-                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#4b5563" }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: "#4b5563" }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} />
+                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: COLORS.muted }} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: COLORS.muted }} />
                       <Tooltip formatter={(value) => [value == null ? "No data" : `${Number(value).toFixed(1)}%`, "SLA compliance"]} />
-                      {slaTarget != null && <ReferenceLine y={slaTarget} stroke="#111827" strokeDasharray="6 4" />}
+                      {slaTarget != null && <ReferenceLine y={slaTarget} stroke={COLORS.text} strokeDasharray="6 4" />}
                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                         {monthly.map((m) => (
-                          <Cell key={m.month} fill={slaTarget == null ? "#1d4ed8" : m.value >= slaTarget ? "#15803d" : "#b45309"} />
+                          <Cell key={m.month} fill={slaTarget == null ? COLORS.blue : m.value >= slaTarget ? COLORS.green : COLORS.amber} />
                         ))}
                       </Bar>
                     </BarChart>
