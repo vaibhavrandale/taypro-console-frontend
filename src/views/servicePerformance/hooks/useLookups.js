@@ -32,3 +32,13 @@ export function useFaultOptions() {
 export function useEngineerOptions(enabled) {
   return useApi((signal) => lookupApi.engineers(signal), "engineers", { enabled });
 }
+
+/** Site ids the selected engineer is assigned to. Keeps the current site visible if it is not one of them. */
+export function sitesForEngineer(allSites, engineers, engineerId, selectedSite) {
+  if (!engineerId) return allSites;
+  const engineer = (engineers || []).find((user) => String(user._id) === String(engineerId));
+  if (!engineer || !Array.isArray(engineer.site_ids)) return allSites;
+  const ids = [...engineer.site_ids];
+  if (selectedSite && !ids.includes(selectedSite)) ids.unshift(selectedSite);
+  return ids;
+}

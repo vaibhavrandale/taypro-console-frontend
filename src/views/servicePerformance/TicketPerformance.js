@@ -12,7 +12,7 @@ import DelayReasonForm from "./components/DelayReasonForm";
 import { performanceApi, saveDelayReason, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
-import { useEngineerOptions, useFaultOptions, useSiteOptions } from "./hooks/useLookups";
+import { useEngineerOptions, useFaultOptions, useSiteOptions, sitesForEngineer } from "./hooks/useLookups";
 import { canReadAll } from "./utils/access";
 import { apiParams, lastSixMonths, periodText, scopeParams } from "./utils/filters";
 import { count, dateTime, duration, MONTHS, pct } from "./utils/format";
@@ -178,7 +178,14 @@ export default function TicketPerformance() {
   return (
     <Page>
       <PageHeader title="Ticket performance" subtitle={`${periodText(filters)} · service and client tickets are reported separately`} />
-      <FilterBar filters={filters} setFilters={setFilters} sites={sites} faults={faults} engineers={admin ? engineers.data || [] : null} />
+      <FilterBar
+        filters={filters}
+        setFilters={setFilters}
+        sites={sitesForEngineer(sites, engineers.data, filters.engineer_id, filters.site_id)}
+        faults={faults}
+        engineers={admin ? engineers.data || [] : null}
+        notice={dash.data?.scope_note || ""}
+      />
 
       <div className="sp-tabs" role="tablist" aria-label="Ticket source">
         {TABS.map(([value, label]) => (

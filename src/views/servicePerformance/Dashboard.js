@@ -15,7 +15,7 @@ import PmSummary from "./components/PmSummary";
 import { performanceApi } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
-import { useEngineerOptions, useFaultOptions, useSiteOptions } from "./hooks/useLookups";
+import { useEngineerOptions, useFaultOptions, useSiteOptions, sitesForEngineer } from "./hooks/useLookups";
 import { canReadAll } from "./utils/access";
 import { apiParams, lastSixMonths, periodText, scopeParams, writeFilters } from "./utils/filters";
 import { categoryCards, scoreSummary } from "./utils/score";
@@ -258,7 +258,14 @@ export default function Dashboard() {
           </>
         }
       />
-      <FilterBar filters={filters} setFilters={setFilters} sites={sites} faults={faults} engineers={admin ? engineers.data || [] : null} />
+      <FilterBar
+        filters={filters}
+        setFilters={setFilters}
+        sites={sitesForEngineer(sites, engineers.data, filters.engineer_id, filters.site_id)}
+        faults={faults}
+        engineers={admin ? engineers.data || [] : null}
+        notice={report?.scope_note || ""}
+      />
 
       {report && (
         <DataQualityBanner
@@ -458,7 +465,7 @@ export default function Dashboard() {
         error={dash.error}
         onRetry={dash.reload}
         empty={!rows.length}
-        emptyText={Array.isArray(report?.site_ids) && !report.site_ids.length ? "No sites are assigned to this account." : "No site has activity in this period."}
+        emptyText={report?.scope_note || (Array.isArray(report?.site_ids) && !report.site_ids.length ? "No sites are assigned to this account." : "No site has activity in this period.")}
       >
         <div className="sp-table-wrap">
           <table className="table sp-table mb-0">

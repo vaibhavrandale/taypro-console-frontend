@@ -115,13 +115,7 @@ export const lookupApi = {
     const response = await axios.get("/api/v1/serviceticketsfaults/all-serviceticketsfaults-without-pg", opts(undefined, signal));
     return [...new Set((response.data?.data || []).filter((f) => !f.is_delete).map((f) => f.fault_name).filter(Boolean))];
   },
-  engineers: async (signal) => {
-    const response = await axios.get("/api/v1/users/get-all-internal-users-without-pg", opts(undefined, signal));
-    const list = response.data?.data || response.data || [];
-    return (Array.isArray(list) ? list : []).filter(
-      (user) => String(user.designation || "").trim().toLowerCase() === "service engineer",
-    );
-  },
+  engineers: (signal) => get("/engineers", undefined, signal),
 };
 
 /**

@@ -19,7 +19,7 @@ function Field({ id, label, children, md = 2 }) {
  * hooks debounce the requests. Priority and PM status are shown disabled
  * because tickets and PM records do not store them.
  */
-export default function FilterBar({ filters, setFilters, sites = [], faults = [], engineers = null, showClient = true, showPm = false }) {
+export default function FilterBar({ filters, setFilters, sites = [], faults = [], engineers = null, showClient = true, showPm = false, notice = "" }) {
   const setPeriodMode = (mode) => {
     if (mode === "range") {
       const today = new Date().toISOString().slice(0, 10);
@@ -63,7 +63,7 @@ export default function FilterBar({ filters, setFilters, sites = [], faults = []
         )}
         <Field id="sp-site" label="Site">
           <CFormSelect id="sp-site" value={filters.site_id} onChange={(e) => setFilters({ site_id: e.target.value })}>
-            <option value="">{engineers ? "All sites" : "All my sites"}</option>
+            <option value="">{engineers ? (filters.engineer_id ? "All of this engineer's sites" : "All sites") : "All my sites"}</option>
             {sites.map((id) => (
               <option key={id} value={id}>
                 {id}
@@ -128,6 +128,11 @@ export default function FilterBar({ filters, setFilters, sites = [], faults = []
       <div id="sp-priority-note" className="sp-small sp-muted mt-2">
         Priority is not stored on tickets{showPm ? ", and PM has no schedule, so only completed records exist" : ""}. Those filters stay off. Times are Asia/Kolkata.
       </div>
+      {notice && (
+        <div className="sp-notice mt-2" role="status">
+          {notice}
+        </div>
+      )}
       {filters.errors?.length > 0 && (
         <div className="sp-notice sp-notice--red mt-2" role="alert">
           {filters.errors.join(" ")} The current month is shown instead.
