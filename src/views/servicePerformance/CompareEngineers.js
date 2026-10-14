@@ -8,6 +8,7 @@ import Panel from "./components/Panel";
 import FilterBar from "./components/FilterBar";
 import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
+import TableSearch, { rowMatches } from "./components/TableSearch";
 import { performanceApi, toApiError, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -24,6 +25,7 @@ const SEGMENTS = [
   ["Rooftop", { mounting_type: "rooftop" }],
   ["PBT", { cloth_type: "PBT" }],
   ["MF", { cloth_type: "MF" }],
+  ["PBT+MF", { cloth_type: "PBT+MF" }],
   ["In warranty", { warranty_status: "in_warranty" }],
   ["Out of warranty", { warranty_status: "out_of_warranty" }],
 ];
@@ -94,10 +96,13 @@ export default function CompareEngineers() {
   const faults = useFaultOptions();
   const [confirm, setConfirm] = useState(false);
   const [running, setRunning] = useState(false);
+  const [scoreQ, setScoreQ] = useState("");
+  const [segmentQ, setSegmentQ] = useState("");
 
-  const rows = compare.data?.engineers || [];
-  const scored = rows.filter((r) => r.score?.overall_score != null);
-  const warnings = [...(compare.error ? [["Failure", `Comparison failed: ${errorText(compare.error)}`]] : []), ...warningsFor(rows)];
+  const allRows = compare.data?.engineers || [];
+  const rows = allRows.filter((r) => rowMatches(scoreQ, [r.engineer?.username, r.engineer?.email]));
+  const scored = allRows.filter((r) => r.score?.overall_score != null);
+  const warnings = [...(compare.error ? [["Failure", `Comparison failed: ${errorText(compare.error)}`]] : []), ...warningsFor(allRows)];
   const canRecalculate = canReadAll(user) && filters.mode === "month" && list.length > 0;
 
   const recalculate = async () => {
@@ -131,7 +136,7 @@ export default function CompareEngineers() {
       <FilterBar filters={{ ...filters, engineer_id: "" }} setFilters={setFilters} sites={sites} faults={faults} />
 
       <CRow className="g-3 mb-3">
-        <CCol md={3} sm={6}><MetricTile label="Engineers scored" value={compare.loading ? "…" : `${scored.length} of ${rows.length}`} /></CCol>
+        <CCol md={3} sm={6}><MetricTile label="Engineers scored" value={compare.loading ? "…" : `${scored.length} of ${allRows.length}`} /></CCol>
         <CCol md={3} sm={6}><MetricTile label="Median score" value={num(median(scored.map((r) => r.score.overall_score)))} /></CCol>
         <CCol md={3} sm={6}><MetricTile label="Sites needing configuration" value={gaps.data ? gaps.data.total : "—"} /></CCol>
         <CCol md={3} sm={6}><MetricTile label="Calculation failures" value={compare.error ? 1 : 0} hint={compare.error ? errorText(compare.error) : "Requests that failed"} /></CCol>
@@ -146,6 +151,7 @@ export default function CompareEngineers() {
           empty={list.length < 2}
           emptyText="At least two users with designation Service Engineer are needed to compare."
         >
+          <TableSearch value={scoreQ} onChange={setScoreQ} placeholder="Search engineer" label="Search engineers" />
           <div className="sp-table-wrap">
             <table className="table sp-table mb-0">
               <thead>
@@ -194,6 +200,7 @@ export default function CompareEngineers() {
       <CRow className="g-3">
         <CCol xl={8}>
           <Panel title="Segment comparison" subtitle="All sites in each segment for this period." loading={segments.loading} error={segments.error} onRetry={segments.reload}>
+            <TableSearch value={segmentQ} onChange={setSegmentQ} placeholder="Search segment" label="Search segments" />
             <div className="sp-table-wrap">
               <table className="table table-sm mb-0" style={{ minWidth: 760 }}>
                 <thead>
@@ -207,7 +214,7 @@ export default function CompareEngineers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(segments.data || []).map(({ label, report, error }) => {
+                  {(segments.data || []).filter(({ label }) => rowMatches(segmentQ, [label])).map(({ label, report, error }) => {
                     if (error) {
                       return (
                         <tr key={label}>

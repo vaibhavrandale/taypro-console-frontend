@@ -9,6 +9,7 @@ import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
 import Pager from "./components/Pager";
 import DelayReasonForm from "./components/DelayReasonForm";
+import TableSearch from "./components/TableSearch";
 import { performanceApi, saveDelayReason, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -98,22 +99,22 @@ function TicketPanel({ row, reasons, onSaved }) {
         Delay reason: <DelayChip row={row} />
         {row.delay_reason_remarks && <div className="sp-small sp-muted">{row.delay_reason_remarks}</div>}
       </div>
-      {row.delay_reason_missing && (
-        <DelayReasonForm
-          key={row.ticket_id}
-          ticketId={row.ticket_id}
-          reasons={reasons}
-          disabledReason={row._id ? "" : `Ticket ${row.ticket_id} has no record id in the performance API response, so it cannot be saved here.`}
-          onSave={async (body) => {
-            try {
-              await saveDelayReason(row, body);
-            } catch (error) {
-              throw new Error(errorText(error));
-            }
-            onSaved();
-          }}
-        />
-      )}
+      <DelayReasonForm
+        key={`${row.ticket_id}-${row.delay_reason_code || ""}`}
+        ticketId={row.ticket_id}
+        reasons={reasons}
+        initialCode={row.delay_reason_code || ""}
+        initialRemarks={row.delay_reason_remarks || ""}
+        disabledReason={row._id ? "" : `Ticket ${row.ticket_id} has no record id in the performance API response, so it cannot be saved here.`}
+        onSave={async (body) => {
+          try {
+            await saveDelayReason(row, body);
+          } catch (error) {
+            throw new Error(errorText(error));
+          }
+          onSaved();
+        }}
+      />
     </Panel>
   );
 }
@@ -126,6 +127,7 @@ export default function TicketPerformance() {
   const selectedId = search.get("ticket") || "";
   const [pages, setPages] = useState({ service: 1, client: 1, combined: 1 });
   const [limit, setLimit] = useState(20);
+  const [tableQ, setTableQ] = useState("");
   const params = apiParams(filters);
   const key = JSON.stringify(params);
   const combined = tab === "combined";
@@ -138,7 +140,7 @@ export default function TicketPerformance() {
     setSearch(next, { replace: true });
   };
 
-  const sectionQuery = (name) => ({ ...params, page: combined ? 1 : pages[name], limit: combined ? COMBINED_LIMIT : limit });
+  const sectionQuery = (name) => ({ ...params, q: tableQ.trim() || undefined, page: combined ? 1 : pages[name], limit: combined ? COMBINED_LIMIT : limit });
   const svcQuery = sectionQuery("service");
   const cliQuery = sectionQuery("client");
   const svc = useApi((signal) => performanceApi.details("tickets", svcQuery, signal), JSON.stringify(svcQuery), { delay: 300 });
@@ -273,9 +275,22 @@ export default function TicketPerformance() {
                 svc.reload();
                 cli.reload();
               }}
-              empty={!rows.length}
+              empty={!rows.length && !tableQ.trim()}
               emptyText="No ticket in this period."
             >
+              <TableSearch
+                value={tableQ}
+                onChange={(value) => {
+                  setTableQ(value);
+                  setPages({ service: 1, client: 1, combined: 1 });
+                }}
+                placeholder="Search ticket or site"
+                label="Search tickets"
+              />
+              {tableQ.trim() && !rows.length ? (
+                <div className="sp-muted sp-small py-2">No ticket matches "{tableQ.trim()}".</div>
+              ) : (
+              <>
               <div className="sp-table-wrap">
                 <table className="table sp-table mb-0">
                   <thead>
@@ -329,6 +344,8 @@ export default function TicketPerformance() {
                 }}
                 label="Ticket pages"
               />
+              </>
+              )}
             </Panel>
           </CCol>
           {selected && (

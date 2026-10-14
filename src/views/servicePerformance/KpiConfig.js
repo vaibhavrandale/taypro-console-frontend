@@ -11,6 +11,7 @@ import { useApi } from "./hooks/useApi";
 import { canWriteConfig } from "./utils/access";
 import { weightsValid } from "./utils/score";
 import { dateTime, day, humanize } from "./utils/format";
+import TableSearch, { rowMatches } from "./components/TableSearch";
 
 const STRATEGY_LABELS = {
   target_achievement: "Target achievement",
@@ -58,6 +59,7 @@ export default function KpiConfig() {
   const [busy, setBusy] = useState(false);
   const [newKpi, setNewKpi] = useState({ key: "", name: "", category: "", strategy: "" });
   const [newReason, setNewReason] = useState({ code: "", label: "" });
+  const [kpiQ, setKpiQ] = useState("");
 
   useEffect(() => {
     if (active.data && !dirty) setDraft(clone(active.data));
@@ -183,6 +185,7 @@ export default function KpiConfig() {
           <Panel title="KPI definitions" subtitle="Strategies come from the scoring registry. There are no formula or code inputs." loading={active.loading} error={active.error}>
             {draft && (
               <>
+                <TableSearch value={kpiQ} onChange={setKpiQ} placeholder="Search KPI" label="Search KPIs" />
                 <div className="sp-table-wrap">
                   <table className="table sp-table mb-2">
                     <thead>
@@ -196,7 +199,7 @@ export default function KpiConfig() {
                       </tr>
                     </thead>
                     <tbody>
-                      {draft.kpis.map((kpi) => {
+                      {draft.kpis.filter((kpi) => rowMatches(kpiQ, [kpi.name, kpi.key, kpi.category])).map((kpi) => {
                         const cat = rows.find((r) => r.key === kpi.category);
                         const share = cat?.weight > 0 && kpi.enabled !== false ? (kpi.weight / cat.weight) * 100 : null;
                         return (

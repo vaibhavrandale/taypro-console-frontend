@@ -8,6 +8,7 @@ import StatusChip from "./components/StatusChip";
 import MetricTile from "./components/MetricTile";
 import MonthlyUptimeList from "./components/MonthlyUptimeList";
 import Pager from "./components/Pager";
+import TableSearch from "./components/TableSearch";
 import { performanceApi } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -37,10 +38,10 @@ function materialChip(status) {
   return <StatusChip status="awaiting_dispatch" title={`ERP status: ${status || "unknown"}`} />;
 }
 
-function usePaged(section, siteId, params) {
+function usePaged(section, siteId, params, q) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const query = { ...params, site_id: siteId, page, limit };
+  const query = { ...params, site_id: siteId, page, limit, ...(q.trim() ? { q: q.trim() } : {}) };
   const state = useApi((signal) => performanceApi.details(section, query, signal), JSON.stringify([section, query]), { delay: 200 });
   return { ...state, page, limit, setPage, setLimit: (n) => { setLimit(n); setPage(1); } };
 }
@@ -55,6 +56,9 @@ export default function SiteDetail() {
   const years = [...new Set(months.map((m) => m.year))];
   const scope = { ...scopeParams(filters), site_id: siteId };
   const [source, setSource] = useState("tickets");
+  const [ticketQ, setTicketQ] = useState("");
+  const [materialQ, setMaterialQ] = useState("");
+  const [pmQ, setPmQ] = useState("");
 
   const report = useApi((signal) => performanceApi.site(siteId, params, signal), key, { delay: 300 });
   const conf = useApi((signal) => performanceApi.siteConfiguration(siteId, signal), siteId);
@@ -64,9 +68,9 @@ export default function SiteDetail() {
     JSON.stringify([scope, years]),
     { delay: 300 },
   );
-  const tickets = usePaged(source, siteId, params);
-  const materials = usePaged("materials", siteId, params);
-  const pm = usePaged("maintenance", siteId, params);
+  const tickets = usePaged(source, siteId, params, ticketQ);
+  const materials = usePaged("materials", siteId, params, materialQ);
+  const pm = usePaged("maintenance", siteId, params, pmQ);
   const sites = useSiteOptions(null, siteId);
   const faults = useFaultOptions();
 
@@ -154,7 +158,10 @@ export default function SiteDetail() {
           </Panel>
         </CCol>
         <CCol lg={6}>
-          <Panel title="Preventive maintenance" subtitle={siteSchedule ? `Schedule ${day(siteSchedule.start_date)} to ${day(siteSchedule.end_date)} · ${siteSchedule.pending_robots.length} robot(s) still due` : "Completed checklist records. No PM schedule overlaps this period."} loading={pm.loading} error={pm.error} onRetry={pm.reload} empty={!pm.data?.data?.length}>
+          <Panel title="Preventive maintenance" subtitle={siteSchedule ? `Schedule ${day(siteSchedule.start_date)} to ${day(siteSchedule.end_date)} · ${siteSchedule.pending_robots.length} robot(s) still due` : "Completed checklist records. No PM schedule overlaps this period."} loading={pm.loading} error={pm.error} onRetry={pm.reload} empty={!pm.data?.data?.length && !pmQ.trim()}>
+            <TableSearch value={pmQ} onChange={(value) => { setPmQ(value); pm.setPage(1); }} placeholder="Search PM or robot" label="Search preventive maintenance" />
+            {pmQ.trim() && !pm.data?.data?.length ? <div className="sp-muted sp-small py-2">No PM matches "{pmQ.trim()}".</div> : (
+            <>
             <div className="sp-table-wrap">
               <table className="table table-sm mb-0">
                 <thead>
@@ -190,6 +197,8 @@ export default function SiteDetail() {
               </table>
             </div>
             <Pager page={pm.page} limit={pm.limit} total={pm.data?.total} onPage={pm.setPage} label="PM pages" />
+            </>
+            )}
           </Panel>
         </CCol>
       </CRow>
@@ -212,9 +221,12 @@ export default function SiteDetail() {
           loading={tickets.loading}
           error={tickets.error}
           onRetry={tickets.reload}
-          empty={!tickets.data?.data?.length}
+          empty={!tickets.data?.data?.length && !ticketQ.trim()}
           emptyText="No ticket from this source in this period."
         >
+          <TableSearch value={ticketQ} onChange={(value) => { setTicketQ(value); tickets.setPage(1); }} placeholder="Search ticket" label="Search tickets" />
+          {ticketQ.trim() && !tickets.data?.data?.length ? <div className="sp-muted sp-small py-2">No ticket matches "{ticketQ.trim()}".</div> : (
+          <>
           <div className="sp-table-wrap">
             <table className="table sp-table mb-0">
               <thead>
@@ -258,12 +270,17 @@ export default function SiteDetail() {
             </table>
           </div>
           <Pager page={tickets.page} limit={tickets.limit} total={tickets.data?.total} onPage={tickets.setPage} onLimit={tickets.setLimit} label="Ticket pages" />
+          </>
+          )}
         </Panel>
       </div>
 
       <CRow className="g-3">
         <CCol lg={8}>
-          <Panel title="Material requests" loading={materials.loading} error={materials.error} onRetry={materials.reload} empty={!materialRows.length}>
+          <Panel title="Material requests" loading={materials.loading} error={materials.error} onRetry={materials.reload} empty={!materialRows.length && !materialQ.trim()}>
+            <TableSearch value={materialQ} onChange={(value) => { setMaterialQ(value); materials.setPage(1); }} placeholder="Search material or request" label="Search material requests" />
+            {materialQ.trim() && !materialRows.length ? <div className="sp-muted sp-small py-2">No material matches "{materialQ.trim()}".</div> : (
+            <>
             <div className="sp-table-wrap">
               <table className="table table-sm mb-0" style={{ minWidth: 720 }}>
                 <thead>
@@ -298,6 +315,8 @@ export default function SiteDetail() {
             </div>
             <Pager page={materials.page} limit={materials.limit} total={materials.data?.total} onPage={materials.setPage} label="Material request pages" />
             <div className="sp-small sp-muted mt-2">“Transferred” is the ERP status, not proof the part is usable on site.</div>
+            </>
+            )}
           </Panel>
         </CCol>
         <CCol lg={4}>

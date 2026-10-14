@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { CButton, CFormLabel, CFormSelect, CFormTextarea } from "@coreui/react";
 
 /**
- * Shown only for late tickets whose delay reason is missing. Reasons come
- * from the active configuration; no free-text reason code is possible.
+ * Sets or changes a ticket's delay reason. Codes come from the active
+ * configuration; no free-text reason code is possible.
  */
-export default function DelayReasonForm({ ticketId, reasons, onSave, disabledReason }) {
-  const [code, setCode] = useState("");
-  const [remarks, setRemarks] = useState("");
+export default function DelayReasonForm({ ticketId, reasons, onSave, disabledReason, initialCode = "", initialRemarks = "" }) {
+  const [code, setCode] = useState(initialCode);
+  const [remarks, setRemarks] = useState(initialRemarks);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const options = (reasons || []).filter((reason) => reason.enabled !== false);

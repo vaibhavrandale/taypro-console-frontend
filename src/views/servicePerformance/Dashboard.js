@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CButton, CCol, CRow } from "@coreui/react";
@@ -12,6 +12,7 @@ import ScoreDonut from "./components/ScoreDonut";
 import BulletBar from "./components/BulletBar";
 import DataQualityBanner from "./components/DataQualityBanner";
 import PmSummary from "./components/PmSummary";
+import TableSearch, { rowMatches } from "./components/TableSearch";
 import { performanceApi } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -173,6 +174,8 @@ export default function Dashboard() {
   const targets = faultTargets(late.data?.data);
   const uptimeTarget = cfg?.uptime_target ?? null;
   const rows = useMemo(() => siteRows(report), [report]);
+  const [siteQuery, setSiteQuery] = useState("");
+  const visibleRows = rows.filter((r) => rowMatches(siteQuery, [r.site_id, r.config?.mounting_type, r.config?.cloth_type, r.config?.warranty_status, r.config?.analysis_status]));
   const query = writeFilters(filters).toString();
 
   const sixMonths = months.map((m) => ({
@@ -467,6 +470,10 @@ export default function Dashboard() {
         empty={!rows.length}
         emptyText={report?.scope_note || (Array.isArray(report?.site_ids) && !report.site_ids.length ? "No sites are assigned to this account." : "No site has activity in this period.")}
       >
+        <TableSearch value={siteQuery} onChange={setSiteQuery} placeholder="Search site" label="Search sites" />
+        {!visibleRows.length && siteQuery ? (
+          <div className="sp-muted sp-small py-2">No site matches "{siteQuery}".</div>
+        ) : (
         <div className="sp-table-wrap">
           <table className="table sp-table mb-0">
             <caption className="visually-hidden">Sites with tickets, SLA, uptime and analysis status</caption>
@@ -483,7 +490,7 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {visibleRows.map((r) => (
                 <tr key={r.site_id} className="sp-row-click" onClick={() => navigate(`${BASE}/sites/${encodeURIComponent(r.site_id)}?${query}`)}>
                   <td>
                     <Link to={`${BASE}/sites/${encodeURIComponent(r.site_id)}?${query}`} onClick={(e) => e.stopPropagation()}>
@@ -514,8 +521,9 @@ export default function Dashboard() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
         </div>
+        )}
       </Panel>
     </Page>
   );

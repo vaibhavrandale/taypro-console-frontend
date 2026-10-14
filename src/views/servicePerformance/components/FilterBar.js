@@ -1,5 +1,6 @@
 import React from "react";
 import { CCol, CFormInput, CFormLabel, CFormSelect, CRow } from "@coreui/react";
+import SearchSelect from "./SearchSelect";
 import { MONTHS } from "../utils/format";
 import { CLIENT_STATUSES, currentIstMonth } from "../utils/filters";
 
@@ -61,15 +62,15 @@ export default function FilterBar({ filters, setFilters, sites = [], faults = []
             </Field>
           </>
         )}
-        <Field id="sp-site" label="Site">
-          <CFormSelect id="sp-site" value={filters.site_id} onChange={(e) => setFilters({ site_id: e.target.value })}>
-            <option value="">{engineers ? (filters.engineer_id ? "All of this engineer's sites" : "All sites") : "All my sites"}</option>
-            {sites.map((id) => (
-              <option key={id} value={id}>
-                {id}
-              </option>
-            ))}
-          </CFormSelect>
+        <Field id="sp-site" label="Site" md={3}>
+          <SearchSelect
+            id="sp-site"
+            ariaLabel="Site"
+            value={filters.site_id}
+            onChange={(site_id) => setFilters({ site_id })}
+            placeholder={engineers ? (filters.engineer_id ? "Search this engineer's sites" : "Search sites") : "Search my sites"}
+            options={sites.map((id) => ({ value: id, label: id }))}
+          />
         </Field>
         {engineers && (
           <Field id="sp-engineer" label="Engineer">

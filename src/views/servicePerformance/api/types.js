@@ -68,7 +68,7 @@
  * @property {string|null} commissioning_date
  * @property {"in_warranty"|"out_of_warranty"|null} warranty_status
  * @property {string|null} warranty_date
- * @property {"PBT"|"MF"|null} cloth_type
+ * @property {"PBT"|"MF"|"PBT+MF"|null} cloth_type
  * @property {"ground"|"rooftop"|null} mounting_type
  * @property {string} [analysis_status]
  * @property {string[]} [metrics_calculable]

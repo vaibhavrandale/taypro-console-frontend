@@ -8,6 +8,7 @@ import Panel from "./components/Panel";
 import Pager from "./components/Pager";
 import StatusChip from "./components/StatusChip";
 import PmSummary from "./components/PmSummary";
+import TableSearch from "./components/TableSearch";
 import { errorText, lookupApi, performanceApi } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { canWriteConfig } from "./utils/access";
@@ -186,7 +187,8 @@ export default function PmSchedule() {
   const [limit, setLimit] = useState(20);
   const [removing, setRemoving] = useState(null);
   const [busy, setBusy] = useState(false);
-  const params = { from: from || undefined, to: to || undefined, status: status || undefined, page, limit };
+  const [q, setQ] = useState("");
+  const params = { from: from || undefined, to: to || undefined, status: status || undefined, q: q.trim() || undefined, page, limit };
   const list = useApi((signal) => performanceApi.pmSchedules(params, signal), JSON.stringify(params), { delay: 250 });
   const rows = list.data?.data || [];
 
@@ -242,7 +244,12 @@ export default function PmSchedule() {
             </Panel>
           </div>
 
-          <Panel title="Scheduled sites" loading={list.loading} error={list.error} onRetry={list.reload} empty={!rows.length} emptyText={status ? `No schedule with status "${status.replace(/_/g, " ")}" in this window.` : "No PM schedule overlaps this window."}>
+          <Panel title="Scheduled sites" loading={list.loading} error={list.error} onRetry={list.reload} empty={!rows.length && !q.trim()} emptyText={status ? `No schedule with status "${status.replace(/_/g, " ")}" in this window.` : "No PM schedule overlaps this window."}>
+            <TableSearch value={q} onChange={(value) => { setQ(value); setPage(1); }} placeholder="Search site" label="Search scheduled sites" />
+            {q.trim() && !rows.length ? (
+              <div className="sp-muted sp-small py-2">No schedule matches "{q.trim()}".</div>
+            ) : (
+            <>
             <div className="sp-table-wrap">
               <table className="table sp-table mb-2">
                 <thead>
@@ -312,6 +319,8 @@ export default function PmSchedule() {
               </table>
             </div>
             {list.data && <Pager page={page} limit={limit} total={list.data.total} onPage={setPage} onLimit={(value) => { setLimit(value); setPage(1); }} label="PM schedules" />}
+            </>
+            )}
           </Panel>
         </CCol>
       </CRow>

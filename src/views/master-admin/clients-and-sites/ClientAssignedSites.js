@@ -26,6 +26,30 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import PaginateInput from "../../../components/PaginateInput";
 import CIcon from "@coreui/icons-react";
 import { cilX } from "@coreui/icons";
+import LastActivity from "../../../components/LastActivity";
+
+const dayText = (value) =>
+  value ? new Date(value).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) : "—";
+
+const STATUS_LABEL = {
+  in_warranty: "In warranty",
+  out_of_warranty: "Out of warranty",
+  in_amc: "In AMC",
+  out_of_amc: "AMC expired",
+  ground: "Ground",
+  rooftop: "Rooftop",
+};
+
+const toActivity = (item) => {
+  if (item?.details) return item;
+  const next = item?.next || {};
+  const previous = item?.previous || {};
+  const details =
+    Object.keys(next)
+      .map((key) => `${key}: "${previous[key] ?? ""}" to "${next[key]}"`)
+      .join(", ") || item?.reason || "Updated";
+  return { ...item, details };
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -129,7 +153,10 @@ const ClientAssignedSites = () => {
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [detail, setDetail] = useState(null);
   const userInfo = useSelector((state) => state.userInfo);
+  const canManage = !["Master User", "Project User", "Service User", "Service Admin"].includes(userInfo?.role);
+  const canEdit = canManage || userInfo?.role === "Service Admin";
   let adminroute = "";
 
   if (userInfo.role === "Master Admin") {
@@ -278,12 +305,7 @@ const ClientAssignedSites = () => {
               <h4>
                 Assigned Sites for - <b>{id}</b>
               </h4>
-              {![
-                "Master User",
-                "Project User",
-                "Service User",
-                "Service Admin",
-              ].includes(userInfo?.role) && (
+              {canManage && (
                 <CButton
                   color="primary"
                   size="sm"
@@ -307,27 +329,22 @@ const ClientAssignedSites = () => {
                   <CTableHeaderCell>Site Name</CTableHeaderCell>
                   <CTableHeaderCell>Location</CTableHeaderCell>
                   <CTableHeaderCell>Type</CTableHeaderCell>
-                  {/* Conditionally render Actions column header */}
-                  {![
-                    "Master User",
-                    "Project User",
-                    "Service User",
-                    "Service Admin",
-                  ].includes(userInfo?.role) && (
-                    <CTableHeaderCell>Actions</CTableHeaderCell>
-                  )}{" "}
+                  <CTableHeaderCell>Warranty</CTableHeaderCell>
+                  <CTableHeaderCell>AMC</CTableHeaderCell>
+                  <CTableHeaderCell>Site type</CTableHeaderCell>
+                  <CTableHeaderCell>Actions</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {state.loading ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={7} className="text-center">
+                    <CTableDataCell colSpan={10} className="text-center">
                       <LoadingSpinner />
                     </CTableDataCell>
                   </CTableRow>
                 ) : state.error ? (
                   <CTableRow>
-                    <CTableDataCell colSpan={7} className="text-center">
+                    <CTableDataCell colSpan={10} className="text-center">
                       {state.error}
                     </CTableDataCell>
                   </CTableRow>
@@ -351,43 +368,37 @@ const ClientAssignedSites = () => {
                       <CTableDataCell>{site.location}</CTableDataCell>
                       <CTableDataCell>{site.site_type}</CTableDataCell>
                       <CTableDataCell>
-                        {![
-                          "Master User",
-                          "Project User",
-                          "Service User",
-                          "Service Admin",
-                        ].includes(userInfo?.role) && (
+                        {STATUS_LABEL[site.warranty_status] || "—"}
+                        <div className="small text-body-secondary">{dayText(site.warranty_date)}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        {STATUS_LABEL[site.amc_status] || "—"}
+                        <div className="small text-body-secondary">{dayText(site.amc_date)}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>{STATUS_LABEL[site.mounting_type] || "—"}</CTableDataCell>
+                      <CTableDataCell>
+                        <CButton color="info" className="m-1" size="sm" onClick={() => setDetail(site)}>
+                          Details
+                        </CButton>
+                        {canEdit && (
                           <CButton
                             color="warning"
                             className="m-1"
                             size="sm"
-                            onClick={() => {
-                              dispatch({
-                                type: "SET_SELECTED_SITE",
-                                payload: site,
-                              });
-                              navigate(
-                                `/${adminroute}/clients-data-dashboard/edit-client/${site?._id}`,
-                              );
-                            }}
+                            onClick={() =>
+                              navigate(`/${adminroute}/clients-data-dashboard/edit-client/${site?._id}`)
+                            }
                           >
                             Edit
                           </CButton>
                         )}
-                        {![
-                          "Master User",
-                          "Project User",
-                          "Service User",
-                          "Service Admin",
-                        ].includes(userInfo?.role) && (
+                        {canManage && (
                           <CButton
                             color="danger"
                             size="sm"
                             onClick={() => handleDelete(site)}
                             disabled={site.is_delete}
-                            {...(site.is_delete && {
-                              title: "This site is already deleted",
-                            })}
+                            {...(site.is_delete && { title: "This site is already deleted" })}
                           >
                             Delete
                           </CButton>
@@ -414,6 +425,48 @@ const ClientAssignedSites = () => {
           </div>
         </CCol>
       </CRow>
+
+      <CModal visible={Boolean(detail)} onClose={() => setDetail(null)} size="lg" scrollable>
+        <CModalHeader>
+          <CModalTitle>{detail?.site_id}</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {detail && (
+            <>
+              <CRow className="g-2 mb-3">
+                {[
+                  ["Site name", detail.siteName],
+                  ["Location", detail.location],
+                  ["Contract type", detail.site_type],
+                  ["Client", detail.client_id],
+                  ["Project code", detail.project_code],
+                  ["Commissioning", dayText(detail.commissioning_date)],
+                  ["Warranty", `${STATUS_LABEL[detail.warranty_status] || "Not set"} · ends ${dayText(detail.warranty_date)}`],
+                  ["AMC", `${STATUS_LABEL[detail.amc_status] || "Not set"} · ends ${dayText(detail.amc_date)}`],
+                  ["Cloth", detail.cloth_type || "—"],
+                  ["Site type", STATUS_LABEL[detail.mounting_type] || "—"],
+                ].map(([label, value]) => (
+                  <CCol sm={6} key={label}>
+                    <div className="small text-body-secondary">{label}</div>
+                    <div>{value || "—"}</div>
+                  </CCol>
+                ))}
+              </CRow>
+              <LastActivity lastactivity={(detail.last_activity || []).map(toActivity)} />
+            </>
+          )}
+        </CModalBody>
+        <CModalFooter>
+          {canEdit && detail && (
+            <CButton color="warning" size="sm" onClick={() => navigate(`/${adminroute}/clients-data-dashboard/edit-client/${detail._id}`)}>
+              Edit
+            </CButton>
+          )}
+          <CButton color="secondary" size="sm" onClick={() => setDetail(null)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
       {/* Add Site Modal */}
       <CModal

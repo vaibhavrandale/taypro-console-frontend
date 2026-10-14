@@ -7,6 +7,7 @@ import Panel from "./components/Panel";
 import Pager from "./components/Pager";
 import MetricTile from "./components/MetricTile";
 import StatusChip from "./components/StatusChip";
+import TableSearch, { rowMatches } from "./components/TableSearch";
 import { performanceApi, errorText } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -75,6 +76,8 @@ function EditPanel({ siteId, period, periodLabel, canWrite, onSaved }) {
       commissioning_date: toInputDate(config.commissioning_date),
       warranty_status: config.warranty_status || "",
       warranty_date: toInputDate(config.warranty_date),
+      amc_status: config.amc_status || "",
+      amc_date: toInputDate(config.amc_date),
       cloth_type: config.cloth_type || "",
       mounting_type: config.mounting_type || "",
     });
@@ -122,10 +125,20 @@ function EditPanel({ siteId, period, periodLabel, canWrite, onSaved }) {
             <CFormInput id="sp-warranty-date" type="date" value={form.warranty_date} disabled={!canWrite} onChange={set("warranty_date")} />
             <div className={`sp-small mt-1 ${warrantyState(form).tone === "red" ? "text-danger" : "sp-muted"}`}>{warrantyState(form).text}</div>
           </div>
+          <fieldset>
+            <legend className="fs-6 mb-1">AMC status</legend>
+            {radio("amc_status", "in_amc", "In AMC")}
+            {radio("amc_status", "out_of_amc", "AMC expired")}
+          </fieldset>
+          <div className="p-2">
+            <CFormLabel htmlFor="sp-amc-date">AMC end date</CFormLabel>
+            <CFormInput id="sp-amc-date" type="date" value={form.amc_date} disabled={!canWrite} onChange={set("amc_date")} />
+          </div>
           <fieldset className={missingClass("cloth_type")}>
             <legend className="fs-6 mb-1">Cloth type{missing.has("cloth_type") ? " (missing)" : ""}</legend>
             {radio("cloth_type", "PBT", "PBT")}
             {radio("cloth_type", "MF", "MF")}
+            {radio("cloth_type", "PBT+MF", "PBT+MF")}
           </fieldset>
           <fieldset className={missingClass("mounting_type")}>
             <legend className="fs-6 mb-1">Site type{missing.has("mounting_type") ? " (missing)" : ""}</legend>
@@ -179,6 +192,7 @@ export default function SiteReadiness() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [selected, setSelected] = useState(null);
+  const [q, setQ] = useState("");
   const engineers = useEngineerOptions(true);
   const engineerId = filters.engineer_id;
 
@@ -188,7 +202,9 @@ export default function SiteReadiness() {
   const assignedRows = siteRows(assigned.data)
     .filter((r) => r.config)
     .sort((a, b) => STATUS_ORDER.indexOf(a.config.analysis_status) - STATUS_ORDER.indexOf(b.config.analysis_status) || a.site_id.localeCompare(b.site_id));
-  const rows = engineerId ? assignedRows : (gaps.data?.data || []).map((config) => ({ site_id: config.site_id, config }));
+  const rows = (engineerId ? assignedRows : (gaps.data?.data || []).map((config) => ({ site_id: config.site_id, config }))).filter((row) =>
+    rowMatches(q, [row.site_id, row.config?.analysis_status, row.config?.warranty_status, ...(row.config?.missing_fields || [])]),
+  );
   const byStatus = (status) => (engineerId && assigned.data ? assignedRows.filter((r) => r.config.analysis_status === status).length : null);
   const needsEngineer = "Pick an engineer to see the analysis status of all their sites";
   const source = engineerId ? assigned : gaps;
@@ -235,9 +251,14 @@ export default function SiteReadiness() {
             loading={source.loading}
             error={source.error}
             onRetry={source.reload}
-            empty={!rows.length}
+            empty={!rows.length && !q.trim()}
             emptyText={engineerId ? "This engineer has no assigned sites." : "Every site has its required configuration."}
           >
+            <TableSearch value={q} onChange={setQ} placeholder="Search site" label="Search sites" />
+            {q.trim() && !rows.length ? (
+              <div className="sp-muted sp-small py-2">No site matches "{q.trim()}".</div>
+            ) : (
+            <>
             <div className="sp-table-wrap">
               <table className="table sp-table mb-2">
                 <thead>
@@ -275,6 +296,8 @@ export default function SiteReadiness() {
             </div>
             {!engineerId && gaps.data && (
               <Pager page={page} limit={limit} total={gaps.data.total} onPage={setPage} onLimit={(value) => { setLimit(value); setPage(1); }} label="sites" />
+            )}
+            </>
             )}
           </Panel>
         </CCol>

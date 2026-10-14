@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   CForm,
   CFormInput,
+  CFormSelect,
   CButton,
   CCard,
   CCardBody,
@@ -10,12 +11,13 @@ import {
   CSpinner,
   CBadge,
   CCol,
-  CFormLabel,
+  CRow,
   CFormCheck,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
+import LastActivity from "../../../components/LastActivity";
 
 const initialState = {
   client: {},
@@ -43,6 +45,23 @@ const reducer = (state, action) => {
   }
 };
 
+const dateInput = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+};
+
+const toActivity = (item) => {
+  if (item?.details) return item;
+  const next = item?.next || {};
+  const previous = item?.previous || {};
+  const details =
+    Object.keys(next)
+      .map((key) => `${key}: "${previous[key] ?? ""}" to "${next[key]}"`)
+      .join(", ") || item?.reason || "Updated";
+  return { ...item, details };
+};
+
 const EditClient = () => {
   const [{ loading, error, updateLoading }, dispatch] = useReducer(
     reducer,
@@ -50,7 +69,17 @@ const EditClient = () => {
   );
   const { id } = useParams();
   const navigate = useNavigate();
-  // const authtoken = useSelector((state) => state.authtoken);
+  const userInfo = useSelector((state) => state.userInfo);
+  const isMaster = userInfo?.role === "Master Admin";
+  const home =
+    userInfo?.role === "Service Admin"
+      ? "service-admin"
+      : userInfo?.role === "Project Admin"
+        ? "project-admin"
+        : userInfo?.role === "Master User"
+          ? "master-user"
+          : "master-admin";
+  const [activity, setActivity] = useState([]);
   const [formData, setFormData] = useState({
     client_name: "",
     client_id: "",
@@ -80,12 +109,20 @@ const EditClient = () => {
           logo: data.data.logo || "",
           client_id: data.data.client_id || "",
           password: data.data.password || "",
-          is_deleted: data.data.is_delete || false,
+          is_delete: data.data.is_delete || false,
           set_warehouse: data.data.set_warehouse || "",
           project_code: data.data.project_code || "",
           is_weather_cleaning_enabled:
             data.data.is_weather_cleaning_enabled || false,
+          commissioning_date: dateInput(data.data.commissioning_date),
+          warranty_status: data.data.warranty_status || "",
+          warranty_date: dateInput(data.data.warranty_date),
+          amc_status: data.data.amc_status || "",
+          amc_date: dateInput(data.data.amc_date),
+          cloth_type: data.data.cloth_type || "",
+          mounting_type: data.data.mounting_type || "",
         });
+        setActivity(data.data.last_activity || []);
       } catch (error) {
         console.error(
           "Failed to fetch site:",
@@ -133,7 +170,7 @@ const EditClient = () => {
 
       dispatch({ type: "UPDATE_SUCCESS", payload: response.data });
       toast.success("Site updated successfully!");
-      navigate("/master-admin/clients-dashboard");
+      navigate(`/${home}/clients-dashboard/clients-data/${updatedData.client_id || formData.client_id}`);
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL", payload: error.message });
       toast.error("Failed to update site.");
@@ -143,7 +180,7 @@ const EditClient = () => {
   return (
     <CCard>
       <CCardHeader>
-        Edit Client - <CBadge color="danger">{formData.client_id}</CBadge>
+        Edit site — <CBadge color="info">{formData.site_id}</CBadge>
       </CCardHeader>
       <CCardBody>
         {loading ? (
@@ -152,159 +189,110 @@ const EditClient = () => {
           <p className="text-danger">{error}</p>
         ) : (
           <CForm onSubmit={handleUpdate}>
-            <CFormInput
-              label="Site ID"
-              type="text"
-              value={formData.site_id}
-              onChange={(e) =>
-                setFormData({ ...formData, site_id: e.target.value })
-              }
-              placeholder="Enter Site ID"
-              className="my-3"
-            />
-            <CFormInput
-              label="Site Type"
-              type="text"
-              value={formData.site_type}
-              onChange={(e) =>
-                setFormData({ ...formData, site_type: e.target.value })
-              }
-              placeholder="Enter Site Type"
-              className="my-3"
-            />
-            <CFormInput
-              label="Site Name"
-              type="text"
-              value={formData.siteName}
-              onChange={(e) =>
-                setFormData({ ...formData, siteName: e.target.value })
-              }
-              placeholder="Enter Site Name"
-              className="my-3"
-            />
-            <CFormInput
-              label="Location"
-              type="text"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-              placeholder="Enter Location"
-              className="my-3"
-            />
-            <CFormInput
-              label="Client ID"
-              type="text"
-              value={formData.client_id}
-              onChange={(e) =>
-                setFormData({ ...formData, client_id: e.target.value })
-              }
-              placeholder="Client ID"
-              className="my-3"
-            />
-            <CFormInput
-              label="Password"
-              type="text"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              placeholder="Enter Password"
-              className="my-3"
-            />
-            <CFormInput
-              label="Wearehouse"
-              type="text"
-              value={formData.set_warehouse}
-              onChange={(e) =>
-                setFormData({ ...formData, set_warehouse: e.target.value })
-              }
-              placeholder="Enter Wearehouse"
-              className="my-3"
-            />
-            <CFormInput
-              label="project_code"
-              type="text"
-              value={formData.project_code}
-              onChange={(e) =>
-                setFormData({ ...formData, project_code: e.target.value })
-              }
-              placeholder="Enter Project Code"
-              className="my-3"
-            />
-            <br />
-            <CFormLabel>
-              Weather Auto Clean/Disable Access:
-              <span className="text-muted ms-2">
-                (If it is checked then it will enable the access of weather auto
-                clean/disable feature for the client)
-              </span>
-            </CFormLabel>
-            <br />
-            <CFormCheck
-              id="is_weather_cleaning_enabled"
-              name="is_weather_cleaning_enabled"
-              checked={formData.is_weather_cleaning_enabled || false}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  is_weather_cleaning_enabled: e.target.checked,
-                })
-              }
-            />{" "}
-            <br />
-            <CFormInput
-              label="Logo"
-              type="file"
-              onChange={handleFileChange}
-              className="my-3"
-            />
-            {formData.logo && (
-              <img
-                src={formData.logo}
-                alt="Client Logo"
-                width="100"
-                className="mt-3"
-              />
-            )}
-            {/* Delete Inventory Section */}
-            <CCol md="6">
-              <CFormLabel>
-                Delete Site:
-                <span className="text-muted ms-2">
-                  {" "}
-                  (When checked, it will be soft deleted)
-                </span>
-              </CFormLabel>
-              <br />
-              <CFormCheck
-                id="is_delete"
-                name="is_delete"
-                checked={formData.is_delete || false} // Make sure to use formData instead of serviceItemData
-                onChange={
-                  (e) =>
-                    setFormData({ ...formData, is_delete: e.target.checked }) // Handling change to set the 'is_delete' value
-                }
-              />
-            </CCol>
+            <h6 className="mt-2 mb-3">Site</h6>
+            <CRow className="g-3">
+              <CCol md={4}>
+                <CFormInput label="Site ID" value={formData.site_id || ""} disabled={!isMaster} onChange={(e) => setFormData({ ...formData, site_id: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Site name" value={formData.siteName || ""} required onChange={(e) => setFormData({ ...formData, siteName: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Location" value={formData.location || ""} required onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Client ID" value={formData.client_id || ""} disabled={!isMaster} onChange={(e) => setFormData({ ...formData, client_id: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Contract type" value={formData.site_type || ""} placeholder="capex or opex" onChange={(e) => setFormData({ ...formData, site_type: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Project code" value={formData.project_code || ""} onChange={(e) => setFormData({ ...formData, project_code: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput label="Warehouse" value={formData.set_warehouse || ""} onChange={(e) => setFormData({ ...formData, set_warehouse: e.target.value })} />
+              </CCol>
+              {isMaster && (
+                <CCol md={4}>
+                  <CFormInput label="Password" value={formData.password || ""} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                </CCol>
+              )}
+            </CRow>
+
+            <h6 className="mt-4 mb-3">Warranty, AMC and site setup</h6>
+            <CRow className="g-3">
+              <CCol md={4}>
+                <CFormInput type="date" label="Commissioning date" value={formData.commissioning_date || ""} onChange={(e) => setFormData({ ...formData, commissioning_date: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormSelect label="Warranty status" value={formData.warranty_status || ""} onChange={(e) => setFormData({ ...formData, warranty_status: e.target.value })}>
+                  <option value="">Not set</option>
+                  <option value="in_warranty">In warranty</option>
+                  <option value="out_of_warranty">Out of warranty</option>
+                </CFormSelect>
+              </CCol>
+              <CCol md={4}>
+                <CFormInput type="date" label="Warranty end date" value={formData.warranty_date || ""} onChange={(e) => setFormData({ ...formData, warranty_date: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormSelect label="AMC status" value={formData.amc_status || ""} onChange={(e) => setFormData({ ...formData, amc_status: e.target.value })}>
+                  <option value="">Not set</option>
+                  <option value="in_amc">In AMC</option>
+                  <option value="out_of_amc">AMC expired</option>
+                </CFormSelect>
+              </CCol>
+              <CCol md={4}>
+                <CFormInput type="date" label="AMC end date" value={formData.amc_date || ""} onChange={(e) => setFormData({ ...formData, amc_date: e.target.value })} />
+              </CCol>
+              <CCol md={4}>
+                <CFormSelect label="Cloth type" value={formData.cloth_type || ""} onChange={(e) => setFormData({ ...formData, cloth_type: e.target.value })}>
+                  <option value="">Not set</option>
+                  <option value="PBT">PBT</option>
+                  <option value="MF">MF</option>
+                  <option value="PBT+MF">PBT+MF</option>
+                </CFormSelect>
+              </CCol>
+              <CCol md={4}>
+                <CFormSelect label="Site type" value={formData.mounting_type || ""} onChange={(e) => setFormData({ ...formData, mounting_type: e.target.value })}>
+                  <option value="">Not set</option>
+                  <option value="ground">Ground</option>
+                  <option value="rooftop">Rooftop</option>
+                </CFormSelect>
+              </CCol>
+            </CRow>
+
+            <CRow className="g-3 mt-1 align-items-end">
+              <CCol md={4}>
+                <CFormCheck
+                  id="is_weather_cleaning_enabled"
+                  label="Weather auto clean is enabled"
+                  checked={formData.is_weather_cleaning_enabled || false}
+                  onChange={(e) => setFormData({ ...formData, is_weather_cleaning_enabled: e.target.checked })}
+                />
+              </CCol>
+              <CCol md={4}>
+                <CFormInput type="file" label="Logo" onChange={handleFileChange} />
+                {formData.logo && <img src={formData.logo} alt="Site logo" width="72" className="mt-2" />}
+              </CCol>
+              {isMaster && (
+                <CCol md={4}>
+                  <CFormCheck
+                    id="is_delete"
+                    label="Soft delete this site"
+                    checked={formData.is_delete || false}
+                    onChange={(e) => setFormData({ ...formData, is_delete: e.target.checked })}
+                  />
+                </CCol>
+              )}
+            </CRow>
+
             <div className="d-flex justify-content-end">
-              <CButton
-                size="sm"
-                type="submit"
-                color="primary"
-                className="mt-3"
-                disabled={updateLoading}
-              >
-                {updateLoading ? (
-                  <>
-                    Updating...
-                    <CSpinner size="sm" />
-                  </>
-                ) : (
-                  "Update"
-                )}
+              <CButton size="sm" type="submit" color="primary" className="mt-3" disabled={updateLoading}>
+                {updateLoading ? <>Saving… <CSpinner size="sm" /></> : "Save site"}
               </CButton>
             </div>
+
+            <LastActivity lastactivity={(activity || []).map(toActivity)} />
           </CForm>
         )}
       </CCardBody>

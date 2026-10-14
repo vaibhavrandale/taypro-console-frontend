@@ -53,6 +53,8 @@
 .sp-notice { border-left: 3px solid var(--sp-amber); background: rgba(245, 158, 11, 0.08); padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
 .sp-notice--red { border-left-color: var(--sp-red); background: rgba(239, 68, 68, 0.1); }
 
+.sp-table-search { max-width: 280px; background: var(--sp-surface-2); color: var(--sp-text); border-color: var(--sp-border); }
+.sp-table-search::placeholder { color: var(--sp-muted); }
 .sp-table-wrap { overflow-x: auto; }
 .sp-table { min-width: 1060px; }
 .sp-table th { font-size: 12px; color: var(--sp-muted); font-weight: 600; white-space: nowrap; }
