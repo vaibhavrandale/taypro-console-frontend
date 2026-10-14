@@ -24,6 +24,12 @@ const TONES = {
   excluded: ["grey", "Excluded"],
   informational: ["blue", "Informational"],
   no_record: ["grey", "No record"],
+  upcoming: ["blue", "Upcoming"],
+  pending: ["amber", "Pending"],
+  overdue: ["red", "Overdue"],
+  completed_on_time: ["green", "Completed on time"],
+  completed_late: ["amber", "Completed late"],
+  no_robots: ["grey", "No robots at site"],
 };
 
 /** Pill badge. Meaning is always in the text, colour only reinforces it. */

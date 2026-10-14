@@ -11,6 +11,7 @@ import MetricTile from "./components/MetricTile";
 import ScoreDonut from "./components/ScoreDonut";
 import BulletBar from "./components/BulletBar";
 import DataQualityBanner from "./components/DataQualityBanner";
+import PmSummary from "./components/PmSummary";
 import { performanceApi } from "./api/client";
 import { useApi } from "./hooks/useApi";
 import { useFilters } from "./hooks/useFilters";
@@ -115,17 +116,6 @@ function TicketCard({ title, kind, summary, config, targets, loading, error, onR
       <h3 className="h6">Avg resolution time by priority</h3>
       <ResolutionRows summary={summary} targets={targets} kind={kind} />
     </Panel>
-  );
-}
-
-function Ring({ label }) {
-  return (
-    <svg width="96" height="96" viewBox="0 0 96 96" role="img" aria-label={label}>
-      <circle cx="48" cy="48" r="40" fill="none" stroke={COLORS.track} strokeWidth="10" />
-      <text x="50%" y="54%" textAnchor="middle" fontSize="20" fontWeight="600" fill={COLORS.muted}>
-        —
-      </text>
-    </svg>
   );
 }
 
@@ -375,34 +365,7 @@ export default function Dashboard() {
       <CRow className="g-3 mb-3">
         <CCol lg={5}>
           <Panel title="Preventive maintenance" loading={dash.loading} error={dash.error} onRetry={dash.reload}>
-            <div className="d-flex gap-3 align-items-center mb-3">
-              <Ring label="Completion rate not available: PM has no schedule" />
-              <div className="sp-small">
-                <div className="fw-semibold">Completion rate n/a</div>
-                <div className="sp-muted">PM records have no schedule, so there is nothing to complete against.</div>
-              </div>
-            </div>
-            <CRow className="g-2">
-              <CCol xs={6} md={4}>
-                <MetricTile label="Scheduled" na="No schedule" />
-              </CCol>
-              <CCol xs={6} md={4}>
-                <MetricTile label="Completed" value={count(report?.preventive_maintenance?.completed)} />
-              </CCol>
-              <CCol xs={6} md={4}>
-                <MetricTile label="On time" na="No due date" />
-              </CCol>
-              <CCol xs={6} md={4}>
-                <MetricTile label="Pending" na="No schedule" />
-              </CCol>
-              <CCol xs={6} md={4}>
-                <MetricTile label="Overdue" na="No due date" />
-              </CCol>
-              <CCol xs={6} md={4}>
-                <MetricTile label="Avg completion time" na="No start time" />
-              </CCol>
-            </CRow>
-            <div className="sp-small sp-muted mt-2">A PM is counted complete only when its checklist record exists. Missing records are not treated as missed.</div>
+            <PmSummary plan={report?.preventive_maintenance?.schedule} records={report?.preventive_maintenance?.completed} scheduleLink={admin ? `${BASE}/admin/pm-schedule` : null} />
           </Panel>
         </CCol>
         <CCol lg={7}>

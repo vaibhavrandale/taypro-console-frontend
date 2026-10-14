@@ -66,6 +66,10 @@ export const performanceApi = {
   createConfig: (body) => send("post", "/config", body),
   activateConfig: (version) => send("post", `/config/${version}/activate`, {}),
   recalculate: (body) => send("post", "/recalculate", body),
+  /** @returns {Promise<{summary:Object, total:number, page:number, limit:number, data:Object[]}>} */
+  pmSchedules: (params, signal) => get("/pm-schedules", params, signal),
+  createPmSchedules: (body) => send("post", "/pm-schedules", body),
+  deletePmSchedule: (id) => send("delete", `/pm-schedules/${id}`),
 };
 
 /**

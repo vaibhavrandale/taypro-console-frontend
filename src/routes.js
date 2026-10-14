@@ -52,6 +52,7 @@ import ServicePerformanceTickets from "./views/servicePerformance/TicketPerforma
 import ServicePerformanceCompare from "./views/servicePerformance/CompareEngineers";
 import ServicePerformanceKpiConfig from "./views/servicePerformance/KpiConfig";
 import ServicePerformanceSites from "./views/servicePerformance/SiteReadiness";
+import ServicePerformancePmSchedule from "./views/servicePerformance/PmSchedule";
 
 import {
   ServiceUserRoute,
@@ -9654,6 +9655,15 @@ const routes = [
     element: (
       <PerformanceRoute admin>
         <ServicePerformanceSites />
+      </PerformanceRoute>
+    ),
+  },
+  {
+    path: "/service-performance/admin/pm-schedule",
+    name: "PM Schedule",
+    element: (
+      <PerformanceRoute admin>
+        <ServicePerformancePmSchedule />
       </PerformanceRoute>
     ),
   },

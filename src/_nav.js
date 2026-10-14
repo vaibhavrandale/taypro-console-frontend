@@ -102,6 +102,7 @@ const _nav = [
           { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
           { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
           { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
+          { component: CNavItem, name: "PM Schedule", to: "/service-performance/admin/pm-schedule", access: "performance-admin" },
         ],
       },
 
@@ -2087,6 +2088,7 @@ const _nav = [
           { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
           { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
           { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
+          { component: CNavItem, name: "PM Schedule", to: "/service-performance/admin/pm-schedule", access: "performance-admin" },
         ],
       },
 

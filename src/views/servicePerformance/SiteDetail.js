@@ -78,6 +78,7 @@ export default function SiteDetail() {
   const query = writeFilters({ ...filters, site_id: "" }).toString();
   const uptimeRows = months.map((m) => ({ label: m.label, value: (trends.data || []).find((p) => p.label === m.label)?.uptime?.cleaning_uptime ?? null }));
   const sla = r?.service_tickets?.sla || {};
+  const siteSchedule = (r?.preventive_maintenance?.schedules || []).find((s) => s.site_id === siteId) || null;
   const consumption = r?.consumption || {};
 
   const changeFilters = (patch) => {
@@ -134,7 +135,9 @@ export default function SiteDetail() {
         {[
           ["Uptime", r?.uptime?.cleaning_uptime == null ? "No record" : pct(r.uptime.cleaning_uptime), r?.uptime ? (r.uptime.aggregation === "unweighted" ? "Unweighted" : "Stored monthly percent") : ""],
           ["Ticket SLA", pct(sla.compliance_percent), sla.eligible ? `${sla.met} of ${sla.eligible} within target` : "No resolved ticket with a target"],
-          ["PM completed", count(r?.preventive_maintenance?.completed), "Schedule not stored"],
+          siteSchedule
+            ? ["PM schedule", `${siteSchedule.robots_done} of ${siteSchedule.robots_due} robots`, `${humanize(siteSchedule.status)} · ${day(siteSchedule.start_date)} to ${day(siteSchedule.end_date)}`]
+            : ["PM completed", count(r?.preventive_maintenance?.completed), "No PM schedule in this period"],
           ["Parts consumed", consumption.expected ? `${consumption.matched} of ${consumption.expected}` : "—", consumption.expected ? "Replaced parts with a ledger record" : "No replaced part recorded"],
         ].map(([label, value, hint]) => (
           <CCol md={3} sm={6} key={label}>
@@ -151,7 +154,7 @@ export default function SiteDetail() {
           </Panel>
         </CCol>
         <CCol lg={6}>
-          <Panel title="Preventive maintenance" subtitle="Completed checklist records. There is no PM schedule." loading={pm.loading} error={pm.error} onRetry={pm.reload} empty={!pm.data?.data?.length}>
+          <Panel title="Preventive maintenance" subtitle={siteSchedule ? `Schedule ${day(siteSchedule.start_date)} to ${day(siteSchedule.end_date)} · ${siteSchedule.pending_robots.length} robot(s) still due` : "Completed checklist records. No PM schedule overlaps this period."} loading={pm.loading} error={pm.error} onRetry={pm.reload} empty={!pm.data?.data?.length}>
             <div className="sp-table-wrap">
               <table className="table table-sm mb-0">
                 <thead>
@@ -171,10 +174,15 @@ export default function SiteDetail() {
                         <div className="sp-small sp-muted">Robot {row.robot_no || "—"}</div>
                       </td>
                       <td className="sp-muted">Not stored</td>
-                      <td className="sp-muted">No schedule</td>
+                      <td className={siteSchedule ? "" : "sp-muted"}>{siteSchedule ? day(siteSchedule.end_date) : "No schedule"}</td>
                       <td>{dateTime(row.created_at)}</td>
                       <td>
-                        <StatusChip status="completed" tone="green" label="Completed" title="On time / late cannot be judged without a due date" />
+                        {(() => {
+                          if (!siteSchedule) return <StatusChip status="completed" tone="green" label="Completed" title="On time / late needs a PM schedule" />;
+                          const t = new Date(row.created_at).getTime();
+                          if (t < new Date(siteSchedule.start_date).getTime()) return <StatusChip status="excluded" label="Before schedule" />;
+                          return t <= new Date(siteSchedule.end_date).getTime() ? <StatusChip status="on_time" /> : <StatusChip status="late" />;
+                        })()}
                       </td>
                     </tr>
                   ))}

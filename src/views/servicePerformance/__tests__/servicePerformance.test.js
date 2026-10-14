@@ -128,6 +128,29 @@ test("errors show the exact server message, status and request", () => {
   expect(errorText({ message: "Network Error", config: { method: "post", url: "/x" } })).toBe("Network Error (POST /x)");
 });
 
+test("quarter shortcuts are calendar quarters in IST", () => {
+  const { quarterOptions } = require("../PmSchedule");
+  const [prev, current, next] = quarterOptions(new Date("2026-09-30T20:00:00Z"));
+  expect(current).toMatchObject({ label: "Oct–Dec 2026 (current)", start: "2026-10-01", end: "2026-12-31" });
+  expect(prev).toMatchObject({ start: "2026-07-01", end: "2026-09-30" });
+  expect(quarterOptions(new Date("2026-11-20T00:00:00Z"))[2]).toMatchObject({ label: "Jan–Mar 2027", start: "2027-01-01", end: "2027-03-31" });
+  expect(next.end).toBe("2027-03-31");
+});
+
+test("PM summary shows schedule metrics, or n/a when no schedule exists", () => {
+  const PmSummary = require("../components/PmSummary").default;
+  const plan = { scheduled: 4, robots_due: 40, robots_done: 30, completed: 2, on_time: 1, completed_late: 1, pending: 1, upcoming: 0, overdue: 1, without_robots: 0, completion_rate: 50, on_time_rate: 33.3333, avg_completion_days: 12.5 };
+  const { unmount } = render(<PmSummary plan={plan} />);
+  expect(screen.getByText("2 of 4 scheduled sites completed")).toBeTruthy();
+  expect(screen.getByText("12.5 d")).toBeTruthy();
+  expect(screen.getByText("33.3% of ended or completed")).toBeTruthy();
+  unmount();
+
+  render(<PmSummary plan={null} records={479} />);
+  expect(screen.getAllByText("n/a")).toHaveLength(6);
+  expect(screen.getByText("479 PM checklist records were saved in this period.")).toBeTruthy();
+});
+
 test("delay reason form is locked when the record id is unavailable", () => {
   render(<DelayReasonForm ticketId="ST-2" onSave={jest.fn()} reasons={[{ code: "x", label: "X" }]} disabledReason="No record id from the API yet." />);
   expect(screen.getByLabelText("Delay reason").disabled).toBe(true);
