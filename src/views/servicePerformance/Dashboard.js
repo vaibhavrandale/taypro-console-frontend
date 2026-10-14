@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CButton, CCol, CRow } from "@coreui/react";
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import Page, { PageHeader } from "./components/Page";
 import Panel from "./components/Panel";
 import FilterBar from "./components/FilterBar";
@@ -142,7 +142,12 @@ export function siteRows(report) {
 function UptimeCell({ uptime, target }) {
   if (!uptime || uptime.status !== "available") return <span className="sp-muted">No report</span>;
   const below = target != null && uptime.monthly_cleaning_uptime < target;
-  return <span className={below ? "text-danger fw-semibold" : ""}>{pct(uptime.monthly_cleaning_uptime)}{below ? " (below target)" : ""}</span>;
+  return (
+    <>
+      <span className={below ? "text-danger fw-semibold" : ""}>{pct(uptime.monthly_cleaning_uptime)}{below ? " (below target)" : ""}</span>
+      <div className="sp-small sp-muted">Avail. {uptime.monthly_availability_uptime == null ? "No record" : pct(uptime.monthly_availability_uptime)}</div>
+    </>
+  );
 }
 
 export default function Dashboard() {
@@ -184,6 +189,7 @@ export default function Dashboard() {
     label: m.label,
     month: `${MONTHS[m.month - 1]} ${String(m.year).slice(2)}`,
     value: (trends.data || []).find((p) => p.label === m.label)?.uptime?.cleaning_uptime ?? null,
+    availability: (trends.data || []).find((p) => p.label === m.label)?.uptime?.availability_uptime ?? null,
   }));
 
   const lateRows = (late.data?.data || []).filter((row) => row.resolved_late === true);
@@ -216,8 +222,9 @@ export default function Dashboard() {
       ["Completeness %", num(summary.completeness)],
       ["Service SLA %", num(report?.service_tickets?.sla?.compliance_percent)],
       ["Cleaning uptime %", num(report?.uptime?.cleaning_uptime)],
+      ["Availability uptime %", num(report?.uptime?.availability_uptime)],
       [],
-      ["Site", "Mounting", "Cloth", "Warranty", "Service raised", "Service resolved", "Service open", "Client raised", "Uptime %", "PM completed", "Analysis status"],
+      ["Site", "Mounting", "Cloth", "Warranty", "Service raised", "Service resolved", "Service open", "Client raised", "Cleaning uptime %", "Availability uptime %", "PM completed", "Analysis status"],
     ];
     const body = rows.map((r) => [
       r.site_id,
@@ -229,6 +236,7 @@ export default function Dashboard() {
       r.service?.open ?? "",
       r.client?.created ?? "",
       r.uptime?.status === "available" ? r.uptime.monthly_cleaning_uptime : "No report",
+      r.uptime?.status === "available" ? r.uptime.monthly_availability_uptime ?? "No record" : "No report",
       r.pm?.completed ?? 0,
       r.config?.analysis_status || "",
     ]);
@@ -342,22 +350,27 @@ export default function Dashboard() {
           <CRow className="g-3 align-items-center">
             <CCol md={3}>
               <div className={`display-6 fw-semibold sp-uptime ${report?.uptime?.cleaning_uptime == null ? "" : uptimeTarget != null && report.uptime.cleaning_uptime < uptimeTarget ? "sp-uptime--low" : "sp-uptime--ok"}`}>{report?.uptime?.cleaning_uptime == null ? "No record" : pct(report.uptime.cleaning_uptime)}</div>
+              <div className="sp-small sp-muted mb-1">Cleaning uptime</div>
+              <div className="fs-4 fw-semibold">{report?.uptime?.availability_uptime == null ? "No record" : pct(report.uptime.availability_uptime)}</div>
+              <div className="sp-small sp-muted mb-2">Availability uptime</div>
               <div className="sp-small sp-muted">
                 {report?.uptime?.aggregation === "robot_weighted_mean_of_stored_monthly_percentages" ? "Robot-weighted mean of stored site percents" : "Unweighted mean"} across {new Set(presentSites).size} of {uptimeSiteCount} sites with a valid report
                 {uptimeTarget != null ? `, target ${uptimeTarget}%` : ""}. Not a fleet-wide robot-day uptime.
               </div>
             </CCol>
             <CCol md={9}>
-              <figure className="mb-0" aria-label={`Cleaning uptime, last six months: ${sixMonths.map((m) => `${monthLabel(m.label)} ${m.value == null ? "no record" : pct(m.value)}`).join(", ")}`}>
+              <figure className="mb-0" aria-label={`Uptime, last six months: ${sixMonths.map((m) => `${monthLabel(m.label)} cleaning ${m.value == null ? "no record" : pct(m.value)}, availability ${m.availability == null ? "no record" : pct(m.availability)}`).join("; ")}`}>
                 <div style={{ width: "100%", height: 200 }} aria-hidden="true">
                   <ResponsiveContainer>
                     <LineChart data={sixMonths} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: COLORS.muted }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: COLORS.muted }} />
-                      <Tooltip formatter={(value) => [value == null ? "No record" : `${Number(value).toFixed(1)}%`, "Uptime"]} />
+                      <Tooltip formatter={(value, name) => [value == null ? "No record" : `${Number(value).toFixed(1)}%`, name]} />
+                      <Legend wrapperStyle={{ fontSize: 12, color: COLORS.muted }} />
                       {uptimeTarget != null && <ReferenceLine y={uptimeTarget} stroke={COLORS.amber} strokeDasharray="6 4" label={{ value: `Target ${uptimeTarget}%`, fontSize: 11, fill: COLORS.amberText, position: "insideTopRight" }} />}
-                      <Line type="monotone" dataKey="value" stroke={COLORS.green} strokeWidth={2} dot connectNulls={false} />
+                      <Line type="monotone" dataKey="value" name="Cleaning uptime" stroke={COLORS.green} strokeWidth={2} dot connectNulls={false} />
+                      <Line type="monotone" dataKey="availability" name="Availability uptime" stroke={COLORS.blue} strokeWidth={2} dot connectNulls={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -365,6 +378,7 @@ export default function Dashboard() {
                   {sixMonths.map((m) => (
                     <span key={m.label}>
                       {m.month}: <strong className={m.value == null ? "sp-muted fw-normal" : ""}>{m.value == null ? "No record" : pct(m.value)}</strong>
+                      <span className="sp-muted"> / {m.availability == null ? "No record" : pct(m.availability)}</span>
                     </span>
                   ))}
                 </div>
@@ -487,7 +501,7 @@ export default function Dashboard() {
                 <th scope="col">Warranty</th>
                 <th scope="col">Tickets</th>
                 <th scope="col">SLA</th>
-                <th scope="col">Uptime</th>
+                <th scope="col">Uptime (cleaning / avail.)</th>
                 <th scope="col">Analysis status</th>
               </tr>
             </thead>

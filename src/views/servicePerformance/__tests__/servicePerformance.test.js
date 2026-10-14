@@ -40,13 +40,15 @@ test("missing uptime months render as No record, not 0% or 100%", () => {
     <MonthlyUptimeList
       target={95}
       rows={[
-        { label: "2026-09", value: 97.25 },
-        { label: "2026-10", value: null },
+        { label: "2026-09", value: 97.25, availability: 88.04 },
+        { label: "2026-10", value: null, availability: null },
       ]}
     />,
   );
   expect(screen.getByText("97.3%")).toBeTruthy();
   expect(screen.getByText("No record")).toBeTruthy();
+  expect(screen.getByText("Avail. 88.0%")).toBeTruthy();
+  expect(screen.getByText("Avail. No record")).toBeTruthy();
   expect(screen.queryByText("0.0%")).toBeNull();
   expect(screen.queryByText("100.0%")).toBeNull();
 });

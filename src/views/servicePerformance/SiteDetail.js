@@ -80,7 +80,11 @@ export default function SiteDetail() {
   const target = config.data?.uptime_target ?? null;
   const summary = scoreSummary(r?.score);
   const query = writeFilters({ ...filters, site_id: "" }).toString();
-  const uptimeRows = months.map((m) => ({ label: m.label, value: (trends.data || []).find((p) => p.label === m.label)?.uptime?.cleaning_uptime ?? null }));
+  const uptimeRows = months.map((m) => {
+    const point = (trends.data || []).find((p) => p.label === m.label);
+    return { label: m.label, value: point?.uptime?.cleaning_uptime ?? null, availability: point?.uptime?.availability_uptime ?? null };
+  });
+  const uptimeHint = r?.uptime ? (r.uptime.aggregation === "unweighted" ? "Unweighted" : "Stored monthly percent") : "";
   const sla = r?.service_tickets?.sla || {};
   const siteSchedule = (r?.preventive_maintenance?.schedules || []).find((s) => s.site_id === siteId) || null;
   const consumption = r?.consumption || {};
@@ -137,14 +141,15 @@ export default function SiteDetail() {
 
       <CRow className="g-3 mb-3">
         {[
-          ["Uptime", r?.uptime?.cleaning_uptime == null ? "No record" : pct(r.uptime.cleaning_uptime), r?.uptime ? (r.uptime.aggregation === "unweighted" ? "Unweighted" : "Stored monthly percent") : ""],
+          ["Cleaning uptime", r?.uptime?.cleaning_uptime == null ? "No record" : pct(r.uptime.cleaning_uptime), uptimeHint],
+          ["Availability uptime", r?.uptime?.availability_uptime == null ? "No record" : pct(r.uptime.availability_uptime), uptimeHint],
           ["Ticket SLA", pct(sla.compliance_percent), sla.eligible ? `${sla.met} of ${sla.eligible} within target` : "No resolved ticket with a target"],
           siteSchedule
             ? ["PM schedule", `${siteSchedule.robots_done} of ${siteSchedule.robots_due} robots`, `${humanize(siteSchedule.status)} · ${day(siteSchedule.start_date)} to ${day(siteSchedule.end_date)}`]
             : ["PM completed", count(r?.preventive_maintenance?.completed), "No PM schedule in this period"],
           ["Parts consumed", consumption.expected ? `${consumption.matched} of ${consumption.expected}` : "—", consumption.expected ? "Replaced parts with a ledger record" : "No replaced part recorded"],
         ].map(([label, value, hint]) => (
-          <CCol md={3} sm={6} key={label}>
+          <CCol xl md={4} sm={6} key={label}>
             {report.loading ? <Panel loading lines={2} /> : report.error ? <Panel error={report.error} onRetry={report.reload} /> : <MetricTile label={label} value={value} hint={hint} />}
           </CCol>
         ))}
@@ -152,7 +157,7 @@ export default function SiteDetail() {
 
       <CRow className="g-3 mb-3">
         <CCol lg={6}>
-          <Panel title="Monthly uptime, last 6 months" actions={r?.uptime ? uptimeChip(r.uptime.aggregation) : null} loading={trends.loading || config.loading} error={trends.error} onRetry={trends.reload}>
+          <Panel title="Monthly cleaning and availability uptime, last 6 months" actions={r?.uptime ? uptimeChip(r.uptime.aggregation) : null} loading={trends.loading || config.loading} error={trends.error} onRetry={trends.reload}>
             <MonthlyUptimeList rows={uptimeRows} target={target} />
             <div className="sp-small sp-muted">{target != null ? `Tick marks the ${target}% target. ` : ""}A month without a site report shows “No record”, never 0% or 100%.</div>
           </Panel>

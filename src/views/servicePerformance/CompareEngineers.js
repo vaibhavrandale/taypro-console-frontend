@@ -233,6 +233,7 @@ export default function CompareEngineers() {
                         <td>{duration(report?.service_tickets?.average_resolution_days)}</td>
                         <td>
                           {report?.uptime?.cleaning_uptime == null ? <span className="sp-muted">No record</span> : pct(report.uptime.cleaning_uptime)} {report?.uptime?.cleaning_uptime != null && uptimeChip(report.uptime.aggregation)}
+                          <div className="sp-small sp-muted">Avail. {report?.uptime?.availability_uptime == null ? "No record" : pct(report.uptime.availability_uptime)}</div>
                         </td>
                         <td>{resolved && report?.consumption?.expected != null ? num(report.consumption.expected / resolved, 2) : "—"}</td>
                       </tr>
