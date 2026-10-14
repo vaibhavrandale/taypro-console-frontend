@@ -141,29 +141,83 @@ const Login = () => {
     "Design Admin": "design-admin",
   };
 
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await axios.post(
+  //       "/api/v1/auth/sign-in",
+  //       { email, password, source: "web" },
+  //       { withCredentials: true }, // ✅ required to send/receive cookies
+  //     );
+
+  //     const user = data.data.user;
+
+  //     // ✅ Redux only — no localStorage
+  //     dispatch({ type: "EMP_SIGNIN", payload: user });
+
+  //     adminroute = ROLE_ROUTE_MAP[user.role];
+  //     if (!adminroute) {
+  //       toast.error("Unknown role. Please contact support.");
+  //       return;
+  //     }
+
+  //     toast.success(`Welcome Back! ${user.username}`);
+  //     const serviceManager =
+  //       user.role === "Service Admin" &&
+  //       String(user.designation || "").trim().toLowerCase() === "service manager";
+  //     navigate(serviceManager ? "/service-performance" : `/${adminroute}/dashboard`);
+  //   } catch (error) {
+  //     toast.error(
+  //       error.response?.data?.message ||
+  //         error.response?.data?.error ||
+  //         "Login failed",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const { data } = await axios.post(
         "/api/v1/auth/sign-in",
         { email, password, source: "web" },
-        { withCredentials: true }, // ✅ required to send/receive cookies
+        { withCredentials: true },
       );
 
       const user = data.data.user;
 
-      // ✅ Redux only — no localStorage
+      // Redux only — no localStorage
       dispatch({ type: "EMP_SIGNIN", payload: user });
 
-      adminroute = ROLE_ROUTE_MAP[user.role];
+      const adminroute = ROLE_ROUTE_MAP[user.role];
+
       if (!adminroute) {
         toast.error("Unknown role. Please contact support.");
         return;
       }
 
+      const designation = String(user.designation || "")
+        .trim()
+        .toLowerCase();
+
+      const serviceManager =
+        user.role === "Service Admin" && designation === "service manager";
+
+      const serviceEngineer =
+        user.role === "Service Admin" && designation === "service engineer";
+
       toast.success(`Welcome Back! ${user.username}`);
-      navigate(`/${adminroute}/dashboard`);
+
+      if (serviceManager || serviceEngineer) {
+        navigate("/service-performance");
+      } else {
+        navigate(`/${adminroute}/dashboard`);
+      }
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
