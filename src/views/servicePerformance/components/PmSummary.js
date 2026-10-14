@@ -43,12 +43,12 @@ export default function PmSummary({ plan, records, scheduleLink }) {
           </div>
         </div>
         <CRow className="g-2">
-          <CCol xs={6} md={4}><MetricTile label="Scheduled" na={why} /></CCol>
-          <CCol xs={6} md={4}><MetricTile label="Completed" na={why} /></CCol>
-          <CCol xs={6} md={4}><MetricTile label="On time" na={why} /></CCol>
-          <CCol xs={6} md={4}><MetricTile label="Pending" na={why} /></CCol>
-          <CCol xs={6} md={4}><MetricTile label="Overdue" na={why} /></CCol>
-          <CCol xs={6} md={4}><MetricTile label="Avg completion time" na={why} /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="Scheduled" na={why} tone="blue" /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="Completed" na={why} tone="green" /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="On time" na={why} tone="cyan" /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="Pending" na={why} tone="amber" /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="Overdue" na={why} tone="red" /></CCol>
+          <CCol xs={6} md={4}><MetricTile label="Avg completion time" na={why} tone="violet" /></CCol>
         </CRow>
         {records != null && <div className="sp-small sp-muted mt-2">{count(records)} PM checklist records were saved in this period.</div>}
       </>
@@ -68,12 +68,12 @@ export default function PmSummary({ plan, records, scheduleLink }) {
         </div>
       </div>
       <CRow className="g-2">
-        <CCol xs={6} md={4}><MetricTile label="Scheduled" value={count(plan.scheduled)} hint={`${count(plan.robots_due)} robots due`} /></CCol>
-        <CCol xs={6} md={4}><MetricTile label="Completed" value={count(plan.completed)} hint={`${count(plan.completed_late)} of them late`} /></CCol>
-        <CCol xs={6} md={4}><MetricTile label="On time" value={count(plan.on_time)} hint={plan.on_time_rate == null ? "No schedule has ended yet" : `${pct(plan.on_time_rate)} of ended or completed`} /></CCol>
-        <CCol xs={6} md={4}><MetricTile label="Pending" value={count(plan.pending + plan.upcoming)} hint={plan.upcoming ? `${plan.upcoming} not started yet` : "Window open, not all robots done"} /></CCol>
-        <CCol xs={6} md={4}><MetricTile label="Overdue" value={count(plan.overdue)} hint="End date passed, robots still missing PM" /></CCol>
-        <CCol xs={6} md={4}><MetricTile label="Avg completion time" value={duration(plan.avg_completion_days)} hint="Start date to last robot's PM" na={plan.avg_completion_days == null ? "No schedule completed yet" : undefined} /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="Scheduled" value={count(plan.scheduled)} hint={`${count(plan.robots_due)} robots due`} tone="blue" /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="Completed" value={count(plan.completed)} hint={`${count(plan.completed_late)} of them late`} tone="green" /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="On time" value={count(plan.on_time)} hint={plan.on_time_rate == null ? "No schedule has ended yet" : `${pct(plan.on_time_rate)} of ended or completed`} tone="cyan" /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="Pending" value={count(plan.pending + plan.upcoming)} hint={plan.upcoming ? `${plan.upcoming} not started yet` : "Window open, not all robots done"} tone="amber" /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="Overdue" value={count(plan.overdue)} hint="End date passed, robots still missing PM" tone="red" /></CCol>
+        <CCol xs={6} md={4}><MetricTile label="Avg completion time" value={duration(plan.avg_completion_days)} hint="Start date to last robot's PM" na={plan.avg_completion_days == null ? "No schedule completed yet" : undefined} tone="violet" /></CCol>
       </CRow>
       {plan.without_robots > 0 && <div className="sp-notice mt-2">{plan.without_robots} scheduled site(s) have no robots registered and are not counted.</div>}
       <div className="sp-small sp-muted mt-2">

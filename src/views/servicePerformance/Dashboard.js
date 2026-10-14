@@ -77,16 +77,16 @@ function TicketCard({ title, kind, summary, config, targets, loading, error, onR
     <Panel title={title} subtitle={kind === "client" ? "Client ticket collection" : "Service ticket collection"} loading={loading} error={error} onRetry={onRetry} lines={6}>
       <CRow className="g-2 mb-3">
         <CCol xs={6} md={3}>
-          <MetricTile label="Assigned" na="No assignee on tickets" />
+          <MetricTile label="Assigned" na="No assignee on tickets" tone="blue" />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Raised at your sites" value={count(summary?.created_in_period)} hint="Counted by site_id" />
+          <MetricTile label="Raised at your sites" value={count(summary?.created_in_period)} hint="Counted by site_id" tone="sky" />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Resolved" value={count(summary?.resolved_in_period)} />
+          <MetricTile label="Resolved" value={count(summary?.resolved_in_period)} tone="green" />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Open / in progress" value={count(summary?.current_open)} />
+          <MetricTile label="Open / in progress" value={count(summary?.current_open)} tone="amber" />
         </CCol>
         <CCol xs={6} md={3}>
           <MetricTile
@@ -94,13 +94,14 @@ function TicketCard({ title, kind, summary, config, targets, loading, error, onR
             value={count(summary?.overdue_open)}
             na={summary?.overdue_open == null ? (clientSlaOff ? "Client SLA days not set" : "Not calculable") : undefined}
             hint="Average age not stored"
+            tone="red"
           />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Avg resolution" value={duration(summary?.average_resolution_days)} />
+          <MetricTile label="Avg resolution" value={duration(summary?.average_resolution_days)} tone="violet" />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Median" value={duration(summary?.median_resolution_days)} />
+          <MetricTile label="Median" value={duration(summary?.median_resolution_days)} tone="violet" />
         </CCol>
         <CCol xs={6} md={3}>
           <MetricTile
@@ -108,10 +109,11 @@ function TicketCard({ title, kind, summary, config, targets, loading, error, onR
             value={pct(sla.compliance_percent)}
             hint={sla.eligible ? `${sla.met} of ${sla.eligible}` : undefined}
             na={clientSlaOff ? "Client SLA days not set" : !sla.eligible ? "No ticket with a target" : undefined}
+            tone="cyan"
           />
         </CCol>
         <CCol xs={6} md={3}>
-          <MetricTile label="Reopened" na="No reopen history" />
+          <MetricTile label="Reopened" na="No reopen history" tone="red" />
         </CCol>
       </CRow>
       <h3 className="h6">Avg resolution time by priority</h3>
@@ -300,7 +302,7 @@ export default function Dashboard() {
             <CRow className="g-2">
               {categories.map((c) => (
                 <CCol md={6} xl={4} key={c.key}>
-                  <div className="sp-tile">
+                  <div className={`sp-tile sp-tile--${c.state === "eligible" ? "green" : c.state === "partial" ? "amber" : c.state === "informational" ? "blue" : "slate"}`}>
                     <div className="d-flex justify-content-between align-items-start gap-2">
                       <div className="fw-semibold">{c.name}</div>
                       <StatusChip status={c.state} />
@@ -339,7 +341,7 @@ export default function Dashboard() {
         >
           <CRow className="g-3 align-items-center">
             <CCol md={3}>
-              <div className="display-6 fw-semibold">{report?.uptime?.cleaning_uptime == null ? "No record" : pct(report.uptime.cleaning_uptime)}</div>
+              <div className={`display-6 fw-semibold sp-uptime ${report?.uptime?.cleaning_uptime == null ? "" : uptimeTarget != null && report.uptime.cleaning_uptime < uptimeTarget ? "sp-uptime--low" : "sp-uptime--ok"}`}>{report?.uptime?.cleaning_uptime == null ? "No record" : pct(report.uptime.cleaning_uptime)}</div>
               <div className="sp-small sp-muted">
                 {report?.uptime?.aggregation === "robot_weighted_mean_of_stored_monthly_percentages" ? "Robot-weighted mean of stored site percents" : "Unweighted mean"} across {new Set(presentSites).size} of {uptimeSiteCount} sites with a valid report
                 {uptimeTarget != null ? `, target ${uptimeTarget}%` : ""}. Not a fleet-wide robot-day uptime.
@@ -404,13 +406,13 @@ export default function Dashboard() {
                   <div className="sp-small sp-muted mb-2">“Transferred or closed” is the ERP status, not proof the part is usable on site.</div>
                   <CRow className="g-2 mb-2">
                     <CCol md={4}>
-                      <MetricTile label="Awaiting dispatch" value={count(m.awaiting_dispatch)} />
+                      <MetricTile label="Awaiting dispatch" value={count(m.awaiting_dispatch)} tone="amber" />
                     </CCol>
                     <CCol md={4}>
-                      <MetricTile label={`Delayed past ${m.threshold_days ?? "—"} d`} value={count(m.delayed_beyond_threshold)} na={m.delayed_beyond_threshold == null ? "No threshold set" : undefined} />
+                      <MetricTile label={`Delayed past ${m.threshold_days ?? "—"} d`} value={count(m.delayed_beyond_threshold)} na={m.delayed_beyond_threshold == null ? "No threshold set" : undefined} tone="red" />
                     </CCol>
                     <CCol md={4}>
-                      <MetricTile label="Avg processing days" na={`0 of ${raised} have dates`} hint={`Open requests average ${duration(m.average_open_age_days)} old`} />
+                      <MetricTile label="Avg processing days" na={`0 of ${raised} have dates`} hint={`Open requests average ${duration(m.average_open_age_days)} old`} tone="violet" />
                     </CCol>
                   </CRow>
                   <div className="sp-notice">{raised} request{raised === 1 ? "" : "s"} lack a transfer timestamp: ERP does not store one.</div>
