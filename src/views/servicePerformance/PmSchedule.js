@@ -63,6 +63,96 @@ function SitePicker({ sites, selected, onChange, disabled }) {
   );
 }
 
+/** Unique users from the recipients response. An explicit pick wins over the server's default selection. */
+export function recipientState(data, picks) {
+  const users = new Map();
+  for (const u of [...(data?.sites || []).flatMap((s) => s.users), ...(data?.internal || [])]) users.set(u._id, u);
+  const checked = (u) => picks[u._id] ?? u.default_selected;
+  const chosen = [...users.values()].filter(checked);
+  return { checked, chosen, ids: chosen.map((u) => u._id), emails: chosen.filter((u) => u.email).length };
+}
+
+function RecipientGroup({ title, users, state, setPicks, prefix, emptyText }) {
+  const all = users.length > 0 && users.every(state.checked);
+  return (
+    <div className="mb-2">
+      <div className="d-flex justify-content-between align-items-center">
+        <span className="fw-semibold sp-small">{title}</span>
+        {users.length > 0 && (
+          <CButton size="sm" color="link" className="p-0" onClick={() => setPicks((p) => ({ ...p, ...Object.fromEntries(users.map((u) => [u._id, !all])) }))}>
+            {all ? "Clear" : "Select all"}
+          </CButton>
+        )}
+      </div>
+      {users.length ? (
+        users.map((u) => (
+          <CFormCheck
+            key={u._id}
+            id={`sp-pm-${prefix}-${u._id}`}
+            checked={state.checked(u)}
+            onChange={() => setPicks((p) => ({ ...p, [u._id]: !state.checked(u) }))}
+            label={
+              <span>
+                {u.username}
+                <span className="sp-muted sp-small">
+                  {" "}· {u.designation ? `${u.role}, ${u.designation}` : u.role} · {u.email || <span className="text-warning">no email, app notification only</span>}
+                </span>
+              </span>
+            }
+          />
+        ))
+      ) : (
+        <div className="sp-small sp-muted">{emptyText}</div>
+      )}
+    </div>
+  );
+}
+
+export function RecipientPicker({ recipients, state, setPicks, disabled }) {
+  if (recipients.loading) return <div className="sp-small sp-muted mt-2">Loading users linked to the selected sites…</div>;
+  if (recipients.error) {
+    return (
+      <div className="sp-notice sp-notice--red mt-2" role="alert">
+        <strong>Recipients could not be loaded:</strong> {errorText(recipients.error)}{" "}
+        <CButton size="sm" color="link" className="p-0" onClick={recipients.reload}>Retry</CButton>
+      </div>
+    );
+  }
+  const data = recipients.data;
+  if (!data) return null;
+  const withoutEmail = state.chosen.length - state.emails;
+  return (
+    <fieldset disabled={disabled} className="mt-2">
+      <legend className="fs-6 mb-1">Recipients ({state.chosen.length} selected)</legend>
+      <div className="border rounded p-2" style={{ maxHeight: 320, overflowY: "auto", borderColor: "var(--sp-border)" }}>
+        {data.sites.map((s) => (
+          <RecipientGroup
+            key={s.site_id}
+            prefix={s.site_id}
+            title={`${s.site_id} · ${s.users.length} user${s.users.length === 1 ? "" : "s"} linked`}
+            users={s.users}
+            state={state}
+            setPicks={setPicks}
+            emptyText="No active user is linked to this site."
+          />
+        ))}
+        <RecipientGroup
+          prefix="internal"
+          title={`Internal team · ${data.internal.length} user${data.internal.length === 1 ? "" : "s"} (all selected sites)`}
+          users={data.internal}
+          state={state}
+          setPicks={setPicks}
+          emptyText="No active Service Admin, Project Admin or Master Admin user."
+        />
+      </div>
+      <div className="sp-small mt-1" aria-live="polite">
+        <strong>{state.emails}</strong> {state.emails === 1 ? "person receives" : "people each receive"} their own email (only them in To, BCC {data.bcc}).
+        {withoutEmail > 0 && ` ${withoutEmail} selected user${withoutEmail === 1 ? " has no email and gets" : "s have no email and get"} the app notification only.`}
+      </div>
+    </fieldset>
+  );
+}
+
 function ScheduleForm({ onCreated }) {
   const sites = useApi((signal) => lookupApi.sites(signal), "sites");
   const quarters = useMemo(() => quarterOptions(), []);
@@ -75,7 +165,20 @@ function ScheduleForm({ onCreated }) {
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  const invalid = !selected.length ? "Select at least one site." : !start || !end ? "Start and end date are required." : end < start ? `End date ${end} is before start date ${start}.` : "";
+  const [picks, setPicks] = useState({});
+  const recipients = useApi((signal) => performanceApi.pmScheduleRecipients(selected, signal), JSON.stringify(selected), { delay: 300, enabled: selected.length > 0 });
+  const people = recipientState(recipients.data, picks);
+  const invalid = !selected.length
+    ? "Select at least one site."
+    : !start || !end
+      ? "Start and end date are required."
+      : end < start
+        ? `End date ${end} is before start date ${start}.`
+        : recipients.loading
+          ? "Loading recipients."
+          : recipients.error
+            ? "Recipients could not be loaded."
+            : "";
 
   const pickQuarter = (value) => {
     setQuarter(value);
@@ -90,9 +193,10 @@ function ScheduleForm({ onCreated }) {
     setSaving(true);
     setError("");
     try {
-      const data = await performanceApi.createPmSchedules({ site_ids: selected, start_date: start, end_date: end, notes });
+      const data = await performanceApi.createPmSchedules({ site_ids: selected, start_date: start, end_date: end, notes, recipient_ids: people.ids });
       setResult(data);
       setSelected([]);
+      setPicks({});
       setNotes("");
       toast.success(`Scheduled PM for ${data.created} site(s)`);
       onCreated();
@@ -105,8 +209,9 @@ function ScheduleForm({ onCreated }) {
   };
 
   return (
-    <Panel title="Schedule preventive maintenance" subtitle="One schedule per site. Technicians of each site and all Service, Project and Master Admins are notified by app and email." loading={sites.loading} error={sites.error} onRetry={sites.reload}>
+    <Panel title="Schedule preventive maintenance" subtitle="One schedule per site. Choose who is notified: users linked to each site and the internal team. Each person gets their own email." loading={sites.loading} error={sites.error} onRetry={sites.reload}>
       <SitePicker sites={sites.data || []} selected={selected} onChange={setSelected} disabled={saving} />
+      {selected.length > 0 && <RecipientPicker recipients={recipients} state={people} setPicks={setPicks} disabled={saving} />}
       <CRow className="g-2 mt-1">
         <CCol md={12}>
           <CFormLabel htmlFor="sp-pm-quarter">Quarter</CFormLabel>
@@ -148,14 +253,25 @@ function ScheduleForm({ onCreated }) {
             Created {result.created} schedule(s) for {day(result.window.start_date)} to {day(result.window.end_date)}
           </div>
           <div className="sp-small mb-1">
-            Internal team: {result.internal.users} user(s) notified ·{" "}
-            {result.internal.email.sent ? <StatusChip status="ready" label="Email sent" /> : <StatusChip status="calculation_error" label={`Email not sent: ${result.internal.email.error}`} />}
+            {result.recipients.total} recipient(s) notified ·{" "}
+            {result.recipients.total && !result.recipients.failed.length ? (
+              <StatusChip status="ready" label={`${result.recipients.emails_sent} individual email(s) sent`} />
+            ) : (
+              <StatusChip status={result.recipients.total ? "calculation_error" : "no_record"} label={`${result.recipients.emails_sent} of ${result.recipients.total} email(s) sent`} />
+            )}{" "}
+            · BCC {result.bcc}
           </div>
+          {result.recipients.failed.length > 0 && (
+            <ul className="sp-small text-danger mb-1 ps-3">
+              {result.recipients.failed.map((f) => (
+                <li key={`${f.username}-${f.email}`}>Not sent to {f.username}: {f.error}</li>
+              ))}
+            </ul>
+          )}
           <ul className="sp-small mb-0 ps-3">
             {result.sites.map((s) => (
               <li key={s.site_id}>
-                {s.site_id}: {s.robots_due} robots · {s.technicians} technician(s) notified ·{" "}
-                {s.technician_email.sent ? "email sent" : <span className="text-danger">email not sent: {s.technician_email.error}</span>}
+                {s.site_id}: {s.robots_due} robots · {s.recipients} recipient(s) · {s.emails_sent} email(s) sent
               </li>
             ))}
           </ul>
@@ -170,7 +286,7 @@ function ScheduleForm({ onCreated }) {
         confirmColor="success"
         confirmLabel="Schedule and notify"
         title={`Schedule PM for ${selected.length} site(s)?`}
-        message={`${start} to ${end}. Each site's technicians and all Service Admin, Project Admin and Master Admin users get an app notification and an email.`}
+        message={people.chosen.length ? `${start} to ${end}. ${people.chosen.length} selected user(s) get an app notification and ${people.emails} get their own email (BCC ${recipients.data?.bcc}).` : `${start} to ${end}. No recipient is selected, so no notification or email is sent.`}
       />
     </Panel>
   );
@@ -297,8 +413,11 @@ export default function PmSchedule() {
                         <td className="sp-small">
                           {row.notified?.at ? (
                             <>
-                              {row.notified.technician_count} technician(s), {row.notified.internal_count} internal
-                              <div className={row.notified.email_sent ? "sp-muted" : "text-danger"}>{row.notified.email_sent ? "Email sent" : `Email not sent: ${row.notified.email_error}`}</div>
+                              {row.notified.recipient_count ?? row.notified.technician_count + row.notified.internal_count} recipient(s)
+                              <div className={row.notified.email_sent ? "sp-muted" : "text-danger"}>
+                                {row.notified.emails_sent != null ? `${row.notified.emails_sent} email(s) sent` : row.notified.email_sent ? "Email sent" : "Email not sent"}
+                                {!row.notified.email_sent && row.notified.email_error ? `: ${row.notified.email_error}` : ""}
+                              </div>
                             </>
                           ) : (
                             <span className="sp-muted">Not notified</span>

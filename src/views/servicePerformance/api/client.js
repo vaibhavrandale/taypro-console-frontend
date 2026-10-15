@@ -68,6 +68,7 @@ export const performanceApi = {
   recalculate: (body) => send("post", "/recalculate", body),
   /** @returns {Promise<{summary:Object, total:number, page:number, limit:number, data:Object[]}>} */
   pmSchedules: (params, signal) => get("/pm-schedules", params, signal),
+  pmScheduleRecipients: (siteIds, signal) => get("/pm-schedules/recipients", { site_ids: siteIds.join(",") }, signal),
   createPmSchedules: (body) => send("post", "/pm-schedules", body),
   deletePmSchedule: (id) => send("delete", `/pm-schedules/${id}`),
 };

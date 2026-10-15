@@ -159,3 +159,28 @@ test("delay reason form is locked when the record id is unavailable", () => {
   expect(screen.getByRole("button", { name: "Save" }).disabled).toBe(true);
   expect(screen.getByText("No record id from the API yet.")).toBeTruthy();
 });
+
+test("PM recipient picker counts each person once and follows custom picks", () => {
+  const { RecipientPicker, recipientState } = require("../PmSchedule");
+  const eng = { _id: "u2", username: "eng", email: "eng@x.in", role: "Service Admin", default_selected: false };
+  const data = {
+    bcc: "software.development@taypro.in",
+    sites: [
+      { site_id: "S1", users: [{ _id: "u1", username: "tech", email: "tech@x.in", role: "Site Technician", default_selected: true }, eng] },
+      { site_id: "S2", users: [eng] },
+    ],
+    internal: [{ _id: "u3", username: "boss", email: null, role: "Master Admin", default_selected: true }],
+  };
+  function Harness() {
+    const [picks, setPicks] = React.useState({});
+    return <RecipientPicker recipients={{ data, loading: false, error: null }} state={recipientState(data, picks)} setPicks={setPicks} />;
+  }
+  render(<Harness />);
+  expect(screen.getByText("S1 · 2 users linked")).toBeTruthy();
+  expect(screen.getByText("Recipients (2 selected)")).toBeTruthy();
+  expect(screen.getByText(/person receives their own email/).textContent).toMatch(/^1 person receives.*BCC software\.development@taypro\.in\)\. 1 selected user has no email and gets/);
+  fireEvent.click(screen.getAllByLabelText(/^eng/)[0]);
+  expect(screen.getByText("Recipients (3 selected)")).toBeTruthy();
+  expect(screen.getAllByLabelText(/^eng/).every((box) => box.checked)).toBe(true);
+  expect(recipientState(data, { u2: true, u1: false }).ids).toEqual(["u2", "u3"]);
+});
