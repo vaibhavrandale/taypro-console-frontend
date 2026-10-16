@@ -349,6 +349,15 @@ const QuizLeaderboard = React.lazy(
 const QuizEvaluate = React.lazy(
   () => import("./views/master-admin/quizzes/QuizEvaluate"),
 );
+const SurveyManagement = React.lazy(
+  () => import("./views/master-admin/surveys/SurveyManagement"),
+);
+const SurveyBuilder = React.lazy(
+  () => import("./views/master-admin/surveys/SurveyBuilder"),
+);
+const SurveyResponses = React.lazy(
+  () => import("./views/master-admin/surveys/SurveyResponses"),
+);
 
 const SitewaiseLog = React.lazy(
   () => import("./views/master-admin/all-site-cleaninglog/SitewaiseLog"),
@@ -1254,6 +1263,42 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <QuizEvaluate />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/surveys",
+    name: "Surveys",
+    element: (
+      <MasterAdminRoute>
+        <SurveyManagement />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/surveys/create",
+    name: "Create Survey",
+    element: (
+      <MasterAdminRoute>
+        <SurveyBuilder />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/surveys/:id/edit",
+    name: "Edit Survey",
+    element: (
+      <MasterAdminRoute>
+        <SurveyBuilder />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/surveys/:id/responses",
+    name: "Survey Responses",
+    element: (
+      <MasterAdminRoute>
+        <SurveyResponses />
       </MasterAdminRoute>
     ),
   },
@@ -4150,6 +4195,42 @@ const routes = [
     ),
   },
   {
+    path: "/project-admin/surveys",
+    name: "Surveys",
+    element: (
+      <ProjectAdminRoute>
+        <SurveyManagement />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/surveys/create",
+    name: "Create Survey",
+    element: (
+      <ProjectAdminRoute>
+        <SurveyBuilder />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/surveys/:id/edit",
+    name: "Edit Survey",
+    element: (
+      <ProjectAdminRoute>
+        <SurveyBuilder />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
+    path: "/project-admin/surveys/:id/responses",
+    name: "Survey Responses",
+    element: (
+      <ProjectAdminRoute>
+        <SurveyResponses />
+      </ProjectAdminRoute>
+    ),
+  },
+  {
     path: "/project-admin/all-site-cleaning-log/sitewise-cleaning-log/:site_id/:date",
     name: "Project Admin Sitewise Cleaning Log",
     element: (
@@ -6218,6 +6299,42 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <QuizEvaluate />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/surveys",
+    name: "Surveys",
+    element: (
+      <ServiceAdminRoute>
+        <SurveyManagement />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/surveys/create",
+    name: "Create Survey",
+    element: (
+      <ServiceAdminRoute>
+        <SurveyBuilder />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/surveys/:id/edit",
+    name: "Edit Survey",
+    element: (
+      <ServiceAdminRoute>
+        <SurveyBuilder />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/surveys/:id/responses",
+    name: "Survey Responses",
+    element: (
+      <ServiceAdminRoute>
+        <SurveyResponses />
       </ServiceAdminRoute>
     ),
   },

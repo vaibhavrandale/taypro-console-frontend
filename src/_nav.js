@@ -147,6 +147,11 @@ const _nav = [
             name: "Quizzes",
             to: "/master-admin/quizzes",
           },
+          {
+            component: CNavItem,
+            name: "Surveys",
+            to: "/master-admin/surveys",
+          },
 
           {
             component: CNavItem,
@@ -1337,6 +1342,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Surveys",
+            to: "/project-admin/surveys",
+          },
+          {
+            component: CNavItem,
             name: "Timers",
             to: "/project-admin/timers",
           },
@@ -2170,6 +2180,11 @@ const _nav = [
             component: CNavItem,
             name: "Quizzes",
             to: "/service-admin/quizzes",
+          },
+          {
+            component: CNavItem,
+            name: "Surveys",
+            to: "/service-admin/surveys",
           },
           {
             component: CNavItem,
