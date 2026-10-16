@@ -35,6 +35,7 @@ const QuizInstructions = React.lazy(
 );
 const QuizAttempt = React.lazy(() => import("./views/quiz-portal/QuizAttempt"));
 const QuizResult = React.lazy(() => import("./views/quiz-portal/QuizResult"));
+const SurveyPublic = React.lazy(() => import("./views/survey/SurveyPublic"));
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes("theme");
@@ -107,6 +108,8 @@ const App = () => {
             />
             <Route path="result/:attemptId" element={<QuizResult />} />
           </Route>
+          <Route path="/survey" element={<SurveyPublic />} />
+          <Route path="/survey/:slug" element={<SurveyPublic />} />
 
           <Route
             exact
