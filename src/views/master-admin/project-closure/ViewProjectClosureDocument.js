@@ -8,6 +8,7 @@ import html2pdf from "html2pdf.js";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Tayprofordarkbg from "../../../assets/brand/logofordarkbg.png";
 import Tayproforwhitebg from "../../../assets/brand/logoforwhitebg.png";
+import SecureFileLink from "../../../components/SecureFileLink";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -480,12 +481,12 @@ const ViewProjectClosureDocument = () => {
               </li>
               <li>
                 <strong>Commissioning&nbsp;&nbsp;Documents&nbsp;&nbsp;:</strong>{" "}
-                <Link
-                  target="blank"
-                  to={`${serviceItemData.commissioning_document}`}
+                <SecureFileLink
+                  url={serviceItemData.commissioning_document}
+                  signedUrlEndpoint={`/api/v1/projectdocs/${id}/commissioning-document/signed-url`}
                 >
                   Click&nbsp;&nbsp;Here
-                </Link>
+                </SecureFileLink>
               </li>
             </ul>
             <div className="section-title">

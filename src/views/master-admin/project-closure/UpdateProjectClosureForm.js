@@ -25,6 +25,9 @@ import {
 import CIcon from "@coreui/icons-react";
 import { cilCloudUpload, cilMinus, cilPlus } from "@coreui/icons";
 import "../service-tickets/servicetickts.css";
+import SecureFileLink, {
+  isAuthenticatedFileUrl,
+} from "../../../components/SecureFileLink";
 
 // Reducer function
 const reducer = (state, action) => {
@@ -943,13 +946,31 @@ const UpdateProjectClosureForm = () => {
                     </div>
                   ) : image || serviceItemData.commissioning_document ? (
                     <div className="d-flex align-items-center">
-                      <img
-                        src={image || serviceItemData.commissioning_document}
-                        alt="Uploaded Item"
-                        width="100"
-                        height="100"
-                        style={{ objectFit: "cover", borderRadius: "5px" }}
-                      />
+                      {isAuthenticatedFileUrl(
+                        image || serviceItemData.commissioning_document,
+                      ) ? (
+                        // Protected file: no direct preview. Open the saved
+                        // one via a short-lived signed URL.
+                        <SecureFileLink
+                          url={image || serviceItemData.commissioning_document}
+                          signedUrlEndpoint={
+                            !image ||
+                            image === serviceItemData.commissioning_document
+                              ? `/api/v1/projectdocs/${id}/commissioning-document/signed-url`
+                              : null
+                          }
+                        >
+                          View document
+                        </SecureFileLink>
+                      ) : (
+                        <img
+                          src={image || serviceItemData.commissioning_document}
+                          alt="Uploaded Item"
+                          width="100"
+                          height="100"
+                          style={{ objectFit: "cover", borderRadius: "5px" }}
+                        />
+                      )}
                     </div>
                   ) : null}
                 </CCol>

@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useState, useEffect, useReducer } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect, useReducer, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -20,6 +20,7 @@ import { GrAddCircle } from "react-icons/gr";
 import { MdDeleteOutline } from "react-icons/md";
 import CIcon from "@coreui/icons-react";
 import { cilCloudDownload, cilPaperclip } from "@coreui/icons";
+import SecureFileLink from "../../components/SecureFileLink";
 // import { formatDate } from "date-fns";
 
 const reducer = (state, action) => {
@@ -58,6 +59,8 @@ const UpdateExpense = () => {
     });
 
   const { id } = useParams(); // expense claim ID from URL
+  // Files as saved on the record, by expense line _id (for signed-URL access)
+  const savedFiles = useRef({});
   // const authtoken = useSelector((state) => state.authtoken);
   const navigate = useNavigate();
   const userInfo = useSelector((state) => state.userInfo);
@@ -122,6 +125,9 @@ const UpdateExpense = () => {
         setFormData(data.data);
 
         setExpenseItems(data.data.expenses || []);
+        savedFiles.current = Object.fromEntries(
+          (data.data.expenses || []).map((e) => [e._id, e.file]),
+        );
 
         if (
           userInfo.role === "Site Technician" &&
@@ -555,29 +561,31 @@ const UpdateExpense = () => {
                                 <span className="d-flex align-items-center  justify-content-center">
                                   {item.file ? (
                                     item.file.endsWith(".pdf") ? (
-                                      <Link
-                                        to={`${item.file}?fl_attachment=true`}
+                                      <SecureFileLink
+                                        url={item.file}
+                                        legacyHref={`${item.file}?fl_attachment=true`}
+                                        signedUrlEndpoint={item._id && savedFiles.current[item._id] === item.file ? `/api/v1/expenseclaims/${id}/attachments/${item._id}/signed-url` : null}
+                                        download
                                         className="d-flex align-items-center justify-content-center gap-2 white-link"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
                                       >
                                         <CIcon
                                           icon={cilCloudDownload}
                                           style={{ color: "white" }}
                                         />
-                                      </Link>
+                                      </SecureFileLink>
                                     ) : (
-                                      <Link
-                                        to={`${item.file}?fl_attachment=true`}
+                                      <SecureFileLink
+                                        url={item.file}
+                                        legacyHref={`${item.file}?fl_attachment=true`}
+                                        signedUrlEndpoint={item._id && savedFiles.current[item._id] === item.file ? `/api/v1/expenseclaims/${id}/attachments/${item._id}/signed-url` : null}
+                                        download
                                         className="d-flex align-items-center justify-content-center gap-2 white-link"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
                                       >
                                         <CIcon
                                           icon={cilPaperclip}
                                           style={{ color: "white" }}
                                         />
-                                      </Link>
+                                      </SecureFileLink>
                                     )
                                   ) : (
                                     <span className="text-muted">No File</span>

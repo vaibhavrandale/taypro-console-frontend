@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -22,6 +22,7 @@ import {
   CModalFooter,
 } from "@coreui/react";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import SecureFileLink from "../../components/SecureFileLink";
 import LastActivity from "../../components/LastActivity";
 import CIcon from "@coreui/icons-react";
 import { cilCloudDownload, cilPaperclip, cilX } from "@coreui/icons";
@@ -286,29 +287,31 @@ const ViewExpenseClaim = () => {
                   <CTableDataCell>
                     {item.file ? (
                       item.file.endsWith(".pdf") ? (
-                        <Link
-                          to={`${item.file}?fl_attachment=true`}
+                        <SecureFileLink
+                          url={item.file}
+                          legacyHref={`${item.file}?fl_attachment=true`}
+                          signedUrlEndpoint={item._id ? `/api/v1/expenseclaims/${id}/attachments/${item._id}/signed-url` : null}
+                          download
                           className="d-flex align-items-center justify-content-center gap-2 white-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
                         >
                           <CIcon
                             icon={cilCloudDownload}
                             style={{ color: "white" }}
                           />
-                        </Link>
+                        </SecureFileLink>
                       ) : (
-                        <Link
-                          to={`${item.file}?fl_attachment=true`}
+                        <SecureFileLink
+                          url={item.file}
+                          legacyHref={`${item.file}?fl_attachment=true`}
+                          signedUrlEndpoint={item._id ? `/api/v1/expenseclaims/${id}/attachments/${item._id}/signed-url` : null}
+                          download
                           className="d-flex align-items-center justify-content-center gap-2 white-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
                         >
                           <CIcon
                             icon={cilPaperclip}
                             style={{ color: "white" }}
                           />
-                        </Link>
+                        </SecureFileLink>
                       )
                     ) : (
                       <span className="text-muted">No File</span>
