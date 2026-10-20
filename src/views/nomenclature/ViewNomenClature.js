@@ -32,7 +32,7 @@ import { useSelector } from "react-redux";
 import { MountingDiagram, MountingTopView } from "./MMSDiagram";
 import { Paperclip } from "lucide-react";
 import OfferBadge from "../../components/FireOfferBadge";
-import { isSafeDeliveryUrl } from "../../utils/cloudinaryUrls";
+import { isPdfPath, isSafeDeliveryUrl } from "../../utils/cloudinaryUrls";
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
@@ -1737,10 +1737,11 @@ const ViewNomenClature = () => {
                 >
                   Invalid file link
                 </div>
-              ) : selectedReferenceFile.file.toLowerCase().includes(".pdf") ? (
+              ) : isPdfPath(selectedReferenceFile.file) ? (
                 <iframe
                   src={selectedReferenceFile.file}
                   title={selectedReferenceFile.name}
+                  referrerPolicy="no-referrer"
                   width="100%"
                   height="700px"
                   style={{

@@ -1,4 +1,5 @@
 import {
+  isPdfPath,
   isAuthenticatedDeliveryUrl,
   isSafeDeliveryUrl,
   isSafeSignedUrl,
@@ -50,4 +51,15 @@ test("signed URLs: only https api.cloudinary.com/v1_1/<our cloud>/<rt>/download"
     `https://api.cloudinary.com/v1_1/${C}/raw/upload`,
     ok[0],
   ].forEach((u) => expect(isSafeSignedUrl(u, C)).toBe(false));
+});
+
+test("isPdfPath: path must end in .pdf; query/hash tricks are not PDFs", () => {
+  expect(isPdfPath(`https://res.cloudinary.com/${C}/raw/upload/v1/nomenclature/a.PDF`)).toBe(true);
+  [
+    `https://res.cloudinary.com/${C}/raw/upload/v1/nomenclature/x.html?.pdf`,
+    `https://res.cloudinary.com/${C}/raw/upload/v1/nomenclature/x.html#.pdf`,
+    `https://res.cloudinary.com/${C}/raw/upload/v1/nomenclature/x.pdf.html`,
+    "not a url",
+    null,
+  ].forEach((u) => expect(isPdfPath(u)).toBe(false));
 });
