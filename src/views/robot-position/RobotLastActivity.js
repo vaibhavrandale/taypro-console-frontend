@@ -9,6 +9,7 @@ import {
   CCard,
   CCardBody,
 } from "@coreui/react";
+import { activityToText } from "../../utils/activityText";
 
 const RobotLastActivity = ({ last_activity }) => {
   if (!last_activity || last_activity.length === 0) {
@@ -52,9 +53,10 @@ const RobotLastActivity = ({ last_activity }) => {
                     </CTableDataCell>
                     <CTableDataCell>{activity.topic}</CTableDataCell>
                     <CTableDataCell>
-                      <span
-                        dangerouslySetInnerHTML={{ __html: activity.details }}
-                      ></span>
+                      <span>
+                        {/* Security (#426 follow-up): plain text, never HTML. */}
+                        {activityToText(activity.details)}
+                      </span>
                     </CTableDataCell>
                     <CTableDataCell>
                       {new Date(activity.timestamp).toLocaleString("en-GB", {

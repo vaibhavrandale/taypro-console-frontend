@@ -25,6 +25,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 import PaginateInput from "../../../components/PaginateInput";
 import toast from "react-hot-toast";
+import { activityToText } from "../../../utils/activityText";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -298,11 +299,10 @@ const Notifications = () => {
                 <CTableDataCell>{notification.action}</CTableDataCell>
                 <CTableDataCell>{notification.module}</CTableDataCell>
                 <CTableDataCell>
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: notification.details,
-                    }}
-                  ></span>
+                  <span>
+                    {/* Security (#426 follow-up): plain text, never HTML. */}
+                    {activityToText(notification.details)}
+                  </span>
                 </CTableDataCell>
                 <CTableDataCell>
                   {notification.performed_by.role}

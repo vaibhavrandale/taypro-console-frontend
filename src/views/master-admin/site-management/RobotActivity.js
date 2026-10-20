@@ -20,7 +20,7 @@ import {
   CFormLabel,
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-
+import { activityToText } from "../../../utils/activityText";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -278,11 +278,10 @@ const RobotActivity = () => {
                   </div>
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "300px" }}>
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: item.last_activity?.details,
-                    }}
-                  ></span>
+                  <span>
+                    {/* Security (#426 follow-up): plain text, never HTML. */}
+                    {activityToText(item.last_activity?.details)}
+                  </span>
                 </CTableDataCell>
                 <CTableDataCell style={{ minWidth: "200px" }}>
                   {new Date(item.createdAt).toLocaleString("en-IN", {
