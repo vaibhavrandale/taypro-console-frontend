@@ -57,3 +57,9 @@ export function isSafeSignedUrl(value, cloudName = CLOUDINARY_CLOUD_NAME) {
     seg[4] === "download"
   );
 }
+
+/** True only when the URL path (not the query or hash) ends in .pdf. */
+export function isPdfPath(value) {
+  const u = parse(value);
+  return Boolean(u && u.pathname.toLowerCase().endsWith(".pdf"));
+}

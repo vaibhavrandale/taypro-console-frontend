@@ -43,6 +43,8 @@ import { useVoiceCall } from "../../../context/VoiceCallContext";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import socket from "../../../components/Socket";
 import PdfIcon from "../../../assets/images/pdf.png";
+import SecureFileLink from "../../../components/SecureFileLink";
+import { isSafeDeliveryUrl } from "../../../utils/cloudinaryUrls";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -1263,20 +1265,30 @@ export default function ChatDashboard() {
                                 msg.message
                               ) : (
                                 <>
-                                  {msg.attachment.type.startsWith("image/") ? (
-                                    <img
-                                      src={msg.attachment.file}
-                                      alt="Attachment"
-                                      className="img-fluid rounded"
-                                      style={{ maxWidth: "200px" }}
-                                    />
+                                  {/* Security (#424 allowlist): only our own
+                                      Cloudinary URLs render as image or link. */}
+                                  {msg.attachment?.type === "" ||
+                                  !msg.attachment?.type ? (
+                                    "No Attachment"
+                                  ) : msg.attachment.type.startsWith("image/") ? (
+                                    isSafeDeliveryUrl(msg.attachment.file) ? (
+                                      <img
+                                        src={msg.attachment.file}
+                                        alt="Attachment"
+                                        className="img-fluid rounded"
+                                        style={{ maxWidth: "200px" }}
+                                      />
+                                    ) : (
+                                      <span className="text-muted">
+                                        Invalid file link
+                                      </span>
+                                    )
                                   ) : msg.attachment.type ===
                                     "application/pdf" ? (
-                                    <a
-                                      href={msg.attachment.file}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      style={{ textDecoration: "none" }}
+                                    <SecureFileLink
+                                      url={msg.attachment.file}
+                                      signedUrlEndpoint={null}
+                                      className="text-decoration-none"
                                     >
                                       <CImage
                                         src={PdfIcon}
@@ -1287,19 +1299,16 @@ export default function ChatDashboard() {
                                         }}
                                         alt="PDF Icon"
                                       />
-                                    </a>
-                                  ) : msg.attachment.type === "" ? (
-                                    "No Attachment"
+                                    </SecureFileLink>
                                   ) : (
-                                    <a
-                                      href={msg.attachment.file}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      style={{ textDecoration: "none" }}
+                                    <SecureFileLink
+                                      url={msg.attachment.file}
+                                      signedUrlEndpoint={null}
+                                      className="text-decoration-none"
                                     >
                                       <CIcon icon={cilPaperclip} size="lg" />{" "}
                                       View Attachment
-                                    </a>
+                                    </SecureFileLink>
                                   )}
                                 </>
                               )}

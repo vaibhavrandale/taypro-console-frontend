@@ -27,6 +27,7 @@ import { cilPlus, cilCloudUpload, cilImage, cilX } from "@coreui/icons";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import SecureFileLink from "../../components/SecureFileLink";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -863,16 +864,16 @@ const CreateNomenclature = () => {
 
             {referenceFiles.length > 0 && (
               <div className="nc-ref-files mb-3">
+                {/* Security (#424 allowlist): only our Cloudinary URLs link. */}
                 {referenceFiles.map((rf, i) => (
-                  <a
+                  <SecureFileLink
                     key={i}
-                    href={rf.file}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    url={rf.file}
+                    signedUrlEndpoint={null}
                     className="nc-ref-file-link"
                   >
                     📎 {rf.name}
-                  </a>
+                  </SecureFileLink>
                 ))}
               </div>
             )}

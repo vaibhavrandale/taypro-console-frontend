@@ -32,6 +32,7 @@ import { useSelector } from "react-redux";
 import { MountingDiagram, MountingTopView } from "./MMSDiagram";
 import { Paperclip } from "lucide-react";
 import OfferBadge from "../../components/FireOfferBadge";
+import { isPdfPath, isSafeDeliveryUrl } from "../../utils/cloudinaryUrls";
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
@@ -1724,10 +1725,23 @@ const ViewNomenClature = () => {
                 >
                   No file available
                 </div>
-              ) : selectedReferenceFile.file.toLowerCase().includes(".pdf") ? (
+              ) : !isSafeDeliveryUrl(selectedReferenceFile.file) ? (
+                // Security (#424 allowlist): never load a non-Cloudinary URL
+                // (javascript:, data:, other hosts) into the iframe or img.
+                <div
+                  style={{
+                    color: "#94a3b8",
+                    textAlign: "center",
+                    padding: "40px 0",
+                  }}
+                >
+                  Invalid file link
+                </div>
+              ) : isPdfPath(selectedReferenceFile.file) ? (
                 <iframe
                   src={selectedReferenceFile.file}
                   title={selectedReferenceFile.name}
+                  referrerPolicy="no-referrer"
                   width="100%"
                   height="700px"
                   style={{
