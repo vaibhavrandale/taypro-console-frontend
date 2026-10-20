@@ -3,6 +3,7 @@ import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilSpeech } from "@coreui/icons";
 import { formatDistanceToNow } from "date-fns";
+import { activityLines } from "../utils/activityText";
 
 const LastActivity = ({ lastactivity }) => {
   if (!lastactivity || !Array.isArray(lastactivity)) {
@@ -84,10 +85,16 @@ const LastActivity = ({ lastactivity }) => {
                         lineHeight: "1.5",
                         textAlign: "start",
                       }}
-                      dangerouslySetInnerHTML={{
-                        __html: activity.details.replace(/, /g, ",<br>"),
-                      }}
-                    ></p>
+                    >
+                      {/* Security (#529 B2): plain text, never HTML. */}
+                      {activityLines(activity.details).map((line, i, arr) => (
+                        <React.Fragment key={i}>
+                          {line}
+                          {i < arr.length - 1 ? "," : ""}
+                          {i < arr.length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </p>
                   )}
                 </div>
               </div>
