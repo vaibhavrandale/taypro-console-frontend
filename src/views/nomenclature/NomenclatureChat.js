@@ -14,7 +14,7 @@ import {
 import CIcon from "@coreui/icons-react";
 
 import { cilSend, cilPaperclip, cilImage, cilReload } from "@coreui/icons";
-import { Link } from "react-router-dom";
+import SecureFileLink from "../../components/SecureFileLink";
 import fileImage from "../../assets/images/file.jpg";
 
 const NomenclatureChat = ({ nomenclatureId, currentUser }) => {
@@ -307,10 +307,10 @@ const NomenclatureChat = ({ nomenclatureId, currentUser }) => {
                               marginTop: 10,
                             }}
                           >
-                            <Link
-                              to={chat.attachment}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            {/* Security (#424 allowlist) */}
+                            <SecureFileLink
+                              url={chat.attachment}
+                              signedUrlEndpoint={null}
                             >
                               <img
                                 src={fileImage}
@@ -323,7 +323,7 @@ const NomenclatureChat = ({ nomenclatureId, currentUser }) => {
                                   borderRadius: "10px",
                                 }}
                               />
-                            </Link>
+                            </SecureFileLink>
                           </div>
                         )}
 
