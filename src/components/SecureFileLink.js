@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  isAuthenticatedDeliveryUrl,
+  isSafeDeliveryUrl,
+  isSafeSignedUrl,
+} from "../utils/cloudinaryUrls";
 
 // Security GO: expense-claim and commissioning-document files uploaded after
 // the backend change are Cloudinary type "authenticated". Their stored URL
@@ -8,8 +13,11 @@ import toast from "react-hot-toast";
 // 10 minutes, only to users allowed to see the record. Old public URLs keep
 // opening directly, exactly as before.
 
-export const isAuthenticatedFileUrl = (url) =>
-  typeof url === "string" && /\/(image|raw|video)\/authenticated\//.test(url);
+// Security (#424 B1): links are built only from our own Cloudinary URLs
+// (https, res.cloudinary.com/<our cloud>/...), and the signed URL from the
+// backend must be https://api.cloudinary.com/v1_1/<our cloud>/.../download.
+// Anything else (javascript:, data:, other hosts) renders as plain text.
+export const isAuthenticatedFileUrl = (url) => isAuthenticatedDeliveryUrl(url);
 
 /**
  * Props:
@@ -31,10 +39,19 @@ const SecureFileLink = ({
 
   if (!url) return null;
 
+  if (!isSafeDeliveryUrl(url)) {
+    return (
+      <span className="text-muted" title="This file link is not allowed">
+        Invalid file link
+      </span>
+    );
+  }
+
   if (!isAuthenticatedFileUrl(url)) {
+    const href = legacyHref && isSafeDeliveryUrl(legacyHref) ? legacyHref : url;
     return (
       <a
-        href={legacyHref || url}
+        href={href}
         className={className}
         target="_blank"
         rel="noopener noreferrer"
@@ -66,7 +83,9 @@ const SecureFileLink = ({
         withCredentials: true,
       });
       const signed = data?.data?.url;
-      if (!signed) throw new Error("No URL returned");
+      if (!signed || !isSafeSignedUrl(signed)) {
+        throw new Error("Signed URL rejected");
+      }
       if (win) win.location.href = signed;
       else window.location.assign(signed);
     } catch (err) {
