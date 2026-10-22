@@ -211,12 +211,42 @@ const SitewaiseLog = () => {
     fetchCleaningLogs();
   }, [site_id, startDate]);
 
+  const moduleCountByRobot = new Map();
+  const rememberModule = (item) => {
+    if (!item?.robot_no) return;
+    const module_count = Number(item.module_count) || 0;
+    const progress = modulesCleanedByRobot({
+      row_length: item.row_length,
+      module_counts: module_count,
+      track_details: item.track_details,
+      cleaning: item.cleaning,
+    });
+    const cleaned_modules = Math.min(module_count, progress.completed);
+    const row = {
+      robot_no: item.robot_no,
+      block: item.block || "",
+      module_count,
+      cleaned_modules,
+      remaining_modules: module_count - cleaned_modules,
+    };
+    const prev = moduleCountByRobot.get(item.robot_no);
+    if (!prev || row.cleaned_modules > prev.cleaned_modules) {
+      moduleCountByRobot.set(item.robot_no, row);
+    }
+  };
+  cleaning_completed?.forEach(rememberModule);
+  cleaning_in_progress?.forEach(rememberModule);
+  cleaning_failures?.forEach(rememberModule);
+  not_started_robots?.forEach(rememberModule);
+  const moduleCountRows = [...moduleCountByRobot.values()];
+
   const exportToExcel = () => {
     if (
       !cleaning_completed?.length &&
       !cleaning_in_progress?.length &&
       !cleaning_failures?.length &&
-      !offline_robots_at_time_of_cleaning?.length
+      !offline_robots_at_time_of_cleaning?.length &&
+      !moduleCountRows.length
     ) {
       toast.error("No data available to export.");
       return;
@@ -410,6 +440,43 @@ const SitewaiseLog = () => {
 
     mergedData.push([]);
     mergedData.push([]);
+
+    mergedData.push(["Module Count"]);
+    if (moduleCountRows.length) {
+      mergedData.push([
+        "Sr No",
+        "Robot No",
+        "Block",
+        "Module Count",
+        "Cleaned modules",
+        "Remaining modules",
+      ]);
+      moduleCountRows.forEach((row, index) => {
+        mergedData.push([
+          index + 1,
+          row.robot_no || "N/A",
+          row.block || "-",
+          row.module_count,
+          row.cleaned_modules,
+          row.remaining_modules,
+        ]);
+      });
+      const sumModules = (key) =>
+        moduleCountRows.reduce((sum, row) => sum + row[key], 0);
+      mergedData.push([
+        "",
+        "",
+        "Total",
+        sumModules("module_count"),
+        sumModules("cleaned_modules"),
+        sumModules("remaining_modules"),
+      ]);
+    } else {
+      mergedData.push(["No module count data available"]);
+    }
+
+    mergedData.push([]);
+    mergedData.push([]);
     // ===================================================
     // 5. Summary
     // ===================================================
@@ -564,34 +631,6 @@ const SitewaiseLog = () => {
     return [...new Set(data.map((item) => item.block).filter(Boolean))];
   };
 
-  const moduleCountByRobot = new Map();
-  const rememberModule = (item) => {
-    if (!item?.robot_no) return;
-    const module_count = Number(item.module_count) || 0;
-    const progress = modulesCleanedByRobot({
-      row_length: item.row_length,
-      module_counts: module_count,
-      track_details: item.track_details,
-      cleaning: item.cleaning,
-    });
-    const cleaned_modules = Math.min(module_count, progress.completed);
-    const row = {
-      robot_no: item.robot_no,
-      block: item.block || "",
-      module_count,
-      cleaned_modules,
-      remaining_modules: module_count - cleaned_modules,
-    };
-    const prev = moduleCountByRobot.get(item.robot_no);
-    if (!prev || row.cleaned_modules > prev.cleaned_modules) {
-      moduleCountByRobot.set(item.robot_no, row);
-    }
-  };
-  cleaning_completed?.forEach(rememberModule);
-  cleaning_in_progress?.forEach(rememberModule);
-  cleaning_failures?.forEach(rememberModule);
-  not_started_robots?.forEach(rememberModule);
-  const moduleCountRows = [...moduleCountByRobot.values()];
   const filteredModules = moduleCountRows.filter((row) => {
     return (
       row.robot_no.toLowerCase().includes(moduleSearch.toLowerCase()) &&
