@@ -363,6 +363,11 @@ const SitewaiseLog = React.lazy(
   () => import("./views/master-admin/all-site-cleaninglog/SitewaiseLog"),
 );
 
+const ModulesCleaningReport = React.lazy(
+  () =>
+    import("./views/master-admin/all-site-cleaninglog/ModulesCleaningReport"),
+);
+
 const Gateways = React.lazy(
   () => import("./views/master-admin/gateways/Gateways"),
 );
@@ -1308,6 +1313,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <CleaningSummary />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Master Admin Modules Cleaning Report",
+    element: (
+      <MasterAdminRoute>
+        <ModulesCleaningReport />
       </MasterAdminRoute>
     ),
   },
@@ -3039,6 +3053,15 @@ const routes = [
     ),
   },
   {
+    path: "/master-user/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Master User Modules Cleaning Report",
+    element: (
+      <MasterUserRoute>
+        <ModulesCleaningReport />
+      </MasterUserRoute>
+    ),
+  },
+  {
     path: "/master-user/all-site-gateways",
     name: "Master User All Site Gateways",
     element: (
@@ -4249,6 +4272,15 @@ const routes = [
       </ProjectAdminRoute>
     ),
   },
+  {
+    path: "/project-admin/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Project Admin Modules Cleaning Report",
+    element: (
+      <ProjectAdminRoute>
+        <ModulesCleaningReport />
+      </ProjectAdminRoute>
+    ),
+  },
 
   {
     path: "/project-admin/timers",
@@ -5320,6 +5352,15 @@ const routes = [
     ),
   },
   {
+    path: "/project-user/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Project User Modules Cleaning Report",
+    element: (
+      <ProjectUserRoute>
+        <ModulesCleaningReport />
+      </ProjectUserRoute>
+    ),
+  },
+  {
     path: "/project-user/timers",
     name: "All Site Timers",
     element: (
@@ -6354,6 +6395,15 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <CleaningSummary />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
+    path: "/service-admin/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Service Admin Modules Cleaning Report",
+    element: (
+      <ServiceAdminRoute>
+        <ModulesCleaningReport />
       </ServiceAdminRoute>
     ),
   },
@@ -7618,6 +7668,15 @@ const routes = [
     element: (
       <ServiceUserRoute>
         <CleaningSummary />
+      </ServiceUserRoute>
+    ),
+  },
+  {
+    path: "/service-user/all-site-cleaning-log/modules-cleaning-report/:site_id",
+    name: "Service User Modules Cleaning Report",
+    element: (
+      <ServiceUserRoute>
+        <ModulesCleaningReport />
       </ServiceUserRoute>
     ),
   },

@@ -1205,38 +1205,16 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
             <>
               <CModalHeader
                 closeButton={false}
-                className="d-flex justify-content-between align-items-center"
+                className="d-flex justify-content-between align-items-center .0"
               >
-                <CModalTitle>
-                  Rate Us
-                  {latestfeedback.createdAt && (
-                    <span className="text-body-secondary fs-6 fw-normal ms-2">
-                      · {moment(latestfeedback.createdAt).format("MMMM YYYY")}
-                    </span>
-                  )}
-                </CModalTitle>
-                <CButton
-                  color="success"
-                  size="sm"
-                  onClick={handleSubmit}
-                  disabled={
-                    !formData.feedback_data.comments ||
-                    !formData.feedback_data.rating ||
-                    // !formData.technician_feedback_data.rating ||
-                    // !formData.technician_feedback_data.comments ||
-                    !formData.service_feedback_data.rating ||
-                    !formData.service_feedback_data.comments ||
-                    submitLoading
-                  }
-                >
-                  {submitLoading ? (
-                    <>
-                      Submitting Your Feedback <LoadingSpinner />
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </CButton>
+                {/* <CModalTitle > */}
+                <h4> Rate Us</h4>
+                {latestfeedback.createdAt && (
+                  <span className="badge bg-warning fs-6 fw-normal ms-2">
+                    {moment(latestfeedback.createdAt).format("MMMM YYYY")}
+                  </span>
+                )}
+                {/* </CModalTitle> */}
               </CModalHeader>
 
               <CModalBody>
@@ -1454,6 +1432,30 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
                     </CCol>
                   </CRow>
                 </CForm>
+                <div className="d-flex justify-content-end align-items-center my-2">
+                  <CButton
+                    color="success"
+                    size="sm"
+                    onClick={handleSubmit}
+                    disabled={
+                      !formData.feedback_data.comments ||
+                      !formData.feedback_data.rating ||
+                      // !formData.technician_feedback_data.rating ||
+                      // !formData.technician_feedback_data.comments ||
+                      !formData.service_feedback_data.rating ||
+                      !formData.service_feedback_data.comments ||
+                      submitLoading
+                    }
+                  >
+                    {submitLoading ? (
+                      <>
+                        Submitting Your Feedback <LoadingSpinner />
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
+                  </CButton>
+                </div>
               </CModalBody>
             </>
           )}
@@ -1877,7 +1879,6 @@ const AppHeader = ({ sidebarShow, setSidebarShow }) => {
           )}
         </CModal>
       )}
-
     </CHeader>
   );
 };

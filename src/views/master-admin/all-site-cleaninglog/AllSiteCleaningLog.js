@@ -201,6 +201,14 @@ const AllSiteCleaningLog = () => {
                   >
                     Report
                   </Link>
+                  <Link
+                    color="success"
+                    size="sm"
+                    className="btn btn-success btn-sm m-1"
+                    to={`/${adminroute}/all-site-cleaning-log/modules-cleaning-report/${site.site_id}`}
+                  >
+                    Modules Cleaning Report
+                  </Link>
                 </CTableDataCell>
               </CTableRow>
             ))

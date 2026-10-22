@@ -116,7 +116,11 @@ const UpdateRobotRowData = () => {
   const [visible, setVisible] = useState(false);
   const [lastActivityVisible, setLastActivityVisible] = useState(false);
   const [selectedRobot, setSelectedRobot] = useState(null);
-  const [formData, setFormData] = useState({ row_number: "", row_length: "" });
+  const [formData, setFormData] = useState({
+    row_number: "",
+    row_length: "",
+    module_count: "",
+  });
   const fetchRobots = async () => {
     let pagination = {
       pg: page,
@@ -203,6 +207,7 @@ const UpdateRobotRowData = () => {
     setFormData({
       row_number: robot.row_number || 0,
       row_length: robot.row_length || 0,
+      module_count: robot.module_count || 0,
     });
     setVisible(true);
   };
@@ -216,6 +221,7 @@ const UpdateRobotRowData = () => {
         {
           row_number: formData.row_number,
           row_length: formData.row_length,
+          module_count: formData.module_count,
         },
         {
           // headers: { Authorization: `Bearer ${authtoken}` }
@@ -279,6 +285,7 @@ const UpdateRobotRowData = () => {
             <CTableHeaderCell>Block</CTableHeaderCell>
             <CTableHeaderCell>Row Number</CTableHeaderCell>
             <CTableHeaderCell>Row length</CTableHeaderCell>
+            <CTableHeaderCell>Total modules</CTableHeaderCell>
             {userInfo?.role === "Master Admin" && (
               <CTableHeaderCell>Last Activity</CTableHeaderCell>
             )}
@@ -288,14 +295,14 @@ const UpdateRobotRowData = () => {
         <CTableBody>
           {fetchrobotsLoading ? (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center fw-bold">
+              <CTableDataCell colSpan="8" className="text-center fw-bold">
                 <LoadingSpinner />
               </CTableDataCell>
             </CTableRow>
           ) : robotsError ? (
             <CTableRow>
               <CTableDataCell
-                colSpan="7"
+                colSpan="8"
                 className="text-center text-danger fw-bold"
               >
                 {robotsError}
@@ -309,6 +316,7 @@ const UpdateRobotRowData = () => {
                 <CTableDataCell>{robot.block}</CTableDataCell>
                 <CTableDataCell>{robot.row_number}</CTableDataCell>
                 <CTableDataCell>{robot.row_length}</CTableDataCell>
+                <CTableDataCell>{robot.module_count || 0}</CTableDataCell>
                 {userInfo?.role === "Master Admin" && (
                   <CTableDataCell>
                     <CButton
@@ -333,7 +341,7 @@ const UpdateRobotRowData = () => {
             ))
           ) : (
             <CTableRow>
-              <CTableDataCell colSpan="7" className="text-center">
+              <CTableDataCell colSpan="8" className="text-center">
                 No robots found.
               </CTableDataCell>
             </CTableRow>
@@ -387,6 +395,17 @@ const UpdateRobotRowData = () => {
               value={formData.row_length}
               onChange={(e) =>
                 setFormData({ ...formData, row_length: e.target.value })
+              }
+              required
+            />
+            <CFormInput
+              label="Total modules"
+              type="number"
+              min="0"
+              className="mt-3"
+              value={formData.module_count}
+              onChange={(e) =>
+                setFormData({ ...formData, module_count: e.target.value })
               }
               required
             />

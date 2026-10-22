@@ -227,6 +227,7 @@ const UpdateRobot = () => {
                       "snr",
                       "row_length",
                       "row_number",
+                      "module_count",
                       "last_battery_diff",
                       "brush_current",
                       "wheel_current",

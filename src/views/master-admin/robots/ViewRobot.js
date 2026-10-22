@@ -173,6 +173,7 @@ const ViewRobot = () => {
         "certificate_no",
         "row_length",
         "row_number",
+        "module_count",
       ],
     },
   ];
