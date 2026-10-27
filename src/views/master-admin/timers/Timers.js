@@ -114,6 +114,7 @@ const emptyTimerForm = {
   timer2_date: "",
   timer3: "00:00:00",
   timer3_date: "",
+  timer_command: "11",
 };
 
 const Timers = () => {
@@ -178,6 +179,7 @@ const Timers = () => {
   const selectableTimers = timers.filter(canSelectRow);
 
   useEffect(() => {
+    if (!site_id) return;
     const fetchAllTimers = async () => {
       dispatch({ type: "FETCH_TIMER_REQUEST" });
       try {
@@ -195,8 +197,7 @@ const Timers = () => {
       } catch (error) {
         dispatch({
           type: "FETCH_TIMER_FAIL",
-          payload:
-            error.response?.data?.error || error.response?.data?.message,
+          payload: error.response?.data?.error || error.response?.data?.message,
         });
         toast.error(
           error.response?.data?.error || error.response?.data?.message,
@@ -275,6 +276,7 @@ const Timers = () => {
       timer2_date: first?.timer2_date || "",
       timer3: first?.timer3 || "00:00:00",
       timer3_date: first?.timer3_date || "",
+      timer_command: first?.timer_command || "11",
     });
     setBulkUpdateModalVisible(true);
   };
@@ -381,8 +383,66 @@ const Timers = () => {
             Disable Timer
           </label>
         </div>
+        <div className="form-text"></div>
       </div>
     </CCol>
+  );
+
+  const setCommand = (command) =>
+    setBulkTimerData((prev) => ({ ...prev, timer_command: command }));
+
+  const COMMAND_NORMAL = "11";
+  const COMMAND_INTELLIGENT = "13";
+  const COMMANDS = [
+    { value: COMMAND_NORMAL, label: "Normal", color: "success" },
+    { value: COMMAND_INTELLIGENT, label: "Intelligent", color: "warning" },
+  ];
+  const CommandOption = ({ option, selected, onSelect }) => (
+    <div
+      role="radio"
+      aria-checked={selected}
+      tabIndex={0}
+      onClick={() => onSelect(option.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(option.value);
+        }
+      }}
+      className="d-flex align-items-center gap-3 p-3 rounded h-100"
+      style={{
+        cursor: "pointer",
+        border: `2px solid ${
+          selected ? `var(--cui-${option.color})` : "var(--cui-border-color)"
+        }`,
+        background: selected
+          ? `color-mix(in srgb, var(--cui-${option.color}) 12%, transparent)`
+          : "transparent",
+        transition: "all 0.15s ease",
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="d-inline-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+        style={{
+          width: 22,
+          height: 22,
+          border: `2px solid ${
+            selected ? `var(--cui-${option.color})` : "var(--cui-border-color)"
+          }`,
+          background: selected ? `var(--cui-${option.color})` : "transparent",
+          color: "#fff",
+          fontSize: 12,
+          lineHeight: 1,
+        }}
+      >
+        {selected ? "✓" : ""}
+      </span>
+      <div>
+        <div className="fw-semibold">{option.label}</div>
+        <small className="text-body-secondary">Command {option.value}</small>
+      </div>
+    </div>
   );
 
   return (
@@ -453,6 +513,7 @@ const Timers = () => {
                 <CTableHeaderCell>Block</CTableHeaderCell>
                 <CTableHeaderCell>Total Robots</CTableHeaderCell>
                 <CTableHeaderCell>Max Cleaning Time</CTableHeaderCell>
+                <CTableHeaderCell>Command</CTableHeaderCell>
                 <CTableHeaderCell>Timer 1</CTableHeaderCell>
                 <CTableHeaderCell>Date 1</CTableHeaderCell>
                 <CTableHeaderCell>Timer 2</CTableHeaderCell>
@@ -487,6 +548,13 @@ const Timers = () => {
                     </CTableDataCell>
                     <CTableDataCell>
                       {site.max_cleaning_time} min
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      {site.timer_command === "11" ? (
+                        <span className="badge bg-success">Normal</span>
+                      ) : (
+                        <span className="badge bg-warning">Intelligent</span>
+                      )}
                     </CTableDataCell>
                     <CTableDataCell>
                       {site.timer1 === "25:00:00" ? (
@@ -603,9 +671,7 @@ const Timers = () => {
           <CModalBody>
             <div className="mb-3 small text-medium-emphasis">
               Selected:{" "}
-              {selectedRows
-                .map((r) => `${r.site_id}:${r.block}`)
-                .join(", ")}
+              {selectedRows.map((r) => `${r.site_id}:${r.block}`).join(", ")}
             </div>
             <CRow>
               {renderTimerInput("timer1", "Timer1")}
@@ -648,7 +714,26 @@ const Timers = () => {
                     onChange={handleBulkTimerChange}
                   />
                 </div>
+                {/* Command mode */}
+                <h6 className="text-body-secondary text-uppercase mb-3">
+                  Timer Command
+                </h6>
               </CCol>
+            </CRow>
+            <CRow
+              className="g-3"
+              role="radiogroup"
+              aria-label="Timer command mode"
+            >
+              {COMMANDS.map((option) => (
+                <CCol key={option.value} xs={12} md={6} xl={4}>
+                  <CommandOption
+                    option={option}
+                    selected={bulkTimerData.timer_command === option.value}
+                    onSelect={setCommand}
+                  />
+                </CCol>
+              ))}
             </CRow>
           </CModalBody>
           <CModalFooter>

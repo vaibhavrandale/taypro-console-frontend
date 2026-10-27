@@ -82,7 +82,7 @@ export default function SiteSelect({
       border: "none",
       borderRadius: "12px",
       minHeight: "26px",
-      minWdth: "70px",
+      minWdth: "75px",
       cursor: "pointer",
       transition: "0.3s",
     }),

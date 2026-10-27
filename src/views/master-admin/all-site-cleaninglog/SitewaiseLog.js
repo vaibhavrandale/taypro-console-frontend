@@ -225,6 +225,8 @@ const SitewaiseLog = () => {
     const row = {
       robot_no: item.robot_no,
       block: item.block || "",
+      row_no: item.row_no ?? item.row_number ?? "",
+      row_length: item.row_length ?? "",
       module_count,
       cleaned_modules,
       remaining_modules: module_count - cleaned_modules,
@@ -447,6 +449,8 @@ const SitewaiseLog = () => {
         "Sr No",
         "Robot No",
         "Block",
+        "Row No",
+        "Row Length (Meters)",
         "Module Count",
         "Cleaned modules",
         "Remaining modules",
@@ -456,6 +460,8 @@ const SitewaiseLog = () => {
           index + 1,
           row.robot_no || "N/A",
           row.block || "-",
+          row.row_no === "" ? "-" : row.row_no,
+          row.row_length === "" ? "-" : row.row_length,
           row.module_count,
           row.cleaned_modules,
           row.remaining_modules,
@@ -467,6 +473,8 @@ const SitewaiseLog = () => {
         "",
         "",
         "Total",
+        "",
+        "",
         sumModules("module_count"),
         sumModules("cleaned_modules"),
         sumModules("remaining_modules"),
@@ -1807,6 +1815,8 @@ const SitewaiseLog = () => {
                           <CTableHeaderCell>Sr</CTableHeaderCell>
                           <CTableHeaderCell>Robot No</CTableHeaderCell>
                           <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Row No</CTableHeaderCell>
+                          <CTableHeaderCell>Row Length (m)</CTableHeaderCell>
                           <CTableHeaderCell>Module Count</CTableHeaderCell>
                           <CTableHeaderCell>Cleaned modules</CTableHeaderCell>
                           <CTableHeaderCell>Remaining modules</CTableHeaderCell>
@@ -1821,6 +1831,10 @@ const SitewaiseLog = () => {
                                 <RobotNoLink robot={row} />
                               </CTableDataCell>
                               <CTableDataCell>{row.block || "-"}</CTableDataCell>
+                              <CTableDataCell>{row.row_no === "" ? "-" : row.row_no}</CTableDataCell>
+                              <CTableDataCell>
+                                {row.row_length === "" ? "-" : row.row_length}
+                              </CTableDataCell>
                               <CTableDataCell>{row.module_count}</CTableDataCell>
                               <CTableDataCell>{row.cleaned_modules}</CTableDataCell>
                               <CTableDataCell>{row.remaining_modules}</CTableDataCell>
@@ -1828,13 +1842,13 @@ const SitewaiseLog = () => {
                           ))
                         ) : (
                           <CTableRow>
-                            <CTableDataCell colSpan={6} className="text-start">
+                            <CTableDataCell colSpan={8} className="text-start">
                               No robots found
                             </CTableDataCell>
                           </CTableRow>
                         )}
                         <CTableRow>
-                          <CTableHeaderCell colSpan={3} className="text-end">
+                          <CTableHeaderCell colSpan={5} className="text-end">
                             Total
                           </CTableHeaderCell>
                           <CTableHeaderCell>{totalModuleCount}</CTableHeaderCell>

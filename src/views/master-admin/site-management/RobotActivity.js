@@ -21,7 +21,6 @@ import {
 } from "@coreui/react";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -251,6 +250,8 @@ const RobotActivity = () => {
                     <CBadge color="danger"> Cleaning Stop</CBadge>
                   ) : item.command === "15" ? (
                     <CBadge color="secondary">Return To Dock</CBadge>
+                  ) : item.command === "13" ? (
+                    <CBadge color="success">Intelligent Cleaning Start</CBadge>
                   ) : (
                     <CBadge color="secondary">{item.command}</CBadge>
                   )}

@@ -461,6 +461,7 @@ export default function ClientAdminDashboard() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   useEffect(() => {
+    if (!site_id) return;
     const fetchSiteDetails = async () => {
       dispatch({ type: "FETCH_SITE_DETAILS_REQUEST" });
       try {

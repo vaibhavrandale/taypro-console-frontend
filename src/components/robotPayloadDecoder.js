@@ -25,6 +25,7 @@ export const BASE64_EVENT_MAP = {
 
   /* Cleaning */
   "EQ==": { desc: "Cleaning Start", code: "11", type: "cleaning" },
+  "Ew==": { desc: "Intelligent Cleaning Start", code: "13", type: "cleaning" },
   "FA==": { desc: "Cleaning Stop", code: "14", type: "cleaning" },
   "FQ==": { desc: "Return to Dock", code: "15", type: "cleaning" },
   "Fg==": { desc: "Cleaning Finish", code: "16", type: "cleaning" },

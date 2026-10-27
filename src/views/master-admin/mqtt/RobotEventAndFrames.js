@@ -54,13 +54,15 @@ const reducer = (state, action) => {
   }
 };
 
-const RobotEventAndFrames = () => {
+const RobotEventAndFrames = ({ robotNo, deveui: deveuiProp } = {}) => {
   const [{ loading, error, frames }, dispatch] = useReducer(reducer, {
     frames: [],
     loading: true,
     error: "",
   });
-  const { robot_no, deveui } = useParams();
+  const params = useParams();
+  const robot_no = robotNo ?? params.robot_no;
+  const deveui = deveuiProp ?? params.deveui;
   const [activeTab, setActiveTab] = useState("Events");
 
   const [selectedFrame, setSelectedFrame] = useState(null);
@@ -70,6 +72,7 @@ const RobotEventAndFrames = () => {
   const userInfo = useSelector((state) => state.userInfo);
 
   useEffect(() => {
+    if (!robot_no || !deveui) return;
     const fetchSubscriptions = async () => {
       dispatch({ type: "FETCH_REQUEST" });
 
@@ -100,7 +103,7 @@ const RobotEventAndFrames = () => {
     fetchSubscriptions();
   }, [robot_no, deveui]);
   useEffect(() => {
-    socket.emit("join_device", deveui);
+    if (deveui) socket.emit("join_device", deveui);
   }, [deveui]);
 
   useEffect(() => {
