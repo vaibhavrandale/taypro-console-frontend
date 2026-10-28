@@ -233,6 +233,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Dock Charge",
+            to: "/master-admin/dock-charge",
+          },
+          {
+            component: CNavItem,
             name: "Robot Commands",
             to: "/master-admin/robot-commands",
           },
@@ -1067,6 +1072,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "Dock Charge",
+            to: "/master-user/dock-charge",
+          },
+          {
+            component: CNavItem,
             name: "Robot Commands",
             to: "/master-user/robot-commands",
           },
@@ -1364,6 +1374,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/project-admin/robot-battery-temperature",
+          },
+          {
+            component: CNavItem,
+            name: "Dock Charge",
+            to: "/project-admin/dock-charge",
           },
         ],
       },
@@ -1828,6 +1843,11 @@ const _nav = [
             name: "Robot Battery Temperature",
             to: "/project-user/robot-battery-temperature",
           },
+          {
+            component: CNavItem,
+            name: "Dock Charge",
+            to: "/project-user/dock-charge",
+          },
         ],
       },
 
@@ -2200,6 +2220,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/service-admin/robot-battery-temperature",
+          },
+          {
+            component: CNavItem,
+            name: "Dock Charge",
+            to: "/service-admin/dock-charge",
           },
           {
             component: CNavItem,
@@ -2666,6 +2691,11 @@ const _nav = [
           />
         ),
         items: [
+          {
+            component: CNavItem,
+            name: "Not Charging",
+            to: "/site-technician/dock-charge",
+          },
           {
             component: CNavItem,
             name: "Commands",
@@ -3625,6 +3655,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/service-user/robot-battery-temperature",
+          },
+          {
+            component: CNavItem,
+            name: "Dock Charge",
+            to: "/service-user/dock-charge",
           },
           {
             component: CNavItem,
