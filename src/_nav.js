@@ -2641,7 +2641,7 @@ const _nav = [
         icon: (
           <RadioTower
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2667,7 +2667,7 @@ const _nav = [
         icon: (
           <LayoutDashboard
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2686,7 +2686,7 @@ const _nav = [
         icon: (
           <Bot
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2726,7 +2726,7 @@ const _nav = [
         icon: (
           <Building2
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2763,7 +2763,7 @@ const _nav = [
         icon: (
           <ClipboardList
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2795,7 +2795,7 @@ const _nav = [
         icon: (
           <TicketCheck
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2832,7 +2832,7 @@ const _nav = [
         icon: (
           <Wrench
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2870,7 +2870,7 @@ const _nav = [
         icon: (
           <UserCheck
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2893,7 +2893,7 @@ const _nav = [
         icon: (
           <Wallet
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2916,7 +2916,7 @@ const _nav = [
       // {
       //   component: CNavGroup,
       //   name: "Material",
-      //   icon:  <PackageSearch  className="nav-icon"
+      //   icon:  <PackageSearch  customClassName="nav-icon"
       //       style={{  color: "rgb(57, 214, 0)" }}
       //     />,
       //   // (
@@ -2940,7 +2940,7 @@ const _nav = [
         icon: (
           <MessageSquareCode
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -2970,7 +2970,7 @@ const _nav = [
         icon: (
           <ClipboardPenLine
             size={20}
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -3934,7 +3934,7 @@ const _nav = [
   //         // style={{  color: "rgb(57, 214, 0)" }}
   //         // />
   //         <CircleGauge
-  //           className="nav-icon"
+  //           customClassName="nav-icon"
   //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
@@ -3950,7 +3950,7 @@ const _nav = [
   //         // style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         // />
   //         <ChartNoAxesCombined
-  //           className="nav-icon"
+  //           customClassName="nav-icon"
   //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
@@ -3983,7 +3983,7 @@ const _nav = [
   //         // style={{  color: "rgb(57, 214, 0)" }}
   //         // />
   //         <SquareTerminal
-  //           className="nav-icon"
+  //           customClassName="nav-icon"
   //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
@@ -3999,7 +3999,7 @@ const _nav = [
   //         // style={{  color: "rgb(57, 214, 0)" }}
   //         // />
   //         <Tags
-  //           className="nav-icon"
+  //           customClassName="nav-icon"
   //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
@@ -4047,7 +4047,7 @@ const _nav = [
 
   //         // />
   //         <Wrench
-  //           className="nav-icon"
+  //           customClassName="nav-icon"
   //           style={{ height: "20px", color: "rgb(57, 214, 0)" }}
   //         />
   //       ),
@@ -4254,7 +4254,7 @@ const _nav = [
     icon: (
       <LayoutDashboard
         size={22}
-        className="nav-icon"
+        customClassName="nav-icon"
         style={{ color: "rgb(57, 214, 0)" }}
       />
     ),
@@ -4265,7 +4265,7 @@ const _nav = [
         to: "/client-admin/dashboard",
         icon: (
           <LayoutDashboard
-            className="nav-icon"
+            customClassName="nav-icon"
             size={18}
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
@@ -4806,7 +4806,7 @@ const _nav = [
         to: "/sales-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -4847,7 +4847,7 @@ const _nav = [
         to: "/accounts-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -4887,7 +4887,7 @@ const _nav = [
         to: "/supply-chain-and-logistics-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -4927,7 +4927,7 @@ const _nav = [
         to: "/research-and-development-and-product-development-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -5015,7 +5015,7 @@ const _nav = [
       //   to: "/hr-admin/mis-report",
       //   icon: (
       //     <Proportions
-      //       className="nav-icon"
+      //       customClassName="nav-icon"
       //       style={{ height: "20px", color: "rgb(57, 214, 0)" }}
       //     />
       //   ),
@@ -5055,7 +5055,7 @@ const _nav = [
         to: "/quality-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),
@@ -5095,7 +5095,7 @@ const _nav = [
         to: "/production-and-operations-admin/mis-report",
         icon: (
           <Proportions
-            className="nav-icon"
+            customClassName="nav-icon"
             style={{ height: "20px", color: "rgb(57, 214, 0)" }}
           />
         ),

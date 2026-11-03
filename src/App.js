@@ -86,14 +86,6 @@ const App = () => {
           />
           <Route
             exact
-            path="/live-data-taypro"
-            name="Live Data Taypro"
-            element={
-              <LiveDashboard source="/api/v1/sites/today/live-data-taypro" />
-            }
-          />
-          <Route
-            exact
             path="/reset-password/:id"
             name="Reset Password"
             element={<ResetPassword />}

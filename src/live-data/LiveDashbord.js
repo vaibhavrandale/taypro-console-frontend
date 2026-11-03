@@ -1219,8 +1219,8 @@ const FleetStat = ({ label, value, color, sub }) => (
     {sub && (
       <div
         style={{
-          fontSize: 13,
-          color: "", //yellow
+          fontSize: 9,
+          color: "#445566",
           //fontFamily: "'DM Mono', monospace",
         }}
       >
@@ -1271,9 +1271,7 @@ const AlertTicker = ({ criticals }) => {
 /* ══════════════════════════════════════════════
    MAIN DASHBOARD
 ══════════════════════════════════════════════ */
-const LiveDashboard = ({
-  source = "/api/v1/sites/today/live-data",
-}) => {
+const LiveDashboard = () => {
   const [sites, setSites] = useState([]);
   const [maxData, setmaxData] = useState({});
   const [selected, setSelected] = useState(0);
@@ -1288,7 +1286,7 @@ const LiveDashboard = ({
   /* ── Fetch & normalise ── */
   const fetchData = useCallback(async () => {
     try {
-      const r = await fetch(source);
+      const r = await fetch("/api/v1/sites/today/live-data");
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = await r.json();
       const arr = Array.isArray(j) ? j : j.data || [];
@@ -1323,7 +1321,7 @@ const LiveDashboard = ({
     } finally {
       setLoading(false);
     }
-  }, [source]);
+  }, []);
 
   useEffect(() => {
     fetchData();
