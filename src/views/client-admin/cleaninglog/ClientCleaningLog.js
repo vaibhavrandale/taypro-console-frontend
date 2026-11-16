@@ -32,6 +32,7 @@ import * as XLSX from "xlsx";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import SubscriptionExpiryCard from "../../../components/SubscriptionExpiryCard";
 import Logmodal from "../../../components/individual-robot-log/Logmodal";
+import { modulesCleanedByRobot } from "../../master-admin/all-site-cleaninglog/modulesCleaned.mjs";
 
 
 // import CompletedCycles from "./CompletedCycles";
@@ -145,6 +146,9 @@ const ClientCleaningLog = () => {
   const [notStartedSearch, setNotStartedSearch] = useState("");
   const [notStartedBlock, setNotStartedBlock] = useState("");
 
+  const [moduleSearch, setModuleSearch] = useState("");
+  const [moduleBlock, setModuleBlock] = useState("");
+
   const [selectedLogId, setSelectedLogId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -204,12 +208,44 @@ const ClientCleaningLog = () => {
     fetchCleaningLogs();
   }, [site_id, startDate]);
 
+  const moduleCountByRobot = new Map();
+  const rememberModule = (item) => {
+    if (!item?.robot_no) return;
+    const module_count = Number(item.module_count) || 0;
+    const progress = modulesCleanedByRobot({
+      row_length: item.row_length,
+      module_counts: module_count,
+      track_details: item.track_details,
+      cleaning: item.cleaning,
+    });
+    const cleaned_modules = Math.min(module_count, progress.completed);
+    const row = {
+      robot_no: item.robot_no,
+      block: item.block || "",
+      row_no: item.row_no ?? item.row_number ?? "",
+      row_length: item.row_length ?? "",
+      module_count,
+      cleaned_modules,
+      remaining_modules: module_count - cleaned_modules,
+    };
+    const prev = moduleCountByRobot.get(item.robot_no);
+    if (!prev || row.cleaned_modules > prev.cleaned_modules) {
+      moduleCountByRobot.set(item.robot_no, row);
+    }
+  };
+  cleaning_completed?.forEach(rememberModule);
+  cleaning_in_progress?.forEach(rememberModule);
+  cleaning_failures?.forEach(rememberModule);
+  not_started_robots?.forEach(rememberModule);
+  const moduleCountRows = [...moduleCountByRobot.values()];
+
   const exportToExcel = () => {
     if (
       !cleaning_completed?.length &&
       !cleaning_in_progress?.length &&
       !cleaning_failures?.length &&
-      !offline_robots_at_time_of_cleaning?.length
+      !offline_robots_at_time_of_cleaning?.length &&
+      !moduleCountRows.length
     ) {
       toast.error("No data available to export.");
       return;
@@ -438,6 +474,49 @@ const ClientCleaningLog = () => {
 
     mergedData.push([]);
     mergedData.push([]);
+
+    mergedData.push(["Module Count"]);
+    if (moduleCountRows.length) {
+      mergedData.push([
+        "Sr No",
+        "Robot No",
+        "Block",
+        "Row No",
+        "Row Length (Meters)",
+        "Module Count",
+        "Cleaned modules",
+        "Remaining modules",
+      ]);
+      moduleCountRows.forEach((row, index) => {
+        mergedData.push([
+          index + 1,
+          row.robot_no || "N/A",
+          row.block || "-",
+          row.row_no === "" ? "-" : row.row_no,
+          row.row_length === "" ? "-" : row.row_length,
+          row.module_count,
+          row.cleaned_modules,
+          row.remaining_modules,
+        ]);
+      });
+      const sumModules = (key) =>
+        moduleCountRows.reduce((sum, row) => sum + row[key], 0);
+      mergedData.push([
+        "",
+        "",
+        "Total",
+        "",
+        "",
+        sumModules("module_count"),
+        sumModules("cleaned_modules"),
+        sumModules("remaining_modules"),
+      ]);
+    } else {
+      mergedData.push(["No module count data available"]);
+    }
+
+    mergedData.push([]);
+    mergedData.push([]);
     // ===================================================
     // 5. Summary
     // ===================================================
@@ -591,6 +670,25 @@ const ClientCleaningLog = () => {
   const getBlocks = (data) => {
     return [...new Set(data.map((item) => item.block).filter(Boolean))];
   };
+
+  const filteredModules = moduleCountRows.filter((row) => {
+    return (
+      row.robot_no.toLowerCase().includes(moduleSearch.toLowerCase()) &&
+      (moduleBlock ? row.block === moduleBlock : true)
+    );
+  });
+  const totalModuleCount = filteredModules.reduce(
+    (sum, row) => sum + row.module_count,
+    0,
+  );
+  const totalCleanedModules = filteredModules.reduce(
+    (sum, row) => sum + row.cleaned_modules,
+    0,
+  );
+  const totalRemainingModules = filteredModules.reduce(
+    (sum, row) => sum + row.remaining_modules,
+    0,
+  );
   const filteredCompleted = cleaning_completed.filter((log) => {
     return (
       log.robot_no.toLowerCase().includes(completedSearch.toLowerCase()) &&
@@ -823,6 +921,9 @@ const ClientCleaningLog = () => {
                     className="text-white"
                   >
                     Not Started
+                  </CTab>
+                  <CTab itemKey="module-count" className="text-white">
+                    Module Count
                   </CTab>
                   <CTab itemKey="technician-dpr-logs" className="text-white">
                     Technician DPR Logs
@@ -1448,6 +1549,93 @@ const ClientCleaningLog = () => {
                             </CTableDataCell>
                           </CTableRow>
                         )}
+                      </CTableBody>
+                    </CTable>
+                  </CTabPanel>
+
+                  <CTabPanel itemKey="module-count">
+                    <CRow className="my-2 justify-content-end">
+                      <CCol md={2}>
+                        <CFormInput
+                          placeholder="Search Robot No..."
+                          value={moduleSearch}
+                          onChange={(e) => setModuleSearch(e.target.value)}
+                        />
+                      </CCol>
+                      <CCol md={2}>
+                        <select
+                          className="form-select"
+                          value={moduleBlock}
+                          onChange={(e) => setModuleBlock(e.target.value)}
+                        >
+                          <option value="">All Blocks</option>
+                          {getBlocks(moduleCountRows).map((block) => (
+                            <option key={block} value={block}>
+                              {block}
+                            </option>
+                          ))}
+                        </select>
+                      </CCol>
+                    </CRow>
+                    <CTable
+                      bordered
+                      hover
+                      responsive
+                      className="text-center bg-important"
+                    >
+                      <CTableHead color="secondary">
+                        <CTableRow>
+                          <CTableHeaderCell>Sr</CTableHeaderCell>
+                          <CTableHeaderCell>Robot No</CTableHeaderCell>
+                          <CTableHeaderCell>Block</CTableHeaderCell>
+                          <CTableHeaderCell>Row No</CTableHeaderCell>
+                          <CTableHeaderCell>Row Length (m)</CTableHeaderCell>
+                          <CTableHeaderCell>Module Count</CTableHeaderCell>
+                          <CTableHeaderCell>Cleaned modules</CTableHeaderCell>
+                          <CTableHeaderCell>Remaining modules</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        {filteredModules.length > 0 ? (
+                          filteredModules.map((row, index) => (
+                            <CTableRow key={row.robot_no}>
+                              <CTableDataCell>{index + 1}</CTableDataCell>
+                              <CTableDataCell>
+                                <RobotNoLink robot={row} />
+                              </CTableDataCell>
+                              <CTableDataCell>{row.block || "-"}</CTableDataCell>
+                              <CTableDataCell>
+                                {row.row_no === "" ? "-" : row.row_no}
+                              </CTableDataCell>
+                              <CTableDataCell>
+                                {row.row_length === "" ? "-" : row.row_length}
+                              </CTableDataCell>
+                              <CTableDataCell>{row.module_count}</CTableDataCell>
+                              <CTableDataCell>{row.cleaned_modules}</CTableDataCell>
+                              <CTableDataCell>
+                                {row.remaining_modules}
+                              </CTableDataCell>
+                            </CTableRow>
+                          ))
+                        ) : (
+                          <CTableRow>
+                            <CTableDataCell colSpan={8} className="text-start">
+                              No robots found
+                            </CTableDataCell>
+                          </CTableRow>
+                        )}
+                        <CTableRow>
+                          <CTableHeaderCell colSpan={5} className="text-end">
+                            Total
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>{totalModuleCount}</CTableHeaderCell>
+                          <CTableHeaderCell>
+                            {totalCleanedModules}
+                          </CTableHeaderCell>
+                          <CTableHeaderCell>
+                            {totalRemainingModules}
+                          </CTableHeaderCell>
+                        </CTableRow>
                       </CTableBody>
                     </CTable>
                   </CTabPanel>
