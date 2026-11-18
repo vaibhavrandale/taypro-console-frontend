@@ -114,6 +114,7 @@ const EditClient = () => {
           project_code: data.data.project_code || "",
           is_weather_cleaning_enabled:
             data.data.is_weather_cleaning_enabled || false,
+          is_show_to_livedata: data.data.is_show_to_livedata !== false,
           commissioning_date: dateInput(data.data.commissioning_date),
           warranty_status: data.data.warranty_status || "",
           warranty_date: dateInput(data.data.warranty_date),
@@ -268,6 +269,14 @@ const EditClient = () => {
                   label="Weather auto clean is enabled"
                   checked={formData.is_weather_cleaning_enabled || false}
                   onChange={(e) => setFormData({ ...formData, is_weather_cleaning_enabled: e.target.checked })}
+                />
+              </CCol>
+              <CCol md={4}>
+                <CFormCheck
+                  id="is_show_to_livedata"
+                  label="Show this site on live data"
+                  checked={formData.is_show_to_livedata !== false}
+                  onChange={(e) => setFormData({ ...formData, is_show_to_livedata: e.target.checked })}
                 />
               </CCol>
               <CCol md={4}>
