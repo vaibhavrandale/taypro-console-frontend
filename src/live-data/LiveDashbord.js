@@ -1555,6 +1555,16 @@ const LiveDashboard = () => {
               value={maxData.max_online_robots || 0}
               color="#22dd88"
             />
+            <FleetStat
+              label="Max Completed"
+              value={maxData.max_completed || 0}
+              color="#22dd88"
+            />
+            <FleetStat
+              label="Max Failures"
+              value={maxData.max_failure || 0}
+              color={(maxData.max_failure || 0) > 0 ? "#ff3355" : "#334455"}
+            />
           </div>
           <div style={{ flex: 1 }} />
 

@@ -233,11 +233,6 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Dock Charge",
-            to: "/master-admin/dock-charge",
-          },
-          {
-            component: CNavItem,
             name: "Robot Commands",
             to: "/master-admin/robot-commands",
           },
@@ -394,13 +389,43 @@ const _nav = [
 
       {
         component: CNavGroup,
-        name: "AI Model",
+        name: "AI",
         icon: maIcon(BrainCircuit),
         items: [
           {
             component: CNavItem,
             name: "Micro-Fiber cloth model",
             to: "/master-admin/ai-model",
+          },
+          {
+            component: CNavItem,
+            name: "Chat with Console",
+            to: "/master-admin/chat-with-console",
+          },
+          {
+            component: CNavItem,
+            name: "Overview",
+            to: "/master-admin/robot-intelligence",
+          },
+          {
+            component: CNavItem,
+            name: "Battery intelligence",
+            to: "/master-admin/robot-intelligence/battery",
+          },
+          {
+            component: CNavItem,
+            name: "Motor intelligence",
+            to: "/master-admin/robot-intelligence/motors",
+          },
+          {
+            component: CNavItem,
+            name: "Cleaning intelligence",
+            to: "/master-admin/robot-intelligence/cleaning",
+          },
+          {
+            component: CNavItem,
+            name: "Sample data",
+            to: "/master-admin/robot-intelligence/data",
           },
         ],
       },
@@ -697,18 +722,6 @@ const _nav = [
             component: CNavItem,
             name: "Custom Notifications",
             to: "/master-admin/custom-notifications",
-          },
-        ],
-      },
-      {
-        component: CNavGroup,
-        name: "Chat with Console",
-        icon: maIcon(MessageSquareCode),
-        items: [
-          {
-            component: CNavItem,
-            name: "Chat with Console",
-            to: "/master-admin/chat-with-console",
           },
         ],
       },
@@ -1072,11 +1085,6 @@ const _nav = [
           },
           {
             component: CNavItem,
-            name: "Dock Charge",
-            to: "/master-user/dock-charge",
-          },
-          {
-            component: CNavItem,
             name: "Robot Commands",
             to: "/master-user/robot-commands",
           },
@@ -1374,11 +1382,6 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/project-admin/robot-battery-temperature",
-          },
-          {
-            component: CNavItem,
-            name: "Dock Charge",
-            to: "/project-admin/dock-charge",
           },
         ],
       },
@@ -1843,11 +1846,6 @@ const _nav = [
             name: "Robot Battery Temperature",
             to: "/project-user/robot-battery-temperature",
           },
-          {
-            component: CNavItem,
-            name: "Dock Charge",
-            to: "/project-user/dock-charge",
-          },
         ],
       },
 
@@ -2220,11 +2218,6 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/service-admin/robot-battery-temperature",
-          },
-          {
-            component: CNavItem,
-            name: "Dock Charge",
-            to: "/service-admin/dock-charge",
           },
           {
             component: CNavItem,
@@ -2691,11 +2684,6 @@ const _nav = [
           />
         ),
         items: [
-          {
-            component: CNavItem,
-            name: "Not Charging",
-            to: "/site-technician/dock-charge",
-          },
           {
             component: CNavItem,
             name: "Commands",
@@ -3655,11 +3643,6 @@ const _nav = [
             component: CNavItem,
             name: "Robot Battery Temperature",
             to: "/service-user/robot-battery-temperature",
-          },
-          {
-            component: CNavItem,
-            name: "Dock Charge",
-            to: "/service-user/dock-charge",
           },
           {
             component: CNavItem,

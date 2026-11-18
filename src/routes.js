@@ -93,7 +93,6 @@ import CreateTechnicianPreventivemaintanance from "./views/site-technician/preve
 import UpdateTechnicianPreventivemaintanance from "./views/site-technician/preventive-maintanance-dashboard/UpdateTechnicianPreventivemaintanance";
 import ViewTechnicianPreventivemaintananceQuaterly from "./views/site-technician/preventive-maintanance-dashboard/ViewTechnicianPreventivemaintananceQuaterly";
 import BatteryAndTemperature from "./views/master-admin/robots/BatteryAndTemperature";
-import DockCharge from "./views/master-admin/robots/DockCharge";
 import PreventiveMaintenanceList from "./views/client-admin/preventive-maintenance-dashboard/PreventiveMaintenanceList";
 import KeyMaintenanceMatrix from "./views/master-admin/service-tickets/KeyMaintenanceMatrix";
 import UserBasedLinkDashboard from "./views/dashboard/UserBasedLinkDashboard";
@@ -120,6 +119,13 @@ import Profile from "./views/master-admin/profile-tab/Profile";
 import CheckMicroFiber from "./views/ai-model/CheckMicroFiber";
 import Home from "./views/ai-model/Home";
 import ViewMicrofiber from "./views/ai-model/ViewMicrofiber";
+import RobotFleet from "./views/robot-intelligence/Fleet";
+import RobotSiteHealth from "./views/robot-intelligence/SiteHealth";
+import RobotHealth from "./views/robot-intelligence/RobotHealth";
+import RobotBattery from "./views/robot-intelligence/Battery";
+import RobotMotors from "./views/robot-intelligence/Motors";
+import RobotCleaning from "./views/robot-intelligence/Cleaning";
+import RobotSampleData from "./views/robot-intelligence/DataTables";
 import ExpenseDashboard from "./views/expense/ExpenseDashboard";
 import CreateExpense from "./views/expense/CreateExpense";
 import ViewExpense from "./views/expense/ViewExpense";
@@ -680,6 +686,69 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <CheckMicroFiber />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence",
+    name: "Robot health",
+    element: (
+      <MasterAdminRoute>
+        <RobotFleet />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/battery",
+    name: "Robot battery",
+    element: (
+      <MasterAdminRoute>
+        <RobotBattery />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/motors",
+    name: "Robot motors",
+    element: (
+      <MasterAdminRoute>
+        <RobotMotors />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/cleaning",
+    name: "Cleaning intelligence",
+    element: (
+      <MasterAdminRoute>
+        <RobotCleaning />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/data",
+    name: "Robot sample data",
+    element: (
+      <MasterAdminRoute>
+        <RobotSampleData />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/sites/:siteId",
+    name: "Site health",
+    element: (
+      <MasterAdminRoute>
+        <RobotSiteHealth />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/robot-intelligence/robots/:robotNo",
+    name: "Robot health detail",
+    element: (
+      <MasterAdminRoute>
+        <RobotHealth />
       </MasterAdminRoute>
     ),
   },
@@ -1531,15 +1600,6 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <BatteryAndTemperature />
-      </MasterAdminRoute>
-    ),
-  },
-  {
-    path: "/master-admin/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <MasterAdminRoute>
-        <DockCharge />
       </MasterAdminRoute>
     ),
   },
@@ -3252,15 +3312,6 @@ const routes = [
     ),
   },
   {
-    path: "/master-user/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <MasterUserRoute>
-        <DockCharge />
-      </MasterUserRoute>
-    ),
-  },
-  {
     path: "/master-user/robot-log-details",
     name: "Robot Log Details",
     element: (
@@ -4572,15 +4623,6 @@ const routes = [
     ),
   },
   {
-    path: "/project-admin/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <ProjectAdminRoute>
-        <DockCharge />
-      </ProjectAdminRoute>
-    ),
-  },
-  {
     path: "/project-admin/expenses",
     name: "Expense Management",
     element: (
@@ -5611,15 +5653,6 @@ const routes = [
     element: (
       <ProjectUserRoute>
         <BatteryAndTemperature />
-      </ProjectUserRoute>
-    ),
-  },
-  {
-    path: "/project-user/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <ProjectUserRoute>
-        <DockCharge />
       </ProjectUserRoute>
     ),
   },
@@ -6756,15 +6789,6 @@ const routes = [
     element: (
       <ServiceAdminRoute>
         <BatteryAndTemperature />
-      </ServiceAdminRoute>
-    ),
-  },
-  {
-    path: "/service-admin/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <ServiceAdminRoute>
-        <DockCharge />
       </ServiceAdminRoute>
     ),
   },
@@ -7970,15 +7994,6 @@ const routes = [
     ),
   },
   {
-    path: "/service-user/dock-charge",
-    name: "Dock Charge",
-    element: (
-      <ServiceUserRoute>
-        <DockCharge />
-      </ServiceUserRoute>
-    ),
-  },
-  {
     path: "/service-user/expenses",
     name: "Expense Management",
     element: (
@@ -8444,15 +8459,6 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <RobotCommands />
-      </SiteTechnicianRoute>
-    ),
-  },
-  {
-    path: "/site-technician/dock-charge",
-    name: "Not Charging",
-    element: (
-      <SiteTechnicianRoute>
-        <DockCharge />
       </SiteTechnicianRoute>
     ),
   },
