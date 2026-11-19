@@ -174,13 +174,6 @@ const fmtTime = (iso) => {
     year: "2-digit",
   });
 };
-const fmtClock = (d) =>
-  d.toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
 const fmtDate = (d) =>
   d.toLocaleDateString("en-IN", {
     weekday: "short",
@@ -188,6 +181,68 @@ const fmtDate = (d) =>
     month: "short",
     year: "numeric",
   });
+
+const ClockPart = ({ children, dim }) => (
+  <span
+    style={{
+      display: "inline-block",
+      width: 32,
+      textAlign: "center",
+      fontSize: 22,
+      fontWeight: 600,
+      lineHeight: 1,
+      fontVariantNumeric: "tabular-nums",
+      color: dim ? "#8ea3b8" : "#eef4ff",
+    }}
+  >
+    {children}
+  </span>
+);
+
+const LiveClock = ({ now }) => {
+  const hours = now.getHours();
+  const pad = (n) => String(n).padStart(2, "0");
+  return (
+    <div
+      style={{
+        flexShrink: 0,
+        marginLeft: 10,
+        minWidth: 168,
+        padding: "4px 10px 5px",
+        borderRadius: 8,
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        textAlign: "center",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: 1,
+          textTransform: "uppercase",
+          color: "#9eb0c4",
+          marginBottom: 4,
+        }}
+      >
+        Time
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center" }}>
+        <ClockPart>{pad(hours % 12 || 12)}</ClockPart>
+        <span style={{ color: "#556677", fontSize: 18, lineHeight: 1 }}>:</span>
+        <ClockPart>{pad(now.getMinutes())}</ClockPart>
+        <span style={{ color: "#556677", fontSize: 18, lineHeight: 1 }}>:</span>
+        <ClockPart dim>{pad(now.getSeconds())}</ClockPart>
+        <span style={{ width: 24, fontSize: 11, fontWeight: 700, color: "#8ea3b8" }}>
+          {hours >= 12 ? "PM" : "AM"}
+        </span>
+      </div>
+      <div style={{ fontSize: 10, color: "#8899aa", marginTop: 4, whiteSpace: "nowrap" }}>
+        {fmtDate(now)}
+      </div>
+    </div>
+  );
+};
 
 const wIcon = (desc = "") => {
   const s = (desc || "").toLowerCase();
@@ -202,6 +257,16 @@ const wIcon = (desc = "") => {
 /* ══════════════════════════════════════════════
    COMPACT SITE CARD  (left grid)
 ══════════════════════════════════════════════ */
+const cleaningState = (c) => {
+  const done = c?.completed || 0;
+  const running = c?.inprogress || 0;
+  const failed = c?.failure || 0;
+  if (running > 0) return { kind: "run", label: `Running ${running}`, color: "#f5a623" };
+  if (done > 0 && failed === 0) return { kind: "done", label: "Done", color: "#22dd88" };
+  if (done > 0 && failed > 0) return { kind: "mix", done, failed };
+  return { kind: "none" };
+};
+
 const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
   const h = getHealth(data);
   console.log("Rendering SiteCard for", data.site.siteName, "with health", h);
@@ -225,17 +290,17 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
   const total = r.online + r.offline;
   const pct = total > 0 ? Math.round((r.online / total) * 100) : 0;
   const gwOk = gateways[0]?.gateway_status;
+  const fill = isSelected ? HEALTH_BG[h] : "rgba(255,255,255,0.025)";
+  const clean = cleaningState(c);
 
   return (
     <div
       onClick={onClick}
       style={{
-        background: isSelected ? HEALTH_BG[h] : "rgba(255,255,255,0.025)",
-        // border: `1px solid ${isSelected ? HEALTH_BORDER[h] : "rgba(255,255,255,0.06)"}`,
+        background: fill,
         borderRadius: 10,
         padding: "10px 12px",
         cursor: "pointer",
-        transition: "all 0.3s ease",
         animation: `fadeUp 0.4s ease ${animDelay}s both`,
         position: "relative",
         overflow: "hidden",
@@ -262,7 +327,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "space-between",
-          marginBottom: 8,
+          marginBottom: 4,
           paddingLeft: 6,
         }}
       >
@@ -283,17 +348,6 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
             {site.siteName.split(" - ")[1] ||
               site.siteName.split(" ").slice(0, 3).join(" ")}
           </div>
-          <div
-            style={{
-              fontSize: 9,
-              color: "#667788",
-              letterSpacing: 1,
-              marginTop: 1,
-              //fontFamily: "'DM Mono', monospace",
-            }}
-          >
-            📍{site.location}
-          </div>
         </div>
         <div
           style={{
@@ -313,6 +367,55 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
         </div>
       </div>
 
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 3,
+          fontSize: 9,
+          color: "#8aa0b4",
+          letterSpacing: 0.2,
+          lineHeight: "13px",
+          height: 26,
+          paddingLeft: 6,
+          marginBottom: 4,
+          overflow: "hidden",
+        }}
+      >
+        <svg width="8" height="10" viewBox="0 0 8 10" fill="#8aa0b4" style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true">
+          <path d="M4 0C1.8 0 0 1.7 0 3.8 0 6.6 4 10 4 10s4-3.4 4-6.2C8 1.7 6.2 0 4 0zm0 5.2a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8z" />
+        </svg>
+        <span style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{site.location}</span>
+      </div>
+      <div style={{ height: 16, margin: "0 6px 12px 6px" }}>
+        {clean.kind === "mix" ? (
+          <div style={{ display: "inline-flex", gap: 4, height: 16 }}>
+            <span style={{ background: "rgba(34,221,136,0.16)", color: "#22dd88", fontSize: 9, fontWeight: 700, lineHeight: "16px", height: 16, padding: "0 5px", borderRadius: 4 }}>
+              Done {clean.done}
+            </span>
+            <span style={{ background: "rgba(255,51,85,0.16)", color: "#ff3355", fontSize: 9, fontWeight: 700, lineHeight: "16px", height: 16, padding: "0 5px", borderRadius: 4 }}>
+              Fail {clean.failed}
+            </span>
+          </div>
+        ) : clean.kind !== "none" ? (
+          <span
+            style={{
+              display: "inline-block",
+              height: 16,
+              fontSize: 9,
+              fontWeight: 700,
+              color: clean.color,
+              background: `${clean.color}22`,
+              borderRadius: 4,
+              padding: "0 6px",
+              lineHeight: "16px",
+            }}
+          >
+            {clean.label}
+          </span>
+        ) : null}
+      </div>
+
       {/* Metrics row */}
       <div
         style={{
@@ -325,25 +428,21 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
         <Metric
           icon="🤖"
           val={`${r.online}/${total}`}
-          label="robots"
           color={r.online === 0 && total > 0 ? "#ff3355" : "#22dd88"}
         />
         <Metric
           icon="🧹"
           val={c.failure}
-          label="fails"
           color={c.failure > 0 ? "#ff3355" : "#334455"}
         />
         <Metric
           icon="👷"
           val={t.length}
-          label="techs"
           color={t.length === 0 ? "#f5a623" : "#22dd88"}
         />
         <Metric
           icon="📡"
           val={gwOk ? "ON" : "OFF"}
-          label="gw"
           color={gwOk ? "#22dd88" : "#ff3355"}
         />
       </div>
@@ -401,7 +500,7 @@ const SiteCard = ({ data, isSelected, onClick, animDelay }) => {
   );
 };
 
-const Metric = ({ icon, val, label, color }) => (
+const Metric = ({ icon, val, color }) => (
   <div
     style={{
       display: "flex",
@@ -433,7 +532,6 @@ const Metric = ({ icon, val, label, color }) => (
       }}
     >
       {icon}
-      {label}
     </span>
   </div>
 );
@@ -569,10 +667,7 @@ const DetailPanel = ({ data }) => {
                 strokeDasharray={circumference}
                 strokeDashoffset={circumference * (1 - pct / 100)}
                 strokeLinecap="round"
-                style={{
-                  transition: "stroke-dashoffset 1s ease",
-                  filter: `drop-shadow(0 0 6px ${pct > 50 ? "#22dd88" : pct > 20 ? "#f5a623" : "#ff3355"})`,
-                }}
+                style={{ transition: "stroke-dashoffset 1s ease" }}
               />
             </svg>
             <div
@@ -691,7 +786,8 @@ const DetailPanel = ({ data }) => {
                   <span
                     style={{
                       fontSize: 20,
-                      fontWeight: 800,
+                      fontFamily: "Blinker, sans-serif",
+                      fontWeight: 400,
                       color,
                       lineHeight: 1,
                     }}
@@ -1185,48 +1281,32 @@ const DetailPanel = ({ data }) => {
 /* ══════════════════════════════════════════════
    FLEET SUMMARY BAR
 ══════════════════════════════════════════════ */
-const FleetStat = ({ label, value, color, sub }) => (
-  <div
-    style={{
-      textAlign: "center",
-      padding: "0 16px",
-      borderRight: "1px solid rgba(255,255,255,0.06)",
-    }}
-  >
+const Count = ({ label, value, color, sub }) => (
+  <div style={{ flex: 1, minWidth: 0, textAlign: "center", padding: "2px 4px 0" }}>
+    <div style={{ fontSize: 9, color: "#667788", letterSpacing: 1, textTransform: "uppercase" }}>{label}</div>
+    <div style={{ fontSize: 26, fontFamily: "Blinker, sans-serif", fontWeight: 600, color: color || "#eef4ff", lineHeight: 1, marginTop: 3 }}>{value}</div>
+    {sub && <div style={{ fontSize: 9, color: "#445566", marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+
+const CountGroup = ({ title, grow, children, first }) => (
+  <div style={{ flex: grow, minWidth: 0, borderLeft: first ? "none" : "1px solid rgba(255,255,255,0.1)", padding: "0 6px" }}>
     <div
       style={{
-        fontSize: 26,
-        fontWeight: 800,
-        //fontFamily: "'DM Mono', monospace",
-        color: color || "#eef4ff",
-        lineHeight: 1,
-      }}
-    >
-      {value}
-    </div>
-    <div
-      style={{
-        fontSize: 9,
-        color: "#667788",
-        letterSpacing: 2,
+        textAlign: "center",
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: 1,
         textTransform: "uppercase",
-        //fontFamily: "'Barlow Condensed', sans-serif",
-        marginTop: 2,
+        color: "#9eb0c4",
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        paddingBottom: 3,
+        marginBottom: 4,
       }}
     >
-      {label}
+      {title}
     </div>
-    {sub && (
-      <div
-        style={{
-          fontSize: 9,
-          color: "#445566",
-          //fontFamily: "'DM Mono', monospace",
-        }}
-      >
-        {sub}
-      </div>
-    )}
+    <div style={{ display: "flex" }}>{children}</div>
   </div>
 );
 
@@ -1425,18 +1505,18 @@ const LiveDashboard = () => {
 
       <div
         style={{
-          width: "100vw",
-          height: "100vh",
-          //   background: "#070b12",
-          //   backgroundImage:
-          //     "radial-gradient(ellipse at 15% 15%, rgba(245,166,35,0.05) 0%,transparent 55%), radial-gradient(ellipse at 85% 85%, rgba(34,120,200,0.05) 0%,transparent 55%), radial-gradient(ellipse at 50% 50%, rgba(255,51,85,0.02) 0%,transparent 70%)",
-          //fontFamily: "'Barlow Condensed',sans-serif",
+          position: "fixed",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          background: "#070b12",
           color: "#e8f0fa",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
+        <div style={{ flexShrink: 0, background: "#070b12" }}>
         {/* ── TOP BAR ── */}
         <div
           style={{
@@ -1450,7 +1530,7 @@ const LiveDashboard = () => {
           }}
         >
           {/* Brand */}
-          <div
+            <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -1490,83 +1570,32 @@ const LiveDashboard = () => {
           />
 
           {/* Fleet stats */}
-          <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
-            <FleetStat
-              label="Total Sites"
-              value={sites.length}
-              color="#eef4ff"
-            />
-            <FleetStat
-              label="Critical"
-              value={criticals.length}
-              color={criticals.length > 0 ? "#ff3355" : "#334455"}
-            />
-            <FleetStat
-              label="Warning"
-              value={warnings.length}
-              color={warnings.length > 0 ? "#f5a623" : "#334455"}
-            />
-            <FleetStat
-              label="Healthy"
-              value={healthyCount.length}
-              color="#22dd88"
-            />
-            <FleetStat
-              label="Robots Online"
-              value={onlineRobots}
-              color="#22dd88"
-              sub={`/ ${totalRobots} total`}
-            />
-            <FleetStat
-              label="Clean Failures"
-              value={totalFailures}
-              color={totalFailures > 0 ? "#ff3355" : "#334455"}
-            />
-            <FleetStat
-              label="Completed"
-              value={totalCompleted}
-              color="#22dd88"
-            />
-            <FleetStat
-              label="In Progress"
-              value={totalInProgress}
-              color={totalInProgress > 0 ? "#f5a623" : "#334455"}
-            />
-            <FleetStat
-              label="Gateway Online"
-              value={totalOnline || 0}
-              color="#22dd88"
-              sub={`/ ${gateway_totals || 0} total`}
-            />
-
-            <FleetStat
-              label="Gateway Offline"
-              value={totalOffline || 0}
-              color="#ff4d4f"
-              sub={`/ ${gateway_totals || 0} total`}
-            />
-            <FleetStat
-              label="On-Site Techs"
-              value={totalTechs}
-              color="#f5a623"
-            />
-            <FleetStat
-              label="Max Online"
-              value={maxData.max_online_robots || 0}
-              color="#22dd88"
-            />
-            <FleetStat
-              label="Max Completed"
-              value={maxData.max_completed || 0}
-              color="#22dd88"
-            />
-            <FleetStat
-              label="Max Failures"
-              value={maxData.max_failure || 0}
-              color={(maxData.max_failure || 0) > 0 ? "#ff3355" : "#334455"}
-            />
+          <div style={{ display: "flex", alignItems: "flex-start", flex: 1, minWidth: 0, width: "100%" }}>
+            <CountGroup title="Sites" grow={4} first>
+              <Count label="Total Sites" value={sites.length} color="#eef4ff" />
+              <Count label="Critical" value={criticals.length} color={criticals.length > 0 ? "#ff3355" : "#334455"} />
+              <Count label="Warning" value={warnings.length} color={warnings.length > 0 ? "#f5a623" : "#334455"} />
+              <Count label="Healthy" value={healthyCount.length} color="#22dd88" />
+            </CountGroup>
+            <CountGroup title="Robots" grow={8}>
+              <Count label="Total" value={totalRobots} color="#eef4ff" />
+              <Count label="Online" value={onlineRobots} color="#22dd88" />
+              <Count label="Failures" value={totalFailures} color={totalFailures > 0 ? "#ff3355" : "#334455"} />
+              <Count label="Completed" value={totalCompleted} color="#22dd88" />
+              <Count label="In Progress" value={totalInProgress} color={totalInProgress > 0 ? "#f5a623" : "#334455"} />
+              <Count label="Max Online" value={maxData.max_online_robots || 0} color="#22dd88" />
+              <Count label="Max Completed" value={maxData.max_completed || 0} color="#22dd88" />
+              <Count label="Max Failures" value={maxData.max_failure || 0} color={(maxData.max_failure || 0) > 0 ? "#ff3355" : "#334455"} />
+            </CountGroup>
+            <CountGroup title="Gateways" grow={3}>
+              <Count label="Total" value={gateway_totals || 0} color="#eef4ff" />
+              <Count label="Online" value={totalOnline || 0} color="#22dd88" />
+              <Count label="Offline" value={totalOffline || 0} color="#ff4d4f" />
+            </CountGroup>
+            <CountGroup title="Techs" grow={1}>
+              <Count label="On site" value={totalTechs} color="#f5a623" />
+            </CountGroup>
           </div>
-          <div style={{ flex: 1 }} />
 
           {/* Live status */}
           {/* <div
@@ -1599,30 +1628,7 @@ const LiveDashboard = () => {
             </span>
           </div> */}
 
-          {/* Clock */}
-          <div style={{ textAlign: "right" }}>
-            <div
-              style={{
-                fontSize: 22,
-                fontWeight: 500,
-                //fontFamily: "'DM Mono',monospace",
-                letterSpacing: 1,
-                lineHeight: 1,
-              }}
-            >
-              {fmtClock(now)}
-            </div>
-            <div
-              style={{
-                fontSize: 9,
-                color: "#8899aa",
-                letterSpacing: 2,
-                marginTop: 1,
-              }}
-            >
-              {fmtDate(now)}
-            </div>
-          </div>
+          <LiveClock now={now} />
         </div>
 
         {/* ── FILTER BAR ── */}
@@ -1687,6 +1693,7 @@ const LiveDashboard = () => {
             {filtered.length} sites shown · auto-cycling detail every{" "}
             {DETAIL_INTERVAL / 1000}s
           </span>
+        </div>
         </div>
 
         {/* ── MAIN BODY ── */}

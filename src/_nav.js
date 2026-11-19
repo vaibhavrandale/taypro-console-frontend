@@ -97,12 +97,42 @@ const _nav = [
         name: "Service Performance",
         icon: maIcon(BarChart3),
         items: [
-          { component: CNavItem, name: "Dashboard", to: "/service-performance", access: "performance" },
-          { component: CNavItem, name: "Ticket Performance", to: "/service-performance/tickets", access: "performance" },
-          { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
-          { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
-          { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
-          { component: CNavItem, name: "PM Schedule", to: "/service-performance/admin/pm-schedule", access: "performance-admin" },
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/service-performance",
+            access: "performance",
+          },
+          {
+            component: CNavItem,
+            name: "Ticket Performance",
+            to: "/service-performance/tickets",
+            access: "performance",
+          },
+          {
+            component: CNavItem,
+            name: "Compare Engineers",
+            to: "/service-performance/admin/compare",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "KPI Configuration",
+            to: "/service-performance/admin/kpi-config",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "Site Readiness",
+            to: "/service-performance/admin/sites",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "PM Schedule",
+            to: "/service-performance/admin/pm-schedule",
+            access: "performance-admin",
+          },
         ],
       },
 
@@ -2111,12 +2141,42 @@ const _nav = [
           />
         ),
         items: [
-          { component: CNavItem, name: "Dashboard", to: "/service-performance", access: "performance" },
-          { component: CNavItem, name: "Ticket Performance", to: "/service-performance/tickets", access: "performance" },
-          { component: CNavItem, name: "Compare Engineers", to: "/service-performance/admin/compare", access: "performance-admin" },
-          { component: CNavItem, name: "KPI Configuration", to: "/service-performance/admin/kpi-config", access: "performance-admin" },
-          { component: CNavItem, name: "Site Readiness", to: "/service-performance/admin/sites", access: "performance-admin" },
-          { component: CNavItem, name: "PM Schedule", to: "/service-performance/admin/pm-schedule", access: "performance-admin" },
+          {
+            component: CNavItem,
+            name: "Dashboard",
+            to: "/service-performance",
+            access: "performance",
+          },
+          {
+            component: CNavItem,
+            name: "Ticket Performance",
+            to: "/service-performance/tickets",
+            access: "performance",
+          },
+          {
+            component: CNavItem,
+            name: "Compare Engineers",
+            to: "/service-performance/admin/compare",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "KPI Configuration",
+            to: "/service-performance/admin/kpi-config",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "Site Readiness",
+            to: "/service-performance/admin/sites",
+            access: "performance-admin",
+          },
+          {
+            component: CNavItem,
+            name: "PM Schedule",
+            to: "/service-performance/admin/pm-schedule",
+            access: "performance-admin",
+          },
         ],
       },
 
