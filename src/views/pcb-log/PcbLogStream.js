@@ -25,6 +25,7 @@ export default function PcbLogStream({ robotNo: robotNoProp, embedded = false } 
   const [watching, setWatching] = useState("");
   const [status, setStatus] = useState("idle");
   const [log, setLog] = useState("");
+  const [error, setError] = useState("");
   const [session, setSession] = useState(null);
   const watchingRef = useRef("");
   const logRef = useRef(null);
