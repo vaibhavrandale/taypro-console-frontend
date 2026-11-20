@@ -2673,7 +2673,6 @@ const routes = [
       </MasterUserRoute>
     ),
   },
-  },
   {
     path: "/master-user/flush-queues",
     name: "Flush Queue",
