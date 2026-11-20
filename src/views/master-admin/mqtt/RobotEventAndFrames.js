@@ -30,6 +30,7 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { decodeRobotPayload } from "../../../components/robotPayloadDecoder";
 import Queues from "./Queues/Queues";
+import PcbLogStream from "../../pcb-log/PcbLogStream";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -136,6 +137,7 @@ const RobotEventAndFrames = ({ robotNo, deveui: deveuiProp } = {}) => {
 
     "Events",
     "Queues",
+    "Live serial log",
     // "LoRaWAN frames",
   ];
   function isValidBase64(str) {
@@ -209,9 +211,9 @@ const RobotEventAndFrames = ({ robotNo, deveui: deveuiProp } = {}) => {
         </div>
 
         {/* LoRaWAN Frames Section */}
-        {loading ? (
+        {activeTab === "Events" && loading ? (
           <LoadingSpinner />
-        ) : error ? (
+        ) : activeTab === "Events" && error ? (
           <CAlert color="danger">{error}</CAlert>
         ) : (
           activeTab === "Events" && (
@@ -386,6 +388,10 @@ const RobotEventAndFrames = ({ robotNo, deveui: deveuiProp } = {}) => {
         )}
 
         {activeTab === "Queues" && <Queues deveui={deveui} />}
+
+        {activeTab === "Live serial log" && (
+          <PcbLogStream robotNo={robot_no} embedded />
+        )}
 
         <COffcanvas
           placement="end"

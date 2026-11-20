@@ -165,6 +165,7 @@ import OpexCertificate from "./views/master-admin/Opex/OpexCertificate";
 import OpexSiteTechnicianCertificate from "./views/opex-site-technician/OpexSiteTechnicianCertificate";
 import EspFirmwareDataUpload from "./views/master-admin/esp-firmware/EspFirmwareDataUpload";
 import MqttDashboard from "./views/master-admin/mqtt/MqttDashboard";
+import PcbLogStream from "./views/pcb-log/PcbLogStream";
 import RobotEventAndFrames from "./views/master-admin/mqtt/RobotEventAndFrames";
 import RobotTracker from "./views/robot-position/RobotTracker";
 
@@ -812,6 +813,15 @@ const routes = [
     element: (
       <MasterAdminRoute>
         <RobotCommands />
+      </MasterAdminRoute>
+    ),
+  },
+  {
+    path: "/master-admin/pcb-log",
+    name: "PCB Log",
+    element: (
+      <MasterAdminRoute>
+        <PcbLogStream />
       </MasterAdminRoute>
     ),
   },
@@ -2653,6 +2663,16 @@ const routes = [
         <RobotCommands />
       </MasterUserRoute>
     ),
+  },
+  {
+    path: "/master-user/pcb-log",
+    name: "PCB Log",
+    element: (
+      <MasterUserRoute>
+        <PcbLogStream />
+      </MasterUserRoute>
+    ),
+  },
   },
   {
     path: "/master-user/flush-queues",
@@ -6034,6 +6054,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-admin/pcb-log",
+    name: "PCB Log",
+    element: (
+      <ServiceAdminRoute>
+        <PcbLogStream />
+      </ServiceAdminRoute>
+    ),
+  },
+  {
     path: "/service-admin/monthlyreport",
     name: "Monthly Site Report",
     element: (
@@ -7408,6 +7437,15 @@ const routes = [
     ),
   },
   {
+    path: "/service-user/pcb-log",
+    name: "PCB Log",
+    element: (
+      <ServiceUserRoute>
+        <PcbLogStream />
+      </ServiceUserRoute>
+    ),
+  },
+  {
     path: "/service-user/monthlyreport",
     name: "Monthly Site Report",
     element: (
@@ -8459,6 +8497,15 @@ const routes = [
     element: (
       <SiteTechnicianRoute>
         <RobotCommands />
+      </SiteTechnicianRoute>
+    ),
+  },
+  {
+    path: "/site-technician/pcb-log",
+    name: "PCB Log",
+    element: (
+      <SiteTechnicianRoute>
+        <PcbLogStream />
       </SiteTechnicianRoute>
     ),
   },

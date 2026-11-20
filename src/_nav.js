@@ -268,6 +268,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "PCB Log",
+            to: "/master-admin/pcb-log",
+          },
+          {
+            component: CNavItem,
             name: "Flush Queue",
             to: "/master-admin/flush-queues",
           },
@@ -1117,6 +1122,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Commands",
             to: "/master-user/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "PCB Log",
+            to: "/master-user/pcb-log",
           },
           {
             component: CNavItem,
@@ -2286,6 +2296,11 @@ const _nav = [
           },
           {
             component: CNavItem,
+            name: "PCB Log",
+            to: "/service-admin/pcb-log",
+          },
+          {
+            component: CNavItem,
             name: "Weather Timer Notifications",
             to: "/service-admin/weather-timer-notifications",
           },
@@ -2748,6 +2763,11 @@ const _nav = [
             component: CNavItem,
             name: "Commands",
             to: "/site-technician/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "PCB Log",
+            to: "/site-technician/pcb-log",
           },
           {
             component: CNavItem,
@@ -3708,6 +3728,11 @@ const _nav = [
             component: CNavItem,
             name: "Robot Commands",
             to: "/service-user/robot-commands",
+          },
+          {
+            component: CNavItem,
+            name: "PCB Log",
+            to: "/service-user/pcb-log",
           },
           {
             component: CNavItem,
